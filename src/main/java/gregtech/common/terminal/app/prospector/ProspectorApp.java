@@ -23,6 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
 
 public class ProspectorApp extends AbstractApplication implements SearchComponent.IWidgetSearch<String> {
 
@@ -42,7 +41,7 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
     private Table<Integer, Integer, PacketProspecting> persist;
     private final ProspectorMode mode;
 
-    public ProspectorApp(@Nonnull ProspectorMode mode) {
+    public ProspectorApp(@NotNull ProspectorMode mode) {
         super(mode.terminalName);
         this.mode = mode;
     }

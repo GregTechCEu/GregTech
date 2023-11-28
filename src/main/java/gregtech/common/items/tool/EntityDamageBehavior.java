@@ -11,13 +11,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Add to tools to have them deal bonus damage to specific mobs.
@@ -53,8 +53,8 @@ public class EntityDamageBehavior implements IToolBehavior {
     }
 
     @Override
-    public void hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target,
-                          @Nonnull EntityLivingBase attacker) {
+    public void hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
+                          @NotNull EntityLivingBase attacker) {
         float damageBonus = shouldDoBonusList.stream().map(func -> func.apply(target)).filter(f -> f > 0).findFirst()
                 .orElse(0f);
         if (damageBonus != 0f) {
@@ -65,8 +65,8 @@ public class EntityDamageBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
-                               @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         if (mobType != null && !mobType.isEmpty()) {
             tooltip.add(I18n.format("item.gt.tool.behavior.damage_boost",
                     I18n.format("item.gt.tool.behavior.damage_boost_" + mobType)));

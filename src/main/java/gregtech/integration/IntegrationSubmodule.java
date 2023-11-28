@@ -7,11 +7,10 @@ import gregtech.modules.GregTechModules;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
 
 /**
  * Abstract class meant to be used by mod-specific compatibility modules.
@@ -22,13 +21,13 @@ public abstract class IntegrationSubmodule extends BaseGregTechModule {
     private static final Set<ResourceLocation> DEPENDENCY_UID = Collections.singleton(
             GTUtility.gregtechId(GregTechModules.MODULE_INTEGRATION));
 
-    @Nonnull
+    @NotNull
     @Override
     public Logger getLogger() {
         return IntegrationModule.logger;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Set<ResourceLocation> getDependencyUids() {
         return DEPENDENCY_UID;

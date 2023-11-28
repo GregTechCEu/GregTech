@@ -5,8 +5,8 @@ import gregtech.client.shader.postprocessing.BloomType;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.IBloomEffect;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class GTBloomParticle extends GTParticle implements IBloomEffect {
 
@@ -21,7 +21,7 @@ public abstract class GTBloomParticle extends GTParticle implements IBloomEffect
     @Nullable
     protected abstract IRenderSetup getBloomRenderSetup();
 
-    @Nonnull
+    @NotNull
     protected abstract BloomType getBloomType();
 
     @Override

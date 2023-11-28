@@ -25,11 +25,10 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiablePart
                                         implements IMultiblockAbilityPart<IItemHandlerModifiable> {
@@ -120,10 +119,10 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
             super(metaTileEntity, 1, null, false);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         // Insert item returns the remainder stack that was not inserted
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             // If the item was not valid, nothing from the stack can be inserted
             if (!isItemValid(slot, stack)) {
                 return stack;
@@ -177,7 +176,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             boolean slotMatches = this.getStackInSlot(slot).isEmpty() ||
                     ItemStackHashStrategy.comparingAllButCount().equals(this.getStackInSlot(slot), stack);
 
@@ -190,7 +189,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
             return slotMatches;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (isSlotBlocked()) {

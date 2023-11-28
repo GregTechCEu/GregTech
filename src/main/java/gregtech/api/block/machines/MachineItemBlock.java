@@ -34,13 +34,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MachineItemBlock extends ItemBlock {
 
@@ -77,16 +76,16 @@ public class MachineItemBlock extends ItemBlock {
         setHasSubtypes(true);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getTranslationKey(@Nonnull ItemStack stack) {
+    public String getTranslationKey(@NotNull ItemStack stack) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity == null ? "unnamed" : metaTileEntity.getMetaName();
     }
 
     @Override
-    public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world,
-                                @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ,
+    public boolean placeBlockAt(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World world,
+                                @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX, float hitY, float hitZ,
                                 IBlockState newState) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         // prevent rendering glitch before meta tile entity sync to client, but after block placement
@@ -109,7 +108,7 @@ public class MachineItemBlock extends ItemBlock {
 
     @Nullable
     @Override
-    public String getCreatorModId(@Nonnull ItemStack itemStack) {
+    public String getCreatorModId(@NotNull ItemStack itemStack) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(itemStack);
         if (metaTileEntity == null) {
             return GTValues.MODID;
@@ -120,7 +119,7 @@ public class MachineItemBlock extends ItemBlock {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable NBTTagCompound nbt) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity == null ? null : metaTileEntity.initItemStackCapabilities(stack);
     }
@@ -130,9 +129,9 @@ public class MachineItemBlock extends ItemBlock {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) != null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getContainerItem(@Nonnull ItemStack itemStack) {
+    public ItemStack getContainerItem(@NotNull ItemStack itemStack) {
         if (!hasContainerItem(itemStack)) {
             return ItemStack.EMPTY;
         }
@@ -152,8 +151,8 @@ public class MachineItemBlock extends ItemBlock {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip,
-                               @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         if (metaTileEntity == null) return;
 
@@ -199,7 +198,7 @@ public class MachineItemBlock extends ItemBlock {
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack) {
+    public int getItemStackLimit(@NotNull ItemStack stack) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity != null ? metaTileEntity.getItemStackLimit(stack) : super.getItemStackLimit(stack);
     }

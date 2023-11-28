@@ -14,12 +14,11 @@ import appeng.fluids.util.AEFluidStack;
 import appeng.fluids.util.MeaningfulFluidIterator;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-
-import javax.annotation.Nonnull;
 
 /**
  * @Author GlodBlock
@@ -59,12 +58,12 @@ public class SerializableFluidList implements IItemList<IAEFluidStack>, INBTSeri
         return !this.iterator().hasNext();
     }
 
-    private IAEFluidStack getOrCreateRecord(@Nonnull IAEFluidStack fluid) {
+    private IAEFluidStack getOrCreateRecord(@NotNull IAEFluidStack fluid) {
         return this.records.computeIfAbsent(fluid.getFluid(),
                 key -> AEFluidStack.fromFluidStack(new FluidStack(key, 0)));
     }
 
-    private IAEFluidStack getRecord(@Nonnull IAEFluidStack fluid) {
+    private IAEFluidStack getRecord(@NotNull IAEFluidStack fluid) {
         return this.records.get(fluid.getFluid());
     }
 

@@ -24,11 +24,10 @@ import net.minecraft.world.World;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
                                        implements IMultiblockAbilityPart<IEnergyContainer> {
@@ -71,7 +70,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
         checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
     }
 
-    @Nonnull
+    @NotNull
     private SimpleOverlayRenderer getOverlay() {
         if (isExportHatch) {
             if (amperage <= 2) {

@@ -19,11 +19,11 @@ import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.BOILER_HEAT;
 import static gregtech.api.capability.GregtechDataCodes.BOILER_LAST_TICK_STEAM;
@@ -240,13 +240,13 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
         wasActiveAndNeedsUpdate = true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public MetaTileEntityLargeBoiler getMetaTileEntity() {
         return (MetaTileEntityLargeBoiler) super.getMetaTileEntity();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = super.serializeNBT();
@@ -258,7 +258,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         super.deserializeNBT(compound);
         this.currentHeat = compound.getInteger("Heat");
         this.excessFuel = compound.getInteger("ExcessFuel");
@@ -267,21 +267,21 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(currentHeat);
         buf.writeVarInt(lastTickSteamOutput);
     }
 
     @Override
-    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.currentHeat = buf.readVarInt();
         this.lastTickSteamOutput = buf.readVarInt();
     }
 
     @Override
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == BOILER_HEAT) {
             this.currentHeat = buf.readVarInt();
@@ -328,7 +328,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
      * @return a valid boiler fluid from a container
      */
     @Nullable
-    private static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount) {
+    private static FluidStack getBoilerFluidFromContainer(@NotNull IFluidHandler fluidHandler, int amount) {
         if (amount == 0) return null;
         FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), true);
         if (drainedWater == null || drainedWater.amount == 0) {

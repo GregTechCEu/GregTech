@@ -15,12 +15,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap<R> implements IResearchRecipeMap {
 
@@ -36,7 +35,7 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
                                                  FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 176)
@@ -50,8 +49,8 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     }
 
     @Override
-    protected void addInventorySlotGroup(ModularUI.Builder builder, @Nonnull IItemHandlerModifiable itemHandler,
-                                         @Nonnull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+    protected void addInventorySlotGroup(ModularUI.Builder builder, @NotNull IItemHandlerModifiable itemHandler,
+                                         @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         int startInputsX = 80 - 4 * 18;
         int fluidInputsCount = fluidHandler.getTanks();
         int startInputsY = 37 - 2 * 18;
@@ -98,7 +97,7 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     }
 
     @Override
-    public boolean removeRecipe(@Nonnull Recipe recipe) {
+    public boolean removeRecipe(@NotNull Recipe recipe) {
         if (!super.removeRecipe(recipe)) return false;
         if (recipe.hasProperty(ResearchProperty.getInstance())) {
             ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
@@ -113,19 +112,19 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     }
 
     @Override
-    public void addDataStickEntry(@Nonnull String researchId, @Nonnull Recipe recipe) {
+    public void addDataStickEntry(@NotNull String researchId, @NotNull Recipe recipe) {
         Collection<Recipe> collection = researchEntries.computeIfAbsent(researchId, (k) -> new ObjectOpenHashSet<>());
         collection.add(recipe);
     }
 
     @Nullable
     @Override
-    public Collection<Recipe> getDataStickEntry(@Nonnull String researchId) {
+    public Collection<Recipe> getDataStickEntry(@NotNull String researchId) {
         return researchEntries.get(researchId);
     }
 
     @Override
-    public boolean removeDataStickEntry(@Nonnull String researchId, @Nonnull Recipe recipe) {
+    public boolean removeDataStickEntry(@NotNull String researchId, @NotNull Recipe recipe) {
         Collection<Recipe> collection = researchEntries.get(researchId);
         if (collection == null) return false;
         if (collection.remove(recipe)) {

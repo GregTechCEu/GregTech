@@ -24,7 +24,10 @@ import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.lang.reflect.Field;
@@ -33,10 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class BloomEffectUtil {
@@ -60,7 +59,7 @@ public class BloomEffectUtil {
     /**
      * @return {@link BlockRenderLayer} instance for the bloom render layer.
      */
-    @Nonnull
+    @NotNull
     public static BlockRenderLayer getBloomLayer() {
         return Objects.requireNonNull(bloom, "Bloom effect is not initialized yet");
     }
@@ -68,7 +67,7 @@ public class BloomEffectUtil {
     /**
      * @deprecated renamed for clarity; use {@link #getEffectiveBloomLayer()}.
      */
-    @Nonnull
+    @NotNull
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static BlockRenderLayer getRealBloomLayer() {
@@ -84,7 +83,7 @@ public class BloomEffectUtil {
      *         bloom layer is disabled
      * @see #getEffectiveBloomLayer(BlockRenderLayer)
      */
-    @Nonnull
+    @NotNull
     public static BlockRenderLayer getEffectiveBloomLayer() {
         return getEffectiveBloomLayer(BlockRenderLayer.CUTOUT);
     }
@@ -115,7 +114,7 @@ public class BloomEffectUtil {
      *         bloom layer is disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
-    @Nonnull
+    @NotNull
     public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive) {
         return getEffectiveBloomLayer(isBloomActive, BlockRenderLayer.CUTOUT);
     }
@@ -159,11 +158,11 @@ public class BloomEffectUtil {
      * @return Ticket for the registered bloom render callback
      * @throws NullPointerException if {@code bloomType == null || render == null}
      */
-    @Nonnull
+    @NotNull
     @CheckReturnValue
     public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
-                                                        @Nonnull BloomType bloomType,
-                                                        @Nonnull IBloomEffect render) {
+                                                        @NotNull BloomType bloomType,
+                                                        @NotNull IBloomEffect render) {
         BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render);
         if (Shaders.isOptiFineShaderPackLoaded()) {
             ticket.invalidate();
@@ -376,8 +375,8 @@ public class BloomEffectUtil {
         return result;
     }
 
-    private static void draw(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context,
-                             @Nonnull List<BloomRenderTicket> tickets) {
+    private static void draw(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context,
+                             @NotNull List<BloomRenderTicket> tickets) {
         boolean initialized = false;
         @Nullable
         IRenderSetup renderSetup = null;
@@ -437,7 +436,7 @@ public class BloomEffectUtil {
     }
 
     @Desugar
-    private record BloomRenderKey(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType) {}
+    private record BloomRenderKey(@Nullable IRenderSetup renderSetup, @NotNull BloomType bloomType) {}
 
     public static final class BloomRenderTicket {
 
@@ -453,8 +452,8 @@ public class BloomEffectUtil {
          */
         private boolean legacy;
 
-        BloomRenderTicket(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType,
-                          @Nonnull IBloomEffect render) {
+        BloomRenderTicket(@Nullable IRenderSetup renderSetup, @NotNull BloomType bloomType,
+                          @NotNull IBloomEffect render) {
             this.renderSetup = renderSetup;
             this.bloomType = Objects.requireNonNull(bloomType, "bloomType == null");
             this.render = Objects.requireNonNull(render, "render == null");
@@ -465,7 +464,7 @@ public class BloomEffectUtil {
             return this.renderSetup;
         }
 
-        @Nonnull
+        @NotNull
         public BloomType getBloomType() {
             return this.bloomType;
         }

@@ -50,6 +50,8 @@ import crafttweaker.api.block.IBlock;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -57,9 +59,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @ZenClass("mods.gregtech.machines.CharcoalPileIgniter")
 @ZenRegister
@@ -119,7 +118,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         updateMaxProgressTime();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         // update the structure's dimensions just before we create it
@@ -219,7 +218,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                 .build();
     }
 
-    @Nonnull
+    @NotNull
     private TraceabilityPredicate logPredicate() {
         return new TraceabilityPredicate(blockWorldState -> {
             if (blockWorldState.getBlockState().getBlock().isWood(blockWorldState.getWorld(),
@@ -274,12 +273,12 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         return true;
     }
 
-    private static boolean isBlockWall(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos,
-                                       @Nonnull EnumFacing direction) {
+    private static boolean isBlockWall(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
+                                       @NotNull EnumFacing direction) {
         return WALL_BLOCKS.contains(world.getBlockState(pos.move(direction)).getBlock());
     }
 
-    private static boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos) {
+    private static boolean isBlockFloor(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos) {
         return world.getBlockState(pos.move(EnumFacing.DOWN)).getBlock() == Blocks.BRICK_BLOCK;
     }
 
@@ -348,7 +347,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.1"));
@@ -445,14 +444,14 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
      * @param block the block to add
      */
     @SuppressWarnings("unused")
-    public static void addWallBlock(@Nonnull Block block) {
+    public static void addWallBlock(@NotNull Block block) {
         WALL_BLOCKS.add(block);
     }
 
     @ZenMethod("addWallBlock")
     @Optional.Method(modid = GTValues.MODID_CT)
     @SuppressWarnings("unused")
-    public static void addWallBlockCT(@Nonnull IBlock block) {
+    public static void addWallBlockCT(@NotNull IBlock block) {
         WALL_BLOCKS.add(CraftTweakerMC.getBlock(block));
     }
 
@@ -489,7 +488,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @SubscribeEvent
-    public static void onItemUse(@Nonnull PlayerInteractEvent.RightClickBlock event) {
+    public static void onItemUse(@NotNull PlayerInteractEvent.RightClickBlock event) {
         TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
         MetaTileEntity mte = null;
         if (tileEntity instanceof IGregTechTileEntity) {

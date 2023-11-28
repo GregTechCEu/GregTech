@@ -20,12 +20,11 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class GrassPathBehavior implements IToolBehavior {
 
@@ -33,10 +32,10 @@ public class GrassPathBehavior implements IToolBehavior {
 
     protected GrassPathBehavior() {/**/}
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
-                                      @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY,
+    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
                                       float hitZ) {
         if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
 
@@ -93,8 +92,8 @@ public class GrassPathBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
-                               @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.grass_path"));
     }
 }

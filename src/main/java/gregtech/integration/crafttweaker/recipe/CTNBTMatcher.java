@@ -6,11 +6,11 @@ import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class CTNBTMatcher implements NBTMatcher {
 
@@ -21,7 +21,7 @@ public class CTNBTMatcher implements NBTMatcher {
      *
      * @param tagCompound the required NBT tag to match.
      */
-    public CTNBTMatcher(@Nonnull NBTTagCompound tagCompound) {
+    public CTNBTMatcher(@NotNull NBTTagCompound tagCompound) {
         this.requiredNBT = tagCompound.tagMap.entrySet();
     }
 

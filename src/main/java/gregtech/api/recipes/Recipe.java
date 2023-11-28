@@ -27,10 +27,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-
-import javax.annotation.Nonnull;
 
 /**
  * Class that represent machine recipe.
@@ -101,18 +100,18 @@ public class Recipe {
 
     private final int hashCode;
 
-    public Recipe(@Nonnull List<GTRecipeInput> inputs,
+    public Recipe(@NotNull List<GTRecipeInput> inputs,
                   List<ItemStack> outputs,
-                  @Nonnull ChancedOutputList<ItemStack, ChancedItemOutput> chancedOutputs,
+                  @NotNull ChancedOutputList<ItemStack, ChancedItemOutput> chancedOutputs,
                   List<GTRecipeInput> fluidInputs,
                   List<FluidStack> fluidOutputs,
-                  @Nonnull ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs,
+                  @NotNull ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs,
                   int duration,
                   int EUt,
                   boolean hidden,
                   boolean isCTRecipe,
                   IRecipePropertyStorage recipePropertyStorage,
-                  @Nonnull GTRecipeCategory recipeCategory) {
+                  @NotNull GTRecipeCategory recipeCategory) {
         this.recipePropertyStorage = recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE :
                 recipePropertyStorage;
         this.inputs = GTRecipeInputCache.deduplicateInputs(inputs);
@@ -135,7 +134,7 @@ public class Recipe {
         this.groovyRecipe = GroovyScriptModule.isCurrentlyRunning();
     }
 
-    @Nonnull
+    @NotNull
     public Recipe copy() {
         return new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs,
                 this.fluidOutputs, this.chancedFluidOutputs, this.duration,
@@ -356,7 +355,7 @@ public class Recipe {
         return otherRecipe.matchesItems(thisStackList).getLeft();
     }
 
-    public static int hashFluidList(@Nonnull List<GTRecipeInput> fluids) {
+    public static int hashFluidList(@NotNull List<GTRecipeInput> fluids) {
         int hash = 0;
         for (GTRecipeInput fluidInput : fluids) {
             hash = 31 * hash + fluidInput.hashCode();
@@ -685,7 +684,7 @@ public class Recipe {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     public GTRecipeCategory getRecipeCategory() {
         return this.recipeCategory;
     }

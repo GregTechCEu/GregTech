@@ -3,11 +3,10 @@ package gregtech.integration.jei.utils.render;
 import net.minecraft.client.Minecraft;
 
 import mezz.jei.api.gui.IDrawable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class CompositeDrawable implements IDrawable {
 
@@ -32,7 +31,7 @@ public class CompositeDrawable implements IDrawable {
     }
 
     @Override
-    public void draw(@Nonnull Minecraft minecraft, int xOffset, int yOffset) {
+    public void draw(@NotNull Minecraft minecraft, int xOffset, int yOffset) {
         for (RenderNode step : steps) {
             step.draw(minecraft, xOffset, yOffset);
         }
@@ -70,6 +69,6 @@ public class CompositeDrawable implements IDrawable {
     @FunctionalInterface
     public interface RenderNode {
 
-        void draw(@Nonnull Minecraft minecraft, int xOffset, int yOffset);
+        void draw(@NotNull Minecraft minecraft, int xOffset, int yOffset);
     }
 }

@@ -1,8 +1,7 @@
 package gregtech.api.worldgen.config;
 
 import com.google.gson.JsonObject;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface IWorldgenDefinition {
 
@@ -13,5 +12,5 @@ public interface IWorldgenDefinition {
      */
     String getDepositName();
 
-    boolean initializeFromConfig(@Nonnull JsonObject configRoot);
+    boolean initializeFromConfig(@NotNull JsonObject configRoot);
 }

@@ -3,11 +3,10 @@ package gregtech.api.recipes.category;
 import gregtech.api.recipes.RecipeMap;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public final class GTRecipeCategory {
 
@@ -29,9 +28,9 @@ public final class GTRecipeCategory {
      * @param recipeMap      the recipemap that accepts this category
      * @return the new category
      */
-    @Nonnull
-    public static GTRecipeCategory create(@Nonnull String modid, @Nonnull String categoryName,
-                                          @Nonnull String translationKey, @Nonnull RecipeMap<?> recipeMap) {
+    @NotNull
+    public static GTRecipeCategory create(@NotNull String modid, @NotNull String categoryName,
+                                          @NotNull String translationKey, @NotNull RecipeMap<?> recipeMap) {
         return categories.computeIfAbsent(categoryName,
                 (k) -> new GTRecipeCategory(modid, categoryName, translationKey, recipeMap));
     }
@@ -41,12 +40,12 @@ public final class GTRecipeCategory {
      * @return the category associated with the name
      */
     @Nullable
-    public static GTRecipeCategory getByName(@Nonnull String categoryName) {
+    public static GTRecipeCategory getByName(@NotNull String categoryName) {
         return categories.get(categoryName);
     }
 
-    private GTRecipeCategory(@Nonnull String modid, @Nonnull String name, @Nonnull String translationKey,
-                             @Nonnull RecipeMap<?> recipeMap) {
+    private GTRecipeCategory(@NotNull String modid, @NotNull String name, @NotNull String translationKey,
+                             @NotNull RecipeMap<?> recipeMap) {
         this.modid = modid;
         this.name = name;
         this.uniqueID = modid + ':' + this.name;
@@ -54,27 +53,27 @@ public final class GTRecipeCategory {
         this.recipeMap = recipeMap;
     }
 
-    @Nonnull
+    @NotNull
     public String getName() {
         return this.name;
     }
 
-    @Nonnull
+    @NotNull
     public String getModid() {
         return this.modid;
     }
 
-    @Nonnull
+    @NotNull
     public String getUniqueID() {
         return this.uniqueID;
     }
 
-    @Nonnull
+    @NotNull
     public String getTranslationKey() {
         return this.translationKey;
     }
 
-    @Nonnull
+    @NotNull
     public RecipeMap<?> getRecipeMap() {
         return this.recipeMap;
     }
@@ -111,7 +110,7 @@ public final class GTRecipeCategory {
         return getUniqueID().hashCode();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String toString() {
         return "GTRecipeCategory{" + uniqueID + '}';

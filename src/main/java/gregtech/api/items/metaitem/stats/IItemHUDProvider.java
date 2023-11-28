@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Provides a drawable HUD for the item
@@ -34,7 +34,7 @@ public interface IItemHUDProvider extends IItemComponent {
      * @param stack    the stack the provider should use
      */
     @SideOnly(Side.CLIENT)
-    static void tryDrawHud(@Nonnull IItemHUDProvider provider, @Nonnull ItemStack stack) {
+    static void tryDrawHud(@NotNull IItemHUDProvider provider, @NotNull ItemStack stack) {
         if (provider.shouldDrawHUD()) provider.drawHUD(stack);
     }
 }

@@ -22,9 +22,9 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public abstract class BlockMaterialPipe<
         PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType,
@@ -34,7 +34,7 @@ public abstract class BlockMaterialPipe<
     protected final PipeType pipeType;
     private final MaterialRegistry registry;
 
-    public BlockMaterialPipe(@Nonnull PipeType pipeType, @Nonnull MaterialRegistry registry) {
+    public BlockMaterialPipe(@NotNull PipeType pipeType, @NotNull MaterialRegistry registry) {
         this.pipeType = pipeType;
         this.registry = registry;
     }
@@ -90,13 +90,13 @@ public abstract class BlockMaterialPipe<
         return pipeType;
     }
 
-    @Nonnull
+    @NotNull
     public MaterialRegistry getMaterialRegistry() {
         return registry;
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     public abstract PipeRenderer getPipeRenderer();
 
     public void onModelRegister() {

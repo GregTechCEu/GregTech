@@ -9,12 +9,12 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Base class for multi-tank fluid handlers. Handles insertion logic, along with other standard
@@ -45,7 +45,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
      * @return unmodifiable view of {@code MultiFluidTankEntry}s. Note that it's still possible to access
      *         and modify inner contents of the tanks.
      */
-    @Nonnull
+    @NotNull
     List<MultiFluidTankEntry> getFluidTanks();
 
     /**
@@ -53,7 +53,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
      */
     int getTanks();
 
-    @Nonnull
+    @NotNull
     MultiFluidTankEntry getTankAt(int index);
 
     /**
@@ -94,17 +94,17 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
         private final IMultipleTankHandler tank;
         private final IFluidTank delegate;
 
-        public MultiFluidTankEntry(@Nonnull IMultipleTankHandler tank, @Nonnull IFluidTank delegate) {
+        public MultiFluidTankEntry(@NotNull IMultipleTankHandler tank, @NotNull IFluidTank delegate) {
             this.tank = tank;
             this.delegate = delegate;
         }
 
-        @Nonnull
+        @NotNull
         public IMultipleTankHandler getTank() {
             return tank;
         }
 
-        @Nonnull
+        @NotNull
         public IFluidTank getDelegate() {
             return delegate;
         }
@@ -119,7 +119,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
             return this.delegate instanceof IFilteredFluidContainer filtered ? filtered.getFilter() : null;
         }
 
-        @Nonnull
+        @NotNull
         public IFluidTankProperties[] getTankProperties() {
             return delegate instanceof IFluidHandler fluidHandler ?
                     fluidHandler.getTankProperties() :

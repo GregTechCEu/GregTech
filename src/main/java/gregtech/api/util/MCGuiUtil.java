@@ -2,9 +2,9 @@ package gregtech.api.util;
 
 import net.minecraft.client.gui.GuiPageButtonList.GuiResponder;
 
-import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 /**
  * This class exists to avoid java always trying to load client classes when loading
@@ -23,7 +23,7 @@ public class MCGuiUtil {
             public void setEntryValue(int id, float value) {}
 
             @Override
-            public void setEntryValue(int id, @Nonnull String value) {
+            public void setEntryValue(int id, @NotNull String value) {
                 onChanged.accept(value);
             }
         };

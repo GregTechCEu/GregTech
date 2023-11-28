@@ -49,6 +49,8 @@ import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.*;
 import stanhebben.zenscript.annotations.Optional;
 
@@ -58,10 +60,6 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
 @ZenRegister
@@ -124,12 +122,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
      */
-    public RecipeMap(@Nonnull String unlocalizedName,
-                     @Nonnegative int maxInputs,
-                     @Nonnegative int maxOutputs,
-                     @Nonnegative int maxFluidInputs,
-                     @Nonnegative int maxFluidOutputs,
-                     @Nonnull R defaultRecipeBuilder,
+    public RecipeMap(@NotNull String unlocalizedName,
+                     int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs,
+                     @NotNull R defaultRecipeBuilder,
                      boolean isHidden) {
         this(unlocalizedName,
                 maxInputs, true, maxOutputs, true,
@@ -152,12 +147,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
      */
-    public RecipeMap(@Nonnull String unlocalizedName,
-                     @Nonnegative int maxInputs, boolean modifyItemInputs,
-                     @Nonnegative int maxOutputs, boolean modifyItemOutputs,
-                     @Nonnegative int maxFluidInputs, boolean modifyFluidInputs,
-                     @Nonnegative int maxFluidOutputs, boolean modifyFluidOutputs,
-                     @Nonnull R defaultRecipeBuilder,
+    public RecipeMap(@NotNull String unlocalizedName,
+                     int maxInputs, boolean modifyItemInputs,
+                     int maxOutputs, boolean modifyItemOutputs,
+                     int maxFluidInputs, boolean modifyFluidInputs,
+                     int maxFluidOutputs, boolean modifyFluidOutputs,
+                     @NotNull R defaultRecipeBuilder,
                      boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
         this.slotOverlays = new Byte2ObjectOpenHashMap<>();
@@ -237,7 +232,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> setChanceFunction(@Nonnull ChanceBoostFunction function) {
+    public RecipeMap<R> setChanceFunction(@NotNull ChanceBoostFunction function) {
         chanceFunction = function;
         return this;
     }
@@ -267,7 +262,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param validationResult the validation result from building the recipe
      * @return if adding the recipe was successful
      */
-    public boolean addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
+    public boolean addRecipe(@NotNull ValidationResult<Recipe> validationResult) {
         validationResult = postValidateRecipe(validationResult);
         switch (validationResult.getType()) {
             case SKIP -> {
@@ -312,7 +307,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param recipe the recipe to remove
      * @return if removal was successful
      */
-    public boolean removeRecipe(@Nonnull Recipe recipe) {
+    public boolean removeRecipe(@NotNull Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
             if (GroovyScriptModule.isCurrentlyRunning()) {
@@ -348,8 +343,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param validationResult the current validation result
      * @return the new result based on validation
      */
-    @Nonnull
-    protected ValidationResult<Recipe> postValidateRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
+    @NotNull
+    protected ValidationResult<Recipe> postValidateRecipe(@NotNull ValidationResult<Recipe> validationResult) {
         EnumValidationResult recipeStatus = validationResult.getType();
         Recipe recipe = validationResult.getResult();
         if (recipe.isGroovyRecipe()) {
@@ -492,8 +487,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return a List of Lists of AbstractMapIngredients used for finding recipes
      */
     @Nullable
-    protected List<List<AbstractMapIngredient>> prepareRecipeFind(@Nonnull Collection<ItemStack> items,
-                                                                  @Nonnull Collection<FluidStack> fluids) {
+    protected List<List<AbstractMapIngredient>> prepareRecipeFind(@NotNull Collection<ItemStack> items,
+                                                                  @NotNull Collection<FluidStack> fluids) {
         // First, check if items and fluids are valid.
         if (items.size() == Integer.MAX_VALUE || fluids.size() == Integer.MAX_VALUE) {
             return null;
@@ -521,8 +516,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return the recipe found
      */
     @Nullable
-    public Recipe find(@Nonnull Collection<ItemStack> items, @Nonnull Collection<FluidStack> fluids,
-                       @Nonnull Predicate<Recipe> canHandle) {
+    public Recipe find(@NotNull Collection<ItemStack> items, @NotNull Collection<FluidStack> fluids,
+                       @NotNull Predicate<Recipe> canHandle) {
         List<List<AbstractMapIngredient>> list = prepareRecipeFind(items, fluids);
         // couldn't build any inputs to use for search, so no recipe could be found
         if (list == null) return null;
@@ -539,8 +534,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param inputs The Collection of GTRecipeInputs.
      * @return an array of unique itemstacks.
      */
-    @Nonnull
-    public static ItemStack[] uniqueItems(@Nonnull Collection<ItemStack> inputs) {
+    @NotNull
+    public static ItemStack[] uniqueItems(@NotNull Collection<ItemStack> inputs) {
         int index = 0;
         ItemStack[] uniqueItems = new ItemStack[inputs.size()];
         main:
@@ -573,8 +568,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param inputs The list of GTRecipeInputs.
      * @return The list of unique inputs.
      */
-    @Nonnull
-    public static List<GTRecipeInput> uniqueIngredientsList(@Nonnull Collection<GTRecipeInput> inputs) {
+    @NotNull
+    public static List<GTRecipeInput> uniqueIngredientsList(@NotNull Collection<GTRecipeInput> inputs) {
         List<GTRecipeInput> list = new ObjectArrayList<>(inputs.size());
         for (GTRecipeInput item : inputs) {
             boolean isEqual = false;
@@ -603,8 +598,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return a recipe
      */
     @Nullable
-    private Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                   @Nonnull Branch branchRoot, @Nonnull Predicate<Recipe> canHandle) {
+    private Recipe recurseIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients,
+                                                   @NotNull Branch branchRoot, @NotNull Predicate<Recipe> canHandle) {
         // Try each ingredient as a starting point, adding it to the skip-list.
         // The skip-list is a packed long, where each 1 bit represents an index to skip
         for (int i = 0; i < ingredients.size(); i++) {
@@ -628,8 +623,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return a recipe
      */
     @Nullable
-    private Recipe recurseIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                   @Nonnull Branch branchMap, @Nonnull Predicate<Recipe> canHandle,
+    private Recipe recurseIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients,
+                                                   @NotNull Branch branchMap, @NotNull Predicate<Recipe> canHandle,
                                                    int index, int count, long skip) {
         // exhausted all the ingredients, and didn't find anything
         if (count == ingredients.size()) return null;
@@ -666,9 +661,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return a recipe
      */
     @Nullable
-    private Recipe diveIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                @Nonnull Branch map,
-                                                @Nonnull Predicate<Recipe> canHandle, int currentIndex, int count,
+    private Recipe diveIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients,
+                                                @NotNull Branch map,
+                                                @NotNull Predicate<Recipe> canHandle, int currentIndex, int count,
                                                 long skip) {
         // We loop around ingredients.size() if we reach the end.
         // only end when all ingredients are exhausted, or a recipe is found
@@ -712,9 +707,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param branchRoot       the root branch to start searching from
      * @param collidingRecipes the list to store recipe collisions
      */
-    private void recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                           @Nonnull Branch branchRoot,
-                                                           @Nonnull Set<Recipe> collidingRecipes) {
+    private void recurseIngredientTreeFindRecipeCollisions(@NotNull List<List<AbstractMapIngredient>> ingredients,
+                                                           @NotNull Branch branchRoot,
+                                                           @NotNull Set<Recipe> collidingRecipes) {
         // Try each ingredient as a starting point, adding it to the skip-list.
         // The skip-list is a packed long, where each 1 bit represents an index to skip
         for (int i = 0; i < ingredients.size(); i++) {
@@ -733,9 +728,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param collidingRecipes the set to store the recipes in
      */
     @Nullable
-    private Recipe recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                             @Nonnull Branch branchMap, int index, int count, long skip,
-                                                             @Nonnull Set<Recipe> collidingRecipes) {
+    private Recipe recurseIngredientTreeFindRecipeCollisions(@NotNull List<List<AbstractMapIngredient>> ingredients,
+                                                             @NotNull Branch branchMap, int index, int count, long skip,
+                                                             @NotNull Set<Recipe> collidingRecipes) {
         // exhausted all the ingredients, and didn't find anything
         if (count == ingredients.size()) return null;
 
@@ -772,9 +767,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return a recipe
      */
     @Nullable
-    private Recipe diveIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                          @Nonnull Branch map, int currentIndex, int count, long skip,
-                                                          @Nonnull Set<Recipe> collidingRecipes) {
+    private Recipe diveIngredientTreeFindRecipeCollisions(@NotNull List<List<AbstractMapIngredient>> ingredients,
+                                                          @NotNull Branch map, int currentIndex, int count, long skip,
+                                                          @NotNull Set<Recipe> collidingRecipes) {
         // We loop around ingredients.size() if we reach the end.
         // only end when all ingredients are exhausted, or a recipe is found
         int i = (currentIndex + 1) % ingredients.size();
@@ -970,9 +965,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param index       where in the ingredients list we are.
      * @param count       how many branches were added already.
      */
-    private boolean recurseIngredientTreeAdd(@Nonnull Recipe recipe,
-                                             @Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                             @Nonnull Branch branchMap, int index, int count) {
+    private boolean recurseIngredientTreeAdd(@NotNull Recipe recipe,
+                                             @NotNull List<List<AbstractMapIngredient>> ingredients,
+                                             @NotNull Branch branchMap, int index, int count) {
         if (count >= ingredients.size()) return true;
         if (index >= ingredients.size()) {
             throw new RuntimeException("Index out of bounds for recurseItemTreeAdd, should not happen");
@@ -1105,9 +1100,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param branchMap  the branch containing the nodes
      * @return the correct nodes for the ingredient
      */
-    @Nonnull
-    protected static Map<AbstractMapIngredient, Either<Recipe, Branch>> determineRootNodes(@Nonnull AbstractMapIngredient ingredient,
-                                                                                           @Nonnull Branch branchMap) {
+    @NotNull
+    protected static Map<AbstractMapIngredient, Either<Recipe, Branch>> determineRootNodes(@NotNull AbstractMapIngredient ingredient,
+                                                                                           @NotNull Branch branchMap) {
         return ingredient.isSpecialIngredient() ? branchMap.getSpecialNodes() : branchMap.getNodes();
     }
 
@@ -1118,8 +1113,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param list        the list of MapIngredients to add to
      * @param fluidInputs the GTRecipeInputs to convert
      */
-    protected void buildFromRecipeFluids(@Nonnull List<List<AbstractMapIngredient>> list,
-                                         @Nonnull List<GTRecipeInput> fluidInputs) {
+    protected void buildFromRecipeFluids(@NotNull List<List<AbstractMapIngredient>> list,
+                                         @NotNull List<GTRecipeInput> fluidInputs) {
         for (GTRecipeInput fluidInput : fluidInputs) {
             AbstractMapIngredient ingredient = new MapFluidIngredient(fluidInput);
             retrieveCachedIngredient(list, ingredient, fluidIngredientRoot);
@@ -1133,9 +1128,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultIngredient the ingredient to use as a default value, if not cached
      * @param cache             the ingredient root to retrieve from
      */
-    protected static void retrieveCachedIngredient(@Nonnull List<List<AbstractMapIngredient>> list,
-                                                   @Nonnull AbstractMapIngredient defaultIngredient,
-                                                   @Nonnull WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> cache) {
+    protected static void retrieveCachedIngredient(@NotNull List<List<AbstractMapIngredient>> list,
+                                                   @NotNull AbstractMapIngredient defaultIngredient,
+                                                   @NotNull WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> cache) {
         WeakReference<AbstractMapIngredient> cached = cache.get(defaultIngredient);
         if (cached != null && cached.get() != null) {
             list.add(Collections.singletonList(cached.get()));
@@ -1151,8 +1146,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param list        the list to populate
      * @param ingredients the ingredients to convert
      */
-    protected void buildFromFluidStacks(@Nonnull List<List<AbstractMapIngredient>> list,
-                                        @Nonnull Iterable<FluidStack> ingredients) {
+    protected void buildFromFluidStacks(@NotNull List<List<AbstractMapIngredient>> list,
+                                        @NotNull Iterable<FluidStack> ingredients) {
         for (FluidStack t : ingredients) {
             list.add(Collections.singletonList(new MapFluidIngredient(t)));
         }
@@ -1164,8 +1159,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param r the recipe to use
      * @return a list of all the AbstractMapIngredients comprising the recipe
      */
-    @Nonnull
-    protected List<List<AbstractMapIngredient>> fromRecipe(@Nonnull Recipe r) {
+    @NotNull
+    protected List<List<AbstractMapIngredient>> fromRecipe(@NotNull Recipe r) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(
                 (r.getInputs().size()) + r.getFluidInputs().size());
         if (r.getInputs().size() > 0) {
@@ -1184,7 +1179,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param list   the list of MapIngredients to add to
      * @param inputs the GTRecipeInputs to convert
      */
-    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, @Nonnull List<GTRecipeInput> inputs) {
+    protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, @NotNull List<GTRecipeInput> inputs) {
         for (GTRecipeInput r : inputs) {
             if (r.isOreDict()) {
                 AbstractMapIngredient ingredient;
@@ -1230,8 +1225,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param list        the list to populate
      * @param ingredients the ingredients to convert
      */
-    protected void buildFromItemStacks(@Nonnull List<List<AbstractMapIngredient>> list,
-                                       @Nonnull ItemStack[] ingredients) {
+    protected void buildFromItemStacks(@NotNull List<List<AbstractMapIngredient>> list,
+                                       @NotNull ItemStack[] ingredients) {
         AbstractMapIngredient ingredient;
         for (ItemStack stack : ingredients) {
             int meta = stack.getMetadata();
@@ -1332,9 +1327,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param branchMap      the current branch in the recursion.
      */
     @Nullable
-    private Recipe recurseIngredientTreeRemove(@Nonnull Recipe recipeToRemove,
-                                               @Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                               @Nonnull Branch branchMap, int depth) {
+    private Recipe recurseIngredientTreeRemove(@NotNull Recipe recipeToRemove,
+                                               @NotNull List<List<AbstractMapIngredient>> ingredients,
+                                               @NotNull Branch branchMap, int depth) {
         // for every ingredient
         for (List<AbstractMapIngredient> current : ingredients) {
             // for all possibilities as keys
@@ -1401,7 +1396,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenSetter("maxInputs")
-    public void setMaxInputs(@Nonnegative int maxInputs) {
+    public void setMaxInputs(int maxInputs) {
         if (modifyItemInputs) {
             this.maxInputs = Math.max(this.maxInputs, maxInputs);
         } else {
@@ -1415,7 +1410,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenSetter("maxOutputs")
-    public void setMaxOutputs(@Nonnegative int maxOutputs) {
+    public void setMaxOutputs(int maxOutputs) {
         if (modifyItemOutputs) {
             this.maxOutputs = Math.max(this.maxOutputs, maxOutputs);
         } else {
@@ -1429,7 +1424,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenSetter("maxFluidInputs")
-    public void setMaxFluidInputs(@Nonnegative int maxFluidInputs) {
+    public void setMaxFluidInputs(int maxFluidInputs) {
         if (modifyFluidInputs) {
             this.maxFluidInputs = Math.max(this.maxFluidInputs, maxFluidInputs);
         } else {
@@ -1443,7 +1438,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenSetter("maxFluidOutputs")
-    public void setMaxFluidOutputs(@Nonnegative int maxFluidOutputs) {
+    public void setMaxFluidOutputs(int maxFluidOutputs) {
         if (modifyFluidOutputs) {
             this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
         } else {
@@ -1458,7 +1453,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      *
      * @return the recipes stored by category.
      */
-    @Nonnull
+    @NotNull
     public Map<GTRecipeCategory, List<Recipe>> getRecipesByCategory() {
         return Collections.unmodifiableMap(recipeByCategory);
     }

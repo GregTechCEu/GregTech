@@ -3,13 +3,13 @@ package gregtech.api.fluids;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.MaterialLiquid;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class GTFluidMaterial extends MaterialLiquid {
 
     private final boolean blocksMovement;
 
-    public GTFluidMaterial(@Nonnull MapColor color, boolean blocksMovement) {
+    public GTFluidMaterial(@NotNull MapColor color, boolean blocksMovement) {
         super(color);
         this.blocksMovement = blocksMovement;
     }

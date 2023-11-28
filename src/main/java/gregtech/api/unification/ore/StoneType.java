@@ -14,11 +14,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.Loader;
 
 import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
 
 /**
  * For ore generation
@@ -57,7 +56,7 @@ public class StoneType implements Comparable<StoneType> {
     }
 
     @Override
-    public int compareTo(@Nonnull StoneType stoneType) {
+    public int compareTo(@NotNull StoneType stoneType) {
         return STONE_TYPE_REGISTRY.getIDForObject(this) - STONE_TYPE_REGISTRY.getIDForObject(stoneType);
     }
 

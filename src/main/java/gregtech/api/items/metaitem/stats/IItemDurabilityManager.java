@@ -3,10 +3,9 @@ package gregtech.api.items.metaitem.stats;
 import net.minecraft.item.ItemStack;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-
-import javax.annotation.Nullable;
 
 public interface IItemDurabilityManager extends IItemComponent {
 

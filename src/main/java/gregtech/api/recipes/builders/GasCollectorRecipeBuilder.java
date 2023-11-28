@@ -10,10 +10,9 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeBuilder> {
 
@@ -33,7 +32,7 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
     }
 
     @Override
-    public boolean applyProperty(@Nonnull String key, Object value) {
+    public boolean applyProperty(@NotNull String key, Object value) {
         if (key.equals(GasCollectorDimensionProperty.KEY)) {
             if (value instanceof Integer) {
                 this.dimension((Integer) value);

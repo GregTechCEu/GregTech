@@ -13,6 +13,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
@@ -26,13 +27,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import org.jetbrains.annotations.ApiStatus;
-import stanhebben.zenscript.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import stanhebben.zenscript.annotations.OperatorType;
+import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenGetter;
+import stanhebben.zenscript.annotations.ZenMethod;
+import stanhebben.zenscript.annotations.ZenOperator;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
@@ -43,7 +48,7 @@ public class Material implements Comparable<Material> {
      *
      * @see MaterialInfo
      */
-    @Nonnull
+    @NotNull
     private final MaterialInfo materialInfo;
 
     /**
@@ -51,7 +56,7 @@ public class Material implements Comparable<Material> {
      *
      * @see MaterialProperties
      */
-    @Nonnull
+    @NotNull
     private final MaterialProperties properties;
 
     /**
@@ -59,7 +64,7 @@ public class Material implements Comparable<Material> {
      *
      * @see MaterialFlags
      */
-    @Nonnull
+    @NotNull
     private final MaterialFlags flags;
 
     /**
@@ -67,7 +72,7 @@ public class Material implements Comparable<Material> {
      */
     private String chemicalFormula;
 
-    @Nonnull
+    @NotNull
     private String calculateChemicalFormula() {
         if (chemicalFormula != null) return this.chemicalFormula;
         if (materialInfo.element != null) {
@@ -114,8 +119,8 @@ public class Material implements Comparable<Material> {
         return getMaterialComponents().toArray(new MaterialStack[0]);
     }
 
-    private Material(@Nonnull MaterialInfo materialInfo, @Nonnull MaterialProperties properties,
-                     @Nonnull MaterialFlags flags) {
+    private Material(@NotNull MaterialInfo materialInfo, @NotNull MaterialProperties properties,
+                     @NotNull MaterialFlags flags) {
         this.materialInfo = materialInfo;
         this.properties = properties;
         this.flags = flags;
@@ -124,7 +129,7 @@ public class Material implements Comparable<Material> {
     }
 
     // thou shall not call
-    protected Material(@Nonnull ResourceLocation resourceLocation) {
+    protected Material(@NotNull ResourceLocation resourceLocation) {
         materialInfo = new MaterialInfo(0, resourceLocation);
         materialInfo.iconSet = MaterialIconSet.DULL;
         properties = new MaterialProperties();
@@ -220,7 +225,7 @@ public class Material implements Comparable<Material> {
      * @param key the key for the fluid
      * @return the fluid corresponding with the key
      */
-    public Fluid getFluid(@Nonnull FluidStorageKey key) {
+    public Fluid getFluid(@NotNull FluidStorageKey key) {
         FluidProperty prop = getProperty(PropertyKey.FLUID);
         if (prop == null) {
             throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
@@ -244,7 +249,7 @@ public class Material implements Comparable<Material> {
      * @param amount the amount the FluidStack should have
      * @return a FluidStack with the fluid and amount
      */
-    public FluidStack getFluid(@Nonnull FluidStorageKey key, int amount) {
+    public FluidStack getFluid(@NotNull FluidStorageKey key, int amount) {
         return new FluidStack(getFluid(key), amount);
     }
 
@@ -346,17 +351,17 @@ public class Material implements Comparable<Material> {
 
     // TODO clean up the name-related methods
     @ZenGetter("name")
-    @Nonnull
+    @NotNull
     public String getName() {
         return getResourceLocation().getPath();
     }
 
-    @Nonnull
+    @NotNull
     public String getModid() {
         return getResourceLocation().getNamespace();
     }
 
-    @Nonnull
+    @NotNull
     public ResourceLocation getResourceLocation() {
         return materialInfo.resourceLocation;
     }
@@ -372,7 +377,7 @@ public class Material implements Comparable<Material> {
         return location.getNamespace() + ".material." + location.getPath();
     }
 
-    @Nonnull
+    @NotNull
     public String getRegistryName() {
         ResourceLocation location = getResourceLocation();
         return location.getNamespace() + ':' + location.getPath();
@@ -404,7 +409,7 @@ public class Material implements Comparable<Material> {
         return new MaterialStack(this, amount);
     }
 
-    @Nonnull
+    @NotNull
     public MaterialProperties getProperties() {
         return properties;
     }
@@ -440,7 +445,7 @@ public class Material implements Comparable<Material> {
         calculateDecompositionType();
     }
 
-    @Nonnull
+    @NotNull
     public MaterialRegistry getRegistry() {
         return GregTechAPI.materialManager.getRegistry(getModid());
     }
@@ -453,6 +458,8 @@ public class Material implements Comparable<Material> {
         private final MaterialInfo materialInfo;
         private final MaterialProperties properties;
         private final MaterialFlags flags;
+
+        private final List<Consumer<Material>> postProcessors = new ArrayList<>(1);
 
         /*
          * The temporary list of components for this Material.
@@ -473,7 +480,7 @@ public class Material implements Comparable<Material> {
          *                         for the Translation Key.
          * @since GTCEu 2.0.0
          */
-        public Builder(int id, @Nonnull ResourceLocation resourceLocation) {
+        public Builder(int id, @NotNull ResourceLocation resourceLocation) {
             String name = resourceLocation.getPath();
             if (name.charAt(name.length() - 1) == '_') {
                 throw new IllegalArgumentException("Material name cannot end with a '_'!");
@@ -503,7 +510,7 @@ public class Material implements Comparable<Material> {
          * <p>
          * Can be called multiple times to add multiple fluids.
          */
-        public Builder fluid(@Nonnull FluidStorageKey key, @Nonnull FluidState state) {
+        public Builder fluid(@NotNull FluidStorageKey key, @NotNull FluidState state) {
             return fluid(key, new FluidBuilder().state(state));
         }
 
@@ -512,10 +519,25 @@ public class Material implements Comparable<Material> {
          * <p>
          * Can be called multiple times to add multiple fluids.
          */
-        public Builder fluid(@Nonnull FluidStorageKey key, @Nonnull FluidBuilder builder) {
+        public Builder fluid(@NotNull FluidStorageKey key, @NotNull FluidBuilder builder) {
             properties.ensureSet(PropertyKey.FLUID);
             FluidProperty property = properties.getProperty(PropertyKey.FLUID);
             property.getStorage().enqueueRegistration(key, builder);
+            return this;
+        }
+
+        /**
+         * Assign an existing fluid to this material. Useful for things like Lava and Water where MC
+         * already has a fluid to use, or for cross-mod compatibility.
+         *
+         * @param fluid The existing liquid
+         */
+        public Builder fluid(@NotNull Fluid fluid, @NotNull FluidStorageKey key, @NotNull FluidState state) {
+            properties.ensureSet(PropertyKey.FLUID);
+            FluidProperty property = properties.getProperty(PropertyKey.FLUID);
+            property.getStorage().store(key, fluid);
+            postProcessors.add(
+                    m -> FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createFluidTooltip(m, fluid, state)));
             return this;
         }
 
@@ -533,7 +555,7 @@ public class Material implements Comparable<Material> {
          * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
-        public Builder liquid(@Nonnull FluidBuilder builder) {
+        public Builder liquid(@NotNull FluidBuilder builder) {
             return fluid(FluidStorageKeys.LIQUID, builder.state(FluidState.LIQUID));
         }
 
@@ -551,7 +573,7 @@ public class Material implements Comparable<Material> {
          * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
-        public Builder plasma(@Nonnull FluidBuilder builder) {
+        public Builder plasma(@NotNull FluidBuilder builder) {
             return fluid(FluidStorageKeys.PLASMA, builder.state(FluidState.PLASMA));
         }
 
@@ -569,7 +591,7 @@ public class Material implements Comparable<Material> {
          * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
-        public Builder gas(@Nonnull FluidBuilder builder) {
+        public Builder gas(@NotNull FluidBuilder builder) {
             return fluid(FluidStorageKeys.GAS, builder.state(FluidState.GAS));
         }
 
@@ -1055,7 +1077,9 @@ public class Material implements Comparable<Material> {
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
-            return new Material(materialInfo, properties, flags);
+            Material m = new Material(materialInfo, properties, flags);
+            if (!postProcessors.isEmpty()) postProcessors.forEach(p -> p.accept(m));
+            return m;
         }
     }
 
@@ -1108,7 +1132,7 @@ public class Material implements Comparable<Material> {
          */
         private Element element;
 
-        private MaterialInfo(int metaItemSubId, @Nonnull ResourceLocation resourceLocation) {
+        private MaterialInfo(int metaItemSubId, @NotNull ResourceLocation resourceLocation) {
             this.metaItemSubId = metaItemSubId;
             String name = resourceLocation.getPath();
             if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name)) {

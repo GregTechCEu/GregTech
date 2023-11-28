@@ -7,8 +7,8 @@ import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
 import net.minecraft.util.EnumFacing;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 // jabel moment
 public class LaserRoutePath implements IRoutePath<TileEntityLaserPipe> {
@@ -28,18 +28,18 @@ public class LaserRoutePath implements IRoutePath<TileEntityLaserPipe> {
      *
      * @return The face to handler
      */
-    @Nonnull
+    @NotNull
     public EnumFacing getFaceToHandler() {
         return faceToHandler;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public TileEntityLaserPipe getTargetPipe() {
         return targetPipe;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public EnumFacing getTargetFacing() {
         return faceToHandler;

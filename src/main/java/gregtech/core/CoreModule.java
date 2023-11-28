@@ -67,10 +67,9 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.GregTechAPI.*;
 
@@ -96,7 +95,7 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Logger getLogger() {
         return logger;

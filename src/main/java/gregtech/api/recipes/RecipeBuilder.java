@@ -40,12 +40,10 @@ import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @see Recipe
@@ -138,7 +136,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public boolean applyProperty(@Nonnull String key, @Nullable Object value) {
+    public boolean applyProperty(@NotNull String key, @Nullable Object value) {
         if (key.equals(CleanroomProperty.KEY)) {
             if (value instanceof CleanroomType) {
                 this.cleanroom((CleanroomType) value);
@@ -152,7 +150,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    public boolean applyProperty(@Nonnull RecipeProperty<?> property, @Nullable Object value) {
+    public boolean applyProperty(@NotNull RecipeProperty<?> property, @Nullable Object value) {
         if (value == null) {
             if (this.recipePropertyStorage != null) {
                 return this.recipePropertyStorage.remove(property);
@@ -783,7 +781,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R category(@Nonnull GTRecipeCategory category) {
+    public R category(@NotNull GTRecipeCategory category) {
         this.category = category;
         return (R) this;
     }
@@ -875,8 +873,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 () -> getRequiredString(maxFluidOutput, fluidOutputs.size(), "fluid output"));
     }
 
-    @Nonnull
-    protected static String getRequiredString(int max, int actual, @Nonnull String type) {
+    @NotNull
+    protected static String getRequiredString(int max, int actual, @NotNull String type) {
         if (max <= 0) {
             return "No " + type + "s allowed, but found " + actual;
         }

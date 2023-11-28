@@ -35,13 +35,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import javax.annotation.Nonnull;
 
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
 
@@ -81,7 +80,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     public PipeRenderer getPipeRenderer() {
         return FluidPipeRenderer.INSTANCE;
@@ -93,14 +92,14 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
             items.add(getItem(material));
         }
     }
 
     @Override
-    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
         super.breakBlock(worldIn, pos, state);
         // TODO insert to neighbours
     }
@@ -128,8 +127,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state,
-                                  @Nonnull Entity entityIn) {
+    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                  @NotNull Entity entityIn) {
         if (worldIn.isRemote) return;
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
         if (pipe instanceof TileEntityFluidPipeTickable && pipe.getFrameMaterial() == null &&
@@ -171,10 +170,10 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
         return FluidPipeRenderer.INSTANCE.getBlockRenderType();
     }
 

@@ -13,10 +13,10 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
@@ -238,7 +238,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         return !inputsEnergy(side);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public final String getName() {
         return GregtechDataCodes.BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT;

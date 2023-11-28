@@ -13,12 +13,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 // basically a modified RecipeRepairItem
 public class ToolHeadReplaceRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
@@ -31,7 +31,7 @@ public class ToolHeadReplaceRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     }
 
     @Override
-    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world) {
+    public boolean matches(@NotNull InventoryCrafting inv, @NotNull World world) {
         List<ItemStack> list = new ArrayList<>();
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -66,9 +66,9 @@ public class ToolHeadReplaceRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
+    public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
         List<ItemStack> list = new ArrayList<>();
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -107,15 +107,15 @@ public class ToolHeadReplaceRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         return ItemStack.EMPTY;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getRecipeOutput() {
         return ItemStack.EMPTY;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+    public NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
     }
 

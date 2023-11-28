@@ -29,9 +29,9 @@ import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public class ItemMagnetBehavior implements IItemBehaviour {
 
@@ -45,7 +45,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, @Nonnull EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, @NotNull EntityPlayer player, EnumHand hand) {
         if (!player.world.isRemote && player.isSneaking()) {
             player.sendStatusMessage(new TextComponentTranslation(toggleActive(player.getHeldItem(hand)) ?
                     "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"), true);
@@ -158,7 +158,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     }
 
     @SubscribeEvent
-    public void onItemToss(@Nonnull ItemTossEvent event) {
+    public void onItemToss(@NotNull ItemTossEvent event) {
         if (event.getPlayer() == null) return;
 
         IInventory inventory = event.getPlayer().inventory;
@@ -175,7 +175,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         }
     }
 
-    private boolean isMagnet(@Nonnull ItemStack stack) {
+    private boolean isMagnet(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>metaItem) {
             for (var behavior : metaItem.getBehaviours(stack)) {
                 if (behavior instanceof ItemMagnetBehavior) {
@@ -186,7 +186,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         return false;
     }
 
-    private static boolean drainEnergy(boolean simulate, @Nonnull ItemStack stack, long amount) {
+    private static boolean drainEnergy(boolean simulate, @NotNull ItemStack stack, long amount) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem == null)
             return false;

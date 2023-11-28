@@ -6,11 +6,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.TreeMap;
-
-import javax.annotation.Nonnull;
 
 public class TemperatureProperty extends RecipeProperty<Integer> {
 
@@ -37,7 +36,7 @@ public class TemperatureProperty extends RecipeProperty<Integer> {
                 value, getMinTierForTemperature(castValue(value))), x, y, color);
     }
 
-    @Nonnull
+    @NotNull
     private String getMinTierForTemperature(Integer value) {
         String name = "";
         for (Map.Entry<Integer, Object> coil : registeredCoilTypes.entrySet()) {

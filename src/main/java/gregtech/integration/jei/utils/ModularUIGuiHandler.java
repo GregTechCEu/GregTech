@@ -16,14 +16,13 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, IGhostIngredientHandler<ModularUIGui>,
                                  IRecipeTransferHandler<ModularUIContainer> {
@@ -40,13 +39,13 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         this.validHandlers = validHandlers;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<ModularUIGui> getGuiContainerClass() {
         return ModularUIGui.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<ModularUIContainer> getContainerClass() {
         return ModularUIContainer.class;
@@ -54,8 +53,8 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(@Nonnull ModularUIContainer container,
-                                               @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player,
+    public IRecipeTransferError transferRecipe(@NotNull ModularUIContainer container,
+                                               @NotNull IRecipeLayout recipeLayout, @NotNull EntityPlayer player,
                                                boolean maxTransfer, boolean doTransfer) {
         if (this.recipeTransferCategoryBlacklist.contains(recipeLayout.getRecipeCategory().getUid())) {
             return this.transferHelper.createInternalError();
@@ -96,9 +95,9 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <I> List<Target<I>> getTargets(ModularUIGui gui, @Nonnull I ingredient, boolean doStart) {
+    public <I> List<Target<I>> getTargets(ModularUIGui gui, @NotNull I ingredient, boolean doStart) {
         Collection<Widget> widgets = gui.getModularUI().guiWidgets.values();
         List<Target<I>> targets = new ArrayList<>();
         for (Widget widget : widgets) {
@@ -113,7 +112,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     @Nullable
     @Override
-    public List<Rectangle> getGuiExtraAreas(@Nonnull ModularUIGui guiContainer) {
+    public List<Rectangle> getGuiExtraAreas(@NotNull ModularUIGui guiContainer) {
         return Collections.emptyList();
     }
 

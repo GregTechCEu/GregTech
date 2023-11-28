@@ -21,6 +21,8 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.oredict.IOreDictEntry;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -29,9 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @ZenClass("mods.gregtech.recipe.RecipeBuilder")
 @ZenRegister
@@ -72,7 +71,7 @@ public class CTRecipeBuilder {
     }
 
     @ZenMethod
-    public CTRecipeBuilder inputs(@Nonnull IIngredient... ingredients) {
+    public CTRecipeBuilder inputs(@NotNull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             this.backingBuilder.input(getInputFromCTIngredient(ingredient));
         }
@@ -80,14 +79,14 @@ public class CTRecipeBuilder {
     }
 
     @ZenMethod
-    public CTRecipeBuilder notConsumable(@Nonnull IIngredient... ingredients) {
+    public CTRecipeBuilder notConsumable(@NotNull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             this.backingBuilder.notConsumable(getInputFromCTIngredient(ingredient));
         }
         return this;
     }
 
-    @Nonnull
+    @NotNull
     private static GTRecipeInput getInputFromCTIngredient(@Nullable IIngredient ingredient) {
         if (ingredient == null) {
             throw new IllegalArgumentException("Invalid ingredient: is null");
@@ -151,8 +150,8 @@ public class CTRecipeBuilder {
      * @param compound the nbt compound to match
      * @return the nbt matching input if successful, otherwise the original recipe input
      */
-    @Nonnull
-    private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input, @Nullable NBTTagCompound compound) {
+    @NotNull
+    private static GTRecipeInput tryConstructNBTInput(@NotNull GTRecipeInput input, @Nullable NBTTagCompound compound) {
         if (compound == null) return input; // do not use nbt matching, if there is no tag to check
         if (compound.isEmpty()) {
             // special case which considers an empty nbt tag as allowing any or no NBT
@@ -168,9 +167,9 @@ public class CTRecipeBuilder {
      * @param map   a mapping of stacks to compounds. The map's key hashing should ignore NBT compounds
      * @return the nbt matching input if successful, otherwise the original recipe input
      */
-    @Nonnull
-    private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input,
-                                                      @Nonnull Map<ItemStack, List<NBTTagCompound>> map) {
+    @NotNull
+    private static GTRecipeInput tryConstructNBTInput(@NotNull GTRecipeInput input,
+                                                      @NotNull Map<ItemStack, List<NBTTagCompound>> map) {
         if (map.isEmpty()) return input; // do not use nbt matching, if there are no tags to check
         return input.setNBTMatchingCondition(new CTNBTMultiItemMatcher(map), null);
     }

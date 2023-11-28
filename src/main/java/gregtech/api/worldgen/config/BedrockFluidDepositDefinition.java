@@ -10,11 +10,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
 
 public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
 
@@ -40,7 +39,7 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
     }
 
     @Override
-    public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
+    public boolean initializeFromConfig(@NotNull JsonObject configRoot) {
         // the weight value for determining which vein will appear
         this.weight = configRoot.get("weight").getAsInt();
         // the [minimum, maximum) yield of the vein

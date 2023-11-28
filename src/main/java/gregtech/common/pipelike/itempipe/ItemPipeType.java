@@ -4,7 +4,7 @@ import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
 
@@ -66,7 +66,7 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;

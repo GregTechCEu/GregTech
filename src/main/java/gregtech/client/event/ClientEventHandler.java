@@ -34,11 +34,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.GTValues.CLIENT_TIME;
 
@@ -137,7 +136,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static void renderHUDMetaArmor(@Nonnull ItemStack stack) {
+    private static void renderHUDMetaArmor(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof ArmorMetaItem) {
             ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) stack.getItem()).getItem(stack);
             if (valueItem == null) return;
@@ -147,7 +146,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static void renderHUDMetaItem(@Nonnull ItemStack stack) {
+    private static void renderHUDMetaItem(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof MetaItem<?>) {
             MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
             if (valueItem == null) return;

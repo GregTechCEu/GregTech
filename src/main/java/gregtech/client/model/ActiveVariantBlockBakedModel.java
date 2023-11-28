@@ -24,15 +24,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class ActiveVariantBlockBakedModel implements IBakedModel {
@@ -79,7 +78,7 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
                 .getModel(active ? activeModelLocation : inactiveModelLocation);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         if (state == null) return Collections.emptyList();
@@ -126,7 +125,7 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
     }
 
     @Override
-    public boolean isAmbientOcclusion(@Nonnull IBlockState state) {
+    public boolean isAmbientOcclusion(@NotNull IBlockState state) {
         return getModel(state).isAmbientOcclusion();
     }
 
@@ -140,13 +139,13 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public TextureAtlasSprite getParticleTexture() {
         return getModel(false).getParticleTexture();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemOverrideList getOverrides() {
         return ItemOverrideList.NONE;

@@ -18,11 +18,10 @@ import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoProvider;
 import mcjty.theoneprobe.api.ProbeMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
 
@@ -32,8 +31,8 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
     }
 
     @Override
-    public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player,
-                             @Nonnull World world, @Nonnull IBlockState blockState, @Nonnull IProbeHitData data) {
+    public void addProbeInfo(@NotNull ProbeMode mode, @NotNull IProbeInfo probeInfo, @NotNull EntityPlayer player,
+                             @NotNull World world, @NotNull IBlockState blockState, @NotNull IProbeHitData data) {
         if (ConfigHolder.misc.debug) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (tileEntity instanceof IGregTechTileEntity) {

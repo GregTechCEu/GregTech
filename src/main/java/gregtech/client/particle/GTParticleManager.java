@@ -19,12 +19,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
-
-import javax.annotation.Nonnull;
 
 /**
  * Singleton class responsible for managing, updating and rendering {@link GTParticle} instances.
@@ -42,7 +41,7 @@ public class GTParticleManager {
 
     private final List<GTParticle> newParticleQueue = new ArrayList<>();
 
-    public void addEffect(@Nonnull GTParticle particles) {
+    public void addEffect(@NotNull GTParticle particles) {
         newParticleQueue.add(particles);
     }
 
@@ -116,7 +115,7 @@ public class GTParticleManager {
         depthDisabledParticles.clear();
     }
 
-    public void renderParticles(@Nonnull Entity renderViewEntity, float partialTicks) {
+    public void renderParticles(@NotNull Entity renderViewEntity, float partialTicks) {
         if (depthEnabledParticles.isEmpty() && depthDisabledParticles.isEmpty()) return;
 
         EffectRenderContext instance = EffectRenderContext.getInstance().update(renderViewEntity, partialTicks);
@@ -141,8 +140,8 @@ public class GTParticleManager {
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
     }
 
-    private static void renderGlParticlesInLayer(@Nonnull Map<@Nullable IRenderSetup, ArrayDeque<GTParticle>> renderQueue,
-                                                 @Nonnull EffectRenderContext context) {
+    private static void renderGlParticlesInLayer(@NotNull Map<@Nullable IRenderSetup, ArrayDeque<GTParticle>> renderQueue,
+                                                 @NotNull EffectRenderContext context) {
         for (var e : renderQueue.entrySet()) {
             @Nullable
             IRenderSetup handler = e.getKey();

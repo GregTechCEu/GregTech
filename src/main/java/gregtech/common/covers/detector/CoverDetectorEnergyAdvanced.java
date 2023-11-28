@@ -26,8 +26,6 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI {
 
     private static final int PADDING = 5, SIZE = 18;
@@ -193,7 +191,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public void writeToNBT(@Nonnull NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
@@ -202,7 +200,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.minValue = tagCompound.getLong("minEU");
         this.maxValue = tagCompound.getLong("maxEU");
@@ -213,7 +211,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     // inverted here was saved using different key, now it is normalized but construction is for compatibility
-    private void readDeprecatedInvertedKeyFromNBT(@Nonnull NBTTagCompound tagCompound) {
+    private void readDeprecatedInvertedKeyFromNBT(@NotNull NBTTagCompound tagCompound) {
         String oldInvertedKey = "inverted";
         if (!tagCompound.hasKey(NBT_KEY_IS_INVERTED) && tagCompound.hasKey(oldInvertedKey)) {
             setInverted(tagCompound.getBoolean(oldInvertedKey));
@@ -221,7 +219,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public void writeInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeLong(this.minValue);
         packetBuffer.writeLong(this.maxValue);
@@ -230,7 +228,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public void readInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.minValue = packetBuffer.readLong();
         this.maxValue = packetBuffer.readLong();

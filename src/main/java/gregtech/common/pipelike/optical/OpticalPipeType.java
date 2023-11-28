@@ -2,7 +2,7 @@ package gregtech.common.pipelike.optical;
 
 import gregtech.api.pipenet.block.IPipeType;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum OpticalPipeType implements IPipeType<OpticalPipeProperties> {
 
@@ -23,7 +23,7 @@ public enum OpticalPipeType implements IPipeType<OpticalPipeProperties> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "normal";

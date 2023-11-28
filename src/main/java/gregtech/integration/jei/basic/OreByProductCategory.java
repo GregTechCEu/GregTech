@@ -22,12 +22,11 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreByProduct> {
 
@@ -137,8 +136,8 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull OreByProduct recipeWrapper,
-                          @Nonnull IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @NotNull OreByProduct recipeWrapper,
+                          @NotNull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 
@@ -174,9 +173,9 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         hasSifter = recipeWrapper.hasSifter();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IRecipeWrapper getRecipeWrapper(@Nonnull OreByProduct recipe) {
+    public IRecipeWrapper getRecipeWrapper(@NotNull OreByProduct recipe) {
         return recipe;
     }
 
@@ -187,7 +186,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         arrowsBase.draw(minecraft, 0, 0);
         if (hasDirectSmelt) {
             arrowsDirectSmelt.draw(minecraft, 0, 0);

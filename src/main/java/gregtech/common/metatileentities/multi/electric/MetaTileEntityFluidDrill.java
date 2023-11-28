@@ -49,12 +49,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                                       implements ITieredMetaTileEntity, IWorkable, IProgressBarMultiblock {
@@ -136,7 +135,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
-    @Nonnull
+    @NotNull
     private TraceabilityPredicate getFramePredicate() {
         if (tier == GTValues.MV)
             return frames(Materials.Steel);
@@ -264,7 +263,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.FLUID_RIG_OVERLAY;

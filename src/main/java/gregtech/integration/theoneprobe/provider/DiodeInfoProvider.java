@@ -12,8 +12,7 @@ import net.minecraft.util.text.TextFormatting;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class DiodeInfoProvider extends ElectricContainerInfoProvider {
 
@@ -23,8 +22,8 @@ public class DiodeInfoProvider extends ElectricContainerInfoProvider {
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IEnergyContainer capability, @Nonnull IProbeInfo probeInfo,
-                                EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull IEnergyContainer capability, @NotNull IProbeInfo probeInfo,
+                                EntityPlayer player, @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         if (tileEntity instanceof IGregTechTileEntity) {
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityDiode) {

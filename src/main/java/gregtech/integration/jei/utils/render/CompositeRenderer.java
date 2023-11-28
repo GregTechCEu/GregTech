@@ -6,14 +6,11 @@ import net.minecraft.client.util.ITooltipFlag;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mezz.jei.api.ingredients.IIngredientRenderer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class CompositeRenderer<T> implements IIngredientRenderer<T> {
 

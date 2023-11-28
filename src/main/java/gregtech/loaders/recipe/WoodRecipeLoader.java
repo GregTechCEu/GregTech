@@ -23,10 +23,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -162,7 +162,7 @@ public class WoodRecipeLoader {
      *
      * @param entry the entry to register for
      */
-    public static void registerWoodUnificationInfo(@Nonnull WoodTypeEntry entry) {
+    public static void registerWoodUnificationInfo(@NotNull WoodTypeEntry entry) {
         if (!entry.log.isEmpty() && entry.addLogOreDict) {
             OreDictUnifier.registerOre(entry.log, log, entry.material);
         }
@@ -234,7 +234,7 @@ public class WoodRecipeLoader {
      *
      * @param entry the entry to register for
      */
-    public static void registerWoodTypeRecipe(@Nonnull WoodTypeEntry entry) {
+    public static void registerWoodTypeRecipe(@NotNull WoodTypeEntry entry) {
         final String name = entry.woodName;
 
         if (entry.planks.isEmpty()) {

@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Render callback interface for {@link BloomEffectUtil#registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}.
@@ -22,7 +22,7 @@ public interface IBloomEffect {
      * @param context render context
      */
     @SideOnly(Side.CLIENT)
-    void renderBloomEffect(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context);
+    void renderBloomEffect(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context);
 
     /**
      * @param context render context
@@ -30,7 +30,7 @@ public interface IBloomEffect {
      *         EffectRenderContext)} call.
      */
     @SideOnly(Side.CLIENT)
-    default boolean shouldRenderBloomEffect(@Nonnull EffectRenderContext context) {
+    default boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
         return true;
     }
 }

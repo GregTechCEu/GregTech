@@ -28,9 +28,9 @@ import net.minecraft.util.text.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
@@ -114,7 +114,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         this.heatingCoilDiscount = 0;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -147,7 +147,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTI_FURNACE_OVERLAY;
@@ -190,14 +190,14 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             super(tileEntity);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ParallelLogicType getParallelLogicType() {
             return ParallelLogicType.APPEND_ITEMS;
         }
 
         @Override
-        public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
+        public void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {
             builder.EUt(getEUtForParallel(builder.getParallel(), heatingCoilDiscount))
                     .duration(getDurationForParallel(builder.getParallel(), getParallelLimit()));
         }

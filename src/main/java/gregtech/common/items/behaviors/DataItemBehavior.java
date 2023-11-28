@@ -11,11 +11,10 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class DataItemBehavior implements IItemBehaviour, IDataItem {
 
@@ -35,7 +34,7 @@ public class DataItemBehavior implements IItemBehaviour, IDataItem {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack itemStack, List<String> lines) {
+    public void addInformation(@NotNull ItemStack itemStack, List<String> lines) {
         String researchId = AssemblyLineManager.readResearchId(itemStack);
         if (researchId == null) return;
         Collection<Recipe> recipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES)

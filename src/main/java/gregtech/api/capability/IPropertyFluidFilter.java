@@ -15,8 +15,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
 
 /**
@@ -30,7 +28,7 @@ import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
 public interface IPropertyFluidFilter extends IFilter<FluidStack> {
 
     @Override
-    default boolean test(@Nonnull FluidStack stack) {
+    default boolean test(@NotNull FluidStack stack) {
         Fluid fluid = stack.getFluid();
         if (fluid.getTemperature() < CRYOGENIC_FLUID_THRESHOLD && !isCryoProof()) return false;
 

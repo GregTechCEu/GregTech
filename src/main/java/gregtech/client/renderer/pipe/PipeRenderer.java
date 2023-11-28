@@ -59,13 +59,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {

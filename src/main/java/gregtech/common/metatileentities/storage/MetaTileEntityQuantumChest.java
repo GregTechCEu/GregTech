@@ -51,13 +51,12 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -231,15 +230,15 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     protected IItemHandlerModifiable createImportItemHandler() {
         return new GTItemStackHandler(this, 1) {
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 if (!isItemValid(slot, stack)) return stack;
                 return GTTransferUtils.insertItem(getCombinedInventory(), stack, simulate);
             }
 
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 NBTTagCompound compound = stack.getTagCompound();
                 ItemStack outStack = getExportItems().getStackInSlot(0);
                 boolean outStackMatch = true;
@@ -559,7 +558,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
             return 1;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             ItemStack itemStack = MetaTileEntityQuantumChest.this.virtualItemStack;
@@ -579,7 +578,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
             return (int) MetaTileEntityQuantumChest.this.maxStoredItems;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             int extractedAmount = (int) Math.min(amount, itemsStoredInside);
@@ -599,9 +598,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
             return extractedStack;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack insertedStack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack insertedStack, boolean simulate) {
             if (insertedStack.isEmpty()) {
                 return ItemStack.EMPTY;
             }

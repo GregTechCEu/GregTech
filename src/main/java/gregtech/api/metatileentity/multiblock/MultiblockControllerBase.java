@@ -49,14 +49,13 @@ import codechicken.lib.vec.Rotation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -109,7 +108,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * @return structure pattern of this multiblock
      */
-    @Nonnull
+    @NotNull
     protected abstract BlockPattern createStructurePattern();
 
     public EnumFacing getUpwardsFacing() {
@@ -164,7 +163,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * @return The overlay to render on the Multiblock Controller
      */
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTIBLOCK_WORKABLE_OVERLAY;
     }
@@ -174,7 +173,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getFrontOverlay().getParticleSprite();
     }
 
-    public static TraceabilityPredicate tilePredicate(@Nonnull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
+    public static TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
                                                       @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
@@ -589,7 +588,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * @param part the part to check
      * @return if the multiblock part is terrain and weather resistant
      */
-    public boolean isMultiblockPartWeatherResistant(@Nonnull IMultiblockPart part) {
+    public boolean isMultiblockPartWeatherResistant(@NotNull IMultiblockPart part) {
         return false;
     }
 }

@@ -16,8 +16,7 @@ import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
@@ -45,7 +44,7 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, @Nonnull IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, @NotNull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         int baseYPos = 19;
 
@@ -75,14 +74,14 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         this.dimension = JEIResourceDepositCategoryUtils.getAllRegisteredDimensions(definition.getDimensionFilter());
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IRecipeWrapper getRecipeWrapper(@Nonnull GTOreInfo recipe) {
+    public IRecipeWrapper getRecipeWrapper(@NotNull GTOreInfo recipe) {
         return recipe;
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         int baseXPos = 70;
         int baseYPos = 19;
         int dimDisplayPos = 70;

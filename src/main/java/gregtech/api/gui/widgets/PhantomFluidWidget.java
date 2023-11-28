@@ -24,6 +24,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.google.common.collect.Lists;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.IOException;
@@ -32,8 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.util.GTUtility.getFluidFromContainer;
 
@@ -94,14 +93,14 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
 
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 FluidStack ingredientStack;
                 if (ingredient instanceof FluidStack)
                     ingredientStack = (FluidStack) ingredient;

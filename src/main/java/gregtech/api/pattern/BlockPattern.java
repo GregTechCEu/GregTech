@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -30,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
 
 public class BlockPattern {
 
@@ -57,8 +56,8 @@ public class BlockPattern {
      */
     public int[] formedRepetitionCount;
 
-    public BlockPattern(@Nonnull TraceabilityPredicate[][][] predicatesIn, @Nonnull RelativeDirection[] structureDir,
-                        @Nonnull int[][] aisleRepetitions) {
+    public BlockPattern(@NotNull TraceabilityPredicate[][][] predicatesIn, @NotNull RelativeDirection[] structureDir,
+                        @NotNull int[][] aisleRepetitions) {
         this.blockMatches = predicatesIn;
         this.globalCount = new HashMap<>();
         this.layerCount = new HashMap<>();

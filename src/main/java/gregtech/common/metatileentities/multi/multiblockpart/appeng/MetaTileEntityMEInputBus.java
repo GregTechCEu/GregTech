@@ -34,12 +34,11 @@ import appeng.me.GridAccessException;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @Author GlodBlock
@@ -227,7 +226,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
@@ -281,7 +280,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         }
 
         @Override
-        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             // NO-OP
         }
 
@@ -290,7 +289,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
             return MetaTileEntityMEInputBus.CONFIG_SIZE;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             if (slot >= 0 && slot < CONFIG_SIZE) {
@@ -299,13 +298,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             return stack;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot >= 0 && slot < CONFIG_SIZE) {
@@ -320,7 +319,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         }
 
         @Override
-        protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+        protected int getStackLimit(int slot, @NotNull ItemStack stack) {
             return Integer.MAX_VALUE;
         }
     }
@@ -355,7 +354,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         }
 
         @Override
-        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             // NO-OP
         }
 
@@ -364,7 +363,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
             return 1;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             if (slot == 0 && this.stock != null) {
@@ -373,13 +372,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             return stack;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot == 0 && this.stock != null) {

@@ -7,6 +7,7 @@ import gregtech.common.covers.filter.oreglob.node.BranchType;
 import gregtech.common.covers.filter.oreglob.node.NodeVisitor;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 
+import org.jetbrains.annotations.Nullable;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import javax.annotation.Nullable;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;

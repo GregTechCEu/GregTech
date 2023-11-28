@@ -23,11 +23,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements
                                             IMultiblockAbilityPart<IOpticalDataAccessHatch>, IOpticalDataAccessHatch {
@@ -67,7 +66,7 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
+    public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
         seen.add(this);
         if (isAttachedToMultiBlock()) {
             if (isTransmitter()) {
@@ -91,9 +90,9 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
         return false;
     }
 
-    private static boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches,
-                                             @Nonnull Collection<IDataAccessHatch> seen,
-                                             @Nonnull Recipe recipe) {
+    private static boolean isRecipeAvailable(@NotNull Iterable<? extends IDataAccessHatch> hatches,
+                                             @NotNull Collection<IDataAccessHatch> seen,
+                                             @NotNull Recipe recipe) {
         for (IDataAccessHatch hatch : hatches) {
             if (seen.contains(hatch)) continue;
             if (hatch.isRecipeAvailable(recipe, seen)) {
@@ -132,7 +131,7 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IOpticalDataAccessHatch> abilityList) {
+    public void registerAbilities(@NotNull List<IOpticalDataAccessHatch> abilityList) {
         abilityList.add(this);
     }
 }

@@ -11,11 +11,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -110,7 +110,7 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@NotNull Capability<?> capability, @Nullable EnumFacing facing) {
         if (providers != null) {
             for (Map.Entry<String, Hardware> entry : providers.entrySet()) {
                 Hardware provider = entry.getValue();
@@ -126,7 +126,7 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
         if (providers != null) {
             for (Map.Entry<String, Hardware> entry : providers.entrySet()) {
                 Hardware provider = entry.getValue();

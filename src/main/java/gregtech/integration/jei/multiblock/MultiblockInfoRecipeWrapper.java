@@ -58,6 +58,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.gui.recipes.RecipeLayout;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -65,7 +66,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
@@ -122,7 +122,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private TraceabilityPredicate father;
 
     @SuppressWarnings("NewExpressionSideOnly")
-    public MultiblockInfoRecipeWrapper(@Nonnull MultiblockControllerBase controller) {
+    public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
         this.controller = controller;
         Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
         this.patterns = controller.getMatchingShapes().stream()
@@ -280,7 +280,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
@@ -395,7 +395,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    public boolean handleClick(@Nonnull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+    public boolean handleClick(@NotNull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (Entry<GuiButton, Runnable> button : buttons.entrySet()) {
             if (button.getKey().mousePressed(minecraft, mouseX, mouseY)) {
                 button.getValue().run();
@@ -452,7 +452,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (drawInfoIcon) {
@@ -501,7 +501,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
         }
 
-        @Nonnull
+        @NotNull
         ItemStack getItemStack() {
             ItemStack result = this.itemStack.copy();
             result.setCount(this.amount);
@@ -509,8 +509,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
     }
 
-    @Nonnull
-    private static Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks,
+    @NotNull
+    private static Collection<PartInfo> gatherStructureBlocks(World world, @NotNull Map<BlockPos, BlockInfo> blocks,
                                                               Set<ItemStack> parts) {
         Map<ItemStack, PartInfo> partsMap = new Object2ObjectOpenCustomHashMap<>(
                 ItemStackHashStrategy.comparingAllButCount());
@@ -563,8 +563,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @SuppressWarnings("NewExpressionSideOnly")
-    @Nonnull
-    private MBPattern initializePattern(@Nonnull MultiblockShapeInfo shapeInfo, @Nonnull Set<ItemStack> parts) {
+    @NotNull
+    private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         MultiblockControllerBase controllerBase = null;
         BlockInfo[][][] blocks = shapeInfo.getBlocks();

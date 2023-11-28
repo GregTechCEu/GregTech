@@ -17,12 +17,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
 
 public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
 

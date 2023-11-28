@@ -13,8 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import mcjty.theoneprobe.api.*;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class LDPipeProvider implements IProbeInfoProvider {
 
@@ -24,8 +23,8 @@ public class LDPipeProvider implements IProbeInfoProvider {
     }
 
     @Override
-    public void addProbeInfo(ProbeMode probeMode, IProbeInfo probeInfo, EntityPlayer entityPlayer, @Nonnull World world,
-                             IBlockState blockState, @Nonnull IProbeHitData probeHitData) {
+    public void addProbeInfo(ProbeMode probeMode, IProbeInfo probeInfo, EntityPlayer entityPlayer, @NotNull World world,
+                             IBlockState blockState, @NotNull IProbeHitData probeHitData) {
         BlockPos pos = probeHitData.getPos();
 
         TileEntity tileEntity = world.getTileEntity(pos);
@@ -69,7 +68,7 @@ public class LDPipeProvider implements IProbeInfoProvider {
         }
     }
 
-    private static void addIOText(@Nonnull IProbeInfo probeInfo, @Nonnull ILDEndpoint endpoint) {
+    private static void addIOText(@NotNull IProbeInfo probeInfo, @NotNull ILDEndpoint endpoint) {
         if (endpoint.isInput()) {
             probeInfo.text(TextStyleClass.INFOIMP + "{*gregtech.top.ld_pipe_input*}");
         } else if (endpoint.isOutput()) {

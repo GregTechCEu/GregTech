@@ -8,10 +8,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
 public class SimpleStateMapper implements IStateMapper {
@@ -23,7 +22,7 @@ public class SimpleStateMapper implements IStateMapper {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Map<IBlockState, ModelResourceLocation> putStateModelLocations(Block block) {
         Map<IBlockState, ModelResourceLocation> map = new Object2ObjectOpenHashMap<>(
                 block.getBlockState().getValidStates().size());

@@ -20,12 +20,11 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 public class DriverRecipeMapMultiblockController extends DriverSidedTileEntity {
 
@@ -102,7 +101,7 @@ public class DriverRecipeMapMultiblockController extends DriverSidedTileEntity {
             return new Object[] { tileEntity.getEnergyContainer().getOutputPerSec() };
         }
 
-        @Nonnull
+        @NotNull
         private Object[] getInventory(IItemHandlerModifiable handler) {
             List<Map<String, Object>> result = new ArrayList<>();
             for (int slot = 0; slot < handler.getSlots(); slot++) {
@@ -126,7 +125,7 @@ public class DriverRecipeMapMultiblockController extends DriverSidedTileEntity {
             return getInventory(tileEntity.getOutputInventory());
         }
 
-        @Nonnull
+        @NotNull
         private Object[] getTank(IMultipleTankHandler handler) {
             List<Map<String, Object>> result = new ArrayList<>();
             handler.getFluidTanks().forEach(tank -> {

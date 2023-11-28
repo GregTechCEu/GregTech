@@ -2,7 +2,7 @@ package gregtech.common.items.armor;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Logic from EnderIO:
@@ -12,7 +12,7 @@ public interface IStepAssist {
 
     float MAGIC_STEP_HEIGHT = 1.0023f;
 
-    default void updateStepHeight(@Nonnull EntityPlayer player) {
+    default void updateStepHeight(@NotNull EntityPlayer player) {
         if (!player.isSneaking()) {
             if (player.stepHeight < MAGIC_STEP_HEIGHT) {
                 player.stepHeight = MAGIC_STEP_HEIGHT;

@@ -42,10 +42,10 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class BlockFrame extends BlockMaterialBase {
 
@@ -55,7 +55,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
         PropertyMaterial property = PropertyMaterial.create("variant", materials);
         return new BlockFrame() {
 
-            @Nonnull
+            @NotNull
             @Override
             public PropertyMaterial getVariantProperty() {
                 return property;
@@ -72,7 +72,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public String getHarvestTool(IBlockState state) {
+    public String getHarvestTool(@NotNull IBlockState state) {
         Material material = getGtMaterial(state);
         if (ModHandler.isMaterialWood(material)) {
             return ToolClasses.AXE;
@@ -80,9 +80,9 @@ public abstract class BlockFrame extends BlockMaterialBase {
         return ToolClasses.WRENCH;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos,
+    public SoundType getSoundType(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos,
                                   @Nullable Entity entity) {
         Material material = getGtMaterial(state);
         if (ModHandler.isMaterialWood(material)) {
@@ -100,14 +100,14 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public int getHarvestLevel(@Nonnull IBlockState state) {
+    public int getHarvestLevel(@NotNull IBlockState state) {
         return 1;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SuppressWarnings("deprecation")
-    public net.minecraft.block.material.Material getMaterial(IBlockState state) {
+    public net.minecraft.block.material.Material getMaterial(@NotNull IBlockState state) {
         Material material = getGtMaterial(state);
         if (ModHandler.isMaterialWood(material)) {
             return net.minecraft.block.material.Material.WOOD;
@@ -116,8 +116,8 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
-                                    @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 
@@ -164,8 +164,8 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state,
-                                    @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull EnumFacing facing,
+    public boolean onBlockActivated(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                    @NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull EnumFacing facing,
                                     float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (stack.isEmpty()) {
@@ -226,7 +226,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state,
+    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                   Entity entityIn) {
         entityIn.motionX = MathHelper.clamp(entityIn.motionX, -0.15, 0.15);
         entityIn.motionZ = MathHelper.clamp(entityIn.motionZ, -0.15, 0.15);
@@ -242,21 +242,21 @@ public abstract class BlockFrame extends BlockMaterialBase {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
+    public EnumPushReaction getPushReaction(@NotNull IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn,
-                                                 @Nonnull BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(@NotNull IBlockState blockState, @NotNull IBlockAccess worldIn,
+                                                 @NotNull BlockPos pos) {
         return COLLISION_BOX;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
@@ -264,20 +264,21 @@ public abstract class BlockFrame extends BlockMaterialBase {
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isOpaqueCube(@Nonnull IBlockState state) {
+    public boolean isOpaqueCube(@NotNull IBlockState state) {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state,
-                                            @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@NotNull IBlockAccess worldIn, @NotNull IBlockState state,
+                                            @NotNull BlockPos pos, @NotNull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         if (ConfigHolder.misc.debug) {
             tooltip.add("MetaItem Id: frame" + getGtMaterial(stack).toCamelCaseString());
         }

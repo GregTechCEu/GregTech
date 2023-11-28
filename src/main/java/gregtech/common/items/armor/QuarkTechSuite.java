@@ -29,12 +29,12 @@ import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
 
@@ -228,7 +228,7 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         }
     }
 
-    public static void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
+    public static void disableNightVision(@NotNull World world, EntityPlayer player, boolean sendMsg) {
         if (!world.isRemote) {
             player.removePotionEffect(MobEffects.NIGHT_VISION);
             if (sendMsg)
@@ -237,7 +237,7 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source,
+    public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source,
                                          double damage, EntityEquipmentSlot equipmentSlot) {
         int damageLimit = Integer.MAX_VALUE;
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
@@ -261,14 +261,14 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
     }
 
     @Override
-    public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source,
+    public boolean handleUnblockableDamage(EntityLivingBase entity, @NotNull ItemStack armor, DamageSource source,
                                            double damage, EntityEquipmentSlot equipmentSlot) {
         return source != DamageSource.FALL && source != DamageSource.DROWN && source != DamageSource.STARVE &&
                 source != DamageSource.OUT_OF_WORLD;
     }
 
     @Override
-    public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack itemStack, DamageSource source, int damage,
+    public void damageArmor(EntityLivingBase entity, @NotNull ItemStack itemStack, DamageSource source, int damage,
                             EntityEquipmentSlot equipmentSlot) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (item == null) {

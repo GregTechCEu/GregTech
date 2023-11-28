@@ -4,9 +4,9 @@ import gregtech.api.capability.IEnergyContainer;
 
 import net.minecraft.util.EnumFacing;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public class EnergyContainerList implements IEnergyContainer {
 
@@ -21,7 +21,7 @@ public class EnergyContainerList implements IEnergyContainer {
     /** The number of energy containers at the highest input voltage in the list. */
     private final int numHighestInputContainers;
 
-    public EnergyContainerList(@Nonnull List<IEnergyContainer> energyContainerList) {
+    public EnergyContainerList(@NotNull List<IEnergyContainer> energyContainerList) {
         this.energyContainerList = energyContainerList;
         long totalInputVoltage = 0;
         long totalOutputVoltage = 0;
@@ -62,7 +62,7 @@ public class EnergyContainerList implements IEnergyContainer {
      *
      * @return [newVoltage, newAmperage]
      */
-    @Nonnull
+    @NotNull
     private static long[] calculateVoltageAmperage(long voltage, long amperage) {
         if (voltage > 1 && amperage > 1) {
             // don't operate if there is no voltage or no amperage

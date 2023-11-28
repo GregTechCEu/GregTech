@@ -15,9 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, IItemDurabilityManager,
                                                    IItemColorProvider, IItemNameProvider {
@@ -44,7 +44,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
         return material;
     }
 
-    public static void setPartMaterial(ItemStack itemStack, @Nonnull Material material) {
+    public static void setPartMaterial(ItemStack itemStack, @NotNull Material material) {
         if (!material.hasProperty(PropertyKey.INGOT))
             throw new IllegalArgumentException("Part material must have an Ingot!");
         NBTTagCompound compound = getOrCreatePartStatsTag(itemStack);

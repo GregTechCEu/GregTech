@@ -57,12 +57,10 @@ import net.minecraftforge.items.ItemStackHandler;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
@@ -423,12 +421,12 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             }
 
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(stack);
                 return behavior != null;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
                 if (!getWorld().isRemote && !getStackInSlot(slot).isEmpty() && !simulate) {

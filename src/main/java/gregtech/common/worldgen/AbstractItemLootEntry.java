@@ -9,11 +9,10 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Random;
-
-import javax.annotation.Nonnull;
 
 public abstract class AbstractItemLootEntry extends LootEntry {
 
@@ -28,7 +27,7 @@ public abstract class AbstractItemLootEntry extends LootEntry {
     protected abstract ItemStack createItemStack();
 
     @Override
-    public void addLoot(@Nonnull Collection<ItemStack> stacks, @Nonnull Random rand, @Nonnull LootContext context) {
+    public void addLoot(@NotNull Collection<ItemStack> stacks, @NotNull Random rand, @NotNull LootContext context) {
         ItemStack itemStack = createItemStack();
         for (LootFunction lootfunction : this.functions) {
             if (LootConditionManager.testAllConditions(lootfunction.getConditions(), rand, context)) {
@@ -52,7 +51,7 @@ public abstract class AbstractItemLootEntry extends LootEntry {
     }
 
     @Override
-    protected final void serialize(@Nonnull JsonObject json, @Nonnull JsonSerializationContext context) {
+    protected final void serialize(@NotNull JsonObject json, @NotNull JsonSerializationContext context) {
         throw new UnsupportedOperationException("Unsupported by custom loot entries");
     }
 }

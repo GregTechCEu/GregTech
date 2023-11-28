@@ -22,12 +22,11 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, MaterialTree> {
 
@@ -128,7 +127,7 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull MaterialTree recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @NotNull MaterialTree recipeWrapper, IIngredients ingredients) {
         // place and check existence of items
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         List<List<ItemStack>> itemInputs = ingredients.getInputs(VanillaTypes.ITEM);
@@ -159,9 +158,9 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         materialAvgN = I18n.format("gregtech.jei.materials.average_neutrons", recipeWrapper.getAvgN());
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IRecipeWrapper getRecipeWrapper(@Nonnull MaterialTree recipe) {
+    public IRecipeWrapper getRecipeWrapper(@NotNull MaterialTree recipe) {
         return recipe;
     }
 
@@ -172,7 +171,7 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         // item slot rendering
         for (int i = 0; i < ITEM_LOCATIONS.size(); i += 2) {
             if (itemExists.get(i / 2))

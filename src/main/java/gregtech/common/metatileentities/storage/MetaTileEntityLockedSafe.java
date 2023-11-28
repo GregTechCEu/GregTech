@@ -52,8 +52,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
 
-import javax.annotation.Nonnull;
-
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONTENTS_SEED;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_LOCKED_STATE;
 
@@ -72,9 +70,9 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private final ItemStackHandler unlockComponents = new GTItemStackHandler(this, 2);
     private final ItemStackHandler unlockInventory = new GTItemStackHandler(this, 2) {
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             int maxStackSize = canPutUnlockItemInSlot(slot, stack);
             if (maxStackSize == 0) return stack;
             int maxAmount = Math.min(maxStackSize, stack.getCount());
@@ -423,7 +421,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     @Override
-    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
+    public boolean canRenderMachineGrid(@NotNull ItemStack mainHandStack, @NotNull ItemStack offHandStack) {
         return false;
     }
 

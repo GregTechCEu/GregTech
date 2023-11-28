@@ -35,6 +35,7 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,24 +43,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 public class CommandRecipeCheck extends CommandBase {
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "recipecheck";
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getUsage(@Nonnull ICommandSender sender) {
+    public String getUsage(@NotNull ICommandSender sender) {
         return "gregtech.command.util.recipecheck.usage";
     }
 
     @Override
-    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) {
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String[] args) {
         sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.begin"));
 
         Object2ObjectOpenHashMap<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> mismatchedRecipes = new Object2ObjectOpenHashMap<>();

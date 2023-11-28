@@ -23,11 +23,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class TieredMetaTileEntity extends MetaTileEntity
                                            implements IEnergyChangeListener, ITieredMetaTileEntity {
@@ -59,7 +58,7 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())

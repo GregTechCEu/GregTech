@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Armor logic that wraps {@link net.minecraftforge.common.ISpecialArmor} methods
@@ -23,7 +23,7 @@ public interface ISpecialArmorLogic extends IArmorLogic {
      * same priority, damage will be distributed between them based on there
      * absorption ratio.
      */
-    ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage,
+    ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage,
                                   EntityEquipmentSlot equipmentSlot);
 
     /**
@@ -31,7 +31,7 @@ public interface ISpecialArmorLogic extends IArmorLogic {
      *
      * @return The number of armor points for display, 2 per shield.
      */
-    int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot);
+    int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot);
 
     /**
      * Simple check to see if the armor should interact with "Unblockable" damage
@@ -41,7 +41,7 @@ public interface ISpecialArmorLogic extends IArmorLogic {
      * Returning true here means that the armor is able to meaningfully respond
      * to this damage source. Otherwise, no interaction is allowed.
      */
-    default boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source,
+    default boolean handleUnblockableDamage(EntityLivingBase entity, @NotNull ItemStack armor, DamageSource source,
                                             double damage, EntityEquipmentSlot equipmentSlot) {
         return false;
     }

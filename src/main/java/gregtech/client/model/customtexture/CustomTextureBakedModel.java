@@ -17,6 +17,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.*;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -24,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 @SideOnly(Side.CLIENT)
@@ -129,7 +129,7 @@ public class CustomTextureBakedModel implements IBakedModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         IBakedModel parent = getParent(rand);
 
@@ -182,20 +182,20 @@ public class CustomTextureBakedModel implements IBakedModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public TextureAtlasSprite getParticleTexture() {
         return parent.getParticleTexture();
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemOverrideList getOverrides() {
         return parent.getOverrides();
     }
 
     @Override
-    @Nonnull
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@Nonnull ItemCameraTransforms.TransformType cameraTransformType) {
+    @NotNull
+    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@NotNull ItemCameraTransforms.TransformType cameraTransformType) {
         return parent.handlePerspective(cameraTransformType);
     }
 

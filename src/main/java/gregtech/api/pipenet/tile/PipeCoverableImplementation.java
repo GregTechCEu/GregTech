@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,8 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -50,7 +49,7 @@ public class PipeCoverableImplementation implements CoverHolder {
 
     @Override
     public final void addCover(@NotNull EnumFacing side, @NotNull Cover cover) {
-        if (cover.isTickable() && !holder.supportsTicking()) {
+        if (cover instanceof ITickable && !holder.supportsTicking()) {
             IPipeTile<?, ?> newHolderTile = holder.setSupportsTicking();
             newHolderTile.getCoverableImplementation().addCover(side, cover);
             holder = newHolderTile;
@@ -200,7 +199,7 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @Override
-    public void writeCoverData(@Nonnull Cover cover, int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
+    public void writeCoverData(@NotNull Cover cover, int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
         writeCustomData(UPDATE_COVER_DATA_PIPE, buffer -> {
             buffer.writeByte(cover.getAttachedSide().getIndex());
             buffer.writeVarInt(discriminator);

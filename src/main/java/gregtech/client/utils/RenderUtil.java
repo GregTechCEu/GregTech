@@ -27,14 +27,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class RenderUtil {
@@ -655,7 +654,7 @@ public class RenderUtil {
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format) {
 
             @Override
-            public void put(int element, @Nonnull float... data) {
+            public void put(int element, float @NotNull... data) {
                 if (this.getVertexFormat().getElement(element) == DefaultVertexFormats.TEX_2S)
                     super.put(element, 480.0f / 0xFFFF, 480.0f / 0xFFFF);
                 else super.put(element, data);

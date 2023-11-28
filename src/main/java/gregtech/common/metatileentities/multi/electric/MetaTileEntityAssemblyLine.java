@@ -48,12 +48,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -76,7 +75,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         return new MetaTileEntityAssemblyLine(metaTileEntityId);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         FactoryBlockPattern pattern = FactoryBlockPattern.start(FRONT, UP, RIGHT)
@@ -107,17 +106,17 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         return pattern.build();
     }
 
-    @Nonnull
+    @NotNull
     protected static IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
-    @Nonnull
+    @NotNull
     protected static IBlockState getGrateState() {
         return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING);
     }
 
-    @Nonnull
+    @NotNull
     protected static TraceabilityPredicate fluidInputPredicate() {
         // block multi-fluid hatches if ordered fluids is enabled
         if (ConfigHolder.machines.orderedFluidAssembly) {
@@ -129,7 +128,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         return abilities(MultiblockAbility.IMPORT_FLUIDS);
     }
 
-    @Nonnull
+    @NotNull
     protected static TraceabilityPredicate dataHatchPredicate() {
         // if research is enabled, require the data hatch, otherwise use a grate instead
         if (ConfigHolder.machines.enableResearch) {
@@ -238,12 +237,12 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
     }
 
-    private void writeParticles(@Nonnull PacketBuffer buf) {
+    private void writeParticles(@NotNull PacketBuffer buf) {
         buf.writeVarInt(beamCount);
     }
 
     @SideOnly(Side.CLIENT)
-    private void readParticles(@Nonnull PacketBuffer buf) {
+    private void readParticles(@NotNull PacketBuffer buf) {
         beamCount = buf.readVarInt();
         if (beamParticles == null) {
             beamParticles = new GTLaserBeamParticle[17][2];
@@ -304,7 +303,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
     }
 
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     private GTLaserBeamParticle createALParticles(Vector3 startPos, Vector3 endPos) {
         return new GTLaserBeamParticle(this, startPos, endPos)
@@ -318,7 +317,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
         if (consumeIfSuccess) return true; // don't check twice
         // check ordered items
         if (ConfigHolder.machines.orderedAssembly) {
@@ -358,8 +357,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
     }
 
-    private static boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches,
-                                             @Nonnull Recipe recipe) {
+    private static boolean isRecipeAvailable(@NotNull Iterable<? extends IDataAccessHatch> hatches,
+                                             @NotNull Recipe recipe) {
         for (IDataAccessHatch hatch : hatches) {
             // creative hatches do not need to check, they always have the recipe
             if (hatch.isCreative()) return true;
@@ -371,7 +370,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                boolean advanced) {
         if (ConfigHolder.machines.orderedAssembly && ConfigHolder.machines.orderedFluidAssembly) {
             tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_both"));

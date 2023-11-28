@@ -14,9 +14,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface ICubeRenderer extends IIconRegister {
 
@@ -73,7 +72,7 @@ public interface ICubeRenderer extends IIconRegister {
 
     @Nullable
     @SideOnly(Side.CLIENT)
-    static TextureAtlasSprite getResource(@Nonnull TextureMap textureMap, @Nonnull String modid, @Nonnull String name) {
+    static TextureAtlasSprite getResource(@NotNull TextureMap textureMap, @NotNull String modid, @NotNull String name) {
         if (ResourceHelper.doResourcepacksHaveTexture(modid, name, true)) {
             return textureMap.registerSprite(new ResourceLocation(modid, name));
         }

@@ -16,30 +16,29 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.collect.Lists;
 import mezz.jei.api.gui.IGhostIngredientHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class ItemOreFilterTestSlot extends OreFilterTestSlot implements IGhostIngredientTarget {
 
-    @Nonnull
+    @NotNull
     private ItemStack testStack = ItemStack.EMPTY;
 
     public ItemOreFilterTestSlot(int xPosition, int yPosition) {
         super(xPosition, yPosition);
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack getTestStack() {
         return testStack;
     }
 
-    public void setTestStack(@Nonnull ItemStack testStack) {
+    public void setTestStack(@NotNull ItemStack testStack) {
         this.testStack = testStack;
         updatePreview();
     }
@@ -95,14 +94,14 @@ public class ItemOreFilterTestSlot extends OreFilterTestSlot implements IGhostIn
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new IGhostIngredientHandler.Target<Object>() {
 
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 if (ingredient instanceof ItemStack) {
                     putItem((ItemStack) ingredient);
                 }

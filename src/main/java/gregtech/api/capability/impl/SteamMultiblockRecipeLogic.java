@@ -21,7 +21,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
 
@@ -122,8 +122,8 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean setupAndConsumeRecipeInputs(@Nonnull Recipe recipe,
-                                                  @Nonnull IItemHandlerModifiable importInventory) {
+    protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                  @NotNull IItemHandlerModifiable importInventory) {
         RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false) &&
                 super.setupAndConsumeRecipeInputs(recipe, importInventory)) {

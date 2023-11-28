@@ -28,16 +28,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties, WorldLaserPipeNet> {
 
     private final LaserPipeType pipeType;
     private final LaserPipeProperties properties;
 
-    public BlockLaserPipe(@Nonnull LaserPipeType pipeType) {
+    public BlockLaserPipe(@NotNull LaserPipeType pipeType) {
         this.pipeType = pipeType;
         this.properties = LaserPipeProperties.INSTANCE;
         setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
@@ -104,12 +103,12 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
         items.add(new ItemStack(this, 1, this.pipeType.ordinal()));
     }
 
     @Override
-    protected boolean isPipeTool(@Nonnull ItemStack stack) {
+    protected boolean isPipeTool(@NotNull ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
     }
 
@@ -136,15 +135,15 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
         return LaserPipeRenderer.INSTANCE.getBlockRenderType();
     }
 
     @Override
-    public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
+    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.CUTOUT) return true;
         return layer == BloomEffectUtil.getEffectiveBloomLayer();
     }

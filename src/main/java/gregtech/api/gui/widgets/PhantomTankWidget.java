@@ -19,6 +19,8 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.google.common.collect.Lists;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,9 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 import static gregtech.api.util.GTUtility.getFluidFromContainer;
@@ -70,14 +69,14 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
 
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 FluidStack stack = getFluidFromContainer(ingredient);
 
                 if (stack != null) {

@@ -7,9 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 
-import java.util.function.Predicate;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.function.Predicate;
 
 public class FilteredItemHandler extends GTItemStackHandler {
 
@@ -37,7 +37,7 @@ public class FilteredItemHandler extends GTItemStackHandler {
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
         return fillPredicate == null || fillPredicate.test(stack);
     }
 }

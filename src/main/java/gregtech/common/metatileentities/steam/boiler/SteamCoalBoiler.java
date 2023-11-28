@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SteamCoalBoiler extends SteamBoiler {
 
@@ -71,9 +71,9 @@ public class SteamCoalBoiler extends SteamBoiler {
     public IItemHandlerModifiable createImportItemHandler() {
         return new GTItemStackHandler(this, 1) {
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 if (TileEntityFurnace.getItemBurnTime(stack) <= 0)
                     return stack;
                 return super.insertItem(slot, stack, simulate);

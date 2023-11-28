@@ -98,13 +98,6 @@ public interface Cover {
         return getCoverableView().getOffsetTimer();
     }
 
-    default void update() {}
-
-    default boolean isTickable() {
-        // noinspection InstanceofThis
-        return this instanceof ITickable;
-    }
-
     /**
      * @return the side the cover is attached to
      */

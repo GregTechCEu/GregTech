@@ -21,13 +21,11 @@ import net.minecraft.world.World;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity
                                                          implements ILDEndpoint, IDataInfoProvider {
@@ -213,7 +211,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.2"));
@@ -227,13 +225,13 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity
     }
 
     @Override
-    public void addToolUsages(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addToolUsages(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> textComponents = new ArrayList<>();

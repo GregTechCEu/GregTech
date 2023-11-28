@@ -23,12 +23,11 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMaintenanceHatch {
 
@@ -108,7 +107,7 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
      * @param type the type to add
      */
     @SuppressWarnings("unused")
-    public static void addCleanroomType(@Nonnull CleanroomType type) {
+    public static void addCleanroomType(@NotNull CleanroomType type) {
         CLEANED_TYPES.add(type);
     }
 

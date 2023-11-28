@@ -1,4 +1,4 @@
-//version: 1699743071
+//version: 1700970468
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -501,8 +501,8 @@ dependencies {
         testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:1.0.0"
     }
 
-    compileOnlyApi 'org.jetbrains:annotations:23.0.0'
-    annotationProcessor 'org.jetbrains:annotations:23.0.0'
+    compileOnlyApi 'org.jetbrains:annotations:24.1.0'
+    annotationProcessor 'org.jetbrains:annotations:24.1.0'
     patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
         transitive = false
     }

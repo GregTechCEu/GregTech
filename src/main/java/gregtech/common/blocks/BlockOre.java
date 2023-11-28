@@ -33,12 +33,12 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class BlockOre extends Block implements IBlockOre {
 
@@ -57,10 +57,10 @@ public class BlockOre extends Block implements IBlockOre {
         setCreativeTab(GregTechAPI.TAB_GREGTECH_ORES);
     }
 
-    @Nonnull
+    @NotNull
     @SuppressWarnings("deprecation")
     @Override
-    public net.minecraft.block.material.Material getMaterial(@Nonnull IBlockState state) {
+    public net.minecraft.block.material.Material getMaterial(@NotNull IBlockState state) {
         String harvestTool = getHarvestTool(state);
         if (harvestTool != null && harvestTool.equals(ToolClasses.SHOVEL)) {
             return net.minecraft.block.material.Material.GROUND;
@@ -68,7 +68,7 @@ public class BlockOre extends Block implements IBlockOre {
         return net.minecraft.block.material.Material.ROCK;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected final BlockStateContainer createBlockState() {
         return new BlockStateContainer(this);
@@ -80,9 +80,9 @@ public class BlockOre extends Block implements IBlockOre {
         setDefaultState(stateContainer.getBaseState());
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
+    public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
         StoneType stoneType = state.getValue(STONE_TYPE);
         // if the stone type should be dropped as an item, or if it is within the first 16 block states
         // don't do any special handling
@@ -98,7 +98,7 @@ public class BlockOre extends Block implements IBlockOre {
     }
 
     @Override
-    public int damageDropped(@Nonnull IBlockState state) {
+    public int damageDropped(@NotNull IBlockState state) {
         StoneType stoneType = state.getValue(STONE_TYPE);
         if (stoneType.shouldBeDroppedAsItem) {
             return getMetaFromState(state);
@@ -107,9 +107,9 @@ public class BlockOre extends Block implements IBlockOre {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos,
+    public SoundType getSoundType(IBlockState state, @NotNull World world, @NotNull BlockPos pos,
                                   @Nullable Entity entity) {
         StoneType stoneType = state.getValue(STONE_TYPE);
         return stoneType.soundType;
@@ -129,7 +129,7 @@ public class BlockOre extends Block implements IBlockOre {
                 material.getBlockHarvestLevel());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ItemStack getSilkTouchDrop(IBlockState state) {
         StoneType stoneType = state.getValue(STONE_TYPE);
@@ -139,7 +139,7 @@ public class BlockOre extends Block implements IBlockOre {
         return super.getSilkTouchDrop(this.getDefaultState());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -154,16 +154,16 @@ public class BlockOre extends Block implements IBlockOre {
         return STONE_TYPE.getAllowedValues().indexOf(state.getValue(STONE_TYPE));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world,
-                                  @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public ItemStack getPickBlock(@NotNull IBlockState state, @NotNull RayTraceResult target, @NotNull World world,
+                                  @NotNull BlockPos pos, @NotNull EntityPlayer player) {
         // Still get correct block even if shouldBeDroppedAsItem is false
         return GTUtility.toItem(state);
     }
 
     @Override
-    public boolean isFireSource(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public boolean isFireSource(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing side) {
         if (side != EnumFacing.UP) return false;
 
         // if the stone type of the ore block is flammable, it will burn forever like Netherrack
@@ -172,7 +172,7 @@ public class BlockOre extends Block implements IBlockOre {
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         if (tab == CreativeTabs.SEARCH || tab == GregTechAPI.TAB_GREGTECH_ORES) {
             blockState.getValidStates().stream()
                     .filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem)
@@ -181,7 +181,7 @@ public class BlockOre extends Block implements IBlockOre {
     }
 
     @Override
-    public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
+    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         return layer == BlockRenderLayer.CUTOUT_MIPPED ||
                 material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getEffectiveBloomLayer();
     }

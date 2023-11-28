@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -84,8 +85,8 @@ public interface CoverHolder extends CoverableView {
     default void updateCovers() {
         for (EnumFacing facing : EnumFacing.VALUES) {
             Cover cover = getCoverAtSide(facing);
-            if (cover != null && cover.isTickable()) {
-                cover.update();
+            if (cover instanceof ITickable tickable) {
+                tickable.update();
             }
         }
     }

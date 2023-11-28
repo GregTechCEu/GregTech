@@ -12,8 +12,6 @@ import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class LaserContainerInfoProvider extends CapabilityInfoProvider<ILaserContainer> {
 
     @NotNull
@@ -23,7 +21,7 @@ public class LaserContainerInfoProvider extends CapabilityInfoProvider<ILaserCon
     }
 
     @Override
-    protected boolean allowDisplaying(@Nonnull ILaserContainer capability) {
+    protected boolean allowDisplaying(@NotNull ILaserContainer capability) {
         return !capability.isOneProbeHidden();
     }
 

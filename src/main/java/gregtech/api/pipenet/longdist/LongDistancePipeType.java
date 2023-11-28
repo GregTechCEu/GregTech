@@ -7,10 +7,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-
-import javax.annotation.Nonnull;
 
 /**
  * This class defines a long distance pipe type. This class MUST be a singleton class!
@@ -62,7 +61,7 @@ public abstract class LongDistancePipeType {
         return endpoint1 != endpoint2 && endpoint1.pos().getDistance(p.getX(), p.getY(), p.getZ()) >= getMinLength();
     }
 
-    @Nonnull
+    @NotNull
     public LongDistanceNetwork createNetwork(LongDistanceNetwork.WorldData worldData) {
         return new LongDistanceNetwork(this, worldData);
     }

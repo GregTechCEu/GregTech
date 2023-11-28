@@ -5,7 +5,7 @@ import gregtech.api.unification.OreDictUnifier;
 
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ToolItemStackHandler extends SingleItemStackHandler {
 
@@ -14,8 +14,8 @@ public class ToolItemStackHandler extends SingleItemStackHandler {
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (stack.getItem().getToolClasses(stack).isEmpty()) return stack;
         if (stack.getItem() instanceof IGTTool &&
                 ((IGTTool) stack.getItem()).getToolStats().isSuitableForCrafting(stack)) {

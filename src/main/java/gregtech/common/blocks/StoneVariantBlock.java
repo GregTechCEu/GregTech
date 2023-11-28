@@ -18,9 +18,9 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import java.util.Random;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.Random;
 
 @SuppressWarnings("deprecation")
 public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType> {
@@ -30,7 +30,7 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
 
     private final StoneVariant stoneVariant;
 
-    public StoneVariantBlock(@Nonnull StoneVariant stoneVariant) {
+    public StoneVariantBlock(@NotNull StoneVariant stoneVariant) {
         super(net.minecraft.block.material.Material.ROCK);
         this.stoneVariant = stoneVariant;
         setRegistryName(stoneVariant.id);
@@ -43,7 +43,7 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         this.VARIANT = PROPERTY;
@@ -52,8 +52,8 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
-                                    @Nonnull EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -63,7 +63,7 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
     }
 
     @Override
-    public boolean checkApplicableBlocks(@Nonnull IBlockState state) {
+    public boolean checkApplicableBlocks(@NotNull IBlockState state) {
         return state == getState(StoneType.CONCRETE_DARK) || state == getState(StoneType.CONCRETE_LIGHT);
     }
 
@@ -72,8 +72,9 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         return this.stoneVariant == StoneVariant.SMOOTH;
     }
 
+    @NotNull
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+    public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
         return Item.getItemFromBlock(this.stoneVariant == StoneVariant.SMOOTH ?
                 MetaBlocks.STONE_BLOCKS.get(StoneVariant.COBBLE) : this);
     }
@@ -90,12 +91,12 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         private final String name;
         public final MapColor mapColor;
 
-        StoneType(@Nonnull String name, @Nonnull MapColor mapColor) {
+        StoneType(@NotNull String name, @NotNull MapColor mapColor) {
             this.name = name;
             this.mapColor = mapColor;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;
@@ -157,19 +158,19 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         public final float hardness;
         public final float resistance;
 
-        StoneVariant(@Nonnull String id) {
+        StoneVariant(@NotNull String id) {
             this(id, id);
         }
 
-        StoneVariant(@Nonnull String id, @Nonnull String translationKey) {
+        StoneVariant(@NotNull String id, @NotNull String translationKey) {
             this(id, translationKey, 1.5f, 10.0f); // vanilla stone stats
         }
 
-        StoneVariant(@Nonnull String id, float hardness, float resistance) {
+        StoneVariant(@NotNull String id, float hardness, float resistance) {
             this(id, id, hardness, resistance);
         }
 
-        StoneVariant(@Nonnull String id, @Nonnull String translationKey, float hardness, float resistance) {
+        StoneVariant(@NotNull String id, @NotNull String translationKey, float hardness, float resistance) {
             this.id = id;
             this.translationKey = translationKey;
             this.hardness = hardness;

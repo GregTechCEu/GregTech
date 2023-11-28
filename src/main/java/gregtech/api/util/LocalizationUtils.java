@@ -3,9 +3,9 @@ package gregtech.api.util;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public class LocalizationUtils {
@@ -69,7 +69,7 @@ public class LocalizationUtils {
      * @param args substitutions
      * @return translated text split with text {@code '\n'}
      */
-    @Nonnull
+    @NotNull
     public static String[] formatLines(String key, Object... args) {
         return NEW_LINE_PATTERN.split(format(key, args));
     }

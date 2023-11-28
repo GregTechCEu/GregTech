@@ -26,7 +26,7 @@ public class GTFluidRegistration {
 
     public static final GTFluidRegistration INSTANCE = new GTFluidRegistration();
 
-    private static Collection<ResourceLocation> fluidSprites = new ObjectOpenHashSet<>();
+    private static final Collection<ResourceLocation> fluidSprites = new ObjectOpenHashSet<>();
 
     private static @Nullable BiMap<String, Fluid> MASTER_FLUID_REFERENCE;
 
@@ -64,13 +64,8 @@ public class GTFluidRegistration {
 
     @ApiStatus.Internal
     public void registerSprites(@NotNull TextureMap textureMap) {
-        if (fluidSprites == null) {
-            throw new IllegalStateException("Cannot register fluid sprites twice");
-        } else {
-            for (ResourceLocation spriteLocation : fluidSprites) {
-                textureMap.registerSprite(spriteLocation);
-            }
-            fluidSprites = null;
+        for (ResourceLocation spriteLocation : fluidSprites) {
+            textureMap.registerSprite(spriteLocation);
         }
     }
 

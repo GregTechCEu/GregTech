@@ -23,15 +23,14 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.M;
 
@@ -170,8 +169,8 @@ public class OreDictUnifier {
         }
     }
 
-    @Nonnull
-    public static Set<String> getOreDictionaryNames(@Nonnull ItemStack itemStack) {
+    @NotNull
+    public static Set<String> getOreDictionaryNames(@NotNull ItemStack itemStack) {
         if (itemStack.isEmpty()) return Collections.emptySet();
         ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
         if (nameEntry == null) return Collections.emptySet();
@@ -188,22 +187,22 @@ public class OreDictUnifier {
     }
 
     @Nullable
-    public static ItemVariantMap<Set<String>> getOreDictionaryEntry(@Nonnull Item item) {
+    public static ItemVariantMap<Set<String>> getOreDictionaryEntry(@NotNull Item item) {
         ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.get(item);
         return entry == null ? null : ItemVariantMap.unmodifiableSetView(entry);
     }
 
-    @Nonnull
-    public static ItemVariantMap<Set<String>> getOreDictionaryEntryOrEmpty(@Nonnull Item item) {
+    @NotNull
+    public static ItemVariantMap<Set<String>> getOreDictionaryEntryOrEmpty(@NotNull Item item) {
         ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.get(item);
         return entry == null ? ItemVariantMap.empty() : ItemVariantMap.unmodifiableSetView(entry);
     }
 
-    public static boolean hasOreDictionaryEntry(@Nonnull Item item) {
+    public static boolean hasOreDictionaryEntry(@NotNull Item item) {
         return stackOreDictName.containsKey(item);
     }
 
-    public static boolean hasOreDictionary(@Nonnull ItemStack itemStack, @Nonnull String oreDictName) {
+    public static boolean hasOreDictionary(@NotNull ItemStack itemStack, @NotNull String oreDictName) {
         if (itemStack.isEmpty()) return false;
         ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
         if (nameEntry == null) return false;
@@ -375,8 +374,8 @@ public class OreDictUnifier {
      * @return value corresponding to given key or its wildcard counterpart
      */
     @Nullable
-    private static <T> T getOrWildcard(@Nonnull Map<ItemAndMetadata, T> map,
-                                       @Nonnull ItemAndMetadata key) {
+    private static <T> T getOrWildcard(@NotNull Map<ItemAndMetadata, T> map,
+                                       @NotNull ItemAndMetadata key) {
         T t = map.get(key);
         if (t != null) return t;
         if (key.isWildcard()) return null;

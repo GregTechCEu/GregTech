@@ -30,10 +30,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                                         implements ITieredMetaTileEntity, IProgressBarMultiblock {
@@ -224,7 +224,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return frontOverlay;

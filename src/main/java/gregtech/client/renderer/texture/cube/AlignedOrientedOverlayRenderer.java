@@ -4,14 +4,13 @@ import net.minecraft.util.EnumFacing;
 
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class AlignedOrientedOverlayRenderer extends OrientedOverlayRenderer {
 
     private static final Rotation DEF_ROT = new Rotation(0, 0, 0, 0);
 
-    public AlignedOrientedOverlayRenderer(@Nonnull String basePath) {
+    public AlignedOrientedOverlayRenderer(@NotNull String basePath) {
         super(basePath);
     }
 

@@ -45,12 +45,10 @@ import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.IGridProxyable;
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
@@ -122,7 +120,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
         customName = compound.getString(GregtechDataCodes.CUSTOM_NAME);
         if (compound.hasKey("MetaId", NBT.TAG_STRING)) {
@@ -146,9 +144,9 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setString(GregtechDataCodes.CUSTOM_NAME, getName());
         if (metaTileEntity != null) {
@@ -175,7 +173,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@NotNull Capability<?> capability, @Nullable EnumFacing facing) {
         Object metaTileEntityValue = metaTileEntity == null ? null :
                 metaTileEntity.getCoverCapability(capability, facing);
         return metaTileEntityValue != null || super.hasCapability(capability, facing);
@@ -183,7 +181,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
         T metaTileEntityValue = metaTileEntity == null ? null : metaTileEntity.getCoverCapability(capability, facing);
         return metaTileEntityValue != null ? metaTileEntityValue : super.getCapability(capability, facing);
     }
@@ -383,21 +381,21 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
-    public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState,
+    public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, IBlockState oldState,
                                  IBlockState newState) {
         return oldState.getBlock() != newState.getBlock(); // MetaTileEntityHolder should never refresh (until block
                                                            // changes)
     }
 
     @Override
-    public void rotate(@Nonnull Rotation rotationIn) {
+    public void rotate(@NotNull Rotation rotationIn) {
         if (metaTileEntity != null) {
             metaTileEntity.setFrontFacing(rotationIn.rotate(metaTileEntity.getFrontFacing()));
         }
     }
 
     @Override
-    public void mirror(@Nonnull Mirror mirrorIn) {
+    public void mirror(@NotNull Mirror mirrorIn) {
         if (metaTileEntity != null) {
             rotate(mirrorIn.toRotation(metaTileEntity.getFrontFacing()));
         }
@@ -418,7 +416,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
@@ -486,7 +484,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return this.customName == null ? "" : this.customName;
@@ -497,7 +495,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         return this.customName != null && !this.customName.isEmpty();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ITextComponent getDisplayName() {
         return this.hasCustomName() ? new TextComponentString(this.getName()) :
@@ -508,7 +506,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     @Nullable
     @Override
     @Method(modid = GTValues.MODID_APPENG)
-    public IGridNode getGridNode(@Nonnull AEPartLocation part) {
+    public IGridNode getGridNode(@NotNull AEPartLocation part) {
         // Forbid it connects the faces it shouldn't connect.
         if (this.getCableConnectionType(part) == AECableType.NONE) {
             return null;
@@ -517,10 +515,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         return proxy == null ? null : proxy.getNode();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @Method(modid = GTValues.MODID_APPENG)
-    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+    public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return metaTileEntity == null ? AECableType.NONE : metaTileEntity.getCableConnectionType(part);
     }
 
@@ -528,7 +526,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     @Method(modid = GTValues.MODID_APPENG)
     public void securityBreak() {}
 
-    @Nonnull
+    @NotNull
     @Override
     @Method(modid = GTValues.MODID_APPENG)
     public IGridNode getActionableNode() {

@@ -33,12 +33,11 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager, ISubItemHandler {
 
@@ -90,7 +89,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, BlockPos pos,
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, BlockPos pos,
                                            EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
@@ -126,7 +125,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, @Nonnull List<String> lines) {
+    public void addInformation(ItemStack itemStack, @NotNull List<String> lines) {
         lines.add(I18n.format(usesFluid ? "behaviour.lighter.fluid.tooltip" : "behaviour.lighter.tooltip"));
         if (hasMultipleUses && !usesFluid) {
             lines.add(I18n.format("behaviour.lighter.uses", getUsesLeft(itemStack)));
@@ -147,7 +146,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         return false;
     }
 
-    private int getUsesLeft(@Nonnull ItemStack stack) {
+    private int getUsesLeft(@NotNull ItemStack stack) {
         if (usesFluid) {
             IFluidHandlerItem fluidHandlerItem = stack
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
@@ -169,7 +168,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         return stack.getCount();
     }
 
-    private void setUsesLeft(EntityPlayer entity, @Nonnull ItemStack stack, int usesLeft) {
+    private void setUsesLeft(EntityPlayer entity, @NotNull ItemStack stack, int usesLeft) {
         if (usesFluid) {
             IFluidHandlerItem fluidHandlerItem = stack
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
@@ -192,7 +191,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     }
 
     @Override
-    public void addPropertyOverride(@Nonnull Item item) {
+    public void addPropertyOverride(@NotNull Item item) {
         if (overrideLocation != null) {
             item.addPropertyOverride(overrideLocation,
                     (stack, world, entity) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F :

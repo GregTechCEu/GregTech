@@ -19,12 +19,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.EnumMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> {
 
@@ -197,7 +197,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     private static class DefaultDataHandler implements IDataAccessHatch {
 
         @Override
-        public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
+        public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
             return false;
         }
 
@@ -210,17 +210,17 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     private static class DefaultComputationHandler implements IOpticalComputationProvider {
 
         @Override
-        public int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen) {
+        public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
             return 0;
         }
 
         @Override
-        public int getMaxCWUt(@Nonnull Collection<IOpticalComputationProvider> seen) {
+        public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
             return 0;
         }
 
         @Override
-        public boolean canBridge(@Nonnull Collection<IOpticalComputationProvider> seen) {
+        public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
             return false;
         }
     }

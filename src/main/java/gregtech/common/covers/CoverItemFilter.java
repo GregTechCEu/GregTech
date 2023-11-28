@@ -34,8 +34,6 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     protected final String titleLocale;
@@ -151,16 +149,16 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
             super(delegate);
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT || !itemFilter.testItemStack(stack)) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (getFilterMode() != ItemFilterMode.FILTER_INSERT) {
