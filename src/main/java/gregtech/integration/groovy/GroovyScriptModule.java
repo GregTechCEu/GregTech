@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import com.cleanroommc.groovyscript.GroovyScript;
 import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.GroovyPlugin;
-import com.cleanroommc.groovyscript.api.Result;
+import com.cleanroommc.groovyscript.api.IGameObjectHandler;
 import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
 import com.cleanroommc.groovyscript.gameobjects.GameObjectHandlerManager;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
@@ -193,25 +193,17 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     @Override
     public void onCompatLoaded(GroovyContainer<?> groovyContainer) {
         modSupportContainer = groovyContainer;
-        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "recipemap", (s, args) -> {
-            RecipeMap<?> map = RecipeMap.getByName(s);
-            return map != null ? Result.some(map) : Result.error("Could not find RecipeMap with name " + s);
-        });
+        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "recipemap",
+                IGameObjectHandler.wrapStringGetter(RecipeMap::getByName));
 
-        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "material", (s, args) -> {
-            Material m = GregTechAPI.materialManager.getMaterial(s);
-            return m != null ? Result.some(m) : Result.error("Could not find Material with name " + s);
-        });
+        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "material",
+                IGameObjectHandler.wrapStringGetter(GregTechAPI.materialManager::getMaterial));
 
-        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "oreprefix", (s, args) -> {
-            OrePrefix prefix = OrePrefix.getPrefix(s);
-            return prefix != null ? Result.some(prefix) : Result.error("Could not find OrePrefix with name " + s);
-        });
+        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "oreprefix",
+                IGameObjectHandler.wrapStringGetter(OrePrefix::getPrefix));
 
-        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "metaitem", (s, args) -> {
-            ItemStack metaItem = getMetaItem(s);
-            return metaItem != null ? Result.some(metaItem) : Result.some(ItemStack.EMPTY);
-        });
+        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "metaitem",
+                IGameObjectHandler.wrapStringGetter(GroovyScriptModule::getMetaItem), ItemStack.EMPTY);
 
         ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
         ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
