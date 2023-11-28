@@ -56,10 +56,6 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     protected void initializeInventory() {
         super.initializeInventory();
 
-        if (!isStructureFormed()) {
-            return;
-        }
-
         FilteredFluidHandler tank = new FilteredFluidHandler(capacity);
         if (!isMetal) {
             tank.setFilter(new PropertyFluidFilter(340, false, false, false, false));
@@ -127,6 +123,10 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     @Override
     protected ModularUI.Builder createUITemplate(@NotNull EntityPlayer entityPlayer) {
+        if (!isStructureFormed()) {
+            return null;
+        }
+
         return ModularUI.defaultBuilder()
                 .widget(new LabelWidget(6, 6, getMetaFullName()))
                 .widget(new TankWidget(importFluids.getTankAt(0), 52, 18, 72, 61)
