@@ -85,7 +85,6 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
     public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                                     Cuboid6 bounds, EnumFacing frontFacing, boolean isActive,
                                     boolean isWorkingEnabled) {
-
         IVertexOperation[] lightPipeline = ConfigHolder.client.machinesEmissiveTextures ?
                 ArrayUtils.add(pipeline, new LightMapOperation(240, 240)) : pipeline;
 
@@ -103,8 +102,8 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
                     sprites.get(CubeSide.BACK), BloomEffectUtil.getEffectiveBloomLayer());
 
         // Left
-        EnumFacing left = frontFacing.getAxis() != EnumFacing.Axis.Y
-                ? frontFacing.rotateYCCW() : EnumFacing.NORTH; // best guess in this weird case
+        // best guess in this weird case
+        EnumFacing left = frontFacing.getAxis() != EnumFacing.Axis.Y ? frontFacing.rotateYCCW() : EnumFacing.NORTH;
         Textures.renderFace(renderState, translation, pipeline, left, bounds,
                 sprites.get(CubeSide.LEFT), BlockRenderLayer.CUTOUT_MIPPED);
         if (spritesEmissive.containsKey(CubeSide.LEFT)) Textures.renderFace(renderState, translation, lightPipeline,
@@ -118,8 +117,8 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
                     sprites.get(CubeSide.RIGHT), BloomEffectUtil.getEffectiveBloomLayer());
 
         // Up
-        EnumFacing up = frontFacing.getAxis() != EnumFacing.Axis.Y
-                ? EnumFacing.UP : EnumFacing.WEST; // best huess in this weird case
+        // best guess in this weird case
+        EnumFacing up = frontFacing.getAxis() != EnumFacing.Axis.Y ? EnumFacing.UP : EnumFacing.WEST;
         Textures.renderFace(renderState, translation, pipeline, up, bounds, sprites.get(CubeSide.TOP),
                 BlockRenderLayer.CUTOUT_MIPPED);
         if (spritesEmissive.containsKey(CubeSide.TOP)) Textures.renderFace(renderState, translation, lightPipeline,
