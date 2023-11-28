@@ -121,12 +121,11 @@ public class ChunkAlignedWorldgen implements Runnable {
             WorldgenModule.logger.info("generating vein at {}", originPos);
         }
 
-        Random random = new XSTR(seed);
-
         ChunkAlignedWorldGenerator potential = cache.getIfPresent(originPos);
         if (potential == null) {
-            findAndGenerateNew(random, originPos, seed);
+            findAndGenerateNew(originPos, seed);
         } else {
+            Random random = new XSTR(seed ^ potential.hashCode());
             generateExisting(potential, random, originPos);
         }
 
@@ -139,17 +138,17 @@ public class ChunkAlignedWorldgen implements Runnable {
     /**
      * Generate a new chunk-aligned vein
      *
-     * @param random    the random to use
      * @param originPos the origin chunk pos
      * @param seed      the seed for random values
      */
-    private void findAndGenerateNew(@NotNull Random random, @NotNull ChunkPosDimension originPos, long seed) {
+    private void findAndGenerateNew(@NotNull ChunkPosDimension originPos, long seed) {
         var collection = WorldgenModule.CHUNK_ALIGNED_REGISTRY.getGenerators(dimension);
         if (collection == null) return;
 
         int originX = originPos.x();
         int originZ = originPos.z();
 
+        Random random = new XSTR(seed);
         int roll = random.nextInt(100);
         if (roll < WorldgenModule.oreVeinAbundance()) {
             int totalWeight = WorldgenModule.CHUNK_ALIGNED_REGISTRY.getTotalWeight(dimension);
@@ -168,7 +167,7 @@ public class ChunkAlignedWorldgen implements Runnable {
 
                         ChunkAlignedWorldGenerator generator = settings.createGenerator();
 
-                        PlacementResult result = generator.generate(world, new XSTR(seed), biome,
+                        PlacementResult result = generator.generate(world, new XSTR(seed ^ settings.hashCode()), biome,
                                 dimension, originX * 16, originZ * 16,
                                 chunkX * 16, chunkZ * 16);
                         switch (result) {
