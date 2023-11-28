@@ -31,9 +31,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import com.cleanroommc.groovyscript.GroovyScript;
 import com.cleanroommc.groovyscript.api.GroovyLog;
-import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
+import com.cleanroommc.groovyscript.api.IGroovyContainer;
+import com.cleanroommc.groovyscript.api.Result;
+import com.cleanroommc.groovyscript.compat.mods.ExternalModContainer;
+import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
-import com.cleanroommc.groovyscript.compat.mods.ModSupport;
+import com.cleanroommc.groovyscript.gameobjects.GameObjectHandlerManager;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import com.google.common.collect.ImmutableList;
@@ -54,7 +57,7 @@ import java.util.function.Supplier;
                 description = "GroovyScript Integration Module")
 public class GroovyScriptModule extends IntegrationSubmodule {
 
-    private static ModSupport.Container<Container> modSupportContainer;
+    private static GroovyContainer<?> modSupportContainer;
     private static final Map<String, Map<String, ItemStack>> metaItems = new Object2ObjectOpenHashMap<>();
 
     @NotNull
@@ -70,7 +73,8 @@ public class GroovyScriptModule extends IntegrationSubmodule {
 
     @Override
     public void construction(FMLConstructionEvent event) {
-        modSupportContainer = new ModSupport.Container<>(GTValues.MODID, "GregTech", Container::new, "gt");
+        var container = new Container();
+        modSupportContainer = new ExternalModContainer(container, container);
     }
 
     public static boolean isCurrentlyRunning() {
@@ -79,7 +83,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
     }
 
     public static Container getInstance() {
-        return modSupportContainer.get();
+        return (Container) modSupportContainer.get();
     }
 
     public static boolean validateNonNull(Object o, Supplier<String> errorMsg) {
@@ -189,7 +193,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
     /**
      * A GroovyScript mod compat container. This should not be referenced when GrS is not installed!
      */
-    public static class Container extends ModPropertyContainer {
+    public static class Container extends ModPropertyContainer implements IGroovyContainer {
 
         private Container() {}
 
@@ -200,17 +204,48 @@ public class GroovyScriptModule extends IntegrationSubmodule {
 
         @Override
         public void initialize() {
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "recipemap", RecipeMap::getByName);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material",
-                    GregTechAPI.materialManager::getMaterial);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "oreprefix", OrePrefix::getPrefix);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "metaitem", GroovyScriptModule::getMetaItem,
-                    ItemStack.EMPTY);
+            GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "recipemap", (s, args) -> {
+                RecipeMap<?> map = RecipeMap.getByName(s);
+                return map != null ? Result.some(map) : Result.error("Could not find RecipeMap with name " + s);
+            });
+
+            GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "material", (s, args) -> {
+                Material m = GregTechAPI.materialManager.getMaterial(s);
+                return m != null ? Result.some(m) : Result.error("Could not find Material with name " + s);
+            });
+
+            GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "oreprefix", (s, args) -> {
+                OrePrefix prefix = OrePrefix.getPrefix(s);
+                return prefix != null ? Result.some(prefix) : Result.error("Could not find OrePrefix with name " + s);
+            });
+
+            GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "metaitem", (s, args) -> {
+                ItemStack metaItem = getMetaItem(s);
+                return metaItem != null ? Result.some(metaItem) : Result.some(ItemStack.EMPTY);
+            });
 
             ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
             ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
             ExpansionHelper.mixinClass(Material.Builder.class, GroovyMaterialBuilderExpansion.class);
             ExpansionHelper.mixinClass(RecipeBuilder.class, GroovyRecipeBuilderExpansion.class);
         }
+
+        @Override
+        public @NotNull String getModId() {
+            return GTValues.MODID;
+        }
+
+        @Override
+        public @NotNull String getModName() {
+            return "GregTech";
+        }
+
+        @Override
+        public boolean isLoaded() {
+            return true;
+        }
+
+        @Override
+        public void onCompatLoaded(GroovyContainer<?> groovyContainer) {}
     }
 }
