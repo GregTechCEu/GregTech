@@ -1,6 +1,7 @@
 package gregtech.api.fluids;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.FluidUnifier;
@@ -290,8 +291,8 @@ public class FluidBuilder {
             }
         }
 
-        if (fluid instanceof GTFluid gtFluid) {
-            attributes.forEach(gtFluid::addAttribute);
+        if (fluid instanceof AttributedFluid attrFluid) {
+            attributes.forEach(attrFluid::addAttribute);
         } else {
             GTLog.logger
                     .warn("Unable to set Fluid Attributes for Fluid {}, as it is owned by another mod! Skipping...");
