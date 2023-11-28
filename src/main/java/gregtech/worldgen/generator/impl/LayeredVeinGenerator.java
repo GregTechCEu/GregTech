@@ -1,4 +1,4 @@
-package gregtech.worldgen.generator;
+package gregtech.worldgen.generator.impl;
 
 import gregtech.worldgen.PlacementResult;
 import gregtech.worldgen.WorldgenModule;

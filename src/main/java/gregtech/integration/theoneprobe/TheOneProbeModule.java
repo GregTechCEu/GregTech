@@ -44,6 +44,8 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         oneProbe.registerProvider(new LDPipeProvider());
         oneProbe.registerProvider(new LaserContainerInfoProvider());
 
+        oneProbe.registerBlockDisplayOverride(new BlockOreInfoProvider());
+
         // Dev environment debug providers
         oneProbe.registerProvider(new DebugPipeNetInfoProvider());
         oneProbe.registerProvider(new DebugTickTimeProvider());

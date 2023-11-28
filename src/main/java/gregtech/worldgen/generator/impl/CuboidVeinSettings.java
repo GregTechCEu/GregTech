@@ -1,5 +1,7 @@
-package gregtech.worldgen.generator;
+package gregtech.worldgen.generator.impl;
 
+import gregtech.worldgen.generator.ChunkAlignedSettings;
+import gregtech.worldgen.generator.ChunkAlignedWorldGenerator;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class CuboidVeinSettings<T extends ChunkAlignedWorldGenerator> extends GeneratorSettingsBase<T>

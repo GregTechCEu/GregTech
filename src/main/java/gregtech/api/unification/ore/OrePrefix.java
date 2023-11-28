@@ -80,6 +80,8 @@ public class OrePrefix {
     public static final OrePrefix oreEndstone = new OrePrefix("oreEndstone", -1, null, MaterialIconType.ore,
             ENABLE_UNIFICATION, hasOreProperty);
 
+    public static final OrePrefix oreSmall = new OrePrefix("oreSmall", -1, null, MaterialIconType.oreSmall, ENABLE_UNIFICATION, hasOreProperty);
+
     public static final OrePrefix crushedCentrifuged = new OrePrefix("crushedCentrifuged", -1, null,
             MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", -1, null,

@@ -1,5 +1,7 @@
-package gregtech.worldgen.generator;
+package gregtech.worldgen.generator.impl;
 
+import gregtech.worldgen.generator.GeneratorSettings;
+import gregtech.worldgen.generator.WorldGenerator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 

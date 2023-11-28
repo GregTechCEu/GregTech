@@ -1,4 +1,4 @@
-package gregtech.worldgen.generator;
+package gregtech.worldgen.generator.impl;
 
 import gregtech.worldgen.PlacementResult;
 import gregtech.worldgen.WorldgenModule;
@@ -67,6 +67,19 @@ public class MixedVeinGenerator extends CuboidVeinGenerator<MixedVeinSettings, M
     @Override
     protected void placeSmallOres(@NotNull World world, @NotNull Random random, BlockPos.@NotNull MutableBlockPos pos,
                                   int xLeft, int xRight, int zLeft, int zRight, int chunkX, int chunkZ) {
+        int[] densities = settings.densities();
+        WorldgenPlaceable[] placeables = settings.placeables();
 
+        int baseAmount = (xRight - xLeft) * (zRight - zLeft) * WorldgenModule.smallOresMultiplier();
+
+        for (int i = 0; i < densities.length; i++) {
+            int amount = baseAmount * densities[i] / 10;
+            int yBound = i == densities.length - 1 ? 190 : 160;
+            for (int j = 0; j < amount; j++) {
+                if (!placeables[i].hasSmall()) continue;
+                IBlockState state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, yBound);
+                placeSmallOre(world, pos, placeables[i], state);
+            }
+        }
     }
 }

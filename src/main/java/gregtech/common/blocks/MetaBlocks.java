@@ -683,7 +683,9 @@ public class MetaBlocks {
                 if (stoneType == null) continue;
                 ItemStack normalStack = GTUtility.toItem(blockOre.getDefaultState()
                         .withProperty(blockOre.STONE_TYPE, stoneType));
-                OreDictUnifier.registerOre(normalStack, stoneType.processingPrefix, material);
+
+                OrePrefix prefix = blockOre.isSmallOre ? OrePrefix.oreSmall : stoneType.processingPrefix;
+                OreDictUnifier.registerOre(normalStack, prefix, material);
             }
         }
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {

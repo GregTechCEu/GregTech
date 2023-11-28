@@ -34,9 +34,10 @@ public class OreBakedModel implements IBakedModel {
 
     private static final Map<Entry, ModelResourceLocation> ENTRIES = new Object2ObjectOpenHashMap<>();
 
-    public static ModelResourceLocation registerOreEntry(StoneType stoneType, Material material) {
+    public static ModelResourceLocation registerOreEntry(@NotNull StoneType stoneType, @NotNull Material material,
+                                                         boolean isSmallOre) {
         return ENTRIES.computeIfAbsent(
-                new Entry(stoneType, material.getMaterialIconSet(), material.getProperty(PropertyKey.ORE).isEmissive()),
+                new Entry(stoneType, material.getMaterialIconSet(), material.getProperty(PropertyKey.ORE).isEmissive(), isSmallOre),
                 Entry::getModelId);
     }
 
@@ -59,7 +60,7 @@ public class OreBakedModel implements IBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         // a way to guarantee one variant on random models with arbitrary entries.
         // this essentially prevents z-fighting issues as long as the first model defined in weighted baked model
         // does not have any rotation applied.
@@ -83,22 +84,19 @@ public class OreBakedModel implements IBakedModel {
         return false;
     }
 
-    @NotNull
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+    public @NotNull TextureAtlasSprite getParticleTexture() {
         return getBaseModel().getParticleTexture();
     }
 
-    @NotNull
     @Override
-    public ItemOverrideList getOverrides() {
+    public @NotNull ItemOverrideList getOverrides() {
         return ItemOverrideList.NONE;
     }
 
     @SuppressWarnings("deprecation")
-    @NotNull
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+    public @NotNull ItemCameraTransforms getItemCameraTransforms() {
         return getBaseModel().getItemCameraTransforms();
     }
 
@@ -110,7 +108,9 @@ public class OreBakedModel implements IBakedModel {
     @SubscribeEvent
     public static void onTextureStitch(TextureStitchEvent.Pre event) {
         for (Map.Entry<Entry, ModelResourceLocation> e : ENTRIES.entrySet()) {
-            event.getMap().registerSprite(MaterialIconType.ore.getBlockTexturePath(e.getKey().iconSet));
+            Entry entry = e.getKey();
+            MaterialIconType iconType = entry.isSmall ? MaterialIconType.oreSmall : MaterialIconType.ore;
+            event.getMap().registerSprite(iconType.getBlockTexturePath(entry.iconSet));
         }
     }
 
@@ -119,36 +119,39 @@ public class OreBakedModel implements IBakedModel {
         Map<ResourceLocation, IBakedModel> overlayCache = new Object2ObjectOpenHashMap<>();
 
         for (Map.Entry<Entry, ModelResourceLocation> e : ENTRIES.entrySet()) {
-            IBakedModel overlay = overlayCache.computeIfAbsent(
-                    MaterialIconType.ore.getBlockTexturePath(e.getKey().iconSet),
+            Entry entry = e.getKey();
+            MaterialIconType iconType = entry.isSmall ? MaterialIconType.oreSmall : MaterialIconType.ore;
+            IBakedModel overlay = overlayCache.computeIfAbsent(iconType.getBlockTexturePath(entry.iconSet),
                     tex -> new ModelFactory(ModelFactory.ModelTemplate.ORE_OVERLAY)
                             .addSprite("texture", tex)
                             .bake());
-            event.getModelRegistry().putObject(e.getValue(), e.getKey().emissive ?
-                    new EmissiveOreBakedModel(e.getKey().stoneType, overlay) :
-                    new OreBakedModel(e.getKey().stoneType, overlay));
+            event.getModelRegistry().putObject(e.getValue(), entry.emissive ?
+                    new EmissiveOreBakedModel(entry.stoneType, overlay) :
+                    new OreBakedModel(entry.stoneType, overlay));
         }
     }
 
     private static final class Entry {
 
-        private final StoneType stoneType;
-        private final MaterialIconSet iconSet;
-        private final boolean emissive;
+        final StoneType stoneType;
+        final MaterialIconSet iconSet;
+        final boolean emissive;
+        final boolean isSmall;
 
         private final int hash;
 
-        private Entry(StoneType stoneType, MaterialIconSet iconSet, boolean emissive) {
+        private Entry(StoneType stoneType, MaterialIconSet iconSet, boolean emissive, boolean isSmall) {
             this.stoneType = stoneType;
             this.iconSet = iconSet;
             this.emissive = emissive;
+            this.isSmall = isSmall;
 
-            this.hash = Objects.hash(stoneType.name, iconSet.name, emissive);
+            this.hash = Objects.hash(stoneType.name, iconSet.name, emissive, isSmall);
         }
 
         public ModelResourceLocation getModelId() {
-            return new ModelResourceLocation(GTUtility.gregtechId(
-                    "ore_" + this.stoneType.name + "_" + this.iconSet.name + (this.emissive ? "_emissive" : "")), "");
+            return new ModelResourceLocation(GTUtility.gregtechId((this.isSmall ? "ore_small_" : "ore_") +
+                    this.stoneType.name + "_" + this.iconSet.name + (this.emissive ? "_emissive" : "")), "");
         }
 
         @Override
@@ -158,7 +161,8 @@ public class OreBakedModel implements IBakedModel {
             Entry entry = (Entry) o;
             return this.stoneType.name.equals(entry.stoneType.name) &&
                     this.iconSet.name.equals(entry.iconSet.name) &&
-                    this.emissive == entry.emissive;
+                    this.emissive == entry.emissive &&
+                    this.isSmall == entry.isSmall;
         }
 
         @Override

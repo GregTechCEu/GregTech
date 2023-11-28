@@ -1,4 +1,4 @@
-package gregtech.worldgen.generator;
+package gregtech.worldgen.generator.impl;
 
 import gregtech.worldgen.placeable.WorldgenPlaceable;
 import org.jetbrains.annotations.NotNull;

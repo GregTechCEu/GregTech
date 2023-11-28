@@ -8,9 +8,15 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
-import gregtech.worldgen.generator.*;
-import gregtech.worldgen.placeable.BlockStatePlaceable;
-import gregtech.worldgen.placeable.MaterialPlaceable;
+import gregtech.worldgen.generator.ChunkAlignedSettings;
+import gregtech.worldgen.generator.GeneratorRegistry;
+import gregtech.worldgen.generator.SporadicSettings;
+import gregtech.worldgen.generator.impl.LayeredVeinSettings;
+import gregtech.worldgen.generator.impl.MixedVeinSettings;
+import gregtech.worldgen.generator.impl.RandomSmallOresSettings;
+import gregtech.worldgen.generator.impl.StoneBlob;
+import gregtech.worldgen.placeable.impl.BlockStatePlaceable;
+import gregtech.worldgen.placeable.impl.MaterialPlaceable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -41,7 +47,7 @@ public class WorldgenModule extends BaseGregTechModule {
 
     public static final GeneratorRegistry<ChunkAlignedSettings<?>> CHUNK_ALIGNED_REGISTRY = new GeneratorRegistry<>();
     public static final GeneratorRegistry<StoneBlob> STONE_BLOB_REGISTRY = new GeneratorRegistry<>();
-//    public static final GeneratorRegistry<SporadicWorldGenerator> SPORADIC_REGISTRY = new GeneratorRegistry<>();
+    public static final GeneratorRegistry<SporadicSettings<?>> SPORADIC_REGISTRY = new GeneratorRegistry<>();
 
     @Override
     public @NotNull Logger getLogger() {
@@ -103,6 +109,10 @@ public class WorldgenModule extends BaseGregTechModule {
                         new MaterialPlaceable(Materials.Powellite)
                 }, 15)
         );
+
+        SPORADIC_REGISTRY.register(new RandomSmallOresSettings("spor1", 60, 180, 32,
+                new int[]{0}, new String[0],
+                new MaterialPlaceable(Materials.Pyrope)));
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Random;
 public interface SporadicWorldGenerator extends WorldGenerator {
 
     /**
-     * Generate worldgen chunk-aligned.
+     * Generate worldgen sporadically.
      *
      * @param world the world to generate in
      * @param random the random to use

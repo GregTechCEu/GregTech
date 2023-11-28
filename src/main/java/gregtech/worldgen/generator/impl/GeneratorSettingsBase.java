@@ -1,6 +1,8 @@
-package gregtech.worldgen.generator;
+package gregtech.worldgen.generator.impl;
 
 import com.google.common.base.Preconditions;
+import gregtech.worldgen.generator.GeneratorSettings;
+import gregtech.worldgen.generator.WorldGenerator;
 import org.jetbrains.annotations.NotNull;
 
 /**

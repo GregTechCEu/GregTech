@@ -37,6 +37,8 @@ import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
+import gregtech.worldgen.WorldgenModule;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -61,7 +63,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.function.Function;
 
 import static gregtech.common.blocks.MetaBlocks.*;
@@ -172,15 +173,22 @@ public class CommonProxy {
         StoneType[] stoneTypeBuffer = new StoneType[16];
         int generationIndex = 0;
         for (StoneType stoneType : StoneType.STONE_TYPE_REGISTRY) {
-            int id = StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType), index = id / 16;
+            int id = StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType);
+            int index = id / 16;
             if (index > generationIndex) {
-                createOreBlock(material, copyNotNull(stoneTypeBuffer), generationIndex);
+                createOreBlock(material, copyNotNull(stoneTypeBuffer), generationIndex, false);
+                if (WorldgenModule.isSmallOresEnabled()) {
+                    createOreBlock(material, copyNotNull(stoneTypeBuffer), generationIndex, true);
+                }
                 Arrays.fill(stoneTypeBuffer, null);
             }
             stoneTypeBuffer[id % 16] = stoneType;
             generationIndex = index;
         }
-        createOreBlock(material, copyNotNull(stoneTypeBuffer), generationIndex);
+        createOreBlock(material, copyNotNull(stoneTypeBuffer), generationIndex, false);
+        if (WorldgenModule.isSmallOresEnabled()) {
+            createOreBlock(material, copyNotNull(stoneTypeBuffer), generationIndex, true);
+        }
     }
 
     private static <T> T[] copyNotNull(T[] src) {
@@ -188,11 +196,13 @@ public class CommonProxy {
         return Arrays.copyOfRange(src, 0, nullIndex == -1 ? src.length : nullIndex);
     }
 
-    private static void createOreBlock(Material material, StoneType[] stoneTypes, int index) {
-        BlockOre block = new BlockOre(material, stoneTypes);
-        block.setRegistryName("ore_" + material + "_" + index);
+    private static void createOreBlock(Material material, StoneType[] stoneTypes, int index, boolean isSmallOre) {
+        BlockOre block = new BlockOre(material, stoneTypes, isSmallOre);
+        block.setRegistryName((isSmallOre ? "ore_small_" : "ore_") + material + "_" + index);
         for (StoneType stoneType : stoneTypes) {
-            GregTechAPI.oreBlockTable.computeIfAbsent(material, m -> new HashMap<>()).put(stoneType, block);
+            var map = isSmallOre ? GregTechAPI.smallOreBlockTable : GregTechAPI.oreBlockTable;
+            map.computeIfAbsent(material, m -> new Object2ObjectOpenHashMap<>())
+                    .put(stoneType, block);
         }
         ORES.add(block);
     }
@@ -285,7 +295,9 @@ public class CommonProxy {
             registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.frameGt)));
         }
         for (BlockOre block : ORES) {
-            registry.register(createItemBlock(block, OreItemBlock::new));
+            if (!block.isSmallOre) {
+                registry.register(createItemBlock(block, OreItemBlock::new));
+            }
         }
     }
 

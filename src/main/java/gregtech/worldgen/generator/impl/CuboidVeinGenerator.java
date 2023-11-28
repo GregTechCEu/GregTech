@@ -1,7 +1,8 @@
-package gregtech.worldgen.generator;
+package gregtech.worldgen.generator.impl;
 
 import gregtech.worldgen.PlacementResult;
 import gregtech.worldgen.WorldgenModule;
+import gregtech.worldgen.generator.ChunkAlignedWorldGenerator;
 import gregtech.worldgen.placeable.WorldgenPlaceable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;

@@ -2,8 +2,8 @@ package gregtech.worldgen;
 
 import gregtech.api.util.XSTR;
 import gregtech.api.util.math.ChunkPosDimension;
-import gregtech.worldgen.generator.StoneBlob;
-import gregtech.worldgen.generator.StoneBlobGenerator;
+import gregtech.worldgen.generator.impl.StoneBlob;
+import gregtech.worldgen.generator.impl.StoneBlobGenerator;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.world.World;

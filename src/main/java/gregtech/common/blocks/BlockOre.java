@@ -1,9 +1,11 @@
 package gregtech.common.blocks;
 
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTUtility;
@@ -45,14 +47,17 @@ public class BlockOre extends Block implements IBlockOre {
     public final PropertyStoneType STONE_TYPE;
     public final Material material;
 
-    public BlockOre(Material material, StoneType[] allowedValues) {
+    public final boolean isSmallOre;
+
+    public BlockOre(Material material, StoneType[] allowedValues, boolean isSmallOre) {
         super(net.minecraft.block.material.Material.ROCK);
-        setTranslationKey("ore_block");
+        setTranslationKey(isSmallOre ? "ore_block" : "small_ore_block");
         setSoundType(SoundType.STONE);
         setHardness(3.0f);
         setResistance(5.0f);
-        this.material = Objects.requireNonNull(material, "Material in BlockOre can not be null!");
         STONE_TYPE = PropertyStoneType.create("stone_type", allowedValues);
+        this.material = Objects.requireNonNull(material, "Material in BlockOre can not be null!");
+        this.isSmallOre = isSmallOre;
         initBlockState();
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_ORES);
     }
@@ -83,6 +88,10 @@ public class BlockOre extends Block implements IBlockOre {
     @NotNull
     @Override
     public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
+        if (isSmallOre) {
+            return OreDictUnifier.get(OrePrefix.crushed, material).getItem();
+        }
+
         StoneType stoneType = state.getValue(STONE_TYPE);
         // if the stone type should be dropped as an item, or if it is within the first 16 block states
         // don't do any special handling
@@ -99,6 +108,10 @@ public class BlockOre extends Block implements IBlockOre {
 
     @Override
     public int damageDropped(@NotNull IBlockState state) {
+        if (isSmallOre) {
+            return material.getId();
+        }
+
         StoneType stoneType = state.getValue(STONE_TYPE);
         if (stoneType.shouldBeDroppedAsItem) {
             return getMetaFromState(state);
@@ -158,6 +171,9 @@ public class BlockOre extends Block implements IBlockOre {
     @Override
     public ItemStack getPickBlock(@NotNull IBlockState state, @NotNull RayTraceResult target, @NotNull World world,
                                   @NotNull BlockPos pos, @NotNull EntityPlayer player) {
+        if (isSmallOre) {
+            return OreDictUnifier.get(OrePrefix.crushed, material);
+        }
         // Still get correct block even if shouldBeDroppedAsItem is false
         return GTUtility.toItem(state);
     }
@@ -200,10 +216,11 @@ public class BlockOre extends Block implements IBlockOre {
         ModelLoader.setCustomStateMapper(this, b -> b.getBlockState().getValidStates().stream()
                 .collect(Collectors.toMap(
                         s -> s,
-                        s -> OreBakedModel.registerOreEntry(s.getValue(STONE_TYPE), this.material))));
+                        s -> OreBakedModel.registerOreEntry(s.getValue(STONE_TYPE), this.material, this.isSmallOre)
+                )));
         for (IBlockState state : this.getBlockState().getValidStates()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state),
-                    OreBakedModel.registerOreEntry(state.getValue(STONE_TYPE), this.material));
+                    OreBakedModel.registerOreEntry(state.getValue(STONE_TYPE), this.material, this.isSmallOre));
         }
     }
 }

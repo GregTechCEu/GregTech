@@ -1,9 +1,14 @@
 package gregtech.worldgen;
 
+import gregtech.api.util.XSTR;
+import gregtech.worldgen.generator.SporadicSettings;
+import gregtech.worldgen.generator.SporadicWorldGenerator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
 
 import static gregtech.worldgen.WorldgenModule.DEBUG;
 
@@ -58,14 +63,17 @@ public class WorldgenContainer implements Runnable {
      */
     private void sporadic() {
         long start = System.nanoTime();
-//        var list = WorldgenModule.SPORADIC_REGISTRY.getGenerators(dimension);
-//        if (list != null) {
-//            Random random = new XSTR();
-//            for (SporadicWorldGenerator generator : list) {
-//                random.setSeed(this.world.getSeed() * 31L + dimension);
-//                generator.generate(world, random, biome, dimension, chunkX * 16, chunkZ * 16);
-//            }
-//        }
+        var list = WorldgenModule.SPORADIC_REGISTRY.getGenerators(dimension);
+        if (list != null) {
+            // random is shared between all sporadic generators
+            Random random = new XSTR();
+            random.setSeed(this.world.getSeed() * 31L + dimension);
+
+            for (SporadicSettings<?> settings : list) {
+                SporadicWorldGenerator generator = settings.createGenerator();
+                generator.generate(world, random, biome, dimension, chunkX * 16, chunkZ * 16);
+            }
+        }
 
         long end = System.nanoTime();
         if (DEBUG) {

@@ -1,4 +1,4 @@
-package gregtech.worldgen.generator;
+package gregtech.worldgen.generator.impl;
 
 import com.google.common.base.Preconditions;
 import gregtech.worldgen.placeable.WorldgenPlaceable;

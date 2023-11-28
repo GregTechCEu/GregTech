@@ -65,7 +65,8 @@ public class GregTechAPI {
             Integer.MAX_VALUE);
 
     public static BlockMachine MACHINE;
-    public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
+    public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new Object2ObjectOpenHashMap<>();
+    public static final Map<Material, Map<StoneType, IBlockOre>> smallOreBlockTable = new Object2ObjectOpenHashMap<>();
     public static final Object2ObjectMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
     public static final Object2ObjectMap<IBlockState, IBatteryData> PSS_BATTERIES = new Object2ObjectOpenHashMap<>();
 

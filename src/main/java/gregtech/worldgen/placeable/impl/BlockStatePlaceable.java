@@ -1,5 +1,6 @@
-package gregtech.worldgen.placeable;
+package gregtech.worldgen.placeable.impl;
 
+import gregtech.worldgen.placeable.WorldgenPlaceable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
