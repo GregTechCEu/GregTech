@@ -80,6 +80,7 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface {
 
     @Override
     public void update() {
+        super.update();
         if (remote != null && !isRemote() && getOffsetTimer() % 20 == 0) {
             TileEntity te = getWorld().getTileEntity(remote);
             if (te instanceof IGregTechTileEntity igtte &&
