@@ -61,6 +61,13 @@ public final class FluidStorage {
             throw new IllegalStateException("FluidStorage has already been registered");
         }
 
+        // if nothing is queued for registration, we need something for the registry to handle
+        // this will prevent cases of a material having a fluid property but no
+        // fluids actually created for the material.
+        if (toRegister.isEmpty()) {
+            enqueueRegistration(FluidStorageKeys.LIQUID, new FluidBuilder());
+        }
+
         for (var entry : toRegister.entrySet()) {
             Fluid fluid = entry.getValue().build(material.getModid(), material, entry.getKey());
             if (!storeNoOverwrites(entry.getKey(), fluid)) {
