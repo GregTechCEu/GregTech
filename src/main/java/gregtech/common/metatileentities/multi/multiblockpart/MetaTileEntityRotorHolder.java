@@ -2,10 +2,10 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -343,10 +343,10 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
                 getController() != null, hasRotor(), isRotorSpinning, getRotorColor());
     }
 
-    private class InventoryRotorHolder extends GTItemStackHandler {
+    private class InventoryRotorHolder extends NotifiableItemStackHandler {
 
         public InventoryRotorHolder() {
-            super(MetaTileEntityRotorHolder.this, 1);
+            super(MetaTileEntityRotorHolder.this, 1, null, false);
         }
 
         @Override
@@ -360,10 +360,13 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
         }
 
         @Override
-        protected void onContentsChanged(int slot) {
+        public void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             setRotorColor(getRotorColor());
             scheduleRenderUpdate();
+            if (getController() != null){
+                addNotifiableMetaTileEntity(getController());
+            }
         }
 
         @Nullable
