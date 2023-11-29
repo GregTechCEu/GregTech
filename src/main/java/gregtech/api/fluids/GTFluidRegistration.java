@@ -67,12 +67,12 @@ public class GTFluidRegistration {
         Objects.requireNonNull(DEFAULT_FLUID_NAME);
 
         String masterKey = MASTER_FLUID_REFERENCE.inverse().get(fluid);
-        if (masterKey != null && masterKey.split(":")[0].equals(GTValues.MODID)) {
+        if (masterKey != null && masterKey.startsWith(GTValues.MODID + ":")) {
             MASTER_FLUID_REFERENCE.inverse().put(fluid, modid + ':' + fluid.getName());
         }
 
         String defaultName = DEFAULT_FLUID_NAME.get(fluid.getName());
-        if (defaultName.split(":")[0].equals(GTValues.MODID)) {
+        if (defaultName.startsWith(GTValues.MODID + ":")) {
             DEFAULT_FLUID_NAME.put(fluid.getName(), modid + ':' + fluid.getName());
         }
     }
