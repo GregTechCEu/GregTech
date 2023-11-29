@@ -1,6 +1,7 @@
 package gregtech.api.fluids;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.FluidUnifier;
@@ -9,11 +10,14 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
 
 import com.google.common.base.Preconditions;
@@ -271,19 +275,28 @@ public class FluidBuilder {
             throw new IllegalStateException("Could not determine fluid name");
         }
 
-        GTFluid fluid;
-        if (material == null) {
-            fluid = new GTFluid(name, still, flowing, state);
-        } else if (key != null) {
-            if (translationKey == null) {
-                translationKey = key.getTranslationKeyFor(material);
+        Fluid fluid = FluidRegistry.getFluid(name);
+        boolean needsRegistration = false;
+        if (fluid == null) {
+            needsRegistration = true;
+            if (material == null) {
+                fluid = new GTFluid(name, still, flowing, state);
+            } else if (key != null) {
+                if (translationKey == null) {
+                    translationKey = key.getTranslationKeyFor(material);
+                }
+                fluid = new GTFluid.GTMaterialFluid(name, still, flowing, state, translationKey, material);
+            } else {
+                throw new IllegalArgumentException("Fluids with materials must have a FluidStorageKey");
             }
-            fluid = new GTFluid.GTMaterialFluid(name, still, flowing, state, translationKey, material);
-        } else {
-            throw new IllegalArgumentException("Fluids with materials must have a FluidStorageKey");
         }
 
-        attributes.forEach(fluid::addAttribute);
+        if (fluid instanceof AttributedFluid attrFluid) {
+            attributes.forEach(attrFluid::addAttribute);
+        } else {
+            GTLog.logger
+                    .warn("Unable to set Fluid Attributes for Fluid {}, as it is owned by another mod! Skipping...");
+        }
 
         determineTemperature(material);
         fluid.setTemperature(temperature);
@@ -302,26 +315,44 @@ public class FluidBuilder {
         determineViscosity(material);
         fluid.setViscosity(viscosity);
 
-        GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
+        if (needsRegistration) {
+            GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
+        } else if (hasBucket) {
+            // In case it didn't have it before, but now it does
+            FluidRegistry.addBucketForFluid(fluid);
+        }
 
         if (material != null) {
             FluidUnifier.registerFluid(fluid, material);
         }
 
-        FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createGTFluidTooltip(fluid));
+        FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createFluidTooltip(material, fluid, state));
 
         if (hasFluidBlock) {
-            GTFluidBlock block;
-            if (material == null) {
-                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), false);
-                block = new GTFluidBlock(fluid, materialLiquid, false, false, false);
+            if (fluid.getBlock() == null) {
+                GTFluidBlock block;
+                if (material == null) {
+                    MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), false);
+                    block = new GTFluidBlock(fluid, materialLiquid, false, false, false);
+                } else {
+                    MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color),
+                            material.hasFlag(MaterialFlags.STICKY));
+                    block = new GTFluidBlock(fluid, materialLiquid, material);
+                }
+                block.setRegistryName(modid, "fluid." + name);
+                GTFluidRegistration.INSTANCE.registerFluidBlock(block);
+                fluid.setBlock(block);
+            } else if (fluid.getBlock() instanceof BlockFluidBase fluidBlock) {
+                // refresh the necessary fluid block stats to our new ones
+                fluidBlock.setDensity(fluid.getDensity());
+                fluidBlock.setTemperature(fluid.getTemperature());
+                fluidBlock.setMaxScaledLight(fluid.getLuminosity());
+                fluidBlock.setTickRate(fluid.getViscosity() / 200);
             } else {
-                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color),
-                        material.hasFlag(MaterialFlags.STICKY));
-                block = new GTFluidBlock(fluid, materialLiquid, material);
+                GTLog.logger.warn(
+                        "Unable to set custom Fluid Block stats for Fluid {}, Fluid Block owned by other mod with unknown type!",
+                        fluid.getName());
             }
-            block.setRegistryName(modid, "fluid." + name);
-            GTFluidRegistration.INSTANCE.registerFluidBlock(block);
         }
 
         // register cross mod compat for colors
