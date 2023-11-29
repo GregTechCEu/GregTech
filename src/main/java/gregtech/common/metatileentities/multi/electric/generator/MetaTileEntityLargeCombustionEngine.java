@@ -412,5 +412,10 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             isOxygenBoosted = false;
             super.invalidate();
         }
+
+        @Override
+        public long getMaximumOverclockVoltage() {
+            return getMaxVoltage();
+        }
     }
 }

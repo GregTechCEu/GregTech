@@ -128,4 +128,9 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             tanks.add((IFluidHandler) tank);
         }
     }
+
+    @Override
+    public long getMaximumOverclockVoltage() {
+        return getMaxVoltage();
+    }
 }
