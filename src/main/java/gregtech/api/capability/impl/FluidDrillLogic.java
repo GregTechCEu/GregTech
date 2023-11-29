@@ -166,11 +166,11 @@ public class FluidDrillLogic {
     }
 
     public int getChunkX() {
-        return metaTileEntity.getPos().getX() / 16;
+        return Math.floorDiv(metaTileEntity.getPos().getX(), 16);
     }
 
     public int getChunkZ() {
-        return metaTileEntity.getPos().getZ() / 16;
+        return Math.floorDiv(metaTileEntity.getPos().getZ(), 16);
     }
 
     /**
