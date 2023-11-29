@@ -192,7 +192,7 @@ public class MetaItem1 extends StandardMetaItem {
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
                 .addComponents(new FilteredFluidStats(128000,
-                        Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
+                        Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true,
                         false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
@@ -200,7 +200,7 @@ public class MetaItem1 extends StandardMetaItem {
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
                 .addComponents(new FilteredFluidStats(512000,
                         Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
-                        false, false, false, true), new ItemFluidContainer())
+                        true, false, false, true), new ItemFluidContainer())
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))) // ingot * 8
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
