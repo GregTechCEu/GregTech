@@ -12,7 +12,7 @@ public class RandomSmallOresSettings extends GeneratorSettingsBase<RandomSmallOr
     public RandomSmallOresSettings(@NotNull String name, int minY, int maxY, int size,
                                       int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes,
                                       @NotNull WorldgenPlaceable placeable) {
-        super(name, minY, maxY, 1, size, allowedDimensions, allowedBiomes);
+        super(name, minY, maxY, 0, size, allowedDimensions, allowedBiomes);
         Preconditions.checkArgument(placeable.hasSmall(), "hasSmall");
         this.placeable = placeable;
     }

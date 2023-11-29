@@ -140,6 +140,11 @@ public class LayeredVeinGenerator extends CuboidVeinGenerator<LayeredVeinSetting
         }
     }
 
+    @Override
+    protected int calculateIndicatorAmount(@NotNull Random random) {
+        return random.nextInt(2);
+    }
+
     /**
      * Place the top ore
      *

@@ -82,4 +82,9 @@ public class MixedVeinGenerator extends CuboidVeinGenerator<MixedVeinSettings, M
             }
         }
     }
+
+    @Override
+    protected int calculateIndicatorAmount(@NotNull Random random) {
+        return random.nextInt(2);
+    }
 }

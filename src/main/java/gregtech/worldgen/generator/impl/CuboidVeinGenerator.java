@@ -2,9 +2,11 @@ package gregtech.worldgen.generator.impl;
 
 import gregtech.worldgen.PlacementResult;
 import gregtech.worldgen.WorldgenModule;
+import gregtech.worldgen.WorldgenUtil;
 import gregtech.worldgen.generator.ChunkAlignedWorldGenerator;
 import gregtech.worldgen.placeable.WorldgenPlaceable;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -166,6 +168,8 @@ public abstract class CuboidVeinGenerator<T extends CuboidVeinSettings<S>, S ext
             placeSmallOres(world, random, pos, xLeft, xRight, zLeft, zRight, chunkX, chunkZ);
         }
 
+        placeIndicators(world, random, pos, xLeft, xRight, zLeft, zRight, chunkX, chunkZ);
+
         return PlacementResult.PLACED;
     }
 
@@ -195,4 +199,65 @@ public abstract class CuboidVeinGenerator<T extends CuboidVeinSettings<S>, S ext
     protected abstract void placeSmallOres(@NotNull World world, @NotNull Random random,
                                            @NotNull BlockPos.MutableBlockPos pos, int xLeft, int xRight, int zLeft,
                                            int zRight, int chunkX, int chunkZ);
+    /**
+     * Places the indicators around the vein
+     *
+     * @param world  the world containing the pos
+     * @param random the random to use
+     * @param pos    the pos to use
+     * @param xLeft  the x left bound of the vein
+     * @param xRight the x right bound of the vein
+     * @param zLeft  the z left bound of the vein
+     * @param zRight the z right bound of the vein
+     * @param chunkX the chunk x coordinate
+     * @param chunkZ the chunk z coordinate
+     */
+    protected void placeIndicators(@NotNull World world, @NotNull Random random, @NotNull BlockPos.MutableBlockPos pos,
+                                   int xLeft, int xRight, int zLeft, int zRight, int chunkX, int chunkZ) {
+        WorldgenPlaceable indicator = settings.indicator();
+        if (!indicator.hasIndicator()) return;
+
+        int worldHeight = world.getHeight(chunkX, chunkZ);
+        int minY = Math.min(worldHeight - 2, world.getSeaLevel());
+        int maxY = Math.min(worldHeight - 1, world.provider.hasSkyLight() ? minY * 2 + 16 : 80);
+
+        int xLim = xRight - xLeft;
+        int zLim = zRight - zLeft;
+
+        int amount = calculateIndicatorAmount(random);
+        int attempts = 0;
+        while (amount > 0 && attempts < 10) {
+            int x = xLeft + random.nextInt(xLim);
+            int z = zLeft + random.nextInt(zLim);
+            for (int y = maxY; y >= minY; y--) {
+                pos.setPos(x, y, z);
+
+                // check the block to replace with the rock
+                WorldgenUtil.RockPlacementResult result = WorldgenUtil.canSurfaceRockReplace(world, pos, world.getBlockState(pos));
+                if (result == WorldgenUtil.RockPlacementResult.SKIP_COLUMN) {
+                    break;
+                } else if (result == WorldgenUtil.RockPlacementResult.SUCCESS) {
+                    pos.move(EnumFacing.DOWN);
+                    result = WorldgenUtil.canSurfaceRockStay(world, pos, world.getBlockState(pos));
+                    if (result == WorldgenUtil.RockPlacementResult.SKIP_COLUMN) {
+                        break;
+                    } else if (result == WorldgenUtil.RockPlacementResult.SUCCESS) {
+                        pos.move(EnumFacing.UP);
+                        indicator.placeIndicator(world, pos);
+                        amount--;
+                        break;
+                    }
+                }
+            }
+            attempts++;
+        }
+    }
+
+    /**
+     * Calculate how many indicators to place
+     *
+     * @param random the random to use
+     * @return the amount to place
+     */
+    protected abstract int calculateIndicatorAmount(@NotNull Random random);
 }

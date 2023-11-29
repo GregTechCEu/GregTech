@@ -34,4 +34,17 @@ public interface WorldgenPlaceable {
      * @return if the placeable has a small block to place at all
      */
     boolean hasSmall();
+
+    /**
+     * Place in world as an indicator
+     *
+     * @param world    the world to place in
+     * @param pos      the position to place at
+     */
+    void placeIndicator(@NotNull World world, @NotNull BlockPos pos);
+
+    /**
+     * @return if the placeable has an indicator to place at all
+     */
+    boolean hasIndicator();
 }

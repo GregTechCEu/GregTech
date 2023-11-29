@@ -62,38 +62,42 @@ public class WorldgenModule extends BaseGregTechModule {
         STONE_BLOB_REGISTRY.register(new StoneBlob("blob_tiny", 0, 180, 5, 75,
                 new int[]{0}, new String[0],
                 new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
-                        .getState(StoneVariantBlock.StoneType.BASALT))));
+                        .getState(StoneVariantBlock.StoneType.BASALT), true, false, false)));
 
         STONE_BLOB_REGISTRY.register(new StoneBlob("blob_small", 0, 180, 10, 100,
                 new int[]{0}, new String[0],
                 new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
-                        .getState(StoneVariantBlock.StoneType.BASALT))));
+                        .getState(StoneVariantBlock.StoneType.BASALT), true, false, false)));
 
         STONE_BLOB_REGISTRY.register(new StoneBlob("blob_medium", 0, 180, 10, 200,
                 new int[]{0}, new String[0],
                 new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
-                        .getState(StoneVariantBlock.StoneType.BASALT))));
+                        .getState(StoneVariantBlock.StoneType.BASALT), true, false, false)));
 
         STONE_BLOB_REGISTRY.register(new StoneBlob("blob_large", 0, 120, 70, 300,
                 new int[]{0}, new String[0],
                 new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
-                        .getState(StoneVariantBlock.StoneType.BASALT))));
+                        .getState(StoneVariantBlock.StoneType.BASALT), true, false, false)));
 
         STONE_BLOB_REGISTRY.register(new StoneBlob("blob_huge", 0, 120, 150, 400,
                 new int[]{0}, new String[0],
                 new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
-                        .getState(StoneVariantBlock.StoneType.BASALT))));
+                        .getState(StoneVariantBlock.StoneType.BASALT), true, false, false)));
 
-        CHUNK_ALIGNED_REGISTRY.register(new LayeredVeinSettings("test1", 20, 50, 80, 5, 32,
+        CHUNK_ALIGNED_REGISTRY.register(new LayeredVeinSettings("test1", 20, 50, 80, 32,
                 new int[]{0}, new String[0],
+                new MaterialPlaceable(Materials.Diamond),
+                5,
                 new MaterialPlaceable(Materials.Diamond),
                 new MaterialPlaceable(Materials.Gold),
                 new MaterialPlaceable(Materials.Copper),
-                new MaterialPlaceable(Materials.TricalciumPhosphate)
-        ));
+                new MaterialPlaceable(Materials.TricalciumPhosphate))
+        );
 
-        CHUNK_ALIGNED_REGISTRY.register(new LayeredVeinSettings("test2", 40, 70, 20, 2, 24,
+        CHUNK_ALIGNED_REGISTRY.register(new LayeredVeinSettings("test2", 40, 70, 20, 24,
                 new int[]{0}, new String[0],
+                new MaterialPlaceable(Materials.Silver),
+                2,
                 new MaterialPlaceable(Materials.Silver),
                 new MaterialPlaceable(Materials.Redstone),
                 new MaterialPlaceable(Materials.Opal),
@@ -101,7 +105,9 @@ public class WorldgenModule extends BaseGregTechModule {
         ));
 
         CHUNK_ALIGNED_REGISTRY.register(new MixedVeinSettings("test3", 40, 70, 20, 24,
-                new int[]{0}, new String[0], new int[]{1, 1, 5, 3},
+                new int[]{0}, new String[0],
+                new MaterialPlaceable(Materials.Platinum),
+                new int[]{1, 1, 5, 3},
                 new MaterialPlaceable[]{
                         new MaterialPlaceable(Materials.Platinum),
                         new MaterialPlaceable(Materials.Bauxite),

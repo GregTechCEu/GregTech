@@ -17,8 +17,8 @@ public interface ChunkAlignedWorldGenerator extends WorldGenerator {
      * @param dimension the dimension being generated in
      * @param originX the origin chunk X in block coordinates
      * @param originZ the origin chunk Z in block coordinates
-     * @param chunkX the current chunk X in block coordinates
-     * @param chunkZ the current chunk Z in block coordinates
+     * @param chunkX the current chunk X in block coordinates. Not adjusted for cascading.
+     * @param chunkZ the current chunk Z in block coordinates. Not adjusted for cascading.
      * @return the result
      */
     @NotNull PlacementResult generate(@NotNull World world, @NotNull Random random, @NotNull String biome,

@@ -1,9 +1,12 @@
 package gregtech.worldgen.placeable.impl;
 
+import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.worldgen.WorldgenModule;
 import gregtech.worldgen.placeable.WorldgenPlaceable;
 import net.minecraft.block.state.IBlockState;
@@ -22,6 +25,7 @@ public class MaterialPlaceable implements WorldgenPlaceable {
      * @param material the material to place
      */
     public MaterialPlaceable(@NotNull Material material) {
+        Preconditions.checkArgument(material.hasProperty(PropertyKey.ORE), "oreProperty");
         this.material = material;
     }
 
@@ -43,6 +47,17 @@ public class MaterialPlaceable implements WorldgenPlaceable {
     @Override
     public boolean hasSmall() {
         return WorldgenModule.isSmallOresEnabled();
+    }
+
+    @Override
+    public void placeIndicator(@NotNull World world, @NotNull BlockPos pos) {
+        IBlockState state = MetaBlocks.SURFACE_ROCK.get(material).getBlock(material);
+        world.setBlockState(pos, state, 16);
+    }
+
+    @Override
+    public boolean hasIndicator() {
+        return true;
     }
 
     private static void place(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState existing,

@@ -12,11 +12,12 @@ public class LayeredVeinSettings extends CuboidVeinSettings<LayeredVeinGenerator
     private final WorldgenPlaceable bottom;
     private final WorldgenPlaceable spread;
 
-    public LayeredVeinSettings(@NotNull String name, int minY, int maxY, int weight, int density, int size,
+    public LayeredVeinSettings(@NotNull String name, int minY, int maxY, int weight, int size,
                                int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes,
-                               @NotNull WorldgenPlaceable top, @NotNull WorldgenPlaceable middle,
-                               @NotNull WorldgenPlaceable bottom, @NotNull WorldgenPlaceable spread) {
-        super(name, minY, maxY, weight, size, allowedDimensions, allowedBiomes);
+                               @NotNull WorldgenPlaceable indicator, int density, @NotNull WorldgenPlaceable top,
+                               @NotNull WorldgenPlaceable middle, @NotNull WorldgenPlaceable bottom,
+                               @NotNull WorldgenPlaceable spread) {
+        super(name, minY, maxY, weight, size, allowedDimensions, allowedBiomes, indicator);
         this.density = density;
         this.top = top;
         this.middle = middle;

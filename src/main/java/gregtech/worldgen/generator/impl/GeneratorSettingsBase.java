@@ -22,7 +22,8 @@ public abstract class GeneratorSettingsBase<T extends WorldGenerator> implements
     protected final int[] allowedDimensions;
     protected final String[] allowedBiomes;
 
-    protected GeneratorSettingsBase(@NotNull String name, int minY, int maxY, int weight, int size, int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes) {
+    protected GeneratorSettingsBase(@NotNull String name, int minY, int maxY, int weight, int size,
+                                    int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes) {
         this.name = name;
         Preconditions.checkArgument(minY < maxY, "minY < maxY");
         this.minY = minY;
