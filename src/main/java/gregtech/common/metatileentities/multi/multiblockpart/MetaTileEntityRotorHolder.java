@@ -364,7 +364,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
             super.onContentsChanged(slot);
             setRotorColor(getRotorColor());
             scheduleRenderUpdate();
-            if (getController() != null){
+            if (getController() != null) {
                 addNotifiableMetaTileEntity(getController());
             }
         }

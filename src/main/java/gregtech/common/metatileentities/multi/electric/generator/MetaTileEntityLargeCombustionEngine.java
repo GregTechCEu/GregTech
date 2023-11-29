@@ -391,7 +391,6 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
         @Override
         protected boolean canProgressRecipe() {
-
             // drain lubricant and invalidate if it fails
             if (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 72 == 0) {
                 IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
@@ -417,6 +416,5 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
             return super.canProgressRecipe();
         }
-
     }
 }
