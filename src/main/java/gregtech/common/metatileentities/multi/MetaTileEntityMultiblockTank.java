@@ -28,6 +28,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -122,11 +124,13 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(@NotNull EntityPlayer entityPlayer) {
-        if (!isStructureFormed()) {
-            return null;
-        }
+    protected boolean openGUIOnRightClick() {
 
+        return isStructureFormed();
+    }
+
+    @Override
+    protected ModularUI.Builder createUITemplate(@NotNull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
                 .widget(new LabelWidget(6, 6, getMetaFullName()))
                 .widget(new TankWidget(importFluids.getTankAt(0), 52, 18, 72, 61)
@@ -154,5 +158,18 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.tank.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", capacity));
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (isStructureFormed()) {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidInventory);
+            } else {
+                return null;
+            }
+        }
+        return super.getCapability(capability, side);
     }
 }
