@@ -125,7 +125,6 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     @Override
     protected boolean openGUIOnRightClick() {
-
         return isStructureFormed();
     }
 
@@ -162,7 +161,6 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (isStructureFormed()) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidInventory);
