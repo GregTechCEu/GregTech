@@ -122,7 +122,7 @@ public class SecondDegreeMaterials {
                 .toolStats(ToolProperty.Builder.of(9.0F, 7.0F, 2048, 4)
                         .enchantability(14).build())
                 .rotorStats(8.0f, 4.0f, 2560)
-                .fluidPipeProperties(3587, 225, true)
+                .fluidPipeProperties(3587, 225, true, true, false, false)
                 .cableProperties(V[IV], 3, 2)
                 .blast(b -> b
                         .temp(4000, GasTier.MID)

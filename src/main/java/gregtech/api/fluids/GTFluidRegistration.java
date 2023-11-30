@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Objects;
 
 public class GTFluidRegistration {
 
@@ -29,6 +30,8 @@ public class GTFluidRegistration {
     private static final Collection<ResourceLocation> fluidSprites = new ObjectOpenHashSet<>();
 
     private static @Nullable BiMap<String, Fluid> MASTER_FLUID_REFERENCE;
+
+    private static @Nullable BiMap<String, String> DEFAULT_FLUID_NAME;
 
     /**
      * Fixes all registered fluids being under the gregtech modid
@@ -49,7 +52,29 @@ public class GTFluidRegistration {
                 throw new IllegalStateException("Could not reflect the Forge Master Fluid Registry", e);
             }
         }
-        MASTER_FLUID_REFERENCE.inverse().put(fluid, modid + ':' + fluid.getName());
+        Objects.requireNonNull(MASTER_FLUID_REFERENCE);
+
+        if (DEFAULT_FLUID_NAME == null) {
+            try {
+                Field field = FluidRegistry.class.getDeclaredField("defaultFluidName");
+                field.setAccessible(true);
+                // noinspection unchecked
+                DEFAULT_FLUID_NAME = (BiMap<String, String>) field.get(null);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new IllegalStateException("Could not reflect the Forge Default Fluid Name map", e);
+            }
+        }
+        Objects.requireNonNull(DEFAULT_FLUID_NAME);
+
+        String masterKey = MASTER_FLUID_REFERENCE.inverse().get(fluid);
+        if (masterKey != null && masterKey.startsWith(GTValues.MODID + ":")) {
+            MASTER_FLUID_REFERENCE.inverse().put(fluid, modid + ':' + fluid.getName());
+        }
+
+        String defaultName = DEFAULT_FLUID_NAME.get(fluid.getName());
+        if (defaultName.startsWith(GTValues.MODID + ":")) {
+            DEFAULT_FLUID_NAME.put(fluid.getName(), modid + ':' + fluid.getName());
+        }
     }
 
     @ApiStatus.Internal
@@ -77,12 +102,15 @@ public class GTFluidRegistration {
      * @param generateBucket if a universal bucket entry should be generated
      */
     public void registerFluid(@NotNull Fluid fluid, @NotNull String modid, boolean generateBucket) {
-        fluidSprites.add(fluid.getStill());
-        fluidSprites.add(fluid.getFlowing());
-
+        boolean didExist = FluidRegistry.getFluid(fluid.getName()) != null;
         FluidRegistry.registerFluid(fluid);
-        fixFluidRegistryName(fluid, modid);
-
+        if (!didExist) {
+            // If it didn't exist, that means that this is a fresh fluid of our own
+            // creation and not one which is being transformed by a Material.
+            fluidSprites.add(fluid.getStill());
+            fluidSprites.add(fluid.getFlowing());
+            fixFluidRegistryName(fluid, modid);
+        }
         if (generateBucket) {
             FluidRegistry.addBucketForFluid(fluid);
         }

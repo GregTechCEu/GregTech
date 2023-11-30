@@ -833,7 +833,7 @@ public class ElementMaterials {
                 .toolStats(ToolProperty.Builder.of(8.0F, 6.0F, 1536, 3)
                         .enchantability(14).build())
                 .rotorStats(7.0f, 3.0f, 1600)
-                .fluidPipeProperties(2426, 150, true)
+                .fluidPipeProperties(2426, 150, true, true, false, false)
                 .blast(b -> b
                         .temp(1941, GasTier.MID)
                         .blastStats(VA[HV], 1500)
