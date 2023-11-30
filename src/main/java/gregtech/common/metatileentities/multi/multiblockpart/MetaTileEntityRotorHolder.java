@@ -420,7 +420,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
         private void damageRotor(int damageAmount) {
             if (!hasRotor()) return;
 
-            if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <= AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
+            if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <=
+                    AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
                 var holder = getController().getRecipeLogic();
                 if (holder != null && holder.isWorking()) {
                     holder.invalidateInputs();
