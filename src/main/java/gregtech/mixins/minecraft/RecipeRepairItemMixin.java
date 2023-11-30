@@ -29,7 +29,6 @@ public class RecipeRepairItemMixin {
             cancellable = true)
     public void gregtechCEu$matches(InventoryCrafting inv, World worldIn, CallbackInfoReturnable<Boolean> cir,
                                     @Local LocalRef<ItemStack> itemstack, @Local LocalRef<ItemStack> itemstack1) {
-
         if (itemstack.get().getItem() instanceof IGTTool first &&
                 itemstack1.get().getItem() instanceof IGTTool second) {
             if (first.isElectric() || second.isElectric()) {
