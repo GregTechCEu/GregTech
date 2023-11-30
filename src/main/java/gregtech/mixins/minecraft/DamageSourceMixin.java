@@ -1,15 +1,16 @@
 package gregtech.mixins.minecraft;
 
-
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import gregtech.api.damagesources.DamageSourceTool;
 import gregtech.api.items.toolitem.IGTTool;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -33,6 +34,5 @@ public class DamageSourceMixin {
             return new DamageSourceTool("mob", source, String.format("death.attack.%s", tool.getToolId()));
         }
         return new EntityDamageSource("mob", source);
-
     }
 }

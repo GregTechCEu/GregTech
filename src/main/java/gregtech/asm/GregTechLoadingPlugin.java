@@ -6,9 +6,9 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
-import zone.rong.mixinbooter.IEarlyMixinLoader;
 
 import org.jetbrains.annotations.Nullable;
+import zone.rong.mixinbooter.IEarlyMixinLoader;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,12 +3,14 @@ package gregtech.mixins.minecraft;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MusicDiscStats;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
