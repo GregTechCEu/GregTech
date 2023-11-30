@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -418,6 +419,14 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
 
         private void damageRotor(int damageAmount) {
             if (!hasRotor()) return;
+
+            if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <= AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
+                var holder = getController().getRecipeLogic();
+                if (holder != null && holder.isWorking()) {
+                    holder.invalidateInputs();
+                }
+            }
+
             // noinspection ConstantConditions
             getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
         }
