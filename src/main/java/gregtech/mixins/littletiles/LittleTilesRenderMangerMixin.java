@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 // TODO, I am not quite sure if this matches with what the ASM was actually doing
 // TODO, transition to using the direct path method, and remove the dependency on LittleTiles
-@Mixin(TileEntityRenderManager.class)
+@Mixin(value = TileEntityRenderManager.class, remap = false)
 public class LittleTilesRenderMangerMixin {
 
     @Mutable

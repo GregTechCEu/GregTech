@@ -4,7 +4,6 @@ import gregtech.asm.util.ObfMapping;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.AbstractCTMBakedModelVisitor;
 import gregtech.asm.visitors.EnchantmentCanApplyVisitor;
-import gregtech.asm.visitors.EntityRendererVisitor;
 import gregtech.asm.visitors.JEIVisitor;
 import gregtech.asm.visitors.LittleTilesVisitor;
 import gregtech.asm.visitors.ModelCTMVisitor;
@@ -90,13 +89,15 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
              * return classWriter.toByteArray();
              * }
              */
-            case EntityRendererVisitor.TARGET_CLASS_NAME: {
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(new TargetClassVisitor(classWriter, EntityRendererVisitor.TARGET_METHOD,
-                        EntityRendererVisitor::new), 0);
-                return classWriter.toByteArray();
-            }
+            /*
+             * case EntityRendererVisitor.TARGET_CLASS_NAME: {
+             * ClassReader classReader = new ClassReader(basicClass);
+             * ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+             * classReader.accept(new TargetClassVisitor(classWriter, EntityRendererVisitor.TARGET_METHOD,
+             * EntityRendererVisitor::new), 0);
+             * return classWriter.toByteArray();
+             * }
+             */
             /*
              * case BlockVisitor.TARGET_CLASS_NAME: {
              * try {
