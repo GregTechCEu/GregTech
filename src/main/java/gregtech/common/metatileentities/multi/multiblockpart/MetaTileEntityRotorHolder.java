@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
+import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
@@ -30,6 +31,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -40,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
+public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiablePart
                                        implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
 
     static final int SPEED_INCREMENT = 1;
@@ -55,7 +57,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
     private boolean frontFaceFree;
 
     public MetaTileEntityRotorHolder(ResourceLocation metaTileEntityId, int tier) {
-        super(metaTileEntityId, tier);
+        super(metaTileEntityId, tier, false);
         this.inventory = new InventoryRotorHolder();
         this.maxSpeed = 2000 + 1000 * tier;
     }
@@ -63,6 +65,11 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityRotorHolder(metaTileEntityId, getTier());
+    }
+
+    @Override
+    public IItemHandlerModifiable getImportItems() {
+        return this.inventory;
     }
 
     @Override
@@ -365,9 +372,6 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
             super.onContentsChanged(slot);
             setRotorColor(getRotorColor());
             scheduleRenderUpdate();
-            if (getController() != null) {
-                addNotifiableMetaTileEntity(getController());
-            }
         }
 
         @Nullable
@@ -422,9 +426,9 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
 
             if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <=
                     AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
-                var holder = getController().getRecipeLogic();
+                var holder = (MultiblockFuelRecipeLogic) getController().getRecipeLogic();
                 if (holder != null && holder.isWorking()) {
-                    holder.invalidateInputs();
+                    holder.invalidate();
                 }
             }
 
