@@ -1,9 +1,10 @@
 package gregtech.mixins.littletiles;
 
+import gregtech.asm.hooks.LittleTilesHooks;
+
 import com.creativemd.littletiles.client.render.cache.LayeredRenderBoxCache;
 import com.creativemd.littletiles.client.render.world.TileEntityRenderManager;
 import com.creativemd.littletiles.common.tileentity.TileEntityLittleTiles;
-import gregtech.asm.hooks.LittleTilesHooks;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

@@ -2,10 +2,12 @@ package gregtech.mixins.minecraft;
 
 import gregtech.api.GTValues;
 import gregtech.asm.hooks.BlockHooks;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.fml.common.Loader;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

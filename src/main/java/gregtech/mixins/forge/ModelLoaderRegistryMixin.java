@@ -1,8 +1,10 @@
 package gregtech.mixins.forge;
 
 import gregtech.api.unification.material.info.MaterialIconType;
+
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -1,8 +1,10 @@
 package gregtech.mixins.minecraft;
 
 import gregtech.client.utils.BloomEffectUtil;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RegionRenderCacheBuilder;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
