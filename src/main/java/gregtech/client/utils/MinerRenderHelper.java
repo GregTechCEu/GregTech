@@ -5,6 +5,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.model.miningpipe.MiningPipeModel;
 import gregtech.common.entities.MiningPipeEntity;
 import gregtech.common.metatileentities.miner.Miner;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,16 +19,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
+
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 
 public class MinerRenderHelper {
 
     private MinerRenderHelper() {}
 
-    public static final ResourceLocation MINER_AREA_PREVIEW_TEXTURE = GTUtility.gregtechId("textures/fx/miner_area_preview.png");
+    public static final ResourceLocation MINER_AREA_PREVIEW_TEXTURE = GTUtility.gregtechId(
+            "textures/fx/miner_area_preview.png");
 
     private static final long TEXTURE_WRAP_INTERVAL_NANOSECONDS = 3_000_000_000L;
 
@@ -54,7 +57,7 @@ public class MinerRenderHelper {
     }
 
     public static <MTE extends MetaTileEntity & Miner> void renderPipe(double x, double y, double z, float partialTicks,
-                                                                       @Nonnull MiningPipeEntity<MTE> entity) {
+                                                                       @NotNull MiningPipeEntity<MTE> entity) {
         if (entity.getMTE() == null || entity.length <= 0) return;
         updateFrustum();
 
@@ -101,7 +104,7 @@ public class MinerRenderHelper {
      * @param y   Y position; generally {@code cameraY + blockY}
      * @param z   Z position; generally {@code cameraZ + blockZ}
      */
-    public static void renderAreaPreview(@Nonnull AxisAlignedBB box, @Nonnull BlockPos pos,
+    public static void renderAreaPreview(@NotNull AxisAlignedBB box, @NotNull BlockPos pos,
                                          double x, double y, double z) {
         // skull emoji
 
@@ -113,7 +116,8 @@ public class MinerRenderHelper {
         boolean isBoxClippingThroughCamera = isBoxClippingThroughCamera(minX, maxX, minY, maxY, minZ, maxZ);
 
         // texture UVs
-        double texOffset = (System.nanoTime() % TEXTURE_WRAP_INTERVAL_NANOSECONDS) / (double) (TEXTURE_WRAP_INTERVAL_NANOSECONDS);
+        double texOffset =
+                (System.nanoTime() % TEXTURE_WRAP_INTERVAL_NANOSECONDS) / (double) (TEXTURE_WRAP_INTERVAL_NANOSECONDS);
 
         double dx = (box.maxX - box.minX);
         double dy = (box.maxY - Math.max(0, box.minY));
@@ -134,7 +138,8 @@ public class MinerRenderHelper {
         Minecraft.getMinecraft().getTextureManager().bindTexture(MINER_AREA_PREVIEW_TEXTURE);
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
+                DestFactor.ZERO);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();

@@ -4,29 +4,30 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.client.model.miningpipe.MiningPipeModel;
 import gregtech.client.renderer.ICubeRenderer;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface LargeMinerType {
 
-    @Nonnull
+    @NotNull
     TraceabilityPredicate getCasing();
 
-    @Nonnull
+    @NotNull
     TraceabilityPredicate getFrame();
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     ICubeRenderer getFrontOverlay();
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     ICubeRenderer getBaseTexture(@Nullable IMultiblockPart sourcePart);
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     MiningPipeModel getMiningPipeModel();
 }

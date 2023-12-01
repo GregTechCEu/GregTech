@@ -10,18 +10,19 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum LargeMinerTypes implements LargeMinerType {
     STEEL,
     TITANIUM,
     TUNGSTEN_STEEL;
 
-    @Nonnull
+    @NotNull
     public TraceabilityPredicate getCasing() {
         return MultiblockControllerBase.states(switch (this) {
             case STEEL -> MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
@@ -31,7 +32,7 @@ public enum LargeMinerTypes implements LargeMinerType {
         });
     }
 
-    @Nonnull
+    @NotNull
     public TraceabilityPredicate getFrame() {
         return MultiblockControllerBase.frames(switch (this) {
             case STEEL -> Materials.Steel;
@@ -40,7 +41,7 @@ public enum LargeMinerTypes implements LargeMinerType {
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public ICubeRenderer getBaseTexture(@Nullable IMultiblockPart sourcePart) {
@@ -51,7 +52,7 @@ public enum LargeMinerTypes implements LargeMinerType {
         };
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public MiningPipeModel getMiningPipeModel() {
         return switch (this) {
@@ -61,7 +62,7 @@ public enum LargeMinerTypes implements LargeMinerType {
         };
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public ICubeRenderer getFrontOverlay() {

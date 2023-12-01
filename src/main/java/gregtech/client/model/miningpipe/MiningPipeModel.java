@@ -2,13 +2,13 @@ package gregtech.client.model.miningpipe;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface MiningPipeModel {
 
-    @Nonnull
+    @NotNull
     IBakedModel getBaseModel();
 
-    @Nonnull
+    @NotNull
     IBakedModel getBottomModel();
 }

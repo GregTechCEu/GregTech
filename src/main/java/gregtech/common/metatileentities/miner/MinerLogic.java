@@ -5,6 +5,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.BlockUtility;
 import gregtech.common.entities.MiningPipeEntity;
 import gregtech.common.metatileentities.miner.Miner.MinedBlockType;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -16,8 +17,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -73,7 +75,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
      * @throws IllegalArgumentException if {@code workFrequency <= 0}
      * @throws NullPointerException     if {@code mte == null}
      */
-    public MinerLogic(@Nonnull MTE mte, int workFrequency, int maximumDiameter) {
+    public MinerLogic(@NotNull MTE mte, int workFrequency, int maximumDiameter) {
         if (workFrequency <= 0) throw new IllegalArgumentException("workFrequency <= 0");
         this.mte = Objects.requireNonNull(mte, "mte == null");
         this.workDelay = this.workFrequency = workFrequency;
@@ -173,7 +175,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
      * @return origin position of the miner. Block boundary will be centered around this position, and mining pipes will
      * be rendered under this position.
      */
-    @Nonnull
+    @NotNull
     protected BlockPos getOrigin() {
         return mte.getPos();
     }
@@ -188,7 +190,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
      *
      * @return new {@link MiningArea} instance
      */
-    @Nonnull
+    @NotNull
     protected MiningArea createMiningArea() {
         BlockPos origin = getOrigin();
         int radius = this.currentDiameter / 2;
@@ -284,7 +286,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         }
     }
 
-    protected void mine(@Nonnull MiningArea miningArea) {
+    protected void mine(@NotNull MiningArea miningArea) {
         if (this.done || --this.workDelay > 0) return;
         this.workDelay = this.workFrequency;
         if (!this.workingEnabled || !this.mte.canOperate()) return;
@@ -344,7 +346,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         this.workDelay = 1; // re-scan next tick
     }
 
-    @Nonnull
+    @NotNull
     protected IBlockState getOreReplacement() {
         return MinerUtil.getOreReplacement();
     }
@@ -356,7 +358,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         this.mte.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeVarInt(length));
     }
 
-    protected void writePreviewUpdatePacket(@Nonnull PacketBuffer buffer) {
+    protected void writePreviewUpdatePacket(@NotNull PacketBuffer buffer) {
         if (this.preview) {
             MiningArea miningArea = this.miningArea;
             if (miningArea != null) {
@@ -368,20 +370,20 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         buffer.writeBoolean(false);
     }
 
-    protected void readPreviewUpdatePacket(@Nonnull PacketBuffer buffer) {
+    protected void readPreviewUpdatePacket(@NotNull PacketBuffer buffer) {
         this.previewArea = buffer.readBoolean() ? readPreviewArea(buffer) : null;
     }
 
-    @Nonnull
-    protected MiningArea readPreviewArea(@Nonnull PacketBuffer buffer) {
+    @NotNull
+    protected MiningArea readPreviewArea(@NotNull PacketBuffer buffer) {
         return SimpleMiningArea.readPreview(buffer);
     }
 
     /**
      * Write states to NBT. Call this method in {@link MetaTileEntity#writeToNBT(NBTTagCompound)}.
      */
-    @Nonnull
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
+    @NotNull
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
         data.setInteger("currentDiameter", this.currentDiameter);
         if (!this.workingEnabled) data.setBoolean("disabled", true);
         if (this.done) data.setBoolean("done", true);
@@ -398,7 +400,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
     /**
      * Read states from NBT. Call this method in {@link MetaTileEntity#readFromNBT(NBTTagCompound)}.
      */
-    public void readFromNBT(@Nonnull NBTTagCompound data) {
+    public void readFromNBT(@NotNull NBTTagCompound data) {
         this.rebuildMiningArea = false;
 
         if (data.hasKey("xPos", Constants.NBT.TAG_INT)) {
@@ -427,7 +429,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
     /**
      * Write states to packet buffer. Call this method in {@link MetaTileEntity#writeInitialSyncData(PacketBuffer)}.
      */
-    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeVarInt(this.pipeLength);
         buf.writeBoolean(this.workingEnabled);
         buf.writeBoolean(this.done);
@@ -438,7 +440,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
     /**
      * Read states from packet buffer. Call this method in {@link MetaTileEntity#receiveInitialSyncData(PacketBuffer)}.
      */
-    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         this.pipeLength = buf.readVarInt();
         this.workingEnabled = buf.readBoolean();
         this.done = buf.readBoolean();
@@ -447,9 +449,10 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
     }
 
     /**
-     * Callback for handling custom data packet sent by miner logic. Call this method in {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)}.
+     * Callback for handling custom data packet sent by miner logic. Call this method in
+     * {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)}.
      */
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         if (dataId == GregtechDataCodes.PUMP_HEAD_LEVEL) {
             this.pipeLength = buf.readVarInt();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {

@@ -1,13 +1,14 @@
 package gregtech.common.metatileentities.miner;
 
 import gregtech.client.model.miningpipe.MiningPipeModel;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface Miner {
 
@@ -19,7 +20,7 @@ public interface Miner {
      * @param simulate       If {@code true}, this action will not affect the state of the game
      * @return Whether the action was successful
      */
-    boolean drainMiningResources(@Nonnull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate);
+    boolean drainMiningResources(@NotNull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate);
 
     /**
      * Try to collect drops from the block. {@code true} is returned if the block drop is successfully collected;
@@ -31,9 +32,9 @@ public interface Miner {
      * @param state the {@link IBlockState} of the block being mined
      * @return Whether the action was successful
      */
-    boolean collectBlockDrops(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state);
+    boolean collectBlockDrops(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state);
 
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     MiningPipeModel getMiningPipeModel();
 
@@ -48,7 +49,7 @@ public interface Miner {
      * @param isOre    whether it was ore block
      * @param isOrigin whether it was origin (the block mining pipe goes in)
      */
-    default void onMineOperation(@Nonnull BlockPos pos, boolean isOre, boolean isOrigin) {}
+    default void onMineOperation(@NotNull BlockPos pos, boolean isOre, boolean isOrigin) {}
 
     /**
      * Type of the block mined.

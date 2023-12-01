@@ -2,6 +2,7 @@ package gregtech.common.entities;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.common.metatileentities.miner.Miner;
+
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,8 +11,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ITeleporter;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Section of the mining pipe. The pipe should be divided into multiple segments due to a naive algorithm used in AABB
@@ -29,7 +30,7 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
 
     private int prevLength = -1;
 
-    protected MiningPipeEntity(@Nonnull World world, @Nullable MTE mte, @Nonnull BlockPos origin) {
+    protected MiningPipeEntity(@NotNull World world, @Nullable MTE mte, @NotNull BlockPos origin) {
         super(world);
         this.setSize(.5f, 0);
         this.setNoGravity(true);
@@ -42,11 +43,11 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
     }
 
     @SuppressWarnings("unused")
-    public MiningPipeEntity(@Nonnull World world) {
+    public MiningPipeEntity(@NotNull World world) {
         this(world, null, BlockPos.ORIGIN);
     }
 
-    public MiningPipeEntity(@Nonnull MTE mte, @Nonnull BlockPos origin) {
+    public MiningPipeEntity(@NotNull MTE mte, @NotNull BlockPos origin) {
         this(mte.getWorld(), mte, origin.toImmutable());
         this.setPosition(this.origin.getX() + .5, this.origin.getY(), this.origin.getZ() + .5);
     }
@@ -56,7 +57,7 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
         return mte;
     }
 
-    @Nonnull
+    @NotNull
     public BlockPos getOrigin() {
         return origin;
     }
@@ -96,7 +97,7 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public EnumPushReaction getPushReaction() {
         return EnumPushReaction.IGNORE;
@@ -104,7 +105,7 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
 
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBox(@Nonnull Entity entity) {
+    public AxisAlignedBB getCollisionBox(@NotNull Entity entity) {
         return entity.canBePushed() ? entity.getEntityBoundingBox() : null;
     }
 
@@ -115,13 +116,13 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
     }
 
     @Override
-    public Entity changeDimension(int dim, @Nonnull ITeleporter teleporter) {
+    public Entity changeDimension(int dim, @NotNull ITeleporter teleporter) {
         return this;
     }
 
     @Override
-    protected void readEntityFromNBT(@Nonnull NBTTagCompound tag) {}
+    protected void readEntityFromNBT(@NotNull NBTTagCompound tag) {}
 
     @Override
-    protected void writeEntityToNBT(@Nonnull NBTTagCompound tag) {}
+    protected void writeEntityToNBT(@NotNull NBTTagCompound tag) {}
 }

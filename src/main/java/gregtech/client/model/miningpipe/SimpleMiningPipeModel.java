@@ -1,10 +1,9 @@
 package gregtech.client.model.miningpipe;
 
-import com.google.common.base.Suppliers;
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -17,8 +16,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.base.Suppliers;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -31,12 +33,12 @@ public final class SimpleMiningPipeModel implements MiningPipeModel {
         return model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
     });
 
-    @Nonnull
-    public static SimpleMiningPipeModel register(@Nonnull String type) {
+    @NotNull
+    public static SimpleMiningPipeModel register(@NotNull String type) {
         return MINING_PIPE_MODELS.computeIfAbsent(type, SimpleMiningPipeModel::new);
     }
 
-    @Nonnull
+    @NotNull
     public final String type;
 
     @Nullable
@@ -48,17 +50,17 @@ public final class SimpleMiningPipeModel implements MiningPipeModel {
     @Nullable
     private IModel unbakedBottomModel;
 
-    private SimpleMiningPipeModel(@Nonnull String type) {
+    private SimpleMiningPipeModel(@NotNull String type) {
         this.type = type;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IBakedModel getBaseModel() {
         return this.baseModel != null ? this.baseModel : MISSING_MODEL_MEMOIZE.get();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IBakedModel getBottomModel() {
         return this.bottomModel != null ? this.bottomModel : MISSING_MODEL_MEMOIZE.get();
@@ -72,8 +74,10 @@ public final class SimpleMiningPipeModel implements MiningPipeModel {
     @SubscribeEvent
     public static void onTextureStitch(TextureStitchEvent.Pre event) {
         for (SimpleMiningPipeModel miningPipe : MINING_PIPE_MODELS.values()) {
-            miningPipe.unbakedBaseModel = loadModel(event, GTUtility.gregtechId("block/mining_pipe/" + miningPipe.type));
-            miningPipe.unbakedBottomModel = loadModel(event, GTUtility.gregtechId("block/mining_pipe/" + miningPipe.type + "_bottom"));
+            miningPipe.unbakedBaseModel = loadModel(event,
+                    GTUtility.gregtechId("block/mining_pipe/" + miningPipe.type));
+            miningPipe.unbakedBottomModel = loadModel(event,
+                    GTUtility.gregtechId("block/mining_pipe/" + miningPipe.type + "_bottom"));
         }
     }
 

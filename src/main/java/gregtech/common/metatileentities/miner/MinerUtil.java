@@ -8,14 +8,16 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
-import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nonnull;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +51,7 @@ public class MinerUtil {
     private static String oreReplacementConfigCache;
     private static IBlockState oreReplacement;
 
-    @Nonnull
+    @NotNull
     @SuppressWarnings("deprecation")
     public static IBlockState getOreReplacement() {
         String config = ConfigHolder.machines.replaceMinedBlocksWith;
@@ -64,15 +66,20 @@ public class MinerUtil {
         Block block = Block.getBlockFromName(blockName);
 
         if (block == null) {
-            GTLog.logger.error("Invalid configuration on entry 'machines/replaceMinedBlocksWith': Cannot find block with name '{}', using cobblestone as fallback.", blockName);
+            GTLog.logger.error(
+                    "Invalid configuration on entry 'machines/replaceMinedBlocksWith': Cannot find block with name '{}', using cobblestone as fallback.",
+                    blockName);
             return oreReplacement = Blocks.COBBLESTONE.getDefaultState();
         } else if (blockDescription.length <= 2 || blockDescription[2].isEmpty()) {
             return oreReplacement = block.getDefaultState();
         } else {
             try {
-                return oreReplacement = block.getDefaultState().getBlock().getStateFromMeta(Integer.parseInt(blockDescription[2]));
+                return oreReplacement = block.getDefaultState().getBlock()
+                        .getStateFromMeta(Integer.parseInt(blockDescription[2]));
             } catch (NumberFormatException ex) {
-                GTLog.logger.error("Invalid configuration on entry 'machines/replaceMinedBlocksWith': Cannot parse metadata value '{}' as integer, using cobblestone as fallback.", blockDescription[2]);
+                GTLog.logger.error(
+                        "Invalid configuration on entry 'machines/replaceMinedBlocksWith': Cannot parse metadata value '{}' as integer, using cobblestone as fallback.",
+                        blockDescription[2]);
                 return oreReplacement = Blocks.COBBLESTONE.getDefaultState();
             }
         }
@@ -85,8 +92,8 @@ public class MinerUtil {
      * @param drops where the drops are stored to
      * @return amount of items inserted to {@code drops}
      */
-    public static int applyTieredHammerDrops(@Nonnull ItemStack stack, @Nonnull List<ItemStack> drops,
-                                             int energyTier, @Nonnull RecipeMap<?> blockDropRecipeMap,
+    public static int applyTieredHammerDrops(@NotNull ItemStack stack, @NotNull List<ItemStack> drops,
+                                             int energyTier, @NotNull RecipeMap<?> blockDropRecipeMap,
                                              int oreMultiplier) {
         Recipe recipe = blockDropRecipeMap.findRecipe(
                 GTValues.V[energyTier],
@@ -94,7 +101,8 @@ public class MinerUtil {
                 Collections.emptyList());
         if (recipe == null || recipe.getOutputs().isEmpty()) return 0;
         int c = 0;
-        for (ItemStack output : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getEUt()), energyTier, blockDropRecipeMap)) {
+        for (ItemStack output : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getEUt()), energyTier,
+                blockDropRecipeMap)) {
             output = output.copy();
             if (oreMultiplier > 0 && OreDictUnifier.getPrefix(output) == OrePrefix.crushed) {
                 output.grow(output.getCount() * oreMultiplier);

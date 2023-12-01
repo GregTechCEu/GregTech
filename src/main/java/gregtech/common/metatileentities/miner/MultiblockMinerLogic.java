@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
 
@@ -30,13 +30,14 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     // flag for disabling ore replacement (if true, ores will be replaced with air instead of whatever block that was specified in the config)
     private boolean replaceOreWithAir;
 
-    public MultiblockMinerLogic(@Nonnull MetaTileEntityLargeMiner largeMiner, int workFrequency, int maximumChunkDiameter) {
+    public MultiblockMinerLogic(@NotNull MetaTileEntityLargeMiner largeMiner, int workFrequency,
+                                int maximumChunkDiameter) {
         super(largeMiner, workFrequency, maximumChunkDiameter * 16);
         this.currentChunkDiameter = this.maximumChunkDiameter = maximumChunkDiameter;
     }
 
     @Override
-    protected void mine(@Nonnull MiningArea miningArea) {
+    protected void mine(@NotNull MiningArea miningArea) {
         if (this.done && this.repeat) {
             miningArea.reset();
             this.done = false;
@@ -48,13 +49,13 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected IBlockState getOreReplacement() {
         return this.replaceOreWithAir ? Blocks.AIR.getDefaultState() : super.getOreReplacement();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected MiningArea createMiningArea() {
         BlockPos origin = getOrigin();
@@ -80,7 +81,7 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPos getOrigin() {
         return this.mpos.setPos(this.mte.getPos()).move(this.mte.getFrontFacing().getOpposite());
@@ -165,9 +166,9 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         this.mte.markDirty();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
         if (this.chunkMode) data.setBoolean("chunkMode", true);
         if (this.silkTouchMode) data.setBoolean("silkTouch", true);
         data.setInteger("currentChunkDiameter", currentChunkDiameter);
@@ -178,7 +179,7 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound data) {
+    public void readFromNBT(@NotNull NBTTagCompound data) {
         this.chunkMode = data.getBoolean("chunkMode") || data.getBoolean("isChunkMode");
         this.silkTouchMode = data.getBoolean("silkTouch") || data.getBoolean("isSilkTouchMode");
         this.currentChunkDiameter = data.hasKey("currentChunkDiameter", Constants.NBT.TAG_INT) ?

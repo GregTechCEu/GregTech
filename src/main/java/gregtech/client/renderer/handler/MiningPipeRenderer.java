@@ -1,30 +1,31 @@
 package gregtech.client.renderer.handler;
 
-import gregtech.common.entities.MiningPipeEntity;
 import gregtech.client.utils.MinerRenderHelper;
+import gregtech.common.entities.MiningPipeEntity;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MiningPipeRenderer extends Render<MiningPipeEntity<?>> {
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Render<MiningPipeEntity> iHateJavaGenerics(RenderManager manager) {
         return (Render<MiningPipeEntity>) (Render) new MiningPipeRenderer(manager);
     }
 
     public MiningPipeRenderer(RenderManager manager) {
         super(manager);
-
         this.shadowSize = 0;
     }
 
     @Override
-    public void doRender(@Nonnull MiningPipeEntity<?> entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(@NotNull MiningPipeEntity<?> entity, double x, double y, double z, float entityYaw,
+                         float partialTicks) {
         boolean renderOutlines = this.renderOutlines;
         if (renderOutlines) {
             GlStateManager.enableColorMaterial();
@@ -41,7 +42,7 @@ public class MiningPipeRenderer extends Render<MiningPipeEntity<?>> {
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(@Nonnull MiningPipeEntity<?> entity) {
+    protected ResourceLocation getEntityTexture(@NotNull MiningPipeEntity<?> entity) {
         return null;
     }
 }

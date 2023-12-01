@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.miner;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.client.utils.MinerRenderHelper;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -10,8 +11,8 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static gregtech.api.metatileentity.IFastRenderMetaTileEntity.RENDER_PASS_TRANSLUCENT;
 
@@ -32,8 +33,7 @@ public class SimpleMiningArea implements MiningArea {
     /**
      * Index for current block position. This implementation of {@link MiningArea} operates by first mapping each block
      * in given area to non-negative long indices, then processing it by incrementing internal counter starting from 0.
-     * <br/>
-     * The area iterates through X plane first, then Z plane, before moving down one Y block.
+     * <br/> The area iterates through X plane first, then Z plane, before moving down one Y block.
      */
     private long currentBlock;
 
@@ -57,13 +57,14 @@ public class SimpleMiningArea implements MiningArea {
         this.endZ = endZ;
     }
 
-    @Nonnull
-    public static SimpleMiningArea readPreview(@Nonnull PacketBuffer buffer) {
-        return new SimpleMiningArea(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
+    @NotNull
+    public static SimpleMiningArea readPreview(@NotNull PacketBuffer buffer) {
+        return new SimpleMiningArea(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(),
+                buffer.readInt(), buffer.readInt());
     }
 
     @Override
-    public boolean getCurrentBlockPos(@Nonnull MutableBlockPos mpos) {
+    public boolean getCurrentBlockPos(@NotNull MutableBlockPos mpos) {
         long index = this.currentBlock;
         if (index < 0) return false;
         int sizeX = this.endX - this.startX;
@@ -93,35 +94,37 @@ public class SimpleMiningArea implements MiningArea {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderMetaTileEntity(@Nonnull MetaTileEntity mte, double x, double y, double z, float partialTicks) {
+    public void renderMetaTileEntity(@NotNull MetaTileEntity mte, double x, double y, double z, float partialTicks) {
         if (MinecraftForgeClient.getRenderPass() == RENDER_PASS_TRANSLUCENT) {
             MinerRenderHelper.renderAreaPreview(this.getRenderBoundingBox(), mte.getPos(), x, y, z);
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         if (this.boundingBoxCache == null) {
             return this.boundingBoxCache = new AxisAlignedBB(
-                    startX + PREVIEW_OFFSET, endY == Integer.MIN_VALUE ? Double.NEGATIVE_INFINITY : endY + PREVIEW_OFFSET, startZ + PREVIEW_OFFSET,
+                    startX + PREVIEW_OFFSET,
+                    endY == Integer.MIN_VALUE ? Double.NEGATIVE_INFINITY : endY + PREVIEW_OFFSET,
+                    startZ + PREVIEW_OFFSET,
                     endX - PREVIEW_OFFSET, startY + 1 - PREVIEW_OFFSET, endZ - PREVIEW_OFFSET);
         }
         return this.boundingBoxCache;
     }
 
     @Override
-    public void write(@Nonnull NBTTagCompound data) {
+    public void write(@NotNull NBTTagCompound data) {
         data.setLong("i", this.currentBlock);
     }
 
     @Override
-    public void read(@Nonnull NBTTagCompound data) {
+    public void read(@NotNull NBTTagCompound data) {
         this.currentBlock = Math.max(0, data.getLong("i"));
     }
 
     @Override
-    public void writePreviewPacket(@Nonnull PacketBuffer buffer) {
+    public void writePreviewPacket(@NotNull PacketBuffer buffer) {
         buffer.writeInt(startX);
         buffer.writeInt(startY);
         buffer.writeInt(startZ);

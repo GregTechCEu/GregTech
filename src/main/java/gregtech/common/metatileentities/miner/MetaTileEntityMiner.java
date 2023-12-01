@@ -1,16 +1,17 @@
 package gregtech.common.metatileentities.miner;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
@@ -24,6 +25,7 @@ import gregtech.client.model.miningpipe.MiningPipeModel;
 import gregtech.client.model.miningpipe.MiningPipeModels;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,13 +49,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import com.google.common.math.IntMath;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity {
+public class MetaTileEntityMiner extends TieredMetaTileEntity
+        implements Miner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity {
 
     private final ItemStackHandler chargerInventory;
 
@@ -62,7 +70,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
 
     private final MinerLogic<MetaTileEntityMiner> minerLogic;
 
-    public MetaTileEntityMiner(@Nonnull ResourceLocation metaTileEntityId, int tier, int workFrequency, int maximumDiameter) {
+    public MetaTileEntityMiner(@NotNull ResourceLocation metaTileEntityId, int tier, int workFrequency,
+                               int maximumDiameter) {
         super(metaTileEntityId, tier);
         this.inventorySize = (tier + 1) * (tier + 1);
         this.energyPerTick = GTValues.V[tier - 1];
@@ -73,7 +82,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityMiner(metaTileEntityId, getTier(), this.minerLogic.getWorkFrequency(), this.minerLogic.getMaximumDiameter());
+        return new MetaTileEntityMiner(metaTileEntityId, getTier(), this.minerLogic.getWorkFrequency(),
+                this.minerLogic.getMaximumDiameter());
     }
 
     @Override
@@ -85,7 +95,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.MINER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), minerLogic.isActive(), minerLogic.isWorkingEnabled());
+        Textures.MINER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
+                minerLogic.isActive(), minerLogic.isWorkingEnabled());
     }
 
     @Override
@@ -118,7 +129,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     }
 
     @Override
-    protected ModularUI createUI(@Nonnull EntityPlayer entityPlayer) {
+    protected ModularUI createUI(@NotNull EntityPlayer entityPlayer) {
         IItemHandlerModifiable exportItems = this.getExportItems();
         int slots = exportItems.getSlots();
         int columns = IntMath.sqrt(slots, RoundingMode.UP);
@@ -133,15 +144,18 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
                         GuiTextures.BUTTON_MINER_AREA_PREVIEW,
                         this.minerLogic::isPreviewEnabled, this.minerLogic::setPreviewEnabled))
                 .widget(new ClickButtonWidget(161, yStart + 18 + 2, 9, 9,
-                        "", cd -> this.minerLogic.setCurrentDiameter(this.minerLogic.getCurrentDiameter() + (cd.isShiftClick ? 5 : 1)))
+                        "", cd -> this.minerLogic.setCurrentDiameter(
+                        this.minerLogic.getCurrentDiameter() + (cd.isShiftClick ? 5 : 1)))
                         .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS))
                 .widget(new ClickButtonWidget(161, yStart + 18 + 2 + 9, 9, 9,
-                        "", cd -> this.minerLogic.setCurrentDiameter(this.minerLogic.getCurrentDiameter() - (cd.isShiftClick ? 5 : 1)))
+                        "", cd -> this.minerLogic.setCurrentDiameter(
+                        this.minerLogic.getCurrentDiameter() - (cd.isShiftClick ? 5 : 1)))
                         .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS))
                 .widget(new AdvancedTextWidget(159, yStart + 18 + 2 + (18 - 11) / 2, list -> {
                     int currentDiameter = this.minerLogic.getCurrentDiameter();
                     list.add(new TextComponentString(currentDiameter + "x" + currentDiameter));
                 }, 0x404040) {
+
                     @Override
                     protected void onSizeUpdate() { // >:(
                         Size size = this.getSize();
@@ -150,7 +164,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
                 })
                 .widget(new SlotWidget(this.chargerInventory, 0, 79, 62 + yOffset, true, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
-                        .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()], GTValues.VNF[getTier()]));
+                        .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
+                                GTValues.VNF[getTier()]));
 
         for (int i = 0; i < slots; i++) {
             builder.slot(exportItems, i, xStart + 18 * (i % columns), yStart + 18 * (i / columns),
@@ -175,12 +190,16 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", energyPerTick)
-                + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getWorkFrequency() / 20));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+                + TextFormatting.GRAY + ", " +
+                I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getWorkFrequency() / 20));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(),
+                GTValues.VNF[getTier()]));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         int maxArea = minerLogic.getMaximumDiameter();
         tooltip.add(I18n.format("gregtech.universal.tooltip.working_area_max", maxArea, maxArea));
     }
@@ -194,7 +213,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     }
 
     @Override
-    public boolean drainMiningResources(@Nonnull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate) {
+    public boolean drainMiningResources(@NotNull MinedBlockType minedBlockType, boolean pipeExtended,
+                                        boolean simulate) {
         if (minedBlockType == MinedBlockType.NOTHING) return true;
         long resultEnergy = energyContainer.getEnergyStored() - energyPerTick;
         if (resultEnergy < 0 || resultEnergy > energyContainer.getEnergyCapacity()) return false;
@@ -205,7 +225,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     }
 
     @Override
-    public boolean collectBlockDrops(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    public boolean collectBlockDrops(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
         NonNullList<ItemStack> drops = NonNullList.create();
         IItemHandlerModifiable inventory = getExportItems();
         state.getBlock().getDrops(drops, world, pos, state, 0);
@@ -217,7 +237,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public MiningPipeModel getMiningPipeModel() {
@@ -230,7 +250,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
         this.minerLogic.update();
         if (!getWorld().isRemote) {
             ((EnergyContainerHandler) this.energyContainer).dischargeOrRechargeEnergyContainers(chargerInventory, 0);
-
             if (getOffsetTimer() % 5 == 0)
                 pushItemsIntoNearbyHandlers(getFrontFacing());
         }
@@ -251,19 +270,19 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     }
 
     @Override
-    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         this.minerLogic.writeInitialSyncData(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.minerLogic.receiveInitialSyncData(buf);
     }
 
     @Override
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         this.minerLogic.receiveCustomData(dataId, buf);
     }
@@ -302,10 +321,11 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
         return minerLogic.isActive();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         int diameter = minerLogic.getCurrentDiameter();
-        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.miner.working_area", diameter, diameter));
+        return Collections.singletonList(
+                new TextComponentTranslation("gregtech.machine.miner.working_area", diameter, diameter));
     }
 }

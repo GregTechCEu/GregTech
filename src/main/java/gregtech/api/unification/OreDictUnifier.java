@@ -175,8 +175,8 @@ public class OreDictUnifier {
         return getOreDictionaryNames(itemStack.getItem(), itemStack.getItemDamage());
     }
 
-    @Nonnull
-    public static Set<String> getOreDictionaryNames(@Nonnull Item item, int metadata) {
+    @NotNull
+    public static Set<String> getOreDictionaryNames(@NotNull Item item, int metadata) {
         ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(item);
         if (nameEntry == null) return Collections.emptySet();
         Set<String> names = nameEntry.get((short) metadata);
@@ -233,7 +233,7 @@ public class OreDictUnifier {
     }
 
     @Nullable
-    public static MaterialStack getMaterial(@Nonnull Item item, int metadata) {
+    public static MaterialStack getMaterial(@NotNull Item item, int metadata) {
         ItemAndMetadata key = new ItemAndMetadata(item, metadata);
         UnificationEntry entry = getOrWildcard(stackUnificationInfo, key);
         if (entry != null) {
@@ -256,12 +256,12 @@ public class OreDictUnifier {
     }
 
     @Nullable
-    public static OrePrefix getPrefix(@Nonnull ItemStack itemStack) {
+    public static OrePrefix getPrefix(@NotNull ItemStack itemStack) {
         return itemStack.isEmpty() ? null : getPrefix(itemStack.getItem(), itemStack.getItemDamage());
     }
 
     @Nullable
-    public static OrePrefix getPrefix(@Nonnull Item item, int metadata) {
+    public static OrePrefix getPrefix(@NotNull Item item, int metadata) {
         UnificationEntry entry = getOrWildcard(stackUnificationInfo, new ItemAndMetadata(item, metadata));
         return entry != null ? entry.orePrefix : null;
     }
