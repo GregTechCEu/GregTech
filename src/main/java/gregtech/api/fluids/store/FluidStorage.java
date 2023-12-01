@@ -61,10 +61,11 @@ public final class FluidStorage {
             throw new IllegalStateException("FluidStorage has already been registered");
         }
 
-        // if nothing is queued for registration, we need something for the registry to handle
-        // this will prevent cases of a material having a fluid property but no
-        // fluids actually created for the material.
-        if (toRegister.isEmpty()) {
+        // If nothing is queued for registration and nothing is manually stored,
+        // we need something for the registry to handle this will prevent cases
+        // of a material having a fluid property but no fluids actually created
+        // for the material.
+        if (toRegister.isEmpty() && map.isEmpty()) {
             enqueueRegistration(FluidStorageKeys.LIQUID, new FluidBuilder());
         }
 
