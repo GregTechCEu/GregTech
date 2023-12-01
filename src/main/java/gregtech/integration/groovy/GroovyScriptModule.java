@@ -25,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -45,6 +46,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+@Optional.Interface(modid = GTValues.MODID_GROOVYSCRIPT,
+                    iface = "com.cleanroommc.groovyscript.api.GroovyPlugin",
+                    striprefs = true)
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_GRS,
                 containerID = GTValues.MODID,
