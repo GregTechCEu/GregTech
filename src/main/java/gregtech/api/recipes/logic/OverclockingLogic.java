@@ -1,7 +1,5 @@
 package gregtech.api.recipes.logic;
 
-import gregtech.common.ConfigHolder;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class OverclockingLogic {
 
     public static final double STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER = 4.0;
-    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.machines.overclockDivisor;
+    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = 2.0;
     public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
 
     public static final int COIL_EUT_DISCOUNT_TEMPERATURE = 900;
