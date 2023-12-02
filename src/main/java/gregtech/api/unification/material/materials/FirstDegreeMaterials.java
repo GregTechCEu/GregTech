@@ -155,7 +155,7 @@ public class FirstDegreeMaterials {
         Cinnabar = new Material.Builder(268, gregtechId("cinnabar"))
                 .dust(1).ore()
                 .color(0x960000).iconSet(EMERALD)
-                .flags(CRYSTALLIZABLE, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Mercury, 1, Sulfur, 1)
                 .build();
 
