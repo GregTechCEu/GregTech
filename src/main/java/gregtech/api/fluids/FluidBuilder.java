@@ -285,6 +285,14 @@ public class FluidBuilder {
             throw new IllegalStateException("Could not determine fluid name");
         }
 
+        if (state == null) {
+            if (key != null && key.getDefaultFluidState() != null) {
+                state = key.getDefaultFluidState();
+            } else {
+                state = FluidState.LIQUID; // default fallback
+            }
+        }
+
         // try to find an already registered fluid that we can use instead of a new one
         Fluid fluid = FluidRegistry.getFluid(name);
         if (fluid == null && alternativeName != null) {
@@ -309,7 +317,7 @@ public class FluidBuilder {
 
         if (fluid instanceof AttributedFluid attrFluid) {
             attributes.forEach(attrFluid::addAttribute);
-        } else {
+        } else if (!attributes.isEmpty()) {
             GTLog.logger
                     .warn("Unable to set Fluid Attributes for Fluid {}, as it is owned by another mod! Skipping...");
         }
