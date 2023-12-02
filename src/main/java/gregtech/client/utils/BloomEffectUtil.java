@@ -1,5 +1,7 @@
 package gregtech.client.utils;
 
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.client.particle.GTParticle;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.Shaders;
 import gregtech.client.shader.postprocessing.BloomEffect;
@@ -7,14 +9,16 @@ import gregtech.client.shader.postprocessing.BloomType;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,7 +28,6 @@ import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @SideOnly(Side.CLIENT)
 public class BloomEffectUtil {
@@ -52,9 +56,6 @@ public class BloomEffectUtil {
 
     private static BlockRenderLayer bloom;
     private static Framebuffer bloomFBO;
-
-    @Nullable
-    private static World currentWorld = null;
 
     /**
      * @return {@link BlockRenderLayer} instance for the bloom render layer.
@@ -79,8 +80,8 @@ public class BloomEffectUtil {
      * layers can be changed depending on external factors, such as presence of Optifine. If the actual bloom layer is
      * disabled, {@link BlockRenderLayer#CUTOUT} is returned instead.
      *
-     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if
-     *         bloom layer is disabled
+     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if bloom
+     * layer is disabled
      * @see #getEffectiveBloomLayer(BlockRenderLayer)
      */
     @NotNull
@@ -95,7 +96,7 @@ public class BloomEffectUtil {
      *
      * @param fallback Block render layer to be returned when bloom layer is disabled
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
-     *         disabled
+     * disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
     @Contract("null -> _; !null -> !null")
@@ -110,8 +111,8 @@ public class BloomEffectUtil {
      *
      * @param isBloomActive Whether bloom layer should be active. If this value is {@code false}, {@code fallback} layer
      *                      will be returned. Has no effect if Optifine is present.
-     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if
-     *         bloom layer is disabled
+     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if bloom
+     * layer is disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
     @NotNull
@@ -128,7 +129,7 @@ public class BloomEffectUtil {
      *                      will be returned. Has no effect if Optifine is present.
      * @param fallback      Block render layer to be returned when bloom layer is disabled
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
-     *         disabled
+     * disabled
      */
     @Contract("_, null -> _; _, !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive, BlockRenderLayer fallback) {
@@ -145,42 +146,107 @@ public class BloomEffectUtil {
 
     /**
      * <p>
-     * Register a custom bloom render callback for subsequent world render. The render call persists until it is
-     * manually freed by calling {@link BloomRenderTicket#invalidate()}, or automatically freed on client world change.
+     * Register a custom bloom render callback for subsequent world render. The render call persists until the
+     * {@code metaTileEntity} is invalidated, or the ticket is manually freed by calling
+     * {@link BloomRenderTicket#invalidate()}.
      * </p>
      * <p>
-     * This method does nothing if Optifine is present.
+     * This method does not register bloom render ticket when Optifine is present, and {@code null} will be returned
+     * instead of a ticket instance.
+     * </p>
+     *
+     * @param setup          Render setup, if exists
+     * @param bloomType      Type of the bloom
+     * @param render         Rendering callback
+     * @param metaTileEntity Meta tile entity instance
+     * @return Ticket for the registered bloom render callback
+     * @throws NullPointerException if {@code bloomType == null || render == null || metaTileEntity == null}
+     */
+    @Nullable
+    public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
+                                                        @NotNull BloomType bloomType,
+                                                        @NotNull IBloomEffect render,
+                                                        @NotNull MetaTileEntity metaTileEntity) {
+        Objects.requireNonNull(metaTileEntity, "metaTileEntity == null");
+        return registerBloomRender(setup, bloomType, render, t -> metaTileEntity.isValid());
+    }
+
+    /**
+     * <p>
+     * Register a custom bloom render callback for subsequent world render. The render call persists until the
+     * {@code particle} is invalidated, or the ticket is manually freed by calling
+     * {@link BloomRenderTicket#invalidate()}.
+     * </p>
+     * <p>
+     * This method does not register bloom render ticket when Optifine is present, and {@code null} will be returned
+     * instead of a ticket instance.
      * </p>
      *
      * @param setup     Render setup, if exists
      * @param bloomType Type of the bloom
      * @param render    Rendering callback
+     * @param particle  Particle instance
+     * @return Ticket for the registered bloom render callback
+     * @throws NullPointerException if {@code bloomType == null || render == null || metaTileEntity == null}
+     */
+    @Nullable
+    public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
+                                                        @NotNull BloomType bloomType,
+                                                        @NotNull IBloomEffect render,
+                                                        @NotNull GTParticle particle) {
+        Objects.requireNonNull(particle, "particle == null");
+        return registerBloomRender(setup, bloomType, render, t -> particle.isAlive());
+    }
+
+    /**
+     * <p>
+     * Register a custom bloom render callback for subsequent world render. The render call persists until it is
+     * manually freed by calling {@link BloomRenderTicket#invalidate()}, or invalidated by validity checker.
+     * </p>
+     * <p>
+     * This method does not register bloom render ticket when Optifine is present, and {@code null} will be returned
+     * instead of a ticket instance.
+     * </p>
+     *
+     * @param setup           Render setup, if exists
+     * @param bloomType       Type of the bloom
+     * @param render          Rendering callback
+     * @param validityChecker Optional validity checker; returning {@code false} causes the ticket to be invalidated.
+     *                        Checked on both pre/post render each frame.
      * @return Ticket for the registered bloom render callback
      * @throws NullPointerException if {@code bloomType == null || render == null}
      */
-    @NotNull
-    @CheckReturnValue
+    @Nullable
     public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
                                                         @NotNull BloomType bloomType,
-                                                        @NotNull IBloomEffect render) {
-        BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render);
-        if (Shaders.isOptiFineShaderPackLoaded()) {
-            ticket.invalidate();
-        } else {
-            SCHEDULED_BLOOM_RENDERS.add(ticket);
-        }
+                                                        @NotNull IBloomEffect render,
+                                                        @Nullable Predicate<BloomRenderTicket> validityChecker) {
+        if (Shaders.isOptiFineShaderPackLoaded()) return null;
+        BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render, validityChecker);
+        SCHEDULED_BLOOM_RENDERS.add(ticket);
         return ticket;
     }
 
     /**
-     * @deprecated use ticket-based bloom render hook
-     *             {@link #registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}
+     * @deprecated use ticket-based bloom render hooks
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static void requestCustomBloom(IBloomRenderFast handler, Consumer<BufferBuilder> render) {
         BloomType bloomType = BloomType.fromValue(handler.customBloomStyle());
-        registerBloomRender(handler, bloomType, (b, c) -> render.accept(b)).legacy = true;
+        var validityChecker = new Predicate<BloomRenderTicket>() {
+
+            boolean invalid;
+
+            @Override
+            public boolean test(BloomRenderTicket bloomRenderTicket) {
+                return !invalid;
+            }
+        };
+        registerBloomRender(handler, bloomType, (b, c) -> {
+            render.accept(b);
+            validityChecker.invalid = true;
+        }, validityChecker);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -375,12 +441,22 @@ public class BloomEffectUtil {
         return result;
     }
 
+    private static void preDraw() {
+        for (BloomRenderTicket ticket : SCHEDULED_BLOOM_RENDERS) {
+            if (!ticket.isValid()) continue;
+            BLOOM_RENDERS.computeIfAbsent(new BloomRenderKey(ticket.renderSetup, ticket.bloomType),
+                    k -> new ArrayList<>()).add(ticket);
+        }
+        SCHEDULED_BLOOM_RENDERS.clear();
+    }
+
     private static void draw(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context,
                              @NotNull List<BloomRenderTicket> tickets) {
         boolean initialized = false;
         @Nullable
         IRenderSetup renderSetup = null;
         for (BloomRenderTicket ticket : tickets) {
+            ticket.checkValidity();
             if (!ticket.isValid() || !ticket.render.shouldRenderBloomEffect(context)) continue;
             if (!initialized) {
                 initialized = true;
@@ -390,45 +466,21 @@ public class BloomEffectUtil {
                 }
             }
             ticket.render.renderBloomEffect(buffer, context);
-            if (ticket.legacy) ticket.invalidate();
         }
         if (initialized && renderSetup != null) {
             renderSetup.postDraw(buffer);
         }
     }
 
-    private static void preDraw() {
-        WorldClient world = Minecraft.getMinecraft().world;
-        if (currentWorld != world) {
-            for (List<BloomRenderTicket> list : BLOOM_RENDERS.values()) {
-                for (BloomRenderTicket ticket : list) {
-                    ticket.invalidate();
-                }
-            }
-            BLOOM_RENDERS.clear();
-            if (currentWorld != null) {
-                for (BloomRenderTicket ticket : SCHEDULED_BLOOM_RENDERS) {
-                    ticket.invalidate();
-                }
-                SCHEDULED_BLOOM_RENDERS.clear();
-            }
-            currentWorld = world;
-        }
-
-        for (BloomRenderTicket ticket : SCHEDULED_BLOOM_RENDERS) {
-            if (!ticket.isValid()) continue;
-            BLOOM_RENDERS.computeIfAbsent(new BloomRenderKey(ticket.renderSetup, ticket.bloomType),
-                    k -> new ArrayList<>()).add(ticket);
-        }
-        SCHEDULED_BLOOM_RENDERS.clear();
-    }
-
     private static void postDraw() {
-        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext();) {
+        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext(); ) {
             List<BloomRenderTicket> list = it.next();
 
             if (!list.isEmpty()) {
-                if (!list.removeIf(ticket -> !ticket.isValid()) || !list.isEmpty()) continue;
+                if (!list.removeIf(ticket -> {
+                    ticket.checkValidity();
+                    return !ticket.isValid();
+                }) || !list.isEmpty()) continue;
             }
 
             it.remove();
@@ -444,19 +496,17 @@ public class BloomEffectUtil {
         private final IRenderSetup renderSetup;
         private final BloomType bloomType;
         private final IBloomEffect render;
+        @Nullable
+        private final Predicate<BloomRenderTicket> validityChecker;
 
-        private boolean valid = true;
-        /**
-         * Used to mark bloom tickets made by legacy API; this ticket will be automatically expired after 1 render call.
-         * Remove this method in 2.9 as well as the deprecated method.
-         */
-        private boolean legacy;
+        private boolean invalidated;
 
         BloomRenderTicket(@Nullable IRenderSetup renderSetup, @NotNull BloomType bloomType,
-                          @NotNull IBloomEffect render) {
+                          @NotNull IBloomEffect render, @Nullable Predicate<BloomRenderTicket> validityChecker) {
             this.renderSetup = renderSetup;
             this.bloomType = Objects.requireNonNull(bloomType, "bloomType == null");
             this.render = Objects.requireNonNull(render, "render == null");
+            this.validityChecker = validityChecker;
         }
 
         @Nullable
@@ -470,17 +520,22 @@ public class BloomEffectUtil {
         }
 
         public boolean isValid() {
-            return this.valid;
+            return !this.invalidated;
         }
 
         public void invalidate() {
-            this.valid = false;
+            this.invalidated = true;
+        }
+
+        private void checkValidity() {
+            if (!this.invalidated && this.validityChecker != null && !this.validityChecker.test(this)) {
+                invalidate();
+            }
         }
     }
 
     /**
-     * @deprecated use ticket-based bloom render hook
-     *             {@link #registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}
+     * @deprecated use ticket-based bloom render hooks
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
@@ -490,12 +545,12 @@ public class BloomEffectUtil {
          * Custom Bloom Style.
          *
          * @return 0 - Simple Gaussian Blur Bloom
-         *         <p>
-         *         1 - Unity Bloom
-         *         </p>
-         *         <p>
-         *         2 - Unreal Bloom
-         *         </p>
+         * <p>
+         * 1 - Unity Bloom
+         * </p>
+         * <p>
+         * 2 - Unreal Bloom
+         * </p>
          */
         int customBloomStyle();
     }
