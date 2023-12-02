@@ -62,7 +62,6 @@ gregtech.top.working_disabled=停止中
 
 gregtech.top.energy_consumption=使用量:
 gregtech.top.energy_production=発電量:
-gregtech.top.of=の
 
 gregtech.top.transform_up=昇圧
 gregtech.top.transform_down=降圧
@@ -1337,7 +1336,6 @@ cover.advanced_energy_detector.label=発展型エネルギー検出器
 cover.advanced_energy_detector.min=最小
 cover.advanced_energy_detector.max=最大
 cover.advanced_energy_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、信号は最小EUを下回った時に出力され、最大EUを上回った時に信号出力が停止します。
-cover.advanced_energy_detector.invert_label=反転:
 cover.advanced_energy_detector.normal=しない
 cover.advanced_energy_detector.inverted=する
 cover.advanced_energy_detector.modes_tooltip=装置の蓄電量に対する最大/最小の比較を、EU値を数値で直接指定するまたは最大蓄電量に対する割合を使用するかどうかを切り替える。
@@ -1346,7 +1344,6 @@ cover.advanced_energy_detector.mode_eu=数値
 cover.advanced_energy_detector.mode_percent=割合
 
 cover.advanced_fluid_detector.label=発展型液体検出器
-cover.advanced_fluid_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小液体量を下回った時に信号が停止し、最大液体量を上回った時に信号が出力されます。
 cover.advanced_fluid_detector.max=最大液体量:
 cover.advanced_fluid_detector.min=最小液体量:
 cover.advanced_item_detector.label=発展型アイテム検出器
@@ -4302,6 +4299,7 @@ gregtech.machine.quantum_chest.items_stored=アイテム量:
 
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=大量の液体を保管するコンパクトな空間
+gregtech.machine.quantum_tank.tooltip.voiding_enabled=超過分の廃棄が§a有効
 gregtech.machine.super_tank.lv.name=スーパータンク I
 gregtech.machine.super_tank.mv.name=スーパータンク II
 gregtech.machine.super_tank.hv.name=スーパータンク III
@@ -4846,7 +4844,7 @@ gregtech.machine.high_performance_computing_array.name=高機能計算アレイ 
 gregtech.machine.high_performance_computing_array.tooltip.1=ごくごく一般的なスーパーコンピュータ
 gregtech.machine.high_performance_computing_array.tooltip.2=§f計算力§7 (と熱) を産み出すのに使われる。
 gregtech.machine.high_performance_computing_array.tooltip.3=§fCWU/t§7 (Compute Work Units) を産み出すためにはHPCAコンポーネントが必要。
-gregtech.multiblock.high_performance_computing_array.description高機能計算アレイ (HPCA) はより複雑なアセンブリライン用データに必要なCompute Work Units (CWU/t) を生産するマルチブロックです。このマルチブロックには任意のHPCAコンポーネントで構成される可変長の3x3のエリアがあります。組み込むコンポーネントによって供給できる計算力、冷却力、発熱量及びHPCAのエネルギー使用量が異なります。ブリッジコンポーネントを組み込んだ場合、HPCAはネットワークスイッチに接続し、複数の供給元から1つまたは複数の宛先への計算の統合と分配を行うことができます。
+gregtech.multiblock.high_performance_computing_array.description=高機能計算アレイ (HPCA) はより複雑なアセンブリライン用データに必要なCompute Work Units (CWU/t) を生産するマルチブロックです。このマルチブロックには任意のHPCAコンポーネントで構成される可変長の3x3のエリアがあります。組み込むコンポーネントによって供給できる計算力、冷却力、発熱量及びHPCAのエネルギー使用量が異なります。ブリッジコンポーネントを組み込んだ場合、HPCAはネットワークスイッチに接続し、複数の供給元から1つまたは複数の宛先への計算の統合と分配を行うことができます。
 
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
