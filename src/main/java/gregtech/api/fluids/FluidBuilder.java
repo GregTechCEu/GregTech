@@ -381,7 +381,8 @@ public class FluidBuilder {
 
         // register cross mod compat for colors
         if (Loader.isModLoaded(GTValues.MODID_TOP_ADDONS)) {
-            Colors.FLUID_NAME_COLOR_MAP.put(name, color);
+            int displayColor = isColorEnabled || material == null ? color : material.getMaterialRGB();
+            Colors.FLUID_NAME_COLOR_MAP.put(name, displayColor);
         }
 
         return fluid;
