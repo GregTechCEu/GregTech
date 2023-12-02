@@ -48,7 +48,7 @@ public class UnknownCompositionMaterials {
                 .flags(STICKY).build();
 
         Diesel = new Material.Builder(1508, gregtechId("diesel"))
-                .liquid(new FluidBuilder().customStill())
+                .liquid(new FluidBuilder().customStill().alternativeName("fuel"))
                 .color(0xFCF404)
                 .flags(FLAMMABLE, EXPLOSIVE).build();
 
@@ -72,7 +72,7 @@ public class UnknownCompositionMaterials {
                 .color(0x0E2950).build();
 
         SeedOil = new Material.Builder(1514, gregtechId("seed_oil"))
-                .liquid(new FluidBuilder().customStill())
+                .liquid(new FluidBuilder().customStill().alternativeName("seed.oil"))
                 .color(0xE4FC8C)
                 .flags(STICKY, FLAMMABLE).build();
 
