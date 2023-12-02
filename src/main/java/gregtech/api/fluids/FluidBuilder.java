@@ -44,7 +44,7 @@ public class FluidBuilder {
 
     private final Collection<FluidAttribute> attributes = new ArrayList<>();
 
-    private FluidState state = FluidState.LIQUID;
+    private FluidState state = null;
     private int temperature = INFER_TEMPERATURE;
     private int color = INFER_COLOR;
     private boolean isColorEnabled = true;
