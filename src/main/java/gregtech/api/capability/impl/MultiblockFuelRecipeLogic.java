@@ -155,4 +155,9 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         FluidStack fuelStack = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
         return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
     }
+
+    @Override
+    public boolean isAllowOverclocking() {
+        return false;
+    }
 }
