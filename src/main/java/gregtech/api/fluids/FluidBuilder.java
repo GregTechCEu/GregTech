@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static gregtech.api.fluids.FluidConstants.*;
 
@@ -59,6 +60,7 @@ public class FluidBuilder {
 
     private boolean hasFluidBlock = false;
     private boolean hasBucket = true;
+    private String alternativeName = null;
 
     public FluidBuilder() {}
 
@@ -214,6 +216,15 @@ public class FluidBuilder {
     }
 
     /**
+     * @param name Alternative registry name for this fluid to look for
+     * @return this
+     */
+    public @NotNull FluidBuilder alternativeName(@NotNull String name) {
+        this.alternativeName = name;
+        return this;
+    }
+
+    /**
      * Mark this fluid as having a custom still texture
      * 
      * @return this
@@ -275,7 +286,13 @@ public class FluidBuilder {
             throw new IllegalStateException("Could not determine fluid name");
         }
 
+        // try to find an already registered fluid that we can use instead of a new one
         Fluid fluid = FluidRegistry.getFluid(name);
+        if (fluid == null && alternativeName != null) {
+            // try to use alternative fluid name if needed
+            fluid = FluidRegistry.getFluid(alternativeName);
+        }
+
         boolean needsRegistration = false;
         if (fluid == null) {
             needsRegistration = true;

@@ -392,7 +392,7 @@ public class OrganicChemistryMaterials {
         // FREE ID 1053
 
         Ethanol = new Material.Builder(1054, gregtechId("ethanol"))
-                .liquid(new FluidBuilder().customStill())
+                .liquid(new FluidBuilder().customStill().alternativeName("bio.ethanol"))
                 .color(0xFC4C04)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1)
