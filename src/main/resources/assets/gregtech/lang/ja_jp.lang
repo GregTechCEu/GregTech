@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.7.4 - beta
-# 対応バージョン: 2.7.4 - beta
+# Corresponding Version: 2.8.1 - beta
+# 対応バージョン: 2.8.1 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -47,7 +47,7 @@ enchantment.disjunction=ディスジャンクション
 gregtech.machine.steam_grinder.name=蒸気式破砕機
 gregtech.multiblock.steam_grinder.description=蒸気時代のマルチブロック式粉砕機。ブロンズ製外装が最低14個必要。/n通常のハッチ/バスは使えず、専用の蒸気用のものが必要。
 gregtech.multiblock.steam.low_steam=蒸気不足!
-gregtech.multiblock.steam.steam_stored=蒸気: %s / %s mb
+gregtech.multiblock.steam.steam_stored=蒸気: %s
 gregtech.machine.steam_hatch.name=蒸気用ハッチ
 gregtech.machine.steam.steam_hatch.tooltip=受入液体: §f蒸気
 gregtech.machine.steam_import_bus.name=蒸気用搬入バス
@@ -62,12 +62,13 @@ gregtech.top.working_disabled=停止中
 
 gregtech.top.energy_consumption=使用量:
 gregtech.top.energy_production=発電量:
-gregtech.top.of=の
 
 gregtech.top.transform_up=昇圧
 gregtech.top.transform_down=降圧
 gregtech.top.transform_input=入力:
 gregtech.top.transform_output=出力:
+gregtech.top.steam_heating_up=加熱中
+gregtech.top.steam_no_water=水がない
 
 gregtech.top.convert_eu=§eEU§rを§cFE§rに変換中
 gregtech.top.convert_fe=§cFE§rを§eEU§rに変換中
@@ -132,8 +133,7 @@ gregtech.multiblock.assembly_line.description=アセンブリラインは5から
 gregtech.multiblock.fusion_reactor.luv.description=核融合炉Mark 1は、元素をより重い元素に融合するために使われる大型マルチブロック機械です。核融合炉Mark 1は、LuVやZPMまたはUVエネルギーハッチを使用できます。ハッチごとに、バッファが1,000万EUずつ増加します。最大開始エネルギーは160,000,000 EUです。
 gregtech.multiblock.fusion_reactor.zpm.description=核融合炉Mark 2は、元素をより重い元素に融合するために使われる大型マルチブロック機械です。核融合炉Mark 2は、ZPMまたはUVエネルギーハッチを使用できます。ハッチごとに、バッファが2,000万EUずつ増加します。最大開始エネルギーは320,000,000 EUです。
 gregtech.multiblock.fusion_reactor.uv.description=核融合炉Mark 3は、元素をより重い元素に融合するために使われる大型マルチブロック機械です。核融合炉Mark 3はUVエネルギーハッチのみを使用できます。ハッチごとに、バッファが4,000万EUずつ増加します。最大開始エネルギーは640,000,000 EUです。
-gregtech.multiblock.fusion_reactor.energy=EU: %d / %d
-gregtech.multiblock.fusion_reactor.heat=熱: %d
+gregtech.multiblock.fusion_reactor.heat=熱: %s
 gregtech.multiblock.large_chemical_reactor.description=大型化学反応炉は化学反応を100%%のエネルギー効率で実現します。オーバークロックは速度とエネルギーの両方を4倍にします。マルチブロックには丁度1つのキュプロニッケルコイルブロックを中央にあるPTFEパイプ外装に隣接して配置する必要があります。
 gregtech.multiblock.primitive_water_pump.description=初歩的な揚水ポンプは蒸気時代以前のマルチブロックであり、1秒に1回バイオームに応じた水量を収集します。ポンプ、ULV、またはLV出力ハッチを使用することにより、バイオーム係数*ハッチ係数に従ってティアごとの水の量を増やすことができます。
 gregtech.multiblock.primitive_water_pump.extra1=バイオーム係数:/n  海、川: 1000 L/s/n  湿地: 800 L/s/n  ジャングル: 350 L/s/n  雪原: 300 L/s/n  草原、森林: 250 L/s/n  タイガ: 175 L/s/n  海岸: 170 L/s/n  他: 100 L/s
@@ -801,9 +801,16 @@ metaitem.neutron_reflector.name=イリジウム製中性子反射板
 metaitem.neutron_reflector.tooltip=破壊不能
 metaitem.duct_tape.name=ブレインテック航空宇宙発展強化ダクトテープ FAL-84
 metaitem.duct_tape.tooltip=これでも直せない? もっと使おう!
+metaitem.basic_tape.name=テープ
+metaitem.basic_tape.tooltip=修理に使えるほどの強度はない
 
 metaitem.component.grinder.diamond.name=ダイヤモンド製研削ヘッド
 metaitem.component.grinder.tungsten.name=タングステン製研削ヘッド
+
+metaitem.minecart_wheels.iron.name=鉄製のトロッコ用車輪
+metaitem.minecart_wheels.iron.tooltip=物事を進めるために
+metaitem.minecart_wheels.steel.name=スチール製のトロッコ用車輪
+metaitem.minecart_wheels.steel.tooltip=物事を進めるために
 
 metaitem.quantumeye.name=クアンタムアイ
 metaitem.quantumeye.tooltip=改善したエンダーアイ
@@ -830,11 +837,11 @@ metaitem.cover.activity.detector_advanced.tooltip=レッドストーン信号と
 metaitem.cover.fluid.detector.name=液体検出器
 metaitem.cover.fluid.detector.tooltip=レッドストーン信号として§f液量§7を検出する§fカバー§7
 metaitem.cover.fluid.detector.advanced.name=発展型液体検出器
-metaitem.cover.fluid.detector.advanced.tooltip=§fSRラッチ§7で制御された§f液体保管量§7をレッドストーン信号として与える§fカバー§7
+metaitem.cover.fluid.detector.advanced.tooltip=§f液体保管量§7をレッドストーン信号として与える§fカバー§7。§fSRラッチ制御§7のオプション付き。
 metaitem.cover.item.detector.name=アイテム検出器
 metaitem.cover.item.detector.tooltip=レッドストーン信号として§fアイテム量§7を検出する§fカバー§7
 metaitem.cover.item.detector.advanced.name=発展型アイテム検出器
-metaitem.cover.item.detector.advanced.tooltip=§fSRラッチ§7で制御された§fアイテム保管量§7をレッドストーン信号として与える§fカバー§7
+metaitem.cover.item.detector.advanced.tooltip=§fアイテム保管量§7をレッドストーン信号として与える§fカバー§7。§fSRラッチ制御§7のオプション付き。
 metaitem.cover.energy.detector.name=エネルギー検出器
 metaitem.cover.energy.detector.tooltip=レッドストーン信号として§fエネルギー量§7を検出する§fカバー§7
 metaitem.cover.energy.detector.advanced.name=発展型エネルギー検出器
@@ -1173,7 +1180,7 @@ cover.filter.blacklist.disabled=ホワイトリスト
 cover.filter.blacklist.enabled=ブラックリスト
 
 cover.ore_dictionary_filter.title=鉱石辞書フィルター
-cover.ore_dictionary_filter.info=§b論理式対応/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r グループ化/n§6*§r ワイルドカード (0文字以上の任意文字列)/n§6?§r 任意の1文字/n§6()§r 空の項目（鉱石辞書がない項目も含む）に適合/n§6$c§r 大文字・小文字を区別する場合に式の先頭に付ける。/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n全てのサイズの金の粉または全てのプレートが該当するが、二重プレートは該当しない。
+cover.ore_dictionary_filter.info=§b論理式の比較演算子/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r グループ化/n§6*§r ワイルドカード (0文字以上の任意文字列)/n§6?§r 任意の1文字/n§6()§r 空の項目（鉱石辞書がない項目も含む）に適合/n§6$c§r 大文字・小文字を区別する場合に式の先頭に付ける。/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n全てのサイズの金の粉または全てのプレートが該当するが、二重プレートは該当しない。
 cover.ore_dictionary_filter.test_slot.info=フィルタ式に一致するかどうかのテスト用スロット
 cover.ore_dictionary_filter.test_slot.matches=§a* %s
 cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
@@ -1183,7 +1190,49 @@ cover.ore_dictionary_filter.status.err=§c%s個のエラー
 cover.ore_dictionary_filter.status.err_warn=§c%s個のエラーと%s個の警告
 cover.ore_dictionary_filter.status.warn=§7%s個の警告
 cover.ore_dictionary_filter.status.no_issues=§a問題ナシ
-cover.ore_dictionary_filter.status.explain=フィルターの状況:
+cover.ore_dictionary_filter.status.explain=フィルターの合致状況:
+
+cover.ore_dictionary_filter.preview.next=<text>の次に右を含むもの: </text>
+cover.ore_dictionary_filter.preview.match=<node>'<value>%s</value>'</node>
+cover.ore_dictionary_filter.preview.match.not=<node><not>次を含まないもの: </not> '<value>%s</value>'</node>
+cover.ore_dictionary_filter.preview.char=<node><value>1</value>文字</node>
+cover.ore_dictionary_filter.preview.char.not=<node><value>2</value>文字以上<logic>または</logic>鉱石辞書なし<logic>のどちらか</logic></node>
+cover.ore_dictionary_filter.preview.chars=<node><value>%s</value>文字</node>
+cover.ore_dictionary_filter.preview.chars.not=<node><value>%s</value>文字超過<logic>または</logic>未満<logic>のどちらか</logic></node>
+cover.ore_dictionary_filter.preview.chars_or_more=<node><value>%s</value>文字以上</node>
+cover.ore_dictionary_filter.preview.chars_or_more.not=<node><value>%s</value>文字未満</node>
+cover.ore_dictionary_filter.preview.group=<node><not>次ではない</not>:</node>
+cover.ore_dictionary_filter.preview.or=<node><logic>次のうちのどれか</logic>...</node>
+cover.ore_dictionary_filter.preview.nor=<node><logic>次のうちのいずれかを<not>満たさないもの</not>全て</logic>...</node>
+cover.ore_dictionary_filter.preview.or.entry=<label>&gt; <logic>または</logic> </label>
+cover.ore_dictionary_filter.preview.or.entry.start=<label>&gt; </label>
+cover.ore_dictionary_filter.preview.and=<node><logic>次を全てを満たすもの</logic>...</node>
+cover.ore_dictionary_filter.preview.nand=<node><logic>次を<not>満たさないもの</not>全て</logic>...</node>
+cover.ore_dictionary_filter.preview.and.entry=<label>&gt; <logic>かつ</logic> </label>
+cover.ore_dictionary_filter.preview.and.entry.start=<label>&gt; </label>
+cover.ore_dictionary_filter.preview.xor=<node><logic>次のうちの１つのみを満たす</logic>...</node>
+cover.ore_dictionary_filter.preview.xnor=<node><logic>次を両方満たすまたは満たさない</logic>...</node>
+cover.ore_dictionary_filter.preview.xor.entry=<label>&gt; </label>
+cover.ore_dictionary_filter.preview.everything=<node>(任意文字列)</node>
+cover.ore_dictionary_filter.preview.impossible=<node>(判断不可能です)</node>
+cover.ore_dictionary_filter.preview.nonempty=<node>何か</node>
+cover.ore_dictionary_filter.preview.empty=<node>鉱石辞書がない</node>
+cover.ore_dictionary_filter.preview.error=<error>エラー!</error>
+
+cover.ore_dictionary_filter.compile.eof=** End of line **
+
+cover.ore_dictionary_filter.compile.error.unexpected_eof=論理式の予期せぬ終了
+cover.ore_dictionary_filter.compile.error.unexpected_token=予期せぬトークン: '%s'
+cover.ore_dictionary_filter.compile.error.unexpected_token_after_eof=論理式末端に予期せぬトークン: '%s'
+cover.ore_dictionary_filter.compile.error.unexpected_compilation_flag=論理式の途中にコンパイルフラグがあります
+cover.ore_dictionary_filter.compile.error.empty_compilation_flag=比較演算子がありません
+cover.ore_dictionary_filter.compile.error.unknown_compilation_flag='%s'が不明の比較演算子です
+cover.ore_dictionary_filter.compile.error.redundant_compilation_flag=比較演算子'%s'が重複しています
+cover.ore_dictionary_filter.compile.error.eof_after_escape=エスケープ記号 ('\') で終わらせないでください
+cover.ore_dictionary_filter.compile.error.invalid_char=U+%s('%s') は有効な文字ではありません
+
+cover.ore_dictionary_filter.compile.warn.nested_negation=入れ子の否定は直感的ではありません。曖昧さをなくすために、グループ化演算子 ( () ) の使用を検討してください。
+cover.ore_dictionary_filter.compile.warn.consecutive_negation=連続否定は直感的でない場合があります。評価結果が望ましいかどうか確認してください。
 
 cover.fluid_filter.title=液体フィルター
 cover.fluid_filter.config_amount=スクロールで量を調整できる。/nShift[§6x10§r],Ctrl[§ex100§r],Shift+Ctrl[§ax1000§r]/n右クリックで増加して左クリックで減少です。/nShiftで倍/半分。/nホイールクリックで消去。
@@ -1213,6 +1262,8 @@ cover.voiding.tooltip=§c警告!§7 これを"有効"にすると搬入された
 cover.voiding.message.disabled=消去カバーを無効化
 cover.voiding.message.enabled=消去カバーを有効化
 
+cover.shutter.message.disabled=シャッターを無効化
+cover.shutter.message.enabled=シャッターを有効化
 
 cover.smart_item_filter.title=スマートアイテムフィルター
 cover.smart_item_filter.filtering_mode.electrolyzer=電解槽
@@ -1274,11 +1325,17 @@ cover.ender_fluid_link.private.tooltip.disabled=個人タンクモードに切�
 cover.ender_fluid_link.private.tooltip.enabled=公開タンクモードに切り替え
 cover.ender_fluid_link.incomplete_hex=入力した色が不完全です!/n8桁の16進数すべてが入力されると反映されます。/nGUIを閉じると編集内容が失われます!
 
+cover.generic.advanced_detector.latched=ラッチ
+cover.generic.advanced_detector.continuous=連続
+cover.generic.advanced_detector.latch_tooltip=カバーの赤石出力の切り替え /n§e連続§7 - デフォルト; 最小量未満で常に0、 最大量超過で常に15を出力する。最小量以上最大量以下では範囲に応じて0から15を出力する。/n§eラッチ§7 - 最大量を上回るまで15を出力し、上回った後は最小量を下回るまで0を出力する。
+cover.generic.advanced_detector.invert_label=赤石出力:
+cover.generic.advanced_detector.latch_label=状態:
+cover.generic.advanced_detector.invert_tooltip=赤石ロジックの反転の切替
+
 cover.advanced_energy_detector.label=発展型エネルギー検出器
 cover.advanced_energy_detector.min=最小
 cover.advanced_energy_detector.max=最大
 cover.advanced_energy_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、信号は最小EUを下回った時に出力され、最大EUを上回った時に信号出力が停止します。
-cover.advanced_energy_detector.invert_label=反転:
 cover.advanced_energy_detector.normal=しない
 cover.advanced_energy_detector.inverted=する
 cover.advanced_energy_detector.modes_tooltip=装置の蓄電量に対する最大/最小の比較を、EU値を数値で直接指定するまたは最大蓄電量に対する割合を使用するかどうかを切り替える。
@@ -1287,7 +1344,6 @@ cover.advanced_energy_detector.mode_eu=数値
 cover.advanced_energy_detector.mode_percent=割合
 
 cover.advanced_fluid_detector.label=発展型液体検出器
-cover.advanced_fluid_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小液体量を下回った時に信号が停止し、最大液体量を上回った時に信号が出力されます。
 cover.advanced_fluid_detector.max=最大液体量:
 cover.advanced_fluid_detector.min=最小液体量:
 cover.advanced_item_detector.label=発展型アイテム検出器
@@ -1737,6 +1793,7 @@ gregtech.material.antimony_trifluoride=三フッ化アンチモン
 gregtech.material.enriched_naquadah_sulfate=濃縮ナクアダ硫酸塩
 gregtech.material.naquadria_sulfate=ナクアドリア硫酸塩
 gregtech.material.pyrochlore=パイロクロア
+gregtech.material.rtm_alloy=RTM合金
 
 
 # Organic Chemistry Materials
@@ -2406,7 +2463,7 @@ tile.wire_coil.tooltip_energy_cracking=  §aエネルギー使用量: §f%s%%
 tile.wire_coil.cupronickel.name=キュプロニッケルコイルブロック
 tile.wire_coil.kanthal.name=カンタルコイルブロック
 tile.wire_coil.nichrome.name=ニクロムコイルブロック
-tile.wire_coil.tungstensteel.name=タングステンスチールコイルブロック
+tile.wire_coil.rtm_alloy.name=RTM合金コイルブロック
 tile.wire_coil.hss_g.name=HSS-Gコイルブロック
 tile.wire_coil.naquadah.name=ナクアダコイルブロック
 tile.wire_coil.trinium.name=トリニウムコイルブロック
@@ -2438,6 +2495,58 @@ tile.warning_sign_1.gregification_hazard.name=Greg化危害警告ブロック
 tile.warning_sign_1.causality_hazard.name=標準的因果危害警告ブロック
 tile.warning_sign_1.automated_defenses_hazard.name=自動防衛システム危害警告ブロック
 tile.warning_sign_1.high_pressure_hazard.name=高圧危害警告ブロック
+
+# Decorative Metal Sheets
+tile.metal_sheet.white.name=白の板金ブロック
+tile.metal_sheet.orange.name=橙色の板金ブロック
+tile.metal_sheet.magenta.name=赤紫色の板金ブロック
+tile.metal_sheet.light_blue.name=空色の板金ブロック
+tile.metal_sheet.yellow.name=黄色の板金ブロック
+tile.metal_sheet.lime.name=黄緑色の板金ブロック
+tile.metal_sheet.pink.name=桃色の板金ブロック
+tile.metal_sheet.gray.name=灰色の板金ブロック
+tile.metal_sheet.silver.name=薄灰色の板金ブロック
+tile.metal_sheet.cyan.name=青緑色の板金ブロック
+tile.metal_sheet.purple.name=紫色の板金ブロック
+tile.metal_sheet.blue.name=青の板金ブロック
+tile.metal_sheet.brown.name=茶色の板金ブロック
+tile.metal_sheet.green.name=緑色の板金ブロック
+tile.metal_sheet.red.name=赤の板金ブロック
+tile.metal_sheet.black.name=黒の板金ブロック
+
+tile.large_metal_sheet.white.name=白の大きな板金ブロック
+tile.large_metal_sheet.orange.name=橙色の大きな板金ブロック
+tile.large_metal_sheet.magenta.name=赤紫色の大きな板金ブロック
+tile.large_metal_sheet.light_blue.name=空色の大きな板金ブロック
+tile.large_metal_sheet.yellow.name=黄色の大きな板金ブロック
+tile.large_metal_sheet.lime.name=黄緑色の大きな板金ブロック
+tile.large_metal_sheet.pink.name=桃色の大きな板金ブロック
+tile.large_metal_sheet.gray.name=灰色の大きな板金ブロック
+tile.large_metal_sheet.silver.name=薄灰色の大きな板金ブロック
+tile.large_metal_sheet.cyan.name=青緑色の大きな板金ブロック
+tile.large_metal_sheet.purple.name=紫色の大きな板金ブロック
+tile.large_metal_sheet.blue.name=青の大きな板金ブロック
+tile.large_metal_sheet.brown.name=茶色の大きな板金ブロック
+tile.large_metal_sheet.green.name=緑色の大きな板金ブロック
+tile.large_metal_sheet.red.name=赤の大きな板金ブロック
+tile.large_metal_sheet.black.name=黒の大きな板金ブロック
+
+tile.studs.white.name=白のスタッド
+tile.studs.orange.name=橙色のスタッド
+tile.studs.magenta.name=赤紫色のスタッド
+tile.studs.light_blue.name=空色のスタッド
+tile.studs.yellow.name=黄色のスタッド
+tile.studs.lime.name=黄緑色のスタッド
+tile.studs.pink.name=桃色のスタッド
+tile.studs.gray.name=灰色のスタッド
+tile.studs.silver.name=薄灰色のスタッド
+tile.studs.cyan.name=黄緑色のスタッド
+tile.studs.purple.name=紫色のスタッド
+tile.studs.blue.name=青のスタッド
+tile.studs.brown.name=茶色のスタッド
+tile.studs.green.name=緑色のスタッド
+tile.studs.red.name=赤のスタッド
+tile.studs.black.name=黒のスタッド
 
 # Lampss(ON)
 tile.gregtech_lamp.white.name=白のランプ
@@ -2584,7 +2693,7 @@ tile.long_distance_fluid_pipeline.name=長距離液体パイプ
 # Creative tabs
 itemGroup.gregtech.main=GregTech
 itemGroup.gregtech.machines=GregTech - 機械
-itemGroup.gregtech.cables=GregTecg - ケーブル
+itemGroup.gregtech.cables=GregTech - ケーブル
 itemGroup.gregtech.pipes=GregTech - パイプ
 itemGroup.gregtech.tools=GregTech - 道具
 itemGroup.gregtech.materials=GregTech - マテリアル
@@ -2612,6 +2721,7 @@ gregtech.machine.crate.aluminium.name=アルミニウム製クレート
 gregtech.machine.crate.stainless_steel.name=ステンレススチール製クレート
 gregtech.machine.crate.titanium.name=チタン製クレート
 gregtech.machine.crate.tungstensteel.name=タングステンスチール製クレート
+gregtech.crate.tooltip.taped_movement=テープを使うと撤去時に中身を保持できる
 
 # Safe
 gregtech.machine.locked_safe.name=金庫
@@ -3891,6 +4001,9 @@ gregtech.machine.scanner.uxv.name=史上最高のスキャナー IV
 gregtech.machine.scanner.uxv.tooltip=電子顕微鏡
 gregtech.machine.scanner.opv.name=伝説のスキャナー
 gregtech.machine.scanner.opv.tooltip=電子顕微鏡
+gregtech.scanner.copy_stick_from=§oスキャンしたスティック
+gregtech.scanner.copy_stick_to=§oスキャンデータのコピー
+gregtech.scanner.copy_stick_empty=§o未スキャンのスティック
 
 gregtech.machine.infinite_energy.name=クリエイティブEU電源
 gregtech.machine.creative_chest.name=クリエイティブ量子チェスト
@@ -4167,6 +4280,9 @@ gregtech.machine.item_collector.ev.name=発展型アイテム収集器 III
 gregtech.machine.item_collector.gui.collect_range=%s ブロック内のアイテム収集
 gregtech.machine.item_collector.tooltip=赤石信号入力時に周囲のアイテムを回収する
 
+gregtech.machine.alarm.name=アラーム
+gregtech.machine.alarm.tooltip=赤石信号が入力されているときに音を発する
+
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Storage Drawersよりも良い
 gregtech.machine.super_chest.lv.name=スーパーチェスト I
@@ -4183,6 +4299,7 @@ gregtech.machine.quantum_chest.items_stored=アイテム量:
 
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=大量の液体を保管するコンパクトな空間
+gregtech.machine.quantum_tank.tooltip.voiding_enabled=超過分の廃棄が§a有効
 gregtech.machine.super_tank.lv.name=スーパータンク I
 gregtech.machine.super_tank.mv.name=スーパータンク II
 gregtech.machine.super_tank.hv.name=スーパータンク III
@@ -4278,19 +4395,24 @@ gregtech.machine.fisher.requirement=%,dx%,d の水槽が必要。設置位置の
 
 # World Accelerator
 gregtech.machine.world_accelerator.lv.name=基本型世界加速機
+gregtech.machine.world_accelerator.lv.tooltip=ティックがブロックを加速させる
 gregtech.machine.world_accelerator.mv.name=発展型世界加速機
+gregtech.machine.world_accelerator.mv.tooltip=ティックがブロックを加速させる
 gregtech.machine.world_accelerator.hv.name=発展型世界加速機 II
+gregtech.machine.world_accelerator.hv.tooltip=ティックがブロックを加速させる
 gregtech.machine.world_accelerator.ev.name=発展型世界加速機 III
+gregtech.machine.world_accelerator.ev.tooltip=ティックがブロックを加速させる
 gregtech.machine.world_accelerator.iv.name=精鋭型世界加速機
+gregtech.machine.world_accelerator.iv.tooltip=時の§m瓶§r§7 ver.ブロック
 gregtech.machine.world_accelerator.luv.name=精鋭型世界加速機 II
+gregtech.machine.world_accelerator.luv.tooltip=時の§m瓶§r§7 ver.ブロック
 gregtech.machine.world_accelerator.zpm.name=精鋭型世界加速機 III
+gregtech.machine.world_accelerator.zpm.tooltip=時の§m瓶§r§7 ver.ブロック
 gregtech.machine.world_accelerator.uv.name=究極型世界加速機
-gregtech.machine.world_accelerator.uhv.name=史上最高の世界加速機
-gregtech.machine.world_accelerator.uev.name=史上最高の世界加速機 II
-gregtech.machine.world_accelerator.uiv.name=史上最高の世界加速機 III
-gregtech.machine.world_accelerator.uxv.name=史上最高の世界加速機 IV
-gregtech.machine.world_accelerator.opv.name=伝説の世界加速機
-gregtech.machine.world_accelerator.description=§fTile Entity§7または§fRandom Tick§7の2つのモードを用いてTickを加速させる。スクリュードライバーでモード変更ができる。
+gregtech.machine.world_accelerator.uv.tooltip=メイド・イン・ヘブン!!
+gregtech.machine.world_accelerator.description=§fスクリュードライバー§7で§fRandom Tick§7モードと§fTile Entity§7モードの変更ができる
+gregtech.machine.world_accelerator.power_usage=Random Tickモードでは§f%dA§7、Tile Entityモードでは§f%dA§7が必要。
+gregtech.machine.world_accelerator.acceleration=§d加速限界: §f%dx
 gregtech.machine.world_accelerator.working_area=§b有効範囲:
 gregtech.machine.world_accelerator.working_area_tile=  Tile Entity モード:§f 隣接ブロック
 gregtech.machine.world_accelerator.working_area_random=  Random Tickモード:§f %dx%d
@@ -4387,6 +4509,8 @@ gregtech.advancement.steam.87_fluid_pipe_death_heat.name=沸騰しちゃった!
 gregtech.advancement.steam.87_fluid_pipe_death_heat.desc=高温の液体パイプに接触して死亡する。
 gregtech.advancement.steam.90_primitive_pump.name=地盤沈下の始まり
 gregtech.advancement.steam.90_primitive_pump.desc=序盤の水源確保の為に初歩的な揚水ポンプを作成する。
+gregtech.advancement.steam.91_primitive_blast_furnace.name=用途募集中
+gregtech.advancement.steam.91_primitive_blast_furnace.desc=初歩的な溶鉱炉を作成する。
 gregtech.advancement.root_lv.name=LV (Low Voltage) 時代
 gregtech.advancement.root_lv.desc=基本型蒸気タービンを作成する。
 gregtech.advancement.low_voltage.17_lv_pump.name=手を洗ったら栓を閉めましょう
@@ -4487,8 +4611,8 @@ gregtech.advancement.insane_voltage.55_qbit_cpu_wafer.name=ナノCPUを右に90�
 gregtech.advancement.insane_voltage.55_qbit_cpu_wafer.desc=量子ビットCPUウェハーを生産する。
 gregtech.advancement.insane_voltage.56_quantum_processor.name=冷却不要!
 gregtech.advancement.insane_voltage.56_quantum_processor.desc=量子処理装置を入手する。
-gregtech.advancement.insane_voltage.57_tungstensteel_coil.name=コイルをレベル IVにしよう
-gregtech.advancement.insane_voltage.57_tungstensteel_coil.desc=タングステンスチールコイルブロックを作成する。
+gregtech.advancement.insane_voltage.57_rtm_alloy_coil.name=コイルをレベル IVにしよう
+gregtech.advancement.insane_voltage.57_rtm_alloy_coil.desc=RTM合金コイルブロックを作成する。
 gregtech.advancement.insane_voltage.58_hss_g_coil.name=コイルをレベル Vにしよう
 gregtech.advancement.insane_voltage.58_hss_g_coil.desc=HSS-Gコイルブロックを作成する。
 gregtech.advancement.root_luv.name=LuV (Ludicrous Voltage) 時代
@@ -4629,7 +4753,7 @@ gregtech.machine.miner.multi.modes=シルクタッチとチャンク整列モー
 gregtech.machine.miner.multi.production=§f粉砕機§7の§f3倍§7以上の砕いた鉱石を生産。
 gregtech.machine.miner.fluid_usage=§f%,d L/t§7で§f%s§7を消費する。オーバークロックごとに液体消費が2倍になる。
 gregtech.machine.miner.multi.description=広い面積をカバーし、大量の鉱石を生産するマルチブロック採掘機。
-gregtech.machine.miner.multi.needsfluid=掘削油が必要
+gregtech.machine.miner.multi.needsfluid=掘削油がありません!
 
 gregtech.machine.miner.startx=開始X: %d
 gregtech.machine.miner.starty=開始Y: %d
@@ -4648,6 +4772,7 @@ gregtech.machine.fluid_drilling_rig.ev.name=発展型液体採掘機 II
 gregtech.machine.fluid_drilling_rig.description=液体を岩盤下から汲みだします。
 gregtech.machine.fluid_drilling_rig.production=§e生産倍率: §f%sx、オーバークロックで%f倍
 gregtech.machine.fluid_drilling_rig.depletion=§b枯渇速度: §f%s%%
+gregtech.machine.fluid_drilling_rig.shows_depletion=枯渇速度の情報を表示
 
 gregtech.machine.cleanroom.name=クリーンルーム
 gregtech.machine.cleanroom.tooltip.1=機械を中に設置すると繊細な素材を加工できるようになる。
@@ -4662,9 +4787,10 @@ gregtech.machine.cleanroom.tooltip.8=エネルギーは壁面の§f筐体§7ま�
 gregtech.machine.cleanroom.tooltip.9=アイテム及び液体は壁面の§f通過ハッチ§7を通して送ることができる。
 gregtech.machine.cleanroom.tooltip.ae2.channels=§a8 AE2チャンネル§7を壁面の§f筐体§7を通して送信できる。
 gregtech.machine.cleanroom.tooltip.ae2.no_channels=§aMEネットワーク§7を壁面の§f筐体§7を通して送信できる。
-gregtech.multiblock.cleanroom.clean_state=状態: §a清潔
-gregtech.multiblock.cleanroom.dirty_state=状態: §4清潔でない
-gregtech.multiblock.cleanroom.clean_amount=清潔度: §a%s%%
+gregtech.multiblock.cleanroom.clean_status=状態: %s
+gregtech.multiblock.cleanroom.clean_state=清潔 (%s%%)
+gregtech.multiblock.cleanroom.dirty_state=汚染されている (%s%%)
+gregtech.multiblock.cleanroom.warning_contaminated=汚染されている!
 
 gregtech.machine.charcoal_pile.name=炭窯
 gregtech.machine.charcoal_pile.tooltip.1=§c点火される§7と、時間をかけて原木を§a木炭§7に変化させる。
@@ -4705,6 +4831,7 @@ gregtech.machine.research_station.tooltip.2=§fデータオーブ§7と§fデー
 gregtech.machine.research_station.tooltip.3=動作には§f計算力§7が必要です。
 gregtech.machine.research_station.tooltip.4=計算力をさらに与えると、より早くレシピを実行できる。
 gregtech.multiblock.research_station.description=研究ステーションはアセンブリライン用のより複雑な研究を行うマルチブロックです。研究にはデータオーブまたはデータモジュールが必要です。また、動作には高機能計算アレイ (HPCAs) から供給されるComputer Work Units (CWU/t)が必要です。
+gregtech.machine.research_station.researching=研究中
 
 gregtech.machine.network_switch.name=ネットワークスイッチ
 gregtech.machine.network_switch.tooltip.1=イーサネットハブ
@@ -4717,7 +4844,7 @@ gregtech.machine.high_performance_computing_array.name=高機能計算アレイ 
 gregtech.machine.high_performance_computing_array.tooltip.1=ごくごく一般的なスーパーコンピュータ
 gregtech.machine.high_performance_computing_array.tooltip.2=§f計算力§7 (と熱) を産み出すのに使われる。
 gregtech.machine.high_performance_computing_array.tooltip.3=§fCWU/t§7 (Compute Work Units) を産み出すためにはHPCAコンポーネントが必要。
-gregtech.multiblock.high_performance_computing_array.description高機能計算アレイ (HPCA) はより複雑なアセンブリライン用データに必要なCompute Work Units (CWU/t) を生産するマルチブロックです。このマルチブロックには任意のHPCAコンポーネントで構成される可変長の3x3のエリアがあります。組み込むコンポーネントによって供給できる計算力、冷却力、発熱量及びHPCAのエネルギー使用量が異なります。ブリッジコンポーネントを組み込んだ場合、HPCAはネットワークスイッチに接続し、複数の供給元から1つまたは複数の宛先への計算の統合と分配を行うことができます。
+gregtech.multiblock.high_performance_computing_array.description=高機能計算アレイ (HPCA) はより複雑なアセンブリライン用データに必要なCompute Work Units (CWU/t) を生産するマルチブロックです。このマルチブロックには任意のHPCAコンポーネントで構成される可変長の3x3のエリアがあります。組み込むコンポーネントによって供給できる計算力、冷却力、発熱量及びHPCAのエネルギー使用量が異なります。ブリッジコンポーネントを組み込んだ場合、HPCAはネットワークスイッチに接続し、複数の供給元から1つまたは複数の宛先への計算の統合と分配を行うことができます。
 
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
@@ -5015,6 +5142,11 @@ gregtech.machine.pump_hatch.tooltip=揚水ポンプ用の初歩的な搬出ハ�
 
 gregtech.machine.machine_hatch.name=マシンアクセスインターフェース
 gregtech.machine.machine_hatch.locked=インターフェースはロックされている
+gregtech.machine.machine_hatch.machines=対象機械: %s
+gregtech.machine.machine_hatch.machines_none=なし
+gregtech.machine.machine_hatch.machines_none_hover=動かす機械をアクセスインターフェースに入れてください。
+gregtech.machine.machine_hatch.machines_max=最大機械数: %s
+gregtech.machine.machine_hatch.machines_max_eut=最大使用EU/t: %s (%sA %s)
 gregtech.machine.machine_hatch.tooltip=有効なアイテムのみを保持する専用アクセスバス
 gregtech.machine.machine_hatch.processing_array=§eプロセッシングアレイ§7に組み込まれた場合、§eプロセッシングアレイ§7で動作するマシンのみを保持します。
 
@@ -5022,6 +5154,9 @@ gregtech.machine.passthrough_hatch_item.name=アイテム通過ハッチ
 gregtech.machine.passthrough_hatch_item.tooltip=一方通行でアイテムを送る
 gregtech.machine.passthrough_hatch_fluid.name=液体通過ハッチ
 gregtech.machine.passthrough_hatch_fluid.tooltip=一方通行で液体を送る
+
+gregtech.machine.reservoir_hatch.name=リザーバーハッチ
+gregtech.machine.reservoir_hatch.tooltip=流しじゃないよ
 
 gregtech.machine.data_access_hatch.name=データアクセスハッチ
 gregtech.machine.data_access_hatch.tooltip.1=マルチブロック用データ搬入出口
@@ -5141,7 +5276,7 @@ gregtech.universal.tooltip.energy_storage_capacity=§c蓄電量: §f%,d EU
 gregtech.universal.tooltip.energy_tier_range=§a許容電圧: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6アイテムスロット数: §f%,d
 gregtech.universal.tooltip.item_storage_total=§6アイテム容量: §f%,d アイテム
-gregtech.universal.tooltip.item_stored=§dアイテム数: §f%s, %,d アイテム
+gregtech.universal.tooltip.item_stored=§dアイテム: §f%s, %,d + %,d アイテム
 gregtech.universal.tooltip.item_transfer_rate=§b運搬速度: §f%,d アイテム/秒
 gregtech.universal.tooltip.item_transfer_rate_stacks=§b運搬速度: §f%,d スタック/秒
 gregtech.universal.tooltip.fluid_storage_capacity=§9液体容量: §f%,d L
@@ -5173,6 +5308,11 @@ gregtech.recipe.duration=処理時間: %s 秒
 gregtech.recipe.amperage=電流: %,d
 gregtech.recipe.not_consumed=このレシピでは消費されない
 gregtech.recipe.chance=確率: %s%% +%s%%/tier
+gregtech.recipe.chance_logic=確率: %s%% +%s%%/tier (%s)
+gregtech.chance_logic.or=OR
+gregtech.chance_logic.and=AND
+gregtech.chance_logic.xor=XOR
+gregtech.chance_logic.none=NONE
 gregtech.recipe.temperature=温度: %,dK (%s)
 gregtech.recipe.explosive=爆薬: %s
 gregtech.recipe.eu_to_start=開始エネルギー: %sEU
@@ -5181,13 +5321,14 @@ gregtech.recipe.cleanroom=%sが必要
 gregtech.recipe.cleanroom.display_name=クリーンルーム
 gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
 gregtech.recipe.research=研究が必要
+gregtech.recipe.scan_for_research=アセンブリラインのためのスキャン
 gregtech.recipe.computation_per_tick=最低計算力: %,d CWU/t
 gregtech.recipe.total_computation=総計算力: %,d
 gregtech.recipe.research_result=このアイテムは研究成果であり、このレシピでは直接クラフトされません。
 
-gregtech.fluid.click_to_fill=§7中身の入った液体容器でクリックすると、§b中身をタンクに移す§7。Shiftクリックで1スタック全て移す。
-gregtech.fluid.click_combined=§7液体容器でクリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。Shiftクリックで1スタック全て移す。
-gregtech.fluid.click_to_empty=§7液体容器でクリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。Shiftクリックで1スタック全て移す。
+gregtech.fluid.click_to_fill=§7中身の入った液体容器で左クリックすると、§b中身をタンクに移す§7。右クリックで1つずつ移す。
+gregtech.fluid.click_combined=§7液体容器で左クリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。右クリックで1つずつ移す。
+gregtech.fluid.click_to_empty=§7液体容器で左クリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。右クリックで1つずつ移す。
 
 gregtech.tool_action.show_tooltips=SHIFTでツール情報を表示
 gregtech.tool_action.screwdriver.auto_output_covers=§8スクリュードライバーで搬出面からの搬入やカバーにアクセスできます。
@@ -5198,6 +5339,7 @@ gregtech.tool_action.screwdriver.auto_output=§8スクリュードライバー�
 gregtech.tool_action.screwdriver.auto_output_down=§8スクリュードライバーで下面からの自動搬出を切替できます。
 gregtech.tool_action.screwdriver.toggle_mode=§8スクリュードライバーでモードを切替できます。
 gregtech.tool_action.wrench.set_facing=§8レンチを使うと向きを変更できます。
+gregtech.tool_action.wrench.extended_facing=§8レンチを使うと向きの変更または機械の回転ができます。
 gregtech.tool_action.wrench.connect=§8レンチで接続を設定できます。
 gregtech.tool_action.wrench.connect_and_block=§8レンチで接続を設定でき、スニークで逆流を防止できます。
 gregtech.tool_action.wire_cutter.connect=§8ワイヤーカッターで接続を設定できます。
@@ -5208,6 +5350,9 @@ gregtech.tool_action.crowbar=§8バールでカバーを撤去できます。
 gregtech.tool_action.tape=§8テープでメンテナンスの問題を解決できます。
 
 gregtech.fluid.generic=%s
+gregtech.fluid.liquid_generic=液化%s
+gregtech.fluid.gas_generic=%sガス
+gregtech.fluid.gas_vapor=%s蒸気
 gregtech.fluid.plasma=%sプラズマ
 gregtech.fluid.empty=空
 gregtech.fluid.amount=§9量: %,d/%,d L
@@ -5238,6 +5383,8 @@ gregtech.gui.fluid_lock.tooltip.enabled=液体ロックを無効化 (現在は�
 gregtech.gui.fluid_lock.tooltip.disabled=液体ロックを有効化 (現在は無効)
 gregtech.gui.fluid_voiding.tooltip.enabled=超過分の廃棄を無効化 (現在は有効)
 gregtech.gui.fluid_voiding.tooltip.disabled=超過分の廃棄を有効化 (現在は無効)
+gregtech.gui.item_voiding.tooltip.enabled=超過分の廃棄を無効化 (現在は有効)
+gregtech.gui.item_voiding.tooltip.disabled=超過分の廃棄を有効化 (現在は無効)
 gregtech.gui.multiblock_item_voiding=消去モード/n§6アイテム§7を消去
 gregtech.gui.multiblock_fluid_voiding=消去モード/n§6液体§7を消去
 gregtech.gui.multiblock_item_fluid_voiding=消去モード/n§6アイテム§7と§6液体§7を消去
@@ -5250,6 +5397,8 @@ gregtech.gui.config_slot=§f設定スロット§r
 gregtech.gui.config_slot.set=§7クリックで設定スロットを§b設定/選択§7。§r
 gregtech.gui.config_slot.scroll=§7スクロールで設定量を§a変更§7。§r
 gregtech.gui.config_slot.remove=§7右クリックで設定スロットを§4初期化§7。§r
+gregtech.gui.alarm.radius=半径:
+
 
 ore.spawnlocation.name=鉱脈情報
 gregtech.jei.ore.surface_rock_1=地表にある小石は鉱脈の生成位置を示します。
@@ -5266,6 +5415,10 @@ gregtech.jei.ore.between_1=中層の鉱石
 gregtech.jei.ore.between_2=鉱脈の中間%d層に生成される
 gregtech.jei.ore.sporadic_1=点在する鉱石
 gregtech.jei.ore.sporadic_2=鉱脈内に点在するように生成される
+gregtech.jei.ore.spawn_range=生成範囲: %d - %d
+gregtech.jei.ore.vein_weight=生成頻度: %d
+gregtech.jei.ore.dimension=ディメンション:
+gregtech.jei.ore.surfacematerial=地表の目印
 
 fluid.spawnlocation.name=液体脈情報
 gregtech.jei.fluid.vein_weight=生成頻度: %d
@@ -5285,6 +5438,58 @@ gregtech.jei.fluid.dep_yield_hover=液体脈が枯渇した時の最大収量
 gregtech.jei.materials.average_mass=平均質量数: %,d
 gregtech.jei.materials.average_protons=平均陽子数: %,d
 gregtech.jei.materials.average_neutrons=平均中性子数: %,d
+
+gregtech.veins.ore.bauxite=ボーキサイト鉱脈
+gregtech.veins.ore.magnetite=磁鉄鉱鉱脈
+gregtech.veins.ore.naquadah=ナクアダ鉱脈
+gregtech.veins.ore.pitchblende=瀝青ウラン鉱鉱脈
+gregtech.veins.ore.scheelite=タングステン鉱脈
+gregtech.veins.ore.sheldonite=プラチナ鉱脈
+gregtech.veins.ore.banded_iron=褐鉄鉱鉱脈
+gregtech.veins.ore.beryllium=ベリリウム鉱脈
+gregtech.veins.ore.certus_quartz=ケルタスクォーツ鉱脈
+gregtech.veins.ore.manganese=マンガン鉱脈
+gregtech.veins.ore.molybdenum=モリブデン鉱脈
+gregtech.veins.ore.monazite=モナザイト鉱脈
+gregtech.veins.ore.nether_quartz=ネザー水晶鉱脈
+gregtech.veins.ore.redstone=赤石鉱脈
+gregtech.veins.ore.saltpeter=硝石鉱脈
+gregtech.veins.ore.sulfur=硫黄鉱脈
+gregtech.veins.ore.tetrahedrite=四面銅鉱鉱脈
+gregtech.veins.ore.topaz=トパーズ鉱脈
+gregtech.veins.ore.apatite=アパタイト鉱脈
+gregtech.veins.ore.basalt_sphere=玄武岩層
+gregtech.veins.ore.black_granite_sphere=黒色花崗岩層
+gregtech.veins.ore.cassiterite=錫鉱脈
+gregtech.veins.ore.coal=石炭鉱脈
+gregtech.veins.ore.copper_tin=銅-錫鉱脈
+gregtech.veins.ore.copper=銅鉱脈
+gregtech.veins.ore.diamond=ダイヤモンド鉱脈
+gregtech.veins.ore.galena=方鉛鉱鉱脈
+gregtech.veins.ore.garnet_tin=ガーネット-錫鉱脈
+gregtech.veins.ore.garnet=ガーネット鉱脈
+gregtech.veins.ore.iron=鉄鉱脈
+gregtech.veins.ore.lapis=ラピス鉱脈
+gregtech.veins.ore.lubricant=石鹸石鉱脈
+gregtech.veins.ore.marble_sphere=大理石層
+gregtech.veins.ore.mica=雲母鉱脈
+gregtech.veins.ore.mineral_sand=石膏鉱脈
+gregtech.veins.ore.nickel=ニッケル鉱脈
+gregtech.veins.ore.oilsands=オイルサンド鉱脈
+gregtech.veins.ore.olivine=オリビン鉱脈
+gregtech.veins.ore.raw_oil_sphere=原料油層
+gregtech.veins.ore.red_granite_sphere=赤色花崗岩層
+gregtech.veins.ore.salts=塩鉱脈
+gregtech.veins.ore.sapphire=サファイア鉱脈
+
+gregtech.veins.fluid.lava=溶岩田 (ネザー)
+gregtech.veins.fluid.natural_gas_nether=天然ガス田 (ネザー)
+gregtech.veins.fluid.heavy_oil=重油田 (オーバーワールド)
+gregtech.veins.fluid.light_oil=軽油田 (オーバーワールド)
+gregtech.veins.fluid.natural_gas_overworld=天然ガス田 (オーバーワールド)
+gregtech.veins.fluid.oil=原油田 (オーバーワールド)
+gregtech.veins.fluid.raw_oil=原料油田 (オーバーワールド)
+gregtech.veins.fluid.salt_water=塩水田 (オーバーワールド)
 
 gregtech.item_filter.empty_item=指定なし
 gregtech.item_filter.footer=§eアイテムでクリックすると上書き
@@ -5308,34 +5513,39 @@ gregtech.item_pipe.priority=§9優先度: %d
 gregtech.multiblock.work_paused=一時停止中
 gregtech.multiblock.running=完璧に動作中
 gregtech.multiblock.idling=停止中
-gregtech.multiblock.not_enough_energy=§c警告:§f エネルギー不足
-gregtech.multiblock.not_enough_energy_output=§eアドバイス:§f ダイナモハッチの電圧が低すぎる!
+gregtech.multiblock.not_enough_energy=エネルギー不足!
+gregtech.multiblock.not_enough_energy_output=ダイナモハッチの電圧が低すぎる!
 gregtech.multiblock.progress=進捗: %s%%
 gregtech.multiblock.invalid_structure=構造が間違っている
 gregtech.multiblock.invalid_structure.tooltip=このブロックはマルチブロックのコントローラーです。構造はJEIのマルチブロック機械の構造を参考にしてください。
 gregtech.multiblock.validation_failed=入力/出力の量が無効です
-gregtech.multiblock.max_energy_per_tick=最大 EU/t: §a%s (%s§r)
+gregtech.multiblock.max_energy_per_tick=最大 EU/t: %s (%s)
+gregtech.multiblock.max_energy_per_tick_hover=運転及びオーバークロックに利用できる最大 EU/tです
+gregtech.multiblock.max_energy_per_tick_amps=最大 EU/t: %s (%sA %s)
+gregtech.multiblock.max_recipe_tier=最大実行可能電圧: %s
+gregtech.multiblock.max_recipe_tier_hover=この機械が実行できるレシピの最大電圧です
 gregtech.multiblock.generation_eu=出力: §a%s EU/t
 gregtech.multiblock.universal.no_problems=問題ナシ!
 gregtech.multiblock.universal.has_problems=問題アリ!
 gregtech.multiblock.universal.has_problems_header=メンテナンスハッチで以下の問題を修理してください:
-gregtech.multiblock.universal.problem.wrench=%s§7パイプが緩い (§aレンチ§7)
-gregtech.multiblock.universal.problem.screwdriver=%s§7ネジが緩い (§aスクリュードライバー§7)
-gregtech.multiblock.universal.problem.soft_mallet=%s§7何かが詰まっている (§aソフトマレット§7)
-gregtech.multiblock.universal.problem.hard_hammer=%s§7メッキがへこんでいる (§aハンマー§7)
-gregtech.multiblock.universal.problem.wire_cutter=%s§7ワイヤーが焼き切れている (§aワイヤーカッター§7)
-gregtech.multiblock.universal.problem.crowbar=%s§7部品がずれている (§aバール§7)
-gregtech.multiblock.universal.muffler_obstructed=§cマフラーハッチがふさがれている!§r/nマフラーハッチの正面は1ブロック空けて下さい。
+gregtech.multiblock.universal.problem.wrench=パイプが緩い (レンチ)
+gregtech.multiblock.universal.problem.screwdriver=ネジが緩い (スクリュードライバー)
+gregtech.multiblock.universal.problem.soft_mallet=何かが詰まっている (ソフトマレット)
+gregtech.multiblock.universal.problem.hard_hammer=メッキがへこんでいる (ハンマー)
+gregtech.multiblock.universal.problem.wire_cutter=ワイヤーが焼き切れている (ワイヤーカッター)
+gregtech.multiblock.universal.problem.crowbar=部品がずれている (バール)
+gregtech.multiblock.universal.muffler_obstructed=マフラーハッチがふさがれている!
+gregtech.multiblock.universal.muffler_obstructed_desc=マフラーハッチの正面は何も置いてはいけません。
 gregtech.multiblock.universal.distinct_enabled=バスの区別: §a有効§r/n各バスはレシピ参照の時互いに完全に異なるものとして扱われます。プログラム回路や金型を用いるときに便利になるでしょう。
 gregtech.multiblock.universal.distinct_disabled=バスの区別: §c無効§r/n各バスはレシピ参照の同じものとして扱われます。
 gregtech.multiblock.universal.distinct_not_supported=このマルチブロックはバスの区別に対応していません。
 gregtech.multiblock.universal.no_flex_button=このマルチブロックはこのボタンに対応する機能を持っていません。
-gregtech.multiblock.parallel=%d個まで同時に実行できる
+gregtech.multiblock.parallel=最大並列処理数: %s
 gregtech.multiblock.multiple_recipemaps.header=マシンモード:
 gregtech.multiblock.multiple_recipemaps.tooltip=スクリュードライバーでコントローラーを右クリックすると使う機械を変更できる。
 gregtech.multiblock.multiple_recipemaps_recipes.tooltip=マシンモード: §e%s§r
 gregtech.multiblock.multiple_recipemaps.switch_message=モード変更時は機械をオフにしてください!
-gregtech.multiblock.energy_stored=蓄電量: %s EU / %s EU
+gregtech.multiblock.energy_stored=蓄電量: %s
 
 gregtech.multiblock.preview.zoom=マウスホイールまたは右クリック+ドラッグでズーム
 gregtech.multiblock.preview.rotate=左クリックとドラッグで回転
@@ -5360,41 +5570,49 @@ gregtech.multiblock.pattern.location_end=§c最後尾§r
 gregtech.multiblock.pattern.replaceable_air=空気で置換可能
 
 gregtech.multiblock.blast_furnace.max_temperature=最大温度: %s
-gregtech.multiblock.multi_furnace.heating_coil_level=コイルレベル: %s
-gregtech.multiblock.multi_furnace.heating_coil_discount=コイルのEUブースト: %sx
+gregtech.multiblock.multi_furnace.heating_coil_discount=コイルによるEU使用量係数: %s
+gregtech.multiblock.multi_furnace.heating_coil_discount_hover=コイルのTierに応じてEU使用量の係数が決定されます。
+gregtech.multiblock.multi_furnace.parallel_hover=コイルのTierに応じてマルチスメルターの並列処理数が変化します。
 gregtech.multiblock.distillation_tower.distilling_fluid=%sを蒸留中
 
+gregtech.multiblock.large_combustion_engine.fuel_amount=燃料: %s
 gregtech.multiblock.large_combustion_engine.no_lubricant=潤滑剤がありません。
-gregtech.multiblock.large_combustion_engine.lubricant_amount=潤滑剤残量: %sL
-gregtech.multiblock.large_combustion_engine.oxygen_amount=酸素残量: %sL
-gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=液体酸素残量: %sL
-gregtech.multiblock.large_combustion_engine.oxygen_boosted=§b酸素ブースト中。
-gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted=§b液体酸素ブースト中。
-gregtech.multiblock.large_combustion_engine.boost_disallowed=§bダイナモハッチを強化することで酸素ブーストが利用可能となる。
+gregtech.multiblock.large_combustion_engine.lubricant_amount=潤滑剤残量: %s
+gregtech.multiblock.large_combustion_engine.oxygen_amount=酸素残量: %s
+gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=液体酸素残量: %s
+gregtech.multiblock.large_combustion_engine.oxygen_boosted=酸素ブースト中
+gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted=液体酸素ブースト中
+gregtech.multiblock.large_combustion_engine.oxygen_boost_disallowed=ダイナモハッチを強化することで酸素ブーストが利用可能となる。
+gregtech.multiblock.large_combustion_engine.liquid_oxygen_boost_disallowed=ダイナモハッチを強化することで液体酸素ブーストが利用可能となる。
 gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=酸素を供給することでブースト。
 gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=液体酸素を供給することでブースト。
-gregtech.multiblock.large_combustion_engine.obstructed=エンジンの吸気口が塞がれている。
+gregtech.multiblock.large_combustion_engine.obstructed=エンジンの吸気口が塞がれている!
+gregtech.multiblock.large_combustion_engine.obstructed.desc=吸気口の正面は何も置いてはいけません。
 
 gregtech.multiblock.turbine.fuel_amount=燃料残量: %sL %s
 gregtech.multiblock.turbine.fuel_needed=%sを%s tick毎に消費します!
-gregtech.multiblock.turbine.rotor_speed=ローター速度: %s/%s RPM
-gregtech.multiblock.turbine.rotor_durability=ローター耐久値: %s%%
+gregtech.multiblock.turbine.rotor_speed=ローター速度: %s
+gregtech.multiblock.turbine.rotor_rpm_unit_name=RPM
+gregtech.multiblock.turbine.rotor_durability=ローター耐久値: %s
 gregtech.multiblock.turbine.rotor_durability_low=ローターの耐久値が残り少ないです!
-gregtech.multiblock.turbine.no_rotor=ローターホルダーにローターがありません。
-gregtech.multiblock.turbine.efficiency=タービン効率: %s%%
+gregtech.multiblock.turbine.no_rotor=ローターホルダーにローターがありません!
+gregtech.multiblock.turbine.efficiency=タービン効率: %s
 gregtech.multiblock.turbine.energy_per_tick=エネルギー出力 EU/t: %s (%s)
-gregtech.multiblock.turbine.obstructed=タービン正面が塞がれている。
+gregtech.multiblock.turbine.obstructed=タービン正面が塞がれている!
+gregtech.multiblock.turbine.obstructed.desc=タービンの正面3x3には何も置いてはいけません。
 gregtech.multiblock.turbine.efficiency_tooltip=%s§7以上のローターホルダーごとに§610%%§7の効率化。
 
 gregtech.multiblock.large_boiler.efficiency=効率: %s
-gregtech.multiblock.large_boiler.steam_output=蒸気生産量: %s L/t
-gregtech.multiblock.large_boiler.throttle=スロットル: %d
+gregtech.multiblock.large_boiler.steam_output=蒸気生産量: %s
+gregtech.multiblock.large_boiler.throttle=スロットル: %s
 gregtech.multiblock.large_boiler.throttle.tooltip=ボイラーはより少ない蒸気を生産し、より少ない燃料を消費する。これにより効率が失われることはなく、予熱時間は影響されない。
 gregtech.multiblock.large_boiler.throttle_increment=スロットルを§a+5%%§f上昇§r/n§7ボイラーはより少ない蒸気を生産し、より少ない燃料を消費する。これにより効率が失われることはなく、予熱時間は影響されない。
 gregtech.multiblock.large_boiler.throttle_decrement=スロットを§c-5%%§f低下§r/n§7Bボイラーはより少ない蒸気を生産し、より少ない燃料を消費する。これにより効率が失われることはなく、予熱時間は影響されない。
 gregtech.multiblock.large_boiler.rate_tooltip=§f石炭1つ§7から§f%d L§7の蒸気を生産 
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7予熱に§f%,d 秒§7必要
 gregtech.multiblock.large_boiler.explosion_tooltip=水がない状態で燃料を入れると爆発する。
+gregtech.multiblock.large_boiler.water_bar_hover=水: %s
+gregtech.multiblock.large_boiler.no_water=水がない!
 
 gregtech.machine.miner.done=終了!
 gregtech.machine.miner.working=稼働中...
@@ -5409,21 +5627,30 @@ gregtech.multiblock.miner.chunk_mode=チャンクモード: §a有効§r/nシル
 gregtech.multiblock.miner.silk_touch_mode=チャンクモード: §c無効§r/nシルクタッチ: §a有効§r/n§7切替には機械を一時停止させる必要がある。
 gregtech.multiblock.miner.both_modes=チャンクモード: §a有効§r/nシルクタッチ: §a有効§r/n§7切替には機械を一時停止させる必要がある。
 
-gregtech.multiblock.pyrolyse_oven.speed=処理速度: %s%%
+gregtech.multiblock.fluid_rig.drilled_fluid=液体: %s
+gregtech.multiblock.fluid_rig.no_fluid_in_area=動作範囲内に液体はありません
+gregtech.multiblock.fluid_rig.fluid_amount=採掘速度: %s
+gregtech.multiblock.fluid_rig.vein_depletion=大きさ: %s
+gregtech.multiblock.fluid_rig.vein_depleted=枯渇しました
+gregtech.multiblock.miner.drilling=採掘中
 
-gregtech.multiblock.cracking_unit.energy=エネルギー使用量: %s%%
+gregtech.multiblock.pyrolyse_oven.speed=処理速度: %s
+gregtech.multiblock.pyrolyse_oven.speed_hover=組み込んだコイルによって処理速度に係数がかかります。
 
-gregtech.multiblock.energy_consumption=エネルギー使用量: %s EU/t
-gregtech.multiblock.computation.max=最大計算力: %s CWU/t
-gregtech.multiblock.computation.usage=使用量: %s CWU/t
+gregtech.multiblock.cracking_unit.energy=エネルギー使用量: %s%
+gregtech.multiblock.cracking_unit.energy_hover=組み込んだコイルによってエネルギー使用量に係数がかかります。
+
+gregtech.multiblock.energy_consumption=エネルギー使用量: %s EU/t (%s)
+gregtech.multiblock.computation.max=最大CWU/t: %s
+gregtech.multiblock.computation.usage=使用量: %s
 gregtech.multiblock.computation.non_bridging=非ブリッジ接続を検出
 gregtech.multiblock.computation.non_bridging.detailed=受信ハッチがブリッジできない機械にリンクされている。
-gregtech.multiblock.computation.not_enough_computation=§c警告:§f 計算力が不足
+gregtech.multiblock.computation.not_enough_computation=計算力がたりない!
 
-gregtech.multiblock.power_substation.stored=蓄電量: %s EU
-gregtech.multiblock.power_substation.capacity=最大蓄電量: %s EU
-gregtech.multiblock.power_substation.passive_drain=損失量: %s EU/t
-gregtech.multiblock.power_substation.average_io=平均入出力: %s EU/t
+gregtech.multiblock.power_substation.stored=蓄電量: %s
+gregtech.multiblock.power_substation.capacity=最大蓄電量: %s
+gregtech.multiblock.power_substation.passive_drain=損失量: %s
+gregtech.multiblock.power_substation.average_io=平均入出力: %s
 gregtech.multiblock.power_substation.average_io_hover=大型蓄電器の平均エネルギー変化量
 gregtech.multiblock.power_substation.time_to_fill=満タンまで: %s
 gregtech.multiblock.power_substation.time_to_drain=枯渇まで: %s
@@ -5435,19 +5662,27 @@ gregtech.multiblock.power_substation.time_years=%s 年
 gregtech.multiblock.power_substation.time_forever=永遠
 gregtech.multiblock.power_substation.under_one_hour_left=枯渇まで1時間以内!
 
-gregtech.multiblock.hpca.computation=供給: %s / %s CWU/t
+gregtech.multiblock.data_bank.providing=研究データを供給中
+
+gregtech.multiblock.hpca.computation=供給: %s
 gregtech.multiblock.hpca.energy=使用エネルギー: %s / %s EU/t (%s)
-gregtech.multiblock.hpca.coolant=要求: %s L/t PCBクーラント
-gregtech.multiblock.hpca.cooling=冷却P:
-gregtech.multiblock.hpca.temperature=温度:
-gregtech.multiblock.hpca.error_damaged=構造体中に壊れたコンポーネントがある
+gregtech.multiblock.hpca.temperature=温度: %s
+gregtech.multiblock.hpca.hover_for_info=ホバーで詳細を表示
+gregtech.multiblock.hpca.error_damaged=構造体中に壊れたコンポーネントがある!
 gregtech.multiblock.hpca.error_temperature=温度が100 ℃を突破。コンポーネントが壊れてしまう!
 gregtech.multiblock.hpca.warning_temperature=温度が50 ℃を突破。100 ℃に到達するとコンポーネントが壊れてしまう!
 gregtech.multiblock.hpca.warning_temperature_active_cool=アクティブクーラーをフル活用
-gregtech.multiblock.hpca.warning_structure_header=構造体のヒント:
+gregtech.multiblock.hpca.warning_structure_header=構造体の警告:
 gregtech.multiblock.hpca.warning_multiple_bridges=- 構造体に複数のブリッジを検出 (意味がない)
 gregtech.multiblock.hpca.warning_no_computation=- 計算力を供給できない
 gregtech.multiblock.hpca.warning_low_cooling=- 冷却Pが足りない
+gregtech.multiblock.hpca.info_max_computation=最大CWU/t: %s
+gregtech.multiblock.hpca.info_max_cooling_demand=必要冷却P: %s
+gregtech.multiblock.hpca.info_max_cooling_available=供給冷却P: %s
+gregtech.multiblock.hpca.info_max_coolant_required=次のクーラントが必要: %s
+gregtech.multiblock.hpca.info_coolant_name=PCBクーラント
+gregtech.multiblock.hpca.info_bridging_enabled=ブリッジが有効
+gregtech.multiblock.hpca.info_bridging_disabled=ブリッジが無効
 
 gregtech.command.usage=使い方: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=使い方: /gregtech worldgen <reload>
@@ -5494,6 +5729,8 @@ gregtech.creative.tank.tpc=Tick毎サイクル
 
 gregtech.creative.energy.amperage=電流
 gregtech.creative.energy.voltage=電圧
+gregtech.creative.energy.sink=自由設定
+gregtech.creative.energy.source=MAX-V / 21億A
 
 gregtech.creative.activity.on=稼働中
 gregtech.creative.activity.off=停止中
@@ -5785,3 +6022,200 @@ gregtech.subtitle.maintenance.mechanical=技術的故障
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTechがデバッグ情報を修正しました! 開発者向け: GregTech.cfgのmisc:debug設定オプションを有効にすることでより多くの情報を見ることができます。
+
+### Forestry Integration
+# Frames
+item.gt.frame_working.name=動きやすい巣枠
+item.gt.frame_mutagenic.name=変異する巣枠
+item.gt.frame_accelerated.name=促進される巣枠
+item.gt.frame_stabilizing.name=安定した巣枠
+item.gt.frame_arborist.name=植木職人の巣枠
+item.gt.frame_decaying.name=崩壊する巣枠
+item.gt.frame_slowing.name=ゆったりとした巣枠
+
+# Electrodes
+metaitem.electrode.apatite.name=リン灰石の真空管
+metaitem.electrode.blaze.name=ブレイズの真空管
+metaitem.electrode.bronze.name=青銅の真空管
+metaitem.electrode.copper.name=銅の真空管
+metaitem.electrode.diamond.name=ダイヤの真空管
+metaitem.electrode.emerald.name=エメラルドの真空管
+metaitem.electrode.ender.name=エンダーの真空管
+metaitem.electrode.gold.name=金の真空管
+metaitem.electrode.iron.name=鉄の真空管
+metaitem.electrode.lapis.name=ラピスの真空管
+metaitem.electrode.obsidian.name=黒曜石の真空管
+metaitem.electrode.orchid.name=オアチドの真空管
+metaitem.electrode.rubber.name=ゴムの真空管
+metaitem.electrode.tin.name=錫の真空管
+
+# Scoop
+item.gt.tool.scoop.name=%s製虫取り網
+item.gt.tool.behavior.scoop=§d樹木医: §f左クリックで蝶を捕獲
+gt.tool.class.scoop=虫取り網
+# Drops
+item.gt.honey_drop.oil.name=石油の雫
+item.gt.honey_drop.biomass.name=バイオマスの雫
+item.gt.honey_drop.ethanol.name=エタノールの雫
+item.gt.honey_drop.mutagen.name=変異源の雫
+
+# Combs
+item.gt.comb.coal.name=石炭の巣板
+item.gt.comb.coke.name=コークスの巣板
+item.gt.comb.stickyresin.name=粘性樹脂の巣板
+item.gt.comb.oil.name=石油質の巣板
+item.gt.comb.apatite.name=アパタイトの巣板
+item.gt.comb.ash.name=灰の巣板
+item.gt.comb.biomass.name=バイオマスの巣板
+item.gt.comb.energy.name=エナジーの巣板
+item.gt.comb.lapotron.name=ラポトロンの巣板
+item.gt.comb.redalloy.name=赤合金の巣板
+item.gt.comb.stainlesssteel.name=ステンレスの巣板
+item.gt.comb.stone.name=石の巣板
+item.gt.comb.certus.name=ケルタスの巣板
+item.gt.comb.redstone.name=赤石の巣板
+item.gt.comb.rareearth.name=希土類の巣板
+item.gt.comb.lapis.name=ラピスの巣板
+item.gt.comb.ruby.name=ルビーの巣板
+item.gt.comb.sapphire.name=サファイアの巣板
+item.gt.comb.diamond.name=ダイヤモンドの巣板
+item.gt.comb.olivine.name=オリビンの巣板
+item.gt.comb.emerald.name=エメラルドの巣板
+item.gt.comb.pyrope.name=苦礬柘榴石の巣板
+item.gt.comb.grossular.name=灰礬柘榴石の巣板
+item.gt.comb.sparkling.name=煌めく巣板
+item.gt.comb.slag.name=鉱滓の巣板
+item.gt.comb.copper.name=銅の巣板
+item.gt.comb.tin.name=錫の巣板
+item.gt.comb.lead.name=鉛の巣板
+item.gt.comb.iron.name=鉄の巣板
+item.gt.comb.steel.name=スチールの巣板
+item.gt.comb.nickel.name=ニッケルの巣板
+item.gt.comb.zinc.name=亜鉛の巣板
+item.gt.comb.silver.name=銀の巣板
+item.gt.comb.gold.name=金の巣板
+item.gt.comb.sulfur.name=硫黄の巣板
+item.gt.comb.gallium.name=ガリウムの巣板
+item.gt.comb.arsenic.name=ヒ素の巣板
+item.gt.comb.bauxite.name=ボーキサイトの巣板
+item.gt.comb.aluminium.name=アルミニウムの巣板
+item.gt.comb.manganese.name=マンガンの巣板
+item.gt.comb.magnesium.name=マグネシウムの巣板
+item.gt.comb.titanium.name=チタンの巣板
+item.gt.comb.chrome.name=クロムの巣板
+item.gt.comb.tungsten.name=タングステンの巣板
+item.gt.comb.platinum.name=プラチナの巣板
+item.gt.comb.iridium.name=イリジウムの巣板
+item.gt.comb.molybdenum.name=モリブデンの巣板
+item.gt.comb.osmium.name=オスミウムの巣板
+item.gt.comb.lithium.name=リチウムの巣板
+item.gt.comb.salt.name=塩分豊富な巣板
+item.gt.comb.electrotine.name=エレクトロチンの巣板
+item.gt.comb.almandine.name=鉄礬柘榴石の巣板
+item.gt.comb.uranium.name=ウランの巣板
+item.gt.comb.plutonium.name=プルトニウムの巣板
+item.gt.comb.naquadah.name=ナクアダの巣板
+item.gt.comb.naquadria.name=ナクアドリアの巣板
+item.gt.comb.thorium.name=トリウムの巣板
+item.gt.comb.lutetium.name=ルテチウムの巣板
+item.gt.comb.americium.name=アメリシウムの巣板
+item.gt.comb.neutronium.name=ニュートロニウムの巣板
+item.gt.comb.phosphorus.name=リンの巣板
+item.gt.comb.indium.name=インジウムの巣板
+item.gt.comb.trinium.name=トリニウムの巣板
+item.gt.comb.helium.name=ヘリウムの巣板
+item.gt.comb.argon.name=アルゴンの巣板
+item.gt.comb.xenon.name=キセノンの巣板
+item.gt.comb.neon.name=ネオンの巣板
+item.gt.comb.krypton.name=クリプトンの巣板
+item.gt.comb.nitrogen.name=窒素の巣板
+item.gt.comb.oxygen.name=酸素の巣板
+item.gt.comb.hydrogen.name=水素の巣板
+item.gt.comb.fluorine.name=フッ素の巣板
+item.gt.comb.fluix.name=フルーシュの巣板
+
+# Bees
+for.bees.species.clay=Clay
+for.bees.species.slimeball=Slime Ball
+for.bees.species.peat=Peat
+for.bees.species.stickyresin=Sticky Resin
+for.bees.species.coal=Coal
+for.bees.species.oil=Oil
+for.bees.species.ash=Ash
+for.bees.species.apatite=Apatite
+for.bees.species.biomass=Biomass
+for.bees.species.redstone=Redstone
+for.bees.species.lapis=Lapis
+for.bees.species.certus=Certus Quartz
+for.bees.species.diamond=Diamond
+for.bees.species.ruby=Ruby
+for.bees.species.sapphire=Sapphire
+for.bees.species.olivine=Olivine
+for.bees.species.emerald=Emerald
+for.bees.species.copper=Copper
+for.bees.species.tin=Tin
+for.bees.species.lead=Lead
+for.bees.species.iron=Iron
+for.bees.species.steel=Steel
+for.bees.species.nickel=Nickel
+for.bees.species.zinc=Zinc
+for.bees.species.silver=Silver
+for.bees.species.gold=Gold
+for.bees.species.arsenic=Arsenic
+for.bees.species.aluminium=Aluminium
+for.bees.species.titanium=Titanium
+for.bees.species.chrome=Chrome
+for.bees.species.manganese=Manganese
+for.bees.species.tungsten=Tungsten
+for.bees.species.platinum=Platinum
+for.bees.species.iridium=Iridium
+for.bees.species.osmium=Osmium
+for.bees.species.salty=Salt
+for.bees.species.lithium=Lithium
+for.bees.species.electrotine=Electrotine
+for.bees.species.energy=Energy
+for.bees.species.lapotron=Lapotron
+for.bees.species.redalloy=Red Alloy
+for.bees.species.stainlesssteel=Stainless Steel
+for.bees.species.uranium=Uranium
+for.bees.species.plutonium=Plutonium
+for.bees.species.naquadah=Naquadah
+for.bees.species.naquadria=Naquadria
+for.bees.species.thorium=Thorium
+for.bees.species.lutetium=Lutetium
+for.bees.species.americium=Americium
+for.bees.species.neutronium=Neutronium
+for.bees.species.divided=Divided
+for.bees.species.sandwich=Sandwich
+for.bees.species.sparkling=Nether Star
+for.bees.species.fertilizer=Fertilizer
+for.bees.species.phosphorus=Phosphorus
+for.bees.species.sulfur=Sulfur
+for.bees.species.indium=Indium
+for.bees.species.explosive=Explosive
+for.bees.species.trinium=Trinium
+for.bees.species.helium=Helium
+for.bees.species.argon=Argon
+for.bees.species.neon=Neon
+for.bees.species.krypton=Krypton
+for.bees.species.xenon=Xenon
+for.bees.species.oxygen=Oxygen
+for.bees.species.hydrogen=Hydrogen
+for.bees.species.nitrogen=Nitrogen
+for.bees.species.fluorine=Fluorine
+for.bees.species.fluix=Fluix
+for.bees.species.silicon=Silicon
+
+# Bee Descriptions (many more to do)
+for.bees.description.clay=勤勉で働き者として知られる有機ミツバチ。噂によると適切なバイオームでは泥を見つけることができるらしい。|Beekeeping 101
+
+# Scanner Information
+gregtech.scanner.forestry.drone=§o解析済みの雄
+gregtech.scanner.forestry.princess=§o解析済みの新女王
+gregtech.scanner.forestry.queen=§o解析済みの女王
+gregtech.scanner.forestry.sapling=§o解析済みの苗木
+gregtech.scanner.forestry.butterfly=§o解析済みの成虫
+gregtech.scanner.forestry.larvae=§o解析済みの幼虫
+gregtech.scanner.forestry.serum=§o解析済みの漿液
+gregtech.scanner.forestry.caterpillar=§o解析済みの幼虫
+gregtech.scanner.forestry.pollen=§o解析済みの花粉
