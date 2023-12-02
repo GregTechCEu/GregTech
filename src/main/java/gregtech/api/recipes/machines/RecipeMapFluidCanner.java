@@ -55,17 +55,22 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
                 }
 
                 // if we didn't drain anything, try filling container
-                if (!fluidInputs.isEmpty() && fluidInputs.get(0) != null) {
-                    FluidStack inputFluid = fluidInputs.get(0).copy();
-                    inputFluid.amount = fluidHandlerItem.fill(inputFluid, true);
-                    if (inputFluid.amount > 0) {
-                        return recipeBuilder()
-                                // we can reuse recipe as long as input container stack fully matches our one
-                                .inputs(new GTRecipeItemInput(inputStack, 1))
-                                .fluidInputs(inputFluid)
-                                .outputs(fluidHandlerItem.getContainer())
-                                .duration(Math.max(16, inputFluid.amount / 64)).EUt(4)
-                                .build().getResult();
+                if (!fluidInputs.isEmpty()) {
+                    for (FluidStack inputFluid : fluidInputs) {
+                        if (inputFluid == null) {
+                            continue;
+                        }
+                        inputFluid = inputFluid.copy();
+                        inputFluid.amount = fluidHandlerItem.fill(inputFluid, true);
+                        if (inputFluid.amount > 0) {
+                            return recipeBuilder()
+                                    // we can reuse recipe as long as input container stack fully matches our one
+                                    .inputs(new GTRecipeItemInput(inputStack, 1))
+                                    .fluidInputs(inputFluid)
+                                    .outputs(fluidHandlerItem.getContainer())
+                                    .duration(Math.max(16, inputFluid.amount / 64)).EUt(4)
+                                    .build().getResult();
+                        }
                     }
                 }
             }

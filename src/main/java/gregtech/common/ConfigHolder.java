@@ -83,11 +83,6 @@ public class ConfigHolder {
         @Config.Comment({ "Minimum distance betweeb Long Distance Fluid Pipe Endpoints", "Default: 50" })
         public int ldFluidPipeMinDistance = 50;
 
-        @Config.Comment({ "Divisor for Recipe Duration per Overclock.", "Default: 2.0" })
-        @Config.RangeDouble(min = 2.0, max = 3.0)
-        @Config.SlidingOption
-        public double overclockDivisor = 2.0;
-
         @Config.Comment({ "Whether Steam Multiblocks should use Steel instead of Bronze.", "Default: false" })
         public boolean steelSteamMultiblocks = false;
 

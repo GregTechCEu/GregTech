@@ -44,7 +44,7 @@ public class FluidBuilder {
 
     private final Collection<FluidAttribute> attributes = new ArrayList<>();
 
-    private FluidState state = FluidState.LIQUID;
+    private FluidState state = null;
     private int temperature = INFER_TEMPERATURE;
     private int color = INFER_COLOR;
     private boolean isColorEnabled = true;
@@ -59,6 +59,7 @@ public class FluidBuilder {
 
     private boolean hasFluidBlock = false;
     private boolean hasBucket = true;
+    private String alternativeName = null;
 
     public FluidBuilder() {}
 
@@ -214,6 +215,15 @@ public class FluidBuilder {
     }
 
     /**
+     * @param name Alternative registry name for this fluid to look for
+     * @return this
+     */
+    public @NotNull FluidBuilder alternativeName(@NotNull String name) {
+        this.alternativeName = name;
+        return this;
+    }
+
+    /**
      * Mark this fluid as having a custom still texture
      * 
      * @return this
@@ -275,7 +285,21 @@ public class FluidBuilder {
             throw new IllegalStateException("Could not determine fluid name");
         }
 
+        if (state == null) {
+            if (key != null && key.getDefaultFluidState() != null) {
+                state = key.getDefaultFluidState();
+            } else {
+                state = FluidState.LIQUID; // default fallback
+            }
+        }
+
+        // try to find an already registered fluid that we can use instead of a new one
         Fluid fluid = FluidRegistry.getFluid(name);
+        if (fluid == null && alternativeName != null) {
+            // try to use alternative fluid name if needed
+            fluid = FluidRegistry.getFluid(alternativeName);
+        }
+
         boolean needsRegistration = false;
         if (fluid == null) {
             needsRegistration = true;
@@ -293,7 +317,7 @@ public class FluidBuilder {
 
         if (fluid instanceof AttributedFluid attrFluid) {
             attributes.forEach(attrFluid::addAttribute);
-        } else {
+        } else if (!attributes.isEmpty()) {
             GTLog.logger
                     .warn("Unable to set Fluid Attributes for Fluid {}, as it is owned by another mod! Skipping...");
         }
@@ -357,7 +381,8 @@ public class FluidBuilder {
 
         // register cross mod compat for colors
         if (Loader.isModLoaded(GTValues.MODID_TOP_ADDONS)) {
-            Colors.FLUID_NAME_COLOR_MAP.put(name, color);
+            int displayColor = isColorEnabled || material == null ? color : material.getMaterialRGB();
+            Colors.FLUID_NAME_COLOR_MAP.put(name, displayColor);
         }
 
         return fluid;

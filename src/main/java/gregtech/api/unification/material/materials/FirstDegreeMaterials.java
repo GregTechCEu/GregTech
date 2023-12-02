@@ -155,7 +155,7 @@ public class FirstDegreeMaterials {
         Cinnabar = new Material.Builder(268, gregtechId("cinnabar"))
                 .dust(1).ore()
                 .color(0x960000).iconSet(EMERALD)
-                .flags(CRYSTALLIZABLE, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Mercury, 1, Sulfur, 1)
                 .build();
 
@@ -263,7 +263,8 @@ public class FirstDegreeMaterials {
                 .dust(0)
                 .liquid(new FluidBuilder()
                         .temperature(273)
-                        .customStill())
+                        .customStill()
+                        .alternativeName("fluid.ice"))
                 .color(0xC8C8FF).iconSet(SHINY)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
@@ -1281,7 +1282,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         DistilledWater = new Material.Builder(421, gregtechId("distilled_water"))
-                .fluid()
+                .liquid(new FluidBuilder().alternativeName("fluidDistWater"))
                 .color(0x4A94FF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)

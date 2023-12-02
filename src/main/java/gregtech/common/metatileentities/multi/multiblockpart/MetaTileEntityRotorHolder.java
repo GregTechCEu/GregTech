@@ -2,16 +2,18 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
+import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -29,6 +31,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -39,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
+public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiablePart
                                        implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
 
     static final int SPEED_INCREMENT = 1;
@@ -54,7 +57,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
     private boolean frontFaceFree;
 
     public MetaTileEntityRotorHolder(ResourceLocation metaTileEntityId, int tier) {
-        super(metaTileEntityId, tier);
+        super(metaTileEntityId, tier, false);
         this.inventory = new InventoryRotorHolder();
         this.maxSpeed = 2000 + 1000 * tier;
     }
@@ -62,6 +65,11 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityRotorHolder(metaTileEntityId, getTier());
+    }
+
+    @Override
+    public IItemHandlerModifiable getImportItems() {
+        return this.inventory;
     }
 
     @Override
@@ -343,10 +351,10 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
                 getController() != null, hasRotor(), isRotorSpinning, getRotorColor());
     }
 
-    private class InventoryRotorHolder extends GTItemStackHandler {
+    private class InventoryRotorHolder extends NotifiableItemStackHandler {
 
         public InventoryRotorHolder() {
-            super(MetaTileEntityRotorHolder.this, 1);
+            super(MetaTileEntityRotorHolder.this, 1, null, false);
         }
 
         @Override
@@ -360,7 +368,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
         }
 
         @Override
-        protected void onContentsChanged(int slot) {
+        public void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             setRotorColor(getRotorColor());
             scheduleRenderUpdate();
@@ -415,6 +423,15 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
 
         private void damageRotor(int damageAmount) {
             if (!hasRotor()) return;
+
+            if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <=
+                    AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
+                var holder = (MultiblockFuelRecipeLogic) getController().getRecipeLogic();
+                if (holder != null && holder.isWorking()) {
+                    holder.invalidate();
+                }
+            }
+
             // noinspection ConstantConditions
             getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
         }
