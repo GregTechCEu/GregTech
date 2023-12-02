@@ -1,5 +1,6 @@
 package gregtech.api.fluids.store;
 
+import gregtech.api.fluids.FluidState;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 
@@ -22,15 +23,18 @@ public final class FluidStorageKey {
     private final UnaryOperator<String> registryNameOperator;
     private final Function<Material, String> translationKeyFunction;
     private final int hashCode;
+    private final FluidState defaultFluidState;
 
     public FluidStorageKey(@NotNull ResourceLocation resourceLocation, @NotNull MaterialIconType iconType,
                            @NotNull UnaryOperator<@NotNull String> registryNameOperator,
-                           @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction) {
+                           @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction,
+                           @Nullable FluidState defaultFluidState) {
         this.resourceLocation = resourceLocation;
         this.iconType = iconType;
         this.registryNameOperator = registryNameOperator;
         this.translationKeyFunction = translationKeyFunction;
         this.hashCode = resourceLocation.hashCode();
+        this.defaultFluidState = defaultFluidState;
         if (keys.containsKey(resourceLocation)) {
             throw new IllegalArgumentException("Cannot create duplicate keys");
         }
@@ -62,6 +66,13 @@ public final class FluidStorageKey {
      */
     public @NotNull String getTranslationKeyFor(@NotNull Material material) {
         return this.translationKeyFunction.apply(material);
+    }
+
+    /**
+     * @return the default fluid state for this storage key, if it exists.
+     */
+    public @Nullable FluidState getDefaultFluidState() {
+        return defaultFluidState;
     }
 
     @Override
