@@ -518,7 +518,7 @@ public class GTUtility {
     }
 
     public static int getExplosionPower(long voltage) {
-        return getTierByVoltage(voltage) + 1;
+        return (getTierByVoltage(voltage) + 10) * 2;
     }
 
     public static int getRedstonePower(World world, BlockPos blockPos, EnumFacing side) {
