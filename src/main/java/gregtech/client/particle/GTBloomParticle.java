@@ -10,12 +10,9 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class GTBloomParticle extends GTParticle implements IBloomEffect {
 
-    private final BloomEffectUtil.BloomRenderTicket ticket;
-
     public GTBloomParticle(double posX, double posY, double posZ) {
         super(posX, posY, posZ);
-
-        this.ticket = BloomEffectUtil.registerBloomRender(getBloomRenderSetup(), getBloomType(), this);
+        BloomEffectUtil.registerBloomRender(getBloomRenderSetup(), getBloomType(), this, this);
     }
 
     @Nullable
@@ -23,9 +20,4 @@ public abstract class GTBloomParticle extends GTParticle implements IBloomEffect
 
     @NotNull
     protected abstract BloomType getBloomType();
-
-    @Override
-    protected void onExpired() {
-        this.ticket.invalidate();
-    }
 }
