@@ -27,6 +27,12 @@ public final class FluidStorageKey {
 
     public FluidStorageKey(@NotNull ResourceLocation resourceLocation, @NotNull MaterialIconType iconType,
                            @NotNull UnaryOperator<@NotNull String> registryNameOperator,
+                           @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction) {
+        this(resourceLocation, iconType, registryNameOperator, translationKeyFunction, null);
+    }
+
+    public FluidStorageKey(@NotNull ResourceLocation resourceLocation, @NotNull MaterialIconType iconType,
+                           @NotNull UnaryOperator<@NotNull String> registryNameOperator,
                            @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction,
                            @Nullable FluidState defaultFluidState) {
         this.resourceLocation = resourceLocation;
