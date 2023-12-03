@@ -156,32 +156,29 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
      * @param duration how long the pipe should be active for
      */
     public void setActive(boolean active, int duration) {
-        boolean stateChanged = false;
-        if (this.isActive && !active) {
-            this.isActive = false;
-            stateChanged = true;
-        } else if (!this.isActive && active) {
-            this.isActive = true;
-            stateChanged = true;
-            activeDuration = duration;
-            TaskScheduler.scheduleTask(getWorld(), () -> {
-                if (++this.ticksActive % activeDuration == 0) {
-                    this.ticksActive = 0;
-                    setActive(false, -1);
-                    return false;
-                }
-                return true;
-            });
-        } else if (this.isActive) {
-            this.ticksActive = 0;
-            this.activeDuration = duration;
-        }
-
-        if (stateChanged) {
-            writeCustomData(GregtechDataCodes.PIPE_LASER_ACTIVE, buf -> buf.writeBoolean(this.isActive));
+        if (this.isActive != active) {
+            this.isActive = active;
             notifyBlockUpdate();
             markDirty();
+            writeCustomData(GregtechDataCodes.PIPE_LASER_ACTIVE, buf -> buf.writeBoolean(this.isActive));
+            if (active && duration != this.activeDuration) {
+                TaskScheduler.scheduleTask(getWorld(), this::queueDisconnect);
+            }
         }
+
+        this.activeDuration = duration;
+        if (duration > 0 && active) {
+            this.ticksActive = 0;
+        }
+    }
+
+    public boolean queueDisconnect() {
+        if (++this.ticksActive % activeDuration == 0) {
+            this.ticksActive = 0;
+            setActive(false, -1);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -191,6 +188,25 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
             this.isActive = buf.readBoolean();
             scheduleChunkForRenderUpdate();
         }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(this.isActive);
+
+        // schedule a disconnect on world load, gotta set the duration to something
+        if (isActive) {
+            activeDuration = 100;
+            TaskScheduler.scheduleTask(getWorld(), this::queueDisconnect);
+        }
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.isActive = buf.readBoolean();
+        scheduleChunkForRenderUpdate();
     }
 
     @NotNull
