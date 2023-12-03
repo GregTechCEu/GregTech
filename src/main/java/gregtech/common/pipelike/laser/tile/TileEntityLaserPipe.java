@@ -156,7 +156,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
      * @param duration how long the pipe should be active for
      */
     public void setActive(boolean active, int duration) {
-        if (this.isActive != active){
+        if (this.isActive != active) {
             this.isActive = active;
             notifyBlockUpdate();
             markDirty();
