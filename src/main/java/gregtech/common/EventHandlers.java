@@ -173,14 +173,14 @@ public class EventHandlers {
                 }
             } else if (!jet.isEmpty() && jet.getItem() instanceof ArmorMetaItem<?> &&
                     GTUtility.getOrCreateNbtCompound(jet).hasKey("flyMode")) {
-                ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
-                if (valueItem != null) {
-                    valueItem.getArmorLogic().damageArmor(player, jet, DamageSource.FALL,
-                            (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
-                    player.fallDistance = 0;
-                    event.setCanceled(true);
-                }
-            }
+                        ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
+                        if (valueItem != null) {
+                            valueItem.getArmorLogic().damageArmor(player, jet, DamageSource.FALL,
+                                    (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                            player.fallDistance = 0;
+                            event.setCanceled(true);
+                        }
+                    }
         }
     }
 
