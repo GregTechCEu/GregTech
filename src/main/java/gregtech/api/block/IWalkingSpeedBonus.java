@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * @deprecated use {@link gregtech.api.util.BlockUtility#addWalkingSpeedBonus(IBlockState, double)}
+ * @deprecated use {@link gregtech.api.util.BlockUtility#setWalkingSpeedBonus(IBlockState, double)}
  */
 @SuppressWarnings("DeprecatedIsStillUsed")
 @Deprecated

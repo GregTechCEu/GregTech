@@ -63,13 +63,13 @@ public class BlockUtility {
     }
 
     /**
-     * Add walking speed bonus to the block state. The bonus value is a percentage value that gets added to the player
+     * Set walking speed bonus for the block state. The bonus value is a percentage value that gets added to the player
      * speed; for example, a bonus value of {@link 0.25} will add 25% of extra speed to the player.
      *
      * @param state  block state
      * @param amount amount of walking speed bonus
      */
-    public static void addWalkingSpeedBonus(@NotNull IBlockState state, double amount) {
+    public static void setWalkingSpeedBonus(@NotNull IBlockState state, double amount) {
         Objects.requireNonNull(state, "state == null");
         if (!Double.isFinite(amount)) {
             throw new IllegalArgumentException("Haha funny i put NaN and Infinity in your API method haha no");

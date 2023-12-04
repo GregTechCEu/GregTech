@@ -629,15 +629,15 @@ public class MetaBlocks {
 
     public static void registerWalkingSpeedBonus() {
         for (IBlockState state : ASPHALT.getBlockState().getValidStates()) {
-            BlockUtility.addWalkingSpeedBonus(state, BlockUtility.ASPHALT_WALKING_SPEED_BONUS);
+            BlockUtility.setWalkingSpeedBonus(state, BlockUtility.ASPHALT_WALKING_SPEED_BONUS);
         }
         for (IBlockState state : STUDS.getBlockState().getValidStates()) {
-            BlockUtility.addWalkingSpeedBonus(state, BlockUtility.STUDS_WALKING_SPEED_BONUS);
+            BlockUtility.setWalkingSpeedBonus(state, BlockUtility.STUDS_WALKING_SPEED_BONUS);
         }
         for (StoneVariantBlock block : STONE_BLOCKS.values()) {
-            BlockUtility.addWalkingSpeedBonus(block.getState(StoneVariantBlock.StoneType.CONCRETE_DARK),
+            BlockUtility.setWalkingSpeedBonus(block.getState(StoneVariantBlock.StoneType.CONCRETE_DARK),
                     BlockUtility.ASPHALT_WALKING_SPEED_BONUS);
-            BlockUtility.addWalkingSpeedBonus(block.getState(StoneVariantBlock.StoneType.CONCRETE_LIGHT),
+            BlockUtility.setWalkingSpeedBonus(block.getState(StoneVariantBlock.StoneType.CONCRETE_LIGHT),
                     BlockUtility.ASPHALT_WALKING_SPEED_BONUS);
         }
     }
