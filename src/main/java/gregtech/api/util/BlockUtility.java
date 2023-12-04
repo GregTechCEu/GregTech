@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class BlockUtility {
 
@@ -25,6 +26,11 @@ public class BlockUtility {
      */
     public static final Object2DoubleMap<IBlockState> WALKING_SPEED_BONUS = Object2DoubleMaps.unmodifiable(
             walkingSpeedBonusInternal);
+
+    /**
+     * UUID of the walking speed bonus attribute applied to players.
+     */
+    public static final UUID WALKING_SPEED_UUID = UUID.fromString("415ac431-8339-4150-965c-e673a8a328be");
 
     /**
      * Walking speed bonus applied to asphalt and concrete blocks.

@@ -60,15 +60,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.UUID;
-
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
 
     private static final String HAS_TERMINAL = GTValues.MODID + ".terminal";
     private static ItemStack lastFeetEquip = ItemStack.EMPTY;
-
-    private static final UUID WALKING_SPEED_UUID = UUID.fromString("415ac431-8339-4150-965c-e673a8a328be");
 
     @SubscribeEvent
     public static void onEndermanTeleportEvent(EnderTeleportEvent event) {
@@ -224,7 +220,7 @@ public class EventHandlers {
         if (event.phase == TickEvent.Phase.START && !player.world.isRemote) {
             IAttributeInstance movementSpeed = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
             if (movementSpeed == null) return;
-            AttributeModifier modifier = movementSpeed.getModifier(WALKING_SPEED_UUID);
+            AttributeModifier modifier = movementSpeed.getModifier(BlockUtility.WALKING_SPEED_UUID);
 
             double speedBonus;
             if (!player.onGround || player.isInWater() || player.isSneaking()) {
@@ -243,13 +239,13 @@ public class EventHandlers {
             }
             if (modifier != null) {
                 if (speedBonus == modifier.getAmount()) return;
-                else movementSpeed.removeModifier(WALKING_SPEED_UUID);
+                else movementSpeed.removeModifier(BlockUtility.WALKING_SPEED_UUID);
             } else {
                 if (speedBonus == 0) return;
             }
             if (speedBonus != 0) {
-                movementSpeed.applyModifier(new AttributeModifier(WALKING_SPEED_UUID, "Walking Speed Bonus",
-                        speedBonus, 2));
+                movementSpeed.applyModifier(new AttributeModifier(BlockUtility.WALKING_SPEED_UUID,
+                        "Walking Speed Bonus", speedBonus, 2));
             }
         }
     }
@@ -260,7 +256,7 @@ public class EventHandlers {
     public static void onFOVUpdate(FOVUpdateEvent event) { // this event SUCKS
         EntityPlayer player = event.getEntity();
         IAttributeInstance movementSpeed = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
-        if (movementSpeed == null || movementSpeed.getModifier(WALKING_SPEED_UUID) == null) return;
+        if (movementSpeed == null || movementSpeed.getModifier(BlockUtility.WALKING_SPEED_UUID) == null) return;
 
         float originalFov = player.capabilities.isFlying ? 1.1f : 1.0f;
         originalFov *= (movementSpeed.getAttributeValue() / player.capabilities.getWalkSpeed() + 1) / 2;
@@ -293,7 +289,7 @@ public class EventHandlers {
         }
 
         for (AttributeModifier m : attrib.getModifiersByOperation(2)) {
-            if (m.getID() == WALKING_SPEED_UUID) continue;
+            if (m.getID() == BlockUtility.WALKING_SPEED_UUID) continue;
             applied *= 1 + m.getAmount();
         }
 
