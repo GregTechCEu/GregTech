@@ -12,12 +12,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockColored extends VariantBlock<EnumDyeColor> {
+import org.jetbrains.annotations.NotNull;
 
-    public BlockColored() {
-        this(net.minecraft.block.material.Material.IRON, "block_colored", 2.0f, 5.0f, SoundType.METAL,
-                EnumDyeColor.WHITE);
-    }
+public class BlockColored extends VariantBlock<EnumDyeColor> {
 
     public BlockColored(Material material, String translationKey, float hardness, float resistance, SoundType soundType,
                         EnumDyeColor defaultColor) {
@@ -30,23 +27,14 @@ public class BlockColored extends VariantBlock<EnumDyeColor> {
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos,
-                                    EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public double getWalkingSpeedBonus() {
-        return 1.25;
-    }
-
-    @Override
-    public boolean checkApplicableBlocks(IBlockState state) {
-        return this == MetaBlocks.STUDS;
-    }
-
-    @Override
-    public boolean recolorBlock(World world, BlockPos pos, EnumFacing side, EnumDyeColor color) {
+    public boolean recolorBlock(World world, @NotNull BlockPos pos, @NotNull EnumFacing side,
+                                @NotNull EnumDyeColor color) {
         if (world.getBlockState(pos) != getState(color)) {
             world.setBlockState(pos, getState(color));
             return true;
