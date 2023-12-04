@@ -20,8 +20,8 @@ public class RenderChunkMixin {
                            at = @At(value = "INVOKE_ASSIGN",
                                     target = "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;getRenderer(Lnet/minecraft/tileentity/TileEntity;)Lnet/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer;"))
     public <T extends TileEntity> TileEntitySpecialRenderer<T> adjustMTERenderer(
-            TileEntitySpecialRenderer<T> originalRenderer,
-            @Nullable TileEntity tileEntityIn) {
+                                                                                 TileEntitySpecialRenderer<T> originalRenderer,
+                                                                                 @Nullable TileEntity tileEntityIn) {
         // TODO, adjust when implementing second part of IGregTileEntity
         if (tileEntityIn instanceof MetaTileEntityHolder && !((MetaTileEntityHolder) tileEntityIn).hasTESR()) {
             return null;
