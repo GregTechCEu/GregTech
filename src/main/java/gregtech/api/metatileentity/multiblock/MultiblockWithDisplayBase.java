@@ -33,6 +33,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -274,8 +275,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     * Produces the muffler particles
+     * @deprecated Use {@link gregtech.client.particle.VanillaParticleEffects#MUFFLER_SMOKE} instead.
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     @SideOnly(Side.CLIENT)
     public void runMufflerEffect(float xPos, float yPos, float zPos, float xSpd, float ySpd, float zSpd) {
         getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, xSpd, ySpd, zSpd);

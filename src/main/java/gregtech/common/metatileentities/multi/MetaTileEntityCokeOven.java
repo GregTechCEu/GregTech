@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockContro
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -47,6 +48,7 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
         return new MetaTileEntityCokeOven(metaTileEntityId);
     }
 
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -112,29 +114,13 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     @Override
     public void randomDisplayTick() {
         if (this.isActive()) {
-            final BlockPos pos = getPos();
-            float x = pos.getX() + 0.5F;
-            float z = pos.getZ() + 0.5F;
-
-            final EnumFacing facing = getFrontFacing();
-            final float horizontalOffset = GTValues.RNG.nextFloat() * 0.6F - 0.3F;
-            final float y = pos.getY() + GTValues.RNG.nextFloat() * 0.375F + 0.3F;
-
-            if (facing.getAxis() == EnumFacing.Axis.X) {
-                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) x += 0.52F;
-                else x -= 0.52F;
-                z += horizontalOffset;
-            } else if (facing.getAxis() == EnumFacing.Axis.Z) {
-                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) z += 0.52F;
-                else z -= 0.52F;
-                x += horizontalOffset;
-            }
+            VanillaParticleEffects.defaultFrontEffect(this, 0.3F, EnumParticleTypes.SMOKE_LARGE,
+                    EnumParticleTypes.FLAME);
             if (ConfigHolder.machines.machineSounds && GTValues.RNG.nextDouble() < 0.1) {
-                getWorld().playSound(x, y, z, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F,
-                        false);
+                BlockPos pos = getPos();
+                getWorld().playSound(pos.getX(), pos.getY(), pos.getZ(),
+                        SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
-            getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, x, y, z, 0, 0, 0);
-            getWorld().spawnParticle(EnumParticleTypes.FLAME, x, y, z, 0, 0, 0);
         }
     }
 

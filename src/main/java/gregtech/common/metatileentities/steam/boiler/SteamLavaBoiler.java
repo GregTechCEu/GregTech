@@ -11,11 +11,15 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -126,11 +130,14 @@ public class SteamLavaBoiler extends SteamBoiler {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void randomDisplayTick(float x, float y, float z) {
-        super.randomDisplayTick(x, y, z);
-        if (GTValues.RNG.nextFloat() < 0.3F) {
-            getWorld().spawnParticle(EnumParticleTypes.LAVA, x + GTValues.RNG.nextFloat(), y,
-                    z + GTValues.RNG.nextFloat(), 0.0F, 0.0F, 0.0F);
+    public void randomDisplayTick() {
+        if (this.isActive()) {
+            VanillaParticleEffects.RANDOM_LAVA_SMOKE.runEffect(this);
+            if (ConfigHolder.machines.machineSounds && GTValues.RNG.nextDouble() < 0.1) {
+                BlockPos pos = getPos();
+                getWorld().playSound(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+                        SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+            }
         }
     }
 }
