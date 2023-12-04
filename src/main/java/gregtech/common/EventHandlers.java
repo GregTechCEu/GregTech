@@ -235,9 +235,10 @@ public class EventHandlers {
                 speedBonus = BlockUtility.WALKING_SPEED_BONUS.getDouble(state);
                 if (speedBonus == 0 &&
                         state.getBlock() instanceof IWalkingSpeedBonus walkingSpeedBonus &&
+                        walkingSpeedBonus.getWalkingSpeedBonus() != 1 &&
                         walkingSpeedBonus.bonusSpeedCondition(player) &&
                         walkingSpeedBonus.checkApplicableBlocks(state)) {
-                    speedBonus = walkingSpeedBonus.getWalkingSpeedBonus();
+                    speedBonus = walkingSpeedBonus.getWalkingSpeedBonus() - 1;
                 }
             }
             if (modifier != null) {
