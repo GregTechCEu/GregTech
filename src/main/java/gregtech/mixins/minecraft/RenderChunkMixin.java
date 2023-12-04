@@ -7,10 +7,9 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-
-import javax.annotation.Nullable;
 
 // TODO, error in log
 @Mixin(RenderChunk.class)
