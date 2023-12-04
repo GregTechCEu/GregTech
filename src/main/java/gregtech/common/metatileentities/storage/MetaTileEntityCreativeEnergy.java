@@ -2,7 +2,9 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.gui.GuiTextures;
@@ -35,6 +37,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -42,9 +45,10 @@ import java.util.function.Function;
 
 import static gregtech.api.GTValues.MAX;
 import static gregtech.api.GTValues.V;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 
-public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer {
+public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer, IControllable {
 
     private long voltage = 0;
     private int amps = 1;
@@ -89,6 +93,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
         } else if (capability == GregtechTileCapabilities.CAPABILITY_LASER) {
             return GregtechTileCapabilities.CAPABILITY_LASER.cast(this);
+        } else if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         } else {
             return super.getCapability(capability, side);
         }
@@ -126,7 +132,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
         builder.dynamicLabel(7, 110, () -> "Energy I/O per sec: " + this.lastEnergyIOPerSec, 0x232323);
 
-        builder.widget(new CycleButtonWidget(7, 139, 77, 20, () -> active, value -> active = value,
+        builder.widget(new CycleButtonWidget(7, 139, 77, 20, () -> active, this::setActive,
                 "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
         builder.widget(new CycleButtonWidget(85, 139, 77, 20, () -> source, value -> {
             source = value;
@@ -142,6 +148,13 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         }, "gregtech.creative.energy.sink", "gregtech.creative.energy.source"));
 
         return builder.build(getHolder(), entityPlayer);
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+        if (!getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, buf -> buf.writeBoolean(active));
+        }
     }
 
     @Override
@@ -297,11 +310,25 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_IO_SPEED) {
             this.lastEnergyIOPerSec = buf.readLong();
+        } else if (dataId == UPDATE_ACTIVE) {
+            this.active = buf.readBoolean();
         }
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(active);
+    }
+
+    @Override
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.active = buf.readBoolean();
     }
 
     public static Function<String, String> getTextFieldValidator() {
@@ -320,5 +347,15 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
             }
             return val;
         };
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return active;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        setActive(isWorkingAllowed);
     }
 }
