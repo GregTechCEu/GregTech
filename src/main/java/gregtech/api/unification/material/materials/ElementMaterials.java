@@ -42,6 +42,7 @@ public class ElementMaterials {
         Americium = new Material.Builder(3, gregtechId("americium"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(1449))
+                .plasma()
                 .color(0x287869).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Am)

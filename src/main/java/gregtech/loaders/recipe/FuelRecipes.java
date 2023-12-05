@@ -301,5 +301,12 @@ public class FuelRecipes {
                 .duration(192)
                 .EUt((int) V[EV])
                 .buildAndRegister();
+
+        RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
+                .fluidInputs(Americium.getPlasma(1))
+                .fluidOutputs(Americium.getFluid(1))
+                .duration(256)
+                .EUt((int) V[EV])
+                .buildAndRegister();
     }
 }

@@ -63,6 +63,15 @@ public class FusionLoader {
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
+                .fluidInputs(Materials.Plutonium241.getFluid(144))
+                .fluidInputs(Materials.Hydrogen.getFluid(2000))
+                .fluidOutputs(Materials.Americium.getPlasma(144))
+                .duration(64)
+                .EUt(98304)
+                .EUToStart(500_000_000)
+                .buildAndRegister();
+
+        RecipeMaps.FUSION_RECIPES.recipeBuilder()
                 .fluidInputs(Materials.Neodymium.getFluid(16))
                 .fluidInputs(Materials.Hydrogen.getFluid(375))
                 .fluidOutputs(Materials.Europium.getFluid(16))
