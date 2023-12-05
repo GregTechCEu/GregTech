@@ -90,9 +90,9 @@ public class FusionLoader {
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
-                .fluidInputs(Materials.Lutetium.getFluid(32))
-                .fluidInputs(Materials.Chrome.getFluid(32))
-                .fluidOutputs(Materials.Americium.getFluid(32))
+                .fluidInputs(Materials.Lutetium.getFluid(16))
+                .fluidInputs(Materials.Chrome.getFluid(16))
+                .fluidOutputs(Materials.Americium.getFluid(16))
                 .duration(64)
                 .EUt(49152)
                 .EUToStart(200_000_000)
