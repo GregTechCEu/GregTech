@@ -296,6 +296,13 @@ public class FuelRecipes {
                 .buildAndRegister();
 
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
+                .fluidInputs(Tin.getPlasma(1))
+                .fluidOutputs(Tin.getFluid(1))
+                .duration(160)
+                .EUt((int) V[EV])
+                .buildAndRegister();
+
+        RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Nickel.getPlasma(1))
                 .fluidOutputs(Nickel.getFluid(1))
                 .duration(192)
