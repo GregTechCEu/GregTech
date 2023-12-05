@@ -355,6 +355,23 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         @Override
+        public void update() {
+            // drain oxygen if present to boost production, and if the dynamo hatch supports it
+            if (combustionEngine.isBoostAllowed() &&
+                    (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 20 == 0)) {
+                IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
+                FluidStack boosterStack = isExtreme ? LIQUID_OXYGEN_STACK : OXYGEN_STACK;
+                if (boosterStack.isFluidStackIdentical(inputTank.drain(boosterStack, false))) {
+                    isOxygenBoosted = true;
+                    inputTank.drain(boosterStack, true);
+                } else {
+                    isOxygenBoosted = false;
+                }
+            }
+            super.update();
+        }
+
+        @Override
         protected boolean shouldSearchForRecipes() {
             // drain lubricant and invalidate if it fails
             if (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 72 == 0) {
@@ -370,24 +387,6 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             return super.shouldSearchForRecipes() &&
                     LUBRICANT_STACK.isFluidStackIdentical(combustionEngine
                             .getInputFluidInventory().drain(LUBRICANT_STACK, false));
-        }
-
-        @Override
-        protected void trySearchNewRecipe() {
-            // drain oxygen if present to boost production, and if the dynamo hatch supports it
-            if (combustionEngine.isBoostAllowed() &&
-                    (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 20 == 0)) {
-                IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
-                FluidStack boosterStack = isExtreme ? LIQUID_OXYGEN_STACK : OXYGEN_STACK;
-                if (boosterStack.isFluidStackIdentical(inputTank.drain(boosterStack, false))) {
-                    isOxygenBoosted = true;
-                    inputTank.drain(boosterStack, true);
-                } else {
-                    isOxygenBoosted = false;
-                }
-            }
-
-            super.trySearchNewRecipe();
         }
 
         @Override
