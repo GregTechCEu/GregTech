@@ -165,16 +165,16 @@ public class FusionLoader {
                 .fluidInputs(Materials.Gallium.getFluid(16))
                 .fluidInputs(Materials.Radon.getFluid(125))
                 .fluidOutputs(Materials.Duranium.getFluid(16))
-                .duration(64)
+                .duration(32)
                 .EUt(16384)
                 .EUToStart(140_000_000)
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
-                .fluidInputs(Materials.Titanium.getFluid(32))
+                .fluidInputs(Materials.Titanium.getFluid(48))
                 .fluidInputs(Materials.Duranium.getFluid(32))
                 .fluidOutputs(Materials.Tritanium.getFluid(16))
-                .duration(64)
+                .duration(16)
                 .EUt(VA[LuV])
                 .EUToStart(200_000_000)
                 .buildAndRegister();
