@@ -111,11 +111,6 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
         builder.widget(new LabelWidget(6, 6, getMetaFullName()))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
-        builder.widget(new CycleButtonWidget(7, 62 + yOffset, 18, 18,
-                workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
-                        .setTooltipHoverString("gregtech.gui.overclock.description")
-                        .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
-
         return builder;
     }
 
