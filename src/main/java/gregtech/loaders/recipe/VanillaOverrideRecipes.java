@@ -649,7 +649,7 @@ public class VanillaOverrideRecipes {
     }
 
     private static void addBedRecipe(int meta) {
-        String colorName = EnumDyeColor.byMetadata(meta).getDyeColorName();
+        String colorName = EnumDyeColor.byMetadata(meta).getName();
         if ("silver".equals(colorName)) {
             // thank you mojang
             colorName = "light_gray";
