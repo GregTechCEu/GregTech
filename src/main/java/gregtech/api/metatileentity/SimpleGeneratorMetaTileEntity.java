@@ -8,7 +8,6 @@ import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
