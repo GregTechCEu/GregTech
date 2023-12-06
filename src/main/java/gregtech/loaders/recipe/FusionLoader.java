@@ -41,7 +41,7 @@ public class FusionLoader {
                 .fluidOutputs(Materials.Iron.getPlasma(144))
                 .duration(32)
                 .EUt(VA[IV])
-                .EUToStart(360_000_000)
+                .EUToStart(300_000_000)
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()

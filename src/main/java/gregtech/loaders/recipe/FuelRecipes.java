@@ -291,7 +291,7 @@ public class FuelRecipes {
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Iron.getPlasma(1))
                 .fluidOutputs(Iron.getFluid(1))
-                .duration(128)
+                .duration(112)
                 .EUt((int) V[EV])
                 .buildAndRegister();
 
