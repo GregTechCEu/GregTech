@@ -220,12 +220,14 @@ public class OrganicChemistryMaterials {
         Propene = new Material.Builder(1028, gregtechId("propene"))
                 .gas()
                 .color(0xFFDD55)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 3, Hydrogen, 6)
                 .build();
 
         Ethane = new Material.Builder(1029, gregtechId("ethane"))
                 .gas()
                 .color(0xC8C8FF)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6)
                 .build();
 

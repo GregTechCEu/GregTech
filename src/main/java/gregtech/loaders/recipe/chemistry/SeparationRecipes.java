@@ -506,6 +506,18 @@ public class SeparationRecipes {
                 .fluidOutputs(Hydrogen.getFluid(18000))
                 .duration(624).EUt(60).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Propene.getFluid(1000))
+                .output(dust, Carbon, 3)
+                .fluidOutputs(Hydrogen.getFluid(6000))
+                .duration(144).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Ethane.getFluid(1000))
+                .output(dust, Carbon, 2)
+                .fluidOutputs(Hydrogen.getFluid(6000))
+                .duration(128).EUt(60).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
