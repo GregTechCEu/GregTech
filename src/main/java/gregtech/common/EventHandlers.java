@@ -229,6 +229,7 @@ public class EventHandlers {
                 IBlockState state = player.world.getBlockState(new BlockPos(
                         player.posX, player.getEntityBoundingBox().minY - 1, player.posZ));
                 speedBonus = BlockUtility.WALKING_SPEED_BONUS.getDouble(state);
+                // { remove this bit while removing IWalkingSpeedBonus
                 if (speedBonus == 0 &&
                         state.getBlock() instanceof IWalkingSpeedBonus walkingSpeedBonus &&
                         walkingSpeedBonus.getWalkingSpeedBonus() != 1 &&
@@ -236,6 +237,7 @@ public class EventHandlers {
                         walkingSpeedBonus.checkApplicableBlocks(state)) {
                     speedBonus = walkingSpeedBonus.getWalkingSpeedBonus() - 1;
                 }
+                // }
             }
             if (modifier != null) {
                 if (speedBonus == modifier.getAmount()) return;
