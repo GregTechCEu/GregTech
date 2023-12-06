@@ -372,7 +372,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         public boolean checkLubricant() {
-            // drain lubricant and invalidate if it fails
+            // check lubricant and invalidate if it fails
             IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
             if (LUBRICANT_STACK.isFluidStackIdentical(inputTank.drain(LUBRICANT_STACK, false))) {
                 return true;
