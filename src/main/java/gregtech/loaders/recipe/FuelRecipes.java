@@ -298,7 +298,7 @@ public class FuelRecipes {
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Tin.getPlasma(1))
                 .fluidOutputs(Tin.getFluid(1))
-                .duration(160)
+                .duration(128)
                 .EUt((int) V[EV])
                 .buildAndRegister();
 
@@ -312,7 +312,7 @@ public class FuelRecipes {
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Americium.getPlasma(1))
                 .fluidOutputs(Americium.getFluid(1))
-                .duration(256)
+                .duration(320)
                 .EUt((int) V[EV])
                 .buildAndRegister();
     }
