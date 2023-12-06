@@ -370,44 +370,6 @@ public class SeparationRecipes {
                 .duration(100).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(AceticAcid.getFluid(2000))
-                .fluidOutputs(Ethane.getFluid(1000))
-                .fluidOutputs(CarbonDioxide.getFluid(2000))
-                .fluidOutputs(Hydrogen.getFluid(2000))
-                .duration(512).EUt(60).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(Chloromethane.getFluid(2000))
-                .fluidOutputs(Ethane.getFluid(1000))
-                .fluidOutputs(Chlorine.getFluid(2000))
-                .duration(400).EUt(60).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(Acetone.getFluid(2000))
-                .output(dust, Carbon, 3)
-                .fluidOutputs(Propane.getFluid(1000))
-                .fluidOutputs(Water.getFluid(2000))
-                .duration(480).EUt(60).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(Butane.getFluid(1000))
-                .fluidOutputs(Butene.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(2000))
-                .duration(240).EUt(VA[MV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(Butene.getFluid(1000))
-                .fluidOutputs(Butadiene.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(2000))
-                .duration(240).EUt(VA[MV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(Propane.getFluid(1000))
-                .fluidOutputs(Propene.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(2000))
-                .duration(640).EUt(VA[MV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Diamond)
                 .output(dust, Carbon, 64)
                 .duration(768).EUt(VA[LV]).buildAndRegister();
@@ -469,6 +431,80 @@ public class SeparationRecipes {
                 .output(dust, Phosphorus, 3)
                 .fluidOutputs(Chlorine.getFluid(1000))
                 .duration(288).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Propane.getFluid(1000))
+                .output(dust, Carbon, 3)
+                .fluidOutputs(Hydrogen.getFluid(8000))
+                .duration(176).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Butene.getFluid(1000))
+                .output(dust, Carbon, 4)
+                .fluidOutputs(Hydrogen.getFluid(8000))
+                .duration(192).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Butane.getFluid(1000))
+                .output(dust, Carbon, 4)
+                .fluidOutputs(Hydrogen.getFluid(10000))
+                .duration(224).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Styrene.getFluid(1000))
+                .output(dust, Carbon, 8)
+                .fluidOutputs(Hydrogen.getFluid(8000))
+                .duration(384).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Butadiene.getFluid(1000))
+                .output(dust, Carbon, 4)
+                .fluidOutputs(Hydrogen.getFluid(6000))
+                .duration(240).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Phenol.getFluid(1000))
+                .output(dust, Carbon, 6)
+                .fluidOutputs(Hydrogen.getFluid(6000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .duration(312).EUt(90).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Ethylene.getFluid(1000))
+                .output(dust, Carbon, 2)
+                .fluidOutputs(Hydrogen.getFluid(4000))
+                .duration(96).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Benzene.getFluid(1000))
+                .output(dust, Carbon, 6)
+                .fluidOutputs(Hydrogen.getFluid(6000))
+                .duration(288).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Ethanol.getFluid(1000))
+                .output(dust, Carbon, 2)
+                .fluidOutputs(Hydrogen.getFluid(6000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .duration(144).EUt(90).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Toluene.getFluid(1000))
+                .output(dust, Carbon, 7)
+                .fluidOutputs(Hydrogen.getFluid(8000))
+                .duration(360).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Dimethylbenzene.getFluid(1000))
+                .output(dust, Carbon, 8)
+                .fluidOutputs(Hydrogen.getFluid(10000))
+                .duration(432).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(Octane.getFluid(1000))
+                .output(dust, Carbon, 8)
+                .fluidOutputs(Hydrogen.getFluid(18000))
+                .duration(624).EUt(60).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
