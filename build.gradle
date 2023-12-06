@@ -1,4 +1,4 @@
-//version: 1701481996
+//version: 1701739812
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -221,6 +221,16 @@ if (enableSpotless.toBoolean()) {
             endWithNewline()
             //noinspection GroovyAssignabilityCheck
             eclipse('4.19.0').configFile(formatFile)
+        }
+        kotlin {
+            target 'src/*/kotlin/**/*.kt'
+
+            toggleOffOn()
+            ktfmt('0.39')
+
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
         }
         scala {
             target 'src/*/scala/**/*.scala'
