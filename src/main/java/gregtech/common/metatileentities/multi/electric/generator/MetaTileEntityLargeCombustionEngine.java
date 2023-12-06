@@ -344,7 +344,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         @Override
         protected void updateRecipeProgress() {
             if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
-
+                drainLubricant();
+                drainOxygen();
                 drawEnergy(recipeEUt, false);
 
                 // as recipe starts with progress on 1 this has to be > only not => to compensate for it
@@ -354,39 +355,44 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
         }
 
-        @Override
-        public void update() {
-            // drain oxygen if present to boost production, and if the dynamo hatch supports it
-            if (combustionEngine.isBoostAllowed() &&
-                    (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 20 == 0)) {
+        public void checkOxygen() {
+            // check oxygen if present to boost production, and if the dynamo hatch supports it
+            if (combustionEngine.isBoostAllowed()) {
                 IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
                 FluidStack boosterStack = isExtreme ? LIQUID_OXYGEN_STACK : OXYGEN_STACK;
-                if (boosterStack.isFluidStackIdentical(inputTank.drain(boosterStack, false))) {
-                    isOxygenBoosted = true;
-                    inputTank.drain(boosterStack, true);
-                } else {
-                    isOxygenBoosted = false;
-                }
+                isOxygenBoosted = boosterStack.isFluidStackIdentical(inputTank.drain(boosterStack, false));
             }
-            super.update();
+        }
+
+        public void drainOxygen() {
+            if (isOxygenBoosted && totalContinuousRunningTime % 20 == 0) {
+                FluidStack boosterStack = isExtreme ? LIQUID_OXYGEN_STACK : OXYGEN_STACK;
+                combustionEngine.getInputFluidInventory().drain(boosterStack, true);
+            }
+        }
+
+        public boolean checkLubricant() {
+            // drain lubricant and invalidate if it fails
+            IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
+            if (LUBRICANT_STACK.isFluidStackIdentical(inputTank.drain(LUBRICANT_STACK, false))) {
+                return true;
+            } else {
+                invalidate();
+                return false;
+            }
+        }
+
+        public void drainLubricant() {
+            if (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 72 == 0) {
+                IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
+                inputTank.drain(LUBRICANT_STACK, true);
+            }
         }
 
         @Override
         protected boolean shouldSearchForRecipes() {
-            // drain lubricant and invalidate if it fails
-            if (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 72 == 0) {
-                IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
-                if (LUBRICANT_STACK.isFluidStackIdentical(inputTank.drain(LUBRICANT_STACK, false))) {
-                    inputTank.drain(LUBRICANT_STACK, true);
-                } else {
-                    invalidate();
-                    return false;
-                }
-            }
-
-            return super.shouldSearchForRecipes() &&
-                    LUBRICANT_STACK.isFluidStackIdentical(combustionEngine
-                            .getInputFluidInventory().drain(LUBRICANT_STACK, false));
+            checkOxygen();
+            return super.shouldSearchForRecipes() && checkLubricant();
         }
 
         @Override
