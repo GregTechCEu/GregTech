@@ -396,6 +396,11 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         @Override
+        protected boolean canProgressRecipe() {
+            return super.canProgressRecipe() && checkLubricant();
+        }
+
+        @Override
         public long getMaxVoltage() {
             // this multiplies consumption through parallel
             if (isOxygenBoosted)
