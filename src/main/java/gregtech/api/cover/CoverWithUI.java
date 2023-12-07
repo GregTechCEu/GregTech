@@ -36,7 +36,9 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
     }
 
     @Deprecated
-    ModularUI createUI(EntityPlayer player);
+    default ModularUI createUI(EntityPlayer player) {
+        return null;
+    }
 
     @Override
     default ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
