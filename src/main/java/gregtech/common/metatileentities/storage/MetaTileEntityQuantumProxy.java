@@ -71,7 +71,7 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
 
     @Override
     public Type getType() {
-        return Type.EXTENDER;
+        return Type.PROXY;
     }
 
     @Override
