@@ -5,14 +5,17 @@ import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
+// TODO This class can be removed
 public class LockableItemStackHandler extends NotifiableItemStackHandler implements ILockableHandler {
     protected boolean locked;
     protected ItemStack lockedItemStack;
+
     public LockableItemStackHandler(MetaTileEntity entityToNotify, boolean isExport) {
-        super(1, entityToNotify, isExport);
+        super(entityToNotify, 1, entityToNotify, isExport);
     }
+
     @Override
     public void setLock(boolean isLocked) {
         this.locked = isLocked;
@@ -24,9 +27,9 @@ public class LockableItemStackHandler extends NotifiableItemStackHandler impleme
         return this.locked;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (this.locked) {
             if (!this.lockedItemStack.isItemEqual(stack)) {
                 return stack;

@@ -17,8 +17,6 @@ import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class MetaTileEntityHeatExchanger extends RecipeMapMultiblockController {
 
     public MetaTileEntityHeatExchanger(ResourceLocation metaTileEntityId) {
@@ -60,7 +58,7 @@ public class MetaTileEntityHeatExchanger extends RecipeMapMultiblockController {
         return Textures.SOLID_STEEL_CASING;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.BLAST_FURNACE_OVERLAY;
