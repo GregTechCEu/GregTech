@@ -172,14 +172,16 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
-            if (!(mte instanceof IQuantumStorage<?>storage)) continue;
+            if (!(mte instanceof IQuantumStorage<?> storage)) continue;
 
             // connected to some other network already, ignore
             if (storage.isConnected() && !storage.getControllerPos().equals(getPos())) continue;
 
             // valid chest/tank located, add it
-            storageInstances.put(pos, new WeakReference<>(storage));
-            storagePositions.add(pos);
+            if (storage.getType() != IQuantumStorage.Type.EXTENDER) {
+                storageInstances.put(pos, new WeakReference<>(storage));
+                storagePositions.add(pos);
+            }
             storage.setConnected(this);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
@@ -209,7 +211,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 storage = oldInstances.get(pos).get();
             } else {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
-                if (mte instanceof IQuantumStorage<?>quantumStorage) {
+                if (mte instanceof IQuantumStorage<?> quantumStorage) {
                     storage = quantumStorage;
                 }
             }
