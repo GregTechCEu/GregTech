@@ -8,7 +8,6 @@ import gregtech.asm.visitors.EnchantmentCanApplyVisitor;
 import gregtech.asm.visitors.JEIVisitor;
 import gregtech.asm.visitors.LittleTilesVisitor;
 import gregtech.asm.visitors.ModelCTMVisitor;
-import gregtech.asm.visitors.RenderItemVisitor;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -16,10 +15,6 @@ import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
-
-import java.util.Iterator;
 
 public class GregTechTransformer implements IClassTransformer, Opcodes {
 
@@ -146,37 +141,44 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                         0);
                 return classWriter.toByteArray();
             }
-            /*case CCLVisitor.TARGET_CLASS_NAME: {
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(new TargetClassVisitor(classWriter, CCLVisitor.TARGET_METHOD, CCLVisitor::new), 0);
-                return classWriter.toByteArray();
-            }*/
-            /*case NuclearCraftRecipeHelperVisitor.TARGET_CLASS_NAME: {
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(0);
-
-                // fix NC recipe compat different depending on overhaul vs normal
-                if (Mods.NuclearCraftOverhauled.isModLoaded()) {
-                    classReader.accept(new TargetClassVisitor(classWriter,
-                            NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NCO, NuclearCraftRecipeHelperVisitor::new),
-                            0);
-                } else if (Mods.NuclearCraft.isModLoaded()) {
-                    classReader.accept(new TargetClassVisitor(classWriter,
-                            NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NC, NuclearCraftRecipeHelperVisitor::new), 0);
-                }
-                return classWriter.toByteArray();
-            }*/
-            case RenderItemVisitor.TARGET_CLASS_NAME: {
-                ClassNode classNode = new ClassNode();
-                ClassReader classReader = new ClassReader(basicClass);
-                classReader.accept(classNode, 0);
-                Iterator<MethodNode> methods = classNode.methods.iterator();
-                RenderItemVisitor.transform(methods);
-                ClassWriter classWriter = new ClassWriter(0);
-                classNode.accept(classWriter);
-                return classWriter.toByteArray();
-            }
+            /*
+             * case CCLVisitor.TARGET_CLASS_NAME: {
+             * ClassReader classReader = new ClassReader(basicClass);
+             * ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+             * classReader.accept(new TargetClassVisitor(classWriter, CCLVisitor.TARGET_METHOD, CCLVisitor::new), 0);
+             * return classWriter.toByteArray();
+             * }
+             */
+            /*
+             * case NuclearCraftRecipeHelperVisitor.TARGET_CLASS_NAME: {
+             * ClassReader classReader = new ClassReader(basicClass);
+             * ClassWriter classWriter = new ClassWriter(0);
+             *
+             * // fix NC recipe compat different depending on overhaul vs underhaul
+             * ModContainer container = Loader.instance().getIndexedModList().get(GTValues.MODID_NC);
+             * if (container.getVersion().contains("2o")) { // overhauled
+             * classReader.accept(new TargetClassVisitor(classWriter,
+             * NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NCO, NuclearCraftRecipeHelperVisitor::new),
+             * 0);
+             * } else {
+             * classReader.accept(new TargetClassVisitor(classWriter,
+             * NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NC, NuclearCraftRecipeHelperVisitor::new), 0);
+             * }
+             * return classWriter.toByteArray();
+             * }
+             */
+            /*
+             * case RenderItemVisitor.TARGET_CLASS_NAME: {
+             * ClassNode classNode = new ClassNode();
+             * ClassReader classReader = new ClassReader(basicClass);
+             * classReader.accept(classNode, 0);
+             * Iterator<MethodNode> methods = classNode.methods.iterator();
+             * RenderItemVisitor.transform(methods);
+             * ClassWriter classWriter = new ClassWriter(0);
+             * classNode.accept(classWriter);
+             * return classWriter.toByteArray();
+             * }
+             */
             /*
              * case RecipeRepairItemVisitor.TARGET_CLASS_NAME: {
              * ClassReader classReader = new ClassReader(basicClass);
