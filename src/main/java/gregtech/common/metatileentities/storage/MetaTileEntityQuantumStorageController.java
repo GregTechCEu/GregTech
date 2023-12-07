@@ -181,10 +181,10 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage.getType() != IQuantumStorage.Type.EXTENDER) {
                 storageInstances.put(pos, new WeakReference<>(storage));
                 storagePositions.add(pos);
+                oldInstances.remove(pos);
+                oldPositions.remove(pos);
             }
             storage.setConnected(this);
-            oldInstances.remove(pos);
-            oldPositions.remove(pos);
 
             // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
