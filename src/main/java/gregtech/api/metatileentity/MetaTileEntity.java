@@ -16,6 +16,7 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.GTThemes;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
@@ -435,8 +436,12 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
-        return new GregTechGuiScreen(mainPanel);
+    public final ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
+        return new GregTechGuiScreen(mainPanel, getUITheme());
+    }
+
+    public GTThemes getUITheme() {
+        return GTThemes.STANDARD;
     }
 
     @Override

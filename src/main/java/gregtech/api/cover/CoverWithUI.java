@@ -3,6 +3,7 @@ package gregtech.api.cover;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.GTThemes;
 import gregtech.api.mui.GregTechGuiScreen;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,9 +37,14 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
         return null;
     }
 
+    @ApiStatus.NonExtendable
     @Override
     default ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
-        return new GregTechGuiScreen(mainPanel);
+        return new GregTechGuiScreen(mainPanel, getUITheme());
+    }
+
+    default GTThemes getUITheme() {
+        return GTThemes.STANDARD;
     }
 
     @Override

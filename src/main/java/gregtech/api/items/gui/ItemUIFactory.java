@@ -2,6 +2,7 @@ package gregtech.api.items.gui;
 
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.stats.IItemComponent;
+import gregtech.api.mui.GTThemes;
 import gregtech.api.mui.GregTechGuiScreen;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +12,7 @@ import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import org.jetbrains.annotations.ApiStatus;
 
 public interface ItemUIFactory extends IItemComponent, IGuiHolder {
 
@@ -23,9 +25,14 @@ public interface ItemUIFactory extends IItemComponent, IGuiHolder {
         return null;
     }
 
+    @ApiStatus.NonExtendable
     @Override
     default ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
-        return new GregTechGuiScreen(mainPanel);
+        return new GregTechGuiScreen(mainPanel, getUITheme());
+    }
+
+    default GTThemes getUITheme() {
+        return GTThemes.STANDARD;
     }
 
     @Override
