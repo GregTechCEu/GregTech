@@ -71,6 +71,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
             guiSyncManager.syncValue("config", i, new InteractionSyncHandler()
                     .setOnMousePressed(b -> {
                         ItemStack item = IntCircuitIngredient.getIntegratedCircuit(finalI);
+                        item.setCount(guiCreationContext.getUsedItemStack().getCount());
                         circuitPreview.setItem(item);
                         guiCreationContext.getPlayer().setHeldItem(guiCreationContext.getUsedHand(), item);
                     }));
