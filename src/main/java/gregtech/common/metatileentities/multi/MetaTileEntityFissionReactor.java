@@ -25,8 +25,8 @@ import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
@@ -45,7 +45,8 @@ import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,11 +71,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return new MetaTileEntityFissionReactor(metaTileEntityId);
     }
 
-    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing direction) {
+    public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction) {
         return this.isBlockEdge(world, pos, direction, 1);
     }
 
-    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing direction, int steps) {
+    public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction, int steps) {
         return world.getBlockState(pos.offset(direction, steps)).getBlock() != MetaBlocks.FISSION_CASING;
     }
 
@@ -146,7 +147,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
 
@@ -222,38 +223,38 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .build();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         list.add(new TextComponentTranslation("gregtech.multiblock.fission_reactor.diameter",
-                new TextComponentTranslation(GTUtility.formatNumbers(this.diameter) + "m").setStyle(new Style().setColor(TextFormatting.YELLOW))));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.diameter) + "m").setStyle(new Style().setColor(TextFormatting.YELLOW))));
         list.add(new TextComponentTranslation("gregtech.multiblock.fission_reactor.height",
-                new TextComponentTranslation(GTUtility.formatNumbers(this.height) + "m").setStyle(new Style().setColor(TextFormatting.YELLOW))));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.height) + "m").setStyle(new Style().setColor(TextFormatting.YELLOW))));
         return list;
     }
 
-    @Nonnull
+    @NotNull
     protected IBlockState getVesselState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.REACTOR_VESSEL);
     }
 
-    @Nonnull
+    @NotNull
     protected IBlockState getFuelChannelState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL);
     }
 
-    @Nonnull
+    @NotNull
     protected IBlockState getControlRodChannelState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL);
     }
 
-    @Nonnull
+    @NotNull
     IBlockState getCoolantChannelState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
     }
 
-    @Nonnull
+    @NotNull
     IBlockState getTopHatchState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
     }
@@ -263,7 +264,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return Textures.FISSION_REACTOR_TEXTURE;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.ASSEMBLER_OVERLAY;
