@@ -29,7 +29,7 @@ public enum GTThemes {
     BRONZE("gregtech_bronze",
             GTGuiTextures.IDs.BRONZE_BACKGROUND,
             null,
-            null,
+            GTGuiTextures.IDs.BRONZE_SLOT,
             null,
             () -> -1),
 
@@ -38,7 +38,7 @@ public enum GTThemes {
     STEEL("gregtech_steel",
             GTGuiTextures.IDs.STEEL_BACKGROUND,
             null,
-            null,
+            GTGuiTextures.IDs.STEEL_SLOT,
             null,
             () -> -1),
 
@@ -47,7 +47,7 @@ public enum GTThemes {
     PRIMITIVE("gregtech_primitive",
             GTGuiTextures.IDs.PRIMITIVE_BACKGROUND,
             null,
-            null,
+            GTGuiTextures.IDs.PRIMITIVE_SLOT,
             null,
             () -> -1);
 
