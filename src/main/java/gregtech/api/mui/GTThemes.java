@@ -9,7 +9,10 @@ import gregtech.common.ConfigHolder;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public enum GTThemes {
 
@@ -19,7 +22,7 @@ public enum GTThemes {
             null,
             null,
             null,
-            ConfigHolder.client.defaultUIColor),
+            () -> ConfigHolder.client.defaultUIColor),
 
     /** Bronze-colored theme used by Bronze Steam machines */
     // todo
@@ -28,7 +31,7 @@ public enum GTThemes {
             null,
             null,
             null,
-            -1),
+            () -> -1),
 
     /** Steel-colored theme used by Steel Steam machines */
     // todo
@@ -37,7 +40,7 @@ public enum GTThemes {
             null,
             null,
             null,
-            -1),
+            () -> -1),
 
     /** Brown/Beige colored theme used by PBF, Coke Oven, etc. */
     // todo
@@ -46,20 +49,21 @@ public enum GTThemes {
             null,
             null,
             null,
-            -1);
+            () -> -1);
 
     private final String id;
     private final String panel;
     private final String button;
     private final String itemSlot;
     private final String fluidSlot;
-    private final int color;
+    private final Supplier<Integer> color;
     private final JsonBuilder builder;
 
     public static final GTThemes[] VALUES = values();
 
     GTThemes(String id, @Nullable String panel, @Nullable String button,
-             @Nullable String itemSlot, @Nullable String fluidSlot, int color) {
+             @Nullable String itemSlot, @Nullable String fluidSlot,
+             @NotNull Supplier<Integer> color) {
         this.id = id;
         this.panel = panel;
         this.button = button;
@@ -102,8 +106,8 @@ public enum GTThemes {
                             .add("type", "texture")
                             .add("id", button)));
         }
-        if (color >= 0) {
-            builder.add("color", color);
+        if (color.get() >= 0) {
+            builder.add("color", color.get());
         }
     }
 
