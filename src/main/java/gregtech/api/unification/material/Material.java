@@ -1064,9 +1064,15 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder fissionFuelProperties(int maxTemperature, int duration, double slowNeutronCaptureCrossSection, double fastNeutronCaptureCrossSection, double slowNeutronFissionCrossSection, double fastNeutronFissionCrossSection) {
+        public Builder fissionFuelProperties(int maxTemperature, int duration, double slowNeutronCaptureCrossSection,
+                                             double fastNeutronCaptureCrossSection,
+                                             double slowNeutronFissionCrossSection,
+                                             double fastNeutronFissionCrossSection) {
             properties.ensureSet(PropertyKey.DUST);
-            properties.setProperty(PropertyKey.FISSION_FUEL, new FissionFuelProperty(maxTemperature, duration, slowNeutronCaptureCrossSection, fastNeutronCaptureCrossSection, slowNeutronFissionCrossSection, fastNeutronFissionCrossSection));
+            properties.setProperty(PropertyKey.FISSION_FUEL,
+                    new FissionFuelProperty(maxTemperature, duration, slowNeutronCaptureCrossSection,
+                            fastNeutronCaptureCrossSection, slowNeutronFissionCrossSection,
+                            fastNeutronFissionCrossSection));
             return this;
         }
 

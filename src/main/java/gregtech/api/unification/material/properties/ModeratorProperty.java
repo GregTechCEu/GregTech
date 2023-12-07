@@ -6,9 +6,7 @@ public class ModeratorProperty implements IMaterialProperty {
     private double absorption = 0.D;
 
     @Override
-    public void verifyProperty(MaterialProperties properties) {
-
-    }
+    public void verifyProperty(MaterialProperties properties) {}
 
     public void setModeratorFactor(double moderatorFactor) {
         this.moderatorFactor = moderatorFactor;
@@ -25,5 +23,4 @@ public class ModeratorProperty implements IMaterialProperty {
     public double getAbsorption() {
         return this.absorption;
     }
-
 }

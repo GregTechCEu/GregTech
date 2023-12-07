@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.NotifiableFluidTank;
@@ -19,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -28,9 +26,14 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.List;
 
-public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank>, IControllable, IFissionReactorHatch {
+public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNotifiablePart implements
+                                              IMultiblockAbilityPart<IFluidTank>, IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
@@ -98,7 +101,7 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     public boolean checkValidity(int depth) {
-        //Export ports are always considered valid
+        // Export ports are always considered valid
         return true;
     }
 
@@ -119,7 +122,8 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new FilteredItemHandler(this).setFillPredicate(FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
+        return new FilteredItemHandler(this).setFillPredicate(
+                FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
     }
 
     @Override

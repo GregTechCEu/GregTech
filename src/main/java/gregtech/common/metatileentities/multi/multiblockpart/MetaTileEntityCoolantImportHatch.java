@@ -1,11 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.ICoolantHandler;
-import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.LockableFluidTank;
@@ -27,6 +23,7 @@ import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -38,11 +35,17 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
 
-public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler, IControllable, IFissionReactorHatch {
+public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart
+                                              implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler,
+                                              IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
@@ -116,10 +119,11 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     public boolean checkValidity(int depth) {
-        //Export ports are always considered valid
+        // Export ports are always considered valid
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL)) {
+            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) !=
+                    MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL)) {
                 return false;
             }
         }
@@ -146,7 +150,8 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new FilteredItemHandler(this).setFillPredicate(FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
+        return new FilteredItemHandler(this).setFillPredicate(
+                FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
     }
 
     @Override
@@ -169,7 +174,6 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
         fluidTank.setLock(isLocked);
         writeCustomData(LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
     }
-
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
@@ -197,7 +201,8 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     @Override
     public void setCoolant(Material material) {
         if (!material.hasProperty(PropertyKey.COOLANT)) {
-            throw new IllegalStateException("Can't use material " + material.getName() + " as a coolant without a coolant property");
+            throw new IllegalStateException(
+                    "Can't use material " + material.getName() + " as a coolant without a coolant property");
         }
         this.coolant = material;
     }

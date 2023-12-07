@@ -14,8 +14,10 @@ import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.BlockGasCentrifugeCasing;
 import gregtech.common.blocks.BlockNuclearCasing;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
+
 import org.jetbrains.annotations.NotNull;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -63,6 +65,7 @@ public class MetaTileEntityGasCentrifuge extends RecipeMapMultiblockController {
     }
 
     private IBlockState getCentrifugeState() {
-        return MetaBlocks.GAS_CENTRIFUGE_CASING.getState(BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_COLUMN);
+        return MetaBlocks.GAS_CENTRIFUGE_CASING
+                .getState(BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_COLUMN);
     }
 }

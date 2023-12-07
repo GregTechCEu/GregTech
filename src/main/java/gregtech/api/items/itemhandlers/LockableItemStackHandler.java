@@ -3,12 +3,14 @@ package gregtech.api.items.itemhandlers;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
+
 import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
 
 // TODO This class can be removed
 public class LockableItemStackHandler extends NotifiableItemStackHandler implements ILockableHandler {
+
     protected boolean locked;
     protected ItemStack lockedItemStack;
 

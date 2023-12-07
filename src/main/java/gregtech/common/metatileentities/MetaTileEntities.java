@@ -1095,12 +1095,14 @@ public class MetaTileEntities {
         // IDs 1752-1756 are taken by AE2 parts
 
         // Nuclear hatches, 1900+
-        FUEL_ROD_INPUT = registerMetaTileEntity(1900, new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
-        FUEL_ROD_OUTPUT = registerMetaTileEntity(1901, new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
+        FUEL_ROD_INPUT = registerMetaTileEntity(1900,
+                new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
+        FUEL_ROD_OUTPUT = registerMetaTileEntity(1901,
+                new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
         COOLANT_INPUT = registerMetaTileEntity(1902, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
-        COOLANT_OUTPUT = registerMetaTileEntity(1903, new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));
+        COOLANT_OUTPUT = registerMetaTileEntity(1903,
+                new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));
         CONTROL_ROD = registerMetaTileEntity(1904, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
-
 
         // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
         // EV hatches separate because of old names/IDs

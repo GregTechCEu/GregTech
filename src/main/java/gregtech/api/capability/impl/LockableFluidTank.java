@@ -2,10 +2,12 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 public class LockableFluidTank extends NotifiableFluidTank implements ILockableHandler {
+
     boolean locked;
     Fluid lockedFluid;
 

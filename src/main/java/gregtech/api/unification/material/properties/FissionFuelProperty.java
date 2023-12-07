@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.properties;
 
 public class FissionFuelProperty implements IMaterialProperty {
+
     private int maxTemperature;
     private int duration;
     private double slowNeutronCaptureCrossSection;
@@ -13,7 +14,9 @@ public class FissionFuelProperty implements IMaterialProperty {
         properties.ensureSet(PropertyKey.DUST, true);
     }
 
-    public FissionFuelProperty(int maxTemperature, int duration, double slowNeutronCaptureCrossSection, double fastNeutronCaptureCrossSection, double slowNeutronFissionCrossSection, double fastNeutronFissionCrossSection) {
+    public FissionFuelProperty(int maxTemperature, int duration, double slowNeutronCaptureCrossSection,
+                               double fastNeutronCaptureCrossSection, double slowNeutronFissionCrossSection,
+                               double fastNeutronFissionCrossSection) {
         this.maxTemperature = maxTemperature;
         this.duration = duration;
         this.slowNeutronCaptureCrossSection = slowNeutronCaptureCrossSection;
@@ -25,7 +28,6 @@ public class FissionFuelProperty implements IMaterialProperty {
     public FissionFuelProperty() {
         this(1, 1, 0.1D, 0.1D, 0.1D, 0.1D);
     }
-
 
     public int getMaxTemperature() {
         return maxTemperature;

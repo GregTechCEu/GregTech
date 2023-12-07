@@ -3,10 +3,12 @@ package gregtech.api.nuclear.fission.components;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
 
 public class FuelRod extends ReactorComponent {
+
     private final FissionFuelProperty fuel;
     private final double neutronSourceIntensity;
 
-    public FuelRod(double maxTemperature, double thermalConductivity, FissionFuelProperty fuel, double neutronSourceIntensity) {
+    public FuelRod(double maxTemperature, double thermalConductivity, FissionFuelProperty fuel,
+                   double neutronSourceIntensity) {
         super(0, maxTemperature, thermalConductivity, true);
         this.fuel = fuel;
         this.neutronSourceIntensity = neutronSourceIntensity;
@@ -35,5 +37,4 @@ public class FuelRod extends ReactorComponent {
     public FissionFuelProperty getFuel() {
         return fuel;
     }
-
 }
