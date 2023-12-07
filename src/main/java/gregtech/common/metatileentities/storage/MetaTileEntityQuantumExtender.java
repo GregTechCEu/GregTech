@@ -54,7 +54,7 @@ public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<
 
     @Override
     public Type getType() {
-        return Type.NONE;
+        return Type.EXTENDER;
     }
 
     @Override
