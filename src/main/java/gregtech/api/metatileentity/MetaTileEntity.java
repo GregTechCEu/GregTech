@@ -422,7 +422,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @return freshly created UI instance
      */
     @Deprecated
-    protected abstract ModularUI createUI(EntityPlayer entityPlayer);
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return null;
+    }
 
     @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
