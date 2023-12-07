@@ -148,8 +148,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     @Override
     public void rebuildNetwork() {
         if (getWorld().isRemote) return;
-        Map<BlockPos, WeakReference<IQuantumStorage<?>>> oldInstances = storageInstances;
-        Set<BlockPos> oldPositions = storagePositions;
+        var oldInstances = storageInstances;
+        var oldPositions = storagePositions;
 
         storageInstances = new HashMap<>();
         storagePositions = new HashSet<>();
@@ -177,12 +177,10 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage.isConnected() && !storage.getControllerPos().equals(getPos())) continue;
 
             // valid chest/tank located, add it
-            if (storage.getType() != IQuantumStorage.Type.EXTENDER) {
-                storageInstances.put(pos, new WeakReference<>(storage));
-                storagePositions.add(pos);
-                oldInstances.remove(pos);
-                oldPositions.remove(pos);
-            }
+            storageInstances.put(pos, new WeakReference<>(storage));
+            storagePositions.add(pos);
+            oldInstances.remove(pos);
+            oldPositions.remove(pos);
             storage.setConnected(this);
 
             // check against already check posses so we don't recheck a checked pos
