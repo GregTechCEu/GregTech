@@ -400,11 +400,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
                             MinerUtil.DISPLAY_CLICK_REPEAT_ENABLE, MinerUtil.DISPLAY_CLICK_REPEAT_DISABLE)));
 
             textList.add(new TextComponentTranslation("gregtech.machine.miner.display.chunk_mode",
-                    toggleButton(this.minerLogic.isRepeat(), this.minerLogic.isWorking(),
+                    toggleButton(this.minerLogic.isChunkMode(), this.minerLogic.isWorking(),
                             MinerUtil.DISPLAY_CLICK_CHUNK_MODE_ENABLE, MinerUtil.DISPLAY_CLICK_CHUNK_MODE_DISABLE)));
 
             textList.add(new TextComponentTranslation("gregtech.machine.miner.display.silk_touch",
-                    toggleButton(this.minerLogic.isRepeat(), this.minerLogic.isWorking(),
+                    toggleButton(this.minerLogic.isSilkTouchMode(), this.minerLogic.isWorking(),
                             MinerUtil.DISPLAY_CLICK_SILK_TOUCH_ENABLE, MinerUtil.DISPLAY_CLICK_SILK_TOUCH_DISABLE)));
 
             ITextComponent replaceOreText = new TextComponentTranslation(
