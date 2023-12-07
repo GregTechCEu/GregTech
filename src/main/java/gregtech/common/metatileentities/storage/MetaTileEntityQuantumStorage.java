@@ -114,7 +114,13 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     private boolean tryFindNewNetwork() {
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (getWorld().getBlockState(getPos().offset(facing)).getBlock() == Blocks.AIR) continue;
-            MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), getPos().offset(facing));
+            MetaTileEntity mte;
+            if (getNeighbor(facing) instanceof IGregTechTileEntity gtte) {
+                mte = gtte.getMetaTileEntity();
+            } else {
+                continue;
+            }
+
             IQuantumController candidate = null;
             if (mte instanceof IQuantumStorage<?>storage) {
                 if (storage.isConnected()) {
