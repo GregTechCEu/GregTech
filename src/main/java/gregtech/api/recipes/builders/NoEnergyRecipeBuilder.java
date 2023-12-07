@@ -8,9 +8,7 @@ import gregtech.api.util.ValidationResult;
 
 public class NoEnergyRecipeBuilder extends RecipeBuilder<NoEnergyRecipeBuilder> {
 
-    public NoEnergyRecipeBuilder() {
-
-    }
+    public NoEnergyRecipeBuilder() {}
 
     @SuppressWarnings("unused")
     public NoEnergyRecipeBuilder(Recipe recipe, RecipeMap<NoEnergyRecipeBuilder> recipeMap) {

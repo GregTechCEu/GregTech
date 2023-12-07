@@ -11,10 +11,12 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.blocks.MetaBlocks;
-import net.minecraft.util.ResourceLocation;
 import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
+import gregtech.common.blocks.MetaBlocks;
+
+import net.minecraft.util.ResourceLocation;
+
 import org.jetbrains.annotations.NotNull;
 
 public class MetaTileEntityHeatExchanger extends RecipeMapMultiblockController {
