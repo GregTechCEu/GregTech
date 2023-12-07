@@ -1,9 +1,9 @@
 package gregtech.api.mui;
 
+import gregtech.api.GTValues;
+
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
-
-import gregtech.api.GTValues;
 
 public class GregTechGuiScreen extends ModularScreen {
 

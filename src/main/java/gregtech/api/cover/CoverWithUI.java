@@ -1,22 +1,18 @@
 package gregtech.api.cover;
 
-import com.cleanroommc.modularui.api.IGuiHolder;
-
-import com.cleanroommc.modularui.manager.GuiCreationContext;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
-
 import gregtech.api.mui.GTGuis;
-
 import gregtech.api.mui.GregTechGuiScreen;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.ApiStatus;
 
 public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
@@ -46,7 +42,8 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
     }
 
     @Override
-    default ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+    default ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
+                                 boolean isClient) {
         return null;
     }
 

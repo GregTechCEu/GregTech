@@ -1,18 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.drawable.ItemDrawable;
-import com.cleanroommc.modularui.manager.GuiCreationContext;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
-
-import com.cleanroommc.modularui.widgets.ButtonWidget;
-
-import com.cleanroommc.modularui.widgets.layout.Grid;
-
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -29,6 +16,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +83,8 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                 if (index > 32) break;
                 options.get(i).add(new ButtonWidget<>()
                         .size(18)
-                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT, new ItemDrawable(IntCircuitIngredient.getIntegratedCircuit(index)).asIcon().size(16))
+                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT,
+                                new ItemDrawable(IntCircuitIngredient.getIntegratedCircuit(index)).asIcon().size(16))
                         .syncHandler("config", index));
             }
         }

@@ -1,21 +1,12 @@
 package gregtech.api.mui;
 
-import com.cleanroommc.modularui.api.IGuiHolder;
-import com.cleanroommc.modularui.api.IThemeApi;
-import com.cleanroommc.modularui.manager.GuiInfo;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.theme.ReloadThemeEvent;
-import com.cleanroommc.modularui.utils.JsonBuilder;
-
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-
 import gregtech.api.util.GTUtility;
-
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
@@ -24,6 +15,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.manager.GuiInfo;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.theme.ReloadThemeEvent;
+import com.cleanroommc.modularui.utils.JsonBuilder;
 
 import java.util.EnumMap;
 
@@ -62,7 +60,8 @@ public class GTGuis {
             })
             .commonGui((context, guiSyncHandler) -> {
                 ItemStack itemStack = context.getMainHandItem();
-                return getGuiHolder(itemStack).buildUI(context.with(EnumHand.MAIN_HAND), guiSyncHandler, context.getWorld().isRemote);
+                return getGuiHolder(itemStack).buildUI(context.with(EnumHand.MAIN_HAND), guiSyncHandler,
+                        context.getWorld().isRemote);
             })
             .build();
 
@@ -74,7 +73,8 @@ public class GTGuis {
             })
             .commonGui((context, guiSyncHandler) -> {
                 ItemStack itemStack = context.getOffHandItem();
-                return getGuiHolder(itemStack).buildUI(context.with(EnumHand.OFF_HAND), guiSyncHandler, context.getWorld().isRemote);
+                return getGuiHolder(itemStack).buildUI(context.with(EnumHand.OFF_HAND), guiSyncHandler,
+                        context.getWorld().isRemote);
             })
             .build();
 
@@ -115,7 +115,8 @@ public class GTGuis {
                 .clientGui((context, mainPanel) -> {
                     TileEntity te = context.getTileEntity();
                     if (te == null) throw new IllegalStateException();
-                    CoverHolder coverHolder = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, facing);
+                    CoverHolder coverHolder = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER,
+                            facing);
                     if (coverHolder == null) throw new IllegalStateException();
                     Cover cover = coverHolder.getCoverAtSide(facing);
                     if (!(cover instanceof CoverWithUI)) throw new IllegalStateException();
@@ -124,7 +125,8 @@ public class GTGuis {
                 .commonGui((context, syncHandler) -> {
                     TileEntity te = context.getTileEntity();
                     if (te == null) throw new IllegalStateException();
-                    CoverHolder coverHolder = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, facing);
+                    CoverHolder coverHolder = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER,
+                            facing);
                     if (coverHolder == null) throw new IllegalStateException();
                     Cover cover = coverHolder.getCoverAtSide(facing);
                     if (!(cover instanceof CoverWithUI)) throw new IllegalStateException();
@@ -146,7 +148,7 @@ public class GTGuis {
     public static void initThemes() {
         MinecraftForge.EVENT_BUS.register(GTGuis.class);
         IThemeApi.get().registerTheme("gregtech", GREGTECH_THEME);
-        //IThemeApi.get().registerTheme("gregtech:bronze", BRONZE_THEME);
+        // IThemeApi.get().registerTheme("gregtech:bronze", BRONZE_THEME);
     }
 
     @SubscribeEvent
