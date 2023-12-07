@@ -32,16 +32,6 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         return false;
     }
 
-    @Override
-    public double getWalkingSpeedBonus() {
-        return 1.6D;
-    }
-
-    @Override
-    public boolean checkApplicableBlocks(IBlockState state) {
-        return state == getState(BlockType.ASPHALT);
-    }
-
     public enum BlockType implements IStringSerializable, IStateHarvestLevel {
 
         ASPHALT("asphalt", 0);

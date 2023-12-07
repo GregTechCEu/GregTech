@@ -58,16 +58,6 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
     }
 
     @Override
-    public double getWalkingSpeedBonus() {
-        return 1.6D;
-    }
-
-    @Override
-    public boolean checkApplicableBlocks(@NotNull IBlockState state) {
-        return state == getState(StoneType.CONCRETE_DARK) || state == getState(StoneType.CONCRETE_LIGHT);
-    }
-
-    @Override
     protected boolean canSilkHarvest() {
         return this.stoneVariant == StoneVariant.SMOOTH;
     }
@@ -103,36 +93,20 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         }
 
         public OrePrefix getOrePrefix() {
-            switch (this) {
-                case BLACK_GRANITE:
-                case RED_GRANITE:
-                case MARBLE:
-                case BASALT:
-                    return OrePrefix.stone;
-                case CONCRETE_LIGHT:
-                case CONCRETE_DARK:
-                    return OrePrefix.block;
-                default:
-                    throw new IllegalStateException("Unreachable");
-            }
+            return switch (this) {
+                case BLACK_GRANITE, RED_GRANITE, MARBLE, BASALT -> OrePrefix.stone;
+                case CONCRETE_LIGHT, CONCRETE_DARK -> OrePrefix.block;
+            };
         }
 
         public Material getMaterial() {
-            switch (this) {
-                case BLACK_GRANITE:
-                    return Materials.GraniteBlack;
-                case RED_GRANITE:
-                    return Materials.GraniteRed;
-                case MARBLE:
-                    return Materials.Marble;
-                case BASALT:
-                    return Materials.Basalt;
-                case CONCRETE_LIGHT:
-                case CONCRETE_DARK:
-                    return Materials.Concrete;
-                default:
-                    throw new IllegalStateException("Unreachable");
-            }
+            return switch (this) {
+                case BLACK_GRANITE -> Materials.GraniteBlack;
+                case RED_GRANITE -> Materials.GraniteRed;
+                case MARBLE -> Materials.Marble;
+                case BASALT -> Materials.Basalt;
+                case CONCRETE_LIGHT, CONCRETE_DARK -> Materials.Concrete;
+            };
         }
     }
 
