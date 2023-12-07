@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.client.particle.IMachineParticleEffect;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
@@ -77,6 +78,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
+    @Nullable // particle run every tick when the machine is active
+    protected final IMachineParticleEffect tickingParticle;
+    @Nullable // particle run in randomDisplayTick() when the machine is active
+    protected final IMachineParticleEffect randomParticle;
+
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap,
                                        ICubeRenderer renderer, int tier, boolean hasFrontFacing) {
         this(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, GTUtility.defaultTankSizeFunction);
@@ -85,15 +91,25 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap,
                                        ICubeRenderer renderer, int tier, boolean hasFrontFacing,
                                        Function<Integer, Integer> tankScalingFunction) {
+        this(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, tankScalingFunction, null, null);
+    }
+
+    public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap,
+                                       ICubeRenderer renderer, int tier, boolean hasFrontFacing,
+                                       Function<Integer, Integer> tankScalingFunction,
+                                       @Nullable IMachineParticleEffect tickingParticle,
+                                       @Nullable IMachineParticleEffect randomParticle) {
         super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
         this.hasFrontFacing = hasFrontFacing;
         this.chargerInventory = new GTItemStackHandler(this, 1);
+        this.tickingParticle = tickingParticle;
+        this.randomParticle = randomParticle;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(),
-                hasFrontFacing, getTankScalingFunction());
+                hasFrontFacing, getTankScalingFunction(), tickingParticle, randomParticle);
     }
 
     @Override
@@ -189,6 +205,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                     pushItemsIntoNearbyHandlers(getOutputFacingItems());
                 }
             }
+        } else if (this.tickingParticle != null && isActive()) {
+            tickingParticle.runEffect(this);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        if (this.randomParticle != null && isActive()) {
+            randomParticle.runEffect(this);
         }
     }
 
