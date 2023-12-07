@@ -7,7 +7,6 @@ import gregtech.asm.visitors.EnchantmentCanApplyVisitor;
 import gregtech.asm.visitors.JEIVisitor;
 import gregtech.asm.visitors.LittleTilesVisitor;
 import gregtech.asm.visitors.ModelCTMVisitor;
-import gregtech.asm.visitors.RenderItemVisitor;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -15,10 +14,6 @@ import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
-
-import java.util.Iterator;
 
 public class GregTechTransformer implements IClassTransformer, Opcodes {
 
@@ -160,7 +155,7 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 ClassWriter classWriter = new ClassWriter(0);
                 classNode.accept(classWriter);
                 return classWriter.toByteArray();
-            }
+            } */
             /*
              * case RecipeRepairItemVisitor.TARGET_CLASS_NAME: {
              * ClassReader classReader = new ClassReader(basicClass);
