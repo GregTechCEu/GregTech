@@ -1,14 +1,15 @@
 package gregtech.api.mui;
 
-import com.cleanroommc.modularui.drawable.UITexture;
-
 import gregtech.api.GTValues;
+
+import com.cleanroommc.modularui.drawable.UITexture;
 
 // TODO: Move primitive slot and background to "textures/gui/base"
 public class GTGuiTextures {
 
     // Keys used for GT assets registered for use in Themes
     public static class IDs {
+
         public static final String STANDARD_BACKGROUND = "gregtech_standard_bg";
         public static final String BRONZE_BACKGROUND = "gregtech_bronze_bg";
         public static final String STEEL_BACKGROUND = "gregtech_steel_bg";
