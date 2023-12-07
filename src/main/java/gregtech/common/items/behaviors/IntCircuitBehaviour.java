@@ -1,5 +1,7 @@
 package gregtech.common.items.behaviors;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -90,11 +92,10 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
         }
         return GTGuis.createPanel(guiCreationContext.getUsedItemStack(), 176, 120)
                 .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
-                .child(circuitPreview.asWidget()
-                        .size(16)
+                .child(new IDrawable.DrawableWidget(circuitPreview.asIcon().size(16))
+                        .size(18)
                         .top(19).alignX(0.5f)
-                        // todo GT slot? Theme also is not applied
-                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT.asIcon().size(18)))
+                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT))
                 .child(new Grid()
                         .left(7).right(7).top(41).height(4 * 18)
                         .matrix(options)
