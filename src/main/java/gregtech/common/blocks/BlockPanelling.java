@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.VariantBlock;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.util.IStringSerializable;
 
@@ -51,5 +52,4 @@ public class BlockPanelling extends VariantBlock<BlockPanelling.PanellingType> {
             return this.harvestLevel;
         }
     }
-
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControlRod extends ReactorComponent {
+
     private double weight;
     private final boolean tipModeration;
     private double insertion;
@@ -80,5 +81,4 @@ public class ControlRod extends ReactorComponent {
     public void computeWeightFromFuelRodMap() {
         this.weight = fuelRodPairs.size() * 2;
     }
-
 }

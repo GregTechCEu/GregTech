@@ -2,6 +2,7 @@ package gregtech.api.nuclear.fission.components;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -9,13 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoolantChannel extends ReactorComponent {
+
     private final Material coolant;
     private double weight;
     private final List<Pair<FuelRod, FuelRod>> fuelRodPairs = new ObjectArrayList<>();
 
-
     public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant) {
-        super(coolant.getProperty(PropertyKey.COOLANT).getModerationFactor(), maxTemperature, thermalConductivity, true);
+        super(coolant.getProperty(PropertyKey.COOLANT).getModerationFactor(), maxTemperature, thermalConductivity,
+                true);
         this.coolant = coolant;
         this.weight = 0;
     }
@@ -53,5 +55,4 @@ public class CoolantChannel extends ReactorComponent {
     public void computeWeightFromFuelRodMap() {
         this.weight = fuelRodPairs.size() * 2;
     }
-
 }
