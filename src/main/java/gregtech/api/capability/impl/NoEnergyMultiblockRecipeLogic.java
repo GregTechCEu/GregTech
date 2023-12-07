@@ -5,7 +5,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.logic.OverclockingLogic;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class NoEnergyMultiblockRecipeLogic extends MultiblockRecipeLogic {
     public NoEnergyMultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
@@ -28,11 +28,11 @@ public class NoEnergyMultiblockRecipeLogic extends MultiblockRecipeLogic {
         return true;
     }
 
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         return 1L;
     }
 
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
+    protected int[] runOverclockingLogic(@NotNull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         return OverclockingLogic.standardOverclockingLogic(1, this.getMaxVoltage(), recipeDuration, amountOC, this.getOverclockingDurationDivisor(), this.getOverclockingVoltageMultiplier());
     }
 

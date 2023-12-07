@@ -7,7 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockNuclearCasing extends VariantActiveBlock<BlockNuclearCasing.NuclearCasingType> {
 
@@ -32,7 +32,7 @@ public class BlockNuclearCasing extends VariantActiveBlock<BlockNuclearCasing.Nu
         private final String name;
         private final int harvestLevel;
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;

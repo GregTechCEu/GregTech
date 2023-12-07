@@ -8,7 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockFissionCasing extends VariantBlock<BlockFissionCasing.FissionCasingType> {
 
@@ -35,7 +35,7 @@ public class BlockFissionCasing extends VariantBlock<BlockFissionCasing.FissionC
             this.harvestLevel = harvestLevel;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;
