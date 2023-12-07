@@ -98,13 +98,13 @@ public enum GTThemes {
             builder.add("itemSlot", new JsonBuilder()
                     .add("background", new JsonBuilder()
                             .add("type", "texture")
-                            .add("id", button)));
+                            .add("id", itemSlot)));
         }
         if (fluidSlot != null) {
             builder.add("fluidSlot", new JsonBuilder()
                     .add("background", new JsonBuilder()
                             .add("type", "texture")
-                            .add("id", button)));
+                            .add("id", fluidSlot)));
         }
         if (color.get() >= 0) {
             builder.add("color", color.get());
