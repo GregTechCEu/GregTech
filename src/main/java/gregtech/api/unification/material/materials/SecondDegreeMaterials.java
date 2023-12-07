@@ -82,14 +82,7 @@ public class SecondDegreeMaterials {
                 .fluidTemp(4000)
                 .build();
 
-        Zircaloy = new Material.Builder(2009, gregtechId("zircaloy"))
-                .ingot().fluid()
-                .color(0xB5ADCC).iconSet(DULL)
-                .flags(GENERATE_PLATE, GENERATE_SPRING, DISABLE_DECOMPOSITION)
-                .components(Zirconium, 1, Tin, 1, Chrome, 1)
-                .blastTemp(2150, GasTier.MID, GTValues.VA[EV], 200)
-                .build()
-                .setFormula("Zr(98.4)Sn(1.5)Cr(0.1)", false);
+        // FREE ID: 2009
 
         Apatite = new Material.Builder(2010, gregtechId("apatite"))
                 .gem(1).ore(2, 2)

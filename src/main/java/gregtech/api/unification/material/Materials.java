@@ -479,6 +479,8 @@ public class Materials {
     public static Material HafniumDioxide;
     public static Material ZirconiumTetrachloride;
     public static Material HafniumTetrachloride;
+    public static Material Zircaloy;
+    public static Material Inconel;
 
     /**
      * Organic chemistry
@@ -752,7 +754,6 @@ public class Materials {
     public static Material Clay;
     public static Material Redstone;
     public static Material ThoriumFLiBe;
-    public static Material Zircaloy;
 
     /**
      * Third Degree Materials

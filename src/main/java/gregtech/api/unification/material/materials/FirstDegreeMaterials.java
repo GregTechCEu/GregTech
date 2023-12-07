@@ -579,7 +579,7 @@ public class FirstDegreeMaterials {
                 .ingot(3).fluid()
                 .color(0xC8C8DC).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD,
-                        GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
+                        GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE, GENERATE_ROUND)
                 .components(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1)
                 .toolStats(ToolProperty.Builder.of(7.0F, 5.0F, 1024, 3)
                         .enchantability(14).build())
@@ -1548,5 +1548,23 @@ public class FirstDegreeMaterials {
                 .components(Zirconium, 1, Chlorine, 4)
                 .color(0x32AD72)
                 .build();
+
+        Zircaloy = new Material.Builder(461, gregtechId("zircaloy"))
+                .ingot().fluid()
+                .color(0xB5ADCC).iconSet(DULL)
+                .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Tin, 1, Chrome, 1)
+                .blastTemp(2150, GasTier.MID, GTValues.VA[EV], 200)
+                .build()
+                .setFormula("Zr(98.4)Sn(1.5)Cr(0.1)", false);
+
+        Inconel = new Material.Builder(462, gregtechId("inconel"))
+                .ingot().fluid()
+                .color(0x7F8F75).iconSet(SHINY)
+                .flags(GENERATE_SPRING, DISABLE_DECOMPOSITION)
+                .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
+                .blastTemp(1610, GasTier.MID, GTValues.VA[EV], 200)
+                .build()
+                .setFormula("Ni50Cr20Fe20Ni5Mo3", true);
     }
 }

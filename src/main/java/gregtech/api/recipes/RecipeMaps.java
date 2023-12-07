@@ -266,7 +266,7 @@ public class RecipeMaps {
      * Any Centrifuge recipe not specifying an <B>EUt</B> value will have the value default to 5.
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CENTRIFUGE_RECIPES = new RecipeMap<>("centrifuge", 2, 6, 1, 6, new SimpleRecipeBuilder().EUt(5), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CENTRIFUGE_RECIPES = new RecipeMap<>("centrifuge", 2, 6, 2, 6, new SimpleRecipeBuilder().EUt(5), false)
             .setSlotOverlay(false, false, false, GuiTextures.EXTRACTOR_OVERLAY)
             .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
             .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
@@ -1141,7 +1141,7 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, ProgressWidget.MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.COOLING);
 
-    public static final RecipeMap<SimpleRecipeBuilder> SPENT_FUEL_POOL_RECIPES = new RecipeMap<>("spent_fuel_pool", 1, 1, 1, 1, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> SPENT_FUEL_POOL_RECIPES = new RecipeMap<>("spent_fuel_pool", 1, 1, 1, 1, new NoEnergyRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
 
     public static final RecipeMap<SimpleRecipeBuilder> GAS_CENTRIFUGE_RECIPES = new RecipeMap<>("gas_centrifuge", 0, 0, 1, 2, new SimpleRecipeBuilder(), false)

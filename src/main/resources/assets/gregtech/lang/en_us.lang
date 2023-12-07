@@ -1835,7 +1835,8 @@ gregtech.material.zirconium_dioxide=Zirconium Dioxide
 gregtech.material.hafnium_dioxide=Hafnium Dioxide
 gregtech.material.zirconium_tetrachloride=Zirconium Tetrachloride
 gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
-gregtech.material.zircaloy=Zircaloy
+gregtech.material.zircaloy=Zircaloy-4
+gregtech.material.inconel=Inconel-718
 
 # Unknown Composition Materials
 gregtech.material.wood_gas=Wood Gas
