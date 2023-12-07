@@ -19,6 +19,7 @@ import java.io.IOException;
 /**
  * {@link UIFactory} implementation for {@link MetaItem}s
  */
+@Deprecated
 public class PlayerInventoryUIFactory extends UIFactory<PlayerInventoryHolder> {
 
     public static final PlayerInventoryUIFactory INSTANCE = new PlayerInventoryUIFactory();

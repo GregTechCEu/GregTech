@@ -1,5 +1,12 @@
 package gregtech.api.metatileentity;
 
+import com.cleanroommc.modularui.api.IGuiHolder;
+
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -15,6 +22,8 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
@@ -82,7 +91,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable {
+public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable, IGuiHolder {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
 
@@ -412,10 +421,27 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @param entityPlayer player opening inventory
      * @return freshly created UI instance
      */
+    @Deprecated
     protected abstract ModularUI createUI(EntityPlayer entityPlayer);
 
+    @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
+    }
+
+    @ApiStatus.Experimental
+    public boolean usesMui2() {
+        return false;
+    }
+
+    @Override
+    public ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
+        return new GregTechGuiScreen(mainPanel);
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        return null;
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
@@ -435,7 +461,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         ItemStack heldStack = playerIn.getHeldItem(hand);
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                if (usesMui2()) {
+                    GTGuis.MTE.open(playerIn, getWorld(), getPos());
+                } else {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                }
             }
             return true;
         } else {
