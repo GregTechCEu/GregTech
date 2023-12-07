@@ -16,7 +16,6 @@ public class AcidRecipes {
     }
 
     private static void sulfuricAcidRecipes() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(2)
                 .input(dust, Sulfur)
@@ -62,7 +61,6 @@ public class AcidRecipes {
     }
 
     private static void nitricAcidRecipes() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(Hydrogen.getFluid(3000))
@@ -127,7 +125,6 @@ public class AcidRecipes {
     }
 
     private static void phosphoricAcidRecipes() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .input(dust, Phosphorus, 4)
@@ -159,7 +156,5 @@ public class AcidRecipes {
                 .duration(320).EUt(VA[LV]).buildAndRegister();
     }
 
-    private static void aceticAcidRecipes() {
-
-    }
+    private static void aceticAcidRecipes() {}
 }

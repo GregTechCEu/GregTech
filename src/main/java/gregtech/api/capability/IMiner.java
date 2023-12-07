@@ -1,6 +1,5 @@
 package gregtech.api.capability;
 
-
 import codechicken.lib.vec.Cuboid6;
 
 public interface IMiner {

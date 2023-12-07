@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.steam;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
@@ -23,6 +19,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -46,11 +43,16 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,7 +77,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new SteamMiner(metaTileEntityId, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius(), this.minerLogic.getFortune());
+        return new SteamMiner(metaTileEntityId, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius(),
+                this.minerLogic.getFortune());
     }
 
     @Override
@@ -84,18 +87,19 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(0, this, false);
+        return new NotifiableItemStackHandler(this, 0, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(inventorySize, this, true);
+        return new NotifiableItemStackHandler(this, inventorySize, this, true);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        ColourMultiplier multiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
+        ColourMultiplier multiplier = new ColourMultiplier(
+                GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
         IVertexOperation[] coloredPipeline = ArrayUtils.add(pipeline, multiplier);
         Textures.STEAM_CASING_BRONZE.render(renderState, translation, coloredPipeline);
         for (EnumFacing renderSide : EnumFacing.HORIZONTALS) {
@@ -132,7 +136,6 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, 0xFFFFFF)
                 .setMaxWidthLimit(84));
 
-
         return builder.build(getHolder(), entityPlayer);
     }
 
@@ -143,17 +146,22 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
         if (this.minerLogic.isDone())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.done")
+                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.working")
+                    .setStyle(new Style().setColor(TextFormatting.GOLD)));
         else if (!this.isWorkingEnabled())
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
         if (this.isInventoryFull)
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         if (ventingStuck)
-            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.vent").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.vent")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         else if (!drainEnergy(true))
-            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.steam").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.steam")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     void addDisplayText2(List<ITextComponent> textList) {
@@ -164,8 +172,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick_steam", energyPerTick)
-                + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick_steam", energyPerTick) + TextFormatting.GRAY +
+                ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
         int maxArea = getWorkingArea(minerLogic.getMaximumRadius());
         tooltip.add(I18n.format("gregtech.universal.tooltip.working_area", maxArea, maxArea));
     }
@@ -248,7 +256,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.STEAM_CASING_BRONZE.getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.TOP), getPaintingColorForRendering());
+        return Pair.of(Textures.STEAM_CASING_BRONZE.getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.TOP),
+                getPaintingColorForRendering());
     }
 
     public void setVentingStuck(boolean ventingStuck) {
@@ -311,14 +320,20 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         BlockPos ventingBlockPos = machinePos.offset(ventingSide);
         IBlockState blockOnPos = this.getWorld().getBlockState(ventingBlockPos);
         if (blockOnPos.getCollisionBoundingBox(this.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
-            this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos), EntitySelectors.CAN_AI_TARGET).forEach((entity) -> entity.attackEntityFrom(DamageSources.getHeatDamage(), 6.0F));
+            this.getWorld()
+                    .getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos),
+                            EntitySelectors.CAN_AI_TARGET)
+                    .forEach((entity) -> entity.attackEntityFrom(DamageSources.getHeatDamage(), 6.0F));
             WorldServer world = (WorldServer) this.getWorld();
             double posX = (double) machinePos.getX() + 0.5D + (double) ventingSide.getXOffset() * 0.6D;
             double posY = (double) machinePos.getY() + 0.5D + (double) ventingSide.getYOffset() * 0.6D;
             double posZ = (double) machinePos.getZ() + 0.5D + (double) ventingSide.getZOffset() * 0.6D;
-            world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ, 7 + world.rand.nextInt(3), (double) ventingSide.getXOffset() / 2.0D, (double) ventingSide.getYOffset() / 2.0D, (double) ventingSide.getZOffset() / 2.0D, 0.1D);
+            world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ, 7 + world.rand.nextInt(3),
+                    (double) ventingSide.getXOffset() / 2.0D, (double) ventingSide.getYOffset() / 2.0D,
+                    (double) ventingSide.getZOffset() / 2.0D, 0.1D);
             if (ConfigHolder.machines.machineSounds && !this.isMuffled()) {
-                world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F,
+                        1.0F);
             }
             this.setNeedsVenting(false);
         } else if (!this.ventingStuck) {
@@ -331,10 +346,11 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         return ventingStuck;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         int workingArea = getWorkingArea(this.minerLogic.getCurrentRadius());
-        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
+        return Collections.singletonList(
+                new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
     }
 }

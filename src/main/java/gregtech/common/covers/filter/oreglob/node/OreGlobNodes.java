@@ -1,12 +1,12 @@
 package gregtech.common.covers.filter.oreglob.node;
 
 import com.google.common.collect.Lists;
-import gregtech.common.covers.filter.oreglob.node.BranchNode.BranchType;
 
 import java.util.List;
 
 /**
- * Entry point for accessing all oreGlobNode instances outside package. Thanks to Java for the superior visibility system.
+ * Entry point for accessing all oreGlobNode instances outside package. Thanks to Java for the superior visibility
+ * system.
  */
 public class OreGlobNodes {
 
@@ -20,6 +20,8 @@ public class OreGlobNodes {
     }
 
     public static OreGlobNode chars(int amount, boolean more) {
+        if (amount == 0) return more ? everything() : empty();
+        if (amount == 1 && more) return nonempty();
         return new AnyCharNode(amount, more);
     }
 
@@ -28,19 +30,19 @@ public class OreGlobNodes {
     }
 
     public static OreGlobNode everything() {
-        return chars(0, true);
+        return new EverythingNode();
     }
 
     public static OreGlobNode nothing() {
         return not(everything());
     }
 
-    public static OreGlobNode something() {
-        return chars(1, true);
+    public static OreGlobNode nonempty() {
+        return not(empty());
     }
 
     public static OreGlobNode empty() {
-        return not(something());
+        return new EmptyNode();
     }
 
     public static OreGlobNode or(OreGlobNode... expressions) {
@@ -51,12 +53,14 @@ public class OreGlobNodes {
         MatchDescription union = MatchDescription.NOTHING;
         for (int i = 0; i < expressions.size(); i++) {
             OreGlobNode expr = expressions.get(i);
-            if (expr.isEverything()) {
+            if (expr.is(MatchDescription.EVERYTHING)) {
                 return expr; // short circuit
-            } else if (union.covers(expr.getMatchDescription())) {
+            }
+            if (union.covers(expr.getMatchDescription())) {
                 expressions.remove(i--); // trivial term
                 continue;
-            } else if (expr.getMatchDescription().covers(union)) {
+            }
+            if (expr.getMatchDescription().covers(union)) {
                 // everything before was trivial
                 while (i != 0) {
                     expressions.remove(0);
@@ -70,13 +74,11 @@ public class OreGlobNodes {
                 return everything(); // short circuit
             }
         }
-        switch (expressions.size()) {
-            case 0:
-                return nothing();
-            case 1:
-                return expressions.get(0);
-        }
-        return new BranchNode(BranchType.OR, expressions);
+        return switch (expressions.size()) {
+            case 0 -> nothing();
+            case 1 -> expressions.get(0);
+            default -> new BranchNode(BranchType.OR, expressions);
+        };
     }
 
     public static OreGlobNode and(OreGlobNode... expressions) {
@@ -87,12 +89,14 @@ public class OreGlobNodes {
         MatchDescription intersection = MatchDescription.EVERYTHING;
         for (int i = 0; i < expressions.size(); i++) {
             OreGlobNode expr = expressions.get(i);
-            if (expr.isImpossibleToMatch()) {
+            if (expr.is(MatchDescription.NOTHING)) {
                 return expr; // short circuit
-            } else if (expr.getMatchDescription().covers(intersection)) {
+            }
+            if (expr.getMatchDescription().covers(intersection)) {
                 expressions.remove(i--); // trivial term
                 continue;
-            } else if (intersection.covers(expr.getMatchDescription())) {
+            }
+            if (intersection.covers(expr.getMatchDescription())) {
                 // everything before was trivial
                 while (i != 0) {
                     expressions.remove(0);
@@ -106,13 +110,11 @@ public class OreGlobNodes {
                 return nothing(); // short circuit
             }
         }
-        switch (expressions.size()) {
-            case 0:
-                return everything();
-            case 1:
-                return expressions.get(0);
-        }
-        return new BranchNode(BranchType.AND, expressions);
+        return switch (expressions.size()) {
+            case 0 -> everything();
+            case 1 -> expressions.get(0);
+            default -> new BranchNode(BranchType.AND, expressions);
+        };
     }
 
     public static OreGlobNode xor(OreGlobNode... expressions) {
@@ -123,9 +125,9 @@ public class OreGlobNodes {
         boolean not = false;
         for (int i1 = 0; i1 < expressions.size(); i1++) {
             OreGlobNode expr = expressions.get(i1);
-            if (expr.isImpossibleToMatch()) {
+            if (expr.is(MatchDescription.NOTHING)) {
                 expressions.remove(i1--); // redundant term
-            } else if (expr.isEverything()) {
+            } else if (expr.is(MatchDescription.EVERYTHING)) {
                 expressions.remove(i1--);
                 not = !not; // same as applying NOT to every other term
             } else {
@@ -147,28 +149,12 @@ public class OreGlobNodes {
                 }
             }
         }
-        switch (expressions.size()) {
-            case 0:
-                return not ? everything() : nothing();
-            case 1:
-                OreGlobNode node = expressions.get(0);
-                return not ? not(node) : node;
-        }
-        BranchNode node = new BranchNode(BranchType.XOR, expressions);
+        OreGlobNode node = switch (expressions.size()) {
+            case 0 -> nothing();
+            case 1 -> expressions.get(0);
+            default -> new BranchNode(BranchType.XOR, expressions);
+        };
         return not ? not(node) : node;
-    }
-
-    public static OreGlobNode branch(BranchType type, List<OreGlobNode> expressions) {
-        switch (type) {
-            case OR:
-                return or(expressions);
-            case AND:
-                return and(expressions);
-            case XOR:
-                return xor(expressions);
-            default:
-                throw new IllegalStateException("Unreachable");
-        }
     }
 
     public static OreGlobNode error() {
@@ -188,13 +174,11 @@ public class OreGlobNodes {
     }
 
     public static OreGlobNode append(OreGlobNode node, OreGlobNode next) {
-        if (node.isImpossibleToMatch() || next.isNothing()) return node;
-        if (next.isImpossibleToMatch() || node.isNothing()) return next;
+        if (node.is(MatchDescription.NOTHING) || next.is(MatchDescription.EMPTY)) return node;
+        if (next.is(MatchDescription.NOTHING) || node.is(MatchDescription.EMPTY)) return next;
 
-        if (node instanceof MatchNode) {
-            if (next instanceof MatchNode) {
-                MatchNode n1 = (MatchNode) node;
-                MatchNode n2 = (MatchNode) next;
+        if (node instanceof MatchNode n1) {
+            if (next instanceof MatchNode n2) {
                 if (!node.isNegated() && !next.isNegated()) {
                     if (n1.ignoreCase == n2.ignoreCase) {
                         // two consecutive, non-negated match nodes can be concatenated
@@ -225,16 +209,18 @@ public class OreGlobNodes {
                     }
                 }
             }
-        } else if (node instanceof AnyCharNode && !node.isNegated()) {
-            AnyCharNode n1 = (AnyCharNode) node;
-            if (next.isEverything()) {
+        } else if (node instanceof AnyCharNode n1 && !node.isNegated()) {
+            if (next.is(MatchDescription.EVERYTHING)) {
+                if (n1.amount == 0) return everything();
+                if (n1.amount == 1) return nonempty();
                 if (!n1.more) {
                     n1.more = true;
                     n1.clearMatchDescriptionCache();
                 }
                 n1.setNext(null);
                 return n1;
-            } else if (next.isSomething()) {
+            } else if (next.is(MatchDescription.NONEMPTY)) {
+                if (n1.amount == 0) return nonempty();
                 n1.amount++;
                 if (!n1.more) {
                     n1.more = true;
@@ -245,11 +231,12 @@ public class OreGlobNodes {
                 return n1;
             }
 
-            if (next instanceof AnyCharNode && !next.isNegated()) {
-                AnyCharNode n2 = (AnyCharNode) next;
+            if (next instanceof AnyCharNode n2 && !next.isNegated()) {
                 // two consecutive, non-negated char nodes can be concatenated
                 n1.amount += n2.amount;
                 n1.more |= n2.more;
+                if (n1.amount == 0) return n1.more ? everything() : empty();
+                if (n1.amount == 1 && n1.more) return nonempty();
                 n1.setNext(n2.getNext());
                 n1.clearMatchDescriptionCache();
                 return n1;
@@ -266,5 +253,9 @@ public class OreGlobNodes {
             nodes[i] = append(nodes[i], nodes[i + 1]);
         }
         return nodes[0];
+    }
+
+    public static boolean isNegatedMatch(OreGlobNode node) {
+        return node.isNegated() && node instanceof MatchNode;
     }
 }

@@ -1,16 +1,12 @@
 package gregtech.client.renderer.texture.custom;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -30,9 +26,16 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.EnumMap;
 
 public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
+
     private static final Cuboid6 glassBox = new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 15 / 16.0, 15 / 16.0);
 
     private static final EnumMap<EnumFacing, Cuboid6> boxFacingMap = new EnumMap<>(EnumFacing.class);
@@ -55,23 +58,33 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
     @Override
     public void registerIcons(TextureMap textureMap) {
-        this.glassTexture = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/overlay/machine/overlay_screen_glass"));
+        this.glassTexture = textureMap
+                .registerSprite(new ResourceLocation("gregtech:blocks/overlay/machine/overlay_screen_glass"));
     }
 
-    public void renderMachine(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing frontFacing, int tier) {
-        Textures.renderFace(renderState, translation, pipeline, frontFacing, glassBox, glassTexture, BlockRenderLayer.CUTOUT_MIPPED);
+    public void renderMachine(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                              EnumFacing frontFacing, int tier) {
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, glassBox, glassTexture,
+                BlockRenderLayer.CUTOUT_MIPPED);
 
-        TextureAtlasSprite hullTexture = Textures.VOLTAGE_CASINGS[tier].getSpriteOnSide(RenderSide.bySide(EnumFacing.NORTH));
+        TextureAtlasSprite hullTexture = Textures.VOLTAGE_CASINGS[tier]
+                .getSpriteOnSide(RenderSide.bySide(EnumFacing.NORTH));
         boxFacingMap.keySet().forEach(facing -> {
             for (EnumFacing box : EnumFacing.VALUES) {
-                if ((facing != frontFacing || box != frontFacing) && (facing != EnumFacing.DOWN || box.getAxis().isVertical())) { // Don't render the front facing box from the front, nor allow Z-fighting to occur on the bottom
-                    Textures.renderFace(renderState, translation, pipeline, facing, boxFacingMap.get(box), hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+                if ((facing != frontFacing || box != frontFacing) &&
+                        (facing != EnumFacing.DOWN || box.getAxis().isVertical())) { // Don't render the front facing
+                                                                                     // box from the front, nor allow
+                                                                                     // Z-fighting to occur on the
+                                                                                     // bottom
+                    Textures.renderFace(renderState, translation, pipeline, facing, boxFacingMap.get(box), hullTexture,
+                            BlockRenderLayer.CUTOUT_MIPPED);
                 }
             }
         });
     }
 
-    public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine, ItemStack stack, long count, float partialTicks) {
+    public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine,
+                                        ItemStack stack, long count, float partialTicks) {
         if (stack.isEmpty() || count == 0)
             return;
 
@@ -106,7 +119,8 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         if (stack == null || stack.amount == 0)
             return;
 
-        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0, 14.9375 / 16.0, 14.9375 / 16.0);
+        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0,
+                14.9375 / 16.0, 14.9375 / 16.0);
 
         double fillFraction = (double) stack.amount / tank.getCapacity();
         if (tank.getFluid().getFluid().isGaseous()) {
@@ -117,9 +131,11 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
         renderState.setFluidColour(stack);
         ResourceLocation fluidStill = stack.getFluid().getStill(stack);
-        TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluidStill.toString());
+        TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
+                .getAtlasSprite(fluidStill.toString());
         for (EnumFacing facing : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite, BlockRenderLayer.CUTOUT_MIPPED);
+            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
+                    BlockRenderLayer.CUTOUT_MIPPED);
         }
         GlStateManager.resetColor();
 
@@ -137,10 +153,10 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderAmountText(double x, double y, double z, long amount, EnumFacing frontFacing) {
-
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
-        GlStateManager.translate(frontFacing.getXOffset() * -1 / 16f, frontFacing.getYOffset() * -1 / 16f, frontFacing.getZOffset() * -1 / 16f);
+        GlStateManager.translate(frontFacing.getXOffset() * -1 / 16f, frontFacing.getYOffset() * -1 / 16f,
+                frontFacing.getZOffset() * -1 / 16f);
         RenderUtil.moveToFace(0, 0, 0, frontFacing);
         if (frontFacing.getAxis() == EnumFacing.Axis.Y) {
             RenderUtil.rotateToFace(frontFacing, EnumFacing.SOUTH);

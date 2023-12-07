@@ -6,14 +6,17 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_MATERIAL;
 
-public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>, NodeDataType> extends TileEntityPipeBase<PipeType, NodeDataType> implements IMaterialPipeTile<PipeType, NodeDataType> {
+public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>,
+        NodeDataType> extends TileEntityPipeBase<PipeType, NodeDataType>
+                                                implements IMaterialPipeTile<PipeType, NodeDataType> {
 
     private Material pipeMaterial = Materials.Aluminium;
 
@@ -51,16 +54,16 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         this.pipeMaterial = ((IMaterialPipeTile<PipeType, NodeDataType>) tileEntity).getPipeMaterial();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setString("PipeMaterial", pipeMaterial.toString());
         return compound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
         MaterialRegistry registry = getPipeBlock().getMaterialRegistry();
         this.pipeMaterial = registry.getObject(compound.getString("PipeMaterial"));
@@ -69,24 +72,24 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         }
     }
 
-    private void writePipeMaterial(@Nonnull PacketBuffer buf) {
+    private void writePipeMaterial(@NotNull PacketBuffer buf) {
         buf.writeVarInt(getPipeBlock().getMaterialRegistry().getIDForObject(pipeMaterial));
     }
 
-    private void readPipeMaterial(@Nonnull PacketBuffer buf) {
+    private void readPipeMaterial(@NotNull PacketBuffer buf) {
         this.pipeMaterial = getPipeBlock().getMaterialRegistry().getObjectById(buf.readVarInt());
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
         buf.writeVarInt(getPipeBlock().getMaterialRegistry().getIDForObject(pipeMaterial));
+        super.writeInitialSyncData(buf);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
         this.pipeMaterial = getPipeBlock().getMaterialRegistry().getObjectById(buf.readVarInt());
+        super.receiveInitialSyncData(buf);
     }
 
     @Override

@@ -1,5 +1,10 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng.stack;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+
 import appeng.api.config.FuzzyMode;
 import appeng.api.storage.IStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
@@ -7,13 +12,8 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.core.Api;
 import appeng.util.item.AEItemStack;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @Author GlodBlock
@@ -21,15 +21,15 @@ import javax.annotation.Nullable;
  */
 public class WrappedItemStack implements IAEItemStack {
 
-    @Nonnull
+    @NotNull
     ItemStack delegate;
 
-    private WrappedItemStack(@Nonnull ItemStack itemStack) {
+    private WrappedItemStack(@NotNull ItemStack itemStack) {
         this.delegate = itemStack;
     }
 
     @Nullable
-    public static WrappedItemStack fromItemStack(@Nonnull ItemStack stack) {
+    public static WrappedItemStack fromItemStack(@NotNull ItemStack stack) {
         return stack.isEmpty() ? null : new WrappedItemStack(stack);
     }
 
@@ -213,7 +213,8 @@ public class WrappedItemStack implements IAEItemStack {
     public boolean equals(Object other) {
         if (other instanceof IAEItemStack) {
             return this.delegate.isItemEqual(((IAEItemStack) other).createItemStack());
-        } if (other instanceof ItemStack) {
+        }
+        if (other instanceof ItemStack) {
             return this.delegate.isItemEqual((ItemStack) other);
         }
         return false;

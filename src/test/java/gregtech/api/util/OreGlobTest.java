@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import gregtech.Bootstrap;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
@@ -7,8 +8,10 @@ import gregtech.common.covers.filter.oreglob.impl.NodeOreGlob;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static gregtech.common.covers.filter.oreglob.node.OreGlobNodes.*;
@@ -19,6 +22,11 @@ public class OreGlobTest {
 
     private static final boolean LOG = false;
 
+    @BeforeAll
+    public static void bootstrap() {
+        Bootstrap.perform();
+    }
+
     @Test
     public void compileTest() {
         // "Will match all gold dusts of all sizes or all plates, but not double plates"
@@ -27,20 +35,15 @@ public class OreGlobTest {
                         append(
                                 match("dust"),
                                 everything(),
-                                match("Gold")
-                        ),
+                                match("Gold")),
                         and(
                                 append(
                                         match("plate"),
-                                        everything()
-                                ),
+                                        everything()),
                                 not(append(
                                         everything(),
                                         match("Double"),
-                                        everything()
-                                ))
-                        )
-                ));
+                                        everything())))));
 
         assertCompile("1^2^3^4^5^!(1^2^3)",
                 xor(
@@ -52,9 +55,7 @@ public class OreGlobTest {
                         not(xor(
                                 match("1"),
                                 match("2"),
-                                match("3")
-                        ))
-                ));
+                                match("3")))));
 
         assertCompile("(??***)(?*?*?****?*???*?)()()()", chars(10, true));
         assertCompile("(?)(??)(??*)(??**)", chars(7, true));
@@ -67,83 +68,71 @@ public class OreGlobTest {
                 not(append(
                         match("a"),
                         match("b"),
-                        match("c")
-                )));
+                        match("c"))));
         assertCompile("!(a b c)",
                 not(append(
                         match("a"),
                         match("b"),
-                        match("c")
-                )));
+                        match("c"))));
         assertCompile("!(a b) c",
                 append(
                         not(append(
                                 match("a"),
-                                match("b")
-                        )),
-                        match("c")
-                ));
+                                match("b"))),
+                        match("c")));
         assertCompile("(!a b) c",
                 append(
                         not(append(
                                 match("a"),
-                                match("b")
-                        )),
-                        match("c")
-                ));
+                                match("b"))),
+                        match("c")));
 
-        assertCompile("!()", something());
+        assertCompile("?*", nonempty());
+        assertCompile("!()", nonempty());
+        assertCompile("(?)(*)", nonempty());
         assertCompile("!(logical) !(inversions) !(are) !(confusing) !(as) !(hell)", everything());
         assertCompile("!(x) !(x)", not(match("x")));
         assertCompile("!(x) !(y)",
                 or(
                         not(match("x")),
-                        not(match("y"))
-                ));
+                        not(match("y"))));
 
         assertCompile("(a | b | !*)",
                 or(
                         match("a"),
-                        match("b")
-                ));
+                        match("b")));
 
         assertCompile("(() | () | abc)",
                 or(
                         empty(),
-                        match("abc")
-                ));
+                        match("abc")));
 
         assertCompile("((a | ()) | b | ())",
                 or(
                         or(
                                 match("a"),
-                                empty()
-                        ),
-                        match("b")
-                ));
+                                empty()),
+                        match("b")));
 
         assertCompile("(() | !())", everything());
 
         assertCompile("(a | b | c | d | e | f | g | *)", everything());
-        assertCompile("(a | b | c | d | e | f | g | !())", something());
+        assertCompile("(a | b | c | d | e | f | g | !())", nonempty());
 
         assertCompile("((a | ()) | ())",
                 or(
                         match("a"),
-                        empty()
-                ));
+                        empty()));
 
         assertCompile("(a & b & *)",
                 and(
                         match("a"),
-                        match("b")
-                ));
+                        match("b")));
 
         assertCompile("(a & b & !())",
                 and(
                         match("a"),
-                        match("b")
-                ));
+                        match("b")));
 
         assertCompile("(a & b & !*)", nothing());
         assertCompile("(() & ?)", nothing());
@@ -292,7 +281,7 @@ public class OreGlobTest {
     }
 
     private static void assertMatch(OreGlob expr, String input, boolean expectedResult) {
-        assertThat(input, new TypeSafeMatcher<String>(String.class) {
+        assertThat(input, new TypeSafeMatcher<>(String.class) {
 
             @Override
             public void describeTo(Description description) {
@@ -318,7 +307,7 @@ public class OreGlobTest {
 
     private static void assertCompile(String expression, OreGlobNode result) {
         OreGlob glob = compile(expression);
-        assertThat(glob, new TypeSafeMatcher<OreGlob>(OreGlob.class) {
+        assertThat(glob, new TypeSafeMatcher<>(OreGlob.class) {
 
             @Override
             public void describeTo(Description description) {
@@ -345,7 +334,7 @@ public class OreGlobTest {
 
     private static void assertReport(String expression, boolean error) {
         OreGlobCompileResult result = new OreGlobParser(expression).compile();
-        assertThat(result, new TypeSafeMatcher<OreGlobCompileResult>(OreGlobCompileResult.class) {
+        assertThat(result, new TypeSafeMatcher<>(OreGlobCompileResult.class) {
 
             @Override
             public void describeTo(Description description) {

@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -18,28 +19,34 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityResearchStation extends RecipeMapMultiblockController implements IOpticalComputationReceiver {
+public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
+                                           implements IOpticalComputationReceiver {
 
     private IOpticalComputationProvider computationProvider;
     private IObjectHolder objectHolder;
@@ -128,7 +135,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .where('A', states(getAdvancedState()))
                 .where('P', states(getCasingState())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1))
+                        .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION).setExactLimit(1)))
                 .where('H', abilities(MultiblockAbility.OBJECT_HOLDER))
                 .build();
@@ -152,7 +159,10 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .where('P', getCasingState())
                 .where('O', MetaTileEntities.COMPUTATION_HATCH_RECEIVER, EnumFacing.NORTH)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LuV], EnumFacing.NORTH)
-                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : getCasingState(), EnumFacing.NORTH)
+                .where('M',
+                        () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
+                                getCasingState(),
+                        EnumFacing.NORTH)
                 .where('H', MetaTileEntities.OBJECT_HOLDER, EnumFacing.NORTH)
                 .build());
     }
@@ -172,6 +182,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.COMPUTER_CASING);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart == null || sourcePart instanceof IObjectHolder) {
@@ -180,6 +191,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         return Textures.COMPUTER_CASING;
     }
 
+    @SideOnly(Side.CLIENT)
     @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
@@ -199,33 +211,37 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.4"));
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed() && isActive()) {
-            var recipeLogic = getRecipeMapWorkable();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", recipeLogic.getRecipeCWUt()));
-            if (recipeLogic.isHasNotEnoughComputation()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.work_paused",
+                        "gregtech.machine.research_station.researching")
+                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed() && isActive() && getRecipeMapWorkable().isHasNotEnoughComputation()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
+                .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     private static class ResearchStationRecipeLogic extends ComputationRecipeLogic {
@@ -246,9 +262,10 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         }
 
         @Override
-        protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe, @NotNull IItemHandlerModifiable importInventory) {
+        protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                      @NotNull IItemHandlerModifiable importInventory) {
             // this machine cannot overclock, so don't bother calling it
-            this.overclockResults = new int[]{recipe.getEUt(), recipe.getDuration()};
+            this.overclockResults = new int[] { recipe.getEUt(), recipe.getDuration() };
             if (!hasEnoughPower(overclockResults)) {
                 return false;
             }

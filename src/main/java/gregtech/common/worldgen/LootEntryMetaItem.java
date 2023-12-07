@@ -1,19 +1,22 @@
 package gregtech.common.worldgen;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+
 public class LootEntryMetaItem extends AbstractItemLootEntry {
 
     private final MetaValueItem metaValueItem;
 
-    protected LootEntryMetaItem(MetaValueItem metaValueItem, int weightIn, int qualityIn, LootFunction[] functionsIn, LootCondition[] conditionsIn, String entryName) {
+    protected LootEntryMetaItem(MetaValueItem metaValueItem, int weightIn, int qualityIn, LootFunction[] functionsIn,
+                                LootCondition[] conditionsIn, String entryName) {
         super(weightIn, qualityIn, functionsIn, conditionsIn, entryName);
         this.metaValueItem = metaValueItem;
     }
@@ -31,7 +34,8 @@ public class LootEntryMetaItem extends AbstractItemLootEntry {
                 .findFirst().orElse(null);
     }
 
-    public static LootEntryMetaItem deserialize(JsonObject object, JsonDeserializationContext context, int weight, int quality, LootCondition[] conditions) {
+    public static LootEntryMetaItem deserialize(JsonObject object, JsonDeserializationContext context, int weight,
+                                                int quality, LootCondition[] conditions) {
         String entryName = net.minecraftforge.common.ForgeHooks.readLootEntryName(object, "item");
         LootFunction[] lootFunctions;
         if (object.has("functions")) {

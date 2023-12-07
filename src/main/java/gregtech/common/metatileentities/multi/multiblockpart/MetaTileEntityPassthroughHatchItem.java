@@ -1,35 +1,47 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
+public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch,
+                                                IMultiblockAbilityPart<IPassthroughHatch> {
 
     private ItemStackHandler itemStackHandler;
+
+    private IItemHandler importHandler;
+    private IItemHandler exportHandler;
 
     public MetaTileEntityPassthroughHatchItem(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -44,7 +56,9 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        itemInventory = itemStackHandler = new ItemStackHandler(getInventorySize());
+        itemInventory = itemStackHandler = new GTItemStackHandler(this, getInventorySize());
+        importHandler = new ItemHandlerProxy(itemStackHandler, new GTItemStackHandler(this, 0));
+        exportHandler = new ItemHandlerProxy(new GTItemStackHandler(this, 0), itemStackHandler);
     }
 
     private int getInventorySize() {
@@ -71,18 +85,19 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
 
             // back side output
             Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
-            Textures.ITEM_HATCH_OUTPUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
+            Textures.ITEM_HATCH_OUTPUT_OVERLAY.renderSided(getFrontFacing().getOpposite(), renderState, translation,
+                    pipeline);
         }
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), true);
+        return new NotifiableItemStackHandler(this, getInventorySize(), getController(), true);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), false);
+        return new NotifiableItemStackHandler(this, getInventorySize(), getController(), false);
     }
 
     @Override
@@ -101,7 +116,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(itemStackHandler, index,
                         (88 - rowSize * 9 + x * 18), 18 + y * 18, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT));
+                                .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
@@ -143,13 +158,26 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+    public void registerAbilities(@NotNull List<IPassthroughHatch> abilityList) {
         abilityList.add(this);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<IItemHandlerModifiable> getPassthroughType() {
         return IItemHandlerModifiable.class;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        // enforce strict sided-ness for item IO
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (side == getFrontFacing()) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(importHandler);
+            } else if (side == getFrontFacing().getOpposite()) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(exportHandler);
+            } else return null;
+        }
+        return super.getCapability(capability, side);
     }
 }

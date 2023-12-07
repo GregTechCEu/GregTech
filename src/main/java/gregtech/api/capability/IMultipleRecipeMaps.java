@@ -6,6 +6,7 @@ public interface IMultipleRecipeMaps {
 
     /**
      * Used to get all possible RecipeMaps a Multiblock can run
+     * 
      * @return array of RecipeMaps
      */
     RecipeMap<?>[] getAvailableRecipeMaps();

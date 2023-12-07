@@ -4,6 +4,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -58,28 +59,30 @@ public class EnergyNetHandler implements IEnergyContainer {
         }
 
         long amperesUsed = 0L;
-        for (RoutePath path : net.getNetData(cable.getPos())) {
+        for (EnergyRoutePath path : net.getNetData(cable.getPos())) {
             if (path.getMaxLoss() >= voltage) {
                 // Will lose all the energy with this path, so don't use it
                 continue;
             }
 
-            if (GTUtility.arePosEqual(cable.getPos(), path.getPipePos()) && side == path.getFaceToHandler()) {
+            if (GTUtility.arePosEqual(cable.getPos(), path.getTargetPipePos()) && side == path.getTargetFacing()) {
                 // Do not insert into source handler
                 continue;
             }
 
-            IEnergyContainer dest = path.getHandler(cable.getWorld());
+            IEnergyContainer dest = path.getHandler();
             if (dest == null) continue;
 
-            EnumFacing facing = path.getFaceToHandler().getOpposite();
+            EnumFacing facing = path.getTargetFacing().getOpposite();
             if (!dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
 
             long pathVoltage = voltage - path.getMaxLoss();
             boolean cableBroken = false;
             for (TileEntityCable cable : path.getPath()) {
                 if (cable.getMaxVoltage() < voltage) {
-                    int heat = (int) (Math.log(GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) * 45 + 36.5);
+                    int heat = (int) (Math.log(
+                            GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) *
+                            45 + 36.5);
                     cable.applyHeat(heat);
 
                     cableBroken = cable.isInvalid();

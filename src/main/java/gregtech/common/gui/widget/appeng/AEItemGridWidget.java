@@ -1,15 +1,17 @@
 package gregtech.common.gui.widget.appeng;
 
+import gregtech.api.gui.Widget;
+import gregtech.common.gui.widget.appeng.slot.AEItemDisplayWidget;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.util.item.AEItemStack;
 import appeng.util.item.ItemList;
-import gregtech.api.gui.Widget;
-import gregtech.common.gui.widget.appeng.slot.AEItemDisplayWidget;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 
 import java.io.IOException;
 
@@ -35,7 +37,7 @@ public class AEItemGridWidget extends AEListGridWidget<IAEItemStack> {
             if (cnt == index) {
                 return item;
             }
-            cnt ++;
+            cnt++;
         }
         return null;
     }
@@ -85,7 +87,7 @@ public class AEItemGridWidget extends AEListGridWidget<IAEItemStack> {
     protected void readListChange(PacketBuffer buffer) {
         int size = buffer.readVarInt();
         try {
-            for (int i = 0; i < size ; i ++) {
+            for (int i = 0; i < size; i++) {
                 ItemStack item = buffer.readItemStack();
                 item.setCount(1);
                 long delta = buffer.readVarLong();
@@ -93,8 +95,6 @@ public class AEItemGridWidget extends AEListGridWidget<IAEItemStack> {
                     this.displayList.add(AEItemStack.fromItemStack(item).setStackSize(delta));
                 }
             }
-        } catch (IOException ignore) {
-        }
+        } catch (IOException ignore) {}
     }
-
 }

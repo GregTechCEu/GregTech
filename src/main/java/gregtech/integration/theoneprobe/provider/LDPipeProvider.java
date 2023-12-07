@@ -5,14 +5,15 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
-import mcjty.theoneprobe.api.*;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import mcjty.theoneprobe.api.*;
+import org.jetbrains.annotations.NotNull;
 
 public class LDPipeProvider implements IProbeInfoProvider {
 
@@ -22,8 +23,8 @@ public class LDPipeProvider implements IProbeInfoProvider {
     }
 
     @Override
-    public void addProbeInfo(ProbeMode probeMode, IProbeInfo probeInfo, EntityPlayer entityPlayer, @Nonnull World world,
-                             IBlockState blockState, @Nonnull IProbeHitData probeHitData) {
+    public void addProbeInfo(ProbeMode probeMode, IProbeInfo probeInfo, EntityPlayer entityPlayer, @NotNull World world,
+                             IBlockState blockState, @NotNull IProbeHitData probeHitData) {
         BlockPos pos = probeHitData.getPos();
 
         TileEntity tileEntity = world.getTileEntity(pos);
@@ -34,7 +35,8 @@ public class LDPipeProvider implements IProbeInfoProvider {
                 if (network == null) {
                     probeInfo.text(TextStyleClass.ERROR + "{*gregtech.top.ld_pipe_no_network*}");
                 } else {
-                    if (network.getEndpointAmount() == 2) {
+                    ILDEndpoint other = endpoint.getLink();
+                    if (other != null) {
                         probeInfo.text(TextStyleClass.OK + "{*gregtech.top.ld_pipe_connected*}");
                         probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.ld_pipe_length*} " +
                                 TextStyleClass.INFOIMP + network.getTotalSize());
@@ -42,22 +44,19 @@ public class LDPipeProvider implements IProbeInfoProvider {
                         addIOText(probeInfo, endpoint);
 
                         if (entityPlayer.isSneaking()) {
-                            ILDEndpoint other = endpoint.getLink();
-                            if (other != null) {
-                                BlockPos otherPos = other.getPos();
-                                String prefix = null;
-                                if (other.isInput()) {
-                                    prefix = "{*gregtech.top.ld_pipe_input_endpoint*}";
-                                } else if (other.isOutput()) {
-                                    prefix = "{*gregtech.top.ld_pipe_output_endpoint*}";
-                                }
+                            BlockPos otherPos = other.pos();
+                            String prefix = null;
+                            if (other.isInput()) {
+                                prefix = "{*gregtech.top.ld_pipe_input_endpoint*}";
+                            } else if (other.isOutput()) {
+                                prefix = "{*gregtech.top.ld_pipe_output_endpoint*}";
+                            }
 
-                                if (prefix != null) {
-                                    probeInfo.text(TextStyleClass.INFO + prefix +
-                                            TextStyleClass.INFO + " x: " + TextStyleClass.OK + otherPos.getX() +
-                                            TextStyleClass.INFO + " y: " + TextStyleClass.OK + otherPos.getY() +
-                                            TextStyleClass.INFO + " z: " + TextStyleClass.OK + otherPos.getZ());
-                                }
+                            if (prefix != null) {
+                                probeInfo.text(TextStyleClass.INFO + prefix +
+                                        TextStyleClass.INFO + " x: " + TextStyleClass.OK + otherPos.getX() +
+                                        TextStyleClass.INFO + " y: " + TextStyleClass.OK + otherPos.getY() +
+                                        TextStyleClass.INFO + " z: " + TextStyleClass.OK + otherPos.getZ());
                             }
                         }
                     } else {
@@ -69,7 +68,7 @@ public class LDPipeProvider implements IProbeInfoProvider {
         }
     }
 
-    private static void addIOText(@Nonnull IProbeInfo probeInfo, @Nonnull ILDEndpoint endpoint) {
+    private static void addIOText(@NotNull IProbeInfo probeInfo, @NotNull ILDEndpoint endpoint) {
         if (endpoint.isInput()) {
             probeInfo.text(TextStyleClass.INFOIMP + "{*gregtech.top.ld_pipe_input*}");
         } else if (endpoint.isOutput()) {

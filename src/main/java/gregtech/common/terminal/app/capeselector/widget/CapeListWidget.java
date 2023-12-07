@@ -8,6 +8,8 @@ import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.CapesRegistry;
+import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 
@@ -16,12 +18,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class CapeListWidget extends DraggableScrollableWidgetGroup {
+
     private final UUID uuid;
     private List<ResourceLocation> capes;
     private int selectedX, selectedY = -1;
 
     public CapeListWidget(int xPosition, int yPosition, int width, int height, UUID uuid) {
-        super(xPosition, yPosition, width * 70 + 42, height * 56 + 12); // Cape banners are 28x44, expanded to 70x56
+        super(xPosition, yPosition, width * 70, height * 56); // Cape banners are 28x44, expanded to 70x56
         this.uuid = uuid;
     }
 
@@ -53,9 +56,7 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
 
     private void updateCapeCandidates(List<ResourceLocation> capes) {
         this.capes = capes;
-        int xPosition = getSelfPosition().x;
-        int yPosition = getSelfPosition().y;
-        int width = (getSize().width - 42) / 70;
+        int width = (getSize().width) / 70;
         int rowNumber = 0;
         if (capes == null || capes.isEmpty()) return;
         int i = 0;
@@ -67,12 +68,14 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
                 int finalRowPosition = rowPosition;
                 int finalRowNumber = rowNumber;
                 int finalI = i;
-                ClickButtonWidget capeButton = new ClickButtonWidget(xPosition + rowPosition * 70, yPosition + rowNumber * 56, 28, 44, "",
-                        (data) -> this.setCape(finalRowPosition, finalRowNumber, capes.get(finalI))).setButtonTexture(capeImage)
-                        .setShouldClientCallback(true);
+                ClickButtonWidget capeButton = new ClickButtonWidget(rowPosition * 70 + 21, rowNumber * 56, 28, 44, "",
+                        (data) -> this.setCape(finalRowPosition, finalRowNumber, capes.get(finalI)))
+                                .setButtonTexture(capeImage)
+                                .setShouldClientCallback(true);
                 row.addWidget(capeButton);
 
-                if(capes.get(i).equals(CapesRegistry.getPlayerCape(uuid))) { // If this is the cape that the player is wearing right now, select it.
+                if (capes.get(i).equals(CapesRegistry.getPlayerCape(uuid))) { // If this is the cape that the player is
+                                                                              // wearing right now, select it.
                     selectedX = finalRowPosition;
                     selectedY = finalRowNumber;
                 }
@@ -112,10 +115,12 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
             return;
 
         // Get selected cape button
-        Widget button = ((WidgetGroup) this.getContainedWidgets(false).get(this.selectedY))
-                .getContainedWidgets(false).get(this.selectedX);
+        Widget button = ((WidgetGroup) this.widgets.get(this.selectedY)).widgets.get(this.selectedX);
 
-        drawSelectionOverlay(button.toRectangleBox().x - 6, button.toRectangleBox().y - 6,
-                button.toRectangleBox().width + 12, button.toRectangleBox().height + 12); // Add a bit of margin
+        RenderUtil.useScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth,
+                getSize().height - xBarHeight, () -> {
+                    drawSelectionOverlay(button.getPosition().x - 6, button.getPosition().y - 6,
+                            button.getSize().width + 12, button.getSize().height + 12); // Add a bit of margin
+                });
     }
 }

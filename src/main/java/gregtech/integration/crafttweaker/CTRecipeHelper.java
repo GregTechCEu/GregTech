@@ -1,14 +1,16 @@
 package gregtech.integration.crafttweaker;
 
-import crafttweaker.mc1120.data.NBTConverter;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.RecipeCompatUtil;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
+
+import crafttweaker.mc1120.data.NBTConverter;
 
 public class CTRecipeHelper {
 
@@ -52,7 +54,6 @@ public class CTRecipeHelper {
         } else {
             builder.append("null");
         }
-
 
         builder.append(").remove();");
         return builder.toString();

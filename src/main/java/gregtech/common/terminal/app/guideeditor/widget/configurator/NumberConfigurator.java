@@ -1,7 +1,5 @@
 package gregtech.common.terminal.app.guideeditor.widget.configurator;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SimpleTextWidget;
@@ -9,7 +7,10 @@ import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 
-public class NumberConfigurator extends ConfiguratorWidget<Integer>{
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+public class NumberConfigurator extends ConfiguratorWidget<Integer> {
 
     public NumberConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name) {
         super(group, config, name);
@@ -19,7 +20,7 @@ public class NumberConfigurator extends ConfiguratorWidget<Integer>{
         super(group, config, name, defaultValue);
     }
 
-    protected void init(){
+    protected void init() {
         int y = 15;
         this.addWidget(new RectButtonWidget(0, y, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),

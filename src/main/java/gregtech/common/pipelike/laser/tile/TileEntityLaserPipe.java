@@ -11,11 +11,14 @@ import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.net.LaserNetHandler;
 import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +26,7 @@ import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 
 public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties> {
+
     private final EnumMap<EnumFacing, LaserNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the LaserNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final ILaserContainer clientCapability = new DefaultLaserContainer();
@@ -40,6 +44,11 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
 
     @Override
     public boolean supportsTicking() {
+        return false;
+    }
+
+    @Override
+    public boolean canHaveBlockedFaces() {
         return false;
     }
 
@@ -116,6 +125,28 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
     }
 
+    @Override
+    public void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor) {
+        if (!getWorld().isRemote && connected && !fromNeighbor) {
+            int connections = getConnections();
+            // block connection if any side other than the requested side and its opposite side are already connected.
+            connections &= ~(1 << side.getIndex());
+            connections &= ~(1 << side.getOpposite().getIndex());
+            if (connections != 0) return;
+
+            // check the same for the targeted pipe
+            TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
+            if (tile instanceof IPipeTile<?, ?>pipeTile &&
+                    pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
+                connections = pipeTile.getConnections();
+                connections &= ~(1 << side.getIndex());
+                connections &= ~(1 << side.getOpposite().getIndex());
+                if (connections != 0) return;
+            }
+        }
+        super.setConnection(side, connected, fromNeighbor);
+    }
+
     public boolean isActive() {
         return this.isActive;
     }
@@ -125,32 +156,29 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
      * @param duration how long the pipe should be active for
      */
     public void setActive(boolean active, int duration) {
-        boolean stateChanged = false;
-        if (this.isActive && !active) {
-            this.isActive = false;
-            stateChanged = true;
-        } else if (!this.isActive && active) {
-            this.isActive = true;
-            stateChanged = true;
-            activeDuration = duration;
-            TaskScheduler.scheduleTask(getWorld(), () -> {
-                if (++this.ticksActive % activeDuration == 0) {
-                    this.ticksActive = 0;
-                    setActive(false, -1);
-                    return false;
-                }
-                return true;
-            });
-        } else if (this.isActive) {
-            this.ticksActive = 0;
-            this.activeDuration = duration;
-        }
-
-        if (stateChanged) {
-            writeCustomData(GregtechDataCodes.PIPE_LASER_ACTIVE, buf -> buf.writeBoolean(this.isActive));
+        if (this.isActive != active) {
+            this.isActive = active;
             notifyBlockUpdate();
             markDirty();
+            writeCustomData(GregtechDataCodes.PIPE_LASER_ACTIVE, buf -> buf.writeBoolean(this.isActive));
+            if (active && duration != this.activeDuration) {
+                TaskScheduler.scheduleTask(getWorld(), this::queueDisconnect);
+            }
         }
+
+        this.activeDuration = duration;
+        if (duration > 0 && active) {
+            this.ticksActive = 0;
+        }
+    }
+
+    public boolean queueDisconnect() {
+        if (++this.ticksActive % activeDuration == 0) {
+            this.ticksActive = 0;
+            setActive(false, -1);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -160,6 +188,25 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
             this.isActive = buf.readBoolean();
             scheduleChunkForRenderUpdate();
         }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(this.isActive);
+
+        // schedule a disconnect on world load, gotta set the duration to something
+        if (isActive) {
+            activeDuration = 100;
+            TaskScheduler.scheduleTask(getWorld(), this::queueDisconnect);
+        }
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.isActive = buf.readBoolean();
+        scheduleChunkForRenderUpdate();
     }
 
     @NotNull
@@ -180,12 +227,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     private static class DefaultLaserContainer implements ILaserContainer {
 
         @Override
-        public long acceptEnergy(EnumFacing side, long amount) {
-            return 0;
-        }
-
-        @Override
-        public long changeEnergy(long amount) {
+        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
             return 0;
         }
 
@@ -195,12 +237,27 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
 
         @Override
+        public long changeEnergy(long differenceAmount) {
+            return 0;
+        }
+
+        @Override
         public long getEnergyStored() {
             return 0;
         }
 
         @Override
         public long getEnergyCapacity() {
+            return 0;
+        }
+
+        @Override
+        public long getInputAmperage() {
+            return 0;
+        }
+
+        @Override
+        public long getInputVoltage() {
             return 0;
         }
     }

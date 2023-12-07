@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -15,11 +16,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Locale;
 
-@ParametersAreNonnullByDefault
+import static gregtech.api.GTValues.VOLTAGE_NAMES;
+
 public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineCasingType> {
 
     public BlockMachineCasing() {
@@ -33,12 +35,13 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         for (MachineCasingType variant : VALUES) {
             if (variant.ordinal() <= MachineCasingType.UHV.ordinal() || GregTechAPI.isHighTier()) {
                 list.add(getItemVariant(variant));
@@ -48,22 +51,22 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
 
     public enum MachineCasingType implements IStringSerializable {
 
-        //Voltage-tiered casings
-        ULV(makeName(GTValues.VOLTAGE_NAMES[0])),
-        LV(makeName(GTValues.VOLTAGE_NAMES[1])),
-        MV(makeName(GTValues.VOLTAGE_NAMES[2])),
-        HV(makeName(GTValues.VOLTAGE_NAMES[3])),
-        EV(makeName(GTValues.VOLTAGE_NAMES[4])),
-        IV(makeName(GTValues.VOLTAGE_NAMES[5])),
-        LuV(makeName(GTValues.VOLTAGE_NAMES[6])),
-        ZPM(makeName(GTValues.VOLTAGE_NAMES[7])),
-        UV(makeName(GTValues.VOLTAGE_NAMES[8])),
-        UHV(makeName(GTValues.VOLTAGE_NAMES[9])),
-        UEV(makeName(GTValues.VOLTAGE_NAMES[10])),
-        UIV(makeName(GTValues.VOLTAGE_NAMES[11])),
-        UXV(makeName(GTValues.VOLTAGE_NAMES[12])),
-        OpV(makeName(GTValues.VOLTAGE_NAMES[13])),
-        MAX(makeName(GTValues.VOLTAGE_NAMES[14]));
+        // Voltage-tiered casings
+        ULV(makeName(VOLTAGE_NAMES[GTValues.ULV])),
+        LV(makeName(VOLTAGE_NAMES[GTValues.LV])),
+        MV(makeName(VOLTAGE_NAMES[GTValues.MV])),
+        HV(makeName(VOLTAGE_NAMES[GTValues.HV])),
+        EV(makeName(VOLTAGE_NAMES[GTValues.EV])),
+        IV(makeName(VOLTAGE_NAMES[GTValues.IV])),
+        LuV(makeName(VOLTAGE_NAMES[GTValues.LuV])),
+        ZPM(makeName(VOLTAGE_NAMES[GTValues.ZPM])),
+        UV(makeName(VOLTAGE_NAMES[GTValues.UV])),
+        UHV(makeName(VOLTAGE_NAMES[GTValues.UHV])),
+        UEV(makeName(VOLTAGE_NAMES[GTValues.UEV])),
+        UIV(makeName(VOLTAGE_NAMES[GTValues.UIV])),
+        UXV(makeName(VOLTAGE_NAMES[GTValues.UXV])),
+        OpV(makeName(VOLTAGE_NAMES[GTValues.OpV])),
+        MAX(makeName(VOLTAGE_NAMES[GTValues.MAX]));
 
         private final String name;
 
@@ -72,7 +75,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         }
 
         @Override
-        @Nonnull
+        @NotNull
         public String getName() {
             return this.name;
         }

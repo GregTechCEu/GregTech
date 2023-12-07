@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.util.BlockInfo;
 import gregtech.client.utils.TrackedDummyWorld;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -26,6 +27,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -71,7 +73,6 @@ public class MultiblockPreviewRenderer {
         }
     }
 
-
     public static void renderMultiBlockPreview(MultiblockControllerBase controller, long durTimeMillis) {
         if (!controller.getPos().equals(mbpPos)) {
             layer = 0;
@@ -98,7 +99,8 @@ public class MultiblockPreviewRenderer {
         }
     }
 
-    public static void renderControllerInList(MultiblockControllerBase controllerBase, MultiblockShapeInfo shapeInfo, int layer) {
+    public static void renderControllerInList(MultiblockControllerBase controllerBase, MultiblockShapeInfo shapeInfo,
+                                              int layer) {
         BlockPos mbpPos = controllerBase.getPos();
         EnumFacing frontFacing, previewFacing;
         previewFacing = controllerBase.getFrontFacing();
@@ -114,8 +116,10 @@ public class MultiblockPreviewRenderer {
                 BlockInfo[] column = aisle[y];
                 for (int z = 0; z < column.length; z++) {
                     blockMap.put(new BlockPos(x, y, z), column[z]);
-                    MetaTileEntity metaTE = column[z].getTileEntity() instanceof IGregTechTileEntity ? ((IGregTechTileEntity) column[z].getTileEntity()).getMetaTileEntity() : null;
-                    if (metaTE instanceof MultiblockControllerBase && metaTE.metaTileEntityId.equals(controllerBase.metaTileEntityId)) {
+                    MetaTileEntity metaTE = column[z].getTileEntity() instanceof IGregTechTileEntity ?
+                            ((IGregTechTileEntity) column[z].getTileEntity()).getMetaTileEntity() : null;
+                    if (metaTE instanceof MultiblockControllerBase &&
+                            metaTE.metaTileEntityId.equals(controllerBase.metaTileEntityId)) {
                         controllerPos = new BlockPos(x, y, z);
                         previewFacing = metaTE.getFrontFacing();
                         mte = (MultiblockControllerBase) metaTE;
@@ -130,14 +134,12 @@ public class MultiblockPreviewRenderer {
         world.setRenderFilter(pos -> pos.getY() + 1 == finalMaxY || finalMaxY == 0);
 
         EnumFacing facing = controllerBase.getFrontFacing();
-        EnumFacing spin = EnumFacing.NORTH;
+        EnumFacing upwardsFacing = controllerBase.getUpwardsFacing();
 
-
-        // TODO SIDEWAYS ONE DAY
-        //  spin = controllerBase.getSpin();
-
-        frontFacing = facing.getYOffset() == 0 ? facing : facing.getYOffset() < 0 ? spin : spin.getOpposite();
-        Rotation rotatePreviewBy = Rotation.values()[(4 + frontFacing.getHorizontalIndex() - previewFacing.getHorizontalIndex()) % 4];
+        frontFacing = facing.getYOffset() == 0 ? facing :
+                facing.getYOffset() < 0 ? upwardsFacing : upwardsFacing.getOpposite();
+        Rotation rotatePreviewBy = Rotation
+                .values()[(4 + frontFacing.getHorizontalIndex() - previewFacing.getHorizontalIndex()) % 4];
 
         Minecraft mc = Minecraft.getMinecraft();
         BlockRendererDispatcher brd = mc.getBlockRendererDispatcher();
@@ -158,7 +160,8 @@ public class MultiblockPreviewRenderer {
             GlStateManager.rotate(90, previewFacing.getZOffset(), 0, -previewFacing.getXOffset());
             GlStateManager.translate(-0.5, -0.5, -0.5);
         } else {
-            int degree = 90 * (spin == EnumFacing.EAST ? -1 : spin == EnumFacing.SOUTH ? 2 : spin == EnumFacing.WEST ? 1 : 0);
+            int degree = 90 * (upwardsFacing == EnumFacing.EAST ? -1 :
+                    upwardsFacing == EnumFacing.SOUTH ? 2 : upwardsFacing == EnumFacing.WEST ? 1 : 0);
             GlStateManager.translate(0.5, 0.5, 0.5);
             GlStateManager.rotate(degree, previewFacing.getXOffset(), 0, previewFacing.getZOffset());
             GlStateManager.translate(-0.5, -0.5, -0.5);
@@ -193,7 +196,6 @@ public class MultiblockPreviewRenderer {
         ForgeHooksClient.setRenderLayer(oldLayer);
 
         GlStateManager.popMatrix();
-
     }
 
     @SideOnly(Side.CLIENT)
@@ -250,6 +252,5 @@ public class MultiblockPreviewRenderer {
         public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
             return pos.equals(BlockPos.ORIGIN) && delegate.isSideSolid(targetPos, side, _default);
         }
-
     }
 }

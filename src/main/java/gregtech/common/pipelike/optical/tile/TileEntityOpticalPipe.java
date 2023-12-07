@@ -13,12 +13,15 @@ import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.net.OpticalNetHandler;
 import gregtech.common.pipelike.optical.net.OpticalPipeNet;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
+
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -42,6 +45,11 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
 
     @Override
     public boolean supportsTicking() {
+        return false;
+    }
+
+    @Override
+    public boolean canHaveBlockedFaces() {
         return false;
     }
 
@@ -76,7 +84,8 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
             if (handlers.isEmpty()) initHandlers();
 
             checkNetwork();
-            return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER.cast(handlers.getOrDefault(facing, defaultHandler));
+            return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER
+                    .cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
     }
@@ -98,7 +107,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
             return null;
         OpticalPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() && currentPipeNet.containsNode(getPipePos()))
-            return currentPipeNet; //if current net is valid and does contain position, return it
+            return currentPipeNet; // if current net is valid and does contain position, return it
         WorldOpticalPipeNet worldNet = (WorldOpticalPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
         currentPipeNet = worldNet.getNetFromPos(getPipePos());
         if (currentPipeNet != null) {
@@ -123,6 +132,22 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
             // create new handlers
             initHandlers();
         }
+    }
+
+    @Override
+    public void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor) {
+        if (!getWorld().isRemote && connected && !fromNeighbor) {
+            // never allow more than two connections total
+            if (getNumConnections() >= 2) return;
+
+            // also check the other pipe
+            TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
+            if (tile instanceof IPipeTile<?, ?>pipeTile &&
+                    pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
+                if (pipeTile.getNumConnections() >= 2) return;
+            }
+        }
+        super.setConnection(side, connected, fromNeighbor);
     }
 
     public boolean isActive() {
@@ -172,7 +197,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     private static class DefaultDataHandler implements IDataAccessHatch {
 
         @Override
-        public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
+        public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
             return false;
         }
 
@@ -185,17 +210,17 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     private static class DefaultComputationHandler implements IOpticalComputationProvider {
 
         @Override
-        public int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen) {
+        public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
             return 0;
         }
 
         @Override
-        public int getMaxCWUt(@Nonnull Collection<IOpticalComputationProvider> seen) {
+        public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
             return 0;
         }
 
         @Override
-        public boolean canBridge(@Nonnull Collection<IOpticalComputationProvider> seen) {
+        public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
             return false;
         }
     }

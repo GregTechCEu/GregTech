@@ -1,13 +1,7 @@
 package gregtech.api.pipenet.longdist;
 
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.util.GTLog;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,12 +12,20 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class LongDistanceNetwork {
@@ -53,33 +55,23 @@ public class LongDistanceNetwork {
      * For this it will start a new thread to keep the main thread free.
      */
     protected void recalculateNetwork(Collection<BlockPos> starts) {
-        // remove the every pipe from the network
-        for (BlockPos pos : this.longDistancePipeBlocks) {
-            this.world.removeNetwork(pos);
-        }
-        invalidateEndpoints();
-        this.endpoints.clear();
-        this.longDistancePipeBlocks.clear();
+        invalidateNetwork(true);
         // start a new thread where all given starting points are being walked
-        Thread thread = new Thread(new NetworkBuilder(world, this, starts));
-        thread.start();
+        new NetworkBuilder(world, this, starts).start();
     }
 
     /**
      * Called from the {@link NetworkBuilder} to set the gathered data
      */
     protected void setData(Collection<BlockPos> pipes, List<ILDEndpoint> endpoints) {
-        boolean wasEmpty = this.longDistancePipeBlocks.isEmpty();
+        invalidateEndpoints();
         this.longDistancePipeBlocks.clear();
         this.longDistancePipeBlocks.addAll(pipes);
         this.endpoints.clear();
         this.endpoints.addAll(endpoints);
         if (this.longDistancePipeBlocks.isEmpty()) {
-            invalidateNetwork();
+            invalidateNetwork(false);
             return;
-        }
-        if (wasEmpty) {
-            this.world.networkList.add(this);
         }
         for (BlockPos pos : this.longDistancePipeBlocks) {
             this.world.putNetwork(pos, this);
@@ -94,12 +86,12 @@ public class LongDistanceNetwork {
         this.longDistancePipeBlocks.remove(pos);
         this.world.removeNetwork(pos);
         if (this.longDistancePipeBlocks.isEmpty()) {
-            invalidateNetwork();
+            invalidateNetwork(false);
             return;
         }
         // find amount of neighbour networks
         List<BlockPos> neighbours = new ArrayList<>();
-        BlockPos.PooledMutableBlockPos offsetPos = BlockPos.PooledMutableBlockPos.retain();
+        BlockPos.MutableBlockPos offsetPos = new BlockPos.MutableBlockPos();
         for (EnumFacing facing : EnumFacing.VALUES) {
             offsetPos.setPos(pos).move(facing);
             LongDistanceNetwork network = world.getNetwork(offsetPos);
@@ -107,7 +99,6 @@ public class LongDistanceNetwork {
                 neighbours.add(offsetPos.toImmutable());
             }
         }
-        offsetPos.release();
         if (neighbours.size() > 1) {
             // the pipe had more than 1 neighbour
             // the network might need to be recalculated for each neighbour
@@ -135,7 +126,7 @@ public class LongDistanceNetwork {
         if (this.endpoints.remove(endpoint)) {
             invalidateEndpoints();
         }
-        onRemovePipe(endpoint.getPos());
+        onRemovePipe(endpoint.pos());
     }
 
     /**
@@ -151,8 +142,8 @@ public class LongDistanceNetwork {
      */
     public void onPlaceEndpoint(ILDEndpoint endpoint) {
         addEndpoint(endpoint);
-        this.longDistancePipeBlocks.add(endpoint.getPos());
-        this.world.putNetwork(endpoint.getPos(), this);
+        this.longDistancePipeBlocks.add(endpoint.pos());
+        this.world.putNetwork(endpoint.pos(), this);
     }
 
     /**
@@ -160,7 +151,8 @@ public class LongDistanceNetwork {
      */
     protected void mergePipeNet(LongDistanceNetwork network) {
         if (getPipeType() != network.getPipeType()) {
-            throw new IllegalStateException("Can't merge unequal pipe types, " + getPipeType().getName() + " and " + network.getPipeType().getName() + " !");
+            throw new IllegalStateException("Can't merge unequal pipe types, " + getPipeType().getName() + " and " +
+                    network.getPipeType().getName() + " !");
         }
         for (BlockPos pos : network.longDistancePipeBlocks) {
             this.world.putNetwork(pos, this);
@@ -170,20 +162,25 @@ public class LongDistanceNetwork {
         for (ILDEndpoint endpoint1 : this.endpoints) {
             endpoint1.invalidateLink();
         }
-        network.invalidateNetwork();
+        network.invalidateNetwork(false);
     }
 
     /**
      * invalidate this network
      */
-    protected void invalidateNetwork() {
+    protected void invalidateNetwork(boolean removeFromWorld) {
+        if (removeFromWorld) {
+            for (BlockPos pos : this.longDistancePipeBlocks) {
+                this.world.removeNetwork(pos);
+            }
+        }
         this.longDistancePipeBlocks.clear();
         this.world.networkList.remove(this);
         invalidateEndpoints();
         this.endpoints.clear();
     }
 
-    protected void invalidateEndpoints() {
+    public void invalidateEndpoints() {
         this.activeInputIndex = -1;
         this.activeOutputIndex = -1;
         for (ILDEndpoint endpoint : this.endpoints) {
@@ -202,10 +199,25 @@ public class LongDistanceNetwork {
         // return null for invalid network configurations
         if (!isValid() || (!endpoint.isInput() && !endpoint.isOutput())) return null;
 
-        if (this.activeInputIndex >= 0 && this.activeOutputIndex >= 0) {
+        // check if endpoint really exists in this network
+        int thisIndex = this.endpoints.indexOf(endpoint);
+        if (thisIndex < 0) {
+            // endpoint not found in this network, something is wrong, recalculate network
+            recalculateNetwork(Collections.singleton(endpoint.getPos()));
+            return null;
+        }
+
+        if (isIOIndexInvalid()) {
+            // current endpoint indexes are invalid
+            invalidateEndpoints();
+        } else if (this.activeInputIndex >= 0) {
             // there is an active input and output endpoint
             ILDEndpoint in = this.endpoints.get(this.activeInputIndex);
             ILDEndpoint out = this.endpoints.get(this.activeOutputIndex);
+            if (!this.pipeType.satisfiesMinLength(in, out)) {
+                invalidateEndpoints();
+                return getOtherEndpoint(endpoint);
+            }
             if (in == endpoint) {
                 if (!endpoint.isInput()) throw new IllegalStateException("Other endpoint from input was itself");
                 // given endpoint is the current input, and therefore we return the output
@@ -217,19 +229,12 @@ public class LongDistanceNetwork {
                 return in;
             }
             return null;
-        } else if (this.activeInputIndex < 0 != this.activeOutputIndex < 0) {
-            // only input or output is active
-            GTLog.logger.warn("Long Distance Network has an {}. This should not happen!", this.activeInputIndex < 0 ? "active input, but not an active output" : "active output, but not an active input");
-            invalidateEndpoints(); // shouldn't happen
         }
 
         // find a valid endpoint in this net
         int otherIndex = find(endpoint);
         if (otherIndex >= 0) {
             // found other endpoint
-            int thisIndex = this.endpoints.indexOf(endpoint);
-            if (thisIndex < 0)
-                throw new IllegalStateException("Tried to get endpoint that is not part of this network. Something is seriously wrong!");
             ILDEndpoint other = this.endpoints.get(otherIndex);
             // set active endpoints
             this.activeOutputIndex = endpoint.isOutput() ? thisIndex : otherIndex;
@@ -242,15 +247,26 @@ public class LongDistanceNetwork {
     private int find(ILDEndpoint endpoint) {
         for (int i = 0; i < this.endpoints.size(); i++) {
             ILDEndpoint other = this.endpoints.get(i);
+            if (!other.isValid()) {
+                other.invalidateLink();
+                this.endpoints.remove(i--);
+                continue;
+            }
             if (endpoint != other &&
                     (other.isOutput() || other.isInput()) &&
                     other.isInput() != endpoint.isInput() &&
-                    endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) > this.pipeType.getMinLength()) {
+                    this.pipeType.satisfiesMinLength(endpoint, other)) {
                 // found valid endpoint with minimum distance
                 return i;
             }
         }
         return -1;
+    }
+
+    public boolean isIOIndexInvalid() {
+        return (this.activeInputIndex >= 0 && this.activeInputIndex >= this.endpoints.size()) ||
+                (this.activeOutputIndex >= 0 && this.activeOutputIndex >= this.endpoints.size()) ||
+                this.activeInputIndex < 0 != this.activeOutputIndex < 0;
     }
 
     public ILDEndpoint getActiveInputIndex() {
@@ -426,7 +442,7 @@ public class LongDistanceNetwork {
                 NBTTagList endpoints = new NBTTagList();
                 tag.setTag("endpoints", endpoints);
                 for (ILDEndpoint endpoint : network.endpoints) {
-                    endpoints.appendTag(new NBTTagLong(endpoint.getPos().toLong()));
+                    endpoints.appendTag(new NBTTagLong(endpoint.pos().toLong()));
                 }
             }
             nbtTagCompound.setTag("nets", list);

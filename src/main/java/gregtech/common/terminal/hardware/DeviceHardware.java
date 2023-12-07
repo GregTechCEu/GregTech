@@ -5,6 +5,7 @@ import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class DeviceHardware extends Hardware {
+
     private final int slot;
 
     public DeviceHardware(int slot) {
@@ -77,7 +79,8 @@ public class DeviceHardware extends Hardware {
         return DEVICE.values()[getNBT().getInteger("d") % DEVICE.values().length];
     }
 
-    public enum DEVICE{
+    public enum DEVICE {
+
         PROSPECTOR_LV(MetaItems.PROSPECTOR_LV, "prospector"),
         PROSPECTOR_HV(MetaItems.PROSPECTOR_HV, "advanced_prospector"),
         WIRELESS(MetaItems.WIRELESS, "wireless"),
@@ -92,14 +95,16 @@ public class DeviceHardware extends Hardware {
         ItemStack itemStack;
         String name;
 
-        DEVICE(ItemStack itemStack, String name){
+        DEVICE(ItemStack itemStack, String name) {
             this.itemStack = itemStack;
             this.name = name;
         }
-        DEVICE(MetaItem<?>.MetaValueItem metaItem, String name){
+
+        DEVICE(MetaItem<?>.MetaValueItem metaItem, String name) {
             this.itemStack = metaItem.getStackForm();
             this.name = name;
         }
+
         public static DEVICE fromString(String name) {
             for (DEVICE device : values()) {
                 if (device.name.equals(name.toLowerCase())) {
@@ -110,7 +115,8 @@ public class DeviceHardware extends Hardware {
         }
     }
 
-    public static class DeviceDemand extends DeviceHardware{
+    public static class DeviceDemand extends DeviceHardware {
+
         private final DEVICE device;
 
         public DeviceDemand(DEVICE device) {

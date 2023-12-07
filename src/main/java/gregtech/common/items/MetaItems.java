@@ -1,6 +1,5 @@
 package gregtech.common.items;
 
-import com.google.common.base.CaseFormat;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.materialitem.MetaPrefixItem;
@@ -13,6 +12,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.armor.MetaArmor;
+
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
@@ -23,12 +23,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.google.common.base.CaseFormat;
+
 import java.util.*;
 
 public final class MetaItems {
 
-    private MetaItems() {
-    }
+    private MetaItems() {}
 
     public static final List<MetaItem<?>> ITEMS = MetaItem.getMetaItems();
 
@@ -113,6 +114,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CARBON_MESH;
     public static MetaItem<?>.MetaValueItem CARBON_FIBER_PLATE;
     public static MetaItem<?>.MetaValueItem DUCT_TAPE;
+    public static MetaItem<?>.MetaValueItem BASIC_TAPE;
 
     public static MetaItem<?>.MetaValueItem NEUTRON_REFLECTOR;
 
@@ -411,6 +413,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;
 
+    public static MetaItem<?>.MetaValueItem IRON_MINECART_WHEELS;
+    public static MetaItem<?>.MetaValueItem STEEL_MINECART_WHEELS;
+
     public static MetaItem<?>.MetaValueItem QUANTUM_EYE;
     public static MetaItem<?>.MetaValueItem QUANTUM_STAR;
     public static MetaItem<?>.MetaValueItem GRAVI_STAR;
@@ -434,7 +439,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_MAINTENANCE_DETECTOR;
 
     public static MetaItem<?>.MetaValueItem COVER_SCREEN;
-    public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;
@@ -455,7 +459,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_LUV;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ZPM;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UV;
-
 
     public static MetaItem<?>.MetaValueItem PLUGIN_TEXT;
     public static MetaItem<?>.MetaValueItem PLUGIN_ONLINE_PIC;
@@ -501,8 +504,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;
 
-    public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
-    public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
+    public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor
+            .values().length];
+    public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor
+            .values().length];
 
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
 
@@ -636,7 +641,8 @@ public final class MetaItems {
             // Register "craftingLensWhite" for example
             OreDictUnifier.registerOre(entry.getValue().getStackForm(), OrePrefix.craftingLens, entry.getKey());
             // Register "craftingLensGlass", intended only for recipes to dye lenses and not in the Engraver
-            OreDictUnifier.registerOre(entry.getValue().getStackForm(), String.format("%s%s", OrePrefix.craftingLens.name(), "Glass"));
+            OreDictUnifier.registerOre(entry.getValue().getStackForm(),
+                    String.format("%s%s", OrePrefix.craftingLens.name(), "Glass"));
         }
     }
 
@@ -664,9 +670,10 @@ public final class MetaItems {
     }
 
     @SideOnly(Side.CLIENT)
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static void registerSpecialItemModel(ModelBakeEvent event, MetaValueItem metaValueItem, IBakedModel bakedModel) {
-        //noinspection RedundantCast
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static void registerSpecialItemModel(ModelBakeEvent event, MetaValueItem metaValueItem,
+                                                 IBakedModel bakedModel) {
+        // noinspection RedundantCast
         ResourceLocation modelPath = ((MetaItem) metaValueItem.getMetaItem()).createItemModelPath(metaValueItem, "");
         ModelResourceLocation modelResourceLocation = new ModelResourceLocation(modelPath, "inventory");
         event.getModelRegistry().putObject(modelResourceLocation, bakedModel);

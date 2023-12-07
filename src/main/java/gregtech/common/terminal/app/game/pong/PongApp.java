@@ -8,13 +8,13 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
 import gregtech.common.terminal.app.game.pong.widget.BallWidget;
 import gregtech.common.terminal.app.game.pong.widget.PaddleWidget;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class PongApp extends AbstractApplication {
 
@@ -39,7 +39,8 @@ public class PongApp extends AbstractApplication {
             this.addWidget(new ImageWidget(333 / 2 - 4, 5, 6, 232 - 10, new ColorRectTexture(0xAAAAAAAA)));
             this.setBall(new BallWidget(333 / 2 - 1, 232 / 2 - 1));
             this.addWidget(new SimpleTextWidget(50, 20, "", 0xAAAAAA, () -> String.valueOf(this.getScore(true)), true));
-            this.addWidget(new SimpleTextWidget(283, 20, "", 0xAAAAAA, () -> String.valueOf(this.getScore(false)), true));
+            this.addWidget(
+                    new SimpleTextWidget(283, 20, "", 0xAAAAAA, () -> String.valueOf(this.getScore(false)), true));
             this.initPaddles();
         }
         return this;
@@ -90,11 +91,12 @@ public class PongApp extends AbstractApplication {
             paddles.forEach((paddle) -> solidObjects.add(new Rectangle(paddle.toSelfRectangleBox())));
             int timeLeft = 1;
 
-            TwoDimensionalRayTracer.TwoDimensionalRayTraceResult result = TwoDimensionalRayTracer.nearestBoxSegmentCollision(
-                    new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
-                    new Vector2f((float) (Math.cos(ball.theta) * 2), (float) (Math.sin(ball.theta) * 2)),
-                    solidObjects,
-                    new Vector2f(4, 4));
+            TwoDimensionalRayTracer.TwoDimensionalRayTraceResult result = TwoDimensionalRayTracer
+                    .nearestBoxSegmentCollision(
+                            new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
+                            new Vector2f((float) (Math.cos(ball.theta) * 2), (float) (Math.sin(ball.theta) * 2)),
+                            solidObjects,
+                            new Vector2f(4, 4));
             while (result.time != 1 && timeLeft != 0) {
                 float angleMod = 0;
                 if (result.pos.y < result.collidedWith.getCenterY() - 2) {
@@ -102,7 +104,12 @@ public class PongApp extends AbstractApplication {
                 } else if (result.pos.x > result.collidedWith.getCenterY() + 2) {
                     angleMod += Math.signum(result.normal.x) * 0.6;
                 }
-                ball.theta = (float) (Math.acos(result.normal.x) * 2 - ball.theta + Math.PI + angleMod) % (2 * Math.PI); // Reflects with a slight angle modification.
+                ball.theta = (float) (Math.acos(result.normal.x) * 2 - ball.theta + Math.PI + angleMod) % (2 * Math.PI); // Reflects
+                                                                                                                         // with
+                                                                                                                         // a
+                                                                                                                         // slight
+                                                                                                                         // angle
+                                                                                                                         // modification.
 
                 if (ball.theta > Math.PI / 2 - 0.5 && ball.theta < Math.PI / 2 + 0.5) {
                     if (ball.theta <= Math.PI / 2)
@@ -119,11 +126,13 @@ public class PongApp extends AbstractApplication {
                 timeLeft -= result.time * timeLeft;
                 result = TwoDimensionalRayTracer.nearestBoxSegmentCollision(
                         new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
-                        new Vector2f((float) (Math.cos(ball.theta) * 3 * timeLeft), (float) (Math.sin(ball.theta) * 3 * timeLeft)),
+                        new Vector2f((float) (Math.cos(ball.theta) * 3 * timeLeft),
+                                (float) (Math.sin(ball.theta) * 3 * timeLeft)),
                         solidObjects,
                         new Vector2f(4, 4));
                 // To prevent it getting permanently lodged into something.
-                ball.addSelfPosition((Math.cos(ball.theta) * 2 * (result.time + 0.1) * (timeLeft + 0.1)), (Math.sin(ball.theta) * 2 * (result.time + 0.1) * (timeLeft + 0.1)));
+                ball.addSelfPosition((Math.cos(ball.theta) * 2 * (result.time + 0.1) * (timeLeft + 0.1)),
+                        (Math.sin(ball.theta) * 2 * (result.time + 0.1) * (timeLeft + 0.1)));
             }
             ball.addSelfPosition((Math.cos(ball.theta) * 2 * timeLeft), (Math.sin(ball.theta) * 2 * timeLeft));
             solidObjects.remove(2);
@@ -150,7 +159,8 @@ public class PongApp extends AbstractApplication {
             return -1;
         if ((ball.getSelfPosition().getY() + 2 * paddle.getSelfPosition().getY()) / 3 < paddle.getSelfPosition().getY())
             return 1;
-        else if ((ball.getSelfPosition().getY() + 2 * paddle.getSelfPosition().getY()) / 3 > paddle.getSelfPosition().getY())
+        else if ((ball.getSelfPosition().getY() + 2 * paddle.getSelfPosition().getY()) / 3 >
+                paddle.getSelfPosition().getY())
             return 0;
         return -1;
     }

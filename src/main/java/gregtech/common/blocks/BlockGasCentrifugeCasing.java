@@ -44,5 +44,4 @@ public class BlockGasCentrifugeCasing extends VariantBlock<BlockGasCentrifugeCas
             return harvestLevel;
         }
     }
-
 }

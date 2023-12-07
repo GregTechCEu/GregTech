@@ -11,5 +11,4 @@ public interface IMultiblockPart {
     default boolean canPartShare() {
         return true;
     }
-
 }

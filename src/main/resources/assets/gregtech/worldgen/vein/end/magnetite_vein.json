@@ -1,4 +1,5 @@
 {
+  "name": "gregtech.veins.ore.magnetite",
   "weight": 30,
   "density": 0.15,
   "min_height": 20,

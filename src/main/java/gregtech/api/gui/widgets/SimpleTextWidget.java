@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -29,11 +30,13 @@ public class SimpleTextWidget extends Widget {
     protected float scale = 1;
     protected int width;
 
-    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
+    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color,
+                            Supplier<String> textSupplier) {
         this(xPosition, yPosition, formatLocale, color, textSupplier, false);
     }
 
-    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier, boolean clientWidget) {
+    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier,
+                            boolean clientWidget) {
         super(new Position(xPosition, yPosition), Size.ZERO);
         this.color = color;
         this.formatLocale = formatLocale;
@@ -89,7 +92,8 @@ public class SimpleTextWidget extends Widget {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
+        String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) :
+                I18n.format(formatLocale, lastText);
         List<String> texts;
         if (this.width > 0) {
             texts = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(text, (int) (width * (1 / scale)));

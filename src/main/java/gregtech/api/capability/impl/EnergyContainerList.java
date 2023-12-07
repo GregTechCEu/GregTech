@@ -1,9 +1,11 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
+
 import net.minecraft.util.EnumFacing;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class EnergyContainerList implements IEnergyContainer {
@@ -14,17 +16,32 @@ public class EnergyContainerList implements IEnergyContainer {
     private final long inputAmperage;
     private final long outputAmperage;
 
-    public EnergyContainerList(@Nonnull List<IEnergyContainer> energyContainerList) {
+    /** The highest single energy container's input voltage in the list. */
+    private final long highestInputVoltage;
+    /** The number of energy containers at the highest input voltage in the list. */
+    private final int numHighestInputContainers;
+
+    public EnergyContainerList(@NotNull List<IEnergyContainer> energyContainerList) {
         this.energyContainerList = energyContainerList;
         long totalInputVoltage = 0;
         long totalOutputVoltage = 0;
         long inputAmperage = 0;
         long outputAmperage = 0;
+        long highestInputVoltage = 0;
+        int numHighestInputContainers = 0;
         for (IEnergyContainer container : energyContainerList) {
             totalInputVoltage += container.getInputVoltage() * container.getInputAmperage();
             totalOutputVoltage += container.getOutputVoltage() * container.getOutputAmperage();
             inputAmperage += container.getInputAmperage();
             outputAmperage += container.getOutputAmperage();
+            if (container.getInputVoltage() > highestInputVoltage) {
+                highestInputVoltage = container.getInputVoltage();
+            }
+        }
+        for (IEnergyContainer container : energyContainerList) {
+            if (container.getInputVoltage() == highestInputVoltage) {
+                numHighestInputContainers++;
+            }
         }
 
         long[] voltageAmperage = calculateVoltageAmperage(totalInputVoltage, inputAmperage);
@@ -33,17 +50,19 @@ public class EnergyContainerList implements IEnergyContainer {
         voltageAmperage = calculateVoltageAmperage(totalOutputVoltage, outputAmperage);
         this.outputVoltage = voltageAmperage[0];
         this.outputAmperage = voltageAmperage[1];
+        this.highestInputVoltage = highestInputVoltage;
+        this.numHighestInputContainers = numHighestInputContainers;
     }
 
     /**
      * Computes the correct max voltage and amperage values
      *
-     * @param voltage the sum of voltage * amperage for each hatch
+     * @param voltage  the sum of voltage * amperage for each hatch
      * @param amperage the total amperage of all hatches
      *
      * @return [newVoltage, newAmperage]
      */
-    @Nonnull
+    @NotNull
     private static long[] calculateVoltageAmperage(long voltage, long amperage) {
         if (voltage > 1 && amperage > 1) {
             // don't operate if there is no voltage or no amperage
@@ -72,7 +91,7 @@ public class EnergyContainerList implements IEnergyContainer {
                 amperage = 1;
             }
         }
-        return new long[]{voltage, amperage};
+        return new long[] { voltage, amperage };
     }
 
     private static boolean hasPrimeFactorGreaterThanTwo(long l) {
@@ -161,6 +180,18 @@ public class EnergyContainerList implements IEnergyContainer {
             energyCapacity += iEnergyContainer.getEnergyCapacity();
         }
         return energyCapacity;
+    }
+
+    /** The highest single voltage of an energy container in this list. */
+    public long getHighestInputVoltage() {
+        return highestInputVoltage;
+    }
+
+    /**
+     * The number of parts with voltage specified in {@link EnergyContainerList#getHighestInputVoltage()} in this list.
+     */
+    public int getNumHighestInputContainers() {
+        return numHighestInputContainers;
     }
 
     /**

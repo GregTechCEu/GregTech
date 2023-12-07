@@ -19,15 +19,14 @@ pluginManagement {
 }
 
 plugins {
-    id 'com.diffplug.blowdryerSetup' version '1.6.0'
+    id 'com.diffplug.blowdryerSetup' version '1.7.0'
     // Automatic toolchain provisioning
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.4.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
 }
 
 blowdryerSetup {
     repoSubfolder 'spotless'
-    github 'GregTechCEu/Buildscripts', 'tag', 'v1.0.0'
-    //devLocal '.' // Use this when testing config updated locally
+    github 'GregTechCEu/Buildscripts', 'tag', 'v1.0.7'
 }
 
 rootProject.name = rootProject.projectDir.getName()

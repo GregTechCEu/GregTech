@@ -1,8 +1,8 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
-public class GroupNode extends OreGlobNode {
+class GroupNode extends OreGlobNode {
 
     final OreGlobNode node;
 
@@ -11,18 +11,17 @@ public class GroupNode extends OreGlobNode {
     }
 
     @Override
-    protected void visitInternal(NodeVisitor visitor) {
+    public void visit(NodeVisitor visitor) {
         visitor.group(node, isNegated());
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
-        if (!(node instanceof GroupNode)) return false;
-        return this.node.isStructurallyEqualTo(((GroupNode) node).node);
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
+        return node instanceof GroupNode groupNode && this.node.isStructurallyEqualTo(groupNode.node);
     }
 
     @Override
     protected MatchDescription getIndividualNodeMatchDescription() {
-        return node.getMatchDescription();
+        return isNegated() ? node.getMatchDescription().complement() : node.getMatchDescription();
     }
 }

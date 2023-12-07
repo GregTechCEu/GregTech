@@ -1,20 +1,23 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.GTValues;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IRecipeWrapperFactory;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper> implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
+public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper>
+                                         implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
 
     public final String uniqueName;
     public final String localizedName;
@@ -33,35 +36,34 @@ public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper> implement
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getUid() {
         return getModName() + ":" + uniqueName;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getTitle() {
         return localizedName;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IDrawable getBackground() {
         return background;
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
-    }
+    public void drawExtras(@NotNull Minecraft minecraft) {}
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         return Collections.emptyList();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getModName() {
         return GTValues.MODID;

@@ -8,5 +8,4 @@ public class BlockStateTileEntity extends TileEntity {
     public IBlockState getBlockState() {
         return getBlockType().getStateFromMeta(getBlockMetadata());
     }
-
 }

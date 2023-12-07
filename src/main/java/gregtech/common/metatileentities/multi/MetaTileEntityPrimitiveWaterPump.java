@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -20,6 +17,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -29,8 +27,14 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,13 +86,14 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
             return 350;
         } else if (biomeTypes.contains(BiomeDictionary.Type.SNOWY)) {
             return 300;
-        } else if (biomeTypes.contains(BiomeDictionary.Type.PLAINS) || biomeTypes.contains(BiomeDictionary.Type.FOREST)) {
-            return 250;
-        } else if (biomeTypes.contains(BiomeDictionary.Type.COLD)) {
-            return 175;
-        } else if (biomeTypes.contains(BiomeDictionary.Type.BEACH)) {
-            return 170;
-        }
+        } else
+            if (biomeTypes.contains(BiomeDictionary.Type.PLAINS) || biomeTypes.contains(BiomeDictionary.Type.FOREST)) {
+                return 250;
+            } else if (biomeTypes.contains(BiomeDictionary.Type.COLD)) {
+                return 175;
+            } else if (biomeTypes.contains(BiomeDictionary.Type.BEACH)) {
+                return 170;
+            }
         return 100;
     }
 
@@ -103,9 +108,7 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
     }
 
     @Override
-    protected void updateFormedValid() {
-
-    }
+    protected void updateFormedValid() {}
 
     @Override
     protected void formStructure(PatternMatchContext context) {
@@ -143,17 +146,21 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
                 .where('S', selfPredicate())
                 .where('X', states(MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.PUMP_DECK)))
                 .where('F', frames(Materials.TreatedWood))
-                .where('H', abilities(MultiblockAbility.PUMP_FLUID_HATCH).or(metaTileEntities(MetaTileEntities.FLUID_EXPORT_HATCH[0], MetaTileEntities.FLUID_EXPORT_HATCH[1])))
+                .where('H',
+                        abilities(MultiblockAbility.PUMP_FLUID_HATCH).or(metaTileEntities(
+                                MetaTileEntities.FLUID_EXPORT_HATCH[0], MetaTileEntities.FLUID_EXPORT_HATCH[1])))
                 .where('*', any())
                 .build();
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.PRIMITIVE_PUMP;
     }
 
-    @Nonnull
+    @SideOnly(Side.CLIENT)
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.PRIMITIVE_PUMP_OVERLAY;
@@ -185,5 +192,10 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
     @Override
     public int getFluidProduction() {
         return (int) (biomeModifier * hatchModifier * (isRainingInBiome() ? 1.5 : 1));
+    }
+
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
     }
 }

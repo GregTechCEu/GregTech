@@ -26,7 +26,7 @@ public class TextFormattingUtil {
         StringBuilder stb = new StringBuilder();
         if (value < 0) {
             stb.append('-');
-            //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+            // Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
             value = value == Long.MIN_VALUE ? Long.MAX_VALUE : -value;
         }
 
@@ -58,5 +58,35 @@ public class TextFormattingUtil {
     /** Allows for formatting Long, Integer, Short, Byte, Number, AtomicInteger, AtomicLong, and BigInteger. */
     public static String formatNumbers(Object number) {
         return NUMBER_FORMAT.format(number);
+    }
+
+    /**
+     * Formats a string to multiple lines, attempting to place a new line at the closest space from "maxLength"
+     * characters away.
+     * 
+     * @param toFormat  the string to be formatted to multiple lines.
+     * @param maxLength the length where a newline should be placed in the nearest space.
+     * @return a string formatted with newlines.
+     */
+    public static String formatStringWithNewlines(String toFormat, int maxLength) {
+        String[] name = toFormat.split(" ");
+        StringBuilder builder = new StringBuilder();
+        int length = 0;
+        for (String s : name) {
+            length += s.length();
+
+            if (length > maxLength) {
+                builder.append("\n");
+                builder.append(s);
+                length = 0;
+                continue;
+            }
+
+            if (builder.length() != 0)
+                builder.append(" ");
+
+            builder.append(s);
+        }
+        return builder.toString();
     }
 }

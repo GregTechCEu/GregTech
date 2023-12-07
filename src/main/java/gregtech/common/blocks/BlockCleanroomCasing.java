@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -15,12 +16,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-@ParametersAreNonnullByDefault
 public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.CasingType> implements IStateHarvestLevel {
 
     public BlockCleanroomCasing() {
@@ -33,7 +33,8 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -49,13 +50,13 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
             this.name = name;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String toString() {
             return getName();
@@ -63,20 +64,23 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
     }
 
     @Override
-    public int getHarvestLevel(IBlockState state) {
+    public int getHarvestLevel(@NotNull IBlockState state) {
         return state == getState(CasingType.PLASCRETE) ? 2 : 1;
     }
 
     @Nullable
     @Override
-    public String getHarvestTool(IBlockState state) {
+    public String getHarvestTool(@NotNull IBlockState state) {
         return state == getState(CasingType.PLASCRETE) ? ToolClasses.PICKAXE : ToolClasses.WRENCH;
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag advanced) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING))) tooltip.add(I18n.format("tile.cleanroom_casing.filter.tooltip"));
-        if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING_STERILE))) tooltip.add(I18n.format("tile.cleanroom_casing.filter_sterile.tooltip"));
+        if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING)))
+            tooltip.add(I18n.format("tile.cleanroom_casing.filter.tooltip"));
+        if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING_STERILE)))
+            tooltip.add(I18n.format("tile.cleanroom_casing.filter_sterile.tooltip"));
     }
 }

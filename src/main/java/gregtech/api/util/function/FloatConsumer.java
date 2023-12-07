@@ -4,5 +4,4 @@ package gregtech.api.util.function;
 public interface FloatConsumer {
 
     void apply(float value);
-
 }

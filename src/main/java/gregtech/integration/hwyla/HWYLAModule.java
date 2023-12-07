@@ -5,20 +5,21 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.hwyla.provider.*;
 import gregtech.modules.GregTechModules;
+
+import net.minecraft.item.ItemStack;
+
 import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import mcp.mobius.waila.api.SpecialChars;
 import mcp.mobius.waila.api.WailaPlugin;
-import net.minecraft.item.ItemStack;
 
 @WailaPlugin
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_HWYLA,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_HWYLA,
-        name = "GregTech HWYLA Integration",
-        descriptionKey = "gregtech.modules.hwyla_integration.description"
-)
+                moduleID = GregTechModules.MODULE_HWYLA,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_HWYLA,
+                name = "GregTech HWYLA Integration",
+                description = "HWYLA (WAILA) Integration Module")
 public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
 
     @Override
@@ -33,6 +34,7 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
         MultiRecipeMapDataProvider.INSTANCE.register(registrar);
         ConverterDataProvider.INSTANCE.register(registrar);
         RecipeLogicDataProvider.INSTANCE.register(registrar);
+        SteamBoilerDataProvider.INSTANCE.register(registrar);
         PrimitivePumpDataProvider.INSTANCE.register(registrar);
         // one day, if cover provider is ported to waila, register it right here
         BlockOreDataProvider.INSTANCE.register(registrar);

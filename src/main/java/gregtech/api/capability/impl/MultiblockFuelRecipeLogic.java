@@ -6,14 +6,15 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.TextFormattingUtil;
+
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
@@ -24,16 +25,8 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         super(tileEntity);
     }
 
-    @Nonnull
     @Override
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
-        // no overclocking happens other than parallelization,
-        // so return the recipe's values, with EUt made positive for it to be made negative later
-        return new int[]{-recipeEUt, recipeDuration};
-    }
-
-    @Override
-    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull int[] values, @NotNull IRecipePropertyStorage storage) {
         // apply maintenance bonuses
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
@@ -44,7 +37,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
@@ -52,31 +45,28 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         if (maintenanceValues.getFirst() > 0) {
             overclockResults[1] = (int) (overclockResults[1] * (1 - 0.1 * maintenanceValues.getFirst()));
         }
+
+        // make EUt negative so it is consumed
+        overclockResults[0] = -overclockResults[0];
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Enum<ParallelLogicType> getParallelLogicType() {
-        return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS
+    public ParallelLogicType getParallelLogicType() {
+        return ParallelLogicType.MULTIPLY; // TODO APPEND_FLUIDS
     }
 
     @Override
-    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+    protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
         // generators always have enough power to run recipes
         return true;
-    }
-
-    @Override
-    public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-        // the builder automatically multiplies by -1, so nothing extra is needed here
-        builder.EUt(builder.getEUt());
     }
 
     @Override
     public void update() {
         super.update();
         if (workingEnabled && isActive && progressTime > 0) {
-                totalContinuousRunningTime ++;
+            totalContinuousRunningTime++;
         } else {
             totalContinuousRunningTime = 0;
         }
@@ -88,6 +78,13 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         return Integer.MAX_VALUE;
     }
 
+    /**
+     * Boost the energy production.
+     * Should not change the state of the workable logic. Only read current values.
+     *
+     * @param production the energy amount to boost
+     * @return the boosted energy amount
+     */
     protected long boostProduction(long production) {
         return production;
     }
@@ -100,6 +97,16 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
             if (!simulate) getEnergyContainer().changeEnergy(-euToDraw);
             return true;
         } else return false;
+    }
+
+    @Override
+    public int getInfoProviderEUt() {
+        return (int) boostProduction(super.getInfoProviderEUt());
+    }
+
+    @Override
+    public boolean consumesEnergy() {
+        return false;
     }
 
     @Override
@@ -126,7 +133,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         }
         FluidStack requiredFluidInput = recipe.getFluidInputs().get(0).getInputFluidStack();
 
-        int ocAmount = (int) (getMaxVoltage() / -recipe.getEUt());
+        int ocAmount = (int) (getMaxVoltage() / recipe.getEUt());
         int neededAmount = ocAmount * requiredFluidInput.amount;
         if (rotorHolder != null && rotorHolder.hasRotor()) {
             neededAmount /= (rotorHolder.getTotalEfficiency() / 100f);
@@ -141,9 +148,16 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         if (previousRecipe == null) {
             Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
 
-            return recipe == null ? null : getInputTank().drain(new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE), false);
+            return recipe == null ? null : getInputTank().drain(
+                    new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
+                    false);
         }
         FluidStack fuelStack = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
         return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
+    }
+
+    @Override
+    public boolean isAllowOverclocking() {
+        return false;
     }
 }

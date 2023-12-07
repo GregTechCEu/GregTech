@@ -1,12 +1,12 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.longdist.LongDistancePipeType;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,25 +14,30 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity implements ILDEndpoint, IDataInfoProvider {
+public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity
+                                                         implements ILDEndpoint, IDataInfoProvider {
 
     private final LongDistancePipeType pipeType;
-    private Type type = Type.NONE;
+    private IOType ioType = IOType.NONE;
     private ILDEndpoint link;
     private boolean placed = false;
 
     public MetaTileEntityLongDistanceEndpoint(ResourceLocation metaTileEntityId, LongDistancePipeType pipeType) {
         super(metaTileEntityId);
-        this.pipeType = pipeType;
+        this.pipeType = Objects.requireNonNull(pipeType);
     }
 
     public void updateNetwork() {
@@ -48,17 +53,18 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             // no neighbours found, create new network
             network = this.pipeType.createNetwork(getWorld());
             network.onPlaceEndpoint(this);
-            setType(Type.NONE);
+            setIoType(IOType.NONE);
         } else if (networks.size() == 1) {
             // one neighbour network found, attach self to neighbour network
             networks.get(0).onPlaceEndpoint(this);
         } else {
             // two neighbour networks found, configuration invalid
-            setType(Type.NONE);
+            setIoType(IOType.NONE);
         }
     }
 
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide,
+                                 CuboidRayTraceResult hitResult) {
         return super.onWrenchClick(playerIn, hand, wrenchSide.getOpposite(), hitResult);
     }
 
@@ -83,7 +89,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             link.invalidateLink();
             invalidateLink();
         }
-        setType(Type.NONE);
+        setIoType(IOType.NONE);
         LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
         // remove endpoint from network
         if (network != null) network.onRemoveEndpoint(this);
@@ -112,7 +118,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             }
         }
         if (networks.size() != 1) {
-            setType(Type.NONE);
+            setIoType(IOType.NONE);
         }
     }
 
@@ -124,13 +130,13 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         if (network != null && pipeType == network.getPipeType()) {
             // found a network on the input face, therefore this is an output of the network
             networks.add(network);
-            setType(Type.OUTPUT);
+            setIoType(IOType.OUTPUT);
         }
         network = LongDistanceNetwork.get(getWorld(), getPos().offset(getOutputFacing()));
         if (network != null && pipeType == network.getPipeType()) {
             // found a network on the output face, therefore this is an input of the network
             networks.add(network);
-            setType(Type.INPUT);
+            setIoType(IOType.INPUT);
         }
         return networks;
     }
@@ -138,24 +144,24 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         NBTTagCompound nbt = super.writeToNBT(data);
-        data.setByte("Type", (byte) type.ordinal());
+        data.setByte("Type", (byte) ioType.ordinal());
         return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.type = Type.values()[data.getByte("Type")];
+        this.ioType = IOType.values()[data.getByte("Type")];
     }
 
     @Override
-    public Type getType() {
-        return type;
+    public @NotNull IOType getIoType() {
+        return ioType;
     }
 
     @Override
-    public void setType(Type type) {
-        this.type = type;
+    public void setIoType(IOType ioType) {
+        this.ioType = Objects.requireNonNull(ioType);
     }
 
     @Override
@@ -164,6 +170,16 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
             if (network != null && network.isValid()) {
                 this.link = network.getOtherEndpoint(this);
+            }
+        } else if (!this.link.isValid()) {
+            this.link.invalidateLink();
+            this.link = null;
+            LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
+            if (network != null) {
+                network.invalidateEndpoints();
+                if (network.isValid()) {
+                    this.link = network.getOtherEndpoint(this);
+                }
             }
         }
         return this.link;
@@ -175,12 +191,12 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     }
 
     @Override
-    public EnumFacing getOutputFacing() {
+    public @NotNull EnumFacing getOutputFacing() {
         return getFrontFacing().getOpposite();
     }
 
     @Override
-    public LongDistancePipeType getPipeType() {
+    public @NotNull LongDistancePipeType getPipeType() {
         return pipeType;
     }
 
@@ -195,7 +211,8 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.3"));
@@ -203,18 +220,18 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.min_length", pipeType.getMinLength()));
         }
         if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant()) {
-            tooltip.add("gregtech.universal.tooltip.terrain_resist");
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
         }
     }
 
     @Override
-    public void addToolUsages(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addToolUsages(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> textComponents = new ArrayList<>();
@@ -225,8 +242,8 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             textComponents.add(new TextComponentString("Network:"));
             textComponents.add(new TextComponentString(" - " + network.getTotalSize() + " pipes"));
             ILDEndpoint in = network.getActiveInputIndex(), out = network.getActiveOutputIndex();
-            textComponents.add(new TextComponentString(" - input: " + (in == null ? "none" : in.getPos())));
-            textComponents.add(new TextComponentString(" - output: " + (out == null ? "none" : out.getPos())));
+            textComponents.add(new TextComponentString(" - input: " + (in == null ? "none" : in.pos())));
+            textComponents.add(new TextComponentString(" - output: " + (out == null ? "none" : out.pos())));
         }
         if (isInput()) {
             textComponents.add(new TextComponentString("Input endpoint"));
@@ -236,4 +253,20 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         }
         return textComponents;
     }
+
+    @Override
+    public World world() {
+        return getWorld();
+    }
+
+    @Override
+    public BlockPos pos() {
+        return getPos();
+    }
+
+    @Override
+    public void onNeighborChanged(@NotNull EnumFacing facing) {}
+
+    @Override
+    public void markAsDirty() {}
 }

@@ -1,10 +1,5 @@
 package gregtech.api.metatileentity.multiblock;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
@@ -17,12 +12,16 @@ import gregtech.api.pattern.*;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -40,17 +39,25 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Rotation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static gregtech.api.capability.GregtechDataCodes.STRUCTURE_FORMED;
+import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
@@ -60,6 +67,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
     private boolean structureFormed;
+
+    protected EnumFacing upwardsFacing = EnumFacing.NORTH;
+    protected boolean isFlipped;
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -98,9 +108,49 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * @return structure pattern of this multiblock
      */
-    @Nonnull
+    @NotNull
     protected abstract BlockPattern createStructurePattern();
 
+    public EnumFacing getUpwardsFacing() {
+        return upwardsFacing;
+    }
+
+    public void setUpwardsFacing(EnumFacing upwardsFacing) {
+        if (!allowsExtendedFacing()) return;
+        if (upwardsFacing == null || upwardsFacing == EnumFacing.UP || upwardsFacing == EnumFacing.DOWN) {
+            GTLog.logger.error("Tried to set upwards facing to invalid facing {}! Skipping", upwardsFacing);
+            return;
+        }
+        if (this.upwardsFacing != upwardsFacing) {
+            this.upwardsFacing = upwardsFacing;
+            if (getWorld() != null && !getWorld().isRemote) {
+                notifyBlockUpdate();
+                markDirty();
+                writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeByte(upwardsFacing.getIndex()));
+                if (structurePattern != null) {
+                    structurePattern.clearCache();
+                    checkStructurePattern();
+                }
+            }
+        }
+    }
+
+    public boolean isFlipped() {
+        return isFlipped;
+    }
+
+    /** <strong>Should not be called outside of structure formation logic!</strong> */
+    @ApiStatus.Internal
+    protected void setFlipped(boolean isFlipped) {
+        if (this.isFlipped != isFlipped) {
+            this.isFlipped = isFlipped;
+            notifyBlockUpdate();
+            markDirty();
+            writeCustomData(UPDATE_FLIP, buf -> buf.writeBoolean(isFlipped));
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
     public abstract ICubeRenderer getBaseTexture(IMultiblockPart sourcePart);
 
     public boolean shouldRenderOverlay(IMultiblockPart sourcePart) {
@@ -112,7 +162,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      *
      * @return The overlay to render on the Multiblock Controller
      */
-    @Nonnull
+    @SideOnly(Side.CLIENT)
+    @NotNull
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTIBLOCK_WORKABLE_OVERLAY;
     }
@@ -122,7 +173,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getFrontOverlay().getParticleSprite();
     }
 
-    public static TraceabilityPredicate tilePredicate(@Nonnull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate, @Nullable Supplier<BlockInfo[]> candidates) {
+    public static TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
+                                                      @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
             if (!(tileEntity instanceof IGregTechTileEntity))
@@ -130,7 +182,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (predicate.apply(blockWorldState, metaTileEntity)) {
                 if (metaTileEntity instanceof IMultiblockPart) {
-                    Set<IMultiblockPart> partsFound = blockWorldState.getMatchContext().getOrCreate("MultiblockParts", HashSet::new);
+                    Set<IMultiblockPart> partsFound = blockWorldState.getMatchContext().getOrCreate("MultiblockParts",
+                            HashSet::new);
                     partsFound.add((IMultiblockPart) metaTileEntity);
                 }
                 return true;
@@ -140,8 +193,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
-        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
-        return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId), getCandidates(metaTileEntities));
+        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull)
+                .map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
+        return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId),
+                getCandidates(metaTileEntities));
     }
 
     private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
@@ -161,8 +216,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
         return tilePredicate((state, tile) -> tile instanceof IMultiblockAbilityPart<?> &&
-                        ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()),
-                getCandidates(Arrays.stream(allowedAbilities).flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream()).toArray(MetaTileEntity[]::new)));
+                ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()),
+                getCandidates(Arrays.stream(allowedAbilities)
+                        .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
+                        .toArray(MetaTileEntity[]::new)));
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
@@ -179,19 +236,22 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * Use this predicate for Frames in your Multiblock. Allows for Framed Pipes as well as normal Frame blocks.
      */
     public static TraceabilityPredicate frames(Material... frameMaterials) {
-        return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m)).toArray(IBlockState[]::new))
-                .or(new TraceabilityPredicate(blockWorldState -> {
-                    TileEntity tileEntity = blockWorldState.getTileEntity();
-                    if (!(tileEntity instanceof IPipeTile)) {
-                        return false;
-                    }
-                    IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
-                    return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
-                }));
+        return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m))
+                .toArray(IBlockState[]::new))
+                        .or(new TraceabilityPredicate(blockWorldState -> {
+                            TileEntity tileEntity = blockWorldState.getTileEntity();
+                            if (!(tileEntity instanceof IPipeTile)) {
+                                return false;
+                            }
+                            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
+                            return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
+                        }));
     }
 
     public static TraceabilityPredicate blocks(Block... block) {
-        return new TraceabilityPredicate(blockWorldState -> ArrayUtils.contains(block, blockWorldState.getBlockState().getBlock()), getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
+        return new TraceabilityPredicate(
+                blockWorldState -> ArrayUtils.contains(block, blockWorldState.getBlockState().getBlock()),
+                getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
     }
 
     public static TraceabilityPredicate air() {
@@ -212,9 +272,31 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        getBaseTexture(null).render(renderState, translation, ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        ICubeRenderer baseTexture = getBaseTexture(null);
+        pipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        if (baseTexture instanceof SimpleOrientedCubeRenderer) {
+            baseTexture.renderOriented(renderState, translation, pipeline, getFrontFacing());
+        } else {
+            baseTexture.render(renderState, translation, pipeline);
+        }
+
+        if (allowsExtendedFacing()) {
+            double degree = Math.PI / 2 * (upwardsFacing == EnumFacing.EAST ? -1 :
+                    upwardsFacing == EnumFacing.SOUTH ? 2 : upwardsFacing == EnumFacing.WEST ? 1 : 0);
+            Rotation rotation = new Rotation(degree, frontFacing.getXOffset(), frontFacing.getYOffset(),
+                    frontFacing.getZOffset());
+            translation.translate(0.5, 0.5, 0.5);
+            if (frontFacing == EnumFacing.DOWN && upwardsFacing.getAxis() == EnumFacing.Axis.Z) {
+                translation.apply(new Rotation(Math.PI, 0, 1, 0));
+            }
+            translation.apply(rotation);
+            translation.scale(1.0000f);
+            translation.translate(-0.5, -0.5, -0.5);
+        }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(getBaseTexture(null).getParticleSprite(), getPaintingColorForRendering());
@@ -237,11 +319,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void checkStructurePattern() {
         if (structurePattern == null) return;
-        PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(), getFrontFacing().getOpposite());
+        PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
+                getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
-            parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
                     if (!part.canPartShare()) {
@@ -249,12 +331,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     }
                 }
             }
+            this.setFlipped(context.neededFlip());
+            parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
             for (IMultiblockPart multiblockPart : parts) {
                 if (multiblockPart instanceof IMultiblockAbilityPart) {
                     @SuppressWarnings("unchecked")
                     IMultiblockAbilityPart<Object> abilityPart = (IMultiblockAbilityPart<Object>) multiblockPart;
-                    List<Object> abilityInstancesList = abilities.computeIfAbsent(abilityPart.getAbility(), k -> new ArrayList<>());
+                    List<Object> abilityInstancesList = abilities.computeIfAbsent(abilityPart.getAbility(),
+                            k -> new ArrayList<>());
                     abilityPart.registerAbilities(abilityInstancesList);
                 }
             }
@@ -266,17 +351,22 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             formStructure(context);
         } else if (context == null && structureFormed) {
             invalidateStructure();
+        } else if (context != null) {
+            // ensure flip is ok, possibly not necessary but good to check just in case
+            if (context.neededFlip() != isFlipped()) {
+                setFlipped(context.neededFlip());
+            }
         }
     }
 
-    protected void formStructure(PatternMatchContext context) {
-    }
+    protected void formStructure(PatternMatchContext context) {}
 
     public void invalidateStructure() {
         this.multiblockParts.forEach(part -> part.removeFromMultiBlock(this));
         this.multiblockAbilities.clear();
         this.multiblockParts.clear();
         this.structureFormed = false;
+        this.setFlipped(false);
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(false));
     }
 
@@ -301,19 +391,37 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
+        if (data.hasKey("UpwardsFacing")) {
+            this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpwardsFacing")];
+        }
+        if (data.hasKey("IsFlipped")) {
+            this.isFlipped = data.getBoolean("IsFlipped");
+        }
         this.reinitializeStructurePattern();
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setByte("UpwardsFacing", (byte) upwardsFacing.getIndex());
+        data.setBoolean("IsFlipped", isFlipped);
+        return data;
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(structureFormed);
+        buf.writeByte(upwardsFacing.getIndex());
+        buf.writeBoolean(isFlipped);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.structureFormed = buf.readBoolean();
+        this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
+        this.isFlipped = buf.readBoolean();
     }
 
     @Override
@@ -324,6 +432,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (!structureFormed) {
                 GregTechAPI.soundManager.stopTileSound(getPos());
             }
+        } else if (dataId == UPDATE_UPWARDS_FACING) {
+            this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
+            scheduleRenderUpdate();
+        } else if (dataId == UPDATE_FLIP) {
+            this.isFlipped = buf.readBoolean();
         }
     }
 
@@ -344,7 +457,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
+        EnumFacing oldFrontFacing = getFrontFacing();
         super.setFrontFacing(frontFacing);
+
+        // Set the upwards facing in a way that makes it "look like" the upwards facing wasn't changed
+        if (allowsExtendedFacing()) {
+            EnumFacing newUpwardsFacing = RelativeDirection.simulateAxisRotation(frontFacing, oldFrontFacing,
+                    getUpwardsFacing());
+            setUpwardsFacing(newUpwardsFacing);
+        }
+
         if (getWorld() != null && !getWorld().isRemote && structurePattern != null) {
             // clear cache since the cache has no concept of pre-existing facing
             // for the controller block (or any block) in the structure
@@ -362,20 +484,54 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         } else {
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         }
-        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        if (allowsExtendedFacing()) {
+            tooltip.add(I18n.format("gregtech.tool_action.wrench.extended_facing"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        }
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
         if (super.onRightClick(playerIn, hand, facing, hitResult))
             return true;
 
-        if (this.getWorld().isRemote && !this.isStructureFormed() && playerIn.isSneaking() && playerIn.getHeldItem(hand).isEmpty()) {
+        if (this.getWorld().isRemote && !this.isStructureFormed() && playerIn.isSneaking() &&
+                playerIn.getHeldItem(hand).isEmpty()) {
             MultiblockPreviewRenderer.renderMultiBlockPreview(this, 60000);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide,
+                                 CuboidRayTraceResult hitResult) {
+        if (wrenchSide == getFrontFacing() && allowsExtendedFacing()) {
+            if (!getWorld().isRemote) {
+                setUpwardsFacing(playerIn.isSneaking() ? upwardsFacing.rotateYCCW() : upwardsFacing.rotateY());
+            }
+            return true;
+        }
+        return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
+    }
+
+    @Override
+    public boolean isValidFrontFacing(EnumFacing facing) {
+        return allowsExtendedFacing() || super.isValidFrontFacing(facing);
+    }
+
+    // todo tooltip on multis saying if this is enabled or disabled?
+    /** Whether this multi can be rotated or face upwards. */
+    public boolean allowsExtendedFacing() {
+        return true;
+    }
+
+    /** Set this to false only if your multiblock is set up such that it could have a wall-shared controller. */
+    public boolean allowsFlip() {
+        return true;
     }
 
     public List<MultiblockShapeInfo> getMatchingShapes() {
@@ -389,7 +545,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return repetitionDFS(new ArrayList<>(), aisleRepetitions, new Stack<>());
     }
 
-    private List<MultiblockShapeInfo> repetitionDFS(List<MultiblockShapeInfo> pages, int[][] aisleRepetitions, Stack<Integer> repetitionStack) {
+    private List<MultiblockShapeInfo> repetitionDFS(List<MultiblockShapeInfo> pages, int[][] aisleRepetitions,
+                                                    Stack<Integer> repetitionStack) {
         if (repetitionStack.size() == aisleRepetitions.length) {
             int[] repetition = new int[repetitionStack.size()];
             for (int i = 0; i < repetitionStack.size(); i++) {
@@ -397,7 +554,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
             pages.add(new MultiblockShapeInfo(Objects.requireNonNull(this.structurePattern).getPreview(repetition)));
         } else {
-            for (int i = aisleRepetitions[repetitionStack.size()][0]; i <= aisleRepetitions[repetitionStack.size()][1]; i++) {
+            for (int i = aisleRepetitions[repetitionStack.size()][0]; i <=
+                    aisleRepetitions[repetitionStack.size()][1]; i++) {
                 repetitionStack.push(i);
                 repetitionDFS(pages, aisleRepetitions, repetitionStack);
                 repetitionStack.pop();
@@ -409,7 +567,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @SideOnly(Side.CLIENT)
     public String[] getDescription() {
         String key = String.format("gregtech.multiblock.%s.description", metaTileEntityId.getPath());
-        return I18n.hasKey(key) ? new String[]{I18n.format(key)} : new String[0];
+        return I18n.hasKey(key) ? new String[] { I18n.format(key) } : new String[0];
     }
 
     @Override
@@ -424,5 +582,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             ((MetaTileEntity) part).doExplosion(explosionPower);
         }
         doExplosion(explosionPower);
+    }
+
+    /**
+     * @param part the part to check
+     * @return if the multiblock part is terrain and weather resistant
+     */
+    public boolean isMultiblockPartWeatherResistant(@NotNull IMultiblockPart part) {
+        return false;
     }
 }

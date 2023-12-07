@@ -2,7 +2,8 @@ package gregtech.api.recipes.ingredients.nbtmatch;
 
 import gregtech.api.util.GTLog;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**

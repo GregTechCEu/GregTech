@@ -1,33 +1,20 @@
 package gregtech.client.renderer.pipe;
 
-import codechicken.lib.lighting.LightMatrix;
-import codechicken.lib.render.BlockRenderer;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.block.BlockRenderingRegistry;
-import codechicken.lib.render.block.ICCBlockRenderer;
-import codechicken.lib.render.item.IItemRenderer;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
-import codechicken.lib.util.TransformUtils;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
-import codechicken.lib.vec.Translation;
-import codechicken.lib.vec.Vector3;
-import codechicken.lib.vec.uv.IconTransformation;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -52,12 +39,31 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.lighting.LightMatrix;
+import codechicken.lib.render.BlockRenderer;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.block.BlockRenderingRegistry;
+import codechicken.lib.render.block.ICCBlockRenderer;
+import codechicken.lib.render.item.IItemRenderer;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.util.TransformUtils;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
@@ -66,8 +72,46 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     public final ModelResourceLocation modelLocation;
     private final String name;
     private EnumBlockRenderType blockRenderType;
-    protected static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
+    protected static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal
+            .withInitial(BlockRenderer.BlockFace::new);
     private static final Cuboid6 FRAME_RENDER_CUBOID = new Cuboid6(0.001, 0.001, 0.001, 0.999, 0.999, 0.999);
+    private static final EnumMap<EnumFacing, EnumMap<Border, EnumFacing>> FACE_BORDER_MAP = new EnumMap<>(
+            EnumFacing.class);
+    private static final Int2ObjectMap<IVertexOperation[]> RESTRICTOR_MAP = new Int2ObjectOpenHashMap<>();
+
+    @SuppressWarnings("unused")
+    public static void initializeRestrictor(TextureMap map) {
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_UP, Border.TOP);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_DOWN, Border.BOTTOM);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_UD, Border.TOP, Border.BOTTOM);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_LEFT, Border.LEFT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_UL, Border.TOP, Border.LEFT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_DL, Border.BOTTOM, Border.LEFT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_NR, Border.TOP, Border.BOTTOM, Border.LEFT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_RIGHT, Border.RIGHT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_UR, Border.TOP, Border.RIGHT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_DR, Border.BOTTOM, Border.RIGHT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_NL, Border.TOP, Border.BOTTOM, Border.RIGHT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_LR, Border.LEFT, Border.RIGHT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_ND, Border.TOP, Border.LEFT, Border.RIGHT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY_NU, Border.BOTTOM, Border.LEFT, Border.RIGHT);
+        addRestrictor(Textures.PIPE_BLOCKED_OVERLAY, Border.TOP, Border.BOTTOM, Border.LEFT, Border.RIGHT);
+    }
+
+    static {
+        FACE_BORDER_MAP.put(EnumFacing.DOWN,
+                borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.WEST));
+        FACE_BORDER_MAP.put(EnumFacing.UP,
+                borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST));
+        FACE_BORDER_MAP.put(EnumFacing.NORTH,
+                borderMap(EnumFacing.UP, EnumFacing.DOWN, EnumFacing.EAST, EnumFacing.WEST));
+        FACE_BORDER_MAP.put(EnumFacing.SOUTH,
+                borderMap(EnumFacing.UP, EnumFacing.DOWN, EnumFacing.WEST, EnumFacing.EAST));
+        FACE_BORDER_MAP.put(EnumFacing.WEST,
+                borderMap(EnumFacing.UP, EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH));
+        FACE_BORDER_MAP.put(EnumFacing.EAST,
+                borderMap(EnumFacing.UP, EnumFacing.DOWN, EnumFacing.SOUTH, EnumFacing.NORTH));
+    }
 
     public PipeRenderer(String name, ModelResourceLocation modelLocation) {
         this.name = name;
@@ -100,7 +144,9 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         event.getModelRegistry().putObject(modelLocation, this);
     }
 
-    public abstract void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material);
+    public abstract void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe,
+                                       @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType,
+                                       @Nullable Material material);
 
     @Override
     public void renderItem(ItemStack rawItemStack, TransformType transformType) {
@@ -114,7 +160,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
         BlockPipe<?, ?, ?> blockFluidPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stack.getItem()).getBlock();
         IPipeType<?> pipeType = blockFluidPipe.getItemPipeType(stack);
-        Material material = blockFluidPipe instanceof BlockMaterialPipe blockMaterialPipe ? blockMaterialPipe.getItemMaterial(stack) : null;
+        Material material = blockFluidPipe instanceof BlockMaterialPipe blockMaterialPipe ?
+                blockMaterialPipe.getItemMaterial(stack) : null;
         if (pipeType != null) {
             // 12 == 0b1100 is North and South connection (index 2 & 3)
             PipeRenderContext renderContext = new PipeRenderContext(12, 0, pipeType.getThickness());
@@ -141,7 +188,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
 
         IPipeType<?> pipeType = pipeTile.getPipeType();
-        Material pipeMaterial = pipeTile instanceof TileEntityMaterialPipeBase ? ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;
+        Material pipeMaterial = pipeTile instanceof TileEntityMaterialPipeBase ?
+                ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;
         int paintingColor = pipeTile.getPaintingColor();
         int connectedSidesMap = pipeTile.getVisualConnections();
         int blockedConnections = pipeTile.getBlockedConnections();
@@ -155,7 +203,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             Textures.RENDER_STATE.set(new CubeRendererState(renderLayer, sideMask, world));
             if (canRenderInLayer(renderLayer)) {
                 renderState.lightMatrix.locate(world, pos);
-                PipeRenderContext renderContext = new PipeRenderContext(pos, renderState.lightMatrix, connectedSidesMap, blockedConnections, pipeType.getThickness());
+                PipeRenderContext renderContext = new PipeRenderContext(pos, renderState.lightMatrix, connectedSidesMap,
+                        blockedConnections, pipeType.getThickness());
                 renderContext.color = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(pipeMaterial, paintingColor));
                 buildRenderer(renderContext, blockPipe, pipeTile, pipeType, pipeMaterial);
                 if (renderLayer == BlockRenderLayer.CUTOUT) {
@@ -166,14 +215,16 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
                 }
             }
 
-            ICoverable coverable = pipeTile.getCoverableImplementation();
-            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
+            CoverHolder coverHolder = pipeTile.getCoverableImplementation();
+            coverHolder.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()),
+                    renderLayer);
             Textures.RENDER_STATE.set(null);
         }
         return true;
     }
 
-    private static void renderFrame(IPipeTile<?, ?> pipeTile, BlockPos pos, CCRenderState renderState, int connections) {
+    private static void renderFrame(IPipeTile<?, ?> pipeTile, BlockPos pos, CCRenderState renderState,
+                                    int connections) {
         Material frameMaterial = pipeTile.getFrameMaterial();
         if (frameMaterial != null) {
             ResourceLocation rl = MaterialIconType.frameGt.getBlockTexturePath(frameMaterial.getMaterialIconSet());
@@ -216,7 +267,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
                 // if connection is blocked
                 if ((renderContext.connections & 1 << renderedSide.getIndex()) == 0) {
                     int oppositeIndex = renderedSide.getOpposite().getIndex();
-                    if ((renderContext.connections & 1 << oppositeIndex) > 0 && (renderContext.connections & 63 & ~(1 << oppositeIndex)) == 0) {
+                    if ((renderContext.connections & 1 << oppositeIndex) > 0 &&
+                            (renderContext.connections & 63 & ~(1 << oppositeIndex)) == 0) {
                         // render open texture if opposite is open and no other
                         renderOpenFace(renderState, renderContext, renderedSide, cuboid6);
                     } else {
@@ -257,19 +309,40 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
     }
 
-    protected static void renderOpenFace(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
+    protected void renderOpenFace(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side,
+                                  Cuboid6 cuboid6) {
         for (IVertexOperation[] vertexOperations : renderContext.openFaceRenderer) {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
     }
 
-    protected static void renderPipeSide(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
+    protected void renderPipeSide(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side,
+                                  Cuboid6 cuboid6) {
         for (IVertexOperation[] vertexOperations : renderContext.pipeSideRenderer) {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
+        int blockedConnections = renderContext.getBlockedConnections();
+        int connections = renderContext.getConnections();
+        if (blockedConnections != 0) {
+            int borderMask = 0;
+            for (Border border : Border.VALUES) {
+                EnumFacing borderSide = getSideAtBorder(side, border);
+                if (TileEntityPipeBase.isFaceBlocked(blockedConnections, borderSide) &&
+                        TileEntityPipeBase.isConnected(connections, borderSide)) {
+                    // only render when the side is blocked *and* connected
+                    borderMask |= border.mask;
+                }
+            }
+            if (borderMask != 0) {
+                IVertexOperation[] pipeline = ArrayUtils.addAll(renderContext.getBaseVertexOperation(),
+                        RESTRICTOR_MAP.get(borderMask));
+                renderFace(renderState, pipeline, side, cuboid6);
+            }
+        }
     }
 
-    protected static void renderFace(CCRenderState renderState, IVertexOperation[] pipeline, EnumFacing side, Cuboid6 cuboid6) {
+    protected void renderFace(CCRenderState renderState, IVertexOperation[] pipeline, EnumFacing side,
+                              Cuboid6 cuboid6) {
         BlockRenderer.BlockFace blockFace = blockFaces.get();
         blockFace.loadCuboidFace(cuboid6, side.getIndex());
         renderState.setPipeline(blockFace, 0, blockFace.verts.length, pipeline);
@@ -277,20 +350,19 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     @Override
-    public void renderBrightness(IBlockState state, float brightness) {
-    }
+    public void renderBrightness(IBlockState state, float brightness) {}
 
     /**
      * Override to render in other layers, e.g. emissive stuff
      * {@link #canRenderInLayer} also need to be overridden
      */
-    protected void renderOtherLayers(BlockRenderLayer layer, CCRenderState renderState, PipeRenderContext renderContext) {
-
-    }
+    protected void renderOtherLayers(BlockRenderLayer layer, CCRenderState renderState,
+                                     PipeRenderContext renderContext) {}
 
     /**
      * What layers can be rendered in.
      * See also {@link #renderOtherLayers}
+     * 
      * @param layer the current layer being rendered too
      * @return true if this should render in {@code layer}
      */
@@ -299,7 +371,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     @Override
-    public void handleRenderBlockDamage(IBlockAccess world, BlockPos pos, IBlockState state, TextureAtlasSprite sprite, BufferBuilder buffer) {
+    public void handleRenderBlockDamage(IBlockAccess world, BlockPos pos, IBlockState state, TextureAtlasSprite sprite,
+                                        BufferBuilder buffer) {
         CCRenderState renderState = CCRenderState.instance();
         renderState.reset();
         renderState.bind(buffer);
@@ -326,8 +399,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     @Override
-    public void registerTextures(TextureMap map) {
-    }
+    public void registerTextures(TextureMap map) {}
 
     @Override
     public IModelState getTransforms() {
@@ -359,7 +431,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         IPipeType<?> pipeType = pipeTile.getPipeType();
-        Material material = pipeTile instanceof TileEntityMaterialPipeBase ? ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;
+        Material material = pipeTile instanceof TileEntityMaterialPipeBase ?
+                ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;
         if (pipeType == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
@@ -374,24 +447,27 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         private final BlockPos pos;
         private final LightMatrix lightMatrix;
-        private final List<IVertexOperation[]> openFaceRenderer = new ArrayList<>();
-        private final List<IVertexOperation[]> pipeSideRenderer = new ArrayList<>();
+        protected final List<IVertexOperation[]> openFaceRenderer = new ArrayList<>();
+        protected final List<IVertexOperation[]> pipeSideRenderer = new ArrayList<>();
+        // Blocked overlay is used for the pipe connector cube, not the main cube
         private final IVertexOperation[] blockedOverlay;
         private final float pipeThickness;
         private int color;
         private final int connections;
         private final int blockedConnections;
 
-        public PipeRenderContext(BlockPos pos, LightMatrix lightMatrix, int connections, int blockedConnections, float thickness) {
+        public PipeRenderContext(BlockPos pos, LightMatrix lightMatrix, int connections, int blockedConnections,
+                                 float thickness) {
             this.pos = pos;
             this.lightMatrix = lightMatrix;
             this.connections = connections;
             this.blockedConnections = blockedConnections;
             this.pipeThickness = thickness;
             if (pos != null && lightMatrix != null) {
-                blockedOverlay = new IVertexOperation[]{new Translation(pos), lightMatrix, new IconTransformation(Textures.PIPE_BLOCKED_OVERLAY)};
+                blockedOverlay = new IVertexOperation[] { new Translation(pos), lightMatrix,
+                        new IconTransformation(Textures.PIPE_BLOCKED_OVERLAY) };
             } else {
-                blockedOverlay = new IVertexOperation[]{new IconTransformation(Textures.PIPE_BLOCKED_OVERLAY)};
+                blockedOverlay = new IVertexOperation[] { new IconTransformation(Textures.PIPE_BLOCKED_OVERLAY) };
             }
         }
 
@@ -433,9 +509,10 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         protected IVertexOperation[] getBaseVertexOperation() {
             if (pos == null) {
-                return lightMatrix == null ? new IVertexOperation[0] : new IVertexOperation[]{lightMatrix};
+                return lightMatrix == null ? new IVertexOperation[0] : new IVertexOperation[] { lightMatrix };
             }
-            return lightMatrix == null ? new IVertexOperation[]{new Translation(pos)} : new IVertexOperation[]{new Translation(pos), lightMatrix};
+            return lightMatrix == null ? new IVertexOperation[] { new Translation(pos) } :
+                    new IVertexOperation[] { new Translation(pos), lightMatrix };
         }
 
         public int getConnections() {
@@ -457,6 +534,43 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         public float getPipeThickness() {
             return pipeThickness;
         }
+    }
 
+    private static EnumMap<Border, EnumFacing> borderMap(EnumFacing topSide, EnumFacing bottomSide, EnumFacing leftSide,
+                                                         EnumFacing rightSide) {
+        EnumMap<Border, EnumFacing> sideMap = new EnumMap<>(Border.class);
+        sideMap.put(Border.TOP, topSide);
+        sideMap.put(Border.BOTTOM, bottomSide);
+        sideMap.put(Border.LEFT, leftSide);
+        sideMap.put(Border.RIGHT, rightSide);
+        return sideMap;
+    }
+
+    private static void addRestrictor(TextureAtlasSprite sprite, Border... borders) {
+        int mask = 0;
+        for (Border border : borders) {
+            mask |= border.mask;
+        }
+        RESTRICTOR_MAP.put(mask, new IVertexOperation[] { new IconTransformation(sprite) });
+    }
+
+    protected static EnumFacing getSideAtBorder(EnumFacing side, Border border) {
+        return FACE_BORDER_MAP.get(side).get(border);
+    }
+
+    public enum Border {
+
+        TOP,
+        BOTTOM,
+        LEFT,
+        RIGHT;
+
+        public static final Border[] VALUES = values();
+
+        public final int mask;
+
+        Border() {
+            mask = 1 << this.ordinal();
+        }
     }
 }

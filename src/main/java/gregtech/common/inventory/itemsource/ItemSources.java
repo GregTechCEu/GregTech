@@ -3,20 +3,23 @@ package gregtech.common.inventory.itemsource;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenCustomHashMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenCustomHashMap;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 
 public class ItemSources implements IItemList {
 
     protected final World world;
     protected final List<ItemSource> handlerInfoList = new ArrayList<>();
-    protected final Map<ItemStack, NetworkItemInfo> itemInfoMap = new Object2ObjectLinkedOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+    protected final Map<ItemStack, NetworkItemInfo> itemInfoMap = new Object2ObjectLinkedOpenCustomHashMap<>(
+            ItemStackHashStrategy.comparingAllButCount());
     private final Comparator<ItemSource> comparator = Comparator.comparing(ItemSource::getPriority);
     private final Set<ItemStack> storedItemsView = Collections.unmodifiableSet(itemInfoMap.keySet());
 

@@ -1,9 +1,5 @@
 package gregtech.common.pipelike.fluidpipe.longdistance;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.gui.ModularUI;
@@ -13,6 +9,7 @@ import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -23,14 +20,19 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEndpoint {
 
     private static final FluidTank DEFAULT_TANK = new FluidTank(10000) {
+
         @Override
         public int fill(FluidStack resource, boolean doFill) {
             return 0;
@@ -66,11 +68,12 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
             ILDEndpoint endpoint = getLink();
             if (endpoint != null) {
                 EnumFacing outputFacing = endpoint.getOutputFacing();
-                TileEntity te = getWorld().getTileEntity(endpoint.getPos().offset(outputFacing));
+                TileEntity te = endpoint.getNeighbor(outputFacing);
                 if (te != null) {
                     T t = te.getCapability(capability, outputFacing.getOpposite());
                     if (t != null) {
-                        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new FluidHandlerWrapper((IFluidHandler) t));
+                        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY
+                                .cast(new FluidHandlerWrapper((IFluidHandler) t));
                     }
                 }
             }
@@ -81,7 +84,8 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         Textures.VOLTAGE_CASINGS[GTValues.LV].render(renderState, translation, colouredPipeline);
         Textures.LD_FLUID_PIPE.renderOrientedState(renderState, translation, pipeline, frontFacing, false, false);
         Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);

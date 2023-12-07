@@ -12,6 +12,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -81,7 +82,8 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     @SideOnly(Side.CLIENT)
     public String getDescription() {
         if (I18n.hasKey("terminal." + getRegistryName() + ".description")) {
-            return NEW_LINE_PATTERN.matcher(I18n.format("terminal." + getRegistryName() + ".description")).replaceAll("\n");
+            return NEW_LINE_PATTERN.matcher(I18n.format("terminal." + getRegistryName() + ".description"))
+                    .replaceAll("\n");
         }
         return I18n.format("terminal.app_name.description");
     }
@@ -145,6 +147,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     /**
      * you should store the persistent data for both side here.
+     * 
      * @return nbt data. if its a clientSideApp and the nbt not null, this nbt should be synced to the server side.
      */
     public NBTTagCompound closeApp() {
@@ -163,7 +166,9 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
      * If the app doesn't require server execution, it better be a client side app.
      * For details about data synchronization, see {@link #closeApp()}
      */
-    public boolean isClientSideApp() {return false;}
+    public boolean isClientSideApp() {
+        return false;
+    }
 
     public TerminalOSWidget getOs() {
         return os;
@@ -171,6 +176,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     /**
      * Add components to menu bar.
+     * 
      * @see IMenuComponent
      */
     public List<IMenuComponent> getMenuComponents() {
@@ -218,7 +224,8 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         if (isClient && reader != null) {
             NBTTagCompound nbt = null;
             try {
-                nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
+                nbt = CompressedStreamTools.read(
+                        new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
             } catch (IOException e) {
                 GTLog.logger.error("error while loading local nbt for {}", getRegistryName(), e);
             }
@@ -238,7 +245,8 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
             try {
                 writer.accept(nbt);
                 if (!nbt.isEmpty()) {
-                    CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
+                    CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH,
+                            String.format("config/%S.nbt", getRegistryName())));
                 }
             } catch (IOException e) {
                 GTLog.logger.error("error while saving local nbt for {}", getRegistryName(), e);
@@ -250,7 +258,8 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
      * Fired when you open this app or terminal's size updated. (maximize)
      */
     public void onOSSizeUpdate(int width, int height) {
-        setSelfPosition(Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
+        setSelfPosition(
+                Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
     }
 
     public boolean canLaunchConcurrently(AbstractApplication application) {

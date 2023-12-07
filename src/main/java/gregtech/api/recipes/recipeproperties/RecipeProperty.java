@@ -4,9 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
 import java.util.Objects;
 
 public abstract class RecipeProperty<T> {
+
     private final Class<T> type;
     private final String key;
 
@@ -22,6 +24,9 @@ public abstract class RecipeProperty<T> {
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value, int mouseX, int mouseY) {
         drawInfo(minecraft, x, y, color, value);
     }
+
+    @SideOnly(Side.CLIENT)
+    public void getTooltipStrings(List<String> tooltip, int mouseX, int mouseY, Object value) {}
 
     public int getInfoHeight(Object value) {
         return 10; // GTRecipeWrapper#LINE_HEIGHT
@@ -45,6 +50,27 @@ public abstract class RecipeProperty<T> {
      * @return true to hide information from JEI
      */
     public boolean isHidden() {
+        return false;
+    }
+
+    /**
+     * Whether to hide the Total EU tooltip for the recipe in JEI.
+     */
+    public boolean hideTotalEU() {
+        return false;
+    }
+
+    /**
+     * Whether to hide the EU/t tooltip for the recipe in JEI.
+     */
+    public boolean hideEUt() {
+        return false;
+    }
+
+    /**
+     * Whether to hide the Duration tooltip for the recipe in JEI.
+     */
+    public boolean hideDuration() {
         return false;
     }
 

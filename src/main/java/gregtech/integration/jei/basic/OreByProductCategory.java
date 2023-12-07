@@ -1,6 +1,5 @@
 package gregtech.integration.jei.basic;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.unification.OreDictUnifier;
@@ -8,6 +7,13 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
+
+import com.google.common.collect.ImmutableList;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -16,13 +22,9 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,8 +99,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
             155, 3,
             119, 21,
             137, 21,
-            155, 21
-    );
+            155, 21);
 
     protected final static ImmutableList<Integer> FLUID_LOCATIONS = ImmutableList.of(
             42, 25, // washer in
@@ -111,17 +112,22 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
                 guiHelper.createBlankDrawable(176, 166),
                 guiHelper);
 
-        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
-        this.fluidSlot = guiHelper.drawableBuilder(GuiTextures.FLUID_SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18)
+                .build();
+        this.fluidSlot = guiHelper.drawableBuilder(GuiTextures.FLUID_SLOT.imageLocation, 0, 0, 18, 18)
+                .setTextureSize(18, 18).build();
 
         String baseloc = GTValues.MODID + ":textures/gui/arrows/";
         this.arrowsBase = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-base.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
-        this.arrowsDirectSmelt = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-smelt.png"), 0, 0, 176, 166)
+        this.arrowsDirectSmelt = guiHelper
+                .drawableBuilder(new ResourceLocation(baseloc + "oreby-smelt.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
-        this.arrowsChemBath = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-chem.png"), 0, 0, 176, 166)
+        this.arrowsChemBath = guiHelper
+                .drawableBuilder(new ResourceLocation(baseloc + "oreby-chem.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
-        this.arrowsSeparator = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-sep.png"), 0, 0, 176, 166)
+        this.arrowsSeparator = guiHelper
+                .drawableBuilder(new ResourceLocation(baseloc + "oreby-sep.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
         this.arrowsSifter = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-sift.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
@@ -130,7 +136,8 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull OreByProduct recipeWrapper, @Nonnull IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @NotNull OreByProduct recipeWrapper,
+                          @NotNull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 
@@ -142,7 +149,8 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         List<List<ItemStack>> itemOutputs = ingredients.getOutputs(VanillaTypes.ITEM);
         itemOutputExists.clear();
         for (int i = 0; i < ITEM_OUTPUT_LOCATIONS.size(); i += 2) {
-            itemStackGroup.init(i / 2 + itemInputs.size(), false, new ItemStackTextRenderer(recipeWrapper.getChance(i / 2 + itemInputs.size())),
+            itemStackGroup.init(i / 2 + itemInputs.size(), false,
+                    new ItemStackTextRenderer(recipeWrapper.getChance(i / 2 + itemInputs.size()), null),
                     ITEM_OUTPUT_LOCATIONS.get(i) + 1, ITEM_OUTPUT_LOCATIONS.get(i + 1) + 1, 16, 16, 0, 0);
             itemOutputExists.add(itemOutputs.get(i / 2).size() > 0);
         }
@@ -165,9 +173,9 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         hasSifter = recipeWrapper.hasSifter();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IRecipeWrapper getRecipeWrapper(@Nonnull OreByProduct recipe) {
+    public IRecipeWrapper getRecipeWrapper(@NotNull OreByProduct recipe) {
         return recipe;
     }
 
@@ -178,7 +186,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         arrowsBase.draw(minecraft, 0, 0);
         if (hasDirectSmelt) {
             arrowsDirectSmelt.draw(minecraft, 0, 0);
@@ -189,7 +197,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         if (hasSeparator) {
             arrowsSeparator.draw(minecraft, 0, 0);
         }
-        if(hasSifter) {
+        if (hasSifter) {
             arrowsSifter.draw(minecraft, 0, 0);
         }
 
@@ -209,5 +217,4 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
             }
         }
     }
-
 }

@@ -1,6 +1,7 @@
 package gregtech.asm.util;
 
 import net.minecraftforge.fml.common.FMLLog;
+
 import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -15,7 +16,8 @@ public class TargetClassVisitor extends ClassVisitor {
     private final Function<MethodVisitor, MethodVisitor> visitorCreator;
     private boolean foundMethod = false;
 
-    public TargetClassVisitor(ClassVisitor cv, ObfMapping methodKey, Function<MethodVisitor, MethodVisitor> visitorCreator) {
+    public TargetClassVisitor(ClassVisitor cv, ObfMapping methodKey,
+                              Function<MethodVisitor, MethodVisitor> visitorCreator) {
         super(Opcodes.ASM5, cv);
         this.methodKey = methodKey.toRuntime();
         this.visitorCreator = visitorCreator;
@@ -46,7 +48,8 @@ public class TargetClassVisitor extends ClassVisitor {
         super.visitEnd();
         if (!foundMethod) {
             FMLLog.log("GregTechTransformer", Level.FATAL, "Failed to find method %s in %s.", methodKey, className);
-            throw new RuntimeException("Failed to patch method " + methodKey + ", loading cannot continue. Check your environment is correct.");
+            throw new RuntimeException("Failed to patch method " + methodKey +
+                    ", loading cannot continue. Check your environment is correct.");
         }
     }
 }

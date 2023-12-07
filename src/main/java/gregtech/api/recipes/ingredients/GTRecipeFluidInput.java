@@ -3,11 +3,17 @@ package gregtech.api.recipes.ingredients;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 public class GTRecipeFluidInput extends GTRecipeInput {
-    FluidStack inputStack;
+
+    private final FluidStack inputStack;
+
+    public GTRecipeFluidInput(Fluid fluid, int amount) {
+        this(new FluidStack(fluid, amount), amount);
+    }
 
     public GTRecipeFluidInput(FluidStack inputStack) {
         this.inputStack = inputStack;
@@ -20,16 +26,28 @@ public class GTRecipeFluidInput extends GTRecipeInput {
         this.amount = amount;
     }
 
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(FluidStack fluidStack, int amount) {
-        return getFromCache(new GTRecipeFluidInput(fluidStack, amount));
+        return new GTRecipeFluidInput(fluidStack, amount);
     }
 
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(Fluid fluid, int amount) {
-        return getFromCache(new GTRecipeFluidInput(new FluidStack(fluid, amount)));
+        return new GTRecipeFluidInput(fluid, amount);
     }
 
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
-        return getFromCache(new GTRecipeFluidInput(ri.getInputFluidStack(), i));
+        return new GTRecipeFluidInput(ri.getInputFluidStack(), i);
     }
 
     @Override
@@ -57,14 +75,19 @@ public class GTRecipeFluidInput extends GTRecipeInput {
 
     @Override
     public boolean acceptsFluid(@Nullable FluidStack input) {
-        if (input == null || input.amount == 0) {
-            return false;
+        if (input == null || input.amount == 0) return false;
+        if (!areFluidsEqual(this.inputStack, input)) return false;
+        if (this.nbtMatcher == null) {
+            return FluidStack.areFluidStackTagsEqual(this.inputStack, input);
+        } else {
+            return this.nbtMatcher.evaluate(input, this.nbtCondition);
         }
-        //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
-        if (inputStack.getFluid().getName().equals(input.getFluid().getName())) {
-            return (nbtMatcher == null ? FluidStack.areFluidStackTagsEqual(inputStack, input) : nbtMatcher.evaluate(input, nbtCondition));
-        }
-        return false;
+    }
+
+    @Override
+    protected int computeHash() {
+        return Objects.hash(this.inputStack.getFluid().getName(), this.amount, this.nbtMatcher, this.nbtCondition,
+                this.nbtMatcher == null ? this.inputStack.tag : 0);
     }
 
     @Override
@@ -74,23 +97,13 @@ public class GTRecipeFluidInput extends GTRecipeInput {
             return false;
         }
         GTRecipeFluidInput other = (GTRecipeFluidInput) obj;
-        if (this.amount != other.amount) return false;
-        if (this.isConsumable != other.isConsumable) return false;
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
-        if (inputStack.getFluid().getName().equals(other.inputStack.getFluid().getName())) {
-            return FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack);
-        }
-        return false;
-    }
 
-    @Override
-    public int hashCode() {
-        if (nbtMatcher == null) {
-            //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
-            return Objects.hash(inputStack.getFluid().getName(), this.amount, this.nbtMatcher, this.nbtCondition, inputStack.tag);
-        }
-        return Objects.hash(inputStack.getFluid().getName(), this.amount, this.nbtMatcher, this.nbtCondition, 0);
+        if (this.amount != other.amount || this.isConsumable != other.isConsumable) return false;
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
+
+        return areFluidsEqual(this.inputStack, other.inputStack) &&
+                (this.nbtMatcher != null || FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack));
     }
 
     @Override
@@ -100,12 +113,22 @@ public class GTRecipeFluidInput extends GTRecipeInput {
             return false;
         }
         GTRecipeFluidInput other = (GTRecipeFluidInput) input;
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
-        //the Fluid registered to the fluidName on game load might not be the same Fluid after loading the world, but will still have the same fluidName.
-        if (inputStack.getFluid().getName().equals(other.inputStack.getFluid().getName())) {
-            return FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack);
-        }
-        return false;
+
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
+
+        return areFluidsEqual(this.inputStack, other.inputStack) &&
+                (this.nbtMatcher != null || FluidStack.areFluidStackTagsEqual(this.inputStack, other.inputStack));
+    }
+
+    @Override
+    public String toString() {
+        return amount + "x" + inputStack.getUnlocalizedName();
+    }
+
+    // the Fluid registered to the fluidName on game load might not be the same Fluid after
+    // loading the world, but will still have the same fluidName.
+    private static boolean areFluidsEqual(FluidStack fluid1, FluidStack fluid2) {
+        return fluid1.getFluid().getName().equals(fluid2.getFluid().getName());
     }
 }

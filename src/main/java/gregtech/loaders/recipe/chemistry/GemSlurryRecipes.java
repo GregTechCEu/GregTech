@@ -9,7 +9,6 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 public class GemSlurryRecipes {
 
     public static void init() {
-
         // Ruby
         MIXER_RECIPES.recipeBuilder().duration(280).EUt(VA[EV])
                 .input(crushed, Ruby, 2)

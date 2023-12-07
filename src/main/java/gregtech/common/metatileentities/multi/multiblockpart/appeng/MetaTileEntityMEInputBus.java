@@ -1,12 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import appeng.api.config.Actionable;
-import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.data.IAEItemStack;
-import appeng.me.GridAccessException;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -20,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,8 +27,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import appeng.api.config.Actionable;
+import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.data.IAEItemStack;
+import appeng.me.GridAccessException;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -43,13 +45,13 @@ import java.util.function.Consumer;
  * @Description The Input Bus that can auto fetch item ME storage network.
  * @Date 2023/4/22-13:34
  */
-public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
+                                      implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
     private boolean workingEnabled;
-    private ExportOnlyAEItem[] aeItemSlots;
     private ExportOnlyAEItemList aeItemHandler;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
@@ -59,11 +61,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
     @Override
     protected void initializeInventory() {
-        this.aeItemSlots = new ExportOnlyAEItem[CONFIG_SIZE];
-        for (int i = 0; i < CONFIG_SIZE; i ++) {
-            this.aeItemSlots[i] = new ExportOnlyAEItem(null, null);
-        }
-        this.aeItemHandler = new ExportOnlyAEItemList(this.aeItemSlots, this.getController());
+        this.aeItemHandler = new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
         super.initializeInventory();
     }
 
@@ -83,12 +81,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             if (this.updateMEStatus()) {
                 try {
                     IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
-                    for (ExportOnlyAEItem aeSlot : this.aeItemSlots) {
+                    for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
                         // Try to clear the wrong item
                         IAEItemStack exceedItem = aeSlot.exceedStack();
                         if (exceedItem != null) {
                             long total = exceedItem.getStackSize();
-                            IAEItemStack notInserted = aeNetwork.injectItems(exceedItem, Actionable.MODULATE, this.getActionSource());
+                            IAEItemStack notInserted = aeNetwork.injectItems(exceedItem, Actionable.MODULATE,
+                                    this.getActionSource());
                             if (notInserted != null && notInserted.getStackSize() > 0) {
                                 aeSlot.extractItem(0, (int) (total - notInserted.getStackSize()), false);
                                 continue;
@@ -99,14 +98,14 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                         // Fill it
                         IAEItemStack reqItem = aeSlot.requestStack();
                         if (reqItem != null) {
-                            IAEItemStack extracted = aeNetwork.extractItems(reqItem, Actionable.MODULATE, this.getActionSource());
+                            IAEItemStack extracted = aeNetwork.extractItems(reqItem, Actionable.MODULATE,
+                                    this.getActionSource());
                             if (extracted != null) {
                                 aeSlot.addStack(extracted);
                             }
                         }
                     }
-                } catch (GridAccessException ignore) {
-                }
+                } catch (GridAccessException ignore) {}
             }
         }
     }
@@ -115,7 +114,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
     public void onRemoval() {
         try {
             IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
-            for (ExportOnlyAEItem aeSlot : this.aeItemSlots) {
+            for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
                 IAEItemStack stock = aeSlot.stock;
                 if (stock instanceof WrappedItemStack) {
                     stock = ((WrappedItemStack) stock).getAEStack();
@@ -124,8 +123,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                     aeNetwork.injectItems(stock, Actionable.MODULATE, this.getActionSource());
                 }
             }
-        } catch (GridAccessException ignore) {
-        }
+        } catch (GridAccessException ignore) {}
         super.onRemoval();
     }
 
@@ -141,12 +139,12 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                 .label(10, 5, getMetaFullName());
         // ME Network status
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                        I18n.format("gregtech.gui.me_network.online") :
-                        I18n.format("gregtech.gui.me_network.offline"),
+                I18n.format("gregtech.gui.me_network.online") :
+                I18n.format("gregtech.gui.me_network.offline"),
                 0xFFFFFFFF);
 
         // Config slots
-        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemSlots));
+        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemHandler.inventory));
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);
@@ -191,8 +189,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         super.writeToNBT(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);
         NBTTagList slots = new NBTTagList();
-        for (int i = 0; i < CONFIG_SIZE; i ++) {
-            ExportOnlyAEItem slot = this.aeItemSlots[i];
+        for (int i = 0; i < CONFIG_SIZE; i++) {
+            ExportOnlyAEItem slot = this.aeItemHandler.inventory[i];
             NBTTagCompound slotTag = new NBTTagCompound();
             slotTag.setInteger("slot", i);
             slotTag.setTag("stack", slot.serializeNBT());
@@ -212,7 +210,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             NBTTagList slots = (NBTTagList) data.getTag(ITEM_BUFFER_TAG);
             for (NBTBase nbtBase : slots) {
                 NBTTagCompound slotTag = (NBTTagCompound) nbtBase;
-                ExportOnlyAEItem slot = this.aeItemSlots[slotTag.getInteger("slot")];
+                ExportOnlyAEItem slot = this.aeItemHandler.inventory[slotTag.getInteger("slot")];
                 slot.deserializeNBT(slotTag.getCompoundTag("stack"));
             }
         }
@@ -228,7 +226,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.item_import.tooltip"));
@@ -249,9 +248,12 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
         ExportOnlyAEItem[] inventory;
 
-        public ExportOnlyAEItemList(ExportOnlyAEItem[] slots, MetaTileEntity entityToNotify) {
-            super(slots.length, entityToNotify, false);
-            this.inventory = slots;
+        public ExportOnlyAEItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
+            super(holder, slots, entityToNotify, false);
+            this.inventory = new ExportOnlyAEItem[CONFIG_SIZE];
+            for (int i = 0; i < CONFIG_SIZE; i++) {
+                this.inventory[i] = new ExportOnlyAEItem(null, null);
+            }
             for (ExportOnlyAEItem slot : this.inventory) {
                 slot.trigger = this::onContentsChanged;
             }
@@ -259,7 +261,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            for (int index = 0; index < CONFIG_SIZE; index ++) {
+            for (int index = 0; index < CONFIG_SIZE; index++) {
                 if (nbt.hasKey("#" + index)) {
                     NBTTagCompound slotTag = nbt.getCompoundTag("#" + index);
                     this.inventory[index].deserializeNBT(slotTag);
@@ -270,7 +272,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
-            for (int index = 0; index < CONFIG_SIZE; index ++) {
+            for (int index = 0; index < CONFIG_SIZE; index++) {
                 NBTTagCompound slot = this.inventory[index].serializeNBT();
                 nbt.setTag("#" + index, slot);
             }
@@ -278,7 +280,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         }
 
         @Override
-        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             // NO-OP
         }
 
@@ -287,7 +289,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             return MetaTileEntityMEInputBus.CONFIG_SIZE;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             if (slot >= 0 && slot < CONFIG_SIZE) {
@@ -296,13 +298,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             return stack;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot >= 0 && slot < CONFIG_SIZE) {
@@ -317,13 +319,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         }
 
         @Override
-        protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+        protected int getStackLimit(int slot, @NotNull ItemStack stack) {
             return Integer.MAX_VALUE;
         }
-
     }
 
     public static class ExportOnlyAEItem extends ExportOnlyAESlot<IAEItemStack> implements IItemHandlerModifiable {
+
         private Consumer<Integer> trigger;
 
         public ExportOnlyAEItem(IAEItemStack config, IAEItemStack stock) {
@@ -348,12 +350,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         public ExportOnlyAEItem copy() {
             return new ExportOnlyAEItem(
                     this.config == null ? null : this.config.copy(),
-                    this.stock == null ? null : this.stock.copy()
-            );
+                    this.stock == null ? null : this.stock.copy());
         }
 
         @Override
-        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             // NO-OP
         }
 
@@ -362,7 +363,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             return 1;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             if (slot == 0 && this.stock != null) {
@@ -371,13 +372,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             return stack;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot == 0 && this.stock != null) {
@@ -433,5 +434,4 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             return Integer.MAX_VALUE;
         }
     }
-
 }

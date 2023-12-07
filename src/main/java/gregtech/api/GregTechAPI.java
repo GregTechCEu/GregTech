@@ -16,6 +16,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
+import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.BaseCreativeTab;
@@ -28,13 +29,15 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,36 +58,41 @@ public class GregTechAPI {
     public static ISoundManager soundManager;
     /** Will be available at the Construction stage */
     public static IMaterialRegistryManager materialManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static MarkerMaterialRegistry markerMaterialRegistry;
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;
     private static boolean highTierInitialized;
 
-    public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
-    public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
-    public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(Integer.MAX_VALUE);
+    public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(
+            Short.MAX_VALUE);
+    public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(
+            Short.MAX_VALUE);
+    public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(
+            Integer.MAX_VALUE);
 
     public static BlockMachine MACHINE;
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
     public static final Object2ObjectMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
     public static final Object2ObjectMap<IBlockState, IBatteryData> PSS_BATTERIES = new Object2ObjectOpenHashMap<>();
 
-    public static final BaseCreativeTab TAB_GREGTECH =
-            new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.LOGO.getStackForm(), true);
-    public static final BaseCreativeTab TAB_GREGTECH_MACHINES =
-            new BaseCreativeTab(GTValues.MODID + ".machines", () -> MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(), true);
-    public static final BaseCreativeTab TAB_GREGTECH_CABLES =
-            new BaseCreativeTab(GTValues.MODID + ".cables", () -> OreDictUnifier.get(OrePrefix.cableGtDouble, Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_PIPES =
-            new BaseCreativeTab(GTValues.MODID + ".pipes", () -> OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_TOOLS =
-            new BaseCreativeTab(GTValues.MODID + ".tools", () -> ToolItems.HARD_HAMMER.get(Materials.Aluminium), false);
-    public static final BaseCreativeTab TAB_GREGTECH_MATERIALS =
-            new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_ORES =
-            new BaseCreativeTab(GTValues.MODID + ".ores", () -> OreDictUnifier.get(OrePrefix.ore, Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_DECORATIONS =
-            new BaseCreativeTab(GTValues.MODID + ".decorations", () -> MetaBlocks.WARNING_SIGN.getItemVariant(BlockWarningSign.SignType.YELLOW_STRIPES), true);
+    public static final BaseCreativeTab TAB_GREGTECH = new BaseCreativeTab(GTValues.MODID + ".main",
+            () -> MetaItems.LOGO.getStackForm(), true);
+    public static final BaseCreativeTab TAB_GREGTECH_MACHINES = new BaseCreativeTab(GTValues.MODID + ".machines",
+            () -> MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(), true);
+    public static final BaseCreativeTab TAB_GREGTECH_CABLES = new BaseCreativeTab(GTValues.MODID + ".cables",
+            () -> OreDictUnifier.get(OrePrefix.cableGtDouble, Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_PIPES = new BaseCreativeTab(GTValues.MODID + ".pipes",
+            () -> OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_TOOLS = new BaseCreativeTab(GTValues.MODID + ".tools",
+            () -> ToolItems.HARD_HAMMER.get(Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_MATERIALS = new BaseCreativeTab(GTValues.MODID + ".materials",
+            () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_ORES = new BaseCreativeTab(GTValues.MODID + ".ores",
+            () -> OreDictUnifier.get(OrePrefix.ore, Materials.Aluminium), true);
+    public static final BaseCreativeTab TAB_GREGTECH_DECORATIONS = new BaseCreativeTab(GTValues.MODID + ".decorations",
+            () -> MetaBlocks.WARNING_SIGN.getItemVariant(BlockWarningSign.SignType.YELLOW_STRIPES), true);
 
     /** Will be available at the Pre-Initialization stage */
     public static boolean isHighTier() {
@@ -120,8 +128,8 @@ public class GregTechAPI {
         }
 
         public void register(int id, String key, V value) {
-            if (registry != null) registry.register(id, new ResourceLocation(Loader.instance().activeModContainer().getModId(), key), value);
+            if (registry != null) registry.register(id,
+                    new ResourceLocation(Loader.instance().activeModContainer().getModId(), key), value);
         }
     }
-
 }

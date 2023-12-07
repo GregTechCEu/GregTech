@@ -31,7 +31,7 @@ dependencies {
 
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.684"
     implementation rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
-    implementation rfg.deobf("curse.maven:groovyscript-687577:4610037") // GRS 0.5.1
+    implementation rfg.deobf("curse.maven:groovyscript-687577:4905039") // GRS 0.7.0
     implementation rfg.deobf("curse.maven:ae2-extended-life-570458:4402048") // AE2UEL 0.55.6
 
     compileOnlyApi rfg.deobf("curse.maven:opencomputers-223008:4526246") // OpenComputers 1.8.0+9833087
@@ -40,6 +40,17 @@ dependencies {
     compileOnlyApi "curse.maven:xaeros-263420:4516832" // Xaero's Minimap 23.4.1
     compileOnlyApi rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
     compileOnlyApi rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2
+    compileOnlyApi rfg.deobf("curse.maven:forestry-59751:2684780") // Forestry 5.8.2.387
+
+    // Mods with Soft compat but which have no need to be in code, such as isModLoaded() checks and getModItem() recipes.
+    // Uncomment any of these to test them in-game.
+
+    // runtimeOnly rfg.deobf("curse.maven:beebetteratbees-244516:2627215") // BeeBetterAtBees 2.0.3 (recommended to enable when testing Forestry compat)
+    // runtimeOnly rfg.deobf("curse.maven:jei-bees-248370:2490058") // JEIBees 0.9.0.5 (recommended to enable when testing Forestry compat)
+    // runtimeOnly rfg.deobf("curse.maven:binnies-mods-223525:2916129") // Binnie 2.5.1.203
+    // runtimeOnly rfg.deobf("curse.maven:magic-bees-65764:2855061") // Magic Bees 3.2.25
+    // runtimeOnly rfg.deobf("curse.maven:gendustry-70492:2516215") // Gendustry 1.6.5.8
+    // runtimeOnly rfg.deobf("curse.maven:bdlib-70496:2518031") // BdLib 1.14.3.12
 }
 
 minecraft {
@@ -47,8 +58,14 @@ minecraft {
 }
 
 configurations {
-    compileClassPath {
+    implementation {
         // exclude GNU trove, FastUtil is superior and still updated
         exclude group: "net.sf.trove4j", module: "trove4j"
+        // exclude javax.annotation from findbugs, jetbrains annotations are superior
+        exclude group: "com.google.code.findbugs", module: "jsr305"
+        // exclude scala as we don't use it for anything and causes import confusion
+        exclude group: "org.scala-lang"
+        exclude group: "org.scala-lang.modules"
+        exclude group: "org.scala-lang.plugins"
     }
 }

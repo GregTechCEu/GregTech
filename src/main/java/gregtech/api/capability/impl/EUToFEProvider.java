@@ -6,13 +6,14 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class EUToFEProvider extends CapabilityCompatProvider {
 
@@ -28,14 +29,14 @@ public class EUToFEProvider extends CapabilityCompatProvider {
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
         return ConfigHolder.compat.energy.nativeEUToFE &&
                 capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER &&
                 hasUpvalueCapability(CapabilityEnergy.ENERGY, facing);
     }
 
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
         if (!ConfigHolder.compat.energy.nativeEUToFE || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
             return null;
 
@@ -55,7 +56,6 @@ public class EUToFEProvider extends CapabilityCompatProvider {
 
         @Override
         public long acceptEnergyFromNetwork(EnumFacing facing, long voltage, long amperage) {
-
             int receive = 0;
 
             // Try to use the internal buffer before consuming a new packet
@@ -162,9 +162,12 @@ public class EUToFEProvider extends CapabilityCompatProvider {
         }
 
         /**
-         * Most RF/FE cables blindly try to insert energy without checking if there is space, since the receiving IEnergyStorage should handle it.
-         * This simulates that behavior in most places by allowing our "is there space" checks to pass and letting the cable attempt to insert energy.
-         * If the wrapped TE actually cannot accept any more energy, the energy transfer will return 0 before any changes to our internal rf buffer.
+         * Most RF/FE cables blindly try to insert energy without checking if there is space, since the receiving
+         * IEnergyStorage should handle it.
+         * This simulates that behavior in most places by allowing our "is there space" checks to pass and letting the
+         * cable attempt to insert energy.
+         * If the wrapped TE actually cannot accept any more energy, the energy transfer will return 0 before any
+         * changes to our internal rf buffer.
          */
         @Override
         public long getEnergyCanBeInserted() {

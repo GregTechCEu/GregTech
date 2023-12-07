@@ -1,18 +1,20 @@
 package gregtech.common.terminal.app.guide.widget;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.common.terminal.app.guideeditor.widget.configurator.FluidStackConfigurator;
 import gregtech.api.util.Size;
+import gregtech.common.terminal.app.guideeditor.widget.configurator.FluidStackConfigurator;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.awt.*;
 import java.util.Collections;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class TankListWidget extends GuideWidgetGroup {
+
     public final static String NAME = "tanks";
 
     // config
@@ -46,7 +49,8 @@ public class TankListWidget extends GuideWidgetGroup {
                 int i = x + y * maxXSize;
                 if (i < size) {
                     FluidStack fluidStack = fluid_list.get(i).getInstance();
-                    TankWidget widget = new TankWidget(new FluidTank(fluidStack, fluid_list.get(i).amount), xPos + x * 18, y * 18, 18, 18);
+                    TankWidget widget = new TankWidget(new FluidTank(fluidStack, fluid_list.get(i).amount),
+                            xPos + x * 18, y * 18, 18, 18);
                     widget.setBackgroundTexture(background).setAlwaysShowFull(true).setClient();
                     this.addWidget(widget);
                 }
@@ -64,26 +68,27 @@ public class TankListWidget extends GuideWidgetGroup {
     @Override
     public JsonObject getTemplate(boolean isFixed) {
         JsonObject template = super.getTemplate(isFixed);
-        template.add("fluid_list", new Gson().toJsonTree(Collections.singletonList(new FluidStackInfo("distilled_water", 1))));
+        template.add("fluid_list",
+                new Gson().toJsonTree(Collections.singletonList(new FluidStackInfo("distilled_water", 1))));
         return template;
     }
 
     @Override
-    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed,
+                                 Consumer<String> needUpdate) {
         super.loadConfigurator(group, config, isFixed, needUpdate);
         group.addWidget(new FluidStackConfigurator(group, config, "fluid_list").setOnUpdated(needUpdate));
     }
 
     public static class FluidStackInfo {
+
         // config
         public String id;
         public int amount = 1;
 
         private transient FluidStack fluidStack;
 
-        public FluidStackInfo() {
-
-        }
+        public FluidStackInfo() {}
 
         public void update(FluidStack itemStack) {
             if (itemStack != null) {

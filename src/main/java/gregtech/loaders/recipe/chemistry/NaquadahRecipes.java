@@ -3,7 +3,8 @@ package gregtech.loaders.recipe.chemistry;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.ingotHot;
 
 public class NaquadahRecipes {
 
@@ -21,7 +22,6 @@ public class NaquadahRecipes {
     // |> 0.25 Barium
 
     public static void init() {
-
         // FLUOROANTIMONIC ACID
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(60)
@@ -44,7 +44,6 @@ public class NaquadahRecipes {
                 .fluidOutputs(Hydrogen.getFluid(2000))
                 .buildAndRegister();
 
-
         // STARTING POINT
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LuV]).duration(600)
@@ -54,7 +53,6 @@ public class NaquadahRecipes {
                 .fluidOutputs(ImpureNaquadriaSolution.getFluid(2000))
                 .output(dust, TitaniumTrifluoride, 4)
                 .buildAndRegister();
-
 
         // ENRICHED NAQUADAH PROCESS
 
@@ -74,7 +72,7 @@ public class NaquadahRecipes {
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
                 .fluidInputs(AcidicEnrichedNaquadahSolution.getFluid(3000))
                 .fluidOutputs(EnrichedNaquadahWaste.getFluid(2000))
-                .fluidOutputs(Fluorine.getFluid(500))
+                .fluidOutputs(Fluorine.getFluid(250))
                 .output(dust, EnrichedNaquadahSulfate, 6) // Nq+SO4
                 .buildAndRegister();
 
@@ -87,12 +85,11 @@ public class NaquadahRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder().EUt(VA[HV]).duration(300)
                 .fluidInputs(EnrichedNaquadahWaste.getFluid(2000))
-                .output(dustSmall, BariumSulfide, 2)
+                .chancedOutput(dust, BariumSulfide, 5000, 0)
                 .fluidOutputs(SulfuricAcid.getFluid(500))
-                .fluidOutputs(EnrichedNaquadahSolution.getFluid(250))
-                .fluidOutputs(NaquadriaSolution.getFluid(100))
+                .fluidOutputs(EnrichedNaquadahSolution.getFluid(350))
+                .fluidOutputs(NaquadriaSolution.getFluid(150))
                 .buildAndRegister();
-
 
         // NAQUADRIA PROCESS
 
@@ -112,7 +109,7 @@ public class NaquadahRecipes {
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
                 .fluidInputs(AcidicNaquadriaSolution.getFluid(3000))
                 .fluidOutputs(NaquadriaWaste.getFluid(2000))
-                .fluidOutputs(Fluorine.getFluid(500))
+                .fluidOutputs(Fluorine.getFluid(250))
                 .output(dust, NaquadriaSulfate, 6)
                 .buildAndRegister();
 
@@ -125,12 +122,11 @@ public class NaquadahRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder().EUt(VA[HV]).duration(300)
                 .fluidInputs(NaquadriaWaste.getFluid(2000))
-                .output(dustSmall, GalliumSulfide, 2)
+                .chancedOutput(dust, GalliumSulfide, 5000, 0)
                 .fluidOutputs(SulfuricAcid.getFluid(500))
-                .fluidOutputs(NaquadriaSolution.getFluid(250))
-                .fluidOutputs(EnrichedNaquadahSolution.getFluid(100))
+                .fluidOutputs(NaquadriaSolution.getFluid(350))
+                .fluidOutputs(EnrichedNaquadahSolution.getFluid(150))
                 .buildAndRegister();
-
 
         // TRINIUM
 
@@ -140,7 +136,6 @@ public class NaquadahRecipes {
                 .output(ingotHot, Trinium)
                 .output(dust, ZincSulfide, 2)
                 .buildAndRegister();
-
 
         // BYPRODUCT PROCESSING
 

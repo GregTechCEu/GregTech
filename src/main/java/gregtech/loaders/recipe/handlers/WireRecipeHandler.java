@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.handlers;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
@@ -11,6 +10,8 @@ import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -29,10 +30,10 @@ import static gregtech.common.items.MetaItems.SHAPE_EXTRUDER_WIRE;
  * - Rubber: This can be used for any cable EV-tier or lower. After that it is unavailable.
  *
  * - Silicone Rubber: This can be used for any cable tier, saving the amount of fluid needed. However, at IV,
- *                    it will require a Foil of the cable material as well, making it undesirable.
+ * it will require a Foil of the cable material as well, making it undesirable.
  *
  * - Styrene-Butadiene Rubber (SBR): This can be used for any cable tier, and is the most optimal cable-covering
- *                                   fluid available.
+ * fluid available.
  *
  * Extra Materials for Cable Covering:
  * - Polyphenylene Sulfide (PPS): At LuV, this foil is required to cover cables. Lower tiers will not use it.
@@ -46,11 +47,9 @@ public class WireRecipeHandler {
             cableGtDouble, 1,
             cableGtQuadruple, 2,
             cableGtOctal, 3,
-            cableGtHex, 5
-    );
+            cableGtHex, 5);
 
     public static void register() {
-
         // Generate 1x Wire creation recipes (Wiremill, Extruder, Wire Cutters)
         wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::processWireSingle);
 
@@ -62,10 +61,11 @@ public class WireRecipeHandler {
         wireGtHex.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
     }
 
+    private static final OrePrefix[] wireSizes = { wireGtDouble, wireGtQuadruple, wireGtOctal, wireGtHex };
 
-    private static final OrePrefix[] wireSizes = {wireGtDouble, wireGtQuadruple, wireGtOctal, wireGtHex};
     public static void processWireSingle(OrePrefix wirePrefix, Material material, WireProperties property) {
-        OrePrefix prefix = material.hasProperty(PropertyKey.INGOT) ? ingot : material.hasProperty(PropertyKey.GEM) ? gem : dust;
+        OrePrefix prefix = material.hasProperty(PropertyKey.INGOT) ? ingot :
+                material.hasProperty(PropertyKey.GEM) ? gem : dust;
 
         EXTRUDER_RECIPES.recipeBuilder()
                 .input(prefix, material)
@@ -89,7 +89,7 @@ public class WireRecipeHandler {
                     .input(prefix, material, multiplier)
                     .circuitMeta(multiplier * 2)
                     .output(wireSize, material)
-                    .duration((int) (material.getMass() * multiplier * 2))
+                    .duration((int) (material.getMass() * multiplier))
                     .EUt(getVoltageMultiplier(material))
                     .buildAndRegister();
         }
@@ -102,7 +102,6 @@ public class WireRecipeHandler {
     }
 
     public static void generateCableCovering(OrePrefix wirePrefix, Material material, WireProperties property) {
-
         // Superconductors have no Cables, so exit early
         if (property.isSuperconductor()) return;
 
@@ -166,7 +165,8 @@ public class WireRecipeHandler {
                 .buildAndRegister();
     }
 
-    private static void generateManualRecipe(OrePrefix wirePrefix, Material material, OrePrefix cablePrefix, int cableAmount) {
+    private static void generateManualRecipe(OrePrefix wirePrefix, Material material, OrePrefix cablePrefix,
+                                             int cableAmount) {
         int insulationAmount = INSULATION_AMOUNT.get(cablePrefix);
         Object[] ingredients = new Object[insulationAmount + 1];
         ingredients[0] = new UnificationEntry(wirePrefix, material);
@@ -175,8 +175,7 @@ public class WireRecipeHandler {
         }
         ModHandler.addShapelessRecipe(String.format("%s_cable_%d", material, cableAmount),
                 OreDictUnifier.get(cablePrefix, material),
-                ingredients
-        );
+                ingredients);
 
         PACKER_RECIPES.recipeBuilder()
                 .input(wirePrefix, material)

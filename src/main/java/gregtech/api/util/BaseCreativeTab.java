@@ -4,7 +4,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Supplier;
 
 public class BaseCreativeTab extends CreativeTabs {
@@ -21,7 +22,7 @@ public class BaseCreativeTab extends CreativeTabs {
             setBackgroundImageName("item_search.png");
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack createIcon() {
         if (iconSupplier == null) {

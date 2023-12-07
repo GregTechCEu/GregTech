@@ -2,13 +2,13 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
 import gregtech.api.capability.IFilteredFluidContainer;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.function.Predicate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FilteredFluidHandler extends FluidTank implements IFilteredFluidContainer {
 
@@ -39,18 +39,10 @@ public class FilteredFluidHandler extends FluidTank implements IFilteredFluidCon
      * @param filter new filter instance
      * @return this
      */
-    @Nonnull
+    @NotNull
     public FilteredFluidHandler setFilter(@Nullable IFilter<FluidStack> filter) {
         this.filter = filter;
         return this;
-    }
-
-    /**
-     * @deprecated Use {@link #setFilter(IFilter)} with new filter API.
-     */
-    @Deprecated
-    public FilteredFluidHandler setFillPredicate(Predicate<FluidStack> predicate) {
-        return setFilter(predicate::test);
     }
 
     @Override

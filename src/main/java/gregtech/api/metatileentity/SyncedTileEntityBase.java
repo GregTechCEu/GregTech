@@ -1,10 +1,11 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.network.PacketDataList;
+import gregtech.api.util.GTLog;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,51 +13,67 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nonnull;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
+public abstract class SyncedTileEntityBase extends BlockStateTileEntity implements ISyncedTileEntity {
 
-    public abstract void writeInitialSyncData(PacketBuffer buf);
+    private final PacketDataList updates = new PacketDataList();
 
-    public abstract void receiveInitialSyncData(PacketBuffer buf);
+    public @Nullable TileEntity getNeighbor(EnumFacing facing) {
+        if (world == null || pos == null) return null;
+        return world.getTileEntity(pos.offset(facing));
+    }
 
-    public abstract void receiveCustomData(int discriminator, PacketBuffer buf);
-
-    protected final Int2ObjectMap<byte[]> updates = new Int2ObjectArrayMap<>(5);
-
-    public void writeCustomData(int discriminator, Consumer<PacketBuffer> dataWriter) {
+    @Override
+    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
         ByteBuf backedBuffer = Unpooled.buffer();
         dataWriter.accept(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
-        updates.put(discriminator, updateData);
+        this.updates.add(discriminator, updateData);
+        notifyWorld();
+    }
+
+    /**
+     * Adds all data packets from another synced tile entity. Useful when the old tile is replaced with a new one.
+     *
+     * @param syncedTileEntityBase other synced tile entity
+     */
+    public void addPacketsFrom(SyncedTileEntityBase syncedTileEntityBase) {
+        if (this == syncedTileEntityBase || syncedTileEntityBase.updates.isEmpty()) return;
+        boolean wasEmpty = this.updates.isEmpty();
+        this.updates.addAll(syncedTileEntityBase.updates);
+        syncedTileEntityBase.updates.clear();
+        if (wasEmpty) notifyWorld(); // if the data is not empty we already notified the world
+    }
+
+    private void notifyWorld() {
         @SuppressWarnings("deprecation")
         IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
         world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
+    public final @Nullable SPacketUpdateTileEntity getUpdatePacket() {
         if (this.updates.isEmpty()) {
             return null;
         }
         NBTTagCompound updateTag = new NBTTagCompound();
-        NBTTagList listTag = new NBTTagList();
-        for (Int2ObjectMap.Entry<byte[]> entry : updates.int2ObjectEntrySet()) {
-            NBTTagCompound entryTag = new NBTTagCompound();
-            entryTag.setByteArray(Integer.toString(entry.getIntKey()), entry.getValue());
-            listTag.appendTag(entryTag);
-        }
-        updateTag.setTag("d", listTag);
-        this.updates.clear();
+        updateTag.setTag("d", this.updates.dumpToNbt());
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
 
     @Override
-    public void onDataPacket(@Nonnull NetworkManager net, SPacketUpdateTileEntity pkt) {
+    public final void onDataPacket(@NotNull NetworkManager net, @NotNull SPacketUpdateTileEntity pkt) {
         NBTTagCompound updateTag = pkt.getNbtCompound();
         NBTTagList listTag = updateTag.getTagList("d", Constants.NBT.TAG_COMPOUND);
         for (NBTBase entryBase : listTag) {
@@ -64,13 +81,25 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
             for (String discriminatorKey : entryTag.getKeySet()) {
                 ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
                 receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
+                if (backedBuffer.readableBytes() != 0) {
+                    String className = null;
+                    if (this instanceof IGregTechTileEntity gtte) {
+                        MetaTileEntity mte = gtte.getMetaTileEntity();
+                        if (mte != null) className = mte.getClass().getName();
+                    }
+                    if (className == null) {
+                        className = this.getClass().getName();
+                    }
+                    GTLog.logger.error(
+                            "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
+                            className, discriminatorKey, backedBuffer.readableBytes());
+                }
             }
         }
     }
 
-    @Nonnull
     @Override
-    public NBTTagCompound getUpdateTag() {
+    public final @NotNull NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
         ByteBuf backedBuffer = Unpooled.buffer();
         writeInitialSyncData(new PacketBuffer(backedBuffer));
@@ -80,11 +109,23 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
     }
 
     @Override
-    public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
+    public final void handleUpdateTag(@NotNull NBTTagCompound tag) {
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
         ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
-    }
+        if (backedBuffer.readableBytes() != 0) {
+            String className = null;
+            if (this instanceof IGregTechTileEntity gtte) {
+                MetaTileEntity mte = gtte.getMetaTileEntity();
+                if (mte != null) className = mte.getClass().getName();
+            }
+            if (className == null) {
+                className = this.getClass().getName();
+            }
 
+            GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
+                    className, backedBuffer.readableBytes());
+        }
+    }
 }

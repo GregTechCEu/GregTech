@@ -8,11 +8,13 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.entity.player.InventoryPlayer;
 
 public class WidgetPluginConfig extends WidgetGroup {
+
     protected TextureArea textureArea;
-    int width,height;
+    int width, height;
 
     public WidgetPluginConfig setSize(int width, int height) {
         setSize(new Size(width, height));
@@ -33,12 +35,12 @@ public class WidgetPluginConfig extends WidgetGroup {
         onPositionUpdate();
     }
 
-    public WidgetPluginConfig setBackGround(TextureArea textureArea){
+    public WidgetPluginConfig setBackGround(TextureArea textureArea) {
         this.textureArea = textureArea;
         return this;
     }
 
-    public WidgetPluginConfig widget(Widget widget){
+    public WidgetPluginConfig widget(Widget widget) {
         addWidget(widget);
         return this;
     }
@@ -47,19 +49,23 @@ public class WidgetPluginConfig extends WidgetGroup {
         clearAllWidgets();
     }
 
-    public WidgetPluginConfig bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x, int y) {
-        for(int row = 0; row < 3; ++row) {
-            for(int col = 0; col < 9; ++col) {
-                this.widget((new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18)).setBackgroundTexture(new TextureArea[]{imageLocation}).setLocationInfo(true, false));
+    public WidgetPluginConfig bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x,
+                                                  int y) {
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 9; ++col) {
+                this.widget((new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18))
+                        .setBackgroundTexture(new TextureArea[] { imageLocation }).setLocationInfo(true, false));
             }
         }
 
         return this.bindPlayerHotbar(inventoryPlayer, imageLocation, x, y + 58);
     }
 
-    public WidgetPluginConfig bindPlayerHotbar(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x, int y) {
-        for(int slot = 0; slot < 9; ++slot) {
-            this.widget((new SlotWidget(inventoryPlayer, slot, x + slot * 18, y)).setBackgroundTexture(new TextureArea[]{imageLocation}).setLocationInfo(true, true));
+    public WidgetPluginConfig bindPlayerHotbar(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x,
+                                               int y) {
+        for (int slot = 0; slot < 9; ++slot) {
+            this.widget((new SlotWidget(inventoryPlayer, slot, x + slot * 18, y))
+                    .setBackgroundTexture(new TextureArea[] { imageLocation }).setLocationInfo(true, true));
         }
 
         return this;
@@ -74,5 +80,4 @@ public class WidgetPluginConfig extends WidgetGroup {
         }
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
-
 }

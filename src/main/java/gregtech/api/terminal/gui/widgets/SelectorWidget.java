@@ -5,6 +5,7 @@ import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class SelectorWidget extends WidgetGroup {
+
     protected RectButtonWidget button;
     protected List<String> candidates;
     protected boolean isShow;
@@ -24,13 +26,14 @@ public class SelectorWidget extends WidgetGroup {
     private boolean isUp;
     private final int fontColor;
 
-    public SelectorWidget(int x, int y, int width, int height, List<String> candidates, int fontColor, Supplier<String> supplier, boolean isClient) {
+    public SelectorWidget(int x, int y, int width, int height, List<String> candidates, int fontColor,
+                          Supplier<String> supplier, boolean isClient) {
         super(new Position(x, y), new Size(width, height));
-        this.button = new RectButtonWidget(0,0,width,height);
+        this.button = new RectButtonWidget(0, 0, width, height);
         this.candidates = candidates;
         this.fontColor = fontColor;
         button.setClickListener(d -> {
-            if(onShowChange != null) {
+            if (onShowChange != null) {
                 onShowChange.accept(!isShow);
             }
             isShow = !isShow;
@@ -81,7 +84,7 @@ public class SelectorWidget extends WidgetGroup {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         super.drawInForeground(mouseX, mouseY);
-        if(isShow) {
+        if (isShow) {
             int x = getPosition().x;
             int width = getSize().width;
             int height = getSize().height;
@@ -93,7 +96,8 @@ public class SelectorWidget extends WidgetGroup {
                 } else {
                     drawSolidRect(x, y, width, height, 0xAA000000);
                 }
-                fontRenderer.drawString(I18n.format(candidate), x + 4, y + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, fontColor);
+                fontRenderer.drawString(I18n.format(candidate), x + 4, y + (height - fontRenderer.FONT_HEIGHT) / 2 + 1,
+                        fontColor);
                 y += height;
             }
             y = (isUp ? -candidates.size() : 1) * height + getPosition().y;
@@ -132,9 +136,9 @@ public class SelectorWidget extends WidgetGroup {
     public void handleClientAction(int id, PacketBuffer buffer) {
         super.handleClientAction(id, buffer);
         if (id == 2) {
-           if (onChanged != null) {
-               onChanged.accept(buffer.readString(Short.MAX_VALUE));
-           }
+            if (onChanged != null) {
+                onChanged.accept(buffer.readString(Short.MAX_VALUE));
+            }
         }
     }
 }

@@ -6,20 +6,24 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.IntegrationUtil;
 import gregtech.integration.opencomputers.drivers.*;
-import gregtech.integration.opencomputers.drivers.specific.*;
+import gregtech.integration.opencomputers.drivers.specific.DriverConverter;
+import gregtech.integration.opencomputers.drivers.specific.DriverFusionReactor;
+import gregtech.integration.opencomputers.drivers.specific.DriverPowerSubstation;
+import gregtech.integration.opencomputers.drivers.specific.DriverWorldAccelerator;
 import gregtech.modules.GregTechModules;
-import li.cil.oc.api.Driver;
-import li.cil.oc.api.driver.DriverBlock;
+
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import li.cil.oc.api.Driver;
+import li.cil.oc.api.driver.DriverBlock;
+
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_OC,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_OC,
-        name = "GregTech OpenComputers Integration",
-        descriptionKey = "gregtech.modules.oc_integration.description"
-)
+                moduleID = GregTechModules.MODULE_OC,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_OC,
+                name = "GregTech OpenComputers Integration",
+                description = "OpenComputers Integration Module")
 public class OpenComputersModule extends IntegrationSubmodule {
 
     private static final String MODID_GTCE2OC = "gtce2oc";
@@ -37,7 +41,7 @@ public class OpenComputersModule extends IntegrationSubmodule {
         registerDriver(new DriverWorkable());
         registerDriver(new DriverAbstractRecipeLogic());
         registerDriver(new DriverRecipeMapMultiblockController());
-        registerDriver(new DriverICoverable());
+        registerDriver(new DriverCoverHolder());
         registerDriver(new DriverSimpleMachine());
         registerDriver(new DriverFusionReactor());
         registerDriver(new DriverWorldAccelerator());

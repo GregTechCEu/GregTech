@@ -2,13 +2,13 @@ package gregtech.api.pipenet.longdist;
 
 import gregtech.common.pipelike.fluidpipe.longdistance.LDFluidPipeType;
 import gregtech.common.pipelike.itempipe.longdistance.LDItemPipeType;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.state.IBlockState;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -17,9 +17,6 @@ import java.util.Objects;
 public abstract class LongDistancePipeType {
 
     private static final Object2ObjectOpenHashMap<String, LongDistancePipeType> PIPE_TYPES = new Object2ObjectOpenHashMap<>();
-
-    private static LDFluidPipeType FLUID;
-    private static LDItemPipeType ITEM;
 
     private final String name;
 
@@ -36,38 +33,21 @@ public abstract class LongDistancePipeType {
         PIPE_TYPES.put(name, this);
     }
 
-    public static void init() {
-        FLUID = LDFluidPipeType.INSTANCE;
-        ITEM = LDItemPipeType.INSTANCE;
-    }
-
     public static LDFluidPipeType fluid() {
-        return FLUID;
+        return LDFluidPipeType.INSTANCE;
     }
 
     public static LDItemPipeType item() {
-        return ITEM;
+        return LDItemPipeType.INSTANCE;
     }
 
     public static LongDistancePipeType getPipeType(String name) {
         return PIPE_TYPES.get(name);
     }
 
-    /**
-     * Checks if the given block state is a valid ld pipe block for this type
-     *
-     * @param blockState potential ld pipe block
-     * @return if the given block state is a valid ld pipe block for this type
-     */
-    public abstract boolean isValidBlock(IBlockState blockState);
-
-    /**
-     * Checks if the given endpoint is a valid endpoint for this type
-     *
-     * @param endpoint potential endpoint
-     * @return if the given endpoint is a valid endpoint for this type
-     */
-    public abstract boolean isValidEndpoint(ILDEndpoint endpoint);
+    public boolean isValidPart(ILDNetworkPart networkPart) {
+        return networkPart != null && networkPart.getPipeType() == this;
+    }
 
     /**
      * @return The minimum required distance (not pipe count between endpoints) between to endpoints to work.
@@ -76,7 +56,12 @@ public abstract class LongDistancePipeType {
         return 0;
     }
 
-    @Nonnull
+    public boolean satisfiesMinLength(ILDEndpoint endpoint1, ILDEndpoint endpoint2) {
+        BlockPos p = endpoint2.pos();
+        return endpoint1 != endpoint2 && endpoint1.pos().getDistance(p.getX(), p.getY(), p.getZ()) >= getMinLength();
+    }
+
+    @NotNull
     public LongDistanceNetwork createNetwork(LongDistanceNetwork.WorldData worldData) {
         return new LongDistanceNetwork(this, worldData);
     }

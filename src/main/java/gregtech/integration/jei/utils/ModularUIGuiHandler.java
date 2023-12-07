@@ -6,25 +6,30 @@ import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
+
+import net.minecraft.entity.player.EntityPlayer;
+
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.gui.IAdvancedGuiHandler;
 import mezz.jei.api.gui.IGhostIngredientHandler;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
-public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, IGhostIngredientHandler<ModularUIGui>, IRecipeTransferHandler<ModularUIContainer> {
+public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, IGhostIngredientHandler<ModularUIGui>,
+                                 IRecipeTransferHandler<ModularUIContainer> {
 
     private final IRecipeTransferHandlerHelper transferHelper;
     private Predicate<IRecipeTransferHandlerWidget> validHandlers = widget -> true;
+    private final Set<String> recipeTransferCategoryBlacklist = new ObjectOpenHashSet<>();
 
     public ModularUIGuiHandler(IRecipeTransferHandlerHelper transferHelper) {
         this.transferHelper = transferHelper;
@@ -34,13 +39,13 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         this.validHandlers = validHandlers;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<ModularUIGui> getGuiContainerClass() {
         return ModularUIGui.class;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<ModularUIContainer> getContainerClass() {
         return ModularUIContainer.class;
@@ -48,7 +53,12 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(ModularUIContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+    public IRecipeTransferError transferRecipe(@NotNull ModularUIContainer container,
+                                               @NotNull IRecipeLayout recipeLayout, @NotNull EntityPlayer player,
+                                               boolean maxTransfer, boolean doTransfer) {
+        if (this.recipeTransferCategoryBlacklist.contains(recipeLayout.getRecipeCategory().getUid())) {
+            return this.transferHelper.createInternalError();
+        }
         Optional<IRecipeTransferHandlerWidget> transferHandler = container.getModularUI()
                 .getFlatVisibleWidgetCollection().stream()
                 .filter(it -> it instanceof IRecipeTransferHandlerWidget)
@@ -58,11 +68,16 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         if (!transferHandler.isPresent()) {
             return transferHelper.createInternalError();
         }
-        String errorTooltip = transferHandler.get().transferRecipe(container, recipeLayout, player, maxTransfer, doTransfer);
+        String errorTooltip = transferHandler.get().transferRecipe(container, recipeLayout, player, maxTransfer,
+                doTransfer);
         if (errorTooltip == null) {
             return null;
         }
         return transferHelper.createUserErrorWithTooltip(errorTooltip);
+    }
+
+    public void blacklistCategory(String... category) {
+        Collections.addAll(this.recipeTransferCategoryBlacklist, category);
     }
 
     @Nullable
@@ -80,16 +95,15 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <I> List<Target<I>> getTargets(ModularUIGui gui, @Nonnull I ingredient, boolean doStart) {
+    public <I> List<Target<I>> getTargets(ModularUIGui gui, @NotNull I ingredient, boolean doStart) {
         Collection<Widget> widgets = gui.getModularUI().guiWidgets.values();
         List<Target<I>> targets = new ArrayList<>();
         for (Widget widget : widgets) {
-            if (widget instanceof IGhostIngredientTarget) {
-                IGhostIngredientTarget ghostTarget = (IGhostIngredientTarget) widget;
+            if (widget instanceof IGhostIngredientTarget ghostTarget) {
                 List<Target<?>> widgetTargets = ghostTarget.getPhantomTargets(ingredient);
-                //noinspection unchecked
+                // noinspection unchecked
                 targets.addAll((List<Target<I>>) (Object) widgetTargets);
             }
         }
@@ -98,11 +112,10 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     @Nullable
     @Override
-    public List<Rectangle> getGuiExtraAreas(@Nonnull ModularUIGui guiContainer) {
+    public List<Rectangle> getGuiExtraAreas(@NotNull ModularUIGui guiContainer) {
         return Collections.emptyList();
     }
 
     @Override
-    public void onComplete() {
-    }
+    public void onComplete() {}
 }

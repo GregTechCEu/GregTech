@@ -1,8 +1,7 @@
 package gregtech.common.worldgen;
 
-import com.google.common.collect.Lists;
-import com.google.gson.*;
 import gregtech.api.util.GTLog;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.math.MathHelper;
@@ -11,6 +10,9 @@ import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import com.google.common.collect.Lists;
+import com.google.gson.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -23,10 +25,13 @@ public class LootTableHelper {
     private static final Map<String, LootTableEntrySerializer<?>> serializerMap = new HashMap<>();
 
     public interface LootTableEntrySerializer<T extends LootEntry> {
-        T deserialize(JsonObject object, JsonDeserializationContext deserializationContext, int weightIn, int qualityIn, LootCondition[] conditionsIn);
+
+        T deserialize(JsonObject object, JsonDeserializationContext deserializationContext, int weightIn, int qualityIn,
+                      LootCondition[] conditionsIn);
     }
 
     public interface SerializableLootEntry {
+
         String getType();
 
         int getWeight();
@@ -58,20 +63,22 @@ public class LootTableHelper {
         registerLootEntry("gregtech:ore_dict", LootEntryOreDict::deserialize);
     }
 
-    private static class LootTableEntrySerializerDelegate implements JsonSerializer<LootEntry>, JsonDeserializer<LootEntry> {
+    private static class LootTableEntrySerializerDelegate implements JsonSerializer<LootEntry>,
+                                                          JsonDeserializer<LootEntry> {
 
         private final JsonSerializer<LootEntry> delegatedSerializer;
         private final JsonDeserializer<LootEntry> delegatedDeserializer;
 
-
         @SuppressWarnings("unchecked")
-        public LootTableEntrySerializerDelegate(JsonSerializer<?> delegatedSerializer, JsonDeserializer<?> delegatedDeserializer) {
+        public LootTableEntrySerializerDelegate(JsonSerializer<?> delegatedSerializer,
+                                                JsonDeserializer<?> delegatedDeserializer) {
             this.delegatedSerializer = (JsonSerializer<LootEntry>) delegatedSerializer;
             this.delegatedDeserializer = (JsonDeserializer<LootEntry>) delegatedDeserializer;
         }
 
         @Override
-        public LootEntry deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public LootEntry deserialize(JsonElement json, Type typeOfT,
+                                     JsonDeserializationContext context) throws JsonParseException {
             JsonObject jsonobject = JsonUtils.getJsonObject(json, "loot item");
             String type = JsonUtils.getString(jsonobject, "type");
             if (serializerMap.containsKey(type)) {
@@ -79,7 +86,8 @@ public class LootTableHelper {
                 int quality = JsonUtils.getInt(jsonobject, "quality", 0);
                 LootCondition[] lootConditions;
                 if (jsonobject.has("conditions")) {
-                    lootConditions = JsonUtils.deserializeClass(jsonobject, "conditions", context, LootCondition[].class);
+                    lootConditions = JsonUtils.deserializeClass(jsonobject, "conditions", context,
+                            LootCondition[].class);
                 } else {
                     lootConditions = new LootCondition[0];
                 }
@@ -108,13 +116,14 @@ public class LootTableHelper {
         }
     }
 
-
     @SuppressWarnings("unchecked")
-    private static void replaceGsonTypeHierarchySerializer(Gson gson, Class<?> type, BiFunction<JsonSerializer<?>, JsonDeserializer<?>, Object> replacer) {
+    private static void replaceGsonTypeHierarchySerializer(Gson gson, Class<?> type,
+                                                           BiFunction<JsonSerializer<?>, JsonDeserializer<?>, Object> replacer) {
         try {
             Field field = Gson.class.getDeclaredField("factories");
             field.setAccessible(true);
-            Class<?> singleTypeFactoryClass = Class.forName("com.google.gson.internal.bind.TreeTypeAdapter$SingleTypeFactory");
+            Class<?> singleTypeFactoryClass = Class
+                    .forName("com.google.gson.internal.bind.TreeTypeAdapter$SingleTypeFactory");
             Field hierarchyTypeField = singleTypeFactoryClass.getDeclaredField("hierarchyType");
             hierarchyTypeField.setAccessible(true);
             List<TypeAdapterFactory> factories = (List<TypeAdapterFactory>) field.get(gson);

@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -19,6 +16,7 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -36,8 +34,12 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,8 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.ENERGY_OUT.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+        Textures.ENERGY_OUT.renderSided(getFrontFacing(), renderState, translation,
+                PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
     }
 
     @Override
@@ -101,17 +104,20 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         return new ItemStackHandler(inventorySize) {
+
             @Override
             protected void onContentsChanged(int slot) {
                 ((EnergyContainerBatteryBuffer) energyContainer).notifyEnergyListener(false);
+                MetaTileEntityBatteryBuffer.this.markDirty();
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
                 if ((electricItem != null && getTier() >= electricItem.getTier()) ||
-                        (ConfigHolder.compat.energy.nativeEUToFE && stack.hasCapability(CapabilityEnergy.ENERGY, null))) {
+                        (ConfigHolder.compat.energy.nativeEUToFE &&
+                                stack.hasCapability(CapabilityEnergy.ENERGY, null))) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;
@@ -122,11 +128,6 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
                 return 1;
             }
         };
-    }
-
-    @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(0);
     }
 
     @Override
@@ -144,7 +145,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
             colSize = 2;
         }
         Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                        18 + 18 * colSize + 94)
+                18 + 18 * colSize + 94)
                 .label(6, 6, getMetaFullName());
 
         int index = 0;
@@ -164,7 +165,8 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
         String tierName = GTValues.VNF[getTier()];
 
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in_out", energyContainer.getInputVoltage(), tierName));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.voltage_in_out", energyContainer.getInputVoltage(), tierName));
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
     }
@@ -191,14 +193,16 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         list.add(new TextComponentTranslation("gregtech.battery_buffer.average_input",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getInputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getInputPerSec() / 20))
+                        .setStyle(new Style().setColor(TextFormatting.YELLOW))));
         list.add(new TextComponentTranslation("gregtech.battery_buffer.average_output",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputPerSec() / 20))
+                        .setStyle(new Style().setColor(TextFormatting.YELLOW))));
         return list;
     }
 }

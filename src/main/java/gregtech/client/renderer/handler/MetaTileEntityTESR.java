@@ -1,11 +1,10 @@
 package gregtech.client.renderer.handler;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.vec.Matrix4;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.Cover;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,15 +16,19 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntityHolder> {
 
     @Override
-    public void render(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(@NotNull MetaTileEntityHolder te, double x, double y, double z, float partialTicks,
+                       int destroyStage,
+                       float alpha) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -34,12 +37,9 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         GlStateManager.enableBlend();
         GlStateManager.disableCull();
 
-        if (Minecraft.isAmbientOcclusionEnabled())
-        {
+        if (Minecraft.isAmbientOcclusionEnabled()) {
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        }
-        else
-        {
+        } else {
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
 
@@ -51,17 +51,18 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
             renderState.reset();
             renderState.bind(buffer);
             renderState.setBrightness(te.getWorld(), te.getPos());
-            ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+            ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityFast(renderState,
+                    new Matrix4().translate(x, y, z), partialTicks);
         }
         if (metaTileEntity != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
-                CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
+                Cover cover = metaTileEntity.getCoverAtSide(side);
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
                     CCRenderState renderState = CCRenderState.instance();
                     renderState.reset();
                     renderState.bind(buffer);
                     renderState.setBrightness(te.getWorld(), te.getPos().offset(side));
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+                    fastRender.renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
                 }
             }
         }
@@ -76,42 +77,44 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         }
         if (metaTileEntity != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
-                CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntity(x, y, z, partialTicks);
+                Cover cover = metaTileEntity.getCoverAtSide(side);
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
+                    fastRender.renderMetaTileEntity(x, y, z, partialTicks);
                 }
             }
         }
     }
 
     @Override
-    public void renderTileEntityFast(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha, @Nonnull BufferBuilder buffer) {
+    public void renderTileEntityFast(MetaTileEntityHolder te, double x, double y, double z, float partialTicks,
+                                     int destroyStage, float alpha, @NotNull BufferBuilder buffer) {
         MetaTileEntity metaTileEntity = te.getMetaTileEntity();
         if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
             CCRenderState renderState = CCRenderState.instance();
             renderState.reset();
             renderState.bind(buffer);
             renderState.setBrightness(te.getWorld(), te.getPos());
-            ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+            ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityFast(renderState,
+                    new Matrix4().translate(x, y, z), partialTicks);
             ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntity(x, y, z, partialTicks);
         }
         if (metaTileEntity != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
-                CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
+                Cover cover = metaTileEntity.getCoverAtSide(side);
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
                     CCRenderState renderState = CCRenderState.instance();
                     renderState.reset();
                     renderState.bind(buffer);
                     renderState.setBrightness(te.getWorld(), te.getPos().offset(side));
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntity(x, y, z, partialTicks);
+                    fastRender.renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+                    fastRender.renderMetaTileEntity(x, y, z, partialTicks);
                 }
             }
         }
     }
 
     @Override
-    public boolean isGlobalRenderer(@Nonnull MetaTileEntityHolder te) {
+    public boolean isGlobalRenderer(@NotNull MetaTileEntityHolder te) {
         if (te.getMetaTileEntity() instanceof IFastRenderMetaTileEntity) {
             return ((IFastRenderMetaTileEntity) te.getMetaTileEntity()).isGlobalRenderer();
         }

@@ -1,15 +1,18 @@
 package gregtech.api.worldgen.config;
 
-import com.google.gson.JsonObject;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.WorldBlockPredicate;
 import gregtech.api.worldgen.filler.BlockFiller;
 import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.shape.ShapeGenerator;
+
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 
-import javax.annotation.Nonnull;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -17,7 +20,8 @@ public class OreDepositDefinition implements IWorldgenDefinition {
 
     public static final Function<Biome, Integer> NO_BIOME_INFLUENCE = biome -> 0;
     public static final Predicate<WorldProvider> PREDICATE_SURFACE_WORLD = WorldProvider::isSurfaceWorld;
-    public static final WorldBlockPredicate PREDICATE_STONE_TYPE = (state, world, pos) -> StoneType.computeStoneType(state, world, pos) != null;
+    public static final WorldBlockPredicate PREDICATE_STONE_TYPE = (state, world, pos) -> StoneType
+            .computeStoneType(state, world, pos) != null;
 
     private final String depositName;
 
@@ -26,7 +30,7 @@ public class OreDepositDefinition implements IWorldgenDefinition {
     private float density;
     private String assignedName;
     private String description;
-    private final int[] heightLimit = new int[]{Integer.MIN_VALUE, Integer.MAX_VALUE};
+    private final int[] heightLimit = new int[] { Integer.MIN_VALUE, Integer.MAX_VALUE };
     private boolean countAsVein = true;
 
     private Function<Biome, Integer> biomeWeightModifier = NO_BIOME_INFLUENCE;
@@ -42,11 +46,11 @@ public class OreDepositDefinition implements IWorldgenDefinition {
     }
 
     @Override
-    public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
+    public boolean initializeFromConfig(@NotNull JsonObject configRoot) {
         this.weight = configRoot.get("weight").getAsInt();
         this.density = configRoot.get("density").getAsFloat();
         if (configRoot.has("name")) {
-            this.assignedName = configRoot.get("name").getAsString();
+            this.assignedName = LocalizationUtils.format(configRoot.get("name").getAsString());
         }
         if (configRoot.has("description")) {
             this.description = configRoot.get("description").getAsString();
@@ -70,14 +74,16 @@ public class OreDepositDefinition implements IWorldgenDefinition {
             this.dimensionFilter = WorldConfigUtils.createWorldPredicate(configRoot.get("dimension_filter"));
         }
         if (configRoot.has("generation_predicate")) {
-            this.generationPredicate = PredicateConfigUtils.createBlockStatePredicate(configRoot.get("generation_predicate"));
+            this.generationPredicate = PredicateConfigUtils
+                    .createBlockStatePredicate(configRoot.get("generation_predicate"));
         }
         if (configRoot.has("vein_populator")) {
             JsonObject object = configRoot.get("vein_populator").getAsJsonObject();
             this.veinPopulator = WorldGenRegistry.INSTANCE.createVeinPopulator(object);
         }
         this.blockFiller = WorldGenRegistry.INSTANCE.createBlockFiller(configRoot.get("filler").getAsJsonObject());
-        this.shapeGenerator = WorldGenRegistry.INSTANCE.createShapeGenerator(configRoot.get("generator").getAsJsonObject());
+        this.shapeGenerator = WorldGenRegistry.INSTANCE
+                .createShapeGenerator(configRoot.get("generator").getAsJsonObject());
 
         if (veinPopulator != null) {
             veinPopulator.initializeForVein(this);
@@ -85,7 +91,10 @@ public class OreDepositDefinition implements IWorldgenDefinition {
         return true;
     }
 
-    //This is the file name
+    /**
+     * Must be converted using {@link gregtech.api.util.FileUtility#slashToNativeSep(String)}
+     * before it can be used as a file path
+     */
     @Override
     public String getDepositName() {
         return depositName;
@@ -175,27 +184,33 @@ public class OreDepositDefinition implements IWorldgenDefinition {
             return false;
         if ((this.assignedName == null && objDeposit.getAssignedName() != null) ||
                 (this.assignedName != null && objDeposit.getAssignedName() == null) ||
-                (this.assignedName != null && objDeposit.getAssignedName() != null && !this.assignedName.equals(objDeposit.getAssignedName())))
+                (this.assignedName != null && objDeposit.getAssignedName() != null &&
+                        !this.assignedName.equals(objDeposit.getAssignedName())))
             return false;
         if ((this.description == null && objDeposit.getDescription() != null) ||
                 (this.description != null && objDeposit.getDescription() == null) ||
-                (this.description != null && objDeposit.getDescription() != null && !this.description.equals(objDeposit.getDescription())))
+                (this.description != null && objDeposit.getDescription() != null &&
+                        !this.description.equals(objDeposit.getDescription())))
             return false;
         if ((this.biomeWeightModifier == null && objDeposit.getBiomeWeightModifier() != null) ||
                 (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() == null) ||
-                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null && !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null &&
+                        !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
             return false;
         if ((this.dimensionFilter == null && objDeposit.getDimensionFilter() != null) ||
                 (this.dimensionFilter != null && objDeposit.getDimensionFilter() == null) ||
-                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null && !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null &&
+                        !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
             return false;
         if ((this.generationPredicate == null && objDeposit.getGenerationPredicate() != null) ||
                 (this.generationPredicate != null && objDeposit.getGenerationPredicate() == null) ||
-                (this.generationPredicate != null && objDeposit.getGenerationPredicate() != null && !this.generationPredicate.equals(objDeposit.getGenerationPredicate())))
+                (this.generationPredicate != null && objDeposit.getGenerationPredicate() != null &&
+                        !this.generationPredicate.equals(objDeposit.getGenerationPredicate())))
             return false;
         if ((this.veinPopulator == null && objDeposit.getVeinPopulator() != null) ||
                 (this.veinPopulator != null && objDeposit.getVeinPopulator() == null) ||
-                (this.veinPopulator != null && objDeposit.getVeinPopulator() != null && !this.veinPopulator.equals(objDeposit.getVeinPopulator())))
+                (this.veinPopulator != null && objDeposit.getVeinPopulator() != null &&
+                        !this.veinPopulator.equals(objDeposit.getVeinPopulator())))
             return false;
 
         return super.equals(obj);

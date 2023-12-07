@@ -1,10 +1,12 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class AbstractCTMBakedModelVisitor extends MethodVisitor implements Opcodes {
+
     public static final String TARGET_CLASS_NAME = "team/chisel/ctm/client/model/AbstractCTMBakedModel";
     public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME,
             "func_188616_a",
@@ -20,7 +22,6 @@ public class AbstractCTMBakedModelVisitor extends MethodVisitor implements Opcod
                     "Lnet/minecraft/util/EnumFacing;" +
                     "J" +
                     ")Ljava/util/List;");
-
 
     public AbstractCTMBakedModelVisitor(MethodVisitor mv) {
         super(ASM5, mv);

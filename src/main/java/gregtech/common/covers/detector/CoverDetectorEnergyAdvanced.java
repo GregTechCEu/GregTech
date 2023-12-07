@@ -1,20 +1,15 @@
 package gregtech.common.covers.detector;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +19,12 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 
-import javax.annotation.Nonnull;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements CoverWithUI {
 
@@ -33,27 +33,27 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     private static final long DEFAULT_MIN_EU = 0, DEFAULT_MAX_EU = 2048;
     private static final int DEFAULT_MIN_PERCENT = 33, DEFAULT_MAX_PERCENT = 66;
 
-    public long minValue, maxValue;
-    private int outputAmount;
-    private boolean usePercent;
+    public long minValue = DEFAULT_MIN_EU;
+    public long maxValue = DEFAULT_MAX_EU;
+    private int outputAmount = 0;
+    private boolean usePercent = false;
     private WidgetGroup widgetsToUpdate;
 
-    public CoverDetectorEnergyAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
-        this.minValue = DEFAULT_MIN_EU;
-        this.maxValue = DEFAULT_MAX_EU;
-        this.outputAmount = 0;
-        this.usePercent = false;
+    public CoverDetectorEnergyAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                                       @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_ENERGY_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.DETECTOR_ENERGY_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!this.coverHolder.getWorld().isRemote) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
+        if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
@@ -61,21 +61,22 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     @Override
     public void update() {
-        if (coverHolder.getOffsetTimer() % 20 != 0) return;
+        if (getOffsetTimer() % 20 != 0) return;
 
-        IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
-        if (energyContainer != null) {
-            if (usePercent) {
-                if (energyContainer.getEnergyCapacity() > 0) {
-                    float ratio = (float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
-                    this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
-                } else {
-                    this.outputAmount = isInverted() ? 0 : 15;
-                }
+        long storedEnergy = getCoverHolderStored();
+        long energyCapacity = getCoverHolderCapacity();
+
+        if (usePercent) {
+            if (energyCapacity > 0) {
+                float ratio = (float) storedEnergy / energyCapacity;
+                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue,
+                        this.minValue, isInverted(), this.outputAmount);
             } else {
-                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
-                        this.maxValue, this.minValue, isInverted(), this.outputAmount);
+                this.outputAmount = isInverted() ? 0 : 15;
             }
+        } else {
+            this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(storedEnergy,
+                    this.maxValue, this.minValue, isInverted(), this.outputAmount);
         }
         setRedstoneSignalOutput(outputAmount);
     }
@@ -99,17 +100,17 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
         // change modes between percent and discrete EU
         group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.modes_label"));
-        group.addWidget(new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
-                "cover.advanced_energy_detector.mode_eu", "cover.advanced_energy_detector.mode_percent")
-                .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip")
-        );
+        group.addWidget(
+                new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
+                        "cover.advanced_energy_detector.mode_eu", "cover.advanced_energy_detector.mode_percent")
+                                .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip"));
 
         // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.advanced_energy_detector.invert_label"));
-        group.addWidget(new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
-                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
-        );
+        group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
+        group.addWidget(
+                new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
+                                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip"));
 
         return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108 + (SIZE))
                 .widget(group)
@@ -120,14 +121,16 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     private WidgetGroup constructWidgetsToUpdate() {
         WidgetGroup sync = new WidgetGroup();
 
-        sync.addWidget(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setMaxLength(this.getLength())
-                .setPostFix(this.getPostFix()));
-        sync.addWidget(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setMaxLength(this.getLength())
-                .setPostFix(this.getPostFix()));
+        sync.addWidget(
+                new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
+                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                        .setMaxLength(this.getLength())
+                        .setPostFix(this.getPostFix()));
+        sync.addWidget(
+                new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
+                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                        .setMaxLength(this.getLength())
+                        .setPostFix(this.getPostFix()));
         return sync;
     }
 
@@ -187,20 +190,17 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         return usePercent ? 3 : 19;
     }
 
-    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
         tagCompound.setBoolean("usePercent", this.usePercent);
-
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.minValue = tagCompound.getLong("minEU");
         this.maxValue = tagCompound.getLong("maxEU");
@@ -210,8 +210,8 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         readDeprecatedInvertedKeyFromNBT(tagCompound);
     }
 
-    //inverted here was saved using different key, now it is normalized but construction is for compatibility
-    private void readDeprecatedInvertedKeyFromNBT(@Nonnull NBTTagCompound tagCompound) {
+    // inverted here was saved using different key, now it is normalized but construction is for compatibility
+    private void readDeprecatedInvertedKeyFromNBT(@NotNull NBTTagCompound tagCompound) {
         String oldInvertedKey = "inverted";
         if (!tagCompound.hasKey(NBT_KEY_IS_INVERTED) && tagCompound.hasKey(oldInvertedKey)) {
             setInverted(tagCompound.getBoolean(oldInvertedKey));
@@ -219,7 +219,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public void writeInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeLong(this.minValue);
         packetBuffer.writeLong(this.maxValue);
@@ -228,7 +228,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public void readInitialSyncData(@Nonnull PacketBuffer packetBuffer) {
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.minValue = packetBuffer.readLong();
         this.maxValue = packetBuffer.readLong();

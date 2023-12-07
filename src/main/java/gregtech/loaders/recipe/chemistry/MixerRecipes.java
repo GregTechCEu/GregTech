@@ -238,6 +238,19 @@ public class MixerRecipes {
                 .output(dust, BlackSteel, 5)
                 .buildAndRegister();
 
+        // Black Steel shortcut
+        // Normal recipe would be 125 ticks per recipe at HV overclock, plus 125 ticks for the Black Bronze step,
+        // for a total of 750 ticks. This recipe is 5 batches at once, so is equivalent time but saves a step.
+        MIXER_RECIPES.recipeBuilder().duration(750).EUt(VA[HV])
+                .input(dust, Copper, 3)
+                .input(dust, Gold)
+                .input(dust, Silver)
+                .input(dust, Nickel, 5)
+                .input(dust, Steel, 15)
+                .circuitMeta(2)
+                .output(dust, BlackSteel, 25)
+                .buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder().duration(600).EUt(VA[ULV])
                 .input(dust, Saltpeter, 2)
                 .input(dust, Sulfur)
@@ -565,6 +578,14 @@ public class MixerRecipes {
                 .fluidInputs(Oxygen.getFluid(8000))
                 .circuitMeta(4)
                 .output(dust, RutheniumTriniumAmericiumNeutronate, 14)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(300).EUt(VA[EV])
+                .input(dust, Ruthenium, 4)
+                .input(dust, Tungsten, 2)
+                .input(dust, Molybdenum)
+                .circuitMeta(1)
+                .output(dust, RTMAlloy, 7)
                 .buildAndRegister();
     }
 }

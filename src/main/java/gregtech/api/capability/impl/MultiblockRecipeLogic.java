@@ -1,7 +1,10 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.*;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMultiblockController;
+import gregtech.api.capability.IMultipleRecipeMaps;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -10,12 +13,14 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +41,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void update() {
-    }
+    public void update() {}
 
     public void updateWorkable() {
         super.update();
@@ -111,7 +115,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
+                    getInputInventory().getSlots() > 0) {
                 boolean canWork = false;
                 if (invalidatedInputList.isEmpty()) {
                     return true;
@@ -122,7 +127,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     metaTileEntity.getNotifiedFluidInputList().clear();
                     metaTileEntity.getNotifiedItemInputList().clear();
                 } else {
-                    Iterator<IItemHandlerModifiable> notifiedIter = metaTileEntity.getNotifiedItemInputList().iterator();
+                    Iterator<IItemHandlerModifiable> notifiedIter = metaTileEntity.getNotifiedItemInputList()
+                            .iterator();
                     while (notifiedIter.hasNext()) {
                         IItemHandlerModifiable bus = notifiedIter.next();
                         Iterator<IItemHandlerModifiable> invalidatedIter = invalidatedInputList.iterator();
@@ -166,7 +172,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // do not run recipes when there are more than 5 maintenance problems
         // Maintenance can apply to all multiblocks, so cast to a base multiblock class
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-        if (ConfigHolder.machines.enableMaintenance && controller.hasMaintenanceMechanics() && controller.getNumMaintenanceProblems() > 5) {
+        if (ConfigHolder.machines.enableMaintenance && controller.hasMaintenanceMechanics() &&
+                controller.getNumMaintenanceProblems() > 5) {
             return;
         }
 
@@ -174,7 +181,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
+                    getInputInventory().getSlots() > 0) {
                 trySearchNewRecipeDistinct();
                 return;
             }
@@ -184,7 +192,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     /**
-     * Put into place so multiblocks can override {@link AbstractRecipeLogic#trySearchNewRecipe()} without having to deal with
+     * Put into place so multiblocks can override {@link AbstractRecipeLogic#trySearchNewRecipe()} without having to
+     * deal with
      * the maintenance and distinct logic in {@link MultiblockRecipeLogic#trySearchNewRecipe()}
      */
     protected void trySearchNewRecipeCombined() {
@@ -229,7 +238,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 }
             }
             if (currentRecipe == null) {
-                //no valid recipe found, invalidate this bus
+                // no valid recipe found, invalidate this bus
                 invalidatedInputList.add(bus);
             }
         }
@@ -239,7 +248,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     public void invalidateInputs() {
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
         RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-        if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
+        if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
+                getInputInventory().getSlots() > 0) {
             invalidatedInputList.add(currentDistinctInputBus);
         } else {
             super.invalidateInputs();
@@ -251,11 +261,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
-
-        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
+        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
+                metaTileEntity.getFluidOutputLimit());
 
         recipe = findParallelRecipe(
-                this,
                 recipe,
                 currentDistinctInputBus,
                 getInputTank(),
@@ -273,7 +282,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull int[] values, @NotNull IRecipePropertyStorage storage) {
         super.modifyOverclockPre(values, storage);
 
         // apply maintenance bonuses
@@ -286,7 +295,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
         super.modifyOverclockPost(overclockResults, storage);
 
         // apply maintenance penalties
@@ -300,13 +309,39 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     public long getMaximumOverclockVoltage() {
-        return getMaxVoltage();
+        IEnergyContainer energyContainer = getEnergyContainer();
+        if (energyContainer instanceof EnergyContainerList) {
+            long voltage;
+            long amperage;
+            if (energyContainer.getInputVoltage() > energyContainer.getOutputVoltage()) {
+                voltage = energyContainer.getInputVoltage();
+                amperage = energyContainer.getInputAmperage();
+            } else {
+                voltage = energyContainer.getOutputVoltage();
+                amperage = energyContainer.getOutputAmperage();
+            }
+
+            if (amperage == 1) {
+                // amperage is 1 when the energy is not exactly on a tier
+
+                // the voltage for recipe search is always on tier, so take the closest lower tier
+                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+            } else {
+                // amperage != 1 means the voltage is exactly on a tier
+                // ignore amperage, since only the voltage is relevant for recipe search
+                // amps are never > 3 in an EnergyContainerList
+                return voltage;
+            }
+        }
+        return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
     }
 
-    @Nonnull
+    @NotNull
     protected Tuple<Integer, Double> getMaintenanceValues() {
-        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
-        int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
+        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ?
+                (MultiblockWithDisplayBase) metaTileEntity : null;
+        int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() ||
+                !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
         double durationMultiplier = 1.0D;
         if (displayBase != null && displayBase.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
             durationMultiplier = displayBase.getMaintenanceDurationMultiplier();
@@ -315,7 +350,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public boolean checkRecipe(@Nonnull Recipe recipe) {
+    public boolean checkRecipe(@NotNull Recipe recipe) {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false)) {
             controller.checkRecipe(recipe, true);
@@ -368,32 +403,35 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         IEnergyContainer energyContainer = getEnergyContainer();
-        if (energyContainer instanceof EnergyContainerList) {
-            long voltage;
-            long amperage;
-            if (energyContainer.getInputVoltage() > energyContainer.getOutputVoltage()) {
-                voltage = energyContainer.getInputVoltage();
-                amperage = energyContainer.getInputAmperage();
-            } else {
-                voltage = energyContainer.getOutputVoltage();
-                amperage = energyContainer.getOutputAmperage();
-            }
-
-            if (amperage == 1) {
-                // amperage is 1 when the energy is not exactly on a tier
-
-                // the voltage for recipe search is always on tier, so take the closest lower tier
+        if (!consumesEnergy()) {
+            // Generators
+            long voltage = energyContainer.getOutputVoltage();
+            long amperage = energyContainer.getOutputAmperage();
+            if (energyContainer instanceof EnergyContainerList && amperage == 1) {
+                // Amperage is 1 when the energy is not exactly on a tier.
+                // The voltage for recipe search is always on tier, so take the closest lower tier.
+                // List check is done because single hatches will always be a "clean voltage," no need
+                // for any additional checks.
                 return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+            }
+            return voltage;
+        } else {
+            // Machines
+            if (energyContainer instanceof EnergyContainerList energyList) {
+                long highestVoltage = energyList.getHighestInputVoltage();
+                if (energyList.getNumHighestInputContainers() > 1) {
+                    // allow tier + 1 if there are multiple hatches present at the highest tier
+                    int tier = GTUtility.getTierByVoltage(highestVoltage);
+                    return GTValues.V[Math.min(tier + 1, GTValues.MAX)];
+                } else {
+                    return highestVoltage;
+                }
             } else {
-                // amperage != 1 means the voltage is exactly on a tier
-                // ignore amperage, since only the voltage is relevant for recipe search
-                // amps are never > 3 in an EnergyContainerList
-                return voltage;
+                return energyContainer.getInputVoltage();
             }
         }
-        return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
     }
 
     @Nullable

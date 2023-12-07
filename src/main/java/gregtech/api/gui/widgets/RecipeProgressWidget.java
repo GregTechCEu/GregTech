@@ -1,6 +1,5 @@
 package gregtech.api.gui.widgets;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.recipes.RecipeMap;
@@ -9,35 +8,40 @@ import gregtech.integration.IntegrationModule;
 import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.recipe.RecipeMapCategory;
 import gregtech.modules.GregTechModules;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.common.Loader;
+
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
 public class RecipeProgressWidget extends ProgressWidget {
 
     private final RecipeMap<?> recipeMap;
-    private static final int HOVER_TEXT_WIDTH = 200;
 
-    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, RecipeMap<?> recipeMap) {
+    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height,
+                                RecipeMap<?> recipeMap) {
         super(progressSupplier, x, y, width, height);
         this.recipeMap = recipeMap;
+        setHoverTextConsumer(
+                list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
     }
 
-    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
+    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height,
+                                TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
         super(progressSupplier, x, y, width, height, fullImage, moveType);
         this.recipeMap = recipeMap;
+        setHoverTextConsumer(
+                list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
     }
 
-    public RecipeProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
+    public RecipeProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage,
+                                MoveType moveType, RecipeMap<?> recipeMap) {
         super(ticksPerCycle, x, y, width, height, fullImage, moveType);
         this.recipeMap = recipeMap;
+        setHoverTextConsumer(
+                list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
     }
 
     @Override
@@ -68,17 +72,4 @@ public class RecipeProgressWidget extends ProgressWidget {
         }
         return false;
     }
-
-
-    @Override
-    public void drawInForeground(int mouseX, int mouseY) {
-        super.drawInForeground(mouseX, mouseY);
-        if (isMouseOverElement(mouseX, mouseY) && Loader.isModLoaded(GTValues.MODID_JEI)) {
-            Minecraft mc = Minecraft.getMinecraft();
-            GuiUtils.drawHoveringText(Collections.singletonList(I18n.format("gui.widget.recipeProgressWidget.default_tooltip")), mouseX, mouseY,
-                    sizes.getScreenWidth(),
-                    sizes.getScreenHeight(), HOVER_TEXT_WIDTH, mc.fontRenderer);
-        }
-    }
-
 }

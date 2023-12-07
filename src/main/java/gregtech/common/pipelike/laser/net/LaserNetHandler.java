@@ -2,49 +2,57 @@ package gregtech.common.pipelike.laser.net;
 
 import gregtech.api.capability.ILaserContainer;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LaserNetHandler implements ILaserContainer {
+
     private LaserPipeNet net;
     private final TileEntityLaserPipe pipe;
     private final EnumFacing facing;
-    private final World world;
 
-    public LaserNetHandler(LaserPipeNet net, @Nonnull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
+    public LaserNetHandler(LaserPipeNet net, @NotNull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
-        this.world = pipe.getWorld();
     }
+
     public void updateNetwork(LaserPipeNet net) {
         this.net = net;
     }
 
-    @Override
-    public long acceptEnergy(EnumFacing side, long amount) {
-        ILaserContainer handler = getInnerContainer();
-        if (handler == null) return 0;
-        long energyUsed = handler.acceptEnergy(side, amount);
-        if (energyUsed > 0) {
-            for (BlockPos pos : net.getAllNodes().keySet()) {
-                if (world.getTileEntity(pos) instanceof TileEntityLaserPipe laserPipe) {
-                    laserPipe.setActive(true, 20);
-                }
+    private void setPipesActive() {
+        for (BlockPos pos : net.getAllNodes().keySet()) {
+            if (pipe.getWorld().getTileEntity(pos) instanceof TileEntityLaserPipe laserPipe) {
+                laserPipe.setActive(true, 100);
             }
         }
-        return energyUsed;
+    }
+
+    @Nullable
+    private ILaserContainer getInnerContainer() {
+        if (net == null || pipe == null || pipe.isInvalid() || facing == null) {
+            return null;
+        }
+
+        LaserRoutePath data = net.getNetData(pipe.getPipePos(), facing);
+        if (data == null) {
+            return null;
+        }
+
+        return data.getHandler();
     }
 
     @Override
-    public long changeEnergy(long amount) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
         ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
-        return handler.changeEnergy(amount);
+        setPipesActive();
+        return handler.acceptEnergyFromNetwork(side, voltage, amperage);
     }
 
     @Override
@@ -55,24 +63,25 @@ public class LaserNetHandler implements ILaserContainer {
     }
 
     @Override
+    public boolean outputsEnergy(EnumFacing side) {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return false;
+        return handler.outputsEnergy(side);
+    }
+
+    @Override
+    public long changeEnergy(long amount) {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return 0;
+        setPipesActive();
+        return handler.changeEnergy(amount);
+    }
+
+    @Override
     public long getEnergyStored() {
         ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
         return handler.getEnergyStored();
-    }
-
-    @Nullable
-    private ILaserContainer getInnerContainer() {
-        if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
-            return null;
-        }
-
-        LaserPipeNet.LaserData data = net.getNetData(pipe.getPipePos(), facing);
-        if (data == null) {
-            return null;
-        }
-
-        return data.getHandler(world);
     }
 
     @Override
@@ -82,7 +91,22 @@ public class LaserNetHandler implements ILaserContainer {
         return handler.getEnergyCapacity();
     }
 
+    @Override
+    public long getInputAmperage() {
+        return 0;
+    }
+
+    @Override
+    public long getInputVoltage() {
+        return 0;
+    }
+
     public LaserPipeNet getNet() {
         return net;
+    }
+
+    @Override
+    public boolean isOneProbeHidden() {
+        return true;
     }
 }

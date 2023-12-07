@@ -1,61 +1,73 @@
 package gregtech.common.covers;
 
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverWithUI;
+import gregtech.api.cover.CoverableView;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.ModularUI;
+import gregtech.client.renderer.texture.Textures;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.client.renderer.texture.Textures;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
-public class CoverStorage extends CoverBehavior implements CoverWithUI {
+public class CoverStorage extends CoverBase implements CoverWithUI {
 
     private final ItemStackHandler storageHandler = new ItemStackHandler(9);
     private static final int MAX_WIDTH = 176;
     private static final int MAX_HEIGHT = 126;
     private static final int SLOT_SIZE = 18;
 
-    public CoverStorage(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
+    public CoverStorage(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                        @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     @Override
-    public boolean canAttach() {
+    public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         return true;
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.STORAGE.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.STORAGE.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public void onRemoved() {
-        NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, storageHandler);
-        for (ItemStack itemStack : drops) {
-            Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
+    public void onRemoval() {
+        dropInventoryContents(storageHandler);
+    }
+
+    @Override
+    public @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                  @NotNull CuboidRayTraceResult hitResult) {
+        if (!getCoverableView().getWorld().isRemote) {
+            openUI((EntityPlayerMP) player);
         }
+        return EnumActionResult.SUCCESS;
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!coverHolder.getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
+        if (!getWorld().isRemote) {
+            openUI((EntityPlayerMP) player);
         }
         return EnumActionResult.SUCCESS;
     }
@@ -65,7 +77,8 @@ public class CoverStorage extends CoverBehavior implements CoverWithUI {
         ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, MAX_WIDTH, MAX_HEIGHT);
         builder.label(5, 5, "cover.storage.title");
         for (int index = 0; index < storageHandler.getSlots(); index++) {
-            builder.slot(storageHandler, index, (index * SLOT_SIZE) + 7, (MAX_HEIGHT - SLOT_SIZE * 5) / 2, true, true, GuiTextures.SLOT);
+            builder.slot(storageHandler, index, (index * SLOT_SIZE) + 7, (MAX_HEIGHT - SLOT_SIZE * 5) / 2, true, true,
+                    GuiTextures.SLOT);
         }
 
         builder.bindPlayerInventory(player.inventory, (MAX_HEIGHT - SLOT_SIZE * 2) / 2 - 1);
@@ -73,27 +86,25 @@ public class CoverStorage extends CoverBehavior implements CoverWithUI {
         return builder.build(this, player);
     }
 
-    @Override
-    public <T> T getCapability(Capability<T> capability, T defaultValue) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (defaultValue == null) {
-                return null;
-            }
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(storageHandler);
-        }
-
-        return defaultValue;
+    /**
+     * @deprecated Only exists for compatibility with the crafting table cover and will be removed in the future.
+     *             Do not depend on this method.
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @ApiStatus.Internal
+    @Deprecated
+    public @NotNull IItemHandler getStorageHandler() {
+        return this.storageHandler;
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setTag("Storage", this.storageHandler.serializeNBT());
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.storageHandler.deserializeNBT(tagCompound.getCompoundTag("Storage"));
     }

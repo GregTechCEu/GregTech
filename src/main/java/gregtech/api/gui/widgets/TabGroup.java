@@ -11,6 +11,7 @@ import gregtech.api.gui.widgets.tab.VerticalTabListRenderer;
 import gregtech.api.gui.widgets.tab.VerticalTabListRenderer.HorizontalLocation;
 import gregtech.api.gui.widgets.tab.VerticalTabListRenderer.VerticalStartCorner;
 import gregtech.api.util.Position;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 
@@ -109,7 +110,8 @@ public class TabGroup<T extends AbstractWidgetGroup> extends AbstractWidgetGroup
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
-        this.tabListRenderer.renderTabs(gui, getPosition(), tabInfos, sizes.getWidth(), sizes.getHeight(), selectedTabIndex);
+        this.tabListRenderer.renderTabs(gui, getPosition(), tabInfos, sizes.getWidth(), sizes.getHeight(),
+                selectedTabIndex);
     }
 
     @Override
@@ -120,7 +122,8 @@ public class TabGroup<T extends AbstractWidgetGroup> extends AbstractWidgetGroup
             int[] tabSizes = tabOnMouse.getSecond();
             ITabInfo tabInfo = tabOnMouse.getFirst();
             boolean isSelected = tabInfos.get(selectedTabIndex) == tabInfo;
-            tabInfo.renderHoverText(tabSizes[0], tabSizes[1], tabSizes[2], tabSizes[3], sizes.getWidth(), sizes.getHeight(), isSelected, mouseX, mouseY);
+            tabInfo.renderHoverText(tabSizes[0], tabSizes[1], tabSizes[2], tabSizes[3], sizes.getWidth(),
+                    sizes.getHeight(), isSelected, mouseX, mouseY);
         }
     }
 
@@ -193,8 +196,10 @@ public class TabGroup<T extends AbstractWidgetGroup> extends AbstractWidgetGroup
 
         HORIZONTAL_TOP_LEFT(() -> new HorizontalTabListRenderer(HorizontalStartCorner.LEFT, VerticalLocation.TOP)),
         HORIZONTAL_TOP_RIGHT(() -> new HorizontalTabListRenderer(HorizontalStartCorner.RIGHT, VerticalLocation.TOP)),
-        HORIZONTAL_BOTTOM_LEFT(() -> new HorizontalTabListRenderer(HorizontalStartCorner.LEFT, VerticalLocation.BOTTOM)),
-        HORIZONTAL_BOTTOM_RIGHT(() -> new HorizontalTabListRenderer(HorizontalStartCorner.RIGHT, VerticalLocation.BOTTOM)),
+        HORIZONTAL_BOTTOM_LEFT(
+                () -> new HorizontalTabListRenderer(HorizontalStartCorner.LEFT, VerticalLocation.BOTTOM)),
+        HORIZONTAL_BOTTOM_RIGHT(
+                () -> new HorizontalTabListRenderer(HorizontalStartCorner.RIGHT, VerticalLocation.BOTTOM)),
         VERTICAL_LEFT_TOP(() -> new VerticalTabListRenderer(VerticalStartCorner.TOP, HorizontalLocation.LEFT)),
         VERTICAL_LEFT_BOTTOM(() -> new VerticalTabListRenderer(VerticalStartCorner.BOTTOM, HorizontalLocation.LEFT)),
         VERTICAL_RIGHT_TOP(() -> new VerticalTabListRenderer(VerticalStartCorner.TOP, HorizontalLocation.RIGHT)),
@@ -206,5 +211,4 @@ public class TabGroup<T extends AbstractWidgetGroup> extends AbstractWidgetGroup
             this.supplier = supplier;
         }
     }
-
 }

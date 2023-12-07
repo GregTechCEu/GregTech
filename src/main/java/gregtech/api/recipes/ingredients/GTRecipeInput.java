@@ -2,17 +2,20 @@ package gregtech.api.recipes.ingredients;
 
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectLists;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectLists;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -22,16 +25,29 @@ import java.util.List;
  * Forge uses are nor Hashable neither implement equals for these cases,
  * as they use a list of ItemStacks internally.
  * <p>
- * The behavior of the ingredient is determined by the GTingredient used.
+ * The behavior of the ingredient is determined by the GTRecipeInput used.
+ * <p>
+ * Each GTRecipeInput is cached by an internal hashtable, and any duplicative
+ * instances will be replaced by identical object previously created. This
+ * caching strategy is turned off after recipe registration is over.
  */
 public abstract class GTRecipeInput {
 
     /**
-     * All GTRecipeInput instances will be cached and reused through this collection.
-     * This cache will be released on FMLLoadCompleteEvent.
+     * Sorting order of standard recipe inputs.
      */
+    public static final int SORTING_ORDER_COMMON = 0;
+    /**
+     * Sorting order of non-consumable recipe inputs.
+     */
+    public static final int SORTING_ORDER_NC = 5;
+    /**
+     * Sorting order of non-consumable {@link IntCircuitIngredient}s.
+     */
+    public static final int SORTING_ORDER_INT_CIRCUIT = 10;
 
-    public static ObjectOpenHashSet<GTRecipeInput> INSTANCES = new ObjectOpenHashSet<>(15072);
+    public static final Comparator<GTRecipeInput> RECIPE_INPUT_COMPARATOR = Comparator
+            .comparingInt(GTRecipeInput::getSortingOrder);
 
     /**
      * All items will initially match the with is NBT (OreDicts have a null tag?)
@@ -43,23 +59,32 @@ public abstract class GTRecipeInput {
     protected NBTMatcher nbtMatcher;
     protected NBTCondition nbtCondition;
 
-    static GTRecipeInput getFromCache(GTRecipeInput realIngredient) {
-        GTRecipeInput cachedIngredient = INSTANCES.get(realIngredient);
-        if (cachedIngredient == null) {
-            INSTANCES.add(cachedIngredient = realIngredient);
-        }
-        return cachedIngredient;
-    }
+    private boolean cached;
 
+    private int hash;
+    protected boolean hashCached;
+
+    /**
+     * @deprecated Calling this function is unnecessary. Use the ingredient directly.
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(GTRecipeInput gtRecipeIngredient) {
-        return getFromCache(gtRecipeIngredient);
+        return gtRecipeIngredient;
     }
 
     public int getAmount() {
         return amount;
     }
 
-    abstract GTRecipeInput copy();
+    public boolean isCached() {
+        return cached;
+    }
+
+    public void setCached() {
+        this.cached = true;
+    }
+
+    protected abstract GTRecipeInput copy();
 
     /**
      * Returns a copy of the ingredient with the given amount.
@@ -70,17 +95,36 @@ public abstract class GTRecipeInput {
      */
     public abstract GTRecipeInput copyWithAmount(int amount);
 
+    /**
+     * Returns either this instance with {@link GTRecipeInput#amount} field modified (for non-cached recipe inputs)
+     * or new copy with given amount (for cached recipe inputs).
+     */
+    public GTRecipeInput withAmount(int amount) {
+        if (getAmount() == amount) {
+            return this;
+        } else if (isCached()) {
+            return copyWithAmount(amount);
+        } else {
+            this.amount = amount;
+            this.hashCached = false;
+            return this;
+        }
+    }
+
     public GTRecipeInput setNonConsumable() {
-        GTRecipeInput copy = copy();
-        copy.isConsumable = false;
-        return getFromCache(copy);
+        if (!isConsumable) return this;
+        GTRecipeInput recipeInput = cached ? copy() : this;
+        recipeInput.isConsumable = false;
+        recipeInput.hashCached = false;
+        return recipeInput;
     }
 
     public GTRecipeInput setNBTMatchingCondition(NBTMatcher nbtMatcher, NBTCondition nbtCondition) {
-        GTRecipeInput copy = copy();
-        copy.nbtMatcher = nbtMatcher;
-        copy.nbtCondition = nbtCondition;
-        return getFromCache(copy);
+        GTRecipeInput recipeInput = cached ? copy() : this;
+        recipeInput.nbtMatcher = nbtMatcher;
+        recipeInput.nbtCondition = nbtCondition;
+        recipeInput.hashCached = false;
+        return recipeInput;
     }
 
     public boolean hasNBTMatchingCondition() {
@@ -123,16 +167,43 @@ public abstract class GTRecipeInput {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        if (!this.hashCached) {
+            this.hash = computeHash();
+            this.hashCached = true;
+        }
+        return this.hash;
+    }
+
+    protected abstract int computeHash();
+
+    @Override
+    public abstract boolean equals(Object obj);
+
     /**
      * @return true if the input matches another input, while ignoring its amount field and
-     * non-consumable status.
-     * <p>
-     * used for unique input matching in RecipeMap
-     * @see gregtech.api.recipes.RecipeMap#uniqueIngredientsList(List) (GTRecipeInput)
+     *         non-consumable status.
+     *         <p>
+     *         used for unique input matching in RecipeMap
+     * @see gregtech.api.recipes.RecipeMap#uniqueIngredientsList(Collection) RecipeMap#uniqueIngredientsList(Collection)
      */
     public abstract boolean equalIgnoreAmount(GTRecipeInput input);
 
+    /**
+     * Get sorting order of this recipe input instance. Recipe inputs are sorted with ascending order.
+     *
+     * @return sorting order of this recipe input instance
+     * @see #SORTING_ORDER_COMMON
+     * @see #SORTING_ORDER_NC
+     * @see #SORTING_ORDER_INT_CIRCUIT
+     */
+    public int getSortingOrder() {
+        return this.isNonConsumable() ? SORTING_ORDER_NC : SORTING_ORDER_COMMON;
+    }
+
     protected static class ItemToMetaList implements Object2ObjectMap.Entry<Item, List<MetaToTAGList>> {
+
         protected Item item;
         protected List<MetaToTAGList> metaToTAGList;
 
@@ -165,6 +236,7 @@ public abstract class GTRecipeInput {
     }
 
     protected static class MetaToTAGList implements Int2ObjectMap.Entry<List<TagToStack>> {
+
         protected int meta;
         protected List<TagToStack> tagToStack;
 
@@ -202,6 +274,7 @@ public abstract class GTRecipeInput {
     }
 
     protected static class TagToStack implements Object2ObjectMap.Entry<NBTTagCompound, ItemStack> {
+
         NBTTagCompound tag;
         ItemStack stack;
 

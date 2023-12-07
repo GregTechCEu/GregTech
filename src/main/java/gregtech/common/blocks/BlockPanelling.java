@@ -51,5 +51,4 @@ public class BlockPanelling extends VariantBlock<BlockPanelling.PanellingType> {
             return this.harvestLevel;
         }
     }
-
 }

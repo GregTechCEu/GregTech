@@ -1,16 +1,20 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class RenderChunkVisitor extends MethodVisitor implements Opcodes {
+
     public static final String TARGET_CLASS_NAME = "net/minecraft/client/renderer/chunk/RenderChunk";
-    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_178581_b", "(FFFLnet/minecraft/client/renderer/chunk/ChunkCompileTaskGenerator;)V");
+    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_178581_b",
+            "(FFFLnet/minecraft/client/renderer/chunk/ChunkCompileTaskGenerator;)V");
     private static final ObfMapping METHOD_GET_RENDERER = new ObfMapping(
             "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher",
             "func_147546_a",
-            "(Lnet/minecraft/tileentity/TileEntity;)Lnet/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer;").toRuntime();
+            "(Lnet/minecraft/tileentity/TileEntity;)Lnet/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer;")
+                    .toRuntime();
     private static final ObfMapping METHOD_GET_RENDERER_HOOKS = new ObfMapping(
             "gregtech/asm/hooks/RenderChunkHooks",
             "getRenderer",
@@ -20,7 +24,6 @@ public class RenderChunkVisitor extends MethodVisitor implements Opcodes {
         super(ASM5, mv);
     }
 
-
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (opcode == INVOKEVIRTUAL && (METHOD_GET_RENDERER.matches(name, desc))) {
@@ -29,5 +32,4 @@ public class RenderChunkVisitor extends MethodVisitor implements Opcodes {
         }
         super.visitMethodInsn(opcode, owner, name, desc, itf);
     }
-
 }

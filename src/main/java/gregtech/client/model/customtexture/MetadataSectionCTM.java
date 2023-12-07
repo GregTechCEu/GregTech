@@ -1,18 +1,20 @@
 package gregtech.client.model.customtexture;
 
-import com.google.gson.*;
 import net.minecraft.client.resources.data.IMetadataSection;
 import net.minecraft.client.resources.data.IMetadataSectionSerializer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.gson.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Type;
 
 @SideOnly(Side.CLIENT)
 public class MetadataSectionCTM implements IMetadataSection {
+
     public static final String SECTION_NAME = "ctm";
 
     public BlockRenderLayer layer = null;
@@ -48,10 +50,12 @@ public class MetadataSectionCTM implements IMetadataSection {
                     }
                 } else if (extraData.get("light").isJsonObject()) {
                     JsonObject light = extraData.getAsJsonObject("light");
-                    if (light.has("block") && light.get("block").isJsonPrimitive() && light.getAsJsonPrimitive("block").isNumber()) {
+                    if (light.has("block") && light.get("block").isJsonPrimitive() &&
+                            light.getAsJsonPrimitive("block").isNumber()) {
                         ret.blockLight = light.getAsJsonPrimitive("block").getAsInt();
                     }
-                    if (light.has("sky") && light.get("sky").isJsonPrimitive() && light.getAsJsonPrimitive("sky").isNumber()) {
+                    if (light.has("sky") && light.get("sky").isJsonPrimitive() &&
+                            light.getAsJsonPrimitive("sky").isNumber()) {
                         ret.blockLight = light.getAsJsonPrimitive("sky").getAsInt();
                     }
                 }
@@ -64,8 +68,8 @@ public class MetadataSectionCTM implements IMetadataSection {
     public static class Serializer implements IMetadataSectionSerializer<MetadataSectionCTM> {
 
         @Override
-        public @Nullable
-        MetadataSectionCTM deserialize(@Nullable JsonElement json, @Nullable Type typeOfT, @Nullable JsonDeserializationContext context) throws JsonParseException {
+        public @Nullable MetadataSectionCTM deserialize(@Nullable JsonElement json, @Nullable Type typeOfT,
+                                                        @Nullable JsonDeserializationContext context) throws JsonParseException {
             if (json != null && json.isJsonObject()) {
                 JsonObject obj = json.getAsJsonObject();
                 return MetadataSectionCTM.fromJson(obj);
@@ -74,8 +78,7 @@ public class MetadataSectionCTM implements IMetadataSection {
         }
 
         @Override
-        public @Nonnull
-        String getSectionName() {
+        public @NotNull String getSectionName() {
             return SECTION_NAME;
         }
     }

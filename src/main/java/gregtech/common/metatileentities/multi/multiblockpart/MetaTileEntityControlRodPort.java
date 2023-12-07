@@ -17,7 +17,9 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
-public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifiablePart implements IControllable, IFissionReactorHatch, IMultiblockAbilityPart<IControlRodPort>, IControlRodPort {
+public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifiablePart
+                                          implements IControllable, IFissionReactorHatch,
+                                          IMultiblockAbilityPart<IControlRodPort>, IControlRodPort {
 
     private boolean workingEnabled;
     private boolean valid;
@@ -55,21 +57,22 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
 
     @Override
     public boolean checkValidity(int depth) {
-        //Export ports are always considered valid
+        // Export ports are always considered valid
         BlockPos pos = this.getPos();
-        for(int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL)) {
+        for (int i = 1; i < depth; i++) {
+            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) !=
+                    MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL)) {
                 return false;
             }
         }
-        return getWorld().getBlockState(pos.offset(EnumFacing.DOWN, depth)) == MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.REACTOR_VESSEL);
+        return getWorld().getBlockState(pos.offset(EnumFacing.DOWN, depth)) ==
+                MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.REACTOR_VESSEL);
     }
 
     @Override
     public void setValid(boolean valid) {
         this.valid = valid;
     }
-
 
     @Override
     public MultiblockAbility<IControlRodPort> getAbility() {

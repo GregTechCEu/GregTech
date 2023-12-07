@@ -1,14 +1,17 @@
 package gregtech.api.recipes.map;
 
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class MapItemStackNBTIngredient extends MapItemStackIngredient {
+
     protected GTRecipeInput gtRecipeInput = null;
 
     public MapItemStackNBTIngredient(ItemStack stack, int meta, NBTTagCompound tag) {
@@ -20,8 +23,8 @@ public class MapItemStackNBTIngredient extends MapItemStackIngredient {
         this.gtRecipeInput = gtRecipeInput;
     }
 
-    @Nonnull
-    public static List<AbstractMapIngredient> from(@Nonnull GTRecipeInput r) {
+    @NotNull
+    public static List<AbstractMapIngredient> from(@NotNull GTRecipeInput r) {
         ObjectArrayList<AbstractMapIngredient> list = new ObjectArrayList<>();
         for (ItemStack s : r.getInputStacks()) {
             list.add(new MapItemStackNBTIngredient(s, r));

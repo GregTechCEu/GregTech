@@ -3,6 +3,7 @@ package gregtech.core.network.packets;
 import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.IPacket;
 import gregtech.api.util.CapesRegistry;
+
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -41,5 +42,4 @@ public class PacketNotifyCapeChange implements IPacket, IClientExecutor {
     public void executeClient(NetHandlerPlayClient handler) {
         CapesRegistry.giveRawCape(uuid, cape);
     }
-
 }

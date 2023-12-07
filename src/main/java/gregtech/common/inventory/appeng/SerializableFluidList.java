@@ -1,12 +1,5 @@
 package gregtech.common.inventory.appeng;
 
-import appeng.api.config.FuzzyMode;
-import appeng.api.storage.data.IAEFluidStack;
-import appeng.api.storage.data.IItemList;
-import appeng.fluids.util.AEFluidStack;
-import appeng.fluids.util.MeaningfulFluidIterator;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,7 +7,15 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import appeng.api.config.FuzzyMode;
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IItemList;
+import appeng.fluids.util.AEFluidStack;
+import appeng.fluids.util.MeaningfulFluidIterator;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -28,8 +29,7 @@ public class SerializableFluidList implements IItemList<IAEFluidStack>, INBTSeri
 
     private final Reference2ObjectMap<Fluid, IAEFluidStack> records = new Reference2ObjectOpenHashMap<>();
 
-    public SerializableFluidList() {
-    }
+    public SerializableFluidList() {}
 
     @Override
     public void add(IAEFluidStack fluid) {
@@ -58,11 +58,12 @@ public class SerializableFluidList implements IItemList<IAEFluidStack>, INBTSeri
         return !this.iterator().hasNext();
     }
 
-    private IAEFluidStack getOrCreateRecord(@Nonnull IAEFluidStack fluid) {
-        return this.records.computeIfAbsent(fluid.getFluid(), key -> AEFluidStack.fromFluidStack(new FluidStack(key, 0)));
+    private IAEFluidStack getOrCreateRecord(@NotNull IAEFluidStack fluid) {
+        return this.records.computeIfAbsent(fluid.getFluid(),
+                key -> AEFluidStack.fromFluidStack(new FluidStack(key, 0)));
     }
 
-    private IAEFluidStack getRecord(@Nonnull IAEFluidStack fluid) {
+    private IAEFluidStack getRecord(@NotNull IAEFluidStack fluid) {
         return this.records.get(fluid.getFluid());
     }
 

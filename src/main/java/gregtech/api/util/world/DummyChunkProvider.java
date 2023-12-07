@@ -1,14 +1,14 @@
 package gregtech.api.util.world;
 
-import io.netty.util.collection.LongObjectHashMap;
-import io.netty.util.collection.LongObjectMap;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import io.netty.util.collection.LongObjectHashMap;
+import io.netty.util.collection.LongObjectMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DummyChunkProvider implements IChunkProvider {
 
@@ -25,7 +25,7 @@ public class DummyChunkProvider implements IChunkProvider {
         return loadedChunks.get(ChunkPos.asLong(x, z));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Chunk provideChunk(int x, int z) {
         long chunkKey = ChunkPos.asLong(x, z);
@@ -44,7 +44,7 @@ public class DummyChunkProvider implements IChunkProvider {
         return loadedChunks.size() > 0;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String makeString() {
         return "Dummy";

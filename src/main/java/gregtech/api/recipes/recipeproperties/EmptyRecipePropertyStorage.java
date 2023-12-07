@@ -8,9 +8,7 @@ public final class EmptyRecipePropertyStorage implements IRecipePropertyStorage 
 
     public static final EmptyRecipePropertyStorage INSTANCE = new EmptyRecipePropertyStorage();
 
-    private EmptyRecipePropertyStorage() {
-
-    }
+    private EmptyRecipePropertyStorage() {}
 
     @Override
     public boolean store(RecipeProperty<?> recipeProperty, Object value) {
@@ -23,9 +21,7 @@ public final class EmptyRecipePropertyStorage implements IRecipePropertyStorage 
     }
 
     @Override
-    public void freeze(boolean frozen) {
-
-    }
+    public void freeze(boolean frozen) {}
 
     @Override
     public IRecipePropertyStorage copy() {
@@ -54,6 +50,11 @@ public final class EmptyRecipePropertyStorage implements IRecipePropertyStorage 
 
     @Override
     public Set<String> getRecipePropertyKeys() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<RecipeProperty<?>> getPropertyTypes() {
         return Collections.emptySet();
     }
 

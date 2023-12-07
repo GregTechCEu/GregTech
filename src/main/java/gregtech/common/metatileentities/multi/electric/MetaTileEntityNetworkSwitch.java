@@ -1,36 +1,46 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IOpticalComputationHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
+import gregtech.api.capability.IOpticalComputationReceiver;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implements IOpticalComputationProvider {
+
+    private static final int EUT_PER_HATCH = GTValues.VA[GTValues.IV];
 
     private final MultipleComputationHandler computationHandler = new MultipleComputationHandler();
 
@@ -72,13 +82,13 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     @Override
     public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isActive() && !hasNotEnoughEnergy ? computationHandler.requestCWUt(cwut, simulate) : 0;
+        return isActive() && !hasNotEnoughEnergy ? computationHandler.requestCWUt(cwut, simulate, seen) : 0;
     }
 
     @Override
     public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isStructureFormed() ? computationHandler.getMaxCWUt() : 0;
+        return isStructureFormed() ? computationHandler.getMaxCWUt(seen) : 0;
     }
 
     // allows chaining Network Switches together
@@ -98,7 +108,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
                 .where('A', states(getAdvancedState()))
                 .where('X', states(getCasingState()).setMinGlobalLimited(7)
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1, 1))
-                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1))
+                        .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION).setMinGlobalLimited(1, 2))
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_TRANSMISSION).setMinGlobalLimited(1, 1)))
                 .build();
@@ -112,52 +122,54 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.ADVANCED_COMPUTER_CASING);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.COMPUTER_CASING;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     protected @NotNull ICubeRenderer getFrontOverlay() {
         return Textures.NETWORK_SWITCH_OVERLAY;
     }
 
     @Override
-    protected void renderTextures(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.4",
+                TextFormattingUtil.formatNumbers(EUT_PER_HATCH)));
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.max", computationHandler.getMaxCWUt()));
-            if (computationHandler.hasNonBridgingConnections()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.computation.non_bridging")
-                        .setStyle(new Style().setColor(TextFormatting.RED)
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        new TextComponentTranslation("gregtech.multiblock.computation.non_bridging.detailed")))));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.data_bank.providing")
+                .addEnergyUsageExactLine(getEnergyUsage())
+                .addComputationUsageLine(computationHandler.getMaxCWUtForDisplay())
+                .addWorkingStatusLine();
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
         if (isStructureFormed() && computationHandler.hasNonBridgingConnections()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.non_bridging.detailed")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.YELLOW,
+                    "gregtech.multiblock.computation.non_bridging.detailed"));
         }
     }
 
     /** Handles computation load across multiple receivers and to multiple transmitters. */
-    private static class MultipleComputationHandler {
+    private static class MultipleComputationHandler implements IOpticalComputationProvider,
+                                                    IOpticalComputationReceiver {
 
         // providers in the NS provide distributable computation to the NS
         private final Set<IOpticalComputationHatch> providers = new ObjectOpenHashSet<>();
@@ -166,11 +178,12 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
 
         private int EUt;
 
-        private void onStructureForm(Collection<IOpticalComputationHatch> providers, Collection<IOpticalComputationHatch> transmitters) {
+        private void onStructureForm(Collection<IOpticalComputationHatch> providers,
+                                     Collection<IOpticalComputationHatch> transmitters) {
             reset();
             this.providers.addAll(providers);
             this.transmitters.addAll(transmitters);
-            this.EUt = (providers.size() + transmitters.size()) * GTValues.VA[GTValues.IV];
+            this.EUt = (providers.size() + transmitters.size()) * EUT_PER_HATCH;
         }
 
         private void reset() {
@@ -179,11 +192,15 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
             EUt = 0;
         }
 
-        private int requestCWUt(int cwut, boolean simulate) {
+        @Override
+        public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
+            if (seen.contains(this)) return 0;
+            // The max CWU/t that this Network Switch can provide, combining all its inputs.
+            seen.add(this);
+            Collection<IOpticalComputationProvider> bridgeSeen = new ArrayList<>(seen);
             int allocatedCWUt = 0;
-            Collection<IOpticalComputationProvider> seen = new ArrayList<>();
             for (var provider : providers) {
-                if (!provider.canBridge()) continue;
+                if (!provider.canBridge(bridgeSeen)) continue;
                 int allocated = provider.requestCWUt(cwut, simulate, seen);
                 allocatedCWUt += allocated;
                 cwut -= allocated;
@@ -192,14 +209,42 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
             return allocatedCWUt;
         }
 
-        /** The max CWU/t that this Network Switch can provide, combining all its inputs. */
-        private int getMaxCWUt() {
+        public int getMaxCWUtForDisplay() {
+            Collection<IOpticalComputationProvider> seen = new ArrayList<>();
+            // The max CWU/t that this Network Switch can provide, combining all its inputs.
+            seen.add(this);
+            Collection<IOpticalComputationProvider> bridgeSeen = new ArrayList<>(seen);
             int maximumCWUt = 0;
             for (var provider : providers) {
-                if (!provider.canBridge()) continue;
-                maximumCWUt += provider.getMaxCWUt();
+                if (!provider.canBridge(bridgeSeen)) continue;
+                maximumCWUt += provider.getMaxCWUt(seen);
             }
             return maximumCWUt;
+        }
+
+        public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
+            if (seen.contains(this)) return 0;
+            // The max CWU/t that this Network Switch can provide, combining all its inputs.
+            seen.add(this);
+            Collection<IOpticalComputationProvider> bridgeSeen = new ArrayList<>(seen);
+            int maximumCWUt = 0;
+            for (var provider : providers) {
+                if (!provider.canBridge(bridgeSeen)) continue;
+                maximumCWUt += provider.getMaxCWUt(seen);
+            }
+            return maximumCWUt;
+        }
+
+        @Override
+        public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
+            if (seen.contains(this)) return false;
+            seen.add(this);
+            for (var provider : providers) {
+                if (provider.canBridge(seen)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /** The EU/t cost of this Network Switch given the attached providers and transmitters. */
@@ -209,12 +254,18 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
 
         /** Test if any of the provider hatches do not allow bridging */
         private boolean hasNonBridgingConnections() {
+            Collection<IOpticalComputationProvider> seen = new ArrayList<>();
             for (var provider : providers) {
-                if (!provider.canBridge()) {
+                if (!provider.canBridge(seen)) {
                     return true;
                 }
             }
             return false;
+        }
+
+        @Override
+        public IOpticalComputationProvider getComputationProvider() {
+            return this;
         }
     }
 }

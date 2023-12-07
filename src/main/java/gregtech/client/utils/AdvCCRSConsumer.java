@@ -1,8 +1,5 @@
 package gregtech.client.utils;
 
-import codechicken.lib.colour.Colour;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.vec.Matrix4;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -11,7 +8,10 @@ import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import codechicken.lib.colour.Colour;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
 @SideOnly(Side.CLIENT)
 public class AdvCCRSConsumer implements IVertexConsumer {
@@ -23,19 +23,19 @@ public class AdvCCRSConsumer implements IVertexConsumer {
         this.ccrs = ccrs;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public VertexFormat getVertexFormat() {
         return ccrs.getVertexFormat();
     }
 
     @Override
-    public void setTexture(@Nonnull TextureAtlasSprite texture) {
+    public void setTexture(@NotNull TextureAtlasSprite texture) {
         ccrs.sprite = texture;
     }
 
     @Override
-    public void put(int e, @Nonnull float... data) {
+    public void put(int e, float @NotNull... data) {
         VertexFormat format = getVertexFormat();
 
         VertexFormatElement fmte = format.getElement(e);
@@ -71,14 +71,11 @@ public class AdvCCRSConsumer implements IVertexConsumer {
     }
 
     @Override
-    public void setQuadTint(int tint) {
-    }
+    public void setQuadTint(int tint) {}
 
     @Override
-    public void setQuadOrientation(@Nonnull EnumFacing orientation) {
-    }
+    public void setQuadOrientation(@NotNull EnumFacing orientation) {}
 
     @Override
-    public void setApplyDiffuseLighting(boolean diffuse) {
-    }
+    public void setApplyDiffuseLighting(boolean diffuse) {}
 }

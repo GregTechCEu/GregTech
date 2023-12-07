@@ -4,10 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -28,9 +25,14 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+import org.jetbrains.annotations.NotNull;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
-import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
@@ -88,18 +90,19 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return false;
     }
 
+    @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         return layer == getRenderLayer() ||
-                layer == (isBloomEnabled(getState(state)) ? BloomEffectUtil.getRealBloomLayer() : BlockRenderLayer.CUTOUT);
+                layer == BloomEffectUtil.getEffectiveBloomLayer(isBloomEnabled(getState(state)));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return super.getStateFromMeta(meta).withProperty(ACTIVE_DEPRECATED, false);
@@ -114,24 +117,27 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return meta + state.getValue(VARIANT).ordinal();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         Class<T> enumClass = getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
         this.VARIANT = PropertyEnum.create("variant", enumClass);
         this.VALUES = enumClass.getEnumConstants();
-        return new ExtendedBlockState(this, new IProperty[]{VARIANT, ACTIVE_DEPRECATED}, new IUnlistedProperty[]{ACTIVE});
+        return new ExtendedBlockState(this, new IProperty[] { VARIANT, ACTIVE_DEPRECATED },
+                new IUnlistedProperty[] { ACTIVE });
     }
 
+    @NotNull
     @Override
-    public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IExtendedBlockState getExtendedState(@NotNull IBlockState state, @NotNull IBlockAccess world,
+                                                @NotNull BlockPos pos) {
         IExtendedBlockState ext = ((IExtendedBlockState) state)
                 .withProperty(ACTIVE, Minecraft.getMinecraft().world != null &&
                         isBlockActive(Minecraft.getMinecraft().world.provider.getDimension(), pos));
 
         if (Loader.isModLoaded(GTValues.MODID_CTM)) {
-            //if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
-            //so that the CTM renderer can render the block properly.
+            // if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
+            // so that the CTM renderer can render the block properly.
             return new CTMExtendedState(ext, world, pos);
         }
         return ext;
@@ -144,17 +150,18 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
             ModelResourceLocation inactiveModel = model(false, value);
             ModelResourceLocation activeModel = model(true, value);
 
-            ActiveVariantBlockBakedModel model = new ActiveVariantBlockBakedModel(inactiveModel, activeModel, () -> isBloomEnabled(value));
+            ActiveVariantBlockBakedModel model = new ActiveVariantBlockBakedModel(inactiveModel, activeModel,
+                    () -> isBloomEnabled(value));
             models.put(value, model.getModelLocation());
 
             Item item = Item.getItemFromBlock(this);
             ModelLoader.setCustomModelResourceLocation(item, value.ordinal(), inactiveModel);
             ModelLoader.registerItemVariants(item, activeModel);
         }
-        ModelLoader.setCustomStateMapper(this, b -> b.getBlockState().getValidStates().stream().collect(Collectors.toMap(
-                s -> s,
-                s -> models.get(s.getValue(VARIANT))
-        )));
+        ModelLoader.setCustomStateMapper(this,
+                b -> b.getBlockState().getValidStates().stream().collect(Collectors.toMap(
+                        s -> s,
+                        s -> models.get(s.getValue(VARIANT)))));
     }
 
     private ModelResourceLocation model(boolean active, T variant) {

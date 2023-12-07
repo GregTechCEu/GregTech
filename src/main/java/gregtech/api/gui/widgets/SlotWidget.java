@@ -1,6 +1,5 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ISizeProvider;
@@ -10,6 +9,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -26,9 +26,12 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
+import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SlotWidget extends Widget implements INativeWidget {
 
@@ -40,24 +43,29 @@ public class SlotWidget extends Widget implements INativeWidget {
     protected IGuiTexture[] backgroundTexture;
     protected Runnable changeListener;
 
-    private String tooltipText;
-    private Object[] tooltipArgs;
+    protected String tooltipText;
+    protected Object[] tooltipArgs;
 
-    public SlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
+    protected Consumer<SlotWidget> consumer;
+
+    public SlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems,
+                      boolean canPutItems) {
         super(new Position(xPosition, yPosition), new Size(18, 18));
         this.canTakeItems = canTakeItems;
         this.canPutItems = canPutItems;
         this.slotReference = createSlot(inventory, slotIndex);
     }
 
-    public SlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
+    public SlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition, boolean canTakeItems,
+                      boolean canPutItems) {
         super(new Position(xPosition, yPosition), new Size(18, 18));
         this.canTakeItems = canTakeItems;
         this.canPutItems = canPutItems;
         this.slotReference = createSlot(itemHandler, slotIndex, true);
     }
 
-    public SlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems, boolean canShiftClickInto) {
+    public SlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition, boolean canTakeItems,
+                      boolean canPutItems, boolean canShiftClickInto) {
         super(new Position(xPosition, yPosition), new Size(18, 18));
         this.canTakeItems = canTakeItems;
         this.canPutItems = canPutItems;
@@ -99,12 +107,14 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
         ItemStack itemStack = slotReference.getStack();
         ModularUIGui modularUIGui = gui == null ? null : gui.getModularUIGui();
-        if (itemStack.isEmpty() && modularUIGui != null && modularUIGui.getDragSplitting() && modularUIGui.getDragSplittingSlots().contains(slotReference)) { // draw split
+        if (itemStack.isEmpty() && modularUIGui != null && modularUIGui.getDragSplitting() &&
+                modularUIGui.getDragSplittingSlots().contains(slotReference)) { // draw split
             int splitSize = modularUIGui.getDragSplittingSlots().size();
             itemStack = gui.entityPlayer.inventory.getItemStack();
             if (!itemStack.isEmpty() && splitSize > 1 && Container.canAddItemToSlot(slotReference, itemStack, true)) {
                 itemStack = itemStack.copy();
-                Container.computeStackSize(modularUIGui.getDragSplittingSlots(), modularUIGui.dragSplittingLimit, itemStack, slotReference.getStack().isEmpty() ? 0 : slotReference.getStack().getCount());
+                Container.computeStackSize(modularUIGui.getDragSplittingSlots(), modularUIGui.dragSplittingLimit,
+                        itemStack, slotReference.getStack().isEmpty() ? 0 : slotReference.getStack().getCount());
                 int k = Math.min(itemStack.getMaxStackSize(), slotReference.getItemStackLimit(itemStack));
                 if (itemStack.getCount() > k) {
                     itemStack.setCount(k);
@@ -122,7 +132,8 @@ public class SlotWidget extends Widget implements INativeWidget {
             GlStateManager.pushMatrix();
             RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
             itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x + 1, pos.y + 1);
-            itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, itemStack, pos.x + 1, pos.y + 1, null);
+            itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, itemStack, pos.x + 1, pos.y + 1,
+                    null);
             GlStateManager.enableAlpha();
             GlStateManager.popMatrix();
             RenderHelper.disableStandardItemLighting();
@@ -196,6 +207,11 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
     }
 
+    public SlotWidget setConsumer(Consumer<SlotWidget> consumer) {
+        this.consumer = consumer;
+        return this;
+    }
+
     public SlotWidget setChangeListener(Runnable changeListener) {
         this.changeListener = changeListener;
         return this;
@@ -267,12 +283,14 @@ public class SlotWidget extends Widget implements INativeWidget {
     }
 
     public interface ISlotWidget {
+
         void setHover(boolean isHover);
 
         boolean isHover();
     }
 
     protected class WidgetSlot extends Slot implements ISlotWidget {
+
         boolean isHover;
 
         public WidgetSlot(IInventory inventory, int index, int xPosition, int yPosition) {
@@ -290,26 +308,26 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
 
         @Override
-        public boolean isItemValid(@Nonnull ItemStack stack) {
+        public boolean isItemValid(@NotNull ItemStack stack) {
             return SlotWidget.this.canPutStack(stack) && super.isItemValid(stack);
         }
 
         @Override
-        public boolean canTakeStack(@Nonnull EntityPlayer playerIn) {
+        public boolean canTakeStack(@NotNull EntityPlayer playerIn) {
             return SlotWidget.this.canTakeStack(playerIn) && super.canTakeStack(playerIn);
         }
 
         @Override
-        public void putStack(@Nonnull ItemStack stack) {
+        public void putStack(@NotNull ItemStack stack) {
             super.putStack(stack);
             if (changeListener != null) {
                 changeListener.run();
             }
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public final ItemStack onTake(@Nonnull EntityPlayer thePlayer, @Nonnull ItemStack stack) {
+        public final ItemStack onTake(@NotNull EntityPlayer thePlayer, @NotNull ItemStack stack) {
             return onItemTake(thePlayer, super.onTake(thePlayer, stack), false);
         }
 
@@ -325,10 +343,12 @@ public class SlotWidget extends Widget implements INativeWidget {
     }
 
     public class WidgetSlotItemHandler extends SlotItemHandler implements ISlotWidget {
+
         boolean isHover;
         final boolean canShiftClickInto;
 
-        public WidgetSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition, boolean canShiftClickInto) {
+        public WidgetSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition,
+                                     boolean canShiftClickInto) {
             super(itemHandler, index, xPosition, yPosition);
             this.canShiftClickInto = canShiftClickInto;
         }
@@ -344,7 +364,7 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
 
         @Override
-        public boolean isItemValid(@Nonnull ItemStack stack) {
+        public boolean isItemValid(@NotNull ItemStack stack) {
             return SlotWidget.this.canPutStack(stack) && super.isItemValid(stack);
         }
 
@@ -354,16 +374,16 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
 
         @Override
-        public void putStack(@Nonnull ItemStack stack) {
+        public void putStack(@NotNull ItemStack stack) {
             super.putStack(stack);
             if (changeListener != null) {
                 changeListener.run();
             }
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public final ItemStack onTake(@Nonnull EntityPlayer thePlayer, @Nonnull ItemStack stack) {
+        public final ItemStack onTake(@NotNull EntityPlayer thePlayer, @NotNull ItemStack stack) {
             return onItemTake(thePlayer, super.onTake(thePlayer, stack), false);
         }
 

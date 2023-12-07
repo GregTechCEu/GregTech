@@ -1,15 +1,18 @@
 package gregtech.core.network.packets;
 
 import gregtech.common.terminal.app.prospector.ProspectorMode;
-import io.netty.buffer.Unpooled;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+
+import io.netty.buffer.Unpooled;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 public class PacketProspecting {
+
     public int chunkX;
     public int chunkZ;
     public int playerChunkX;
@@ -23,7 +26,8 @@ public class PacketProspecting {
     @SuppressWarnings("unused")
     public PacketProspecting() {}
 
-    public PacketProspecting(int chunkX, int chunkZ, int playerChunkX, int playerChunkZ, int posX, int posZ, ProspectorMode mode) {
+    public PacketProspecting(int chunkX, int chunkZ, int playerChunkX, int playerChunkZ, int posX, int posZ,
+                             ProspectorMode mode) {
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
         this.playerChunkX = playerChunkX;
@@ -32,10 +36,10 @@ public class PacketProspecting {
         this.posZ = posZ;
         this.mode = mode;
         if (mode == ProspectorMode.FLUID) {
-            //noinspection unchecked
+            // noinspection unchecked
             map = new HashMap[1][1];
         } else {
-            //noinspection unchecked
+            // noinspection unchecked
             map = new HashMap[16][16];
         }
 
@@ -43,7 +47,8 @@ public class PacketProspecting {
     }
 
     public static PacketProspecting readPacketData(PacketBuffer buffer) {
-        PacketProspecting packet = new PacketProspecting(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), ProspectorMode.VALUES[buffer.readInt()]);
+        PacketProspecting packet = new PacketProspecting(buffer.readInt(), buffer.readInt(), buffer.readInt(),
+                buffer.readInt(), buffer.readInt(), buffer.readInt(), ProspectorMode.VALUES[buffer.readInt()]);
         int aSize = 0;
         if (packet.mode == ProspectorMode.ORE)
             aSize = 16;
@@ -71,10 +76,10 @@ public class PacketProspecting {
         return packet;
     }
 
-
     public static PacketProspecting readPacketData(NBTTagCompound nbt) {
         if (nbt.hasKey("buffer")) {
-            return PacketProspecting.readPacketData(new PacketBuffer(Unpooled.wrappedBuffer(nbt.getByteArray("buffer"))));
+            return PacketProspecting
+                    .readPacketData(new PacketBuffer(Unpooled.wrappedBuffer(nbt.getByteArray("buffer"))));
         }
         return null;
     }
@@ -133,5 +138,4 @@ public class PacketProspecting {
             }
         }
     }
-
 }

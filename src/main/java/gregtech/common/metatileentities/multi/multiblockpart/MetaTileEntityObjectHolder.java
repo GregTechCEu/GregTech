@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IObjectHolder;
@@ -20,6 +17,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,11 +26,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IObjectHolder>, IObjectHolder {
+public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiablePart
+                                        implements IMultiblockAbilityPart<IObjectHolder>, IObjectHolder {
 
     // purposefully not exposed to automation or capabilities
     private final ObjectHolderHandler heldItems;
@@ -41,7 +44,7 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
 
     public MetaTileEntityObjectHolder(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.ZPM, false);
-        heldItems = new ObjectHolderHandler();
+        heldItems = new ObjectHolderHandler(this);
     }
 
     @Override
@@ -138,7 +141,7 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public @NotNull IItemHandler getAsHandler() {
-        //noinspection ReturnOfInnerClass
+        // noinspection ReturnOfInnerClass
         return this.heldItems;
     }
 
@@ -206,8 +209,8 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
 
     private class ObjectHolderHandler extends NotifiableItemStackHandler {
 
-        public ObjectHolderHandler() {
-            super(2, null, false);
+        public ObjectHolderHandler(MetaTileEntity metaTileEntity) {
+            super(metaTileEntity, 2, null, false);
         }
 
         // only allow a single item, no stack size
@@ -234,7 +237,7 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
             }
 
             boolean isDataItem = false;
-            if (stack.getItem() instanceof MetaItem<?> metaItem) {
+            if (stack.getItem() instanceof MetaItem<?>metaItem) {
                 for (IItemBehaviour behaviour : metaItem.getBehaviours(stack)) {
                     if (behaviour instanceof IDataItem) {
                         isDataItem = true;

@@ -1,14 +1,17 @@
 package gregtech.api.worldgen.config;
 
-import com.google.gson.JsonObject;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
+
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
-import javax.annotation.Nonnull;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -26,15 +29,17 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
 
     private Fluid storedFluid; // the fluid which the vein contains
 
-    private Function<Biome, Integer> biomeWeightModifier = OreDepositDefinition.NO_BIOME_INFLUENCE; // weighting of biomes
-    private Predicate<WorldProvider> dimensionFilter = OreDepositDefinition.PREDICATE_SURFACE_WORLD; // filtering of dimensions
+    private Function<Biome, Integer> biomeWeightModifier = OreDepositDefinition.NO_BIOME_INFLUENCE; // weighting of
+                                                                                                    // biomes
+    private Predicate<WorldProvider> dimensionFilter = OreDepositDefinition.PREDICATE_SURFACE_WORLD; // filtering of
+                                                                                                     // dimensions
 
     public BedrockFluidDepositDefinition(String depositName) {
         this.depositName = depositName;
     }
 
     @Override
-    public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
+    public boolean initializeFromConfig(@NotNull JsonObject configRoot) {
         // the weight value for determining which vein will appear
         this.weight = configRoot.get("weight").getAsInt();
         // the [minimum, maximum) yield of the vein
@@ -43,19 +48,21 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
         // amount of fluid the vein gets depleted by
         this.depletionAmount = configRoot.get("depletion").getAsJsonObject().get("amount").getAsInt();
         // the chance [0, 100] that the vein will deplete by depletionAmount
-        this.depletionChance = Math.max(0, Math.min(100, configRoot.get("depletion").getAsJsonObject().get("chance").getAsInt()));
+        this.depletionChance = Math.max(0,
+                Math.min(100, configRoot.get("depletion").getAsJsonObject().get("chance").getAsInt()));
 
         // the fluid which the vein contains
         Fluid fluid = FluidRegistry.getFluid(configRoot.get("fluid").getAsString());
         if (fluid != null) {
             this.storedFluid = fluid;
         } else {
-            GTLog.logger.error("Bedrock Fluid Vein {} cannot have a null fluid!", this.depositName, new RuntimeException());
+            GTLog.logger.error("Bedrock Fluid Vein {} cannot have a null fluid!", this.depositName,
+                    new RuntimeException());
             return false;
         }
         // vein name for JEI display
         if (configRoot.has("name")) {
-            this.assignedName = configRoot.get("name").getAsString();
+            this.assignedName = LocalizationUtils.format(configRoot.get("name").getAsString());
         }
         // vein description for JEI display
         if (configRoot.has("description")) {
@@ -77,7 +84,10 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
         return true;
     }
 
-    //This is the file name
+    /**
+     * Must be converted using {@link gregtech.api.util.FileUtility#slashToNativeSep(String)}
+     * before it can be used as a file path
+     */
     @Override
     public String getDepositName() {
         return depositName;
@@ -152,21 +162,25 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
             return false;
         if ((this.assignedName == null && objDeposit.getAssignedName() != null) ||
                 (this.assignedName != null && objDeposit.getAssignedName() == null) ||
-                (this.assignedName != null && objDeposit.getAssignedName() != null && !this.assignedName.equals(objDeposit.getAssignedName())))
+                (this.assignedName != null && objDeposit.getAssignedName() != null &&
+                        !this.assignedName.equals(objDeposit.getAssignedName())))
             return false;
         if ((this.description == null && objDeposit.getDescription() != null) ||
                 (this.description != null && objDeposit.getDescription() == null) ||
-                (this.description != null && objDeposit.getDescription() != null && !this.description.equals(objDeposit.getDescription())))
+                (this.description != null && objDeposit.getDescription() != null &&
+                        !this.description.equals(objDeposit.getDescription())))
             return false;
         if (this.depletedYield != objDeposit.getDepletedYield())
             return false;
         if ((this.biomeWeightModifier == null && objDeposit.getBiomeWeightModifier() != null) ||
                 (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() == null) ||
-                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null && !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null &&
+                        !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
             return false;
         if ((this.dimensionFilter == null && objDeposit.getDimensionFilter() != null) ||
                 (this.dimensionFilter != null && objDeposit.getDimensionFilter() == null) ||
-                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null && !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null &&
+                        !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
             return false;
 
         return super.equals(obj);

@@ -1,16 +1,18 @@
 package gregtech.integration.groovy;
 
-import com.cleanroommc.groovyscript.api.GroovyLog;
-import com.cleanroommc.groovyscript.helper.SimpleObjectStream;
-import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
-import com.google.common.base.CaseFormat;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.ArrayList;
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.cleanroommc.groovyscript.helper.Alias;
+import com.cleanroommc.groovyscript.helper.SimpleObjectStream;
+import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
+import com.google.common.base.CaseFormat;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -19,20 +21,9 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     private final RecipeMap<?> recipeMap;
 
     public VirtualizedRecipeMap(RecipeMap<?> recipeMap) {
-        super(false, generateAliases(recipeMap.unlocalizedName));
+        super(Alias.generateOf(recipeMap.unlocalizedName, CaseFormat.LOWER_UNDERSCORE));
         this.recipeMap = recipeMap;
-        GroovyScriptModule.getInstance().addRegistry(this);
-    }
-
-    public static String[] generateAliases(String name) {
-        ArrayList<String> aliases = new ArrayList<>();
-        aliases.add(name);
-        aliases.add(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name));
-        if (name.split("_").length > 2) {
-            aliases.add(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name));
-        }
-
-        return aliases.toArray(new String[0]);
+        GroovyScriptModule.getInstance().getVirtualizedRegistrar().addRegistry(this);
     }
 
     @Override

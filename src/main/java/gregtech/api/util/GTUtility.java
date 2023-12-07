@@ -1,11 +1,12 @@
 package gregtech.api.util;
 
-import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.fluids.GTFluid;
+import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -16,8 +17,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.items.behaviors.CoverPlaceBehavior;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
@@ -36,11 +36,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
@@ -49,10 +51,14 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
@@ -71,8 +77,8 @@ public class GTUtility {
         return result;
     }
 
-    //just because CCL uses a different color format
-    //0xRRGGBBAA
+    // just because CCL uses a different color format
+    // 0xRRGGBBAA
     public static int convertRGBtoOpaqueRGBA_CL(int colorValue) {
         return convertRGBtoRGBA_CL(colorValue, 255);
     }
@@ -85,12 +91,22 @@ public class GTUtility {
         return colorAlpha >>> 8;
     }
 
-    //0xAARRGGBB
+    // 0xAARRGGBB
     public static int convertRGBtoOpaqueRGBA_MC(int colorValue) {
         return convertRGBtoOpaqueRGBA_MC(colorValue, 255);
     }
 
     public static int convertRGBtoOpaqueRGBA_MC(int colorValue, int opacity) {
+        return opacity << 24 | colorValue;
+    }
+
+    public static int convertRGBtoARGB(int colorValue) {
+        return convertRGBtoARGB(colorValue, 0xFF);
+    }
+
+    public static int convertRGBtoARGB(int colorValue, int opacity) {
+        // preserve existing opacity if present
+        if (((colorValue >> 24) & 0xFF) != 0) return colorValue;
         return opacity << 24 | colorValue;
     }
 
@@ -104,24 +120,25 @@ public class GTUtility {
      */
     public static boolean mergeItemStack(ItemStack itemStack, List<Slot> slots, boolean simulate) {
         if (itemStack.isEmpty())
-            return false; //if we are merging empty stack, return
+            return false; // if we are merging empty stack, return
 
         boolean merged = false;
-        //iterate non-empty slots first
-        //to try to insert stack into them
+        // iterate non-empty slots first
+        // to try to insert stack into them
         for (Slot slot : slots) {
             if (!slot.isItemValid(itemStack))
-                continue; //if itemstack cannot be placed into that slot, continue
+                continue; // if itemstack cannot be placed into that slot, continue
             ItemStack stackInSlot = slot.getStack();
             if (!ItemStack.areItemsEqual(itemStack, stackInSlot) ||
                     !ItemStack.areItemStackTagsEqual(itemStack, stackInSlot))
-                continue; //if itemstacks don't match, continue
+                continue; // if itemstacks don't match, continue
             int slotMaxStackSize = Math.min(stackInSlot.getMaxStackSize(), slot.getItemStackLimit(stackInSlot));
             int amountToInsert = Math.min(itemStack.getCount(), slotMaxStackSize - stackInSlot.getCount());
-            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine Access Interface
+            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine
+            // Access Interface
             if (amountToInsert <= 0)
-                continue; //if we can't insert anything, continue
-            //shrink our stack, grow slot's stack and mark slot as changed
+                continue; // if we can't insert anything, continue
+            // shrink our stack, grow slot's stack and mark slot as changed
             if (!simulate) {
                 stackInSlot.grow(amountToInsert);
             }
@@ -129,27 +146,27 @@ public class GTUtility {
             slot.onSlotChanged();
             merged = true;
             if (itemStack.isEmpty())
-                return true; //if we inserted all items, return
+                return true; // if we inserted all items, return
         }
 
-        //then try to insert itemstack into empty slots
-        //breaking it into pieces if needed
+        // then try to insert itemstack into empty slots
+        // breaking it into pieces if needed
         for (Slot slot : slots) {
             if (!slot.isItemValid(itemStack))
-                continue; //if itemstack cannot be placed into that slot, continue
+                continue; // if itemstack cannot be placed into that slot, continue
             if (slot.getHasStack())
-                continue; //if slot contains something, continue
+                continue; // if slot contains something, continue
             int amountToInsert = Math.min(itemStack.getCount(), slot.getItemStackLimit(itemStack));
             if (amountToInsert == 0)
-                continue; //if we can't insert anything, continue
-            //split our stack and put result in slot
+                continue; // if we can't insert anything, continue
+            // split our stack and put result in slot
             ItemStack stackInSlot = itemStack.splitStack(amountToInsert);
             if (!simulate) {
                 slot.putStack(stackInSlot);
             }
             merged = true;
             if (itemStack.isEmpty())
-                return true; //if we inserted all items, return
+                return true; // if we inserted all items, return
         }
         return merged;
     }
@@ -187,9 +204,9 @@ public class GTUtility {
      * @param array Array sorted with natural order
      * @param value Value to search for
      * @return Index of the nearest value lesser or equal than {@code value},
-     * or {@code -1} if there's no entry matching the condition
+     *         or {@code -1} if there's no entry matching the condition
      */
-    public static int nearestLesserOrEqual(@Nonnull long[] array, long value) {
+    public static int nearestLesserOrEqual(@NotNull long[] array, long value) {
         int low = 0, high = array.length - 1;
         while (true) {
             int median = (low + high) / 2;
@@ -207,9 +224,9 @@ public class GTUtility {
      * @param array Array sorted with natural order
      * @param value Value to search for
      * @return Index of the nearest value lesser than {@code value},
-     * or {@code -1} if there's no entry matching the condition
+     *         or {@code -1} if there's no entry matching the condition
      */
-    public static int nearestLesser(@Nonnull long[] array, long value) {
+    public static int nearestLesser(@NotNull long[] array, long value) {
         int low = 0, high = array.length - 1;
         while (true) {
             int median = (low + high) / 2;
@@ -225,8 +242,8 @@ public class GTUtility {
 
     /**
      * @return Lowest tier of the voltage that can handle {@code voltage}; that is,
-     * a voltage with value greater than equal than {@code voltage}. If there's no
-     * tier that can handle it, {@code MAX} is returned.
+     *         a voltage with value greater than equal than {@code voltage}. If there's no
+     *         tier that can handle it, {@code MAX} is returned.
      */
     public static byte getTierByVoltage(long voltage) {
         return (byte) Math.min(GTValues.MAX, nearestLesser(V, voltage) + 1);
@@ -236,7 +253,7 @@ public class GTUtility {
      * Ex: This method turns both 1024 and 512 into HV.
      *
      * @return the highest voltage tier with value below or equal to {@code voltage}, or
-     * {@code ULV} if there's no tier below
+     *         {@code ULV} if there's no tier below
      */
     public static byte getFloorTierByVoltage(long voltage) {
         return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(V, voltage));
@@ -244,7 +261,8 @@ public class GTUtility {
 
     @SuppressWarnings("deprecation")
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
-        Map<String, BiomeDictionary.Type> byName = ReflectionHelper.getPrivateValue(BiomeDictionary.Type.class, null, "byName");
+        Map<String, BiomeDictionary.Type> byName = ReflectionHelper.getPrivateValue(BiomeDictionary.Type.class, null,
+                "byName");
         return byName.get(name);
     }
 
@@ -327,11 +345,39 @@ public class GTUtility {
     }
 
     /**
+     * Calculates on which side the neighbor is relative to the main pos.
+     *
+     * @param main     main pos
+     * @param neighbor neighbor pos
+     * @return position of neighbor relative to main or null the neighbor pos is not a neighbor
+     */
+    @Nullable
+    public static EnumFacing getFacingToNeighbor(@NotNull BlockPos main, @NotNull BlockPos neighbor) {
+        int difX = neighbor.getX() - main.getX();
+        int difY = neighbor.getY() - main.getY();
+        int difZ = neighbor.getZ() - main.getZ();
+        if (difX != 0) {
+            if (difY != 0 || difZ != 0 || (difX != 1 && difX != -1)) return null;
+            return difX > 0 ? EnumFacing.EAST : EnumFacing.WEST;
+        }
+        if (difY != 0) {
+            if (difZ != 0 || (difY != 1 && difY != -1)) return null;
+            return difY > 0 ? EnumFacing.UP : EnumFacing.DOWN;
+        }
+        if (difZ != 0) {
+            if (difZ != 1 && difZ != -1) return null;
+            return difZ > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH;
+        }
+        return null;
+    }
+
+    /**
      * @return a list of itemstack linked with given item handler
-     * modifications in list will reflect on item handler and wise-versa
+     *         modifications in list will reflect on item handler and wise-versa
      */
     public static List<ItemStack> itemHandlerToList(IItemHandlerModifiable inputs) {
         return new AbstractList<ItemStack>() {
+
             @Override
             public ItemStack set(int index, ItemStack element) {
                 ItemStack oldStack = inputs.getStackInSlot(index);
@@ -353,11 +399,12 @@ public class GTUtility {
 
     /**
      * @return a list of fluidstack linked with given fluid handler
-     * modifications in list will reflect on fluid handler and wise-versa
+     *         modifications in list will reflect on fluid handler and wise-versa
      */
     public static List<FluidStack> fluidHandlerToList(IMultipleTankHandler fluidInputs) {
         List<IMultipleTankHandler.MultiFluidTankEntry> backedList = fluidInputs.getFluidTanks();
         return new AbstractList<FluidStack>() {
+
             @Override
             public FluidStack set(int index, FluidStack element) {
                 IFluidTank fluidTank = backedList.get(index).getDelegate();
@@ -404,26 +451,13 @@ public class GTUtility {
     }
 
     /**
-     * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyFirst(ItemStack...)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @Nonnull
-    public static ItemStack copy(@Nonnull ItemStack... stacks) {
-        for (ItemStack stack : stacks)
-            if (!stack.isEmpty()) return stack.copy();
-        return ItemStack.EMPTY;
-    }
-
-    /**
      * Copies the ItemStack.
      *
      * @param stack item stack for copying
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
      */
-    @Nonnull
-    public static ItemStack copy(@Nonnull ItemStack stack) {
+    @NotNull
+    public static ItemStack copy(@NotNull ItemStack stack) {
         return stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
     }
 
@@ -433,8 +467,8 @@ public class GTUtility {
      * @param stack item stack for copying
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
      */
-    @Nonnull
-    public static ItemStack copy(int newCount, @Nonnull ItemStack stack) {
+    @NotNull
+    public static ItemStack copy(int newCount, @NotNull ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
         ItemStack copy = stack.copy();
         copy.setCount(newCount);
@@ -448,8 +482,8 @@ public class GTUtility {
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if all the candidates are empty
      * @throws IllegalArgumentException if {@code stacks} is empty
      */
-    @Nonnull
-    public static ItemStack copyFirst(@Nonnull ItemStack... stacks) {
+    @NotNull
+    public static ItemStack copyFirst(@NotNull ItemStack... stacks) {
         if (stacks.length == 0) {
             throw new IllegalArgumentException("Empty ItemStack candidates");
         }
@@ -468,8 +502,8 @@ public class GTUtility {
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if all the candidates are empty
      * @throws IllegalArgumentException if {@code stacks} is empty
      */
-    @Nonnull
-    public static ItemStack copyFirst(int newCount, @Nonnull ItemStack... stacks) {
+    @NotNull
+    public static ItemStack copyFirst(int newCount, @NotNull ItemStack... stacks) {
         if (stacks.length == 0) {
             throw new IllegalArgumentException("Empty ItemStack candidates");
         }
@@ -481,17 +515,6 @@ public class GTUtility {
             }
         }
         return ItemStack.EMPTY;
-    }
-
-    /**
-     * @deprecated Use {@link #copy(int, ItemStack)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @Nonnull
-    public static ItemStack copyAmount(int amount, @Nonnull ItemStack stack) {
-        return copy(amount, stack);
     }
 
     public static int getExplosionPower(long voltage) {
@@ -515,15 +538,16 @@ public class GTUtility {
         return pos1.getX() == pos2.getX() & pos1.getY() == pos2.getY() & pos1.getZ() == pos2.getZ();
     }
 
-    public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier, @Nullable Predicate<CoverDefinition> canPlaceCover) {
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier,
+                                              @Nullable Predicate<CoverDefinition> canPlaceCover) {
         Item item = itemStack.getItem();
         if (item instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                    if (behaviour instanceof CoverPlaceBehavior) {
-                        return canPlaceCover == null || canPlaceCover.test(((CoverPlaceBehavior) behaviour).coverDefinition);
+                    if (behaviour instanceof CoverItemBehavior coverItemBehavior) {
+                        return canPlaceCover == null || canPlaceCover.test(coverItemBehavior.getDefinition());
                     }
                 }
             }
@@ -584,9 +608,11 @@ public class GTUtility {
      * <p>
      * This function is meant for use with generators
      */
-    public static final Function<Integer, Integer> steamGeneratorTankSizeFunction = tier -> Math.min(16000 * (1 << (tier - 1)), 64000);
+    public static final Function<Integer, Integer> steamGeneratorTankSizeFunction = tier -> Math
+            .min(16000 * (1 << (tier - 1)), 64000);
 
-    public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math.min(4000 * (1 << (tier - 1)), 16000);
+    public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math
+            .min(4000 * (1 << (tier - 1)), 16000);
 
     public static ItemStack toItem(IBlockState state) {
         return toItem(state, 1);
@@ -622,16 +648,18 @@ public class GTUtility {
     }
 
     /**
-     * Does almost the same thing as .to(LOWER_UNDERSCORE, string), but it also inserts underscores between words and numbers.
+     * Does almost the same thing as .to(LOWER_UNDERSCORE, string), but it also inserts underscores between words and
+     * numbers.
      *
      * @param string Any string with ASCII characters.
-     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maragingSteel300" -> "maraging_steel_300"
+     * @return A string that is all lowercase, with underscores inserted before word/number boundaries:
+     *         "maragingSteel300" -> "maraging_steel_300"
      */
     public static String toLowerCaseUnderscore(String string) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < string.length(); i++) {
-            if (i != 0 && (Character.isUpperCase(string.charAt(i)) || (
-                    Character.isDigit(string.charAt(i - 1)) ^ Character.isDigit(string.charAt(i)))))
+            if (i != 0 && (Character.isUpperCase(string.charAt(i)) ||
+                    (Character.isDigit(string.charAt(i - 1)) ^ Character.isDigit(string.charAt(i)))))
                 result.append("_");
             result.append(Character.toLowerCase(string.charAt(i)));
         }
@@ -639,10 +667,12 @@ public class GTUtility {
     }
 
     /**
-     * Does almost the same thing as LOWER_UNDERSCORE.to(UPPER_CAMEL, string), but it also removes underscores before numbers.
+     * Does almost the same thing as LOWER_UNDERSCORE.to(UPPER_CAMEL, string), but it also removes underscores before
+     * numbers.
      *
      * @param string Any string with ASCII characters.
-     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maraging_steel_300" -> "maragingSteel300"
+     * @return A string that is all lowercase, with underscores inserted before word/number boundaries:
+     *         "maraging_steel_300" -> "maragingSteel300"
      */
     public static String lowerUnderscoreToUpperCamel(String string) {
         StringBuilder result = new StringBuilder();
@@ -656,26 +686,6 @@ public class GTUtility {
             }
         }
         return result.toString();
-    }
-
-    /**
-     * @deprecated Use {@link TextFormattingUtil#formatNumbers(long)} instead.
-     *
-     * </p> This class was deprecated in 2.7 and will be removed in 2.8
-     */
-    @Deprecated
-    public static String formatNumbers(long number) {
-        return TextFormattingUtil.formatNumbers(number);
-    }
-
-    /**
-     * @deprecated Use {@link TextFormattingUtil#formatNumbers(double)} instead.
-     *
-     * </p> This class was deprecated in 2.7 and will be removed in 2.8
-     */
-    @Deprecated
-    public static String formatNumbers(double number) {
-        return TextFormattingUtil.formatNumbers(number);
     }
 
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
@@ -737,39 +747,43 @@ public class GTUtility {
         return color;
     }
 
-    public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
-        return blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
+    /**
+     * @param blockState the blockstate to check
+     * @return if the block is a snow layer or snow block
+     */
+    public static boolean isBlockSnow(@NotNull IBlockState blockState) {
+        return blockState.getBlock() == Blocks.SNOW_LAYER || blockState.getBlock() == Blocks.SNOW;
     }
 
     /**
      * Attempt to break a (single) snow layer at the given BlockPos.
+     * Will also turn snow blocks into snow layers at height 7.
      *
-     * @return true if the passed IBlockState was a snow layer
+     * @return true if the passed IBlockState was valid snow block
      */
-    public static boolean tryBreakSnowLayer(World world, BlockPos pos, @Nonnull IBlockState blockState, boolean playSound) {
-        if (isBlockSnowLayer(blockState)) {
-            world.destroyBlock(pos, false);
-            if (playSound) {
-                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+    public static boolean tryBreakSnow(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                       boolean playSound) {
+        boolean success = false;
+        if (state.getBlock() == Blocks.SNOW) {
+            world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, 7));
+            success = true;
+        } else if (state.getBlock() == Blocks.SNOW_LAYER) {
+            int layers = state.getValue(BlockSnow.LAYERS);
+            if (layers == 1) {
+                world.destroyBlock(pos, false);
+            } else {
+                world.setBlockState(pos,
+                        Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layers - 1));
             }
-            return true;
+            success = true;
         }
-        return false;
-    }
 
-    /**
-     * @param stack the stack to retrieve from
-     * @return all the sub-items of an ItemStack
-     * @deprecated Use {@link #getAllSubItems(Item)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Nonnull
-    @Deprecated
-    public static Set<ItemStack> getAllSubItems(@Nonnull ItemStack stack) {
-        //match subtypes only on wildcard damage value items
-        if (stack.getItemDamage() != GTValues.W) return Collections.singleton(stack);
-        return getAllSubItems(stack.getItem());
+        if (success && playSound) {
+            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH,
+                    SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
+
+        return success;
     }
 
     /**
@@ -783,8 +797,8 @@ public class GTUtility {
      * @param item item
      * @return all the sub-items of an item
      */
-    @Nonnull
-    public static Set<ItemStack> getAllSubItems(@Nonnull Item item) {
+    @NotNull
+    public static Set<ItemStack> getAllSubItems(@NotNull Item item) {
         NonNullList<ItemStack> subItems = NonNullList.create();
         for (CreativeTabs tab : item.getCreativeTabs()) {
             if (tab == null || tab == CreativeTabs.SEARCH) continue;
@@ -807,7 +821,8 @@ public class GTUtility {
             return (FluidStack) ingredient;
         } else if (ingredient instanceof ItemStack) {
             ItemStack itemStack = (ItemStack) ingredient;
-            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandler = itemStack
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandler != null)
                 return fluidHandler.drain(Integer.MAX_VALUE, false);
         }
@@ -820,8 +835,27 @@ public class GTUtility {
      * @param path the path in the location
      * @return the new location
      */
-    @Nonnull
-    public static ResourceLocation gregtechId(@Nonnull String path) {
+    @NotNull
+    public static ResourceLocation gregtechId(@NotNull String path) {
         return new ResourceLocation(GTValues.MODID, path);
+    }
+
+    @Contract("null -> null")
+    public static TextComponentTranslation getFluidTranslation(@Nullable FluidStack stack) {
+        if (stack == null) return null;
+        if (stack.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+
+        return new TextComponentTranslation(stack.getUnlocalizedName());
+    }
+
+    @Contract("null -> null")
+    public static TextComponentTranslation getFluidTranslation(@Nullable Fluid fluid) {
+        if (fluid == null) return null;
+        if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+        return new TextComponentTranslation(fluid.getUnlocalizedName());
     }
 }

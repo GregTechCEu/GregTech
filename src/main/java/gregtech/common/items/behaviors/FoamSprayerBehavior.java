@@ -11,7 +11,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GradientUtil;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,16 +25,19 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabilityManager, IItemBehaviour, ISubItemHandler {
+public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabilityManager, IItemBehaviour,
+                                 ISubItemHandler {
 
     private static final int FLUID_PER_BLOCK = 100;
 
@@ -45,9 +48,11 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack itemStack = player.getHeldItem(hand);
-        IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem fluidHandlerItem = itemStack
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (fluidHandlerItem == null) {
             return ActionResult.newResult(EnumActionResult.FAIL, itemStack);
         }
@@ -80,7 +85,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
 
     @Override
     public double getDurabilityForDisplay(ItemStack itemStack) {
-        IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem fluidHandlerItem = itemStack
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (fluidHandlerItem == null) return 0;
         IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
         FluidStack fluidStack = fluidTankProperties.getContents();
@@ -103,7 +109,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         List<BlockPos> frameBlocks = gatherFrameBlocks(world, pos, 1024);
         frameBlocks = frameBlocks.subList(0, Math.min(frameBlocks.size(), maxBlocksToFoam));
 
-        //replace blocks without updating physics
+        // replace blocks without updating physics
         for (BlockPos framePos : frameBlocks) {
             IBlockState blockState = world.getBlockState(framePos);
             boolean isNormalFrame = isSneaking ||
@@ -111,11 +117,12 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
             if (isNormalFrame) {
                 blockState.getBlock().dropBlockAsItem(world, framePos, blockState, 0);
             }
-            IBlockState foamToPlace = isNormalFrame ? MetaBlocks.FOAM.getDefaultState() : MetaBlocks.REINFORCED_FOAM.getDefaultState();
+            IBlockState foamToPlace = isNormalFrame ? MetaBlocks.FOAM.getDefaultState() :
+                    MetaBlocks.REINFORCED_FOAM.getDefaultState();
             world.setBlockState(framePos, foamToPlace, 2);
         }
 
-        //perform block physics updates
+        // perform block physics updates
         for (BlockPos blockPos : frameBlocks) {
             IBlockState blockState = world.getBlockState(blockPos);
             world.notifyNeighborsRespectDebug(blockPos, blockState.getBlock(), true);
@@ -128,11 +135,11 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         replacableBlocks = replacableBlocks.subList(0, Math.min(replacableBlocks.size(), maxBlocksToFoam));
 
         for (BlockPos blockPos : replacableBlocks) {
-            //foaming air blocks doesn't cause updates of other blocks, so just proceed
+            // foaming air blocks doesn't cause updates of other blocks, so just proceed
             world.setBlockState(blockPos, MetaBlocks.FOAM.getDefaultState(), 2);
         }
 
-        //perform block physics updates
+        // perform block physics updates
         for (BlockPos blockPos : replacableBlocks) {
             IBlockState blockState = world.getBlockState(blockPos);
             world.notifyNeighborsRespectDebug(pos, blockState.getBlock(), true);
@@ -152,7 +159,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
             for (EnumFacing facing : EnumFacing.VALUES) {
                 currentPos.move(facing);
                 IBlockState blockStateHere = world.getBlockState(currentPos);
-                //if there is node, and it can connect with previous node, add it to list, and set previous node as current
+                // if there is node, and it can connect with previous node, add it to list, and set previous node as
+                // current
                 if (blockStateHere.getBlock().isReplaceable(world, currentPos) &&
                         currentPos.distanceSq(centerPos) <= maxRadiusSq && !observedSet.contains(currentPos)) {
                     BlockPos immutablePos = currentPos.toImmutable();
@@ -183,7 +191,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
             for (EnumFacing facing : EnumFacing.VALUES) {
                 currentPos.move(facing);
                 IBlockState blockStateHere = world.getBlockState(currentPos);
-                //if there is node, and it can connect with previous node, add it to list, and set previous node as current
+                // if there is node, and it can connect with previous node, add it to list, and set previous node as
+                // current
                 if (blockStateHere.getBlock() instanceof BlockFrame &&
                         currentPos.distanceSq(centerPos) <= maxRadiusSq &&
                         (frameState == null || frameState == blockStateHere) && !observedSet.contains(currentPos)) {
@@ -211,7 +220,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
     @Override
     public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         ItemStack copy = itemStack.copy();
-        IFluidHandlerItem fluidHandlerItem = copy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem fluidHandlerItem = copy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                null);
         if (fluidHandlerItem != null) {
             fluidHandlerItem.fill(Materials.ConstructionFoam.getFluid(10000), true);
             subItems.add(copy);

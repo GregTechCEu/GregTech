@@ -1,5 +1,7 @@
 package gregtech.api.capability;
 
+import gregtech.api.gui.resources.TextureArea;
+
 public interface IHPCAComponentHatch {
 
     /**
@@ -34,11 +36,15 @@ public interface IHPCAComponentHatch {
     /**
      * Set this component as damaged (or undamaged).
      */
-    default void setDamaged(boolean damaged) {
-    }
+    default void setDamaged(boolean damaged) {}
 
     /**
      * If this component allows for bridging HPCAs to Network Switches.
      */
     boolean isBridge();
+
+    /**
+     * The icon for this component in the HPCA's UI. Should be a 13x13 px sprite.
+     */
+    TextureArea getComponentIcon();
 }

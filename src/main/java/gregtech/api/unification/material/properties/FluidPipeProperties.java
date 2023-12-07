@@ -1,32 +1,45 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.capability.IPropertyFluidFilter;
+import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.attribute.FluidAttribute;
+import gregtech.api.fluids.attribute.FluidAttributes;
 
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
+
+import java.util.Collection;
 import java.util.Objects;
 
 public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter {
+
+    private final Object2BooleanMap<FluidAttribute> containmentPredicate = new Object2BooleanOpenHashMap<>();
 
     private int throughput;
     private final int tanks;
 
     private int maxFluidTemperature;
     private boolean gasProof;
-    private boolean acidProof;
     private boolean cryoProof;
     private boolean plasmaProof;
 
-    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof,
+                               boolean cryoProof, boolean plasmaProof) {
         this(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof, 1);
     }
 
     /**
-     * Should only be called from {@link gregtech.common.pipelike.fluidpipe.FluidPipeType#modifyProperties(FluidPipeProperties)}
+     * Should only be called from
+     * {@link gregtech.common.pipelike.fluidpipe.FluidPipeType#modifyProperties(FluidPipeProperties)}
      */
-    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof, int tanks) {
+    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof,
+                               boolean cryoProof, boolean plasmaProof, int tanks) {
         this.maxFluidTemperature = maxFluidTemperature;
         this.throughput = throughput;
         this.gasProof = gasProof;
-        this.acidProof = acidProof;
+        if (acidProof) setCanContain(FluidAttributes.ACID, true);
         this.cryoProof = cryoProof;
         this.plasmaProof = plasmaProof;
         this.tanks = tanks;
@@ -74,6 +87,29 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
     }
 
     @Override
+    public boolean canContain(@NotNull FluidState state) {
+        return switch (state) {
+            case LIQUID -> true;
+            case GAS -> gasProof;
+            case PLASMA -> plasmaProof;
+        };
+    }
+
+    @Override
+    public boolean canContain(@NotNull FluidAttribute attribute) {
+        return containmentPredicate.getBoolean(attribute);
+    }
+
+    @Override
+    public void setCanContain(@NotNull FluidAttribute attribute, boolean canContain) {
+        this.containmentPredicate.put(attribute, canContain);
+    }
+
+    @Override
+    public @NotNull @UnmodifiableView Collection<@NotNull FluidAttribute> getContainedAttributes() {
+        return containmentPredicate.keySet();
+    }
+
     public boolean isGasProof() {
         return gasProof;
     }
@@ -82,16 +118,10 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         this.gasProof = gasProof;
     }
 
-    @Override
     public boolean isAcidProof() {
-        return acidProof;
+        return canContain(FluidAttributes.ACID);
     }
 
-    public void setAcidProof(boolean acidProof) {
-        this.acidProof = acidProof;
-    }
-
-    @Override
     public boolean isCryoProof() {
         return cryoProof;
     }
@@ -100,7 +130,6 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         this.cryoProof = cryoProof;
     }
 
-    @Override
     public boolean isPlasmaProof() {
         return plasmaProof;
     }
@@ -117,14 +146,15 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
                 getTanks() == that.getTanks() &&
                 getMaxFluidTemperature() == that.getMaxFluidTemperature() &&
                 isGasProof() == that.isGasProof() &&
-                isAcidProof() == that.isAcidProof() &&
                 isCryoProof() == that.isCryoProof() &&
-                isPlasmaProof() == that.isPlasmaProof();
+                isPlasmaProof() == that.isPlasmaProof() &&
+                containmentPredicate.equals(that.containmentPredicate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getThroughput(), getTanks(), getMaxFluidTemperature(), isGasProof(), isAcidProof(), isCryoProof(), isPlasmaProof());
+        return Objects.hash(getThroughput(), getTanks(), getMaxFluidTemperature(), gasProof, cryoProof, plasmaProof,
+                containmentPredicate);
     }
 
     @Override
@@ -134,9 +164,9 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
                 ", tanks=" + tanks +
                 ", maxFluidTemperature=" + maxFluidTemperature +
                 ", gasProof=" + gasProof +
-                ", acidProof=" + acidProof +
                 ", cryoProof=" + cryoProof +
                 ", plasmaProof=" + plasmaProof +
+                ", containmentPredicate=" + containmentPredicate +
                 '}';
     }
 }

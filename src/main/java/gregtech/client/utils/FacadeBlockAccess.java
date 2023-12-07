@@ -1,6 +1,7 @@
 package gregtech.client.utils;
 
 import gregtech.api.pipenet.IBlockAppearance;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -13,7 +14,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -30,7 +31,6 @@ public class FacadeBlockAccess implements IBlockAccess {
     public final IBlockState state;
 
     public FacadeBlockAccess(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
-
         this.world = world;
         this.pos = pos;
         this.side = side;
@@ -38,7 +38,11 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     public enum Result {
-        ORIGINAL, AIR, BASE, BEDROCK, COVER
+        ORIGINAL,
+        AIR,
+        BASE,
+        BEDROCK,
+        COVER
     }
 
     public Result getAction(BlockPos pos) {
@@ -67,9 +71,9 @@ public class FacadeBlockAccess implements IBlockAccess {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IBlockState getBlockState(@Nonnull BlockPos pos) {
+    public IBlockState getBlockState(@NotNull BlockPos pos) {
         IBlockState ret;
         Result action = getAction(pos);
         if (action == Result.ORIGINAL) {
@@ -87,13 +91,13 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     @Override
-    public TileEntity getTileEntity(@Nonnull BlockPos pos) {
+    public TileEntity getTileEntity(@NotNull BlockPos pos) {
         return getAction(pos) == Result.ORIGINAL ? world.getTileEntity(pos) : null;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public int getCombinedLight(@Nonnull BlockPos pos, int t) {
+    public int getCombinedLight(@NotNull BlockPos pos, int t) {
         if (((side == DOWN && pos.getY() > this.pos.getY()) ||
                 (side == UP && pos.getY() < this.pos.getY()) ||
                 (side == NORTH && pos.getZ() > this.pos.getZ()) ||
@@ -106,33 +110,33 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     @Override
-    public int getStrongPower(@Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public int getStrongPower(@NotNull BlockPos pos, @NotNull EnumFacing side) {
         return world.getStrongPower(pos, side);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public WorldType getWorldType() {
         return world.getWorldType();
     }
 
     @Override
-    public boolean isAirBlock(@Nonnull BlockPos pos) {
+    public boolean isAirBlock(@NotNull BlockPos pos) {
         Result action = getAction(pos);
         return action == Result.AIR ||
                 (action == Result.ORIGINAL && world.isAirBlock(pos)) ||
                 (action == Result.COVER && getBlockState(pos).getBlock().isAir(getBlockState(pos), this, pos));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public Biome getBiome(@Nonnull BlockPos pos) {
+    public Biome getBiome(@NotNull BlockPos pos) {
         return world.getBiome(pos);
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, @Nonnull EnumFacing side, boolean _default) {
+    public boolean isSideSolid(BlockPos pos, @NotNull EnumFacing side, boolean _default) {
         if (pos.getX() < -30000000 ||
                 pos.getZ() < -30000000 ||
                 pos.getX() >= 30000000 ||

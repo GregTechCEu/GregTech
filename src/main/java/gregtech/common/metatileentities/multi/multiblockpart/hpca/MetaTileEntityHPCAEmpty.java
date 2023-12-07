@@ -1,9 +1,12 @@
 package gregtech.common.metatileentities.multi.multiblockpart.hpca;
 
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+
 import net.minecraft.util.ResourceLocation;
 
 public class MetaTileEntityHPCAEmpty extends MetaTileEntityHPCAComponent {
@@ -25,6 +28,11 @@ public class MetaTileEntityHPCAEmpty extends MetaTileEntityHPCAComponent {
     @Override
     public SimpleOverlayRenderer getFrontOverlay() {
         return Textures.HPCA_EMPTY_OVERLAY;
+    }
+
+    @Override
+    public TextureArea getComponentIcon() {
+        return GuiTextures.HPCA_ICON_EMPTY_COMPONENT;
     }
 
     @Override

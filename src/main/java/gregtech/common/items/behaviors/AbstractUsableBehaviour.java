@@ -1,6 +1,7 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,10 +21,10 @@ public class AbstractUsableBehaviour implements IItemBehaviour {
         if (!player.capabilities.isCreativeMode) {
             if (--usesLeft <= 0) {
                 if (replacementStack.isEmpty()) {
-                    //if replacement stack is empty, just shrink resulting stack
+                    // if replacement stack is empty, just shrink resulting stack
                     stack.shrink(1);
                 } else {
-                    //otherwise, update held item to replacement stack
+                    // otherwise, update held item to replacement stack
                     player.setHeldItem(hand, replacementStack);
                 }
                 return true;
@@ -48,5 +49,4 @@ public class AbstractUsableBehaviour implements IItemBehaviour {
         }
         tagCompound.setInteger("GT.UsesLeft", usesLeft);
     }
-
 }

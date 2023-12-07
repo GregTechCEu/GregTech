@@ -8,26 +8,35 @@ import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
 
     private final EnumMap<EnumFacing, ItemNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final Map<FacingPos, Integer> transferred = new HashMap<>();
+    private final Object2IntMap<FacingPos> transferred = new Object2IntOpenHashMap<>();
     private ItemNetHandler defaultHandler;
     // the ItemNetHandler can only be created on the server so we have a empty placeholder for the client
     private final IItemHandler clientCapability = new ItemStackHandler(0);
     private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
+
+    private int transferredItems = 0;
+    private long timer = 0;
+
+    public long getWorldTime() {
+        return hasWorld() ? getWorld().getTotalWorldTime() : 0L;
+    }
 
     @Override
     public Class<ItemPipeType> getPipeTypeClass() {
@@ -84,7 +93,7 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         ItemPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() &&
                 currentPipeNet.containsNode(getPipePos()))
-            return currentPipeNet; //if current net is valid and does contain position, return it
+            return currentPipeNet; // if current net is valid and does contain position, return it
         WorldItemPipeNet worldFluidPipeNet = (WorldItemPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
         currentPipeNet = worldFluidPipeNet.getNetFromPos(getPipePos());
         if (currentPipeNet != null) {
@@ -97,25 +106,51 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         transferred.clear();
     }
 
-    public Map<FacingPos, Integer> getTransferred() {
+    public Object2IntMap<FacingPos> getTransferred() {
         return transferred;
     }
 
     @Override
     public void transferDataFrom(IPipeTile<ItemPipeType, ItemPipeProperties> tileEntity) {
         super.transferDataFrom(tileEntity);
-        if (getItemPipeNet() == null)
-            return;
         TileEntityItemPipe itemPipe = (TileEntityItemPipe) tileEntity;
-        if (!itemPipe.handlers.isEmpty() && itemPipe.defaultHandler != null) {
-            // take handlers from old pipe
-            handlers.clear();
-            handlers.putAll(itemPipe.handlers);
-            defaultHandler = itemPipe.defaultHandler;
-            checkNetwork();
-        } else {
-            // create new handlers
-            initHandlers();
+        // take handlers from old pipe
+        if (!itemPipe.handlers.isEmpty()) {
+            this.handlers.clear();
+            for (ItemNetHandler handler : itemPipe.handlers.values()) {
+                handler.updatePipe(this);
+                this.handlers.put(handler.getFacing(), handler);
+            }
         }
+        if (itemPipe.defaultHandler != null) {
+            itemPipe.defaultHandler.updatePipe(this);
+            this.defaultHandler = itemPipe.defaultHandler;
+        }
+    }
+
+    // every time the transferred variable is accessed this method should be called
+    // if 20 ticks passed since the last access it will reset it
+    // this method is equal to
+    // if (++time % 20 == 0) {
+    // this.transferredItems = 0;
+    // }
+    // if it was in a ticking TileEntity
+    private void updateTransferredState() {
+        long currentTime = getWorldTime();
+        long dif = currentTime - this.timer;
+        if (dif >= 20 || dif < 0) {
+            this.transferredItems = 0;
+            this.timer = currentTime;
+        }
+    }
+
+    public void addTransferredItems(int amount) {
+        updateTransferredState();
+        this.transferredItems += amount;
+    }
+
+    public int getTransferredItems() {
+        updateTransferredState();
+        return this.transferredItems;
     }
 }

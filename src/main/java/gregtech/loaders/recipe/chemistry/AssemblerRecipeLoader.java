@@ -1,5 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.common.ConfigHolder;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -18,14 +20,13 @@ import static gregtech.common.items.MetaItems.*;
 public class AssemblerRecipeLoader {
 
     public static void init() {
-
         // Gearbox-like
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Bronze, 4)
                 .input(gear, Bronze, 2)
                 .input(frameGt, Bronze)
                 .circuitMeta(4)
-                .outputs(TURBINE_CASING.getItemVariant(BRONZE_GEARBOX, 2))
+                .outputs(TURBINE_CASING.getItemVariant(BRONZE_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -33,7 +34,7 @@ public class AssemblerRecipeLoader {
                 .input(gear, Steel, 2)
                 .input(frameGt, Steel)
                 .circuitMeta(4)
-                .outputs(TURBINE_CASING.getItemVariant(STEEL_GEARBOX, 2))
+                .outputs(TURBINE_CASING.getItemVariant(STEEL_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -41,7 +42,7 @@ public class AssemblerRecipeLoader {
                 .input(gear, StainlessSteel, 2)
                 .input(frameGt, StainlessSteel)
                 .circuitMeta(4)
-                .outputs(TURBINE_CASING.getItemVariant(STAINLESS_STEEL_GEARBOX, 2))
+                .outputs(TURBINE_CASING.getItemVariant(STAINLESS_STEEL_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -49,7 +50,7 @@ public class AssemblerRecipeLoader {
                 .input(gear, Titanium, 2)
                 .input(frameGt, Titanium)
                 .circuitMeta(4)
-                .outputs(TURBINE_CASING.getItemVariant(TITANIUM_GEARBOX, 2))
+                .outputs(TURBINE_CASING.getItemVariant(TITANIUM_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -57,7 +58,7 @@ public class AssemblerRecipeLoader {
                 .input(gear, TungstenSteel, 2)
                 .input(frameGt, TungstenSteel)
                 .circuitMeta(4)
-                .outputs(TURBINE_CASING.getItemVariant(TUNGSTENSTEEL_GEARBOX, 2))
+                .outputs(TURBINE_CASING.getItemVariant(TUNGSTENSTEEL_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         // Other
@@ -65,14 +66,15 @@ public class AssemblerRecipeLoader {
                 .input(rotor, Titanium, 2)
                 .input(pipeNormalFluid, Titanium, 4)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
-                .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, 2))
+                .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, TungstenSteel, 2)
                 .input(pipeNormalFluid, TungstenSteel, 4)
                 .inputs(METAL_CASING.getItemVariant(TUNGSTENSTEEL_ROBUST))
-                .outputs(MULTIBLOCK_CASING.getItemVariant(EXTREME_ENGINE_INTAKE_CASING, 2))
+                .outputs(MULTIBLOCK_CASING.getItemVariant(EXTREME_ENGINE_INTAKE_CASING,
+                        ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -124,50 +126,6 @@ public class AssemblerRecipeLoader {
                 .input(dust, TricalciumPhosphate)
                 .output(TOOL_MATCHES, 4)
                 .duration(64).EUt(16).buildAndRegister();
-
-        // Wood Pipes
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(plate, Wood)
-                .circuitMeta(12)
-                .fluidInputs(Glue.getFluid(50))
-                .output(pipeSmallFluid, Wood)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(plate, Wood, 3)
-                .circuitMeta(6)
-                .fluidInputs(Glue.getFluid(20))
-                .output(pipeNormalFluid, Wood)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                .input(plate, Wood, 6)
-                .circuitMeta(2)
-                .fluidInputs(Glue.getFluid(10))
-                .output(pipeLargeFluid, Wood)
-                .buildAndRegister();
-				
-        // Treated Wood Pipes
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(plate, TreatedWood)
-                .circuitMeta(12)
-                .fluidInputs(Glue.getFluid(50))
-                .output(pipeSmallFluid, TreatedWood)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(plate, TreatedWood, 3)
-                .circuitMeta(6)
-                .fluidInputs(Glue.getFluid(20))
-                .output(pipeNormalFluid, TreatedWood)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                .input(plate, TreatedWood, 6)
-                .circuitMeta(2)
-                .fluidInputs(Glue.getFluid(10))
-                .output(pipeLargeFluid, TreatedWood)
-                .buildAndRegister();
 
         // Voltage Coils
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])

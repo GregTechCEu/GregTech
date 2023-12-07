@@ -1,6 +1,7 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.AdviceAdapter;
@@ -28,7 +29,8 @@ public final class EnchantmentCanApplyVisitor extends AdviceAdapter implements O
     }
 
     private static void createMapping(String className) {
-        CLASS_TO_MAPPING_MAP.put(className, new ObfMapping(className, "func_92089_a", "(Lnet/minecraft/item/ItemStack;)Z").toRuntime());
+        CLASS_TO_MAPPING_MAP.put(className,
+                new ObfMapping(className, "func_92089_a", "(Lnet/minecraft/item/ItemStack;)Z").toRuntime());
     }
 
     public EnchantmentCanApplyVisitor(MethodVisitor mv, ObfMapping mapping) {
@@ -42,7 +44,9 @@ public final class EnchantmentCanApplyVisitor extends AdviceAdapter implements O
             visitVarInsn(ALOAD, 1); // load ItemStack
             visitVarInsn(ALOAD, 0); // load this (Enchantment)
             visitMethodInsn(INVOKESTATIC, "gregtech/asm/hooks/EnchantmentHooks", "checkTool",
-                    "(ZLnet/minecraft/item/ItemStack;Lnet/minecraft/enchantment/Enchantment;)Z", false); // do GT tool checking logic
+                    "(ZLnet/minecraft/item/ItemStack;Lnet/minecraft/enchantment/Enchantment;)Z", false); // do GT tool
+                                                                                                         // checking
+                                                                                                         // logic
         }
     }
 }

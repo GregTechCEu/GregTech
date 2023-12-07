@@ -1,4 +1,5 @@
 {
+  "name": "gregtech.veins.ore.mica",
   "weight": 20,
   "density": 0.25,
   "max_height": 40,

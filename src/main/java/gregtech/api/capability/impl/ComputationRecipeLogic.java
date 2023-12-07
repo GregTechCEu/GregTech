@@ -5,7 +5,10 @@ import gregtech.api.capability.IOpticalComputationReceiver;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.recipeproperties.ComputationProperty;
+import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
+
 import net.minecraft.nbt.NBTTagCompound;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,8 +19,16 @@ import org.jetbrains.annotations.NotNull;
 public class ComputationRecipeLogic extends MultiblockRecipeLogic {
 
     private final ComputationType type;
+    /*
+     * Whether recipe duration should be treated as a total CWU value (so, incremented by the CWU/t used each tick),
+     * or normally (increase by 1 for each successful draw of CWU/t). If this value is true, the logic will attempt
+     * to draw as much CWU/t as possible to try and accelerate the computation process, and CWU/t is treated as a
+     * minimum value instead of a static cost.
+     */
+    private boolean isDurationTotalCWU;
     private int recipeCWUt;
     private boolean hasNotEnoughComputation;
+    private int currentDrawnCWUt;
 
     public ComputationRecipeLogic(RecipeMapMultiblockController metaTileEntity, ComputationType type) {
         super(metaTileEntity);
@@ -50,6 +61,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     protected void setupRecipe(Recipe recipe) {
         super.setupRecipe(recipe);
         this.recipeCWUt = recipe.getProperty(ComputationProperty.getInstance(), 0);
+        this.isDurationTotalCWU = recipe.hasProperty(TotalComputationProperty.getInstance());
     }
 
     @Override
@@ -63,15 +75,24 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
             drawEnergy(recipeEUt, false);
 
             IOpticalComputationProvider provider = getComputationProvider();
-            int availableCWUt = provider.requestCWUt(recipeCWUt, true);
+            int availableCWUt = provider.requestCWUt(Integer.MAX_VALUE, true);
             if (availableCWUt >= recipeCWUt) {
                 // carry on as normal
                 this.hasNotEnoughComputation = false;
-                provider.requestCWUt(recipeCWUt, false);
-                if (++progressTime > maxProgressTime) {
+                if (isDurationTotalCWU) {
+                    // draw as much CWU as possible, and increase progress by this amount
+                    currentDrawnCWUt = provider.requestCWUt(availableCWUt, false);
+                    progressTime += currentDrawnCWUt;
+                } else {
+                    // draw only the recipe CWU/t, and increase progress by 1
+                    provider.requestCWUt(recipeCWUt, false);
+                    progressTime++;
+                }
+                if (progressTime > maxProgressTime) {
                     completeRecipe();
                 }
             } else {
+                currentDrawnCWUt = 0;
                 this.hasNotEnoughComputation = true;
                 // only decrement progress for low CWU/t if we need a steady supply
                 if (type == ComputationType.STEADY) {
@@ -91,11 +112,17 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     protected void completeRecipe() {
         super.completeRecipe();
         this.recipeCWUt = 0;
+        this.isDurationTotalCWU = false;
         this.hasNotEnoughComputation = false;
+        this.currentDrawnCWUt = 0;
     }
 
     public int getRecipeCWUt() {
         return recipeCWUt;
+    }
+
+    public int getCurrentDrawnCWUt() {
+        return isDurationTotalCWU ? currentDrawnCWUt : recipeCWUt;
     }
 
     public boolean isHasNotEnoughComputation() {
@@ -108,6 +135,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         NBTTagCompound compound = super.serializeNBT();
         if (this.progressTime > 0) {
             compound.setInteger("RecipeCWUt", recipeCWUt);
+            compound.setBoolean("IsDurationTotalCWU", isDurationTotalCWU);
         }
         return compound;
     }
@@ -117,7 +145,15 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         super.deserializeNBT(compound);
         if (this.progressTime > 0) {
             recipeCWUt = compound.getInteger("RecipeCWUt");
+            isDurationTotalCWU = compound.getBoolean("IsDurationTotalCWU");
         }
+    }
+
+    /**
+     * @return Whether TOP / WAILA should show the recipe progress as duration or as total computation.
+     */
+    public boolean shouldShowDuration() {
+        return !isDurationTotalCWU;
     }
 
     public enum ComputationType {

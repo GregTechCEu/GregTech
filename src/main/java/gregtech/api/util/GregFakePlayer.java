@@ -1,6 +1,5 @@
 package gregtech.api.util;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -16,12 +15,15 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import com.mojang.authlib.GameProfile;
+
 import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public class GregFakePlayer extends EntityPlayer {
 
-    private static final GameProfile GREGTECH = new GameProfile(UUID.fromString("518FDF18-EC2A-4322-832A-58ED1721309B"), "[GregTech]");
+    private static final GameProfile GREGTECH = new GameProfile(UUID.fromString("518FDF18-EC2A-4322-832A-58ED1721309B"),
+            "[GregTech]");
     private static WeakReference<FakePlayer> GREGTECH_PLAYER = null;
 
     public static FakePlayer get(WorldServer world) {
@@ -58,20 +60,16 @@ public class GregFakePlayer extends EntityPlayer {
     }
 
     @Override
-    public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar) {
-    }
+    public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar) {}
 
     @Override
-    public void sendMessage(ITextComponent component) {
-    }
+    public void sendMessage(ITextComponent component) {}
 
     @Override
-    public void addStat(StatBase par1StatBase, int par2) {
-    }
+    public void addStat(StatBase par1StatBase, int par2) {}
 
     @Override
-    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z) {
-    }
+    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z) {}
 
     @Override
     public boolean isEntityInvulnerable(DamageSource source) {
@@ -100,5 +98,5 @@ public class GregFakePlayer extends EntityPlayer {
     }
 
     @Override
-    protected void playEquipSound(ItemStack stack) { }
+    protected void playEquipSound(ItemStack stack) {}
 }

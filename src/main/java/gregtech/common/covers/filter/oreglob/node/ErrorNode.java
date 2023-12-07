@@ -1,32 +1,21 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-public class ErrorNode extends OreGlobNode {
-
-    ErrorNode() {
-    }
-
-    @Nullable
-    @Override
-    public OreGlobNode visit(NodeVisitor visitor) {
-        visitor.error();
-        return getNext();
-    }
+class ErrorNode extends OreGlobNode {
 
     @Override
-    protected void visitInternal(NodeVisitor visitor) {
+    public void visit(NodeVisitor visitor) {
         visitor.error();
     }
 
     @Override
-    public boolean isStructurallyEqualTo(@Nonnull OreGlobNode node) { // removed inverted flag check
+    public boolean isStructurallyEqualTo(@NotNull OreGlobNode node) { // removed inverted flag check
         return this == node || node instanceof ErrorNode && isStructurallyEqualTo(this.getNext(), node.getNext());
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
         return node instanceof ErrorNode;
     }
 

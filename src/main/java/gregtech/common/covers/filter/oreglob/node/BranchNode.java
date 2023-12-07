@@ -1,9 +1,10 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class BranchNode extends OreGlobNode {
+class BranchNode extends OreGlobNode {
 
     final BranchType type;
     final List<OreGlobNode> expressions;
@@ -14,7 +15,7 @@ public class BranchNode extends OreGlobNode {
     }
 
     @Override
-    protected void visitInternal(NodeVisitor visitor) {
+    public void visit(NodeVisitor visitor) {
         if (expressions.size() == 1) {
             visitor.group(expressions.get(0), isNegated());
         } else {
@@ -24,54 +25,39 @@ public class BranchNode extends OreGlobNode {
 
     @Override
     protected MatchDescription getIndividualNodeMatchDescription() {
-        switch (this.expressions.size()) {
-            case 0:
-                return this.type == BranchType.AND ? MatchDescription.EVERYTHING : MatchDescription.NOTHING;
-            case 1:
-                return this.expressions.get(0).getIndividualNodeMatchDescription();
-        }
-        switch (this.type) {
-            case OR: {
-                MatchDescription union = MatchDescription.NOTHING;
-                for (OreGlobNode node : this.expressions) {
-                    MatchDescription desc = node.getMatchDescription();
-                    if (desc == MatchDescription.NOTHING) continue;
-                    union = union.or(desc);
-                    if (union == MatchDescription.EVERYTHING) {
-                        return MatchDescription.EVERYTHING;
+        MatchDescription description = switch (this.expressions.size()) {
+            case 0 -> this.type == BranchType.AND ? MatchDescription.EVERYTHING : MatchDescription.NOTHING;
+            case 1 -> this.expressions.get(0).getMatchDescription();
+            default -> switch (this.type) {
+                    case OR -> {
+                        MatchDescription union = MatchDescription.NOTHING;
+                        for (OreGlobNode node : this.expressions) {
+                            union = union.or(node.getMatchDescription());
+                        }
+                        yield union;
                     }
-                }
-                return union;
-            }
-            case AND: {
-                MatchDescription intersection = MatchDescription.EVERYTHING;
-                for (OreGlobNode node : this.expressions) {
-                    MatchDescription desc = node.getMatchDescription();
-                    if (desc == MatchDescription.EVERYTHING) continue;
-                    intersection = intersection.and(desc);
-                    if (intersection == MatchDescription.EMPTY) {
-                        return MatchDescription.EMPTY;
+                    case AND -> {
+                        MatchDescription intersection = MatchDescription.EVERYTHING;
+                        for (OreGlobNode node : this.expressions) {
+                            intersection = intersection.and(node.getMatchDescription());
+                        }
+                        yield intersection;
                     }
-                }
-                return intersection;
-            }
-            case XOR: {
-                MatchDescription disjunction = MatchDescription.NOTHING;
-                for (OreGlobNode node : this.expressions) {
-                    MatchDescription desc = node.getMatchDescription();
-                    disjunction = disjunction.xor(desc);
-                }
-                return disjunction;
-            }
-            default:
-                throw new IllegalStateException("Unreachable");
-        }
+                    case XOR -> {
+                        MatchDescription disjunction = MatchDescription.NOTHING;
+                        for (OreGlobNode node : this.expressions) {
+                            disjunction = disjunction.xor(node.getMatchDescription());
+                        }
+                        yield disjunction;
+                    }
+                };
+        };
+        return isNegated() ? description.complement() : description;
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
-        if (!(node instanceof BranchNode)) return false;
-        BranchNode br = (BranchNode) node;
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
+        if (!(node instanceof BranchNode br)) return false;
         if (this.type != br.type) return false;
         if (this.expressions.size() != br.expressions.size()) return false;
 
@@ -91,9 +77,5 @@ public class BranchNode extends OreGlobNode {
             if (!matched) return false;
         }
         return true;
-    }
-
-    public enum BranchType {
-        OR, AND, XOR
     }
 }

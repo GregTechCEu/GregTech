@@ -2,11 +2,11 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
-import gregtech.common.covers.filter.oreglob.node.MatchNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +14,7 @@ import static gregtech.common.covers.filter.oreglob.impl.OreGlobParser.TokenType
 
 /**
  * Top-down parser for oreGlob expression.
+ * 
  * <pre>
  * oreGlob = [ FLAG ], [ or ], EOF
  *
@@ -72,48 +73,33 @@ public final class OreGlobParser {
         while (true) {
             int start = this.inputIndex;
             switch (readNextChar()) {
-                case ' ': case '\t': case '\n': case '\r':
+                case ' ', '\t', '\n', '\r' -> {
                     continue;
-                case '(':
-                    setCurrentToken(LPAR, start, 1);
-                    return;
-                case ')':
-                    setCurrentToken(RPAR, start, 1);
-                    return;
-                case '|':
-                    setCurrentToken(OR, start, 1);
-                    return;
-                case '&':
-                    setCurrentToken(AND, start, 1);
-                    return;
-                case '!':
-                    setCurrentToken(NOT, start, 1);
-                    return;
-                case '^':
-                    setCurrentToken(XOR, start, 1);
-                    return;
-                case '*':
-                    setCurrentToken(ANY, start, 1);
-                    return;
-                case '?':
-                    setCurrentToken(ANY_CHAR, start, 1);
-                    return;
-                case '$':
+                }
+                case '(' -> setCurrentToken(LPAR, start, 1);
+                case ')' -> setCurrentToken(RPAR, start, 1);
+                case '|' -> setCurrentToken(OR, start, 1);
+                case '&' -> setCurrentToken(AND, start, 1);
+                case '!' -> setCurrentToken(NOT, start, 1);
+                case '^' -> setCurrentToken(XOR, start, 1);
+                case '*' -> setCurrentToken(ANY, start, 1);
+                case '?' -> setCurrentToken(ANY_CHAR, start, 1);
+                case '$' -> {
                     if (!first) {
-                        error("Compilation flags in the middle of expression", start, 1);
+                        error(OreGlobMessages.compileErrorUnexpectedCompilationFlag(), start, 1);
                     }
                     gatherFlags(first);
                     first = false;
                     continue;
-                case CHAR_EOF:
-                    setCurrentToken(EOF, input.length(), 0);
-                    return;
-                default:
+                }
+                case CHAR_EOF -> setCurrentToken(EOF, input.length(), 0);
+                default -> {
                     this.inputIndex = start;
                     String literalValue = gatherLiteralValue();
                     setCurrentToken(LITERAL, start, inputIndex - start, literalValue);
-                    return;
+                }
             }
+            return;
         }
     }
 
@@ -129,8 +115,7 @@ public final class OreGlobParser {
     }
 
     private String getTokenSection() {
-        return tokenType == EOF ?
-                "** End of line **" :
+        return this.tokenType == EOF ? OreGlobMessages.compileEOF() :
                 this.input.substring(this.tokenStart, this.tokenStart + this.tokenLength);
     }
 
@@ -140,20 +125,20 @@ public final class OreGlobParser {
             int i = this.inputIndex;
             int c = readNextChar();
             switch (c) {
-                case '\\':
+                case '\\' -> {
                     c = readNextChar();
                     if (c == CHAR_EOF) {
-                        error("End of file after escape character ('\\')", i, 1);
+                        error(OreGlobMessages.compileErrorEOFAfterEscape(), i, 1);
                         return stb.toString();
-                    } else break;
-                case ' ': case '\t': case '\n': case '\r': case '(': case ')':
-                case '|': case '&': case '!': case '^': case '*': case '?': case '$':
-                case CHAR_EOF:
+                    }
+                }
+                case ' ', '\t', '\n', '\r', '(', ')', '|', '&', '!', '^', '*', '?', '$', CHAR_EOF -> {
                     this.inputIndex = i;
                     return stb.toString();
+                }
             }
             if (c > 0xFFFF) {
-                error("Characters above 0xFFFF can't be used", i, 1);
+                error(OreGlobMessages.compileErrorInvalidChar(c), i, 1);
                 c = '?';
             }
             stb.appendCodePoint(c);
@@ -166,28 +151,27 @@ public final class OreGlobParser {
             int i = this.inputIndex;
             int c = readNextChar();
             switch (c) {
-                case '\\':
+                case '\\' -> {
                     c = readNextChar();
                     if (c == CHAR_EOF) {
-                        error("End of file after escape character ('\\')", i, 1);
-                        break;
+                        error(OreGlobMessages.compileErrorEOFAfterEscape(), i, 1);
                     } else if (add) {
                         addFlag(c, i);
                         flagsAdded = true;
                         continue;
                     }
-                case ' ': case '\t': case '\n': case '\r':
-                case CHAR_EOF:
-                    break;
-                default:
+                }
+                case ' ', '\t', '\n', '\r', CHAR_EOF -> {}
+                default -> {
                     if (add) {
                         addFlag(c, i);
                         flagsAdded = true;
                     }
                     continue;
+                }
             }
             if (!flagsAdded && add) {
-                error("No compilation flags given", i, 1);
+                error(OreGlobMessages.compileErrorEmptyCompilationFlag(), i, 1);
             }
             return;
         }
@@ -195,15 +179,15 @@ public final class OreGlobParser {
 
     private void addFlag(int flag, int index) {
         switch (flag) {
-            case 'c': case 'C':
+            case 'c', 'C' -> {
                 if (this.caseSensitive) {
-                    warn("Compilation flag 'c' written twice", index, 1);
+                    warn(OreGlobMessages.compileErrorRedundantCompilationFlag("c"), index, 1);
                 } else {
                     this.caseSensitive = true;
                 }
-                break;
-            default:
-                warn(new StringBuilder("Unknown compilation flag '").appendCodePoint(flag).append('\'').toString(), index, 1);
+            }
+            default -> warn(OreGlobMessages.compileErrorUnknownCompilationFlag(
+                    new StringBuilder().appendCodePoint(flag).toString()), index, 1);
         }
     }
 
@@ -218,7 +202,7 @@ public final class OreGlobParser {
         if (tokenType != EOF) {
             OreGlobNode expr = or();
             if (tokenType != EOF) { // likely caused by program error, not user issue
-                error("Unexpected token " + getTokenSection() + " after end of expression");
+                error(OreGlobMessages.compileErrorUnexpectedTokenAfterEOF(getTokenSection()));
             }
             if (!error) {
                 return new OreGlobCompileResult(new NodeOreGlob(expr), this.reports);
@@ -236,7 +220,7 @@ public final class OreGlobParser {
             // Eat through OR tokens as much as we can, to prevent scenario where
             // a disgusting C like lang users type || and complain their filter is broken
             // noinspection StatementWithEmptyBody
-            while (advanceIf(OR)) ;
+            while (advanceIf(OR));
             nodes.add(and());
         } while (advanceIf(OR));
         return OreGlobNodes.or(nodes);
@@ -251,29 +235,25 @@ public final class OreGlobParser {
             // Eat through AND tokens as much as we can, to prevent scenario where
             // a disgusting C like lang users type && and complain their filter is broken
             // noinspection StatementWithEmptyBody
-            while (advanceIf(AND)) ;
+            while (advanceIf(AND));
             nodes.add(xor());
         } while (advanceIf(AND));
         return OreGlobNodes.and(nodes);
     }
 
     private OreGlobNode xor() {
-        OreGlobNode expr = not();
+        OreGlobNode expr = not(false);
         if (!advanceIf(XOR)) return expr;
         List<OreGlobNode> nodes = new ArrayList<>();
         nodes.add(expr);
         do {
             // XOR token redundancy is not checked because it doesn't make any sense
-            nodes.add(not());
+            nodes.add(not(false));
         } while (advanceIf(XOR));
         return OreGlobNodes.xor(nodes);
     }
 
-    private OreGlobNode not() {
-        return not(false);
-    }
-
-    private OreGlobNode not(boolean insideNegation) {
+    private OreGlobNode not(boolean nested) {
         boolean not = false;
         while (advanceIf(NOT)) not = !not;
         OreGlobNode root;
@@ -285,90 +265,91 @@ public final class OreGlobParser {
             } else {
                 root = OreGlobNodes.not(or());
                 switch (tokenType) {
-                    case RPAR:
-                        advance();
-                    case EOF:
-                        break;
-                    default: // likely caused by program error, not user issue
-                        error("Unexpected token " + getTokenSection() + " after end of expression");
+                    case RPAR -> advance();
+                    case EOF -> {}
+                    // likely caused by program error, not user issue
+                    default -> error(OreGlobMessages.compileErrorUnexpectedToken(getTokenSection()));
                 }
             }
         } else {
-            if (not && insideNegation) {
-                warn("Nested negations can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.");
+            if (not && nested) {
+                warn(OreGlobMessages.compileWarnNestedNegation());
             }
             root = primary();
         }
 
-        switch (tokenType) {
-            case NOT: case LITERAL: case LPAR: case ANY: case ANY_CHAR: // lookahead for not ruleset
+        switch (tokenType) { // lookahead for not ruleset
+            case NOT, LITERAL, LPAR, ANY, ANY_CHAR -> {
                 int tokenStart = this.tokenStart;
-                OreGlobNode node = not(insideNegation || not);
-                if (root instanceof MatchNode && root.isNegated() &&
-                        node instanceof MatchNode && node.isNegated()) {
-                    warn("Consecutive negations can be unintuitive. Please check if the evaluation result is desirable.", tokenStart, this.tokenStart + this.tokenLength - tokenStart);
+                OreGlobNode node = not(nested || not);
+                if (OreGlobNodes.isNegatedMatch(root) && OreGlobNodes.isNegatedMatch(node)) {
+                    warn(OreGlobMessages.compileWarnConsecutiveNegation(), tokenStart,
+                            tokenStart + tokenLength - tokenStart);
                 }
                 root = OreGlobNodes.append(root, node);
-            default:
-                return not ? OreGlobNodes.not(root) : root;
+            }
         }
+        return not ? OreGlobNodes.not(root) : root;
     }
 
     private OreGlobNode primary() {
-        switch (tokenType) {
-            case LITERAL:
+        return switch (tokenType) {
+            case LITERAL -> {
                 if (tokenLiteralValue != null) {
                     OreGlobNode result = OreGlobNodes.match(tokenLiteralValue, !this.caseSensitive);
                     advance();
-                    return result;
+                    yield result;
                 } else { // likely caused by program error, not user issue
                     error("Literal token without value");
                     advance();
-                    return OreGlobNodes.error();
+                    yield OreGlobNodes.error();
                 }
-            case LPAR:
+            }
+            case LPAR -> {
                 advance();
-                switch (tokenType) {
-                    case RPAR: // Empty group, i.e. nothing
+                yield switch (tokenType) {
+                    // Empty group, i.e. nothing
+                    case RPAR -> {
                         advance();
-                    case EOF:
-                        // To preserve consistency between grouped expression below, enclosing parenthesis of nothing match is also optional
-                        // For example, this is totally valid ore expression
-                        //    (
-                        // ...in the same logic the ore expression below is valid
-                        //    ( ore* | ingot*
-                        return OreGlobNodes.empty();
-                    default:
+                        yield OreGlobNodes.empty();
+                    }
+                    // To preserve consistency between grouped expression below, enclosing parenthesis of nothing match
+                    // is also optional
+                    // For example, this is totally valid ore expression
+                    // (
+                    // ...in the same logic the ore expression below is valid
+                    // ( ore* | ingot*
+                    case EOF -> OreGlobNodes.empty();
+                    default -> {
                         OreGlobNode result = or();
                         advanceIf(RPAR); // optional enclosing parenthesis
-                        return result;
-                }
-            case ANY:
-                return nOrMore(0, true);
-            case ANY_CHAR:
-                return nOrMore(1, false);
-            case EOF:
-                error("Unexpected end of expression");
-                return OreGlobNodes.error();
-            default:
-                error("Unexpected token '" + getTokenSection() + "'");
+                        yield result;
+                    }
+                };
+            }
+            case ANY -> nOrMore(0, true);
+            case ANY_CHAR -> nOrMore(1, false);
+            case EOF -> {
+                error(OreGlobMessages.compileErrorUnexpectedEOF());
+                yield OreGlobNodes.error();
+            }
+            default -> {
+                error(OreGlobMessages.compileErrorUnexpectedToken(getTokenSection()));
                 advance();
-                return OreGlobNodes.error();
-        }
+                yield OreGlobNodes.error();
+            }
+        };
     }
 
     private OreGlobNode nOrMore(int n, boolean more) {
         while (true) {
             advance();
             switch (tokenType) {
-                case ANY_CHAR:
-                    n++;
-                    break;
-                case ANY:
-                    more = true;
-                    break;
-                default:
+                case ANY_CHAR -> n++;
+                case ANY -> more = true;
+                default -> {
                     return OreGlobNodes.chars(n, more);
+                }
             }
         }
     }

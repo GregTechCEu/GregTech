@@ -1,17 +1,18 @@
 package gregtech.core.unification.material.internal;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+
+import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,9 +40,9 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
         return INSTANCE;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public MaterialRegistry createRegistry(@Nonnull String modid) {
+    public MaterialRegistry createRegistry(@NotNull String modid) {
         if (getPhase() != Phase.PRE) {
             throw new IllegalStateException("Cannot create registries in phase " + getPhase());
         }
@@ -54,21 +55,21 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
         return registry;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public MaterialRegistry getRegistry(@Nonnull String modid) {
+    public MaterialRegistry getRegistry(@NotNull String modid) {
         MaterialRegistry registry = registries.get(modid);
         return registry != null ? registry : gregtechRegistry;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public MaterialRegistry getRegistry(int networkId) {
         MaterialRegistry registry = networkIds.get(networkId);
         return registry != null ? registry : gregtechRegistry;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Collection<MaterialRegistry> getRegistries() {
         if (getPhase() == Phase.PRE) {
@@ -77,7 +78,7 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
         return Collections.unmodifiableCollection(registries.values());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Collection<Material> getRegisteredMaterials() {
         if (registeredMaterials == null ||
@@ -89,7 +90,7 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
 
     @Nullable
     @Override
-    public Material getMaterial(@Nonnull String name) {
+    public Material getMaterial(@NotNull String name) {
         if (!name.isEmpty()) {
             String modid;
             String materialName;
@@ -106,7 +107,7 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Phase getPhase() {
         return registrationPhase;
@@ -132,14 +133,14 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
         registrationPhase = Phase.FROZEN;
     }
 
-    @Nonnull
+    @NotNull
     private MaterialRegistryImpl createInternalRegistry() {
         MaterialRegistryImpl registry = new MaterialRegistryImpl(GTValues.MODID);
         this.registries.put(GTValues.MODID, registry);
         return registry;
     }
 
-    @Nonnull
+    @NotNull
     public Material getDefaultFallback() {
         return gregtechRegistry.getFallbackMaterial();
     }

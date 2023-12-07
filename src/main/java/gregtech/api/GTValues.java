@@ -1,8 +1,8 @@
 package gregtech.api;
 
-import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
 import gregtech.common.ConfigHolder;
+
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
@@ -17,16 +17,6 @@ import static net.minecraft.util.text.TextFormatting.*;
  * Made for static imports, this Class is just a Helper.
  */
 public class GTValues {
-
-    /**
-     * Version String for use in addon mods' @Mod(dependencies = "...") block.
-     *
-     * @deprecated use {@link gregtech.GTInternalTags#VERSION}
-     *
-     * </p> This field was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    public static final String MOD_VERSION_DEP = "required-after:gregtech@[" + GregTechVersion.DEP_VERSION + ",);";
 
     /**
      * <p/>
@@ -61,22 +51,26 @@ public class GTValues {
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
      */
-    public static final long[] V = {8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432, 134217728, 536870912, Integer.MAX_VALUE};
+    public static final long[] V = { 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432,
+            134217728, 536870912, Integer.MAX_VALUE };
 
     /**
      * The Voltage Tiers divided by 2.
      */
-    public static final int[] VH = {4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216, 67108864, 268435456, 1073741824};
+    public static final int[] VH = { 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216,
+            67108864, 268435456, 1073741824 };
 
     /**
      * The Voltage Tiers adjusted for cable loss. Use this for recipe EU/t to avoid full-amp recipes
      */
-    public static final int[] VA = {7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
+    public static final int[] VA = { 7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280,
+            125829120, 503316480, 2013265920 };
 
     /**
      * The Voltage Tiers adjusted for cable loss, divided by 2.
      */
-    public static final int[] VHA = {7, 16, 60, 240, 960, 3840, 15360, 61440, 245760, 983040, 3932160, 15728640, 62914560, 251658240, 1006632960};
+    public static final int[] VHA = { 7, 16, 60, 240, 960, 3840, 15360, 61440, 245760, 983040, 3932160, 15728640,
+            62914560, 251658240, 1006632960 };
 
     public static final int ULV = 0;
     public static final int LV = 1;
@@ -98,28 +92,32 @@ public class GTValues {
     /**
      * The short names for the voltages, used for registration primarily
      */
-    public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UXV", "OpV", "MAX"};
+    public static final String[] VN = new String[] { "ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV",
+            "UEV", "UIV", "UXV", "OpV", "MAX" };
 
     /**
      * The short names for the voltages, formatted for text
      */
-    public static final String[] VNF = new String[]{
+    public static final String[] VNF = new String[] {
             DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
             GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
             LIGHT_PURPLE + "LuV", RED + "ZPM", DARK_AQUA + "UV",
             DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
-            YELLOW + "UXV", BLUE + "OpV", RED.toString() + BOLD + "MAX"};
+            YELLOW + "UXV", BLUE + "OpV", RED.toString() + BOLD + "MAX" };
 
     /**
      * Color values for the voltages
      */
-    public static final int[] VC = new int[]{0xC80000, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xE99797, 0x7EC3C4, 0x7EB07E, 0xBF74C0, 0x0B5CFE, 0x914E91, 0x488748, 0x8C0000, 0x2828F5};
+    public static final int[] VC = new int[] { 0xC80000, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xE99797,
+            0x7EC3C4, 0x7EB07E, 0xBF74C0, 0x0B5CFE, 0x914E91, 0x488748, 0x8C0000, 0x2828F5 };
 
     /**
      * The long names for the voltages
      */
-    public static final String[] VOLTAGE_NAMES = new String[]{"Ultra Low Voltage", "Low Voltage", "Medium Voltage", "High Voltage", "Extreme Voltage", "Insane Voltage", "Ludicrous Voltage", "ZPM Voltage", "Ultimate Voltage",
-            "Ultra High Voltage", "Ultra Excessive Voltage", "Ultra Immense Voltage", "Ultra Extreme Voltage", "Overpowered Voltage", "Maximum Voltage"};
+    public static final String[] VOLTAGE_NAMES = new String[] { "Ultra Low Voltage", "Low Voltage", "Medium Voltage",
+            "High Voltage", "Extreme Voltage", "Insane Voltage", "Ludicrous Voltage", "ZPM Voltage", "Ultimate Voltage",
+            "Ultra High Voltage", "Ultra Excessive Voltage", "Ultra Immense Voltage", "Ultra Extreme Voltage",
+            "Overpowered Voltage", "Maximum Voltage" };
 
     /**
      * ModID strings, since they are quite common parameters
@@ -145,7 +143,19 @@ public class GTValues {
             MODID_VOXELMAP = "voxelmap",
             MODID_XAERO_MINIMAP = "xaerominimap",
             MODID_HWYLA = "hwyla",
-            MODID_BAUBLES = "baubles";
+            MODID_BAUBLES = "baubles",
+            MODID_TOP_ADDONS = "topaddons",
+            MODID_IC2 = "ic2",
+            MODID_GTFO = "gregtechfoodoption",
+            MODID_BINNIE = "binniecore",
+            MODID_XU2 = "extrautils2",
+            MODID_TR = "techreborn",
+            MODID_MB = "magicbees",
+            MODID_EB = "extrabees",
+            MODID_ET = "extratrees",
+            MODID_GENETICS = "genetics",
+            MODID_BOP = "biomesoplenty",
+            MODID_TCON = "tconstruct";
 
     private static Boolean isClient;
 
@@ -174,6 +184,7 @@ public class GTValues {
 
     public static Supplier<Boolean> XMAS = () -> {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
-        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("12") && (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
+        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("12") &&
+                (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
     };
 }

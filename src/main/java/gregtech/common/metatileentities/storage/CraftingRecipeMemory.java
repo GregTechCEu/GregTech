@@ -8,7 +8,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class CraftingRecipeMemory {
 
@@ -47,7 +47,8 @@ public class CraftingRecipeMemory {
     private MemorizedRecipe findOrCreateRecipe(ItemStack resultItemStack) {
         // search preexisting recipe with identical recipe result
         for (MemorizedRecipe memorizedRecipe : memorizedRecipes) {
-            if (memorizedRecipe != null && ItemStack.areItemStacksEqual(memorizedRecipe.recipeResult, resultItemStack)) {
+            if (memorizedRecipe != null &&
+                    ItemStack.areItemStacksEqual(memorizedRecipe.recipeResult, resultItemStack)) {
                 return memorizedRecipe;
             }
         }
@@ -112,6 +113,7 @@ public class CraftingRecipeMemory {
     }
 
     public static class MemorizedRecipe {
+
         private final ItemStackHandler craftingMatrix = new ItemStackHandler(9);
         private ItemStack recipeResult;
         private boolean recipeLocked = false;
@@ -147,7 +149,7 @@ public class CraftingRecipeMemory {
         }
 
         private void updateCraftingMatrix(IItemHandler craftingGrid) {
-            //do not modify crafting grid for locked recipes
+            // do not modify crafting grid for locked recipes
             if (!recipeLocked) {
                 copyInventoryItems(craftingGrid, craftingMatrix);
             }

@@ -1,23 +1,27 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.collect.Lists;
+import gregtech.api.fluids.GTFluid;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
-import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.Lists;
+import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
@@ -39,7 +43,8 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
     @Nullable
     protected FluidStack lastPhantomStack;
 
-    public PhantomTankWidget(IFluidTank fluidTank, int x, int y, int width, int height, Supplier<FluidStack> phantomFluidGetter, Consumer<FluidStack> phantomFluidSetter) {
+    public PhantomTankWidget(IFluidTank fluidTank, int x, int y, int width, int height,
+                             Supplier<FluidStack> phantomFluidGetter, Consumer<FluidStack> phantomFluidSetter) {
         super(fluidTank, x, y, width, height);
         this.phantomFluidGetter = phantomFluidGetter;
         this.phantomFluidSetter = phantomFluidSetter;
@@ -64,14 +69,14 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
 
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 FluidStack stack = getFluidFromContainer(ingredient);
 
                 if (stack != null) {
@@ -92,7 +97,8 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
                 phantomFluidSetter.accept(null);
             } else {
                 stack.setCount(1);
-                IFluidHandlerItem fluidHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                IFluidHandlerItem fluidHandler = stack
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
                 if (fluidHandler != null) {
                     phantomFluidSetter.accept(fluidHandler.drain(Integer.MAX_VALUE, false));
                 }
@@ -119,8 +125,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            writeClientAction(SET_PHANTOM_FLUID, buf -> {
-            });
+            writeClientAction(SET_PHANTOM_FLUID, buf -> {});
             return true;
         }
         return false;
@@ -157,8 +162,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         if (stack == null) {
             if (lastPhantomStack != null) {
                 setLastPhantomStack(null);
-                writeUpdateInfo(REMOVE_PHANTOM_FLUID_TYPE, buf -> {
-                });
+                writeUpdateInfo(REMOVE_PHANTOM_FLUID_TYPE, buf -> {});
             }
         } else if (lastPhantomStack == null || !stack.isFluidEqual(lastPhantomStack)) {
             setLastPhantomStack(stack);
@@ -191,12 +195,17 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         return fluid == null ? "" : fluid.getLocalizedName();
     }
 
-    @Override
-    public String getFluidUnlocalizedName() {
-        if (lastFluidInTank != null) {
-            return lastFluidInTank.getUnlocalizedName();
+    @Nullable
+    public TextComponentTranslation getFluidTextComponent() {
+        if (lastFluidInTank != null && lastFluidInTank.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
         }
-        FluidStack fluid = phantomFluidGetter.get();
-        return fluid == null ? "" : fluid.getUnlocalizedName();
+
+        FluidStack stack = phantomFluidGetter.get();
+        if (stack == null) return null;
+        if (stack.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+        return new TextComponentTranslation(stack.getUnlocalizedName());
     }
 }

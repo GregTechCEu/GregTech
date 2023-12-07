@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
@@ -20,7 +21,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
 
@@ -30,7 +31,8 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     // EU per mB
     private final double conversionRate;
 
-    public SteamMultiblockRecipeLogic(RecipeMapSteamMultiblockController tileEntity, RecipeMap<?> recipeMap, IMultipleTankHandler steamFluidTank, double conversionRate) {
+    public SteamMultiblockRecipeLogic(RecipeMapSteamMultiblockController tileEntity, RecipeMap<?> recipeMap,
+                                      IMultipleTankHandler steamFluidTank, double conversionRate) {
         super(tileEntity, recipeMap);
         this.steamFluidTank = steamFluidTank;
         this.conversionRate = conversionRate;
@@ -73,7 +75,6 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     public void update() {
-
         // Fixes an annoying GTCE bug in AbstractRecipeLogic
         RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
         if (isActive && !controller.isStructureFormed()) {
@@ -111,7 +112,7 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         return GTValues.V[GTValues.LV];
     }
 
@@ -121,7 +122,8 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean setupAndConsumeRecipeInputs(@Nonnull Recipe recipe, @Nonnull IItemHandlerModifiable importInventory) {
+    protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                  @NotNull IItemHandlerModifiable importInventory) {
         RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false) &&
                 super.setupAndConsumeRecipeInputs(recipe, importInventory)) {
@@ -143,8 +145,7 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         IBlockState blockOnPos = metaTileEntity.getWorld().getBlockState(ventingBlockPos);
         if (blockOnPos.getCollisionBoundingBox(metaTileEntity.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
             performVentingAnimation(machinePos, ventingSide);
-        }
-        else if(blockOnPos.getBlock() == Blocks.SNOW_LAYER && blockOnPos.getValue(BlockSnow.LAYERS) == 1) {
+        } else if (blockOnPos.getBlock() == Blocks.SNOW_LAYER && blockOnPos.getValue(BlockSnow.LAYERS) == 1) {
             performVentingAnimation(machinePos, ventingSide);
             metaTileEntity.getWorld().destroyBlock(ventingBlockPos, false);
         }
@@ -161,8 +162,9 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
                 ventingSide.getXOffset() / 2.0,
                 ventingSide.getYOffset() / 2.0,
                 ventingSide.getZOffset() / 2.0, 0.1);
-        if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()){
-            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()) {
+            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f,
+                    1.0f);
         }
     }
 }

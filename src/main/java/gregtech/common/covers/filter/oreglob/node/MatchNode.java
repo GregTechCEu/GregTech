@@ -1,8 +1,8 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
-public class MatchNode extends OreGlobNode {
+class MatchNode extends OreGlobNode {
 
     String match;
     boolean ignoreCase;
@@ -13,20 +13,19 @@ public class MatchNode extends OreGlobNode {
     }
 
     @Override
-    protected void visitInternal(NodeVisitor visitor) {
+    public void visit(NodeVisitor visitor) {
         visitor.match(match, ignoreCase, isNegated());
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
-        if (!(node instanceof MatchNode)) return false;
-        String match = ((MatchNode) node).match;
-        return this.ignoreCase ? this.match.equalsIgnoreCase(match) : this.match.equals(match);
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
+        return node instanceof MatchNode match &&
+                (this.ignoreCase ? this.match.equalsIgnoreCase(match.match) : this.match.equals(match.match));
     }
 
     @Override
     protected MatchDescription getIndividualNodeMatchDescription() {
-        return this.match.isEmpty() ? MatchDescription.EMPTY : MatchDescription.OTHER_EXCLUDING_EMPTY;
+        return isNegated() ? MatchDescription.OTHER_INCLUDING_EMPTY : MatchDescription.OTHER_EXCLUDING_EMPTY;
     }
 
     public boolean isMatchEquals(MatchNode other) {

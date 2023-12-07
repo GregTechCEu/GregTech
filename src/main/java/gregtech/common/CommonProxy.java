@@ -6,17 +6,19 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
@@ -35,7 +37,7 @@ import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -49,11 +51,13 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
@@ -76,13 +80,14 @@ public class CommonProxy {
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (Material material : materialRegistry) {
-                if (material.hasProperty(PropertyKey.ORE)) {
+                if (material.hasProperty(PropertyKey.ORE) && !material.hasFlag(MaterialFlags.DISABLE_ORE_BLOCK)) {
                     createOreBlock(material);
                 }
 
                 if (material.hasProperty(PropertyKey.WIRE)) {
                     for (BlockCable cable : CABLES.get(materialRegistry.getModid())) {
-                        if (!cable.getItemPipeType(null).isCable() || !material.getProperty(PropertyKey.WIRE).isSuperconductor())
+                        if (!cable.getItemPipeType(null).isCable() ||
+                                !material.getProperty(PropertyKey.WIRE).isSuperconductor())
                             cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
                     }
                 }
@@ -115,6 +120,9 @@ public class CommonProxy {
         registry.register(CLEANROOM_CASING);
         registry.register(COMPUTER_CASING);
         registry.register(BATTERY_BLOCK);
+        registry.register(FISSION_CASING);
+        registry.register(NUCLEAR_CASING);
+        registry.register(GAS_CENTRIFUGE_CASING);
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
         registry.register(PETRIFIED_FOAM);
@@ -148,9 +156,9 @@ public class CommonProxy {
         registry.register(RUBBER_WOOD_DOOR);
         registry.register(TREATED_WOOD_DOOR);
         registry.register(BRITTLE_CHARCOAL);
-        registry.register(FISSION_CASING);
-        registry.register(NUCLEAR_CASING);
-        registry.register(GAS_CENTRIFUGE_CASING);
+        registry.register(METAL_SHEET);
+        registry.register(LARGE_METAL_SHEET);
+        registry.register(STUDS);
         registry.register(PANELLING);
 
         for (BlockLamp block : LAMPS.values()) registry.register(block);
@@ -193,7 +201,7 @@ public class CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerBlocksLast(RegistryEvent.Register<Block> event) {
-        //last chance for mods to register their potion types is here
+        // last chance for mods to register their potion types is here
         FLUID_BLOCKS.forEach(event.getRegistry()::register);
     }
 
@@ -216,9 +224,12 @@ public class CommonProxy {
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
-            for (BlockCable cable : CABLES.get(materialRegistry.getModid())) registry.register(createItemBlock(cable, ItemBlockCable::new));
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
-            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
+            for (BlockCable cable : CABLES.get(materialRegistry.getModid()))
+                registry.register(createItemBlock(cable, ItemBlockCable::new));
+            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid()))
+                registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
+            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid()))
+                registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemBlockOpticalPipe::new));
         for (BlockLaserPipe pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemBlockLaserPipe::new));
@@ -241,6 +252,9 @@ public class CommonProxy {
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN_1, VariantItemBlock::new));
+        registry.register(createItemBlock(METAL_SHEET, VariantItemBlock::new));
+        registry.register(createItemBlock(LARGE_METAL_SHEET, VariantItemBlock::new));
+        registry.register(createItemBlock(STUDS, VariantItemBlock::new));
         for (BlockLamp block : LAMPS.values()) {
             registry.register(createItemBlock(block, LampItemBlock::new));
         }
@@ -281,18 +295,22 @@ public class CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void initComponents(RegistryEvent.Register<IRecipe> event) {
+        GTRecipeInputCache.enableCache();
         CraftingComponent.initializeComponents();
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, CraftingComponent.class));
     }
 
-    //this is called with normal priority, so most mods working with
-    //ore dictionary and recipes will get recipes accessible in time
+    // this is called with normal priority, so most mods working with
+    // ore dictionary and recipes will get recipes accessible in time
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        //Registers Fusion tiers for the FusionEUToStartProperty
+        // Registers Fusion tiers for the FusionEUToStartProperty
         FusionEUToStartProperty.registerFusionTier(6, "(MK1)");
         FusionEUToStartProperty.registerFusionTier(7, "(MK2)");
         FusionEUToStartProperty.registerFusionTier(8, "(MK3)");
+
+        // Register data stick copying custom scanner logic
+        AssemblyLineManager.registerScannerLogic();
 
         GTLog.logger.info("Registering ore dictionary...");
 
@@ -310,22 +328,27 @@ public class CommonProxy {
         GTRecipeManager.load();
     }
 
-    //this is called almost last, to make sure all mods registered their ore dictionary
-    //items and blocks for running first phase of material handlers
-    //it will also clear generated materials
+    // this is called almost last, to make sure all mods registered their ore dictionary
+    // items and blocks for running first phase of material handlers
+    // it will also clear generated materials
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void runEarlyMaterialHandlers(RegistryEvent.Register<IRecipe> event) {
         GTLog.logger.info("Running early material handlers...");
         OrePrefix.runMaterialHandlers();
     }
 
-    //this is called last, so all mods finished registering their stuff, as example, CraftTweaker
-    //if it registered some kind of ore dictionary entry, late processing will hook it and generate recipes
+    // this is called last, so all mods finished registering their stuff, as example, CraftTweaker
+    // if it registered some kind of ore dictionary entry, late processing will hook it and generate recipes
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerRecipesLowest(RegistryEvent.Register<IRecipe> event) {
         GTLog.logger.info("Running late material handlers...");
         OrePrefix.runMaterialHandlers();
         GTRecipeManager.loadLatest();
+
+        // On initial load we need to postpone cache flushing until FMLPostInitializationEvent
+        // to account for post-init recipe registration
+        if (Loader.instance().hasReachedState(LoaderState.AVAILABLE))
+            GTRecipeInputCache.disableCache();
     }
 
     @SubscribeEvent
@@ -339,17 +362,17 @@ public class CommonProxy {
     public static void modifyFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
         ItemStack stack = event.getItemStack();
         Block block = Block.getBlockFromItem(stack.getItem());
-        //handle sapling and log burn rates
+        // handle sapling and log burn rates
         if (block == RUBBER_SAPLING) {
             event.setBurnTime(100);
         } else if (block == WOOD_SLAB) {
             event.setBurnTime(150);
         } else if (block instanceof BlockCompressed) {
-            //handle material blocks burn value
+            // handle material blocks burn value
             Material material = ((BlockCompressed) block).getGtMaterial(stack);
             DustProperty property = material.getProperty(PropertyKey.DUST);
             if (property != null && property.getBurnTime() > 0) {
-                //compute burn value for block prefix, taking amount of material in block into account
+                // compute burn value for block prefix, taking amount of material in block into account
                 double materialUnitsInBlock = OrePrefix.block.getMaterialAmount(material) / (GTValues.M * 1.0);
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
@@ -366,11 +389,9 @@ public class CommonProxy {
         return itemBlock;
     }
 
-    public void onPreLoad() {
-    }
+    public void onPreLoad() {}
 
-    public void onLoad() {
-    }
+    public void onLoad() {}
 
     public void onPostLoad() {
         TerminalRegistry.init();
@@ -380,8 +401,8 @@ public class CommonProxy {
         }
     }
 
-    public void onLoadComplete(FMLLoadCompleteEvent event) {
-        GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();
+    public void onLoadComplete() {
+        GTRecipeInputCache.disableCache();
     }
 
     public boolean isFancyGraphics() {

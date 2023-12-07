@@ -30,6 +30,7 @@ import gregtech.common.terminal.app.teleport.TeleportApp;
 import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
@@ -40,12 +41,14 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TerminalRegistry {
+
     public static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
     public static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
     public static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
@@ -74,6 +77,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
         AppRegistryBuilder.create(new SettingsApp()).defaultApp().build();
+        AppRegistryBuilder.create(new CapeSelectorApp()).defaultApp().build();
 
         AppRegistryBuilder.create(new TeleportApp())
                 .battery(GTValues.ZPM, 10000)
@@ -156,16 +160,13 @@ public class TerminalRegistry {
                 .battery(GTValues.MV, 500)
                 .device(DeviceHardware.DEVICE.WIRELESS)
                 .build();
-        AppRegistryBuilder.create(new CapeSelectorApp())
-                .battery(GTValues.ULV, 8)
-                .build();
     }
 
     @SideOnly(Side.CLIENT)
     public static void initTerminalFiles() {
-        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(TerminalRegistry::onResourceManagerReload);
+        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager())
+                .registerReloadListener(TerminalRegistry::onResourceManagerReload);
     }
-
 
     @SideOnly(Side.CLIENT)
     public static void onResourceManagerReload(IResourceManager resourceManager) {
@@ -190,7 +191,8 @@ public class TerminalRegistry {
         HW_REGISTER.put(name, hardware);
     }
 
-    public static void registerHardwareDemand(String name, boolean isDefaultApp, @Nonnull List<Hardware>[] hardware, @Nonnull List<ItemStack>[] upgrade) {
+    public static void registerHardwareDemand(String name, boolean isDefaultApp, @NotNull List<Hardware>[] hardware,
+                                              @NotNull List<ItemStack>[] upgrade) {
         if (name != null && APP_REGISTER.containsKey(name)) {
             if (isDefaultApp) {
                 DEFAULT_APPS.add(name);
@@ -227,17 +229,19 @@ public class TerminalRegistry {
     }
 
     public static List<ItemStack> getAppHardwareUpgradeConditions(String name, int tier) {
-        return APP_UPGRADE_CONDITIONS.get(name)[tier] != null ? APP_UPGRADE_CONDITIONS.get(name)[tier] : Collections.emptyList();
+        return APP_UPGRADE_CONDITIONS.get(name)[tier] != null ? APP_UPGRADE_CONDITIONS.get(name)[tier] :
+                Collections.emptyList();
     }
 
     private static class AppRegistryBuilder {
+
         AbstractApplication app;
         boolean isDefaultApp;
         BatteryHardware[] battery;
         List<Hardware>[] hardware;
         List<ItemStack>[] upgrade;
 
-        public static AppRegistryBuilder create(AbstractApplication app){
+        public static AppRegistryBuilder create(AbstractApplication app) {
             AppRegistryBuilder builder = new AppRegistryBuilder();
             builder.app = app;
             builder.battery = new BatteryHardware[app.getMaxTier() + 1];
@@ -246,7 +250,7 @@ public class TerminalRegistry {
             return builder;
         }
 
-        public AppRegistryBuilder defaultApp(){
+        public AppRegistryBuilder defaultApp() {
             this.isDefaultApp = true;
             return this;
         }

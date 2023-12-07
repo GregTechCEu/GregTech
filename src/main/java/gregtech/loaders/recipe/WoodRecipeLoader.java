@@ -14,6 +14,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.WoodTypeEntry;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -22,7 +23,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class WoodRecipeLoader {
                             .planks(new ItemStack(Blocks.PLANKS), "oak_planks")
                             .log(new ItemStack(Blocks.LOG)).removeCharcoalRecipe()
                             .door(new ItemStack(Items.OAK_DOOR), "wooden_door")
-                            .slab(new ItemStack(Blocks.WOODEN_SLAB))
+                            .slab(new ItemStack(Blocks.WOODEN_SLAB), "oak_wooden_slab")
                             .fence(new ItemStack(Blocks.OAK_FENCE), "fence")
                             .fenceGate(new ItemStack(Blocks.OAK_FENCE_GATE), "fence_gate")
                             .stairs(new ItemStack(Blocks.OAK_STAIRS))
@@ -55,7 +57,7 @@ public class WoodRecipeLoader {
                             .planks(new ItemStack(Blocks.PLANKS, 1, 1), "spruce_planks")
                             .log(new ItemStack(Blocks.LOG, 1, 1)).removeCharcoalRecipe()
                             .door(new ItemStack(Items.SPRUCE_DOOR), "spruce_door")
-                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 1))
+                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 1), "spruce_wooden_slab")
                             .fence(new ItemStack(Blocks.SPRUCE_FENCE), "spruce_fence")
                             .fenceGate(new ItemStack(Blocks.SPRUCE_FENCE_GATE), "spruce_fence_gate")
                             .stairs(new ItemStack(Blocks.SPRUCE_STAIRS))
@@ -66,7 +68,7 @@ public class WoodRecipeLoader {
                             .planks(new ItemStack(Blocks.PLANKS, 1, 2), "birch_planks")
                             .log(new ItemStack(Blocks.LOG, 1, 2)).removeCharcoalRecipe()
                             .door(new ItemStack(Items.BIRCH_DOOR), "birch_door")
-                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 2))
+                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 2), "birch_wooden_slab")
                             .fence(new ItemStack(Blocks.BIRCH_FENCE), "birch_fence")
                             .fenceGate(new ItemStack(Blocks.BIRCH_FENCE_GATE), "birch_fence_gate")
                             .stairs(new ItemStack(Blocks.BIRCH_STAIRS))
@@ -77,7 +79,7 @@ public class WoodRecipeLoader {
                             .planks(new ItemStack(Blocks.PLANKS, 1, 3), "jungle_planks")
                             .log(new ItemStack(Blocks.LOG, 1, 3)).removeCharcoalRecipe()
                             .door(new ItemStack(Items.JUNGLE_DOOR), "jungle_door")
-                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 3))
+                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 3), "jungle_wooden_slab")
                             .fence(new ItemStack(Blocks.JUNGLE_FENCE), "jungle_fence")
                             .fenceGate(new ItemStack(Blocks.JUNGLE_FENCE_GATE), "jungle_fence_gate")
                             .stairs(new ItemStack(Blocks.JUNGLE_STAIRS))
@@ -88,7 +90,7 @@ public class WoodRecipeLoader {
                             .planks(new ItemStack(Blocks.PLANKS, 1, 4), "acacia_planks")
                             .log(new ItemStack(Blocks.LOG2)).removeCharcoalRecipe()
                             .door(new ItemStack(Items.ACACIA_DOOR), "acacia_door")
-                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 4))
+                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 4), "acacia_wooden_slab")
                             .fence(new ItemStack(Blocks.ACACIA_FENCE), "acacia_fence")
                             .fenceGate(new ItemStack(Blocks.ACACIA_FENCE_GATE), "acacia_fence_gate")
                             .stairs(new ItemStack(Blocks.ACACIA_STAIRS))
@@ -99,7 +101,7 @@ public class WoodRecipeLoader {
                             .planks(new ItemStack(Blocks.PLANKS, 1, 5), "dark_oak_planks")
                             .log(new ItemStack(Blocks.LOG2, 1, 1)).removeCharcoalRecipe()
                             .door(new ItemStack(Items.DARK_OAK_DOOR), "dark_oak_door")
-                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 5))
+                            .slab(new ItemStack(Blocks.WOODEN_SLAB, 1, 5), "dark_oak_wooden_slab")
                             .fence(new ItemStack(Blocks.DARK_OAK_FENCE), "dark_oak_fence")
                             .fenceGate(new ItemStack(Blocks.DARK_OAK_FENCE_GATE), "dark_oak_fence_gate")
                             .stairs(new ItemStack(Blocks.DARK_OAK_STAIRS))
@@ -110,7 +112,7 @@ public class WoodRecipeLoader {
                             .planks(MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), null)
                             .log(new ItemStack(MetaBlocks.RUBBER_LOG)).addCharcoalRecipe()
                             .door(MetaItems.RUBBER_WOOD_DOOR.getStackForm(), null)
-                            .slab(new ItemStack(MetaBlocks.WOOD_SLAB)).addSlabRecipe()
+                            .slab(new ItemStack(MetaBlocks.WOOD_SLAB), null).addSlabRecipe()
                             .fence(new ItemStack(MetaBlocks.RUBBER_WOOD_FENCE), null)
                             .fenceGate(new ItemStack(MetaBlocks.RUBBER_WOOD_FENCE_GATE), null)
                             .stairs(new ItemStack(MetaBlocks.RUBBER_WOOD_STAIRS)).addStairsRecipe()
@@ -121,7 +123,7 @@ public class WoodRecipeLoader {
                     new WoodTypeEntry.Builder(GTValues.MODID, "treated")
                             .planks(MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), null)
                             .door(MetaItems.TREATED_WOOD_DOOR.getStackForm(), null)
-                            .slab(new ItemStack(MetaBlocks.WOOD_SLAB, 1, 1)).addSlabRecipe()
+                            .slab(new ItemStack(MetaBlocks.WOOD_SLAB, 1, 1), null).addSlabRecipe()
                             .fence(new ItemStack(MetaBlocks.TREATED_WOOD_FENCE), null)
                             .fenceGate(new ItemStack(MetaBlocks.TREATED_WOOD_FENCE_GATE), null)
                             .stairs(new ItemStack(MetaBlocks.TREATED_WOOD_STAIRS)).addStairsRecipe()
@@ -129,8 +131,7 @@ public class WoodRecipeLoader {
                             .material(TreatedWood)
                             .registerAllOres()
                             .registerAllUnificationInfo()
-                            .build()
-            );
+                            .build());
         }
         return DEFAULT_ENTRIES;
     }
@@ -161,7 +162,7 @@ public class WoodRecipeLoader {
      *
      * @param entry the entry to register for
      */
-    public static void registerWoodUnificationInfo(@Nonnull WoodTypeEntry entry) {
+    public static void registerWoodUnificationInfo(@NotNull WoodTypeEntry entry) {
         if (!entry.log.isEmpty() && entry.addLogOreDict) {
             OreDictUnifier.registerOre(entry.log, log, entry.material);
         }
@@ -179,7 +180,8 @@ public class WoodRecipeLoader {
             }
             if (entry.addDoorsUnificationInfo) {
                 OreDictUnifier.registerOre(entry.door, ConfigHolder.recipes.hardWoodRecipes ?
-                        new ItemMaterialInfo(new MaterialStack(entry.material, M * 2), new MaterialStack(Materials.Iron, M / 9)) : // screw
+                        new ItemMaterialInfo(new MaterialStack(entry.material, M * 2),
+                                new MaterialStack(Materials.Iron, M / 9)) : // screw
                         new ItemMaterialInfo(new MaterialStack(entry.material, M * 2)));
             }
         }
@@ -207,7 +209,8 @@ public class WoodRecipeLoader {
                 OreDictUnifier.registerOre(entry.fenceGate, fenceGate, entry.material);
             }
             if (entry.addFenceGatesUnificationInfo) {
-                OreDictUnifier.registerOre(entry.fenceGate, new ItemMaterialInfo(new MaterialStack(entry.material, M * 3)));
+                OreDictUnifier.registerOre(entry.fenceGate,
+                        new ItemMaterialInfo(new MaterialStack(entry.material, M * 3)));
             }
         }
 
@@ -216,7 +219,8 @@ public class WoodRecipeLoader {
                 OreDictUnifier.registerOre(entry.stairs, stair, entry.material);
             }
             if (entry.addStairsUnificationInfo) {
-                OreDictUnifier.registerOre(entry.stairs, new ItemMaterialInfo(new MaterialStack(entry.material, (3 * M) / 2)));
+                OreDictUnifier.registerOre(entry.stairs,
+                        new ItemMaterialInfo(new MaterialStack(entry.material, (3 * M) / 2)));
             }
         }
 
@@ -230,7 +234,7 @@ public class WoodRecipeLoader {
      *
      * @param entry the entry to register for
      */
-    public static void registerWoodTypeRecipe(@Nonnull WoodTypeEntry entry) {
+    public static void registerWoodTypeRecipe(@NotNull WoodTypeEntry entry) {
         final String name = entry.woodName;
 
         if (entry.planks.isEmpty()) {
@@ -295,8 +299,7 @@ public class WoodRecipeLoader {
                         'P', entry.planks.copy(),
                         'T', new ItemStack(Blocks.TRAPDOOR),
                         'R', new UnificationEntry(ring, Iron),
-                        'S', new UnificationEntry(screw, Iron)
-                );
+                        'S', new UnificationEntry(screw, Iron));
 
                 // plank -> door assembling
                 ASSEMBLER_RECIPES.recipeBuilder()
@@ -309,8 +312,7 @@ public class WoodRecipeLoader {
                 if (!hasDoorRecipe) {
                     ModHandler.addShapedRecipe(name + "_door", GTUtility.copy(3, entry.door),
                             "PP", "PP", "PP",
-                            'P', entry.planks.copy()
-                    );
+                            'P', entry.planks.copy());
                 }
 
                 ASSEMBLER_RECIPES.recipeBuilder()
@@ -340,7 +342,7 @@ public class WoodRecipeLoader {
 
         // slab
         if (!entry.slab.isEmpty()) {
-            if (entry.addSlabCraftingRecipe) {
+            if (entry.addSlabCraftingRecipe && !ConfigHolder.recipes.hardWoodRecipes) {
                 ModHandler.addShapedRecipe(name + "_slab", GTUtility.copy(6, entry.slab),
                         "PPP", 'P', entry.planks.copy());
             }
@@ -348,6 +350,10 @@ public class WoodRecipeLoader {
             // plank -> slab crafting
             ModHandler.addShapedRecipe(name + "_slab_saw", GTUtility.copy(2, entry.slab),
                     "sS", 'S', entry.planks.copy());
+
+            if (ConfigHolder.recipes.hardWoodRecipes && entry.slabRecipeName != null) {
+                ModHandler.removeRecipeByName(new ResourceLocation(entry.modid, entry.slabRecipeName));
+            }
 
             // plank -> slab cutting
             CUTTER_RECIPES.recipeBuilder()
@@ -369,15 +375,13 @@ public class WoodRecipeLoader {
                 ModHandler.addShapedRecipe(hasFenceRecipe ? entry.fenceRecipeName : name + "_fence", entry.fence.copy(),
                         "PSP", "PSP", "PSP",
                         'P', entry.planks.copy(),
-                        'S', entry.getStick()
-                );
+                        'S', entry.getStick());
             } else {
                 if (!hasFenceRecipe) {
                     ModHandler.addShapedRecipe(name + "_fence", GTUtility.copy(3, entry.fence),
                             "PSP", "PSP",
                             'P', entry.planks.copy(),
-                            'S', entry.getStick()
-                    );
+                            'S', entry.getStick());
                 }
             }
 
@@ -399,12 +403,12 @@ public class WoodRecipeLoader {
                     ModHandler.removeRecipeByName(new ResourceLocation(entry.modid, entry.fenceGateRecipeName));
                 }
 
-                ModHandler.addShapedRecipe(hasFenceGateRecipe ? entry.fenceGateRecipeName : name + "_fence_gate", entry.fenceGate.copy(),
+                ModHandler.addShapedRecipe(hasFenceGateRecipe ? entry.fenceGateRecipeName : name + "_fence_gate",
+                        entry.fenceGate.copy(),
                         "F F", "SPS", "SPS",
                         'P', entry.planks.copy(),
                         'S', entry.getStick(),
-                        'F', new ItemStack(Items.FLINT)
-                );
+                        'F', new ItemStack(Items.FLINT));
 
                 ModHandler.addShapedRecipe(name + "_fence_gate_screws", GTUtility.copy(2, entry.fenceGate),
                         "IdI", "SPS", "SPS",
@@ -416,8 +420,7 @@ public class WoodRecipeLoader {
                     ModHandler.addShapedRecipe(name + "_fence_gate", entry.fenceGate.copy(),
                             "SPS", "SPS",
                             'P', entry.planks.copy(),
-                            'S', entry.getStick()
-                    );
+                            'S', entry.getStick());
                 }
             }
 
@@ -467,12 +470,14 @@ public class WoodRecipeLoader {
      * Standard recipes for GT woods
      */
     private static void registerGTWoodRecipes() {
-        ModHandler.addShapedRecipe("treated_wood_planks", MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK, 8),
+        ModHandler.addShapedRecipe("treated_wood_planks",
+                MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK, 8),
                 "PPP", "PBP", "PPP",
                 'P', "plankWood",
                 'B', FluidUtil.getFilledBucket(Creosote.getFluid(1000)));
 
-        ModHandler.addShapedRecipe("treated_wood_stick", OreDictUnifier.get(OrePrefix.stick, TreatedWood, ConfigHolder.recipes.nerfWoodCrafting ? 2 : 4),
+        ModHandler.addShapedRecipe("treated_wood_stick",
+                OreDictUnifier.get(OrePrefix.stick, TreatedWood, ConfigHolder.recipes.nerfWoodCrafting ? 2 : 4),
                 "L", "L",
                 'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
         if (ConfigHolder.recipes.nerfWoodCrafting) {
@@ -662,21 +667,21 @@ public class WoodRecipeLoader {
         // COAL TAR ============================================
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
                 .inputs(new ItemStack(Items.COAL, 32, 1))
-                .output(dustSmall, Ash, 2)
+                .chancedOutput(dust, Ash, 5000, 0)
                 .fluidOutputs(CoalTar.getFluid(1000))
                 .duration(640).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
                 .inputs(new ItemStack(Items.COAL, 12))
-                .output(dustSmall, DarkAsh, 2)
+                .chancedOutput(dust, DarkAsh, 5000, 0)
                 .fluidOutputs(CoalTar.getFluid(3000))
                 .duration(320).EUt(96)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
                 .input(gem, Coke, 8)
-                .output(dustSmall, Ash, 3)
+                .chancedOutput(dust, Ash, 7500, 0)
                 .fluidOutputs(CoalTar.getFluid(4000))
                 .duration(320).EUt(96)
                 .buildAndRegister();

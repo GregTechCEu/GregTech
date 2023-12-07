@@ -6,9 +6,7 @@ import gregtech.api.recipes.RecipeMap;
 
 public class FuelRecipeBuilder extends RecipeBuilder<FuelRecipeBuilder> {
 
-    public FuelRecipeBuilder() {
-
-    }
+    public FuelRecipeBuilder() {}
 
     public FuelRecipeBuilder(Recipe recipe, RecipeMap<FuelRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
@@ -22,10 +20,4 @@ public class FuelRecipeBuilder extends RecipeBuilder<FuelRecipeBuilder> {
     public FuelRecipeBuilder copy() {
         return new FuelRecipeBuilder(this);
     }
-
-    @Override
-    public FuelRecipeBuilder EUt(int EUt) {
-        return super.EUt(Math.abs(EUt) * -1);
-    }
-
 }

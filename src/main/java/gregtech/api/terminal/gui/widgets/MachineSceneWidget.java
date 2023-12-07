@@ -14,6 +14,7 @@ import gregtech.api.util.FacingPos;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -28,15 +29,17 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-import javax.vecmath.Vector3f;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+
+import javax.vecmath.Vector3f;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,6 +49,7 @@ import java.util.stream.Collectors;
  * @Description:
  */
 public class MachineSceneWidget extends WidgetGroup {
+
     private static FBOWorldSceneRenderer worldSceneRenderer;
     private boolean dragging;
     private int lastMouseX;
@@ -79,8 +83,8 @@ public class MachineSceneWidget extends WidgetGroup {
         this.addWidget(new ScrollBarWidget(5, height - 13, width - 50, 8, 0, 1, 0.05f)
                 .setOnChanged(value -> alpha = value, true).setInitValue(1f));
         this.addWidget(new RectButtonWidget(width - 40, height - 15, 35, 12, 1)
-                .setToggleButton(new TextTexture("COLOR", -1), (c, b)->blendColor=b)
-                .setValueSupplier(true, ()->blendColor)
+                .setToggleButton(new TextTexture("COLOR", -1), (c, b) -> blendColor = b)
+                .setValueSupplier(true, () -> blendColor)
                 .setColors(TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_F_1.getColor(), 0)
                 .setIcon(new TextTexture("ALPHA", -1)));
         if (worldSceneRenderer != null) {
@@ -154,12 +158,15 @@ public class MachineSceneWidget extends WidgetGroup {
             GlStateManager.popMatrix();
         }
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
     }
 
     private static void drawFacingBorder(FacingPos posFace, int color) {
         GlStateManager.pushMatrix();
-        RenderUtil.moveToFace(posFace.getPos().getX(), posFace.getPos().getY(), posFace.getPos().getZ(), posFace.getFacing());
+        RenderUtil.moveToFace(posFace.getPos().getX(), posFace.getPos().getY(), posFace.getPos().getZ(),
+                posFace.getFacing());
         RenderUtil.rotateToFace(posFace.getFacing(), null);
         GlStateManager.scale(1f / 16, 1f / 16, 0);
         GlStateManager.translate(-8, -8, 0);
@@ -173,7 +180,8 @@ public class MachineSceneWidget extends WidgetGroup {
         if (mte == null) {
             World world = this.gui.entityPlayer.world;
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() != null) {
+            if (tileEntity instanceof IGregTechTileEntity &&
+                    ((IGregTechTileEntity) tileEntity).getMetaTileEntity() != null) {
                 mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 updateScene();
             }
@@ -195,10 +203,12 @@ public class MachineSceneWidget extends WidgetGroup {
         cores = new HashSet<>();
         around = new HashSet<>();
         cores.add(pos);
-        if (mte instanceof MultiblockControllerBase && ((MultiblockControllerBase) mte).isStructureFormed()) {
-            PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern.checkPatternFastAt(world, pos, mte.getFrontFacing().getOpposite());
+        if (mte instanceof MultiblockControllerBase multi && multi.isStructureFormed()) {
+            PatternMatchContext context = multi.structurePattern.checkPatternFastAt(
+                    world, pos, mte.getFrontFacing().getOpposite(), multi.getUpwardsFacing(), multi.allowsFlip());
             if (context != null) {
-                List<BlockPos> validPos = ((MultiblockControllerBase) mte).structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toList());
+                List<BlockPos> validPos = multi.structurePattern.cache.keySet().stream().map(BlockPos::fromLong)
+                        .collect(Collectors.toList());
                 Set<IMultiblockPart> parts = context.getOrCreate("MultiblockParts", HashSet::new);
                 for (IMultiblockPart part : parts) {
                     if (part instanceof MetaTileEntity) {
@@ -206,7 +216,7 @@ public class MachineSceneWidget extends WidgetGroup {
                     }
                 }
                 for (EnumFacing facing : EnumFacing.VALUES) {
-                    cores.forEach(pos->around.add(pos.offset(facing)));
+                    cores.forEach(pos -> around.add(pos.offset(facing)));
                 }
                 int minX = Integer.MAX_VALUE;
                 int minY = Integer.MAX_VALUE;
@@ -282,7 +292,8 @@ public class MachineSceneWidget extends WidgetGroup {
         if (isMouseOverElement(mouseX, mouseY)) {
             zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, 999);
             if (worldSceneRenderer != null) {
-                worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+                worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch),
+                        Math.toRadians(rotationYaw));
             }
         }
         return super.mouseWheelMove(mouseX, mouseY, wheelDelta);
@@ -297,7 +308,8 @@ public class MachineSceneWidget extends WidgetGroup {
             lastMouseY = mouseY;
             lastMouseX = mouseX;
             if (worldSceneRenderer != null) {
-                worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+                worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch),
+                        Math.toRadians(rotationYaw));
             }
             return true;
         }

@@ -1,37 +1,41 @@
 package gregtech.api.pipenet.longdist;
 
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.interfaces.INeighborCache;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ILDEndpoint {
+public interface ILDEndpoint extends ILDNetworkPart, INeighborCache {
 
     /**
      * @return the current type of this endpoint (input, output or none)
      */
-    Type getType();
+    @NotNull
+    IOType getIoType();
 
     /**
-     * @param type new active type
+     * @param ioType new active type
      */
-    void setType(Type type);
+    void setIoType(IOType ioType);
 
     /**
      * @return true if this endpoint is considered a network input
      */
     default boolean isInput() {
-        return getType() == Type.INPUT;
+        return getIoType() == IOType.INPUT;
     }
 
     /**
      * @return true if this endpoint is considered a network output
      */
     default boolean isOutput() {
-        return getType() == Type.OUTPUT;
+        return getIoType() == IOType.OUTPUT;
     }
 
     /**
@@ -48,16 +52,20 @@ public interface ILDEndpoint {
     /**
      * @return the front facing, usually the input face
      */
+    @NotNull
     EnumFacing getFrontFacing();
 
     /**
      * @return the output facing
      */
+    @NotNull
     EnumFacing getOutputFacing();
 
     /**
      * @return the ld pipe type for this endpoint
      */
+    @Override
+    @NotNull
     LongDistancePipeType getPipeType();
 
     /**
@@ -65,18 +73,22 @@ public interface ILDEndpoint {
      */
     BlockPos getPos();
 
+    World getWorld();
+
+    boolean isValid();
+
+    @Nullable
     static ILDEndpoint tryGet(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof IGregTechTileEntity) {
-            MetaTileEntity mte = ((IGregTechTileEntity) te).getMetaTileEntity();
-            if (mte instanceof ILDEndpoint) {
-                return (ILDEndpoint) mte;
-            }
+        if (te instanceof IGregTechTileEntity gte && gte.getMetaTileEntity() instanceof ILDEndpoint endpoint) {
+            return endpoint;
         }
         return null;
     }
 
-    enum Type {
-        NONE, INPUT, OUTPUT
+    enum IOType {
+        NONE,
+        INPUT,
+        OUTPUT
     }
 }

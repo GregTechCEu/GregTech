@@ -1,40 +1,41 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
-    protected VoidingMode voidingMode;
+    protected VoidingMode voidingMode = VoidingMode.VOID_ANY;
     protected int transferAmount = 0;
 
-    public CoverFluidVoidingAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
-        this.voidingMode = VoidingMode.VOID_ANY;
+    public CoverFluidVoidingAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                                     @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     @Override
@@ -44,16 +45,15 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     @Override
     protected void doTransferFluids() {
-        IFluidHandler myFluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
+        IFluidHandler myFluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                getAttachedSide());
         if (myFluidHandler == null) {
             return;
         }
         switch (voidingMode) {
-            case VOID_ANY:
-                GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
-                break;
-            case VOID_OVERFLOW:
-                voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);
+            case VOID_ANY -> GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE,
+                    fluidFilter::testFluidStack);
+            case VOID_OVERFLOW -> voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);
         }
     }
 
@@ -72,10 +72,13 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && voidingMode == VoidingMode.VOID_OVERFLOW) {
+            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null &&
+                    voidingMode == VoidingMode.VOID_OVERFLOW) {
                 keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
             }
-            if (sourceFluid == null || sourceFluid.amount == 0 || !getFluidFilterContainer().testFluidStack(sourceFluid, true)) continue;
+            if (sourceFluid == null || sourceFluid.amount == 0 ||
+                    !getFluidFilterContainer().testFluidStack(sourceFluid, true))
+                continue;
             sourceFluid.amount = sourceFluid.amount - keepAmount;
             sourceHandler.drain(sourceFluid, true);
         }
@@ -99,7 +102,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     private void setTransferAmount(int transferAmount) {
         this.transferAmount = transferAmount;
-        coverHolder.markDirty();
+        markDirty();
     }
 
     public int getTransferAmount() {
@@ -108,7 +111,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     public void setVoidingMode(VoidingMode transferMode) {
         this.voidingMode = transferMode;
-        this.coverHolder.markDirty();
+        this.markDirty();
     }
 
     public VoidingMode getVoidingMode() {
@@ -139,17 +142,17 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         primaryGroup.addWidget(new CycleButtonWidget(92, 15, 75, 18,
                 VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
-                .setTooltipHoverString("cover.voiding.voiding_mode.description"));
+                        .setTooltipHoverString("cover.voiding.voiding_mode.description"));
 
         this.initFilterUI(20, primaryGroup::addWidget);
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
                 "cover.voiding.label.disabled", "cover.voiding.label.enabled")
-                .setTooltipHoverString("cover.voiding.tooltip"));
+                        .setTooltipHoverString("cover.voiding.tooltip"));
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 112, 116, 18,
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82 + 16 + 24)
                 .widget(primaryGroup)
@@ -157,7 +160,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         return buildUI(builder, player);
     }
 
-    public void initFilterUI(int y, Consumer<Widget> widgetGroup){
+    public void initFilterUI(int y, Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.pump.fluid_filter.title"));
         widgetGroup.accept(new SlotWidget(fluidFilter.getFilterInventory(), 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
@@ -169,10 +172,11 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(92, 34, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
+        stackSizeGroup
+                .addWidget(new IncrementButtonWidget(92, 34, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
+                        .setDefaultTooltip()
+                        .setTextScale(0.7f)
+                        .setShouldClientCallback(false));
 
         stackSizeGroup.addWidget(new TextFieldWidget2(111, 39, 37, 11, this::getTransferAmountString, val -> {
             if (val != null && !val.isEmpty()) {
@@ -188,40 +192,40 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .setMaxLength(10)
                 .setScale(0.6f));
 
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 47, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
+        stackSizeGroup
+                .addWidget(new SimpleTextWidget(129, 47, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
 
         stackSizeGroup.addWidget(new CycleButtonWidget(114, 53, 30, 20,
                 BucketMode.class, this::getBucketMode, mode -> {
-            if (mode != bucketMode) {
-                setBucketMode(mode);
-            }
-        }));
+                    if (mode != bucketMode) {
+                        setBucketMode(mode);
+                    }
+                }));
 
         widgetGroup.accept(stackSizeGroup);
 
         this.fluidFilter.getFilterWrapper().initUI(y + 15, widgetGroup);
-        this.fluidFilter.getFilterWrapper().blacklistUI(y + 15, widgetGroup, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
+        this.fluidFilter.getFilterWrapper().blacklistUI(y + 15, widgetGroup,
+                () -> voidingMode != VoidingMode.VOID_OVERFLOW);
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.FLUID_VOIDING_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.FLUID_VOIDING_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidingMode", voidingMode.ordinal());
         tagCompound.setInteger("TransferAmount", transferAmount);
-
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.voidingMode = VoidingMode.values()[tagCompound.getInteger("VoidingMode")];
         this.transferAmount = tagCompound.getInteger("TransferAmount");
     }
-
 }

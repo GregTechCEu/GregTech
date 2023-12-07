@@ -1,21 +1,25 @@
 package gregtech.api.metatileentity;
 
-import it.unimi.dsi.fastutil.objects.Object2IntFunction;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.Object2IntFunction;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Consumer;
 
-public abstract class MTETrait {
+public abstract class MTETrait implements ISyncedTileEntity {
 
     private static final Object2IntFunction<String> traitIds = new Object2IntOpenHashMap<>();
-    private static int rollingNetworkId = 0;
-
     private static final int NO_NETWORK_ID = -1;
+
+    private static int rollingNetworkId = 0;
 
     static {
         traitIds.defaultReturnValue(NO_NETWORK_ID);
@@ -29,7 +33,7 @@ public abstract class MTETrait {
      *
      * @param metaTileEntity the MTE to reference, and add the trait to
      */
-    public MTETrait(@Nonnull MetaTileEntity metaTileEntity) {
+    public MTETrait(@NotNull MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
 
         final String traitName = getName();
@@ -42,7 +46,7 @@ public abstract class MTETrait {
         metaTileEntity.addMetaTileEntityTrait(this);
     }
 
-    @Nonnull
+    @NotNull
     public MetaTileEntity getMetaTileEntity() {
         return metaTileEntity;
     }
@@ -50,7 +54,7 @@ public abstract class MTETrait {
     /**
      * @return the name of the MTE Trait
      */
-    @Nonnull
+    @NotNull
     public abstract String getName();
 
     /**
@@ -62,31 +66,51 @@ public abstract class MTETrait {
 
     public abstract <T> T getCapability(Capability<T> capability);
 
-    public void onFrontFacingSet(EnumFacing newFrontFacing) {
-    }
+    public void onFrontFacingSet(EnumFacing newFrontFacing) {}
 
-    public void update() {
-    }
+    public void update() {}
 
-    @Nonnull
+    @NotNull
     public NBTTagCompound serializeNBT() {
         return new NBTTagCompound();
     }
 
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {}
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {}
+
+    /**
+     * Deprecated since 2.8 and will be removed in 2.9.
+     *
+     * @deprecated Use {@link #writeInitialSyncData(PacketBuffer)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
+    public void writeInitialData(@NotNull PacketBuffer buffer) {
+        writeInitialSyncData(buffer);
     }
 
-    public void writeInitialData(@Nonnull PacketBuffer buffer) {
+    @Override
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {}
+
+    /**
+     * Deprecated since 2.8 and will be removed in 2.9.
+     *
+     * @deprecated use {@link #receiveInitialSyncData(PacketBuffer)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
+    public void receiveInitialData(@NotNull PacketBuffer buffer) {
+        receiveInitialSyncData(buffer);
     }
 
-    public void receiveInitialData(@Nonnull PacketBuffer buffer) {
-    }
+    @Override
+    public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {}
 
-    public void receiveCustomData(int id, @Nonnull PacketBuffer buffer) {
-    }
-
-    public final void writeCustomData(int id, @Nonnull Consumer<PacketBuffer> writer) {
-        metaTileEntity.writeTraitData(this, id, writer);
+    @Override
+    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
+        metaTileEntity.writeTraitData(this, discriminator, dataWriter);
     }
 
     @Override

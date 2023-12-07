@@ -1,8 +1,8 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
-public class AnyCharNode extends OreGlobNode {
+class AnyCharNode extends OreGlobNode {
 
     int amount;
     boolean more;
@@ -13,7 +13,7 @@ public class AnyCharNode extends OreGlobNode {
     }
 
     @Override
-    protected void visitInternal(NodeVisitor visitor) {
+    public void visit(NodeVisitor visitor) {
         if (more) {
             visitor.charsOrMore(amount, isNegated());
         } else {
@@ -22,20 +22,12 @@ public class AnyCharNode extends OreGlobNode {
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
-        if (!(node instanceof AnyCharNode)) return false;
-        AnyCharNode o = (AnyCharNode) node;
-        return this.amount == o.amount && this.more == o.more;
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
+        return node instanceof AnyCharNode o && this.amount == o.amount && this.more == o.more;
     }
 
     @Override
     protected MatchDescription getIndividualNodeMatchDescription() {
-        if (this.more) {
-            if (this.amount == 0) return MatchDescription.EVERYTHING;
-            if (this.amount == 1) return MatchDescription.NONEMPTY;
-        } else {
-            if (this.amount == 0) return MatchDescription.EMPTY;
-        }
-        return MatchDescription.OTHER_EXCLUDING_EMPTY;
+        return isNegated() ? MatchDescription.OTHER_INCLUDING_EMPTY : MatchDescription.OTHER_EXCLUDING_EMPTY;
     }
 }

@@ -5,7 +5,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class VariantItemBlock<R extends Enum<R> & IStringSerializable, T extends VariantBlock<R>> extends ItemBlock {
 
@@ -27,10 +27,9 @@ public class VariantItemBlock<R extends Enum<R> & IStringSerializable, T extends
         return block.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getTranslationKey(@Nonnull ItemStack stack) {
+    public String getTranslationKey(@NotNull ItemStack stack) {
         return super.getTranslationKey(stack) + '.' + genericBlock.getState(getBlockState(stack)).getName();
     }
-
 }

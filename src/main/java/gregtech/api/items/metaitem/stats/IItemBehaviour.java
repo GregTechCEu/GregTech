@@ -1,7 +1,5 @@
 package gregtech.api.items.metaitem.stats;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -16,7 +14,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public interface IItemBehaviour extends IItemComponent {
@@ -25,23 +26,24 @@ public interface IItemBehaviour extends IItemComponent {
         return false;
     }
 
-    default boolean itemInteractionForEntity(ItemStack itemStack, EntityPlayer player, EntityLivingBase target, EnumHand hand) {
+    default boolean itemInteractionForEntity(ItemStack itemStack, EntityPlayer player, EntityLivingBase target,
+                                             EnumHand hand) {
         return false;
     }
 
-    default EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    default EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+                                            float hitY, float hitZ, EnumHand hand) {
         return EnumActionResult.PASS;
     }
 
-    default ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    default ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                              EnumFacing facing, float hitX, float hitY, float hitZ) {
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
-    default void addInformation(ItemStack itemStack, List<String> lines) {
-    }
+    default void addInformation(ItemStack itemStack, List<String> lines) {}
 
-    default void onUpdate(ItemStack itemStack, Entity entity) {
-    }
+    default void onUpdate(ItemStack itemStack, Entity entity) {}
 
     default Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
         return HashMultimap.create();
@@ -51,6 +53,5 @@ public interface IItemBehaviour extends IItemComponent {
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
-    default void addPropertyOverride(@Nonnull Item item) {
-    }
+    default void addPropertyOverride(@NotNull Item item) {}
 }

@@ -1,15 +1,15 @@
 package gregtech.api.worldgen.shape;
 
+import net.minecraft.util.math.Vec3i;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.util.math.Vec3i;
 
 public class LayeredGenerator extends EllipsoidGenerator {
 
     private int yRadius;
 
-    public LayeredGenerator() {
-    }
+    public LayeredGenerator() {}
 
     @Override
     public void loadFromConfig(JsonObject object) {

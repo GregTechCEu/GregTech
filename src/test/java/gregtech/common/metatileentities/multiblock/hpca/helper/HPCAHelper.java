@@ -16,7 +16,8 @@ public class HPCAHelper {
         return b.apply(new GridHandlerBuilder()).build();
     }
 
-    public static IHPCAComputationProvider getComputation(int cwuPerTick, int coolingPerTick, int upkeepEUt, int maxEUt) {
+    public static IHPCAComputationProvider getComputation(int cwuPerTick, int coolingPerTick, int upkeepEUt,
+                                                          int maxEUt) {
         return new HPCAComputationProviderTestImpl(upkeepEUt, maxEUt, cwuPerTick, coolingPerTick);
     }
 
@@ -64,7 +65,7 @@ public class HPCAHelper {
         }
 
         private HPCAGridHandler build() {
-            HPCAGridHandler handler = new HPCAGridHandler();
+            HPCAGridHandler handler = new HPCAGridHandler(null);
             List<IHPCAComponentHatch> components = new ArrayList<>(numComputation + numCooler);
             for (int i = 0; i < numCooler; i++) {
                 components.add(coolerBuilder.apply(new CoolerBuilder()).build());

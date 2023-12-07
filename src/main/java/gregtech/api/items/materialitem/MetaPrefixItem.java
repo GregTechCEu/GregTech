@@ -15,7 +15,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -32,8 +32,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +54,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         purifyMap.put(OrePrefix.dustPure, OrePrefix.dust);
     }
 
-    public MetaPrefixItem(@Nonnull MaterialRegistry registry, @Nonnull OrePrefix orePrefix) {
+    public MetaPrefixItem(@NotNull MaterialRegistry registry, @NotNull OrePrefix orePrefix) {
         super();
         this.registry = registry;
         this.prefix = orePrefix;
@@ -96,9 +98,9 @@ public class MetaPrefixItem extends StandardMetaItem {
         return orePrefix.doGenerateItem(material);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack itemStack) {
+    public String getItemStackDisplayName(@NotNull ItemStack itemStack) {
         Material material = getMaterial(itemStack);
         if (material == null || prefix == null) return "";
         return prefix.getLocalNameForItem(material);
@@ -106,7 +108,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected int getColorForItemStack(@Nonnull ItemStack stack, int tintIndex) {
+    protected int getColorForItemStack(@NotNull ItemStack stack, int tintIndex) {
         if (tintIndex == 0) {
             Material material = getMaterial(stack);
             if (material == null)
@@ -125,7 +127,8 @@ public class MetaPrefixItem extends StandardMetaItem {
 
             short registrationKey = (short) (prefix.id + materialIconSet.id);
             if (!alreadyRegistered.containsKey(registrationKey)) {
-                ResourceLocation resourceLocation = Objects.requireNonNull(prefix.materialIconType).getItemModelPath(materialIconSet);
+                ResourceLocation resourceLocation = Objects.requireNonNull(prefix.materialIconType)
+                        .getItemModelPath(materialIconSet);
                 ModelBakery.registerItemVariants(this, resourceLocation);
                 alreadyRegistered.put(registrationKey, new ModelResourceLocation(resourceLocation, "inventory"));
             }
@@ -136,19 +139,21 @@ public class MetaPrefixItem extends StandardMetaItem {
         // Make some default models for meta prefix items without any materials associated
         if (metaItems.keySet().isEmpty()) {
             MaterialIconSet defaultIcon = MaterialIconSet.DULL;
-            ResourceLocation defaultLocation = Objects.requireNonNull(OrePrefix.ingot.materialIconType).getItemModelPath(defaultIcon);
+            ResourceLocation defaultLocation = Objects.requireNonNull(OrePrefix.ingot.materialIconType)
+                    .getItemModelPath(defaultIcon);
             ModelBakery.registerItemVariants(this, defaultLocation);
         }
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack) {
+    public int getItemStackLimit(@NotNull ItemStack stack) {
         if (prefix == null) return 64;
         return prefix.maxStackSize;
     }
 
     @Override
-    public void onUpdate(@Nonnull ItemStack itemStack, @Nonnull World worldIn, @Nonnull Entity entityIn, int itemSlot, boolean isSelected) {
+    public void onUpdate(@NotNull ItemStack itemStack, @NotNull World worldIn, @NotNull Entity entityIn, int itemSlot,
+                         boolean isSelected) {
         super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
         if (metaItems.containsKey((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase entity) {
             if (entityIn.ticksExisted % 20 == 0) {
@@ -160,7 +165,8 @@ public class MetaPrefixItem extends StandardMetaItem {
                 float heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
                 ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                 if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
-                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
+                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem())
+                            .getItem(armor);
                     if (metaValueItem != null) heatDamage *= metaValueItem.getArmorLogic().getHeatResistance();
                 }
 
@@ -175,7 +181,8 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
+    public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines,
+                               @NotNull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
         Material material = getMaterial(itemStack);
         if (prefix == null || material == null) return;
@@ -189,7 +196,7 @@ public class MetaPrefixItem extends StandardMetaItem {
      * @return the material
      */
     @Nullable
-    public Material getMaterial(@Nonnull ItemStack stack) {
+    public Material getMaterial(@NotNull ItemStack stack) {
         return registry.getObjectById(stack.getMetadata());
     }
 
@@ -198,7 +205,7 @@ public class MetaPrefixItem extends StandardMetaItem {
      *
      * @return the material
      */
-    @Nonnull
+    @NotNull
     protected Material getMaterial(int metadata) {
         return Objects.requireNonNull(registry.getObjectById(metadata));
     }
@@ -209,7 +216,7 @@ public class MetaPrefixItem extends StandardMetaItem {
      * @return the material
      */
     @Nullable
-    public static Material tryGetMaterial(@Nonnull ItemStack itemStack) {
+    public static Material tryGetMaterial(@NotNull ItemStack itemStack) {
         if (itemStack.getItem() instanceof MetaPrefixItem metaPrefixItem) {
             return metaPrefixItem.getMaterial(itemStack);
         }
@@ -221,16 +228,15 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    public int getItemBurnTime(@Nonnull ItemStack itemStack) {
+    public int getItemBurnTime(@NotNull ItemStack itemStack) {
         Material material = getMaterial(itemStack);
         DustProperty property = material == null ? null : material.getProperty(PropertyKey.DUST);
         if (property != null) return (int) (property.getBurnTime() * prefix.getMaterialAmount(material) / GTValues.M);
         return super.getItemBurnTime(itemStack);
-
     }
 
     @Override
-    public boolean isBeaconPayment(@Nonnull ItemStack stack) {
+    public boolean isBeaconPayment(@NotNull ItemStack stack) {
         Material material = getMaterial(stack);
         if (material != null && this.prefix != OrePrefix.ingot && this.prefix != OrePrefix.gem) {
             ToolProperty property = material.getProperty(PropertyKey.TOOL);
@@ -266,7 +272,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         return false;
     }
 
-    protected void addMaterialTooltip(@Nonnull List<String> lines, @Nonnull ItemStack itemStack) {
+    protected void addMaterialTooltip(@NotNull List<String> lines, @NotNull ItemStack itemStack) {
         if (this.prefix.tooltipFunc != null) {
             lines.addAll(this.prefix.tooltipFunc.apply(getMaterial(itemStack)));
         }

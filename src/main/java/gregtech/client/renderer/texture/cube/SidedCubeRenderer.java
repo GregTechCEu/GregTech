@@ -1,9 +1,5 @@
 package gregtech.client.renderer.texture.cube;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
@@ -11,12 +7,20 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer.OverlayFace;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.EnumMap;
@@ -53,6 +57,7 @@ public class SidedCubeRenderer implements ICubeRenderer {
         this.sprites = new EnumMap<>(OverlayFace.class);
         this.spritesEmissive = new EnumMap<>(OverlayFace.class);
 
+        boolean foundTexture = false;
         for (OverlayFace overlayFace : OverlayFace.VALUES) {
             final String faceName = overlayFace.name().toLowerCase();
             final String overlayPath = String.format(BASE_DIR, basePath, faceName);
@@ -61,9 +66,16 @@ public class SidedCubeRenderer implements ICubeRenderer {
             // require the normal texture to get the rest
             if (normalSprite == null) continue;
 
+            foundTexture = true;
+
             sprites.put(overlayFace, normalSprite);
 
             spritesEmissive.put(overlayFace, ICubeRenderer.getResource(textureMap, modID, overlayPath + EMISSIVE));
+        }
+
+        if (!foundTexture) {
+            FMLClientHandler.instance()
+                    .trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/OVERLAY_FACE"));
         }
     }
 
@@ -75,20 +87,25 @@ public class SidedCubeRenderer implements ICubeRenderer {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
+    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                                    Cuboid6 bounds, EnumFacing frontFacing, boolean isActive,
+                                    boolean isWorkingEnabled) {
         for (EnumFacing facing : EnumFacing.VALUES) {
             OverlayFace overlayFace = OverlayFace.bySide(facing, frontFacing);
             TextureAtlasSprite renderSprite = sprites.get(overlayFace);
             if (renderSprite != null) {
-                Textures.renderFace(renderState, translation, pipeline, facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                Textures.renderFace(renderState, translation, pipeline, facing, bounds, renderSprite,
+                        BlockRenderLayer.CUTOUT_MIPPED);
 
                 TextureAtlasSprite emissiveSprite = spritesEmissive.get(overlayFace);
                 if (emissiveSprite != null) {
                     if (ConfigHolder.client.machinesEmissiveTextures) {
                         IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                        Textures.renderFace(renderState, translation, lightPipeline, facing, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
+                        Textures.renderFace(renderState, translation, lightPipeline, facing, bounds, emissiveSprite,
+                                BloomEffectUtil.getEffectiveBloomLayer());
                     } else {
-                        Textures.renderFace(renderState, translation, pipeline, facing, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                        Textures.renderFace(renderState, translation, pipeline, facing, bounds, emissiveSprite,
+                                BlockRenderLayer.CUTOUT_MIPPED);
                     }
                 }
             }

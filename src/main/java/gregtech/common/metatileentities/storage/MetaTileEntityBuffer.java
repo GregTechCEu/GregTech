@@ -1,19 +1,17 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,10 +22,15 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaTileEntity {
@@ -52,7 +55,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
             fluidHandlers[i] = new FilteredFluidHandler(TANK_SIZE);
         }
         fluidInventory = fluidTankList = new FluidTankList(false, fluidHandlers);
-        itemInventory = itemStackHandler = new ItemStackHandler((int)Math.pow(tier + 2, 2));
+        itemInventory = itemStackHandler = new GTItemStackHandler(this, ((int) Math.pow(tier + 2, 2)));
     }
 
     @Override
@@ -69,7 +72,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int invTier = tier + 2;
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND,
-                176, Math.max(166, 18 + 18 * invTier + 94));//176, 166
+                176, Math.max(166, 18 + 18 * invTier + 94));// 176, 166
         for (int i = 0; i < this.fluidTankList.getTanks(); i++) {
             builder.widget(new TankWidget(this.fluidTankList.getTankAt(i), 176 - 8 - 18, 18 + 18 * i, 18, 18)
                     .setAlwaysShowFull(true)
@@ -139,7 +142,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         // TODO Add this when the Buffer gets an auto-output side, and change the above to
         // "gregtech.tool_action.screwdriver.auto_output_covers"
-        //tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        // tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 

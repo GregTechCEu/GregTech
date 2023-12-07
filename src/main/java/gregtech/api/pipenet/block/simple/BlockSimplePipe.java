@@ -6,9 +6,12 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+
 import net.minecraft.item.ItemStack;
 
-public abstract class BlockSimplePipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
+public abstract class BlockSimplePipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType,
+        WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>>
+                                     extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
 
     @Override
     public NodeDataType createProperties(IPipeTile<PipeType, NodeDataType> pipeTile) {

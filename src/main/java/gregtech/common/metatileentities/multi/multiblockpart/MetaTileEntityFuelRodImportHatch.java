@@ -1,11 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IFuelRodHandler;
-import gregtech.api.capability.ILockableHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
@@ -30,11 +26,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
 
-public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler, IControllable, IFissionReactorHatch {
+public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNotifiablePart
+                                              implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
+                                              IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
@@ -90,7 +92,8 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
         if (shouldRenderOverlay()) {
             SimpleOverlayRenderer renderer = isExportHatch ? Textures.PIPE_OUT_OVERLAY : Textures.PIPE_IN_OVERLAY;
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            SimpleOverlayRenderer overlay = isExportHatch ? Textures.ITEM_HATCH_OUTPUT_OVERLAY : Textures.ITEM_HATCH_INPUT_OVERLAY;
+            SimpleOverlayRenderer overlay = isExportHatch ? Textures.ITEM_HATCH_OUTPUT_OVERLAY :
+                    Textures.ITEM_HATCH_INPUT_OVERLAY;
             overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
@@ -114,7 +117,8 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     public boolean checkValidity(int depth) {
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
+            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) !=
+                    MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
                 return false;
             }
         }
@@ -128,7 +132,6 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     public void setValid(boolean valid) {
         this.valid = valid;
     }
-
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
@@ -152,7 +155,6 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
         writeCustomData(LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
     }
 
-
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
@@ -172,9 +174,7 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
-    public void setFuel(Material material) {
-
-    }
+    public void setFuel(Material material) {}
 
     @Override
     public LockableItemStackHandler getStackHandler() {

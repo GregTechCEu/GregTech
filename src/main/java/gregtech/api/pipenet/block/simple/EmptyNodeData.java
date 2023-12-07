@@ -5,6 +5,5 @@ public class EmptyNodeData {
 
     public static final EmptyNodeData INSTANCE = new EmptyNodeData();
 
-    private EmptyNodeData() {
-    }
+    private EmptyNodeData() {}
 }

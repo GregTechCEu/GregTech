@@ -3,6 +3,7 @@ package gregtech.api.metatileentity.multiblock;
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.recipes.RecipeMap;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidTank;
@@ -22,10 +23,14 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
 
     // just initialize inventories based on RecipeMap values by default
     protected void initializeAbilities() {
-        this.importItems = new NotifiableItemStackHandler(recipeMapWorkable.getRecipeMap().getMaxInputs(), this, false);
-        this.importFluids = new FluidTankList(true, makeFluidTanks(recipeMapWorkable.getRecipeMap().getMaxFluidInputs(), false));
-        this.exportItems = new NotifiableItemStackHandler(recipeMapWorkable.getRecipeMap().getMaxOutputs(), this, true);
-        this.exportFluids = new FluidTankList(false, makeFluidTanks(recipeMapWorkable.getRecipeMap().getMaxFluidOutputs(), true));
+        this.importItems = new NotifiableItemStackHandler(this, recipeMapWorkable.getRecipeMap().getMaxInputs(), this,
+                false);
+        this.importFluids = new FluidTankList(true,
+                makeFluidTanks(recipeMapWorkable.getRecipeMap().getMaxFluidInputs(), false));
+        this.exportItems = new NotifiableItemStackHandler(this, recipeMapWorkable.getRecipeMap().getMaxOutputs(), this,
+                true);
+        this.exportFluids = new FluidTankList(false,
+                makeFluidTanks(recipeMapWorkable.getRecipeMap().getMaxFluidOutputs(), true));
 
         this.itemInventory = new ItemHandlerProxy(this.importItems, this.exportItems);
         this.fluidInventory = new FluidHandlerProxy(this.importFluids, this.exportFluids);
@@ -68,5 +73,10 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     @Override
     protected boolean openGUIOnRightClick() {
         return isStructureFormed();
+    }
+
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
     }
 }

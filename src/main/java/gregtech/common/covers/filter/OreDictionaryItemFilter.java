@@ -14,11 +14,13 @@ import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import gregtech.common.gui.widget.HighlightedTextField;
 import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
 import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.Map;
 import java.util.Set;
@@ -85,35 +87,29 @@ public class OreDictionaryItemFilter extends ItemFilter {
                     String t = h.getOriginalText();
                     for (int i = 0; i < t.length(); i++) {
                         switch (t.charAt(i)) {
-                            case '|': case '&': case '^': case '(': case ')':
-                                h.format(i, TextFormatting.GOLD);
-                                break;
-                            case '*': case '?':
-                                h.format(i, TextFormatting.GREEN);
-                                break;
-                            case '!':
-                                h.format(i, TextFormatting.RED);
-                                break;
-                            case '\\':
-                                h.format(i++, TextFormatting.YELLOW);
-                                break;
-                            case '$': {
+                            case '|', '&', '^', '(', ')' -> h.format(i, TextFormatting.GOLD);
+                            case '*', '?' -> h.format(i, TextFormatting.GREEN);
+                            case '!' -> h.format(i, TextFormatting.RED);
+                            case '\\' -> h.format(i++, TextFormatting.YELLOW);
+                            case '$' -> {
                                 h.format(i, TextFormatting.DARK_GREEN);
                                 for (; i < t.length(); i++) {
                                     switch (t.charAt(i)) {
-                                        case ' ': case '\t': case '\n': case '\r':
-                                            break;
-                                        case '\\':
+                                        case ' ', '\t', '\n', '\r' -> {}
+                                        case '\\' -> {
                                             i++;
-                                        default:
                                             continue;
+                                        }
+                                        default -> {
+                                            continue;
+                                        }
                                     }
                                     break;
                                 }
-                                break;
                             }
-                            default:
+                            default -> {
                                 continue;
+                            }
                         }
                         h.format(i + 1, TextFormatting.RESET);
                     }
@@ -122,7 +118,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @Override
     public Object matchItemStack(ItemStack itemStack) {
-        return matchesItemStack(itemStack) ? "wtf is this system?? i can put any non null object here and it i will work??? $arch" : null;
+        return matchesItemStack(itemStack) ?
+                "wtf is this system?? i can put any non null object here and it i will work??? $arch" : null;
     }
 
     public boolean matchesItemStack(ItemStack itemStack) {

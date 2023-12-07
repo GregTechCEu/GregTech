@@ -1,6 +1,5 @@
 package gregtech.common.gui.widget.appeng;
 
-import appeng.api.storage.data.IAEStack;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.util.Position;
@@ -8,6 +7,8 @@ import gregtech.api.util.Size;
 import gregtech.common.gui.widget.appeng.slot.AEConfigSlot;
 import gregtech.common.gui.widget.appeng.slot.AmountSetSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+
+import appeng.api.storage.data.IAEStack;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
@@ -72,7 +73,7 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         this.changeMap.clear();
-        for (int index = 0; index < this.config.length; index ++) {
+        for (int index = 0; index < this.config.length; index++) {
             IConfigurableSlot<T> newSlot = this.config[index];
             IConfigurableSlot<T> oldSlot = this.cached[index];
             T nConfig = newSlot.getConfig();
@@ -82,6 +83,7 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
             if (!areAEStackCountEquals(nConfig, oConfig) || !areAEStackCountEquals(nStock, oStock)) {
                 this.changeMap.put(index, newSlot.copy());
                 this.cached[index] = this.config[index].copy();
+                this.gui.holder.markAsDirty();
             }
         }
         if (!this.changeMap.isEmpty()) {
@@ -105,8 +107,7 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
                             buf.writeBoolean(false);
                         }
                     }
-                } catch (IOException ignored) {
-                }
+                } catch (IOException ignored) {}
             });
         }
     }
@@ -128,5 +129,4 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
         }
         return false;
     }
-
 }

@@ -3,18 +3,24 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaRegistrar;
+import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -40,7 +46,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setBoolean("Working", capability.isWorking());
         if (capability.isWorking()) {
-            subTag.setInteger("RecipeEUt", capability.getRecipeEUt());
+            subTag.setInteger("RecipeEUt", capability.getInfoProviderEUt());
         }
         tag.setTag("gregtech.AbstractRecipeLogic", subTag);
         return tag;
@@ -48,7 +54,8 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
 
     @NotNull
     @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor,
+                                     IWailaConfigHandler config) {
         if (!config.getConfig("gregtech.recipe_logic") || accessor.getTileEntity() == null) {
             return tooltip;
         }
@@ -58,18 +65,29 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
             if (tag.getBoolean("Working")) {
                 int EUt = tag.getInteger("RecipeEUt");
                 int absEUt = Math.abs(EUt);
+                boolean consumer = EUt > 0;
                 String endText = null;
 
                 if (accessor.getTileEntity() instanceof IGregTechTileEntity gtte) {
-                    if (gtte.getMetaTileEntity() instanceof SteamMetaTileEntity) {
-                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " + I18n.format("material.steam");
+                    MetaTileEntity mte = gtte.getMetaTileEntity();
+                    if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
+                            mte instanceof RecipeMapSteamMultiblockController) {
+                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " +
+                                I18n.format(Materials.Steam.getUnlocalizedName());
+                    }
+                    AbstractRecipeLogic arl = mte.getRecipeLogic();
+                    if (arl != null) {
+                        consumer = arl.consumesEnergy();
                     }
                 }
                 if (endText == null) {
-                    endText = ": " + absEUt + TextFormatting.RESET + " EU/t (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.RESET + ")";
+                    endText = ": " + absEUt + TextFormatting.RESET + " EU/t (" +
+                            GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.RESET + ")";
                 }
 
-                if (EUt > 0) {
+                if (EUt == 0) return tooltip;
+
+                if (consumer) {
                     tooltip.add(I18n.format("gregtech.top.energy_consumption") + endText);
                 } else {
                     tooltip.add(I18n.format("gregtech.top.energy_production") + endText);

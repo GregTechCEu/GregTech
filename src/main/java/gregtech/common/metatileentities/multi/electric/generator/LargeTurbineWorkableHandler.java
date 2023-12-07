@@ -8,9 +8,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
+
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -32,7 +32,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         if (canRecipeProgress) {
             // turbines can void energy
             drawEnergy(recipeEUt, false);
-            //as recipe starts with progress on 1 this has to be > only not => to compensate for it
+            // as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
                 completeRecipe();
             }
@@ -44,7 +44,9 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         if (previousRecipe == null) {
             Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
 
-            return recipe == null ? null : getInputTank().drain(new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE), false);
+            return recipe == null ? null : getInputTank().drain(
+                    new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
+                    false);
         }
         FluidStack fuelStack = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
         return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
@@ -85,9 +87,9 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             excessVoltage -= turbineMaxVoltage;
         } else {
             double holderEfficiency = rotorHolder.getTotalEfficiency() / 100.0;
-            //get the amount of parallel required to match the desired output voltage
+            // get the amount of parallel required to match the desired output voltage
             parallel = MathHelper.ceil((turbineMaxVoltage - excessVoltage) /
-                            (Math.abs(recipe.getEUt()) * holderEfficiency));
+                    (Math.abs(recipe.getEUt()) * holderEfficiency));
 
             // Null check fluid here, since it can return null on first join into world or first form
             FluidStack inputFluid = getInputFluidStack();
@@ -95,14 +97,14 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
                 return false;
             }
 
-            //this is necessary to prevent over-consumption of fuel
+            // this is necessary to prevent over-consumption of fuel
             excessVoltage += (int) (parallel * Math.abs(recipe.getEUt()) * holderEfficiency - turbineMaxVoltage);
         }
 
-        //rebuild the recipe and adjust voltage to match the turbine
+        // rebuild the recipe and adjust voltage to match the turbine
         RecipeBuilder<?> recipeBuilder = getRecipeMap().recipeBuilder();
         recipeBuilder.append(recipe, parallel, false)
-                .EUt(-turbineMaxVoltage);
+                .EUt(turbineMaxVoltage);
         applyParallelBonus(recipeBuilder);
         recipe = recipeBuilder.build().getResult();
 

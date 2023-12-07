@@ -2,12 +2,17 @@ package gregtech.integration;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +40,25 @@ public class IntegrationUtil {
         }
     }
 
+    @NotNull
+    public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta) {
+        return getModItem(modid, name, meta, 1, null);
+    }
+
+    @NotNull
+    public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta, int amount) {
+        return getModItem(modid, name, meta, amount, null);
+    }
+
+    @NotNull
+    public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta, int amount,
+                                       @Nullable String nbt) {
+        if (!Loader.isModLoaded(modid)) {
+            return ItemStack.EMPTY;
+        }
+        return GameRegistry.makeItemStack(modid + ":" + name, meta, amount, nbt);
+    }
+
     @SideOnly(Side.CLIENT)
     private static void throwClientIncompatibility(List<String> messages) {
         throw new ModIncompatibilityException(messages);
@@ -52,11 +76,11 @@ public class IntegrationUtil {
         }
 
         @Override
-        public void initGui(GuiErrorScreen guiErrorScreen, FontRenderer fontRenderer) {
-        }
+        public void initGui(GuiErrorScreen guiErrorScreen, FontRenderer fontRenderer) {}
 
         @Override
-        public void drawScreen(GuiErrorScreen errorScreen, FontRenderer fontRenderer, int mouseX, int mouseY, float time) {
+        public void drawScreen(GuiErrorScreen errorScreen, FontRenderer fontRenderer, int mouseX, int mouseY,
+                               float time) {
             int x = errorScreen.width / 2;
             int y = 75;
             for (String message : messages) {

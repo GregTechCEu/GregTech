@@ -1,7 +1,8 @@
 package gregtech.api.pattern;
 
-import com.google.common.base.Joiner;
 import gregtech.api.util.RelativeDirection;
+
+import com.google.common.base.Joiner;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -60,11 +61,14 @@ public class FactoryBlockPattern {
             }
 
             if (aisle.length != this.aisleHeight) {
-                throw new IllegalArgumentException("Expected aisle with height of " + this.aisleHeight + ", but was given one with a height of " + aisle.length + ")");
+                throw new IllegalArgumentException("Expected aisle with height of " + this.aisleHeight +
+                        ", but was given one with a height of " + aisle.length + ")");
             } else {
                 for (String s : aisle) {
                     if (s.length() != this.rowWidth) {
-                        throw new IllegalArgumentException("Not all rows in the given aisle are the correct width (expected " + this.rowWidth + ", found one with " + s.length() + ")");
+                        throw new IllegalArgumentException(
+                                "Not all rows in the given aisle are the correct width (expected " + this.rowWidth +
+                                        ", found one with " + s.length() + ")");
                     }
 
                     for (char c0 : s.toCharArray()) {
@@ -77,7 +81,7 @@ public class FactoryBlockPattern {
                 this.depth.add(aisle);
                 if (minRepeat > maxRepeat)
                     throw new IllegalArgumentException("Lower bound of repeat counting must smaller than upper bound!");
-                aisleRepetitions.add(new int[]{minRepeat, maxRepeat});
+                aisleRepetitions.add(new int[] { minRepeat, maxRepeat });
                 return this;
             }
         } else {
@@ -98,7 +102,7 @@ public class FactoryBlockPattern {
     public FactoryBlockPattern setRepeatable(int minRepeat, int maxRepeat) {
         if (minRepeat > maxRepeat)
             throw new IllegalArgumentException("Lower bound of repeat counting must smaller than upper bound!");
-        aisleRepetitions.set(aisleRepetitions.size() - 1, new int[]{minRepeat, maxRepeat});
+        aisleRepetitions.set(aisleRepetitions.size() - 1, new int[] { minRepeat, maxRepeat });
         return this;
     }
 
@@ -113,7 +117,8 @@ public class FactoryBlockPattern {
         return new FactoryBlockPattern(RIGHT, UP, BACK);
     }
 
-    public static FactoryBlockPattern start(RelativeDirection charDir, RelativeDirection stringDir, RelativeDirection aisleDir) {
+    public static FactoryBlockPattern start(RelativeDirection charDir, RelativeDirection stringDir,
+                                            RelativeDirection aisleDir) {
         return new FactoryBlockPattern(charDir, stringDir, aisleDir);
     }
 
@@ -123,12 +128,14 @@ public class FactoryBlockPattern {
     }
 
     public BlockPattern build() {
-        return new BlockPattern(makePredicateArray(), structureDir, aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));
+        return new BlockPattern(makePredicateArray(), structureDir,
+                aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));
     }
 
     private TraceabilityPredicate[][][] makePredicateArray() {
         this.checkMissingPredicates();
-        TraceabilityPredicate[][][] predicate = (TraceabilityPredicate[][][]) Array.newInstance(TraceabilityPredicate.class, this.depth.size(), this.aisleHeight, this.rowWidth);
+        TraceabilityPredicate[][][] predicate = (TraceabilityPredicate[][][]) Array
+                .newInstance(TraceabilityPredicate.class, this.depth.size(), this.aisleHeight, this.rowWidth);
 
         for (int i = 0; i < this.depth.size(); ++i) {
             for (int j = 0; j < this.aisleHeight; ++j) {

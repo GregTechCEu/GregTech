@@ -1,9 +1,6 @@
 package gregtech.api.recipes.builders;
 
-import gregtech.api.GTValues;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IDataItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -12,20 +9,18 @@ import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTStringUtils;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.UnaryOperator;
 
 public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeBuilder> {
-
-    public static final int DEFAULT_DURATION = 144000;
-    public static final int DEFAULT_EUT = GTValues.VA[GTValues.LV];
 
     private final Collection<ResearchRecipeEntry> recipeEntries = new ArrayList<>();
 
@@ -38,7 +33,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         super(recipe, recipeMap);
     }
 
-    public AssemblyLineRecipeBuilder(@Nonnull AssemblyLineRecipeBuilder builder) {
+    public AssemblyLineRecipeBuilder(@NotNull AssemblyLineRecipeBuilder builder) {
         super(builder);
         this.recipeEntries.addAll(builder.getRecipeEntries());
         this.generatingRecipes = builder.generatingRecipes;
@@ -50,10 +45,10 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     @Override
-    public boolean applyProperty(@Nonnull String key, @Nullable Object value) {
+    public boolean applyProperty(@NotNull String key, @Nullable Object value) {
         if (key.equals(ResearchProperty.KEY)) {
             if (value instanceof ItemStack itemStack) {
-                research(itemStack);
+                scannerResearch(itemStack);
                 return true;
             }
         }
@@ -69,13 +64,15 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         }
 
         if (!generatingRecipes) {
-            GTLog.logger.error("Cannot generate recipes when using researchWithoutRecipe()", new IllegalArgumentException());
+            GTLog.logger.error("Cannot generate recipes when using researchWithoutRecipe()",
+                    new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
 
         if (recipePropertyStorage != null && recipePropertyStorage.hasRecipeProperty(ResearchProperty.getInstance())) {
-            ResearchPropertyData property = recipePropertyStorage.getRecipePropertyValue(ResearchProperty.getInstance(), null);
+            ResearchPropertyData property = recipePropertyStorage.getRecipePropertyValue(ResearchProperty.getInstance(),
+                    null);
             if (property == null) throw new IllegalStateException("Property storage has a null property");
             property.add(researchEntry);
             return true;
@@ -96,7 +93,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * @param researchId the researchId for the recipe
      * @return this
      */
-    public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId) {
+    public AssemblyLineRecipeBuilder researchWithoutRecipe(@NotNull String researchId) {
         return researchWithoutRecipe(researchId, AssemblyLineManager.getDefaultScannerItem());
     }
 
@@ -104,17 +101,20 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * Does not generate a research recipe.
      *
      * @param researchId the researchId for the recipe
-     * @param dataStack     the stack to hold the data. Must have the {@link IDataItem} behavior.
+     * @param dataStack  the stack to hold the data. Must have the {@link IDataItem} behavior.
      * @return this
      */
-    public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId, @Nonnull ItemStack dataStack) {
+    public AssemblyLineRecipeBuilder researchWithoutRecipe(@NotNull String researchId, @NotNull ItemStack dataStack) {
         applyResearchProperty(new ResearchPropertyData.ResearchEntry(researchId, dataStack));
         this.generatingRecipes = false;
         return this;
     }
 
-    public AssemblyLineRecipeBuilder research(UnaryOperator<ResearchBuilder> research) {
-        ResearchRecipeEntry entry = research.apply(new ResearchBuilder()).build();
+    /**
+     * Generates a research recipe for the Scanner.
+     */
+    public AssemblyLineRecipeBuilder scannerResearch(UnaryOperator<ResearchRecipeBuilder.ScannerRecipeBuilder> research) {
+        ResearchRecipeEntry entry = research.apply(new ResearchRecipeBuilder.ScannerRecipeBuilder()).build();
         if (applyResearchProperty(new ResearchPropertyData.ResearchEntry(entry.researchId, entry.dataStack))) {
             this.recipeEntries.add(entry);
         }
@@ -122,16 +122,27 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     /**
-     * Generates a research recipe.
+     * Generates a research recipe for the Scanner. All values are defaults other than the research stack.
      *
      * @param researchStack the stack to use for research
      * @return this
      */
-    public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchStack) {
-        return research(b -> new ResearchBuilder().researchStack(researchStack));
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull ItemStack researchStack) {
+        return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder().researchStack(researchStack));
     }
 
-    @Nonnull
+    /**
+     * Generates a research recipe for the Research Station.
+     */
+    public AssemblyLineRecipeBuilder stationResearch(UnaryOperator<ResearchRecipeBuilder.StationRecipeBuilder> research) {
+        ResearchRecipeEntry entry = research.apply(new ResearchRecipeBuilder.StationRecipeBuilder()).build();
+        if (applyResearchProperty(new ResearchPropertyData.ResearchEntry(entry.researchId, entry.dataStack))) {
+            this.recipeEntries.add(entry);
+        }
+        return this;
+    }
+
+    @NotNull
     public Collection<ResearchRecipeEntry> getRecipeEntries() {
         return this.recipeEntries;
     }
@@ -149,14 +160,15 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         private final int CWUt;
 
         /**
-         * @param researchId the id of the research to store
+         * @param researchId    the id of the research to store
          * @param researchStack the stack to scan for research
-         * @param dataStack the stack to contain the data
-         * @param duration the duration of the recipe
-         * @param EUt the EUt of the recipe
-         * @param CWUt how much computation per tick this recipe needs if in Research Station
+         * @param dataStack     the stack to contain the data
+         * @param duration      the duration of the recipe
+         * @param EUt           the EUt of the recipe
+         * @param CWUt          how much computation per tick this recipe needs if in Research Station
          */
-        public ResearchRecipeEntry(@Nonnull String researchId, @Nonnull ItemStack researchStack, @Nonnull ItemStack dataStack, int duration, int EUt, int CWUt) {
+        public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
+                                   @NotNull ItemStack dataStack, int duration, int EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
@@ -165,17 +177,17 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             this.CWUt = CWUt;
         }
 
-        @Nonnull
+        @NotNull
         public String getResearchId() {
             return this.researchId;
         }
 
-        @Nonnull
+        @NotNull
         public ItemStack getResearchStack() {
             return researchStack;
         }
 
-        @Nonnull
+        @NotNull
         public ItemStack getDataStack() {
             return dataStack;
         }
@@ -190,93 +202,6 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
 
         public int getCWUt() {
             return CWUt;
-        }
-    }
-
-    public static class ResearchBuilder {
-
-        private ItemStack researchStack;
-        private ItemStack dataStack;
-        private String researchId;
-        private int duration;
-        private int eut;
-        private int cwut;
-
-        private ResearchBuilder() {/**/}
-
-        public ResearchBuilder researchStack(@Nonnull ItemStack researchStack) {
-            if (!researchStack.isEmpty()) {
-                this.researchStack = researchStack;
-            }
-            return this;
-        }
-
-        public ResearchBuilder dataStack(@Nonnull ItemStack dataStack) {
-            if (!dataStack.isEmpty()) {
-                this.dataStack = dataStack;
-            }
-            return this;
-        }
-
-        public ResearchBuilder researchId(String researchId) {
-            this.researchId = researchId;
-            return this;
-        }
-
-        public ResearchBuilder duration(int duration) {
-            this.duration = duration;
-            return this;
-        }
-
-        public ResearchBuilder EUt(int eut) {
-            this.eut = eut;
-            return this;
-        }
-
-        /** If this value is greater than zero, then this recipe will be done in the Research Station instead of the Scanner */
-        public ResearchBuilder CWUt(int cwut) {
-            this.cwut = cwut;
-            return this;
-        }
-
-        private ResearchRecipeEntry build() {
-            if (researchStack == null) {
-                throw new IllegalArgumentException("Research stack cannot be null or empty!");
-            }
-
-            if (researchId == null) {
-                researchId = GTStringUtils.itemStackToString(researchStack);
-            }
-
-            if (dataStack == null) {
-                dataStack = cwut > 0
-                        ? AssemblyLineManager.getDefaultResearchStationItem()
-                        : AssemblyLineManager.getDefaultScannerItem();
-            }
-
-            boolean foundBehavior = false;
-            if (dataStack.getItem() instanceof MetaItem<?> metaItem) {
-                for (IItemBehaviour behaviour : metaItem.getBehaviours(dataStack)) {
-                    if (behaviour instanceof IDataItem) {
-                        foundBehavior = true;
-                        dataStack = dataStack.copy();
-                        dataStack.setCount(1);
-                        break;
-                    }
-                }
-            }
-            if (!foundBehavior) {
-                throw new IllegalArgumentException("Data ItemStack must have the IDataItem behavior");
-            }
-
-            if (duration <= 0) {
-                duration = DEFAULT_DURATION;
-            }
-
-            if (eut <= 0) {
-                eut = DEFAULT_EUT;
-            }
-            return new ResearchRecipeEntry(researchId, researchStack, dataStack, duration, eut, cwut);
         }
     }
 }

@@ -80,5 +80,4 @@ public class ControlRod extends ReactorComponent {
     public void computeWeightFromFuelRodMap() {
         this.weight = fuelRodPairs.size() * 2;
     }
-
 }

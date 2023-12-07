@@ -8,6 +8,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.SlotDelegate;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerEnchantment;
@@ -21,7 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 @EventBusSubscriber(modid = GTValues.MODID)
 public class EnchantmentTableTweaks {
@@ -42,8 +43,8 @@ public class EnchantmentTableTweaks {
 
     private static void onContainerOpen(Container container) {
         if (container instanceof ContainerEnchantment) {
-            //wrap in try-catch because such kind of tweaks is subject to breaking
-            //don't let it crash game if some mod borked it
+            // wrap in try-catch because such kind of tweaks is subject to breaking
+            // don't let it crash game if some mod borked it
             try {
                 int index = getEnchantmentSlotIndex((ContainerEnchantment) container);
                 if (index != -1) {
@@ -87,9 +88,8 @@ public class EnchantmentTableTweaks {
         }
 
         @Override
-        public boolean isItemValid(@Nonnull ItemStack stack) {
+        public boolean isItemValid(@NotNull ItemStack stack) {
             return super.isItemValid(stack) || isValidForEnchantment(stack);
         }
     }
-
 }

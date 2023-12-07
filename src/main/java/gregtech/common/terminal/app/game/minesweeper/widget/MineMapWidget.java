@@ -4,14 +4,18 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.interpolate.RGBInterpolator;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class MineMapWidget extends Widget {
 
-    private static final TextureArea COVERED = new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/covered.png"), 0, 0, 1, 1);
-    private static final TextureArea FLAG = new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/flag.png"), 0, 0, 1, 1);
-    private static final TextureArea BOMB = new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/bomb.png"), 0, 0, 1, 1);
+    private static final TextureArea COVERED = new TextureArea(
+            new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/covered.png"), 0, 0, 1, 1);
+    private static final TextureArea FLAG = new TextureArea(
+            new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/flag.png"), 0, 0, 1, 1);
+    private static final TextureArea BOMB = new TextureArea(
+            new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/bomb.png"), 0, 0, 1, 1);
 
     private static final TextureArea[] NUMBERS = {
             new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/blank.png"), 0, 0, 1, 1),
@@ -90,12 +94,11 @@ public class MineMapWidget extends Widget {
             }
         }
 
-
         // Add to surrounding numbers for the mine
         // The weird ternaries here are making sure to not cause overflows
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                if(mines[x][y]) {
+                if (mines[x][y]) {
                     for (int xMod = x == 0 ? 0 : -1; xMod < (x == width - 1 ? 1 : 2); xMod++) {
                         for (int yMod = y == 0 ? 0 : -1; yMod < (y == height - 1 ? 1 : 2); yMod++) {
                             generatedNumbers[x + xMod][y + yMod]++;
@@ -139,7 +142,8 @@ public class MineMapWidget extends Widget {
                     else
                         COVERED.draw(i * 16 + getPosition().getX(), j * 16 + getPosition().getY(), 16, 16);
                 } else if (!mines[i][j])
-                    NUMBERS[generatedNumbers[i][j]].draw(i * 16 + getPosition().getX(), j * 16 + getPosition().getY(), 16, 16);
+                    NUMBERS[generatedNumbers[i][j]].draw(i * 16 + getPosition().getX(), j * 16 + getPosition().getY(),
+                            16, 16);
                 else
                     BOMB.draw(i * 16 + getPosition().getX(), j * 16 + getPosition().getY(), 16, 16);
             }
@@ -148,7 +152,7 @@ public class MineMapWidget extends Widget {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if(isWon || isLost) {
+        if (isWon || isLost) {
             return false; // Don't let them interact now...
         }
 
@@ -157,7 +161,6 @@ public class MineMapWidget extends Widget {
         if (gridX >= width || gridY >= height || gridX < 0 || gridY < 0) {
             return false;
         }
-
 
         if (button == 0 && !flags[gridX][gridY]) {
             if (!isPrepared)
@@ -181,7 +184,7 @@ public class MineMapWidget extends Widget {
 
     private void uncoverSafeTiles(int x, int y) {
         checkedSpaces[x][y] = true;
-        if(generatedNumbers[x][y] != 0)
+        if (generatedNumbers[x][y] != 0)
             return;
         // Weird ternaries again for preventing ArrayIndexOutOfBounds exceptions
         for (int xMod = x == 0 ? 0 : -1; xMod < (x == width - 1 ? 1 : 2); xMod++) {
@@ -201,7 +204,9 @@ public class MineMapWidget extends Widget {
             return false;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (mines[i][j] != flags[i][j] || checkedSpaces[i][j] == mines[i][j]) { // If there is an unchecked safe square, or an uncovered bomb...
+                if (mines[i][j] != flags[i][j] || checkedSpaces[i][j] == mines[i][j]) { // If there is an unchecked safe
+                                                                                        // square, or an uncovered
+                                                                                        // bomb...
                     return false;
                 }
             }

@@ -11,19 +11,22 @@ import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
 
     private static ItemStack NAME_MOLD = ItemStack.EMPTY;
 
-    public RecipeMapFormingPress(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
+    public RecipeMapFormingPress(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs,
+                                 int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
         super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
     }
 
@@ -49,7 +52,8 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
 
                 if (moldStack.isEmpty() && inputStack.isItemEqual(NAME_MOLD)) {
                     // only valid if the name mold has a name, which is stored in the "display" sub-compound
-                    if (inputStack.getTagCompound() != null && inputStack.getTagCompound().hasKey("display", Constants.NBT.TAG_COMPOUND)) {
+                    if (inputStack.getTagCompound() != null &&
+                            inputStack.getTagCompound().hasKey("display", Constants.NBT.TAG_COMPOUND)) {
                         moldStack = inputStack;
                     }
                 } else if (itemStack.isEmpty()) {
@@ -62,7 +66,8 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
                 ItemStack output = GTUtility.copy(1, itemStack);
                 output.setStackDisplayName(moldStack.getDisplayName());
                 return this.recipeBuilder()
-                        .notConsumable(GTRecipeItemInput.getOrCreate(moldStack)) //recipe is reusable as long as mold stack matches
+                        .notConsumable(new GTRecipeItemInput(moldStack)) // recipe is reusable as long as mold stack
+                                                                         // matches
                         .inputs(GTUtility.copy(1, itemStack))
                         .outputs(output)
                         .duration(40).EUt(4)
@@ -74,7 +79,8 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
     }
 
     @Override
-    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
+    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
         SlotWidget slotWidget = new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs);
         TextureArea base = GuiTextures.SLOT;
         if (isOutputs)

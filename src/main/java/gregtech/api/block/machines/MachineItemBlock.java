@@ -1,6 +1,5 @@
 package gregtech.api.block.machines;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
@@ -11,7 +10,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -33,8 +32,11 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -50,17 +52,21 @@ public class MachineItemBlock extends ItemBlock {
      * Note that, for machines to be properly registered on the creative tab, a matching implementation of
      * {@link MetaTileEntity#isInCreativeTab(CreativeTabs)} should be provided as well.
      *
-     * @param creativeTab Creative tab to be checked during {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList)}
+     * @param creativeTab Creative tab to be checked during
+     *                    {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList)}
      * @throws NullPointerException     If {@code creativeTab == null}
-     * @throws IllegalArgumentException If {@code creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES || creativeTab == CreativeTabs.SEARCH}
+     * @throws IllegalArgumentException If
+     *                                  {@code creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES || creativeTab == CreativeTabs.SEARCH}
      * @see MetaTileEntity#isInCreativeTab(CreativeTabs)
      */
     public static void addCreativeTab(CreativeTabs creativeTab) {
         Preconditions.checkNotNull(creativeTab, "creativeTab");
         if (creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES) {
-            throw new IllegalArgumentException("Adding " + GregTechAPI.TAB_GREGTECH_MACHINES.tabLabel + " as additional creative tab is redundant.");
+            throw new IllegalArgumentException("Adding " + GregTechAPI.TAB_GREGTECH_MACHINES.tabLabel +
+                    " as additional creative tab is redundant.");
         } else if (creativeTab == CreativeTabs.SEARCH) {
-            throw new IllegalArgumentException("Adding " + CreativeTabs.SEARCH.tabLabel + " as additional creative tab is redundant.");
+            throw new IllegalArgumentException(
+                    "Adding " + CreativeTabs.SEARCH.tabLabel + " as additional creative tab is redundant.");
         }
         ADDITIONAL_CREATIVE_TABS.add(creativeTab);
     }
@@ -70,18 +76,20 @@ public class MachineItemBlock extends ItemBlock {
         setHasSubtypes(true);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getTranslationKey(@Nonnull ItemStack stack) {
+    public String getTranslationKey(@NotNull ItemStack stack) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity == null ? "unnamed" : metaTileEntity.getMetaName();
     }
 
     @Override
-    public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
+    public boolean placeBlockAt(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World world,
+                                @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX, float hitY, float hitZ,
+                                IBlockState newState) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
-        //prevent rendering glitch before meta tile entity sync to client, but after block placement
-        //set opaque property on the placing on block, instead during set of meta tile entity
+        // prevent rendering glitch before meta tile entity sync to client, but after block placement
+        // set opaque property on the placing on block, instead during set of meta tile entity
         boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
                 newState.withProperty(BlockMachine.OPAQUE, metaTileEntity != null && metaTileEntity.isOpaqueCube()));
         if (superVal && !world.isRemote) {
@@ -89,7 +97,8 @@ public class MachineItemBlock extends ItemBlock {
             Block block = world.getBlockState(possiblePipe).getBlock();
             if (block instanceof BlockPipe) {
                 IPipeTile pipeTile = ((BlockPipe<?, ?, ?>) block).getPipeTileEntity(world, possiblePipe);
-                if (pipeTile != null && ((BlockPipe<?, ?, ?>) block).canPipeConnectToBlock(pipeTile, side.getOpposite(), world.getTileEntity(pos))) {
+                if (pipeTile != null && ((BlockPipe<?, ?, ?>) block).canPipeConnectToBlock(pipeTile, side.getOpposite(),
+                        world.getTileEntity(pos))) {
                     pipeTile.setConnection(side, true, false);
                 }
             }
@@ -99,7 +108,7 @@ public class MachineItemBlock extends ItemBlock {
 
     @Nullable
     @Override
-    public String getCreatorModId(@Nonnull ItemStack itemStack) {
+    public String getCreatorModId(@NotNull ItemStack itemStack) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(itemStack);
         if (metaTileEntity == null) {
             return GTValues.MODID;
@@ -110,7 +119,7 @@ public class MachineItemBlock extends ItemBlock {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable NBTTagCompound nbt) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity == null ? null : metaTileEntity.initItemStackCapabilities(stack);
     }
@@ -120,14 +129,15 @@ public class MachineItemBlock extends ItemBlock {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) != null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getContainerItem(@Nonnull ItemStack itemStack) {
+    public ItemStack getContainerItem(@NotNull ItemStack itemStack) {
         if (!hasContainerItem(itemStack)) {
             return ItemStack.EMPTY;
         }
         if (itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-            IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                    null);
             if (handler != null) {
                 FluidStack drained = handler.drain(1000, true);
                 if (drained == null || drained.amount != 1000) {
@@ -141,21 +151,23 @@ public class MachineItemBlock extends ItemBlock {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         if (metaTileEntity == null) return;
 
-        //item specific tooltip like: gregtech.machine.lathe.lv.tooltip
+        // item specific tooltip like: gregtech.machine.lathe.lv.tooltip
         String tooltipLocale = metaTileEntity.getMetaName() + ".tooltip";
         if (I18n.hasKey(tooltipLocale)) {
             Collections.addAll(tooltip, LocalizationUtils.formatLines(tooltipLocale));
         }
 
-        //tier less tooltip for a electric machine like: gregtech.machine.lathe.tooltip
+        // tier less tooltip for a electric machine like: gregtech.machine.lathe.tooltip
         if (metaTileEntity instanceof ITieredMetaTileEntity) {
             String tierlessTooltipLocale = ((ITieredMetaTileEntity) metaTileEntity).getTierlessTooltipKey();
-            //only add tierless tooltip if it's key is not equal to normal tooltip key (i.e if machine name has dot in it's name)
-            //case when it's not true would be any machine extending from TieredMetaTileEntity but having only one tier
+            // only add tierless tooltip if it's key is not equal to normal tooltip key (i.e if machine name has dot in
+            // it's name)
+            // case when it's not true would be any machine extending from TieredMetaTileEntity but having only one tier
             if (!tooltipLocale.equals(tierlessTooltipLocale) && I18n.hasKey(tierlessTooltipLocale)) {
                 Collections.addAll(tooltip, LocalizationUtils.formatLines(tierlessTooltipLocale));
             }
@@ -183,5 +195,11 @@ public class MachineItemBlock extends ItemBlock {
         CreativeTabs[] tabs = ADDITIONAL_CREATIVE_TABS.toArray(new CreativeTabs[ADDITIONAL_CREATIVE_TABS.size() + 1]);
         tabs[tabs.length - 1] = getCreativeTab();
         return tabs;
+    }
+
+    @Override
+    public int getItemStackLimit(@NotNull ItemStack stack) {
+        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
+        return metaTileEntity != null ? metaTileEntity.getItemStackLimit(stack) : super.getItemStackLimit(stack);
     }
 }

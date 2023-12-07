@@ -1,14 +1,15 @@
 package gregtech.api.items;
 
-
 public enum OreDictNames {
 
     string,
     chestWood,
     chestEnder,
+    fenceWood,
 
     cobblestone, // For just cobblestone.
     stoneCobble, // For any kind of cobblestone (e.g. mossy cobblestone).
+    stoneBricks, // For any kind of stone bricks
 
     craftingAnvil,
     craftingFurnace,

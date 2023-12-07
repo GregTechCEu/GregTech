@@ -7,7 +7,8 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class ItemStackTexture implements IGuiTexture{
+public class ItemStackTexture implements IGuiTexture {
+
     private final ItemStack[] itemStack;
     private int index = 0;
     private int ticks = 0;
@@ -21,15 +22,15 @@ public class ItemStackTexture implements IGuiTexture{
     public ItemStackTexture(Item item, Item... items) {
         this.itemStack = new ItemStack[items.length + 1];
         this.itemStack[0] = new ItemStack(item);
-        for(int i = 0; i < items.length; i++) {
-            itemStack[i+1] = new ItemStack(items[i]);
+        for (int i = 0; i < items.length; i++) {
+            itemStack[i + 1] = new ItemStack(items[i]);
         }
     }
 
     @Override
     public void updateTick() {
-        if(itemStack.length > 1 && ++ticks % 20 == 0)
-            if(++index == itemStack.length)
+        if (itemStack.length > 1 && ++ticks % 20 == 0)
+            if (++index == itemStack.length)
                 index = 0;
     }
 

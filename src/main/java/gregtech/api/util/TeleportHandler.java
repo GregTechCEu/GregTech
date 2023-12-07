@@ -8,12 +8,11 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-//Uses code from:
-//github.com/CleanroomMC/Airlock/blob/master/src/main/java/com/cleanroommc/airlock/common/util/TeleportUtil.java
+// Uses code from:
+// github.com/CleanroomMC/Airlock/blob/master/src/main/java/com/cleanroommc/airlock/common/util/TeleportUtil.java
 public class TeleportHandler {
 
-    private TeleportHandler() {
-    }
+    private TeleportHandler() {}
 
     public static WorldServer getWorldByDimensionID(int id) {
         WorldServer world = DimensionManager.getWorld(id);
@@ -53,7 +52,8 @@ public class TeleportHandler {
      * @param teleportToY y position that the entity is teleporting to
      * @param teleportToZ z position that the entity is teleporting to
      */
-    public static void teleport(Entity teleporter, int dimension, double teleportToX, double teleportToY, double teleportToZ) {
+    public static void teleport(Entity teleporter, int dimension, double teleportToX, double teleportToY,
+                                double teleportToZ) {
         if (teleporter.world.isRemote || teleporter.isDead) {
             return;
         }
@@ -85,7 +85,8 @@ public class TeleportHandler {
      * @param teleportToY      y position that the entity is teleporting to
      * @param teleportToZ      z position that the entity is teleporting to
      */
-    public static void teleport(Entity teleporter, int dimension, ITeleporter customTeleporter, double teleportToX, double teleportToY, double teleportToZ) {
+    public static void teleport(Entity teleporter, int dimension, ITeleporter customTeleporter, double teleportToX,
+                                double teleportToY, double teleportToZ) {
         if (teleporter.world.isRemote || teleporter.isDead) {
             return;
         }

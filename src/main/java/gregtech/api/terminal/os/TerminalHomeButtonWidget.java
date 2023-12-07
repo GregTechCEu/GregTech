@@ -3,10 +3,12 @@ package gregtech.api.terminal.os;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.util.GTLog;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class TerminalHomeButtonWidget extends CircleButtonWidget {
+
     private final TerminalOSWidget os;
     private int mouseClickTime = -1;
     private final Pair<SystemCall, String>[] actions;
@@ -37,7 +40,8 @@ public class TerminalHomeButtonWidget extends CircleButtonWidget {
                 for (int i = 0; i < actions.length; i++) {
                     if (nbt.hasKey(String.valueOf(i))) {
                         NBTTagCompound tag = nbt.getCompoundTag(String.valueOf(i));
-                        actions[i] = new MutablePair<>(SystemCall.getFromIndex(tag.getInteger("action")), tag.hasKey("arg") ? tag.getString("arg") : null);
+                        actions[i] = new MutablePair<>(SystemCall.getFromIndex(tag.getInteger("action")),
+                                tag.hasKey("arg") ? tag.getString("arg") : null);
                     }
                 }
             }
@@ -67,7 +71,8 @@ public class TerminalHomeButtonWidget extends CircleButtonWidget {
             }
             try {
                 if (!nbt.isEmpty()) {
-                    CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH, "config/home_button.nbt"));
+                    CompressedStreamTools.safeWrite(nbt,
+                            new File(TerminalRegistry.TERMINAL_PATH, "config/home_button.nbt"));
                 }
             } catch (IOException e) {
                 GTLog.logger.error("error while saving local nbt for the home button", e);
@@ -127,7 +132,7 @@ public class TerminalHomeButtonWidget extends CircleButtonWidget {
     private void sendToServer(Pair<SystemCall, String> pair) {
         if (pair != null) {
             String[] args = pair.getValue() == null ? new String[0] : pair.getValue().split(" ");
-            writeClientAction(1, buffer->{
+            writeClientAction(1, buffer -> {
                 buffer.writeVarInt(pair.getKey().index);
                 buffer.writeVarInt(args.length);
                 for (String arg : args) {
@@ -137,5 +142,4 @@ public class TerminalHomeButtonWidget extends CircleButtonWidget {
             click(pair.getKey().index, true, args);
         }
     }
-
 }

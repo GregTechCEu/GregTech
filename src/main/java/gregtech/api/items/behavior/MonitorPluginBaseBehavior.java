@@ -9,11 +9,11 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.core.network.packets.PacketPluginSynced;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
-import io.netty.buffer.Unpooled;
+import gregtech.core.network.packets.PacketPluginSynced;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,11 +29,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import io.netty.buffer.Unpooled;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemUIFactory, IDirtyNotifiable {
+
     protected MetaTileEntityMonitorScreen screen;
     private NBTTagCompound nbtTagCompound;
 
@@ -57,7 +60,8 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
 
     /***
      * Do not override createUI below.
-     * @param holder It should be one of PlayerInventoryHolder or MetaTileEntityHolder.
+     * 
+     * @param holder       It should be one of PlayerInventoryHolder or MetaTileEntityHolder.
      * @param entityPlayer Player
      * @return WidgetGroup back
      */
@@ -73,15 +77,17 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     }
 
     /***
-     * Server / Client. Itemstack will be synced to client when init so... yeah normally you don't need to consider nbt init.
+     * Server / Client. Itemstack will be synced to client when init so... yeah normally you don't need to consider nbt
+     * init.
      * this will be called when you markDirty.
+     * 
      * @param data nbtTag
      */
-    public void writeToNBT(NBTTagCompound data) {
-    }
+    public void writeToNBT(NBTTagCompound data) {}
 
     /***
      * Server / Client. Initialization of Server and Client.
+     * 
      * @param data nbtTag
      */
     public void readFromNBT(NBTTagCompound data) {
@@ -90,10 +96,11 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
 
     /***
      * Server. Same as writeCustomData in MetaTileEntity.
-     * @param id PacketID
+     * 
+     * @param id  PacketID
      * @param buf PacketBuffer
      */
-    public final void writePluginData(int id, @Nonnull Consumer<PacketBuffer> buf) {
+    public final void writePluginData(int id, @NotNull Consumer<PacketBuffer> buf) {
         if (screen != null && this.screen.getWorld() != null && !this.screen.getWorld().isRemote) {
             screen.writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_DATA, packetBuffer -> {
                 packetBuffer.writeVarInt(id);
@@ -104,19 +111,19 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
 
     /***
      * Client. Same as receiveCustomData in MetaTileEntity.
-     * @param id PacketID
+     * 
+     * @param id  PacketID
      * @param buf PacketBuffer
      */
-    public void readPluginData(int id, PacketBuffer buf) {
-
-    }
+    public void readPluginData(int id, PacketBuffer buf) {}
 
     /***
      * Client. Send data to Server.
-     * @param id PacketID
+     * 
+     * @param id         PacketID
      * @param dataWriter PacketBuffer
      */
-    public final void writePluginAction(int id, @Nonnull Consumer<PacketBuffer> dataWriter) {
+    public final void writePluginAction(int id, @NotNull Consumer<PacketBuffer> dataWriter) {
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         dataWriter.accept(buffer);
         GregTechAPI.networkHandler.sendToServer(new PacketPluginSynced(
@@ -127,29 +134,26 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
 
     /***
      * Server. receive data from client
+     * 
      * @param player player
-     * @param id PacketID
-     * @param buf PacketBuffer
+     * @param id     PacketID
+     * @param buf    PacketBuffer
      */
-    public void readPluginAction(EntityPlayerMP player, int id, PacketBuffer buf) {
-
-    }
+    public void readPluginAction(EntityPlayerMP player, int id, PacketBuffer buf) {}
 
     /***
      * Server. Same as writeInitialSyncData in MetaTileEntity.
+     * 
      * @param buf PacketBuffer
      */
-    public void writeInitialSyncData(PacketBuffer buf) {
-
-    }
+    public void writeInitialSyncData(PacketBuffer buf) {}
 
     /***
      * Client. Same as receiveInitialSyncData in MetaTileEntity.
+     * 
      * @param buf PacketBuffer
      */
-    public void receiveInitialSyncData(PacketBuffer buf) {
-
-    }
+    public void receiveInitialSyncData(PacketBuffer buf) {}
 
     /***
      * Server / Client (deprecated). Should be called when need to write persistence data to NBT
@@ -162,36 +166,36 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
         }
     }
 
-    /*** Server / Client. Called when player touch the screen.
+    /***
+     * Server / Client. Called when player touch the screen.
+     * 
      * @param playerIn Player
-     * @param hand Hand
-     * @param facing Facing
-     * @param isRight is Right Click
-     * @param x xPos of the screen (0 ~ 1.0)
-     * @param y yPos of the screen (0 ~ 1.0)
+     * @param hand     Hand
+     * @param facing   Facing
+     * @param isRight  is Right Click
+     * @param x        xPos of the screen (0 ~ 1.0)
+     * @param y        yPos of the screen (0 ~ 1.0)
      * @return trigger result
      */
-    public boolean onClickLogic(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, double x, double y) {
+    public boolean onClickLogic(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, double x,
+                                double y) {
         return false;
     }
 
     /***
      * Server / Client. Called per tick when structure formed.
      */
-    public void update() {
-
-    }
+    public void update() {}
 
     /***
      * Client. Write rendering here
      */
     @SideOnly(Side.CLIENT)
-    public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult) {
-
-    }
+    public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult) {}
 
     /***
      * Server / Client. Called when plugin is added or removed from the screen.
+     * 
      * @param screen
      * @param valid
      */
@@ -227,7 +231,8 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
             behavior = behavior.createPlugin();
             behavior.readFromNBT(itemStack.getOrCreateSubCompound("monitor_plugin"));
             return ModularUI.builder(GuiTextures.BOXED_BACKGROUND, 260, 210)
-                    .widget(behavior.customUI(new WidgetPluginConfig().setBackGround(GuiTextures.BACKGROUND), playerInventoryHolder, entityPlayer))
+                    .widget(behavior.customUI(new WidgetPluginConfig().setBackGround(GuiTextures.BACKGROUND),
+                            playerInventoryHolder, entityPlayer))
                     .bindCloseListener(this::markAsDirty)
                     .build(playerInventoryHolder, entityPlayer);
         }

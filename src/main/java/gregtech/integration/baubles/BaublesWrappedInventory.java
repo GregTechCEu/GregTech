@@ -1,11 +1,12 @@
 package gregtech.integration.baubles;
 
-import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+
+import baubles.api.cap.IBaublesItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 /** Wrapped player inventory and Baubles inventory. */
@@ -31,7 +32,7 @@ public class BaublesWrappedInventory implements IInventory {
         if (index < handler.getSlots()) {
             return handler.getStackInSlot(index);
         }
-        return player.inventory.getStackInSlot(index);
+        return player.inventory.getStackInSlot(index - handler.getSlots());
     }
 
     @Override
@@ -39,7 +40,7 @@ public class BaublesWrappedInventory implements IInventory {
         if (index < handler.getSlots()) {
             return handler.extractItem(index, count, false);
         }
-        return player.inventory.decrStackSize(index, count);
+        return player.inventory.decrStackSize(index - handler.getSlots(), count);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class BaublesWrappedInventory implements IInventory {
             handler.setStackInSlot(index, ItemStack.EMPTY);
             return out;
         }
-        return player.inventory.removeStackFromSlot(index);
+        return player.inventory.removeStackFromSlot(index - handler.getSlots());
     }
 
     @Override
@@ -57,7 +58,7 @@ public class BaublesWrappedInventory implements IInventory {
         if (index < handler.getSlots()) {
             handler.setStackInSlot(index, stack);
         } else {
-            player.inventory.setInventorySlotContents(index, stack);
+            player.inventory.setInventorySlotContents(index - handler.getSlots(), stack);
         }
     }
 
@@ -66,7 +67,7 @@ public class BaublesWrappedInventory implements IInventory {
         if (index < handler.getSlots()) {
             return handler.isItemValidForSlot(index, stack, player);
         }
-        return player.inventory.isItemValidForSlot(index, stack);
+        return player.inventory.isItemValidForSlot(index - handler.getSlots(), stack);
     }
 
     // less important overrides
@@ -82,8 +83,7 @@ public class BaublesWrappedInventory implements IInventory {
     }
 
     @Override
-    public void markDirty() {
-    }
+    public void markDirty() {}
 
     @Override
     public boolean isUsableByPlayer(@NotNull EntityPlayer player) {
@@ -91,12 +91,10 @@ public class BaublesWrappedInventory implements IInventory {
     }
 
     @Override
-    public void openInventory(@NotNull EntityPlayer player) {
-    }
+    public void openInventory(@NotNull EntityPlayer player) {}
 
     @Override
-    public void closeInventory(@NotNull EntityPlayer player) {
-    }
+    public void closeInventory(@NotNull EntityPlayer player) {}
 
     @Override
     public int getField(int id) {
@@ -104,8 +102,7 @@ public class BaublesWrappedInventory implements IInventory {
     }
 
     @Override
-    public void setField(int id, int value) {
-    }
+    public void setField(int id, int value) {}
 
     @Override
     public int getFieldCount() {
@@ -113,8 +110,7 @@ public class BaublesWrappedInventory implements IInventory {
     }
 
     @Override
-    public void clear() {
-    }
+    public void clear() {}
 
     @Override
     public @NotNull String getName() {

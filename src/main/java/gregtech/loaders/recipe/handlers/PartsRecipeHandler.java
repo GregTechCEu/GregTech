@@ -18,6 +18,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
@@ -30,15 +31,14 @@ import static gregtech.api.util.DyeUtil.determineDyeColor;
 
 public class PartsRecipeHandler {
 
-    private PartsRecipeHandler() {
-    }
+    private PartsRecipeHandler() {}
 
     public static void register() {
         OrePrefix.stick.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processStick);
         OrePrefix.stickLong.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processLongStick);
         OrePrefix.plate.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processPlate);
         OrePrefix.plateDouble.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDouble);
-        OrePrefix.plateDense.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDense);
+        OrePrefix.plateDense.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processPlateDense);
 
         OrePrefix.turbineBlade.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processTurbine);
         OrePrefix.rotor.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRotor);
@@ -164,7 +164,7 @@ public class PartsRecipeHandler {
                 .input(OrePrefix.ingot, material)
                 .circuitMeta(3)
                 .output(fineWirePrefix, material, 8)
-                .duration((int) material.getMass() * 3)
+                .duration((int) material.getMass() * 2)
                 .EUt(VA[ULV])
                 .buildAndRegister();
     }
@@ -213,8 +213,10 @@ public class PartsRecipeHandler {
 
         if (material.hasFlag(GENERATE_PLATE) && material.hasFlag(GENERATE_ROD)) {
             if (gearPrefix == OrePrefix.gearSmall) {
-                ModHandler.addShapedRecipe(String.format("small_gear_%s", material), OreDictUnifier.get(gearSmall, material),
-                        " R ", "hPx", " R ", 'R', new UnificationEntry(stick, material), 'P', new UnificationEntry(plate, material));
+                ModHandler.addShapedRecipe(String.format("small_gear_%s", material),
+                        OreDictUnifier.get(gearSmall, material),
+                        " R ", "hPx", " R ", 'R', new UnificationEntry(stick, material), 'P',
+                        new UnificationEntry(plate, material));
 
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                         .input(OrePrefix.ingot, material)
@@ -318,7 +320,7 @@ public class PartsRecipeHandler {
         }
     }
 
-    public static void processPlateDense(OrePrefix orePrefix, Material material, IngotProperty property) {
+    public static void processPlateDense(OrePrefix orePrefix, Material material, DustProperty property) {
         RecipeMaps.BENDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, material, 9)
                 .circuitMeta(9)
@@ -327,13 +329,15 @@ public class PartsRecipeHandler {
                 .EUt(96)
                 .buildAndRegister();
 
-        RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 9)
-                .circuitMeta(9)
-                .output(orePrefix, material)
-                .duration((int) Math.max(material.getMass() * 9L, 1L))
-                .EUt(96)
-                .buildAndRegister();
+        if (material.hasProperty(PropertyKey.INGOT)) {
+            RecipeMaps.BENDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 9)
+                    .circuitMeta(9)
+                    .output(orePrefix, material)
+                    .duration((int) Math.max(material.getMass() * 9L, 1L))
+                    .EUt(96)
+                    .buildAndRegister();
+        }
     }
 
     public static void processRing(OrePrefix ringPrefix, Material material, IngotProperty property) {

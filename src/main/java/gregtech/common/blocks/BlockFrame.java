@@ -15,6 +15,7 @@ import gregtech.client.model.MaterialStateMapper;
 import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.properties.PropertyMaterial;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
@@ -41,8 +42,9 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public abstract class BlockFrame extends BlockMaterialBase {
@@ -52,7 +54,8 @@ public abstract class BlockFrame extends BlockMaterialBase {
     public static BlockFrame create(Material[] materials) {
         PropertyMaterial property = PropertyMaterial.create("variant", materials);
         return new BlockFrame() {
-            @Nonnull
+
+            @NotNull
             @Override
             public PropertyMaterial getVariantProperty() {
                 return property;
@@ -69,7 +72,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public String getHarvestTool(IBlockState state) {
+    public String getHarvestTool(@NotNull IBlockState state) {
         Material material = getGtMaterial(state);
         if (ModHandler.isMaterialWood(material)) {
             return ToolClasses.AXE;
@@ -77,9 +80,10 @@ public abstract class BlockFrame extends BlockMaterialBase {
         return ToolClasses.WRENCH;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos,
+                                  @Nullable Entity entity) {
         Material material = getGtMaterial(state);
         if (ModHandler.isMaterialWood(material)) {
             return SoundType.WOOD;
@@ -96,14 +100,14 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public int getHarvestLevel(@Nonnull IBlockState state) {
+    public int getHarvestLevel(@NotNull IBlockState state) {
         return 1;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SuppressWarnings("deprecation")
-    public net.minecraft.block.material.Material getMaterial(IBlockState state) {
+    public net.minecraft.block.material.Material getMaterial(@NotNull IBlockState state) {
         Material material = getGtMaterial(state);
         if (ModHandler.isMaterialWood(material)) {
             return net.minecraft.block.material.Material.WOOD;
@@ -112,11 +116,13 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 
-    public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, ItemStack stackInHand, EnumFacing facing) {
+    public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+                                         ItemStack stackInHand, EnumFacing facing) {
         BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
         if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
             ItemBlock itemBlock = (ItemBlock) stackInHand.getItem();
@@ -131,7 +137,8 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 return false;
             }
             SoundType type = blockPipe.getSoundType(state, worldIn, pos, playerIn);
-            worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+            worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
+                    (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
             if (!playerIn.capabilities.isCreativeMode) {
                 stackInHand.shrink(1);
             }
@@ -157,8 +164,8 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state,
-                                    @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull EnumFacing facing,
+    public boolean onBlockActivated(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                    @NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull EnumFacing facing,
                                     float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (stack.isEmpty()) {
@@ -189,9 +196,11 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 continue;
             }
             if (canPlaceBlockAt(world, blockPos)) {
-                world.setBlockState(blockPos, this.getStateFromMeta(stack.getItem().getMetadata(stack.getItemDamage())));
+                world.setBlockState(blockPos,
+                        frameBlock.getStateFromMeta(stack.getItem().getMetadata(stack.getItemDamage())));
                 SoundType type = getSoundType(stack);
-                world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+                world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F,
+                        type.getPitch() * 0.8F);
                 if (!player.capabilities.isCreativeMode) {
                     stack.shrink(1);
                 }
@@ -200,7 +209,8 @@ public abstract class BlockFrame extends BlockMaterialBase {
             } else if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getFrameMaterial() == null) {
                 ((TileEntityPipeBase<?, ?>) te).setFrameMaterial(frameBlock.getGtMaterial(stack));
                 SoundType type = getSoundType(stack);
-                world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+                world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F,
+                        type.getPitch() * 0.8F);
                 if (!player.capabilities.isCreativeMode) {
                     stack.shrink(1);
                 }
@@ -216,7 +226,8 @@ public abstract class BlockFrame extends BlockMaterialBase {
     }
 
     @Override
-    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, Entity entityIn) {
+    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                  Entity entityIn) {
         entityIn.motionX = MathHelper.clamp(entityIn.motionX, -0.15, 0.15);
         entityIn.motionZ = MathHelper.clamp(entityIn.motionZ, -0.15, 0.15);
         entityIn.fallDistance = 0.0F;
@@ -231,20 +242,21 @@ public abstract class BlockFrame extends BlockMaterialBase {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
+    public EnumPushReaction getPushReaction(@NotNull IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(@NotNull IBlockState blockState, @NotNull IBlockAccess worldIn,
+                                                 @NotNull BlockPos pos) {
         return COLLISION_BOX;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
@@ -252,19 +264,21 @@ public abstract class BlockFrame extends BlockMaterialBase {
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isOpaqueCube(@Nonnull IBlockState state) {
+    public boolean isOpaqueCube(@NotNull IBlockState state) {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@NotNull IBlockAccess worldIn, @NotNull IBlockState state,
+                                            @NotNull BlockPos pos, @NotNull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         if (ConfigHolder.misc.debug) {
             tooltip.add("MetaItem Id: frame" + getGtMaterial(stack).toCamelCaseString());
         }

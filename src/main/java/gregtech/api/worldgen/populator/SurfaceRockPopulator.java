@@ -1,7 +1,6 @@
 package gregtech.api.worldgen.populator;
 
-import com.google.gson.JsonObject;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.unification.FluidUnifier;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -11,6 +10,7 @@ import gregtech.api.worldgen.config.OreConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.generator.GridEntryInfo;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -24,18 +24,17 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 
+import com.google.gson.JsonObject;
+
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 public class SurfaceRockPopulator implements VeinChunkPopulator {
 
     private Material material;
     private int failedGenerationCounter = 0;
 
-    public SurfaceRockPopulator() {
-    }
+    public SurfaceRockPopulator() {}
 
     public SurfaceRockPopulator(Material material) {
         this.material = material;
@@ -47,33 +46,30 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     }
 
     @Override
-    public void initializeForVein(OreDepositDefinition definition) {
-    }
+    public void initializeForVein(OreDepositDefinition definition) {}
 
-    private static Set<Material> findUndergroundMaterials(Collection<IBlockState> generatedBlocks) {
-        Set<Material> result = new HashSet<>();
+    private static boolean hasUndergroundMaterials(Collection<IBlockState> generatedBlocks) {
         for (IBlockState blockState : generatedBlocks) {
-            Material resultMaterial;
             if (blockState.getBlock() instanceof IFluidBlock || blockState.getBlock() instanceof BlockLiquid) {
                 Fluid fluid = FluidRegistry.lookupFluidForBlock(blockState.getBlock());
-                resultMaterial = fluid == null ? null : MetaFluids.getMaterialFromFluid(fluid);
+                if (fluid != null && FluidUnifier.getMaterialFromFluid(fluid) != null) {
+                    return true;
+                }
             } else {
-                ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().damageDropped(blockState));
+                ItemStack itemStack = new ItemStack(blockState.getBlock(), 1,
+                        blockState.getBlock().damageDropped(blockState));
                 UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
-                if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE))
-                    resultMaterial = entry.material;
-                else
-                    resultMaterial = null;
-            }
-            if (resultMaterial != null) {
-                result.add(resultMaterial);
+                if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE)) {
+                    return true;
+                }
             }
         }
-        return result;
+        return false;
     }
 
     private void setStoneBlock(World world, BlockPos blockPos) {
-        boolean surfaceRockPlaced = world.setBlockState(blockPos, MetaBlocks.SURFACE_ROCK.get(this.material).getBlock(this.material));
+        boolean surfaceRockPlaced = world.setBlockState(blockPos,
+                MetaBlocks.SURFACE_ROCK.get(this.material).getBlock(this.material));
         if (!surfaceRockPlaced)
             failedGenerationCounter++;
     }
@@ -85,16 +81,19 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
      * @param world         - The Minecraft world. Used for finding the top most block and its state
      * @param chunkX        - The X chunk coordinate
      * @param chunkZ        - The Z chunk coordinate
-     * @param random        - A Random parameter. Used for determining the number of spawned Surface Blocks and their position
+     * @param random        - A Random parameter. Used for determining the number of spawned Surface Blocks and their
+     *                      position
      * @param definition    - The Ore Vein definition
      * @param gridEntryInfo - Information about the ore generation grid for the current generation section
      */
     @Override
-    public void populateChunk(World world, int chunkX, int chunkZ, Random random, OreDepositDefinition definition, GridEntryInfo gridEntryInfo) {
+    public void populateChunk(World world, int chunkX, int chunkZ, Random random, OreDepositDefinition definition,
+                              GridEntryInfo gridEntryInfo) {
         int stonesCount = random.nextInt(2) + 1;
         if (world.getWorldType() != WorldType.FLAT) {
-            if (findUndergroundMaterials(gridEntryInfo.getGeneratedBlocks(definition, chunkX, chunkZ)).isEmpty())
+            if (!hasUndergroundMaterials(gridEntryInfo.getGeneratedBlocks(definition, chunkX, chunkZ))) {
                 return;
+            }
 
             int baseX = chunkX * 16 + 8;
             int baseZ = chunkZ * 16 + 8;
@@ -110,25 +109,27 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
             generateSurfaceRock(world, gridEntryInfo.getCenterPos(definition));
         }
 
-        //Log if all Surface Rock generation attempts were failed
+        // Log if all Surface Rock generation attempts were failed
         if (failedGenerationCounter == stonesCount && world.getWorldType() != WorldType.FLAT) {
-            GTLog.logger.debug("Failed to generate surface rocks for vein {} at chunk with position: x: {}, z: {}", definition.getDepositName(), chunkX, chunkZ);
+            GTLog.logger.debug("Failed to generate surface rocks for vein {} at chunk with position: x: {}, z: {}",
+                    definition.getDepositName(), chunkX, chunkZ);
         }
     }
 
     public void generateSurfaceRock(World world, BlockPos pos) {
         BlockPos topBlockPos = findSpawnHeight(world, pos);
-        if(topBlockPos.getY() <= 20) { // don't generate below y20
+        if (topBlockPos.getY() <= 20) { // don't generate below y20
             return;
         }
         Block blockAtPos = world.getBlockState(topBlockPos).getBlock();
 
-        if(topBlockPos.getY() >= world.provider.getActualHeight()) {
+        if (topBlockPos.getY() >= world.provider.getActualHeight()) {
             return;
         }
-        //Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
+        // Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
         // exclude one deep liquid blocks, for looks
-        if (!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
+        if (!blockAtPos.isReplaceable(world, topBlockPos) ||
+                world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
             return;
         }
 
@@ -147,13 +148,13 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
         while (blockpos.getY() > 20) {
             blockpos.move(EnumFacing.DOWN);
             IBlockState state = chunk.getBlockState(blockpos);
-            if(state.getMaterial() == net.minecraft.block.material.Material.AIR ||
+            if (state.getMaterial() == net.minecraft.block.material.Material.AIR ||
                     state.getMaterial() == net.minecraft.block.material.Material.LEAVES ||
                     state.getMaterial() == net.minecraft.block.material.Material.VINE ||
                     state.getBlock().isFoliage(world, blockpos)) {
                 airBlocks++;
             } else {
-                if(airBlocks >= 10 && state.isSideSolid(world, blockpos, EnumFacing.UP)) {
+                if (airBlocks >= 10 && state.isSideSolid(world, blockpos, EnumFacing.UP)) {
                     blockpos.move(EnumFacing.UP);
                     break;
                 }

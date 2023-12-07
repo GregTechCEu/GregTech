@@ -1,4 +1,4 @@
-//version: 1688969024
+//version: 1701739812
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -20,19 +20,19 @@ import static org.gradle.internal.logging.text.StyledTextOutput.Style
 plugins {
     id 'java'
     id 'java-library'
+    id 'base'
     id 'eclipse'
     id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.19'
-    id 'net.darkhax.curseforgegradle' version '1.0.14' apply false
-    id 'com.modrinth.minotaur' version '2.8.0' apply false
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.25'
+    id 'net.darkhax.curseforgegradle' version '1.1.17' apply false
+    id 'com.modrinth.minotaur' version '2.8.6' apply false
     id 'com.diffplug.spotless' version '6.13.0' apply false
     id 'com.palantir.git-version' version '3.0.0' apply false
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
-}
-
-if (verifySettingsGradle()) {
-    throw new GradleException("Settings has been updated, please re-run task.")
+    id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
+    id 'org.jetbrains.kotlin.kapt' version '1.8.0' apply false
+    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
 }
 
 def out = services.get(StyledTextOutputFactory).create('an-output')
@@ -66,6 +66,8 @@ propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
+propertyDefaultIfUnset("generateMixinConfig", true)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
@@ -87,24 +89,25 @@ propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
 
 final String javaSourceDir = 'src/main/java/'
 final String scalaSourceDir = 'src/main/scala/'
-// If Kotlin is supported, add the path here
+final String kotlinSourceDir = 'src/main/kotlin/'
 
 final String modGroupPath = modGroup.toString().replace('.' as char, '/' as char)
 final String apiPackagePath = apiPackage.toString().replace('.' as char, '/' as char)
 
 String targetPackageJava = javaSourceDir + modGroupPath
 String targetPackageScala = scalaSourceDir + modGroupPath
-// If Kotlin is supported, add the path here
+String targetPackageKotlin = kotlinSourceDir + modGroupPath
 
-if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists()) {
-    throw new GradleException("Could not resolve \"modGroup\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
+if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists() && !getFile(targetPackageKotlin).exists()) {
+    throw new GradleException("Could not resolve \"modGroup\"! Could not find ${targetPackageJava} or ${targetPackageScala} or ${targetPackageKotlin}")
 }
 
 if (apiPackage) {
     targetPackageJava = javaSourceDir + modGroupPath + '/' + apiPackagePath
     targetPackageScala = scalaSourceDir + modGroupPath + '/' + apiPackagePath
-    if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists()) {
-        throw new GradleException("Could not resolve \"apiPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
+    targetPackageKotlin = kotlinSourceDir + modGroupPath + '/' + apiPackagePath
+    if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists() && !getFile(targetPackageKotlin).exists()) {
+        throw new GradleException("Could not resolve \"apiPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala} or ${targetPackageKotlin}")
     }
 }
 
@@ -126,8 +129,9 @@ if (usesMixins.toBoolean()) {
     final String mixinPackagePath = mixinsPackage.toString().replaceAll('\\.', '/')
     targetPackageJava = javaSourceDir + modGroupPath + '/' + mixinPackagePath
     targetPackageScala = scalaSourceDir + modGroupPath + '/' + mixinPackagePath
-    if (!getFile(targetPackageJava).exists()) {
-        throw new GradleException("Could not resolve \"mixinsPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
+    targetPackageKotlin = kotlinSourceDir + modGroupPath + '/' + mixinPackagePath
+    if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists() && !getFile(targetPackageKotlin).exists()) {
+        throw new GradleException("Could not resolve \"mixinsPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala} or ${targetPackageKotlin}")
     }
 }
 
@@ -136,8 +140,9 @@ if (coreModClass) {
     String targetFileJava = javaSourceDir + modGroupPath + '/' + coreModPath + '.java'
     String targetFileScala = scalaSourceDir + modGroupPath + '/' + coreModPath + '.scala'
     String targetFileScalaJava = scalaSourceDir + modGroupPath + '/' + coreModPath + '.java'
-    if (!getFile(targetFileJava).exists() && !getFile(targetFileScala).exists() && !getFile(targetFileScalaJava).exists()) {
-        throw new GradleException("Could not resolve \"coreModClass\"! Could not find " + targetFileJava)
+    String targetFileKotlin = kotlinSourceDir + modGroupPath + '/' + coreModPath + '.kt'
+    if (!getFile(targetFileJava).exists() && !getFile(targetFileScala).exists() && !getFile(targetFileScalaJava).exists() && !getFile(targetFileKotlin).exists()) {
+        throw new GradleException("Could not resolve \"coreModClass\"! Could not find ${targetFileJava} or ${targetFileScala} or ${targetFileScalaJava} or ${targetFileKotlin}")
     }
 }
 
@@ -147,6 +152,36 @@ if (coreModClass) {
 // Scala
 if (getFile('src/main/scala').exists()) {
     apply plugin: 'scala'
+}
+
+if (getFile('src/main/kotlin').exists()) {
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+}
+
+// Kotlin
+pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
+    kotlin {
+        jvmToolchain(8)
+    }
+    def disabledKotlinTaskList = [
+            "kaptGenerateStubsMcLauncherKotlin",
+            "kaptGenerateStubsPatchedMcKotlin",
+            "kaptGenerateStubsInjectedTagsKotlin",
+            "compileMcLauncherKotlin",
+            "compilePatchedMcKotlin",
+            "compileInjectedTagsKotlin",
+            "kaptMcLauncherKotlin",
+            "kaptPatchedMcKotlin",
+            "kaptInjectedTagsKotlin",
+            "kspMcLauncherKotlin",
+            "kspPatchedMcKotlin",
+            "kspInjectedTagsKotlin",
+    ]
+    tasks.configureEach { task ->
+        if (task.name in disabledKotlinTaskList) {
+            task.enabled = false
+        }
+    }
 }
 
 // Spotless
@@ -186,6 +221,16 @@ if (enableSpotless.toBoolean()) {
             endWithNewline()
             //noinspection GroovyAssignabilityCheck
             eclipse('4.19.0').configFile(formatFile)
+        }
+        kotlin {
+            target 'src/*/kotlin/**/*.kt'
+
+            toggleOffOn()
+            ktfmt('0.39')
+
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
         }
         scala {
             target 'src/*/scala/**/*.scala'
@@ -248,6 +293,8 @@ tasks.withType(ScalaCompile).configureEach {
 // Allow others using this buildscript to have custom gradle code run
 if (getFile('addon.gradle').exists()) {
     apply from: 'addon.gradle'
+} else if (getFile('addon.gradle.kts').exists()) {
+    apply from: 'addon.gradle.kts'
 }
 
 
@@ -274,7 +321,10 @@ else {
 }
 
 group = modGroup
-archivesBaseName = modArchivesBaseName
+
+base {
+    archivesName = modArchivesBaseName
+}
 
 minecraft {
     mcVersion = minecraftVersion
@@ -301,8 +351,21 @@ minecraft {
             '-Dmixin.debug.export=true'
         ])
     }
-    if (coreModClass) {
-        extraRunJvmArguments.add("-Dfml.coreMods.load=${modGroup}.${coreModClass}")
+
+    if (enableCoreModDebug.toBoolean()) {
+        extraRunJvmArguments.addAll([
+                '-Dlegacy.debugClassLoading=true',
+                '-Dlegacy.debugClassLoadingFiner=true',
+                '-Dlegacy.debugClassLoadingSave=true'
+        ])
+    }
+}
+
+if (coreModClass) {
+    for (runTask in ['runClient', 'runServer']) {
+        tasks.named(runTask).configure {
+            extraJvmArgs.add("-Dfml.coreMods.load=${modGroup}.${coreModClass}")
+        }
     }
 }
 
@@ -330,6 +393,8 @@ repositories.configureEach { repo ->
 // Allow adding custom repositories to the buildscript
 if (getFile('repositories.gradle').exists()) {
     apply from: 'repositories.gradle'
+} else if (getFile('repositories.gradle.kts').exists()) {
+    apply from: 'repositories.gradle.kts'
 }
 
 repositories {
@@ -367,6 +432,11 @@ repositories {
             name 'BlameJared Maven'
             url 'https://maven.blamejared.com'
         }
+        maven {
+            name 'GTNH Maven'
+            url 'http://jenkins.usrv.eu:8081/nexus/content/groups/public'
+            allowInsecureProtocol = true
+        }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
         // need to add this here even if we did not above
@@ -396,32 +466,31 @@ configurations {
     }
 }
 
+String mixinProviderSpec = 'zone.rong:mixinbooter:8.9'
 dependencies {
-    if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
-        implementation 'zone.rong:mixinbooter:8.3'
-        String mixin = 'zone.rong:mixinbooter:8.3'
-        if (usesMixins.toBoolean()) {
-            mixin = modUtils.enableMixins(mixin, "mixins.${modId}.refmap.json")
-        }
-
-        api (mixin) {
-            transitive = false
-        }
-
-        annotationProcessor(mixin) {
-            transitive = false
-        }
-
+    if (usesMixins.toBoolean()) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
         // should use 24.1.1 but 30.0+ has a vulnerability fix
         annotationProcessor 'com.google.guava:guava:30.0-jre'
         // should use 2.8.6 but 2.8.9+ has a vulnerability fix
         annotationProcessor 'com.google.code.gson:gson:2.8.9'
+
+        mixinProviderSpec = modUtils.enableMixins(mixinProviderSpec, "mixins.${modId}.refmap.json")
+        api (mixinProviderSpec) {
+            transitive = false
+        }
+
+        annotationProcessor(mixinProviderSpec) {
+            transitive = false
+        }
+    } else if (forceEnableMixins.toBoolean()) {
+        runtimeOnly(mixinProviderSpec)
     }
 
     if (enableJUnit.toBoolean()) {
-        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
         testImplementation 'org.hamcrest:hamcrest:2.2'
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
     if (enableModernJavaSyntax.toBoolean()) {
@@ -442,8 +511,11 @@ dependencies {
         testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:1.0.0"
     }
 
-    compileOnlyApi 'org.jetbrains:annotations:23.0.0'
-    annotationProcessor 'org.jetbrains:annotations:23.0.0'
+    compileOnlyApi 'org.jetbrains:annotations:24.1.0'
+    annotationProcessor 'org.jetbrains:annotations:24.1.0'
+    patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
+        transitive = false
+    }
 
     if (includeCommonDevEnvMods.toBoolean()) {
         implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
@@ -452,8 +524,18 @@ dependencies {
     }
 }
 
+pluginManager.withPlugin('org.jetbrains.kotlin.kapt') {
+    if (usesMixins.toBoolean()) {
+        dependencies {
+            kapt(mixinProviderSpec)
+        }
+    }
+}
+
 if (getFile('dependencies.gradle').exists()) {
     apply from: 'dependencies.gradle'
+} else if (getFile('dependencies.gradle.kts').exists()) {
+    apply from: 'dependencies.gradle.kts'
 }
 
 
@@ -555,7 +637,7 @@ tasks.register('generateAssets') {
         }
 
         // mixins.{modid}.json
-        if (usesMixins.toBoolean()) {
+        if (usesMixins.toBoolean() && generateMixinConfig.toBoolean()) {
             def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
             if (!mixinConfigFile.exists()) {
                 def mixinConfigRefmap = "mixins.${modId}.refmap.json"
@@ -955,7 +1037,7 @@ def getChangelog() {
 
 // Buildscript updating
 
-def buildscriptGradleVersion = '8.1.1'
+def buildscriptGradleVersion = '8.5'
 
 tasks.named('wrapper', Wrapper).configure {
     gradleVersion = buildscriptGradleVersion
@@ -990,29 +1072,18 @@ static URL availableBuildScriptUrl() {
     new URL("https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/build.gradle")
 }
 
-static URL exampleSettingsGradleUrl() {
+static URL availableSettingsGradleUrl() {
     new URL("https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/settings.gradle")
-}
-
-boolean verifySettingsGradle() {
-    def settingsFile = getFile("settings.gradle")
-    if (!settingsFile.exists()) {
-        println("Downloading default settings.gradle")
-        exampleSettingsGradleUrl().withInputStream { i -> settingsFile.withOutputStream { it << i } }
-        return true
-    }
-    return false
 }
 
 boolean performBuildScriptUpdate() {
     if (isNewBuildScriptVersionAvailable()) {
         def buildscriptFile = getFile("build.gradle")
+        def settingsFile = getFile("settings.gradle")
         availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
+        availableSettingsGradleUrl().withInputStream { i -> settingsFile.withOutputStream { it << i } }
         def out = services.get(StyledTextOutputFactory).create('buildscript-update-output')
         out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
-        if (verifySettingsGradle()) {
-            throw new GradleException("Settings has been updated, please re-run task.")
-        }
         return true
     }
     return false

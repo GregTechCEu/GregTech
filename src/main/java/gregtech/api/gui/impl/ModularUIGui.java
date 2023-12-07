@@ -5,6 +5,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.core.network.packets.PacketUIWidgetUpdate;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.common.MinecraftForge;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -26,7 +28,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     private final ModularUI modularUI;
 
-    public static final float FRAMES_PER_TICK = 1/3f;
+    public static final float FRAMES_PER_TICK = 1 / 3f;
 
     private float lastUpdate;
 
@@ -134,7 +136,6 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         renderHoveredToolTip(mouseX, mouseY);
     }
 
-
     public void setHoveredSlot(Slot hoveredSlot) {
         this.hoveredSlot = hoveredSlot;
     }
@@ -170,7 +171,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
                 itemStack.setCount(this.dragSplittingRemnant);
             }
             // This null is eventually nullable, 2 calls deep
-            //noinspection DataFlowIssue
+            // noinspection DataFlowIssue
             this.drawItemStack(itemStack, mouseX - guiLeft - 8, mouseY - guiTop - dragOffset, null);
         }
     }
@@ -186,7 +187,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
             int deltaY = this.returningStackDestSlot.yPos - this.touchUpY;
             int currentX = this.touchUpX + (int) ((float) deltaX * partialTicks);
             int currentY = this.touchUpY + (int) ((float) deltaY * partialTicks);
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             this.drawItemStack(this.returningStack, currentX, currentY, null);
         }
     }
@@ -205,7 +206,8 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.pushMatrix();
-        GlStateManager.color(modularUI.getRColorForOverlay(), modularUI.getGColorForOverlay(), modularUI.getBColorForOverlay(), 1.0F);
+        GlStateManager.color(modularUI.getRColorForOverlay(), modularUI.getGColorForOverlay(),
+                modularUI.getBColorForOverlay(), 1.0F);
         GlStateManager.enableBlend();
         GlStateManager.popMatrix();
         modularUI.backgroundPath.draw(guiLeft, guiTop, xSize, ySize);
@@ -213,8 +215,9 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
             if (!widget.isVisible()) return;
             GlStateManager.pushMatrix();
             GlStateManager.enableBlend();
-            widget.drawInBackground(mouseX, mouseY, partialTicks,this);
-            GlStateManager.color(modularUI.getRColorForOverlay(), modularUI.getGColorForOverlay(), modularUI.getBColorForOverlay(), 1.0F);
+            widget.drawInBackground(mouseX, mouseY, partialTicks, this);
+            GlStateManager.color(modularUI.getRColorForOverlay(), modularUI.getGColorForOverlay(),
+                    modularUI.getBColorForOverlay(), 1.0F);
             GlStateManager.popMatrix();
         });
     }
@@ -233,7 +236,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     protected void mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
+            if (widget.isVisible() && widget.isActive() && widget.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
                 return;
             }
         }
@@ -251,7 +254,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, mouseButton)) {
                 return;
             }
         }
@@ -260,14 +263,15 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     public void superMouseClicked(int mouseX, int mouseY, int mouseButton) {
         try {
             super.mouseClicked(mouseX, mouseY, mouseButton);
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {}
     }
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)) {
+            if (widget.isVisible() && widget.isActive() &&
+                    widget.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)) {
                 return;
             }
         }
@@ -281,7 +285,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseReleased(mouseX, mouseY, state)) {
+            if (widget.isVisible() && widget.isActive() && widget.mouseReleased(mouseX, mouseY, state)) {
                 return;
             }
         }
@@ -295,7 +299,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.keyTyped(typedChar, keyCode)) {
+            if (widget.isVisible() && widget.isActive() && widget.keyTyped(typedChar, keyCode)) {
                 return;
             }
         }

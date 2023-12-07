@@ -1,6 +1,5 @@
 package gregtech.common.terminal.app.worldprospector;
 
-import com.google.common.collect.Lists;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
@@ -26,7 +25,7 @@ import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.worldprospector.matcher.BlockStateMatcher;
 import gregtech.common.terminal.app.worldprospector.matcher.IMatcher;
-import mezz.jei.api.gui.IGhostIngredientHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.client.Minecraft;
@@ -52,10 +51,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import mezz.jei.api.gui.IGhostIngredientHandler;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
@@ -73,10 +74,11 @@ public class WorldProspectorARApp extends ARApplication {
     @Override
     public AbstractApplication initApp() {
         addWidget(new ImageWidget(10, 10, 313, 212, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
-        addWidget(new LabelWidget(15 + 150 / 2, 232 / 2, "terminal.world_prospector.radius", -1, new Object[]{getMaxRadius()})
-                .setShadow(true)
-                .setYCentered(true)
-                .setXCentered(true));
+        addWidget(new LabelWidget(15 + 150 / 2, 232 / 2, "terminal.world_prospector.radius", -1,
+                new Object[] { getMaxRadius() })
+                        .setShadow(true)
+                        .setYCentered(true)
+                        .setXCentered(true));
         int slotSize = (int) Math.pow(2, getAppTier());
         int x = 250 - slotSize * 12;
         int y = 232 / 2 - 18;
@@ -102,19 +104,21 @@ public class WorldProspectorARApp extends ARApplication {
                     }
                     Rectangle rectangle = toRectangleBox();
                     return Collections.singletonList(new IGhostIngredientHandler.Target<Object>() {
-                        @Nonnull
+
+                        @NotNull
                         @Override
                         public Rectangle getArea() {
                             return rectangle;
                         }
 
                         @Override
-                        public void accept(@Nonnull Object ingredient) {
+                        public void accept(@NotNull Object ingredient) {
                             if (ingredient instanceof ItemStack) {
                                 int mouseButton = Mouse.getEventButton();
                                 boolean shiftDown = TooltipHelper.isShiftDown();
                                 ClickType clickType = shiftDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
-                                PhantomSlotUtil.slotClickPhantom(slotReference, mouseButton, clickType, (ItemStack) ingredient);
+                                PhantomSlotUtil.slotClickPhantom(slotReference, mouseButton, clickType,
+                                        (ItemStack) ingredient);
                                 updateBlockSelectionAndColor((ItemStack) ingredient, index, buttonWidget);
                                 writeClientAction(1, buffer -> {
                                     buffer.writeItemStack((ItemStack) ingredient);
@@ -125,7 +129,6 @@ public class WorldProspectorARApp extends ARApplication {
                         }
                     });
                 }
-
 
                 @Override
                 public boolean mouseClicked(int mouseX, int mouseY, int button) {
@@ -144,11 +147,9 @@ public class WorldProspectorARApp extends ARApplication {
                 public void handleClientAction(int id, PacketBuffer buffer) {
                     if (id == -1) {
                         selectReference(index, buttonWidget);
-                    }
-                    else if (id == 0) {
+                    } else if (id == 0) {
                         updateBlockSelectionAndColor(ItemStack.EMPTY, index, buttonWidget);
-                    }
-                    else if (id == 1) {
+                    } else if (id == 1) {
                         try {
                             buffer.markReaderIndex(); // just want to reset reader index, not both with .clear
                             ItemStack stack = buffer.readItemStack();
@@ -166,16 +167,16 @@ public class WorldProspectorARApp extends ARApplication {
             addWidget(buttonWidget
                     .setHoverText("terminal.world_prospector.color")
                     .setColors(0x4fffffff, -1, colors[i])
-                    .setClickListener(cd -> TerminalDialogWidget.showColorDialog(getOs(), "terminal.world_prospector.color", res->{
-                        if (res != null) {
-                            buttonWidget.setFill(res | 0xff000000);
-                            colors[index] = res | 0xff000000;
-                        }
-                    }, colors[index]).open())
-            );
+                    .setClickListener(cd -> TerminalDialogWidget
+                            .showColorDialog(getOs(), "terminal.world_prospector.color", res -> {
+                                if (res != null) {
+                                    buttonWidget.setFill(res | 0xff000000);
+                                    colors[index] = res | 0xff000000;
+                                }
+                            }, colors[index]).open()));
         }
         addWidget(new CircleButtonWidget(333 / 2, 200)
-                .setClickListener(cd->openAR())
+                .setClickListener(cd -> openAR())
                 .setHoverText("terminal.ar.open")
                 .setColors(0, -1, TerminalTheme.COLOR_B_3.getColor())
                 .setIcon(new ItemStackTexture(MetaItems.CAMERA.getStackForm())));
@@ -195,7 +196,8 @@ public class WorldProspectorARApp extends ARApplication {
             } else if (ms != null) {
                 colors[index] = ms.material.getMaterialRGB();
             } else {
-                colors[index] = block.getStateFromMeta(copy.getMetadata()).getMaterial().getMaterialMapColor().colorValue;
+                colors[index] = block.getStateFromMeta(copy.getMetadata()).getMaterial()
+                        .getMaterialMapColor().colorValue;
             }
             if (colors[index] == 0) {
                 colors[index] = block.hashCode();
@@ -237,7 +239,8 @@ public class WorldProspectorARApp extends ARApplication {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
         if (Shaders.allowedShader()) {
-            ShaderTexture.createShader("lightring.frag").draw(getPosition().x + 15, getPosition().y + (232 - 150) / 2f, 150, 150, uniformCache -> uniformCache.glUniform1F("u_time", time));
+            ShaderTexture.createShader("lightring.frag").draw(getPosition().x + 15, getPosition().y + (232 - 150) / 2f,
+                    150, 150, uniformCache -> uniformCache.glUniform1F("u_time", time));
         }
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
@@ -245,8 +248,7 @@ public class WorldProspectorARApp extends ARApplication {
     private void selectReference(int index, RectButtonWidget buttonWidget) {
         TerminalDialogWidget.showItemSelector(getOs(), "terminal.world_prospector.reference", false,
                 stack -> stack.getItem() instanceof ItemBlock,
-                stack -> updateBlockSelectionAndColor(stack, index, buttonWidget)
-        ).open();
+                stack -> updateBlockSelectionAndColor(stack, index, buttonWidget)).open();
     }
 
     private int getMaxRadius() {
@@ -276,7 +278,7 @@ public class WorldProspectorARApp extends ARApplication {
         return stacks;
     }
 
-    //////////////////////////////////////AR/////////////////////////////////////////
+    ////////////////////////////////////// AR/////////////////////////////////////////
 
     @SideOnly(Side.CLIENT)
     private static Set<IMatcher> matchers;
@@ -302,11 +304,12 @@ public class WorldProspectorARApp extends ARApplication {
                 Block block = ((ItemBlock) stack.getFirst().getItem()).getBlock();
 
                 if (block != Blocks.AIR) {
-                    matchers.add(new BlockStateMatcher(block.getStateFromMeta(stack.getFirst().getMetadata()), stack.getSecond()));
+                    matchers.add(new BlockStateMatcher(block.getStateFromMeta(stack.getFirst().getMetadata()),
+                            stack.getSecond()));
                 }
             }
         }
-        matchers.forEach(matcher->founds.put(matcher, new HashMap<>()));
+        matchers.forEach(matcher -> founds.put(matcher, new HashMap<>()));
     }
 
     @SideOnly(Side.CLIENT)
@@ -317,17 +320,17 @@ public class WorldProspectorARApp extends ARApplication {
         z = r;
         d = 3 - 2 * r;
         circlePlot(blockPos, xc, zc, x, z);
-        while(x < z) {
-            if(d < 0) {
+        while (x < z) {
+            if (d < 0) {
                 d = d + 4 * x + 6;
             } else {
-                d = d + 4 * ( x - z ) + 10;
+                d = d + 4 * (x - z) + 10;
                 z--;
             }
             x++;
             circlePlot(blockPos, xc, zc, x, z);
         }
-        return  blockPos;
+        return blockPos;
     }
 
     @SideOnly(Side.CLIENT)
@@ -403,7 +406,7 @@ public class WorldProspectorARApp extends ARApplication {
         for (BlockPos pos : bresenhamCircle(lastPos.getX(), lastPos.getZ(), radius)) {
             for (int y = minY; y <= maxY; y++) {
                 for (IMatcher matcher : matchers) {
-                    BlockPos blockPos =new BlockPos(pos.getX(), y, pos.getZ());
+                    BlockPos blockPos = new BlockPos(pos.getX(), y, pos.getZ());
                     if (matcher.match(world.getBlockState(blockPos))) {
                         addCluster(blockPos, founds.get(matcher));
                     }
@@ -466,7 +469,8 @@ public class WorldProspectorARApp extends ARApplication {
             final float b = (color & 0xFF) / 255f;
             final float a = 1;
             for (AxisAlignedBB bound : founds.get(matcher).keySet()) {
-                RenderBufferHelper.renderCubeFace(buffer, bound.minX, bound.minY, bound.minZ, bound.maxX, bound.maxY, bound.maxZ, r, g, b, a);
+                RenderBufferHelper.renderCubeFace(buffer, bound.minX, bound.minY, bound.minZ, bound.maxX, bound.maxY,
+                        bound.maxZ, r, g, b, a);
             }
         }
 

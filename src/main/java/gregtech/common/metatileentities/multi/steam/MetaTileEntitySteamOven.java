@@ -15,14 +15,18 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
@@ -48,7 +52,8 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 .aisle("XXX", "CSC", "#C#")
                 .where('S', selfPredicate())
                 .where('X', states(getFireboxState())
-                        .or(autoAbilities(true, false, false, false, false).setMinGlobalLimited(1).setMaxGlobalLimited(3)))
+                        .or(autoAbilities(true, false, false, false, false).setMinGlobalLimited(1)
+                                .setMaxGlobalLimited(3)))
                 .where('C', states(getCasingState()).setMinGlobalLimited(6)
                         .or(autoAbilities(false, false, true, true, false)))
                 .where('#', any())
@@ -71,6 +76,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (ConfigHolder.machines.steelSteamMultiblocks) {
@@ -87,7 +93,8 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         }
     }
 
-    @Nonnull
+    @SideOnly(Side.CLIENT)
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.ELECTRIC_FURNACE_OVERLAY;
@@ -104,7 +111,8 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.steam_.duration_modifier"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", MAX_PARALLELS));

@@ -12,8 +12,9 @@ import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 
 public class DummySaveHandler implements ISaveHandler, IPlayerFileData, IChunkLoader {
@@ -25,70 +26,61 @@ public class DummySaveHandler implements ISaveHandler, IPlayerFileData, IChunkLo
     }
 
     @Override
-    public void checkSessionLock() {
-    }
+    public void checkSessionLock() {}
 
-    @Nonnull
+    @NotNull
     @Override
-    public IChunkLoader getChunkLoader(@Nonnull WorldProvider provider) {
+    public IChunkLoader getChunkLoader(@NotNull WorldProvider provider) {
         return this;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IPlayerFileData getPlayerNBTManager() {
         return this;
     }
 
-
-    @Nonnull
+    @NotNull
     @Override
     public TemplateManager getStructureTemplateManager() {
         return new TemplateManager("", new DataFixer(0));
     }
 
     @Override
-    public void saveWorldInfoWithPlayer(@Nonnull WorldInfo worldInformation, @Nonnull NBTTagCompound tagCompound) {
-    }
+    public void saveWorldInfoWithPlayer(@NotNull WorldInfo worldInformation, @NotNull NBTTagCompound tagCompound) {}
 
     @Override
-    public void saveWorldInfo(@Nonnull WorldInfo worldInformation) {
-    }
+    public void saveWorldInfo(@NotNull WorldInfo worldInformation) {}
 
-    @Nonnull
+    @NotNull
     @Override
     public File getWorldDirectory() {
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public File getMapFileFromName(@Nonnull String mapName) {
+    public File getMapFileFromName(@NotNull String mapName) {
         return null;
     }
-
 
     @Nullable
     @Override
-    public Chunk loadChunk(@Nonnull World worldIn, int x, int z) {
+    public Chunk loadChunk(@NotNull World worldIn, int x, int z) {
         return null;
     }
 
     @Override
-    public void saveChunk(@Nonnull World worldIn, @Nonnull Chunk chunkIn) {
-    }
+    public void saveChunk(@NotNull World worldIn, @NotNull Chunk chunkIn) {}
 
     @Override
-    public void saveExtraChunkData(@Nonnull World worldIn, @Nonnull Chunk chunkIn) {
-    }
+    public void saveExtraChunkData(@NotNull World worldIn, @NotNull Chunk chunkIn) {}
 
     @Override
-    public void chunkTick() {
-    }
+    public void chunkTick() {}
 
     @Override
-    public void flush() {
-    }
+    public void flush() {}
 
     @Override
     public boolean isChunkGeneratedAt(int x, int z) {
@@ -96,16 +88,15 @@ public class DummySaveHandler implements ISaveHandler, IPlayerFileData, IChunkLo
     }
 
     @Override
-    public void writePlayerData(@Nonnull EntityPlayer player) {
-    }
+    public void writePlayerData(@NotNull EntityPlayer player) {}
 
     @Nullable
     @Override
-    public NBTTagCompound readPlayerData(@Nonnull EntityPlayer player) {
+    public NBTTagCompound readPlayerData(@NotNull EntityPlayer player) {
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String[] getAvailablePlayerDat() {
         return new String[0];

@@ -1,11 +1,9 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
+import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -15,9 +13,11 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.core.advancement.AdvancementTriggers;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,13 +31,19 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
+public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiablePart
+                                       implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
 
     static final int SPEED_INCREMENT = 1;
     static final int SPEED_DECREMENT = 3;
@@ -51,7 +57,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     private boolean frontFaceFree;
 
     public MetaTileEntityRotorHolder(ResourceLocation metaTileEntityId, int tier) {
-        super(metaTileEntityId, tier);
+        super(metaTileEntityId, tier, false);
         this.inventory = new InventoryRotorHolder();
         this.maxSpeed = 2000 + 1000 * tier;
     }
@@ -62,7 +68,12 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    protected ModularUI createUI(@Nonnull EntityPlayer entityPlayer) {
+    public IItemHandlerModifiable getImportItems() {
+        return this.inventory;
+    }
+
+    @Override
+    protected ModularUI createUI(@NotNull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
                 .label(6, 6, getMetaFullName())
                 .slot(inventory, 0, 79, 36, GuiTextures.SLOT, GuiTextures.TURBINE_OVERLAY)
@@ -135,7 +146,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IRotorHolder> abilityList) {
+    public void registerAbilities(@NotNull List<IRotorHolder> abilityList) {
         abilityList.add(this);
     }
 
@@ -167,7 +178,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         return true;
     }
 
-    private boolean onRotorHolderInteract(@Nonnull EntityPlayer player) {
+    private boolean onRotorHolderInteract(@NotNull EntityPlayer player) {
         if (player.isCreative()) return false;
 
         if (!getWorld().isRemote && isRotorSpinning) {
@@ -257,17 +268,20 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) || super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                 CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) || super.onWrenchClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn);
     }
 
@@ -337,10 +351,10 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
                 getController() != null, hasRotor(), isRotorSpinning, getRotorColor());
     }
 
-    private class InventoryRotorHolder extends ItemStackHandler {
+    private class InventoryRotorHolder extends NotifiableItemStackHandler {
 
         public InventoryRotorHolder() {
-            super(1);
+            super(MetaTileEntityRotorHolder.this, 1, null, false);
         }
 
         @Override
@@ -354,7 +368,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         }
 
         @Override
-        protected void onContentsChanged(int slot) {
+        public void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
             setRotorColor(getRotorColor());
             scheduleRenderUpdate();
         }
@@ -381,44 +396,52 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
 
         private int getRotorColor() {
             if (!hasRotor()) return -1;
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return getTurbineBehavior().getPartMaterial(getStackInSlot(0)).getMaterialRGB();
-
         }
 
         private int getRotorDurabilityPercent() {
             if (!hasRotor()) return 0;
 
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return getTurbineBehavior().getRotorDurabilityPercent(getStackInSlot(0));
         }
 
         private int getRotorEfficiency() {
             if (!hasRotor()) return -1;
 
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return getTurbineBehavior().getRotorEfficiency(getTurbineStack());
         }
 
         private int getRotorPower() {
             if (!hasRotor()) return -1;
 
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return getTurbineBehavior().getRotorPower(getTurbineStack());
         }
 
         private void damageRotor(int damageAmount) {
             if (!hasRotor()) return;
-            //noinspection ConstantConditions
+
+            if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <=
+                    AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
+                var holder = (MultiblockFuelRecipeLogic) getController().getRecipeLogic();
+                if (holder != null && holder.isWorking()) {
+                    holder.invalidate();
+                }
+            }
+
+            // noinspection ConstantConditions
             getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return TurbineRotorBehavior.getInstanceFor(stack) != null && super.isItemValid(slot, stack);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             ItemStack itemStack = super.extractItem(slot, amount, simulate);

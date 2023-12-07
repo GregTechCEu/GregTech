@@ -1,15 +1,12 @@
 package gregtech.common.pipelike.cable.tile;
 
-import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.util.PerTickLongCounter;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTOverheatParticle;
@@ -20,6 +17,7 @@ import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
 import gregtech.common.pipelike.cable.net.WorldENet;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -32,23 +30,29 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.vec.Cuboid6;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> implements IDataInfoProvider {
+import static gregtech.api.capability.GregtechDataCodes.CABLE_TEMPERATURE;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONNECTIONS;
+
+public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties>
+                             implements IDataInfoProvider {
 
     private static final int meltTemp = 3000;
 
     private final EnumMap<EnumFacing, EnergyNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter(0);
-    private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter(0, 20);
-    private final AveragingPerTickCounter averageAmperageCounter = new AveragingPerTickCounter(0, 20);
+    private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter();
+    private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter();
+    private final AveragingPerTickCounter averageAmperageCounter = new AveragingPerTickCounter();
     private EnergyNetHandler defaultHandler;
-    // the EnergyNetHandler can only be created on the server so we have a empty placeholder for the client
+    // the EnergyNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
     @SideOnly(Side.CLIENT)
@@ -56,6 +60,10 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private int heatQueue;
     private int temperature = getDefaultTemp();
     private boolean isTicking = false;
+
+    public long getWorldTime() {
+        return hasWorld() ? getWorld().getTotalWorldTime() : 0L;
+    }
 
     @Override
     public Class<Insulation> getPipeTypeClass() {
@@ -100,13 +108,13 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
      * @return if the cable should be destroyed
      */
     public boolean incrementAmperage(long amps, long voltage) {
-        if (voltage > maxVoltageCounter.get(world)) {
-            maxVoltageCounter.set(world, voltage);
+        if (voltage > maxVoltageCounter.get(getWorld())) {
+            maxVoltageCounter.set(getWorld(), voltage);
         }
-        averageVoltageCounter.increment(world, voltage);
-        averageAmperageCounter.increment(world, amps);
+        averageVoltageCounter.increment(getWorld(), voltage);
+        averageAmperageCounter.increment(getWorld(), amps);
 
-        int dif = (int) (averageAmperageCounter.getLast(world) - getMaxAmperage());
+        int dif = (int) (averageAmperageCounter.getLast(getWorld()) - getMaxAmperage());
         if (dif > 0) {
             applyHeat(dif * 40);
             return true;
@@ -165,6 +173,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         world.setBlockState(pos, newBlock.getDefaultState());
         TileEntityCable newCable = (TileEntityCable) world.getTileEntity(pos);
         if (newCable != null) { // should never be null
+            // TODO: use transfer data method
             newCable.setPipeData(newBlock, newBlock.getItemPipeType(null), getPipeMaterial());
             for (EnumFacing facing : EnumFacing.VALUES) {
                 if (isConnected(facing)) {
@@ -183,7 +192,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         this.temperature = temperature;
         world.checkLight(pos);
         if (!world.isRemote) {
-            writeCustomData(100, buf -> buf.writeVarInt(temperature));
+            writeCustomData(CABLE_TEMPERATURE, buf -> buf.writeVarInt(temperature));
         } else {
             if (temperature <= getDefaultTemp()) {
                 if (isParticleAlive())
@@ -211,7 +220,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     @SideOnly(Side.CLIENT)
     public void createParticle() {
-        particle = new GTOverheatParticle(world, pos, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
+        particle = new GTOverheatParticle(this, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
         GTParticleManager.INSTANCE.addEffect(particle);
     }
 
@@ -257,7 +266,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return super.getCapabilityInternal(capability, facing);
     }
 
-
     public void checkNetwork() {
         if (defaultHandler != null) {
             EnergyNet current = getEnergyNet();
@@ -276,7 +284,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         EnergyNet currentEnergyNet = this.currentEnergyNet.get();
         if (currentEnergyNet != null && currentEnergyNet.isValid() &&
                 currentEnergyNet.containsNode(getPos()))
-            return currentEnergyNet; //return current net if it is still valid
+            return currentEnergyNet; // return current net if it is still valid
         WorldENet worldENet = WorldENet.getWorldENet(getWorld());
         currentEnergyNet = worldENet.getNetFromPos(getPos());
         if (currentEnergyNet != null) {
@@ -292,11 +300,11 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
-        if (discriminator == 100) {
+        if (discriminator == CABLE_TEMPERATURE) {
             setTemperature(buf.readVarInt());
         } else {
             super.receiveCustomData(discriminator, buf);
-            if (isParticleAlive() && discriminator == GregtechDataCodes.UPDATE_CONNECTIONS) {
+            if (isParticleAlive() && discriminator == UPDATE_CONNECTIONS) {
                 particle.updatePipeBoxes(getPipeBoxes());
             }
         }
@@ -320,30 +328,30 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return pipeBoxes;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setInteger("Temp", temperature);
         return compound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
         temperature = compound.getInteger("Temp");
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         list.add(new TextComponentTranslation("behavior.tricorder.eut_per_sec",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageVoltage())).setStyle(new Style().setColor(TextFormatting.RED))
-        ));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageVoltage()))
+                        .setStyle(new Style().setColor(TextFormatting.RED))));
         list.add(new TextComponentTranslation("behavior.tricorder.amp_per_sec",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
-        ));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageAmperage()))
+                        .setStyle(new Style().setColor(TextFormatting.RED))));
         return list;
     }
 }

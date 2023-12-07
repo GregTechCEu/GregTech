@@ -1,23 +1,45 @@
 package gregtech.api.recipes.ingredients;
 
 import gregtech.api.GTValues;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GTRecipeItemInput extends GTRecipeInput {
-    ItemStack[] inputStacks;
-    List<ItemToMetaList> itemList = new ObjectArrayList<>();
 
-    protected GTRecipeItemInput(ItemStack stack, int amount) {
-        this(new ItemStack[]{stack}, amount);
+    private final ItemStack[] inputStacks;
+    private final List<ItemToMetaList> itemList = new ObjectArrayList<>();
+
+    public GTRecipeItemInput(ItemStack stack) {
+        this(new ItemStack[] { stack }, stack.getCount());
     }
 
-    protected GTRecipeItemInput(ItemStack[] stack, int amount) {
+    public GTRecipeItemInput(ItemStack stack, int amount) {
+        this(new ItemStack[] { stack }, amount);
+    }
+
+    public GTRecipeItemInput(GTRecipeInput input) {
+        this(input.getInputStacks());
+    }
+
+    public GTRecipeItemInput(GTRecipeInput input, int amount) {
+        this(input.getInputStacks(), amount);
+    }
+
+    public GTRecipeItemInput(ItemStack... stacks) {
+        this(stacks, stacks[0].getCount());
+    }
+
+    public GTRecipeItemInput(ItemStack[] stack, int amount) {
         this.amount = amount;
 
         NonNullList<ItemStack> lst = NonNullList.create();
@@ -59,28 +81,44 @@ public class GTRecipeItemInput extends GTRecipeInput {
         }).toArray(ItemStack[]::new);
     }
 
-    protected GTRecipeItemInput(ItemStack... stacks) {
-        this(stacks, stacks[0].getCount());
-    }
-
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(ItemStack stack, int amount) {
-        return getFromCache(new GTRecipeItemInput(stack, amount));
+        return new GTRecipeItemInput(stack, amount);
     }
 
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(GTRecipeInput ri, int i) {
-        return getFromCache(new GTRecipeItemInput(ri.getInputStacks(), i));
+        return new GTRecipeItemInput(ri, i);
     }
 
-    public static GTRecipeInput getOrCreate(GTRecipeInput ri) {
-        return getFromCache(new GTRecipeItemInput(ri.getInputStacks()));
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
+    public static GTRecipeInput getOrCreate(GTRecipeInput input) {
+        return new GTRecipeItemInput(input);
     }
 
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(ItemStack stack) {
-        return getFromCache(new GTRecipeItemInput(stack));
+        return new GTRecipeItemInput(stack);
     }
 
+    /**
+     * @deprecated Use constructors
+     */
+    @Deprecated
     public static GTRecipeInput getOrCreate(ItemStack[] stacks) {
-        return getFromCache(new GTRecipeItemInput(stacks));
+        return new GTRecipeItemInput(stacks);
     }
 
     @Override
@@ -138,7 +176,7 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     @Override
-    public int hashCode() {
+    protected int computeHash() {
         int hash = 1;
         for (ItemStack stack : inputStacks) {
             hash = 31 * hash + stack.getItem().hashCode();
@@ -160,10 +198,9 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (!(obj instanceof GTRecipeItemInput)) return false;
         GTRecipeItemInput other = (GTRecipeItemInput) obj;
 
-        if (this.amount != other.amount) return false;
-        if (this.isConsumable != other.isConsumable) return false;
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+        if (this.amount != other.amount || this.isConsumable != other.isConsumable) return false;
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
 
         if (this.inputStacks.length != other.inputStacks.length) return false;
         for (int i = 0; i < this.inputStacks.length; i++) {
@@ -178,14 +215,33 @@ public class GTRecipeItemInput extends GTRecipeInput {
         if (!(input instanceof GTRecipeItemInput)) return false;
         GTRecipeItemInput other = (GTRecipeItemInput) input;
 
-        if (this.nbtMatcher != null && !this.nbtMatcher.equals(other.nbtMatcher)) return false;
-        if (this.nbtCondition != null && !this.nbtCondition.equals(other.nbtCondition)) return false;
+        if (!Objects.equals(this.nbtMatcher, other.nbtMatcher)) return false;
+        if (!Objects.equals(this.nbtCondition, other.nbtCondition)) return false;
 
         if (this.inputStacks.length != other.inputStacks.length) return false;
         for (int i = 0; i < this.inputStacks.length; i++) {
-            if (!ItemStack.areItemsEqual(this.inputStacks[i], other.inputStacks[i]) || !ItemStack.areItemStackTagsEqual(this.inputStacks[i], other.inputStacks[i]))
+            if (!ItemStack.areItemsEqual(this.inputStacks[i], other.inputStacks[i]) ||
+                    !ItemStack.areItemStackTagsEqual(this.inputStacks[i], other.inputStacks[i]))
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        switch (this.inputStacks.length) {
+            case 0:
+                return amount + "x[]";
+            case 1:
+                return amount + "x" + toStringWithoutQuantity(this.inputStacks[0]);
+            default:
+                return amount + "x[" + Arrays.stream(this.inputStacks)
+                        .map(GTRecipeItemInput::toStringWithoutQuantity)
+                        .collect(Collectors.joining("|")) + "]";
+        }
+    }
+
+    private static String toStringWithoutQuantity(ItemStack stack) {
+        return stack.getItem().getTranslationKey(stack) + "@" + stack.getItemDamage();
     }
 }

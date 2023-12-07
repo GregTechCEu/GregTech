@@ -3,7 +3,7 @@ package gregtech.api.recipes.recipeproperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public final class ResearchProperty extends RecipeProperty<ResearchPropertyData> {
 
@@ -15,7 +15,7 @@ public final class ResearchProperty extends RecipeProperty<ResearchPropertyData>
         super(KEY, ResearchPropertyData.class);
     }
 
-    @Nonnull
+    @NotNull
     public static ResearchProperty getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ResearchProperty();
@@ -24,7 +24,7 @@ public final class ResearchProperty extends RecipeProperty<ResearchPropertyData>
     }
 
     @Override
-    public void drawInfo(@Nonnull Minecraft minecraft, int x, int y, int color, Object value) {
+    public void drawInfo(@NotNull Minecraft minecraft, int x, int y, int color, Object value) {
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.research"), x, y, color);
     }
 }

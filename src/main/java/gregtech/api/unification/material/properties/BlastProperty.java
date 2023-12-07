@@ -1,8 +1,7 @@
 package gregtech.api.unification.material.properties;
 
 import crafttweaker.CraftTweakerAPI;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlastProperty implements IMaterialProperty {
 
@@ -37,15 +36,37 @@ public class BlastProperty implements IMaterialProperty {
      */
     private int eutOverride = -1;
 
+    /**
+     * The duration of the EBF recipe, overriding the stock behavior.
+     * <p>
+     * Default: -1, meaning the duration will be: material.getMass() * 3
+     */
+    private int vacuumDurationOverride = -1;
+
+    /**
+     * The EU/t of the Vacuum Freezer recipe (if needed), overriding the stock behavior.
+     * <p>
+     * Default: -1, meaning the EU/t will be 120 EU/t.
+     */
+    private int vacuumEUtOverride = -1;
+
     public BlastProperty(int blastTemperature) {
         this.blastTemperature = blastTemperature;
     }
 
-    public BlastProperty(int blastTemperature, GasTier gasTier, int eutOverride, int durationOverride) {
+    public BlastProperty(int blastTemperature, GasTier gasTier) {
+        this.blastTemperature = blastTemperature;
+        this.gasTier = gasTier;
+    }
+
+    private BlastProperty(int blastTemperature, GasTier gasTier, int eutOverride, int durationOverride,
+                          int vacuumEUtOverride, int vacuumDurationOverride) {
         this.blastTemperature = blastTemperature;
         this.gasTier = gasTier;
         this.eutOverride = eutOverride;
         this.durationOverride = durationOverride;
+        this.vacuumEUtOverride = vacuumEUtOverride;
+        this.vacuumDurationOverride = vacuumDurationOverride;
     }
 
     /**
@@ -68,7 +89,7 @@ public class BlastProperty implements IMaterialProperty {
         return gasTier;
     }
 
-    public void setGasTier(@Nonnull GasTier tier) {
+    public void setGasTier(@NotNull GasTier tier) {
         this.gasTier = tier;
     }
 
@@ -88,13 +109,25 @@ public class BlastProperty implements IMaterialProperty {
         this.eutOverride = eut;
     }
 
+    public int getVacuumDurationOverride() {
+        return vacuumDurationOverride;
+    }
+
+    public void setVacuumDurationOverride(int duration) {
+        this.vacuumDurationOverride = duration;
+    }
+
+    public int getVacuumEUtOverride() {
+        return vacuumEUtOverride;
+    }
+
+    public void setVacuumEutOverride(int eut) {
+        this.vacuumEUtOverride = eut;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.INGOT, true);
-
-        FluidProperty fluidProperty = properties.getProperty(PropertyKey.FLUID);
-        if (fluidProperty != null && fluidProperty.getFluidTemperature() == FluidProperty.BASE_TEMP)
-            fluidProperty.setFluidTemperature(blastTemperature);
     }
 
     public static GasTier validateGasTier(String gasTierName) {
@@ -107,17 +140,72 @@ public class BlastProperty implements IMaterialProperty {
         else {
             String message = "Gas Tier must be either \"LOW\", \"MID\", \"HIGH\", \"HIGHER\", or \"HIGHEST\"";
             CraftTweakerAPI.logError(message);
-            throw new IllegalArgumentException("Could not find valid gas tier for name: " + gasTierName + ". " + message);
+            throw new IllegalArgumentException(
+                    "Could not find valid gas tier for name: " + gasTierName + ". " + message);
         }
     }
 
     public enum GasTier {
+
         // Tiers used by GTCEu
-        LOW, MID, HIGH,
+        LOW,
+        MID,
+        HIGH,
 
         // Tiers reserved for addons
-        HIGHER, HIGHEST;
+        HIGHER,
+        HIGHEST;
 
         public static final GasTier[] VALUES = values();
+    }
+
+    public static class Builder {
+
+        private int temp;
+        private GasTier gasTier;
+        private int eutOverride = -1;
+        private int durationOverride = -1;
+        private int vacuumEUtOverride = -1;
+        private int vacuumDurationOverride = -1;
+
+        public Builder() {}
+
+        public Builder temp(int temperature) {
+            this.temp = temperature;
+            return this;
+        }
+
+        public Builder temp(int temperature, GasTier gasTier) {
+            this.temp = temperature;
+            this.gasTier = gasTier;
+            return this;
+        }
+
+        public Builder blastStats(int eutOverride) {
+            this.eutOverride = eutOverride;
+            return this;
+        }
+
+        public Builder blastStats(int eutOverride, int durationOverride) {
+            this.eutOverride = eutOverride;
+            this.durationOverride = durationOverride;
+            return this;
+        }
+
+        public Builder vacuumStats(int eutOverride) {
+            this.vacuumEUtOverride = eutOverride;
+            return this;
+        }
+
+        public Builder vacuumStats(int eutOverride, int durationOverride) {
+            this.vacuumEUtOverride = eutOverride;
+            this.vacuumDurationOverride = durationOverride;
+            return this;
+        }
+
+        public BlastProperty build() {
+            return new BlastProperty(temp, gasTier, eutOverride, durationOverride, vacuumEUtOverride,
+                    vacuumDurationOverride);
+        }
     }
 }

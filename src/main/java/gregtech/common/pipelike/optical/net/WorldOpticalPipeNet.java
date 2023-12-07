@@ -2,9 +2,10 @@ package gregtech.common.pipelike.optical.net;
 
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
+
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldOpticalPipeNet extends WorldPipeNet<OpticalPipeProperties, OpticalPipeNet> {
 
@@ -14,8 +15,8 @@ public class WorldOpticalPipeNet extends WorldPipeNet<OpticalPipeProperties, Opt
         super(name);
     }
 
-    @Nonnull
-    public static WorldOpticalPipeNet getWorldPipeNet(@Nonnull World world) {
+    @NotNull
+    public static WorldOpticalPipeNet getWorldPipeNet(@NotNull World world) {
         WorldOpticalPipeNet netWorldData = (WorldOpticalPipeNet) world.loadData(WorldOpticalPipeNet.class, DATA_ID);
         if (netWorldData == null) {
             netWorldData = new WorldOpticalPipeNet(DATA_ID);

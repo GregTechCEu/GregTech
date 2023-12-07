@@ -1,14 +1,15 @@
 package gregtech.integration.crafttweaker.recipe;
 
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTUtility;
+
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.mc1120.liquid.MCLiquidStack;
-import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTUtility;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -53,14 +54,6 @@ public class CTRecipe {
                 .stream()
                 .map(MCItemStack::new)
                 .collect(Collectors.toList());
-    }
-
-    @ZenGetter("chancedOutputs")
-    public List<ChancedEntry> getChancedOutputs() {
-        ArrayList<ChancedEntry> result = new ArrayList<>();
-        this.backingRecipe.getChancedOutputs().forEach(chanceEntry ->
-                result.add(new ChancedEntry(new MCItemStack(chanceEntry.getItemStack()), chanceEntry.getChance(), chanceEntry.getBoostPerTier())));
-        return result;
     }
 
     @ZenGetter("fluidInputs")
@@ -111,5 +104,4 @@ public class CTRecipe {
     public boolean remove() {
         return this.recipeMap.removeRecipe(this.backingRecipe);
     }
-
 }
