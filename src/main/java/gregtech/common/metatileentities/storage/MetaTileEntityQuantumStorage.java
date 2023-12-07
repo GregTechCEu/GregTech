@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.storage;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.resources.I18n;
