@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.steam;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -8,6 +9,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -19,6 +21,7 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -44,6 +47,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         return new MetaTileEntitySteamOven(metaTileEntityId);
     }
 
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -117,5 +121,16 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         tooltip.add(I18n.format("gregtech.multiblock.steam_.duration_modifier"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", MAX_PARALLELS));
         tooltip.add(TooltipHelper.BLINKING_ORANGE + I18n.format("gregtech.multiblock.require_steam_parts"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        if (isActive()) {
+            VanillaParticleEffects.defaultFrontEffect(this, EnumParticleTypes.SMOKE_LARGE, EnumParticleTypes.FLAME);
+            if (GTValues.RNG.nextBoolean()) {
+                VanillaParticleEffects.defaultFrontEffect(this, 0.5F, EnumParticleTypes.SMOKE_NORMAL);
+            }
+        }
     }
 }
