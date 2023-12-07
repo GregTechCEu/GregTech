@@ -39,7 +39,7 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
     }
 
     @Override
-    public void addInformation(@NotNull ItemStack stack, @Nullable World player, List<String> tooltip,
+    public void addInformation(@NotNull ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag advanced) {
         int ordinal = getState(stack).ordinal();
         if (ordinal < 2) {

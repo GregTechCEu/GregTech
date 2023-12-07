@@ -46,4 +46,9 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
         // parallel is limited by voltage
         return Integer.MAX_VALUE;
     }
+
+    @Override
+    public boolean isAllowOverclocking() {
+        return false;
+    }
 }

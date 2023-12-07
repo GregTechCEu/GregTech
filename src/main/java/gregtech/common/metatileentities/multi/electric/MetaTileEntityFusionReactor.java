@@ -3,7 +3,11 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.impl.*;
+import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.capability.impl.EnergyContainerList;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
@@ -14,7 +18,11 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -31,7 +39,11 @@ import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.shader.postprocessing.BloomType;
-import gregtech.client.utils.*;
+import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.EffectRenderContext;
+import gregtech.client.utils.IBloomEffect;
+import gregtech.client.utils.RenderBufferHelper;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockGlassCasing;
@@ -68,21 +80,21 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                                          implements IFastRenderMetaTileEntity, IBloomEffect {
 
+    protected static final int NO_COLOR = 0;
+
     private final int tier;
     private EnergyContainerList inputEnergyContainers;
     private long heat = 0; // defined in TileEntityFusionReactor but serialized in FusionRecipeLogic
-    @Nullable
-    private Integer color;
+    private int fusionRingColor = NO_COLOR;
     private final FusionProgressSupplier progressBarSupplier;
 
     @SideOnly(Side.CLIENT)
-    private BloomEffectUtil.BloomRenderTicket bloomRenderTicket;
+    private boolean registeredBloomRenderTicket;
 
     public MetaTileEntityFusionReactor(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.FUSION_RECIPES);
@@ -215,6 +227,21 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_COIL);
     }
 
+    protected int getFusionRingColor() {
+        return this.fusionRingColor;
+    }
+
+    protected boolean hasFusionRingColor() {
+        return this.fusionRingColor != NO_COLOR;
+    }
+
+    protected void setFusionRingColor(int fusionRingColor) {
+        if (this.fusionRingColor != fusionRingColor) {
+            this.fusionRingColor = fusionRingColor;
+            writeCustomData(GregtechDataCodes.UPDATE_COLOR, buf -> buf.writeVarInt(fusionRingColor));
+        }
+    }
+
     @Override
     protected void formStructure(PatternMatchContext context) {
         long energyStored = this.energyContainer.getEnergyStored();
@@ -236,6 +263,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         };
         this.inputEnergyContainers = new EnergyContainerList(Lists.newArrayList());
         this.heat = 0;
+        this.setFusionRingColor(NO_COLOR);
     }
 
     @Override
@@ -268,50 +296,35 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
             if (energyAdded > 0) this.inputEnergyContainers.removeEnergy(energyAdded);
         }
         super.updateFormedValid();
-        if (recipeMapWorkable.isWorking() && color == null) {
+        if (recipeMapWorkable.isWorking() && fusionRingColor == NO_COLOR) {
             if (recipeMapWorkable.getPreviousRecipe() != null &&
                     !recipeMapWorkable.getPreviousRecipe().getFluidOutputs().isEmpty()) {
-                int newColor = 0xFF000000 |
-                        recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor();
-                if (!Objects.equals(color, newColor)) {
-                    color = newColor;
-                    writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
-                }
+                setFusionRingColor(0xFF000000 |
+                        recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor());
             }
-        } else if (!recipeMapWorkable.isWorking() && isStructureFormed() && color != null) {
-            color = null;
-            writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
+        } else if (!recipeMapWorkable.isWorking() && isStructureFormed()) {
+            setFusionRingColor(NO_COLOR);
         }
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        writeColor(buf);
+        buf.writeVarInt(this.fusionRingColor);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        readColor(buf);
+        this.fusionRingColor = buf.readVarInt();
     }
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_COLOR) {
-            readColor(buf);
-        }
-    }
-
-    private void readColor(PacketBuffer buf) {
-        color = buf.readBoolean() ? buf.readVarInt() : null;
-    }
-
-    private void writeColor(PacketBuffer buf) {
-        buf.writeBoolean(color != null);
-        if (color != null) {
-            buf.writeVarInt(color);
+            this.fusionRingColor = buf.readVarInt();
+        } else {
+            super.receiveCustomData(dataId, buf);
         }
     }
 
@@ -643,18 +656,17 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     @Override
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (this.color != null && this.bloomRenderTicket == null) {
-            this.bloomRenderTicket = BloomEffectUtil.registerBloomRender(FusionBloomSetup.INSTANCE, getBloomType(),
-                    this);
+        if (this.hasFusionRingColor() && !this.registeredBloomRenderTicket) {
+            this.registeredBloomRenderTicket = true;
+            BloomEffectUtil.registerBloomRender(FusionBloomSetup.INSTANCE, getBloomType(), this, this);
         }
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void renderBloomEffect(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {
-        Integer c = color;
-        if (c == null) return;
-        int color = RenderUtil.interpolateColor(c, -1, Eases.QUAD_IN.getInterpolation(
+        if (!this.hasFusionRingColor()) return;
+        int color = RenderUtil.interpolateColor(this.getFusionRingColor(), -1, Eases.QUAD_IN.getInterpolation(
                 Math.abs((Math.abs(getOffsetTimer() % 50) + context.partialTicks()) - 25) / 25));
         float a = (float) (color >> 24 & 255) / 255.0F;
         float r = (float) (color >> 16 & 255) / 255.0F;
@@ -676,7 +688,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
-        return this.color != null;
+        return this.hasFusionRingColor();
     }
 
     @Override

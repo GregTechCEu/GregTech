@@ -120,7 +120,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
-        Class<T> enumClass = getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
+        Class<T> enumClass = getActualTypeParameter(getClass(), VariantActiveBlock.class);
         this.VARIANT = PropertyEnum.create("variant", enumClass);
         this.VALUES = enumClass.getEnumConstants();
         return new ExtendedBlockState(this, new IProperty[] { VARIANT, ACTIVE_DEPRECATED },

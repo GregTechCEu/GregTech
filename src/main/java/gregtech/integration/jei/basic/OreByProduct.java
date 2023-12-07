@@ -9,6 +9,7 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.client.resources.I18n;
@@ -296,7 +297,7 @@ public class OreByProduct implements IRecipeWrapper {
             ChancedItemOutput entry = chances.get(slotIndex);
             double chance = entry.getChance() / 100.0;
             double boost = entry.getChanceBoost() / 100.0;
-            tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
+            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance", chance, boost));
         }
     }
 

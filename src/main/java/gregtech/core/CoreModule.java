@@ -48,7 +48,19 @@ import gregtech.core.advancement.AdvancementTriggers;
 import gregtech.core.advancement.internal.AdvancementManager;
 import gregtech.core.command.internal.CommandManager;
 import gregtech.core.network.internal.NetworkHandler;
-import gregtech.core.network.packets.*;
+import gregtech.core.network.packets.PacketBlockParticle;
+import gregtech.core.network.packets.PacketClipboard;
+import gregtech.core.network.packets.PacketClipboardNBTUpdate;
+import gregtech.core.network.packets.PacketClipboardUIWidgetUpdate;
+import gregtech.core.network.packets.PacketFluidVeinList;
+import gregtech.core.network.packets.PacketKeysPressed;
+import gregtech.core.network.packets.PacketNotifyCapeChange;
+import gregtech.core.network.packets.PacketPluginSynced;
+import gregtech.core.network.packets.PacketRecoverMTE;
+import gregtech.core.network.packets.PacketReloadShaders;
+import gregtech.core.network.packets.PacketUIClientAction;
+import gregtech.core.network.packets.PacketUIOpen;
+import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
 import gregtech.core.unification.material.internal.MaterialRegistryManager;
@@ -62,7 +74,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.LogManager;
@@ -235,6 +253,7 @@ public class CoreModule implements IGregTechModule {
         /* End Cover Definition Registration */
 
         DungeonLootLoader.init();
+        MetaBlocks.registerWalkingSpeedBonus();
     }
 
     @Override

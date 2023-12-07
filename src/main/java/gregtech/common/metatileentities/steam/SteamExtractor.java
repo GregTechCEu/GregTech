@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,7 +53,9 @@ public class SteamExtractor extends SteamMetaTileEntity {
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
-        getWorld().spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
+    public void randomDisplayTick() {
+        if (isActive()) {
+            VanillaParticleEffects.defaultFrontEffect(this, EnumParticleTypes.CLOUD);
+        }
     }
 }

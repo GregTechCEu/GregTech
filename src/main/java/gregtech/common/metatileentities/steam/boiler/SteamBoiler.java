@@ -18,6 +18,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -48,6 +49,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -386,32 +388,21 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     @Override
     public void randomDisplayTick() {
         if (this.isActive()) {
-            final BlockPos pos = getPos();
-            float x = pos.getX() + 0.5F;
-            float z = pos.getZ() + 0.5F;
+            EnumParticleTypes smokeParticle = isHighPressure ? EnumParticleTypes.SMOKE_LARGE :
+                    EnumParticleTypes.SMOKE_NORMAL;
+            VanillaParticleEffects.defaultFrontEffect(this, smokeParticle, EnumParticleTypes.FLAME);
 
-            if (GTValues.RNG.nextDouble() < 0.1) {
-                getWorld().playSound(x, pos.getY(), z + 0.5F, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE,
-                        SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+            if (ConfigHolder.machines.machineSounds && GTValues.RNG.nextDouble() < 0.1) {
+                BlockPos pos = getPos();
+                getWorld().playSound(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+                        SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
-
-            final EnumFacing facing = getFrontFacing();
-            final float horizontalOffset = GTValues.RNG.nextFloat() * 0.6F - 0.3F;
-            final float y = pos.getY() + GTValues.RNG.nextFloat() * 0.375F;
-
-            if (facing.getAxis() == EnumFacing.Axis.X) {
-                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) x += 0.52F;
-                else x -= 0.52F;
-                z += horizontalOffset;
-            } else if (facing.getAxis() == EnumFacing.Axis.Z) {
-                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) z += 0.52F;
-                else z -= 0.52F;
-                x += horizontalOffset;
-            }
-            randomDisplayTick(x, y, z);
         }
     }
 
+    /** @deprecated No longer used, look at {@link VanillaParticleEffects#defaultFrontEffect} to see old logic. */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @SideOnly(Side.CLIENT)
     protected void randomDisplayTick(float x, float y, float z) {
         getWorld().spawnParticle(isHighPressure ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL, x, y,

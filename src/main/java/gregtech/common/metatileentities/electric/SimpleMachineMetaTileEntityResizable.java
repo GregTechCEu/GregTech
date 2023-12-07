@@ -5,10 +5,13 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.client.particle.IMachineParticleEffect;
 import gregtech.client.renderer.ICubeRenderer;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -58,6 +61,23 @@ public class SimpleMachineMetaTileEntityResizable extends SimpleMachineMetaTileE
         initializeInventory();
     }
 
+    public SimpleMachineMetaTileEntityResizable(ResourceLocation metaTileEntityId,
+                                                RecipeMap<?> recipeMap,
+                                                int inputAmount,
+                                                int outputAmount,
+                                                ICubeRenderer renderer,
+                                                int tier,
+                                                boolean hasFrontFacing,
+                                                Function<Integer, Integer> tankScalingFunction,
+                                                @Nullable IMachineParticleEffect tickingParticle,
+                                                @Nullable IMachineParticleEffect randomParticle) {
+        super(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, tankScalingFunction, tickingParticle,
+                randomParticle);
+        this.inputAmount = inputAmount;
+        this.outputAmount = outputAmount;
+        initializeInventory();
+    }
+
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (inputAmount != -1) {
@@ -77,7 +97,8 @@ public class SimpleMachineMetaTileEntityResizable extends SimpleMachineMetaTileE
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new SimpleMachineMetaTileEntityResizable(metaTileEntityId, workable.getRecipeMap(), inputAmount,
-                outputAmount, renderer, getTier());
+                outputAmount, renderer, getTier(), hasFrontFacing(),
+                getTankScalingFunction(), tickingParticle, randomParticle);
     }
 
     @Override
