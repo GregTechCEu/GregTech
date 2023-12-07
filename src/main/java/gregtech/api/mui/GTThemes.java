@@ -23,15 +23,30 @@ public enum GTThemes {
 
     /** Bronze-colored theme used by Bronze Steam machines */
     // todo
-    BRONZE("gregtech_bronze", null, null, null, null, -1),
+    BRONZE("gregtech_bronze",
+            GTGuiTextures.IDs.BRONZE_BACKGROUND,
+            null,
+            null,
+            null,
+            -1),
 
     /** Steel-colored theme used by Steel Steam machines */
     // todo
-    STEEL("gregtech_steel", null, null, null, null, -1),
+    STEEL("gregtech_steel",
+            GTGuiTextures.IDs.STEEL_BACKGROUND,
+            null,
+            null,
+            null,
+            -1),
 
     /** Brown/Beige colored theme used by PBF, Coke Oven, etc. */
     // todo
-    PRIMITIVE("gregtech_primitive", null, null, null, null, -1);
+    PRIMITIVE("gregtech_primitive",
+            GTGuiTextures.IDs.PRIMITIVE_BACKGROUND,
+            null,
+            null,
+            null,
+            -1);
 
     private final String id;
     private final String panel;

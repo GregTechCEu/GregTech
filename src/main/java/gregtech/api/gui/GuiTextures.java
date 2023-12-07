@@ -21,8 +21,10 @@ public class GuiTextures {
     // BASE TEXTURES
     public static final TextureArea BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/background.png", 176,
             166, 3, 3);
+    // todo try to remove
     public static final TextureArea BORDERED_BACKGROUND = AdoptableTextureArea
             .fullImage("textures/gui/base/bordered_background.png", 195, 136, 4, 4);
+    // todo try to remove
     public static final TextureArea BOXED_BACKGROUND = AdoptableTextureArea
             .fullImage("textures/gui/base/boxed_background.png", 256, 174, 11, 11);
     public static final SteamTexture BACKGROUND_STEAM = SteamTexture.fullImage("textures/gui/base/background_%s.png",
