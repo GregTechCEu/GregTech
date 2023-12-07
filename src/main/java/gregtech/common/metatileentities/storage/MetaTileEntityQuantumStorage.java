@@ -27,7 +27,7 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONTROLLER_POS;
 
 public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity implements IQuantumStorage<T> {
 
-    private WeakReference<IQuantumController> controller; // not synced, server only. lazily initialized from pos
+    private WeakReference<IQuantumController> controller = new WeakReference<>(null); // not synced, server only. lazily initialized from pos
     private BlockPos controllerPos; // synced, server and client
 
     public MetaTileEntityQuantumStorage(ResourceLocation metaTileEntityId) {
@@ -49,13 +49,11 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     @Override
     public void setDisconnected() {
-        if (getWorld().isRemote) return;
-        if (controllerPos != null && !tryFindNewNetwork()) {
-            // first try to find a new adjacent network
-            controller = null;
+        if (!getWorld().isRemote) {
+            controller.clear();
             controllerPos = null;
-
             writeCustomData(REMOVE_CONTROLLER, buf -> {});
+            tryFindNewNetwork();
             markDirty();
         }
     }
@@ -72,10 +70,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 return (IQuantumController) mte;
             } else {
                 // controller is no longer there for some reason, need to disconnect
-                controller = null;
-                controllerPos = null;
-                writeCustomData(REMOVE_CONTROLLER, buf -> {});
-                markDirty();
+                setDisconnected();
             }
         }
         return null;
@@ -123,7 +118,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             }
 
             IQuantumController candidate = null;
-            if (mte instanceof IQuantumStorage<?>storage) {
+            if (mte instanceof IQuantumStorage<?> storage) {
                 if (storage.isConnected()) {
                     IQuantumController controller = storage.getController();
                     if (controller == null || controller.getPos().equals(controllerPos)) continue;
