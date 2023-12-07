@@ -220,40 +220,22 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .aisle(interiorSlice).setRepeatable(heightTop - 1)
                 .aisle(topSlice)
                 .where('S', selfPredicate())
-                .where('A', states(getFuelChannelState(), getControlRodChannelState(), getCoolantChannelState()))              // A
-                                                                                                                               // for
-                                                                                                                               // interior
-                                                                                                                               // components
+                // A for interior components
+                .where('A', states(getFuelChannelState(), getControlRodChannelState(), getCoolantChannelState()))
+                // I for the inputs on the top
                 .where('I',
                         states(getVesselState()).or(abilities(MultiblockAbility.IMPORT_COOLANT,
-                                MultiblockAbility.IMPORT_FUEL_ROD, MultiblockAbility.CONTROL_ROD_PORT)))           // I
-                                                                                                                   // for
-                                                                                                                   // the
-                                                                                                                   // inputs
-                                                                                                                   // on
-                                                                                                                   // the
-                                                                                                                   // top
+                                MultiblockAbility.IMPORT_FUEL_ROD, MultiblockAbility.CONTROL_ROD_PORT)))
+                // O for the outputs on the bottom
                 .where('O',
                         states(getVesselState())
-                                .or(abilities(MultiblockAbility.EXPORT_COOLANT, MultiblockAbility.EXPORT_FUEL_ROD)))        // O
-                                                                                                                            // for
-                                                                                                                            // the
-                                                                                                                            // outputs
-                                                                                                                            // on
-                                                                                                                            // the
-                                                                                                                            // bottom
+                                .or(abilities(MultiblockAbility.EXPORT_COOLANT, MultiblockAbility.EXPORT_FUEL_ROD)))
+                // B for the vessel blocks on the walls
                 .where('B',
                         states(getVesselState())
                                 .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1)
                                         .setMaxGlobalLimited(1))
-                                .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1)))                   // B
-                                                                                                                          // for
-                                                                                                                          // the
-                                                                                                                          // vessel
-                                                                                                                          // blocks
-                                                                                                                          // on
-                                                                                                                          // the
-                                                                                                                          // walls
+                                .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1)))
                 .where(' ', any())
                 .build();
     }
