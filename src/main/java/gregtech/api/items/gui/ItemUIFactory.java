@@ -21,7 +21,9 @@ public interface ItemUIFactory extends IItemComponent, IGuiHolder {
      * about item stack and hand, and also player
      */
     @Deprecated
-    ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer);
+    default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
+        return null;
+    }
 
     @Override
     default ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
