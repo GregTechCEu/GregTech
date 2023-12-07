@@ -355,7 +355,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
         }
 
-        public void checkOxygen() {
+        protected void checkOxygen() {
             // check oxygen if present to boost production, and if the dynamo hatch supports it
             if (combustionEngine.isBoostAllowed()) {
                 IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
@@ -364,14 +364,14 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
         }
 
-        public void drainOxygen() {
+        protected void drainOxygen() {
             if (isOxygenBoosted && totalContinuousRunningTime % 20 == 0) {
                 FluidStack boosterStack = isExtreme ? LIQUID_OXYGEN_STACK : OXYGEN_STACK;
                 combustionEngine.getInputFluidInventory().drain(boosterStack, true);
             }
         }
 
-        public boolean checkLubricant() {
+        protected boolean checkLubricant() {
             // check lubricant and invalidate if it fails
             IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
             if (LUBRICANT_STACK.isFluidStackIdentical(inputTank.drain(LUBRICANT_STACK, false))) {
@@ -382,7 +382,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
         }
 
-        public void drainLubricant() {
+        protected void drainLubricant() {
             if (totalContinuousRunningTime == 1 || totalContinuousRunningTime % 72 == 0) {
                 IMultipleTankHandler inputTank = combustionEngine.getInputFluidInventory();
                 inputTank.drain(LUBRICANT_STACK, true);
