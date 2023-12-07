@@ -13,6 +13,7 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTThemes;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
@@ -130,6 +131,7 @@ public class CoreModule implements IGregTechModule {
         GTSoundEvents.register();
 
         /* MUI Initialization */
+        GTGuiTextures.init();
         GTThemes.init();
 
         /* Start UI Factory Registration */

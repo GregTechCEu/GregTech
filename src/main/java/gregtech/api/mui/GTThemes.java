@@ -1,7 +1,6 @@
 package gregtech.api.mui;
 
 import com.cleanroommc.modularui.api.IThemeApi;
-import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
 
@@ -10,33 +9,48 @@ import gregtech.common.ConfigHolder;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import org.jetbrains.annotations.Nullable;
+
 public enum GTThemes {
 
     /** Standard theme used by most GT UIs */
-    STANDARD("gregtech_standard") {
-        @Override
-        protected void onReload() {
-            builder.add("color", ConfigHolder.client.defaultUIColor);
-            builder.add("panel", new JsonBuilder()
-                    .add("background", new JsonBuilder()
-                            .add("type", "texture")
-                            .add("id", "gregtech_standard_bg")));
-        }
-    },
+    STANDARD("gregtech_standard",
+            GTGuiTextures.IDs.STANDARD_BACKGROUND,
+            null,
+            null,
+            null,
+            ConfigHolder.client.defaultUIColor),
+
     /** Bronze-colored theme used by Bronze Steam machines */
-    BRONZE("gregtech_bronze"),
+    // todo
+    BRONZE("gregtech_bronze", null, null, null, null, -1),
+
     /** Steel-colored theme used by Steel Steam machines */
-    STEEL("gregtech_steel"),
+    // todo
+    STEEL("gregtech_steel", null, null, null, null, -1),
+
     /** Brown/Beige colored theme used by PBF, Coke Oven, etc. */
-    PRIMITIVE("gregtech_primitive");
+    // todo
+    PRIMITIVE("gregtech_primitive", null, null, null, null, -1);
 
     private final String id;
-    protected final JsonBuilder builder;
+    private final String panel;
+    private final String button;
+    private final String itemSlot;
+    private final String fluidSlot;
+    private final int color;
+    private final JsonBuilder builder;
 
     public static final GTThemes[] VALUES = values();
 
-    GTThemes(String id) {
+    GTThemes(String id, @Nullable String panel, @Nullable String button,
+             @Nullable String itemSlot, @Nullable String fluidSlot, int color) {
         this.id = id;
+        this.panel = panel;
+        this.button = button;
+        this.itemSlot = itemSlot;
+        this.fluidSlot = fluidSlot;
+        this.color = color;
         this.builder = new JsonBuilder();
     }
 
@@ -48,12 +62,38 @@ public enum GTThemes {
         IThemeApi.get().registerTheme(id, builder);
     }
 
-    protected void onReload() {}
+    private void onReload() {
+        if (panel != null) {
+            builder.add("panel", new JsonBuilder()
+                    .add("background", new JsonBuilder()
+                            .add("type", "texture")
+                            .add("id", panel)));
+        }
+        if (button != null) {
+            builder.add("button", new JsonBuilder()
+                    .add("background", new JsonBuilder()
+                            .add("type", "texture")
+                            .add("id", button)));
+        }
+        if (itemSlot != null) {
+            builder.add("itemSlot", new JsonBuilder()
+                    .add("background", new JsonBuilder()
+                            .add("type", "texture")
+                            .add("id", button)));
+        }
+        if (fluidSlot != null) {
+            builder.add("fluidSlot", new JsonBuilder()
+                    .add("background", new JsonBuilder()
+                            .add("type", "texture")
+                            .add("id", button)));
+        }
+        if (color >= 0) {
+            builder.add("color", color);
+        }
+    }
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(GTThemes.class);
-        // todo try to link this BG to the theme in a better way
-        GuiTextures.registerBackground("gregtech_standard_bg", GTGuiTextures.BACKGROUND);
         for (GTThemes theme : VALUES) {
             theme.register();
         }
