@@ -7,7 +7,10 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandler;
+
+import java.io.IOException;
 
 public class GhostCircuitSyncHandler extends ItemSlotSH {
 
@@ -34,7 +37,7 @@ public class GhostCircuitSyncHandler extends ItemSlotSH {
         setCircuitValue(getNextCircuitValue(mouseData.mouseButton == 1));
     }
 
-    private void setCircuitValue(int value) {
+    public void setCircuitValue(int value) {
         GhostCircuitItemStackHandler handler = getGhostCircuitHandler();
         handler.setCircuitValue(value);
         syncToClient(1, buf -> {
@@ -42,6 +45,15 @@ public class GhostCircuitSyncHandler extends ItemSlotSH {
             buf.writeItemStack(handler.getStackInSlot(0));
             buf.writeBoolean(false);
         });
+    }
+
+    @Override
+    public void readOnServer(int id, PacketBuffer buf) throws IOException {
+        if (id == 10) {
+            setCircuitValue(buf.readShort());
+        } else {
+            super.readOnServer(id, buf);
+        }
     }
 
     private int getNextCircuitValue(boolean increment) {
