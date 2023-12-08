@@ -363,8 +363,8 @@ public class ConfigHolder {
         @Config.Comment({ "Whether to give the terminal to new players on login", "Default: true" })
         public boolean spawnTerminal = true;
 
-        @Config.Comment({ "Whether suffocation damage based on dimension is enabled.", "Default: false" })
-        public boolean enableDimSuffocation = false;
+        @Config.Comment({ "Whether suffocation damage based on dimension is enabled.", "Default: true" })
+        public boolean enableDimSuffocation = true;
 
         @Config.Comment({ "Whether toxicity damage based on dimension is enabled.", "Default: true" })
         public boolean enableDimToxicity = true;
@@ -375,7 +375,7 @@ public class ConfigHolder {
         @Config.Comment({ "What dimensions have which hazards. Pair dimension IDs with their hazards.",
                 "Suffocation - s | Toxic - t | Radiation - r" })
         @Config.RequiresMcRestart
-        public String[] dimensionAirHazards = new String[] { "default:s", "0:", "-1:st", "1:str" };
+        public String[] dimensionAirHazards = new String[] { "default:", "0:", "-1:st", "1:str" };
     }
 
     public static class ClientOptions {
