@@ -564,7 +564,8 @@ public class Recipe {
         // If just the regular outputs would satisfy the outputLimit
         else if (getFluidOutputs().size() >= outputLimit) {
             outputs.addAll(
-                    GTUtility.copyFluidList(getFluidOutputs()).subList(0, Math.min(outputLimit, getFluidOutputs().size())));
+                    GTUtility.copyFluidList(getFluidOutputs()).subList(0,
+                            Math.min(outputLimit, getFluidOutputs().size())));
             // clear the chanced outputs, as we are only getting regular outputs
             chancedOutputs.clear();
         }
