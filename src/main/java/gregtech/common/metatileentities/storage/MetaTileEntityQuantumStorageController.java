@@ -179,9 +179,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             // valid chest/tank located, add it
             storageInstances.put(pos, new WeakReference<>(storage));
             storagePositions.add(pos);
+            storage.setConnected(this);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
-            storage.setConnected(this);
 
             // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
