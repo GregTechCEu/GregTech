@@ -15,6 +15,7 @@ public class GTGuiTextures {
         public static final String STEEL_BACKGROUND = "gregtech_steel_bg";
         public static final String PRIMITIVE_BACKGROUND = "gregtech_primitive_bg";
 
+        public static final String STANDARD_SLOT = "gregtech_standard_slot";
         public static final String BRONZE_SLOT = "gregtech_bronze_slot";
         public static final String STEEL_SLOT = "gregtech_steel_slot";
         public static final String PRIMITIVE_SLOT = "gregtech_primitive_slot";
@@ -50,6 +51,13 @@ public class GTGuiTextures {
             .build();
 
     // SLOTS
+    public static final UITexture SLOT = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/base/slot.png")
+            .imageSize(18, 18)
+            .adaptable(1)
+            .registerAsBackground(IDs.STANDARD_SLOT, true)
+            .build();
+
     public static final UITexture SLOT_BRONZE = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/slot_bronze.png")
             .imageSize(18, 18)
@@ -70,6 +78,11 @@ public class GTGuiTextures {
             .adaptable(1)
             .registerAsBackground(IDs.PRIMITIVE_SLOT)
             .build();
+
+    // SLOT OVERLAYS
+
+    public static final UITexture INT_CIRCUIT_OVERLAY = UITexture.fullImage(GTValues.MODID,
+            "textures/gui/overlay/int_circuit_overlay.png", true);
 
     public static void init() {/**/}
 }

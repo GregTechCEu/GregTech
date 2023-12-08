@@ -1,11 +1,10 @@
 package gregtech.common.metatileentities.steam.multiblockpart;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -14,7 +13,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -82,23 +80,9 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
         return 0xFFFFFF;
     }
 
-    // Override UI to make it a Steam UI
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(IS_STEEL), 176, 166)
-                .label(6, 6, getMetaFullName());
-
-        for (int y = 0; y < 2; y++) {
-            for (int x = 0; x < 2; x++) {
-                int index = y * 2 + x;
-                builder.slot(isExportHatch ? exportItems : importItems, index, 70 + x * 18, 31 + y * 18, true,
-                        !isExportHatch,
-                        GuiTextures.SLOT_STEAM.get(IS_STEEL));
-            }
-        }
-        builder.shouldColor(false);
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(IS_STEEL), 7, 83);
-        return builder.build(getHolder(), entityPlayer);
+    public GTGuiTheme getUITheme() {
+        return IS_STEEL ? GTGuiTheme.STEEL : GTGuiTheme.BRONZE;
     }
 
     @Override

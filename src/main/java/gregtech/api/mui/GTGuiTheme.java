@@ -19,6 +19,7 @@ public class GTGuiTheme {
 
     public static final GTGuiTheme STANDARD = new Builder("gregtech_standard")
             .panel(GTGuiTextures.IDs.STANDARD_BACKGROUND)
+            .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
             .build();
 
