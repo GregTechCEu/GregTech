@@ -27,9 +27,11 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONTROLLER_POS;
 
 public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity implements IQuantumStorage<T> {
 
-    private WeakReference<IQuantumController> controller = new WeakReference<>(null); // not synced, server only. lazily
-                                                                                      // initialized from pos
-    private BlockPos controllerPos; // synced, server and client
+    /** not synced, server only. lazily initialized from pos */
+    private WeakReference<IQuantumController> controller = new WeakReference<>(null);
+
+    /** synced, server and client */
+    private BlockPos controllerPos;
 
     public MetaTileEntityQuantumStorage(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -158,8 +160,10 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_CONTROLLER_POS) {
             this.controllerPos = buf.readBlockPos();
+            this.controller.clear();
         } else if (dataId == REMOVE_CONTROLLER) {
             this.controllerPos = null;
+            this.controller.clear();
         }
     }
 
