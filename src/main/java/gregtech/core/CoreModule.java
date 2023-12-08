@@ -13,6 +13,8 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -127,6 +129,10 @@ public class CoreModule implements IGregTechModule {
 
         GregTechAPI.soundManager = SoundManager.getInstance();
         GTSoundEvents.register();
+
+        /* MUI Initialization */
+        GTGuiTextures.init();
+        GTGuiTheme.registerThemes();
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();

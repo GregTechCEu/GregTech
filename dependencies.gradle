@@ -25,6 +25,7 @@ dependencies {
     // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer
     // therefore we manually deobf the regular jar
     implementation rfg.deobf("curse.maven:codechicken-lib-1-8-242818:2779848") // CCL 3.2.3.358
+    implementation "curse.maven:modularui-624243:4856895-deobf-4856896-sources-4856897" // MUI 2.3.1
 
     // Soft Dependencies
     // Can change any of these from compileOnlyApi -> implementation to test them in-game.

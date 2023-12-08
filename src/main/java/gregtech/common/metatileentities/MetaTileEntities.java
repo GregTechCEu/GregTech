@@ -1009,19 +1009,19 @@ public class MetaTileEntities {
 
         // Crates, IDs 1625-1639
         WOODEN_CRATE = registerMetaTileEntity(1625,
-                new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));
+                new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27, 9));
         BRONZE_CRATE = registerMetaTileEntity(1626,
-                new MetaTileEntityCrate(gregtechId("crate.bronze"), Materials.Bronze, 54));
+                new MetaTileEntityCrate(gregtechId("crate.bronze"), Materials.Bronze, 54, 9));
         STEEL_CRATE = registerMetaTileEntity(1627,
-                new MetaTileEntityCrate(gregtechId("crate.steel"), Materials.Steel, 72));
+                new MetaTileEntityCrate(gregtechId("crate.steel"), Materials.Steel, 72, 9));
         ALUMINIUM_CRATE = registerMetaTileEntity(1628,
-                new MetaTileEntityCrate(gregtechId("crate.aluminium"), Materials.Aluminium, 90));
+                new MetaTileEntityCrate(gregtechId("crate.aluminium"), Materials.Aluminium, 90, 10));
         STAINLESS_STEEL_CRATE = registerMetaTileEntity(1629,
-                new MetaTileEntityCrate(gregtechId("crate.stainless_steel"), Materials.StainlessSteel, 108));
+                new MetaTileEntityCrate(gregtechId("crate.stainless_steel"), Materials.StainlessSteel, 108, 12));
         TITANIUM_CRATE = registerMetaTileEntity(1630,
-                new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 126));
+                new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 126, 14));
         TUNGSTENSTEEL_CRATE = registerMetaTileEntity(1631,
-                new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 144));
+                new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 144, 16));
 
         // Rotor Holder, IDs 1640-1645
         ROTOR_HOLDER[0] = registerMetaTileEntity(1640,
