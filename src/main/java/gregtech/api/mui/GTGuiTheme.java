@@ -1,13 +1,13 @@
 package gregtech.api.mui;
 
-import com.cleanroommc.modularui.api.IThemeApi;
-import com.cleanroommc.modularui.theme.ReloadThemeEvent;
-import com.cleanroommc.modularui.utils.JsonBuilder;
-
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.theme.ReloadThemeEvent;
+import com.cleanroommc.modularui.utils.JsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,11 +245,13 @@ public class GTGuiTheme {
             return toggleButton(toggleButtonId, selectedBackgroundId, 0xFFFFFFFF, true);
         }
 
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor, boolean textShadow) {
+        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor,
+                                    boolean textShadow) {
             return toggleButton(toggleButtonId, selectedBackgroundId, textColor, textShadow, null, 0xFFBBBBBB);
         }
 
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor, boolean textShadow, String selectedHoverBackgroundId, int selectedColor) {
+        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor,
+                                    boolean textShadow, String selectedHoverBackgroundId, int selectedColor) {
             theme.elementBuilder.add(b -> b
                     .add("toggleButton", new JsonBuilder()
                             .add("background", new JsonBuilder()
