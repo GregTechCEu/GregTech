@@ -374,7 +374,7 @@ public class ConfigHolder {
 
         @Config.Comment({ "What dimensions have which hazards. Pair dimension IDs with their hazards.",
                 "Suffocation - s | Toxic - t | Radiation - r" })
-        @Config.RequiresMcRestart
+        @Config.RequiresWorldRestart
         public String[] dimensionAirHazards = new String[] { "default:", "0:", "-1:st", "1:str" };
     }
 
