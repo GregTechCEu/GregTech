@@ -145,6 +145,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     // Used when this controller is initially placed. Try to find all possible
     // storage instances that are connected and within our distance radius
+    // todo rework this to use neighbor cache somehow
     @Override
     public void rebuildNetwork() {
         if (getWorld().isRemote) return;

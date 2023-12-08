@@ -54,7 +54,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             controller.clear();
             controllerPos = null;
             writeCustomData(REMOVE_CONTROLLER, buf -> {});
-            tryFindNewNetwork();
+            tryFindNetwork();
             markDirty();
         }
     }
@@ -96,18 +96,16 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         }
     }
 
-    // todo might not be good time to do this
-    // todo need to make sure it is AFTER nbt has been read
     @Override
     public void onPlacement() {
         // add to the network if an adjacent block is part of a network
         // use whatever we find first, merging networks is not supported
         if (!getWorld().isRemote) {
-            tryFindNewNetwork();
+            tryFindNetwork();
         }
     }
 
-    private boolean tryFindNewNetwork() {
+    private void tryFindNetwork() {
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (getWorld().getBlockState(getPos().offset(facing)).getBlock() == Blocks.AIR) continue;
             MetaTileEntity mte;
@@ -133,10 +131,9 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             }
             if (candidate != null) {
                 candidate.rebuildNetwork();
-                return true;
+                return;
             }
         }
-        return false;
     }
 
     @Override
