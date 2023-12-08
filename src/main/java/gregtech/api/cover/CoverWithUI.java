@@ -2,8 +2,8 @@ package gregtech.api.cover;
 
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.GTThemes;
 import gregtech.api.mui.GregTechGuiScreen;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,8 +43,8 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
         return new GregTechGuiScreen(mainPanel, getUITheme());
     }
 
-    default GTThemes getUITheme() {
-        return GTThemes.STANDARD;
+    default GTGuiTheme getUITheme() {
+        return GTGuiTheme.STANDARD;
     }
 
     @Override

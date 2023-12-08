@@ -15,8 +15,8 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.GTThemes;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
@@ -440,8 +440,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return new GregTechGuiScreen(mainPanel, getUITheme());
     }
 
-    public GTThemes getUITheme() {
-        return GTThemes.STANDARD;
+    public GTGuiTheme getUITheme() {
+        return GTGuiTheme.STANDARD;
     }
 
     @Override

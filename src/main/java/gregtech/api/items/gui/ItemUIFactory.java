@@ -2,7 +2,7 @@ package gregtech.api.items.gui;
 
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.stats.IItemComponent;
-import gregtech.api.mui.GTThemes;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,8 +31,8 @@ public interface ItemUIFactory extends IItemComponent, IGuiHolder {
         return new GregTechGuiScreen(mainPanel, getUITheme());
     }
 
-    default GTThemes getUITheme() {
-        return GTThemes.STANDARD;
+    default GTGuiTheme getUITheme() {
+        return GTGuiTheme.STANDARD;
     }
 
     @Override
