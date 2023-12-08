@@ -62,9 +62,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     // use this to make sure controller is properly initialized
     @Override
     public IQuantumController getController() {
-        if (getWorld().isRemote) return null; // quick safety check
-        if (isConnected()) {
-            if (controller != null && controller.get() != null) return controller.get();
+        if (!getWorld().isRemote && isConnected()) {
+            if (controller.get() != null) return controller.get();
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), controllerPos);
             if (mte instanceof IQuantumController) {
                 controller = new WeakReference<>((IQuantumController) mte);
