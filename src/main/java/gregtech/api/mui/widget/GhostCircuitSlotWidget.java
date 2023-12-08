@@ -27,17 +27,20 @@ public class GhostCircuitSlotWidget extends ItemSlot {
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
-        if (mouseButton == 0 && TooltipHelper.isShiftDown()) {
-            createCircuitPickerPanel();
-        } else {
-            MouseData mouseData = MouseData.create(mouseButton);
-            getSyncHandler().syncToServer(2, mouseData::writeToPacket);
+        if (!isSelectorPanelOpen()) {
+            if (mouseButton == 0 && TooltipHelper.isShiftDown()) {
+                createSelectorPanel();
+            } else {
+                MouseData mouseData = MouseData.create(mouseButton);
+                getSyncHandler().syncToServer(2, mouseData::writeToPacket);
+            }
         }
         return Result.SUCCESS;
     }
 
     @Override
     public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int amount) {
+        if (isSelectorPanelOpen()) return true;
         MouseData mouseData = MouseData.create(scrollDirection.modifier);
         getSyncHandler().syncToServer(3, mouseData::writeToPacket);
         return false;
@@ -64,7 +67,11 @@ public class GhostCircuitSlotWidget extends ItemSlot {
         return true;
     }
 
-    private void createCircuitPickerPanel() {
+    private boolean isSelectorPanelOpen() {
+        return getPanel().getScreen().isPanelOpen("circuit_selector");
+    }
+
+    private void createSelectorPanel() {
         ItemDrawable circuitPreview = new ItemDrawable(getSyncHandler().getSlot().getStack());
 
         List<List<IWidget>> options = new ArrayList<>();
