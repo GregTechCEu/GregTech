@@ -562,23 +562,23 @@ public class Recipe {
             outputs.addAll(GTUtility.copyFluidList(getFluidOutputs()));
         }
         // If just the regular outputs would satisfy the outputLimit
-        else if (getOutputs().size() >= outputLimit) {
+        else if (getFluidOutputs().size() >= outputLimit) {
             outputs.addAll(
-                    GTUtility.copyFluidList(getFluidOutputs()).subList(0, Math.min(outputLimit, getOutputs().size())));
+                    GTUtility.copyFluidList(getFluidOutputs()).subList(0, Math.min(outputLimit, getFluidOutputs().size())));
             // clear the chanced outputs, as we are only getting regular outputs
             chancedOutputs.clear();
         }
         // If the regular outputs and chanced outputs are required to satisfy the outputLimit
-        else if (!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
+        else if (!getFluidOutputs().isEmpty() && (getFluidOutputs().size() + chancedOutputs.size()) >= outputLimit) {
             outputs.addAll(GTUtility.copyFluidList(getFluidOutputs()));
 
             // Calculate the number of chanced outputs after adding all the regular outputs
-            int numChanced = outputLimit - getOutputs().size();
+            int numChanced = outputLimit - getFluidOutputs().size();
 
             chancedOutputs = chancedOutputs.subList(0, Math.min(numChanced, chancedOutputs.size()));
         }
         // There are only chanced outputs to satisfy the outputLimit
-        else if (getOutputs().isEmpty()) {
+        else if (getFluidOutputs().isEmpty()) {
             chancedOutputs = chancedOutputs.subList(0, Math.min(outputLimit, chancedOutputs.size()));
         }
         // The number of outputs + chanced outputs is lower than the trim number, so just add everything
