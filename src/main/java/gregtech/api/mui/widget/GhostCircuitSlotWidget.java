@@ -1,29 +1,38 @@
 package gregtech.api.mui.widget;
 
-import com.cleanroommc.modularui.api.drawable.IDrawable;
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.drawable.ItemDrawable;
-import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.sync.ItemSlotSH;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.layout.Grid;
-import com.cleanroommc.modularui.widgets.slot.ModularSlot;
-
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.synchandler.GhostCircuitSyncHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.client.utils.TooltipHelper;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentTranslation;
+
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.Tooltip;
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.ItemSlotSH;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GhostCircuitSlotWidget extends ItemSlot {
+
+    public GhostCircuitSlotWidget() {
+        tooltipBuilder(this::getCircuitSlotTooltip);
+    }
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
@@ -52,6 +61,24 @@ public class GhostCircuitSlotWidget extends ItemSlot {
         isValidSyncHandler(sh);
         setSyncHandler(sh);
         return this;
+    }
+
+    @Override
+    protected List<String> getItemTooltip(ItemStack stack) {
+        // we don't want the item tooltip
+        return Collections.emptyList();
+    }
+
+    protected void getCircuitSlotTooltip(@NotNull Tooltip tooltip) {
+        String configString;
+        int value = getSyncHandler().getGhostCircuitHandler().getCircuitValue();
+        if (value == GhostCircuitItemStackHandler.NO_CONFIG) {
+            configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
+        } else {
+            configString = String.valueOf(value);
+        }
+
+        tooltip.addLine(IKey.lang("gregtech.gui.configurator_slot.tooltip", configString));
     }
 
     @Override

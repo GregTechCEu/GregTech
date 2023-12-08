@@ -39,7 +39,6 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -290,25 +289,12 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 .childIf(hasGhostCircuitInventory() && this.circuitInventory != null, new GhostCircuitSlotWidget()
                         .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                         .left(backgroundWidth - 18 - 7).bottom(18 * 4 + 22)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY)
-                        .tooltip(this::getCircuitSlotTooltip));
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
     }
 
     @Override
     public boolean hasGhostCircuitInventory() {
         return !this.isExportHatch;
-    }
-
-    // Method provided to override
-    protected void getCircuitSlotTooltip(@NotNull Tooltip tooltip) {
-        String configString;
-        if (circuitInventory == null || circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
-            configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
-        } else {
-            configString = String.valueOf(circuitInventory.getCircuitValue());
-        }
-
-        tooltip.addLine(IKey.lang("gregtech.gui.configurator_slot.tooltip", configString));
     }
 
     private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {

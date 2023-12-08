@@ -1,14 +1,14 @@
 package gregtech.api.mui.synchandler;
 
-import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.sync.ItemSlotSH;
-import com.cleanroommc.modularui.widgets.slot.ModularSlot;
-
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandler;
+
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.ItemSlotSH;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ public class GhostCircuitSyncHandler extends ItemSlotSH {
         setCircuitValue(getNextCircuitValue(mouseData.mouseButton == 1));
     }
 
-    public void setCircuitValue(int value) {
+    private void setCircuitValue(int value) {
         GhostCircuitItemStackHandler handler = getGhostCircuitHandler();
         handler.setCircuitValue(value);
         syncToClient(1, buf -> {
@@ -83,7 +83,7 @@ public class GhostCircuitSyncHandler extends ItemSlotSH {
         }
     }
 
-    private GhostCircuitItemStackHandler getGhostCircuitHandler() {
+    public GhostCircuitItemStackHandler getGhostCircuitHandler() {
         IItemHandler handler = getSlot().getItemHandler();
         if (!(handler instanceof GhostCircuitItemStackHandler ghostHandler)) {
             throw new IllegalStateException(
