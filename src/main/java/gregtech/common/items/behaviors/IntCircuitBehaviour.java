@@ -5,6 +5,7 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
@@ -85,7 +86,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                 if (index > 32) break;
                 options.get(i).add(new ButtonWidget<>()
                         .size(18)
-                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT,
+                        .background(GTGuiTextures.SLOT,
                                 new ItemDrawable(IntCircuitIngredient.getIntegratedCircuit(index)).asIcon().size(16))
                         .syncHandler("config", index));
             }
@@ -95,7 +96,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                 .child(new IDrawable.DrawableWidget(circuitPreview.asIcon().size(16))
                         .size(18)
                         .top(19).alignX(0.5f)
-                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT))
+                        .background(GTGuiTextures.SLOT))
                 .child(new Grid()
                         .left(7).right(7).top(41).height(4 * 18)
                         .matrix(options)
