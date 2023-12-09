@@ -418,6 +418,8 @@ public class EventHandlers {
             }
         };
 
+        private static boolean hasSuffocated = false;
+
         private DimensionBreathabilityHandler() {}
 
         public static void loadConfig() {
@@ -451,6 +453,7 @@ public class EventHandlers {
             if (ConfigHolder.misc.enableDimToxicity && dimInfo.toxic) toxicityCheck(player, dimInfo.toxicityRating);
             if (ConfigHolder.misc.enableDimRadiation && dimInfo.radiation)
                 radiationCheck(player, dimInfo.radiationRating);
+            hasSuffocated = false;
         }
 
         private static void suffocationCheck(EntityPlayer player) {
@@ -460,7 +463,10 @@ public class EventHandlers {
         }
 
         private static void suffocate(EntityPlayer player) {
-            player.attackEntityFrom(DamageSources.getSuffocationDamage(), 2);
+            if (!hasSuffocated) {
+                hasSuffocated = true;
+                player.attackEntityFrom(DamageSources.getSuffocationDamage(), 2);
+            }
         }
 
         private static void toxicityCheck(EntityPlayer player, int dimRating) {
@@ -469,7 +475,7 @@ public class EventHandlers {
                 // if sealed, no need for toxicity check
                 if (itemInfo.isSealed) {
                     if (drainOxy(player)) return;
-                    else suffocate(player);
+                    else if (ConfigHolder.misc.enableDimSuffocation) suffocate(player);
                 } else if (dimRating > itemInfo.toxicityRating) {
                     toxificate(player, dimRating - itemInfo.toxicityRating);
                     return;
