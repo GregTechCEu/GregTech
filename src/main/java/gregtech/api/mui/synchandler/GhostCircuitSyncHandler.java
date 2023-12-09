@@ -22,19 +22,19 @@ public class GhostCircuitSyncHandler extends ItemSlotSH {
     protected void phantomClick(MouseData mouseData) {
         if (mouseData.mouseButton == 0) {
             // increment on left-click
-            setCircuitValue(getNextCircuitValue(true));
+            setCircuitValue(getNextCircuitValue(1));
         } else if (mouseData.mouseButton == 1 && mouseData.shift) {
             // clear on shift-right-click
             setCircuitValue(GhostCircuitItemStackHandler.NO_CONFIG);
         } else if (mouseData.mouseButton == 1) {
             // decrement on right-click
-            setCircuitValue(getNextCircuitValue(false));
+            setCircuitValue(getNextCircuitValue(-1));
         }
     }
 
     @Override
     protected void phantomScroll(MouseData mouseData) {
-        setCircuitValue(getNextCircuitValue(mouseData.mouseButton == 1));
+        setCircuitValue(getNextCircuitValue(mouseData.mouseButton));
     }
 
     private void setCircuitValue(int value) {
@@ -56,31 +56,23 @@ public class GhostCircuitSyncHandler extends ItemSlotSH {
         }
     }
 
-    private int getNextCircuitValue(boolean increment) {
+    private int getNextCircuitValue(int delta) {
         GhostCircuitItemStackHandler handler = getGhostCircuitHandler();
-        if (increment) {
+
+        // if no circuit, skip 0 and return 32 if decrementing,
+        // or, skip 0 and return 1 when incrementing
+        if (!handler.hasCircuitValue()) {
+            return delta == 1 ? 1 : IntCircuitIngredient.CIRCUIT_MAX;
             // if at max, loop around to no circuit
-            if (handler.getCircuitValue() == IntCircuitIngredient.CIRCUIT_MAX) {
-                return GhostCircuitItemStackHandler.NO_CONFIG;
-            }
-            // if at no circuit, skip 0 and return 1
-            if (!handler.hasCircuitValue()) {
-                return 1;
-            }
-            // normal case: increment by 1
-            return handler.getCircuitValue() + 1;
-        } else {
-            // if at no circuit, loop around to max
-            if (!handler.hasCircuitValue()) {
-                return IntCircuitIngredient.CIRCUIT_MAX;
-            }
-            // if at 1, skip 0 and return no circuit
-            if (handler.getCircuitValue() == 1) {
-                return GhostCircuitItemStackHandler.NO_CONFIG;
-            }
-            // normal case: decrement by 1
-            return handler.getCircuitValue() - 1;
+        } else if (handler.getCircuitValue() + delta > IntCircuitIngredient.CIRCUIT_MAX) {
+            return GhostCircuitItemStackHandler.NO_CONFIG;
+            // if at 1, skip 0 and return to no circuit
+        } else if (handler.getCircuitValue() + delta < 1) {
+            return GhostCircuitItemStackHandler.NO_CONFIG;
         }
+
+        // normal case: change by "delta" which is either 1 or -1
+        return handler.getCircuitValue() + delta;
     }
 
     public GhostCircuitItemStackHandler getGhostCircuitHandler() {

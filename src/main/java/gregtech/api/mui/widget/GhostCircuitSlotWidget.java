@@ -10,7 +10,6 @@ import gregtech.client.utils.TooltipHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
@@ -121,7 +120,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
 
         getPanel().getScreen().openPanel(GTGuis.createPanel("circuit_selector", 176, 120)
                 .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
-                .child(new IDrawable.DrawableWidget(circuitPreview.asIcon().size(16))
+                .child(circuitPreview.asIcon().size(16).asWidget()
                         .size(18)
                         .top(19).alignX(0.5f)
                         .background(GTGuiTextures.SLOT))

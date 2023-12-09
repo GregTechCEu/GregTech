@@ -18,7 +18,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
@@ -93,7 +92,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
         }
         return GTGuis.createPanel(guiCreationContext.getUsedItemStack(), 176, 120)
                 .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
-                .child(new IDrawable.DrawableWidget(circuitPreview.asIcon().size(16))
+                .child(circuitPreview.asIcon().size(16).asWidget()
                         .size(18)
                         .top(19).alignX(0.5f)
                         .background(GTGuiTextures.SLOT))

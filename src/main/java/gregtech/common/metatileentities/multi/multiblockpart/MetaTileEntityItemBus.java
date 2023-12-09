@@ -273,7 +273,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 widgets.get(i)
                         .add(new ItemSlot()
                                 .slot(SyncHandlers.itemSlot(isExportHatch ? exportItems : importItems, i * rowSize + j)
-                                        .slotGroup("item_inv")));
+                                        .slotGroup("item_inv")
+                                        .accessibility(!isExportHatch, true)));
             }
         }
 
