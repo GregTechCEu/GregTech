@@ -481,10 +481,6 @@ public class EventHandlers {
                     return;
                 }
             }
-            toxificate(player);
-        }
-
-        private static void toxificate(EntityPlayer player) {
             toxificate(player, 100);
         }
 
