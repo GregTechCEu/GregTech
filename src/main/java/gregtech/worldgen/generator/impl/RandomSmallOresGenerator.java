@@ -15,7 +15,8 @@ public class RandomSmallOresGenerator extends GeneratorBase<RandomSmallOresSetti
     }
 
     @Override
-    public void generate(@NotNull World world, @NotNull Random random, @NotNull String biome, int dimension, int chunkX, int chunkZ) {
+    public void generate(@NotNull World world, @NotNull Random random, @NotNull String biome, int dimension, int chunkX,
+                         int chunkZ) {
         if (!canGenerateInDimension(dimension)) return;
         if (!canGenerateInBiome(biome)) return;
 

@@ -115,7 +115,7 @@ public class ChunkAlignedWorldgen implements Runnable {
      */
     private void generate(@NotNull ChunkPosDimension originPos) {
         long start = System.nanoTime();
-        long seed = originPos.hashCode() * 31L + world.getSeed();
+        long seed = WorldgenUtil.getRandomSeed(world, originPos);
 
         if (DEBUG) {
             WorldgenModule.logger.info("generating vein at {}", originPos);
@@ -125,7 +125,7 @@ public class ChunkAlignedWorldgen implements Runnable {
         if (potential == null) {
             findAndGenerateNew(originPos, seed);
         } else {
-            Random random = new XSTR(seed ^ potential.hashCode());
+            Random random = WorldgenModule.randomManager.seeded(seed ^ potential.hashCode());
             generateExisting(potential, random, originPos);
         }
 
@@ -148,13 +148,15 @@ public class ChunkAlignedWorldgen implements Runnable {
         int originX = originPos.x();
         int originZ = originPos.z();
 
-        Random random = new XSTR(seed);
+        Random random = WorldgenModule.randomManager.seeded(seed);
         int roll = random.nextInt(100);
         if (roll < WorldgenModule.oreVeinAbundance()) {
             int totalWeight = WorldgenModule.CHUNK_ALIGNED_REGISTRY.getTotalWeight(dimension);
             if (totalWeight > 0) {
                 int attempts = 0;
                 boolean foundVein = false;
+
+                Random generatorRandom = new XSTR();
 
                 for (int i = 0; i < WorldgenModule.maxOregenSearchAttempts(); i++) {
                     if (foundVein) break;
@@ -166,10 +168,10 @@ public class ChunkAlignedWorldgen implements Runnable {
                         if (weight > 0) continue;
 
                         ChunkAlignedWorldGenerator generator = settings.createGenerator();
+                        generatorRandom.setSeed(seed ^ settings.hashCode());
 
-                        PlacementResult result = generator.generate(world, new XSTR(seed ^ settings.hashCode()), biome,
-                                dimension, originX * 16, originZ * 16,
-                                chunkX * 16, chunkZ * 16);
+                        PlacementResult result = generator.generate(world, generatorRandom, biome, dimension,
+                                originX * 16, originZ * 16, chunkX * 16, chunkZ * 16);
                         switch (result) {
                             case PLACED, NON_OVERLAPPING -> {
                                 if (DEBUG) {

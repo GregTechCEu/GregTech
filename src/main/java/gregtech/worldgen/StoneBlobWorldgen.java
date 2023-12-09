@@ -46,7 +46,7 @@ public class StoneBlobWorldgen implements Runnable {
     }
 
     private double findOriginChunks(@NotNull StoneBlob blob, @NotNull Random random) {
-        double realSize = blob.size() / 16f;
+        double realSize = blob.size() / 16.0f;
         int windowWidth = (int) realSize / 16 + 1;
 
         int minX = chunkX - windowWidth;
@@ -62,8 +62,7 @@ public class StoneBlobWorldgen implements Runnable {
                         blobChunks.add(pos);
                     }
                 } else {
-                    long seed = pos.hashCode() * 31L + world.getSeed();
-                    random.setSeed(seed);
+                    random.setSeed(WorldgenUtil.getRandomSeed(world, pos));
                     if (random.nextInt(blob.weight()) == 0) {
                         blobs.put(pos, true);
                         blobChunks.add(pos);
@@ -85,7 +84,7 @@ public class StoneBlobWorldgen implements Runnable {
 
     private void generate(@NotNull StoneBlob blob, @NotNull ChunkPosDimension originPos, @NotNull Random random,
                           double realSize) {
-        random.setSeed(originPos.hashCode() * 31L + world.getSeed());
+        random.setSeed(WorldgenUtil.getRandomSeed(world, originPos));
         PlacementResult result =  new StoneBlobGenerator(blob).generate(world, random, biome, dimension, chunkX * 16, chunkZ * 16,
                 originPos.x() * 16, originPos.z() * 16, realSize);
         if (result == PlacementResult.NON_OVERLAPPING_AIR_BLOCK) {

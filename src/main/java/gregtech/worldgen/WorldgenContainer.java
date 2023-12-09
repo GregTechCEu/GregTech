@@ -1,6 +1,5 @@
 package gregtech.worldgen;
 
-import gregtech.api.util.XSTR;
 import gregtech.worldgen.generator.SporadicSettings;
 import gregtech.worldgen.generator.SporadicWorldGenerator;
 import net.minecraft.util.math.BlockPos;
@@ -66,8 +65,7 @@ public class WorldgenContainer implements Runnable {
         var list = WorldgenModule.SPORADIC_REGISTRY.getGenerators(dimension);
         if (list != null) {
             // random is shared between all sporadic generators
-            Random random = new XSTR();
-            random.setSeed(this.world.getSeed() * 31L + dimension);
+            Random random = WorldgenModule.randomManager.persistent(world);
 
             for (SporadicSettings<?> settings : list) {
                 SporadicWorldGenerator generator = settings.createGenerator();

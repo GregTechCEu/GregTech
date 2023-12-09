@@ -11,19 +11,20 @@ import gregtech.modules.GregTechModules;
 import gregtech.worldgen.generator.ChunkAlignedSettings;
 import gregtech.worldgen.generator.GeneratorRegistry;
 import gregtech.worldgen.generator.SporadicSettings;
-import gregtech.worldgen.generator.impl.LayeredVeinSettings;
-import gregtech.worldgen.generator.impl.MixedVeinSettings;
-import gregtech.worldgen.generator.impl.RandomSmallOresSettings;
-import gregtech.worldgen.generator.impl.StoneBlob;
+import gregtech.worldgen.generator.impl.*;
 import gregtech.worldgen.placeable.impl.BlockStatePlaceable;
 import gregtech.worldgen.placeable.impl.MaterialPlaceable;
+import gregtech.worldgen.random.RandomManager;
+import gregtech.worldgen.random.SingleThreadedRandomManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,6 +39,8 @@ import org.jetbrains.annotations.NotNull;
 public class WorldgenModule extends BaseGregTechModule {
 
     public static final Logger logger = LogManager.getLogger("GregTech Worldgen");
+
+    public static RandomManager randomManager;
 
     /**
      * If worldgen debugging should be enabled.
@@ -57,6 +60,7 @@ public class WorldgenModule extends BaseGregTechModule {
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+        initializeRandomManager();
         GameRegistry.registerWorldGenerator(GTWorldGenerator.INSTANCE, 1);
 
         STONE_BLOB_REGISTRY.register(new StoneBlob("blob_tiny", 0, 180, 5, 75,
@@ -119,12 +123,30 @@ public class WorldgenModule extends BaseGregTechModule {
         SPORADIC_REGISTRY.register(new RandomSmallOresSettings("spor1", 60, 180, 32,
                 new int[]{0}, new String[0],
                 new MaterialPlaceable(Materials.Pyrope)));
+
+        SPORADIC_REGISTRY.register(new FluidSpringSettings("spring1", 60, 90, 2, 7,
+                new int[]{0}, new String[0],
+                new BlockStatePlaceable(Blocks.IRON_BLOCK.getDefaultState(), true, false, false)));
+    }
+
+    /**
+     * Initialize the random manager with potential concurrency if necessary
+     */
+    private static void initializeRandomManager() {
+        randomManager = new SingleThreadedRandomManager();
     }
 
     @Override
     public void serverStopped(FMLServerStoppedEvent event) {
         super.serverStopped(event);
         ChunkAlignedWorldgen.clearCache();
+    }
+
+    @SubscribeEvent
+    public void onDimensionUnload(@NotNull WorldEvent.Unload event) {
+        if (!event.getWorld().isRemote) {
+            randomManager.onDimensionUnload(event.getWorld());
+        }
     }
 
     /**

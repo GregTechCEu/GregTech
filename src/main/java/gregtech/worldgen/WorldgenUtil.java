@@ -1,5 +1,6 @@
 package gregtech.worldgen;
 
+import gregtech.api.util.math.ChunkPosDimension;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.BlockFire;
@@ -15,6 +16,19 @@ import org.jetbrains.annotations.NotNull;
 import static gregtech.worldgen.WorldgenUtil.RockPlacementResult.*;
 
 public final class WorldgenUtil {
+
+    /**
+     * @param world the world to seed with
+     * @return a seed for a random number according to the world
+     */
+    public static long getRandomSeed(@NotNull World world) {
+        return world.getSeed() * 31L + world.provider.getDimension();
+    }
+
+    public static long getRandomSeed(@NotNull World world, @NotNull ChunkPosDimension pos) {
+        return getRandomSeed(world) * 31L + pos.hashCode();
+//        return (pos.hashCode() * 31L + world.getSeed()) * 31L + pos.dimension();
+    }
 
     /**
      * Checks if a surface rock can replace a block
