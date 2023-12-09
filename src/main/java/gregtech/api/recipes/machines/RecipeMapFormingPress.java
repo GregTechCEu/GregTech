@@ -4,7 +4,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
-import gregtech.api.recipes.ui.FormingPressUI;
+import gregtech.api.recipes.ui.RecipeMapUIFunction;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 
@@ -23,8 +23,9 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
 
     private static ItemStack NAME_MOLD = ItemStack.EMPTY;
 
-    public RecipeMapFormingPress(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder) {
-        super(unlocalizedName, defaultRecipeBuilder, FormingPressUI::new, 6, 1, 0, 0);
+    public RecipeMapFormingPress(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
+                                 @NotNull RecipeMapUIFunction recipeMapUI) {
+        super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 6, 1, 0, 0);
     }
 
     @Override

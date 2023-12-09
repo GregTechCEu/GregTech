@@ -5,7 +5,7 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.ResearchProperty;
 import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
-import gregtech.api.recipes.ui.AssemblyLineUI;
+import gregtech.api.recipes.ui.RecipeMapUIFunction;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -22,8 +22,9 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     /** Contains the recipes for each research key */
     private final Map<String, Collection<Recipe>> researchEntries = new Object2ObjectOpenHashMap<>();
 
-    public RecipeMapAssemblyLine(@NotNull String unlocalizedName, @NotNull R defaultRecipeBuilder) {
-        super(unlocalizedName, defaultRecipeBuilder, AssemblyLineUI::new, 16, 1, 4, 0);
+    public RecipeMapAssemblyLine(@NotNull String unlocalizedName, @NotNull R defaultRecipeBuilder,
+                                 @NotNull RecipeMapUIFunction recipeMapUI) {
+        super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 16, 1, 4, 0);
     }
 
     @Override

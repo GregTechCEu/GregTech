@@ -23,10 +23,13 @@ import gregtech.api.recipes.machines.RecipeMapFormingPress;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.recipes.machines.RecipeMapResearchStation;
 import gregtech.api.recipes.machines.RecipeMapScanner;
-import gregtech.api.recipes.ui.CokeOvenUI;
-import gregtech.api.recipes.ui.CrackerUnitUI;
-import gregtech.api.recipes.ui.DistillationTowerUI;
 import gregtech.api.recipes.ui.RecipeMapUI;
+import gregtech.api.recipes.ui.impl.AssemblyLineUI;
+import gregtech.api.recipes.ui.impl.CokeOvenUI;
+import gregtech.api.recipes.ui.impl.CrackerUnitUI;
+import gregtech.api.recipes.ui.impl.DistillationTowerUI;
+import gregtech.api.recipes.ui.impl.FormingPressUI;
+import gregtech.api.recipes.ui.impl.ResearchStationUI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.ItemMaterialInfo;
@@ -193,7 +196,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<AssemblyLineRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>(
-            "assembly_line", new AssemblyLineRecipeBuilder())
+            "assembly_line", new AssemblyLineRecipeBuilder(), AssemblyLineUI::new)
                     .setSound(GTSoundEvents.ASSEMBLER)
                     .onRecipeBuild(AssemblyLineManager::createDefaultResearchRecipe);
 
@@ -918,7 +921,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FORMING_PRESS_RECIPES = new RecipeMapFormingPress(
-            "forming_press", new SimpleRecipeBuilder())
+            "forming_press", new SimpleRecipeBuilder(), FormingPressUI::new)
                     .setSound(GTSoundEvents.COMPRESSOR);
 
     /**
@@ -1342,7 +1345,7 @@ public final class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<ComputationRecipeBuilder> RESEARCH_STATION_RECIPES = new RecipeMapResearchStation<>(
-            "research_station", new ComputationRecipeBuilder())
+            "research_station", new ComputationRecipeBuilder(), ResearchStationUI::new)
                     .setSound(GTValues.FOOLS.get() ? GTSoundEvents.SCIENCE : GTSoundEvents.COMPUTATION);
 
     @ZenProperty

@@ -20,6 +20,7 @@ import gregtech.api.recipes.map.MapItemStackNBTIngredient;
 import gregtech.api.recipes.map.MapOreDictIngredient;
 import gregtech.api.recipes.map.MapOreDictNBTIngredient;
 import gregtech.api.recipes.ui.RecipeMapUI;
+import gregtech.api.recipes.ui.RecipeMapUIFunction;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
@@ -212,8 +213,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param maxFluidOutputs      the maximum fluid outputs
      */
     public RecipeMap(@NotNull String unlocalizedName, @NotNull R defaultRecipeBuilder,
-                     @NotNull Function<@NotNull RecipeMap<?>, @NotNull RecipeMapUI<?>> recipeMapUI, int maxInputs,
-                     int maxOutputs, int maxFluidInputs, int maxFluidOutputs) {
+                     @NotNull RecipeMapUIFunction recipeMapUI, int maxInputs, int maxOutputs, int maxFluidInputs,
+                     int maxFluidOutputs) {
         this.unlocalizedName = unlocalizedName;
         this.recipeMapUI = recipeMapUI.apply(this);
 

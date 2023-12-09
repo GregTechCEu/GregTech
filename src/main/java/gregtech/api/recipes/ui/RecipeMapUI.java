@@ -19,24 +19,26 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.function.DoubleSupplier;
 
 @ApiStatus.Experimental
 public class RecipeMapUI<R extends RecipeMap<?>> {
 
-    protected final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
+    private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
 
     private final R recipeMap;
     private final boolean modifyItemInputs;
     private final boolean modifyItemOutputs;
     private final boolean modifyFluidInputs;
     private final boolean modifyFluidOutputs;
+
     private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
     private ProgressWidget.MoveType moveType = ProgressWidget.MoveType.HORIZONTAL;
+    private @Nullable TextureArea specialTexture;
+    private int @Nullable [] specialTexturePosition;
 
-    protected @Nullable TextureArea specialTexture;
-    protected int @Nullable [] specialTexturePosition;
     private boolean isJEIVisible = true;
 
     /**
@@ -348,6 +350,20 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     public void setSpecialTexture(@NotNull TextureArea specialTexture, int @NotNull [] position) {
         this.specialTexture = specialTexture;
         this.specialTexturePosition = position;
+    }
+
+    /**
+     * @return the special texture
+     */
+    public @Nullable TextureArea specialTexture() {
+        return this.specialTexture;
+    }
+
+    /**
+     * @return the special texture's position
+     */
+    public int @Nullable @UnmodifiableView [] specialTexturePosition() {
+        return this.specialTexturePosition;
     }
 
     /**

@@ -4,7 +4,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
-import gregtech.api.recipes.ui.RecipeMapUI;
+import gregtech.api.recipes.ui.RecipeMapUIFunction;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -16,13 +16,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
 
 @ApiStatus.Internal
 public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
 
     public RecipeMapFluidCanner(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
-                                @NotNull Function<@NotNull RecipeMap<?>, @NotNull RecipeMapUI<?>> recipeMapUI) {
+                                @NotNull RecipeMapUIFunction recipeMapUI) {
         super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 2, 2, 1, 1);
     }
 

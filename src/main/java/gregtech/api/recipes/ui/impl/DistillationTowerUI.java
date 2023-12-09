@@ -1,4 +1,4 @@
-package gregtech.api.recipes.ui;
+package gregtech.api.recipes.ui.impl;
 
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -8,6 +8,7 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ui.RecipeMapUI;
 
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -55,7 +56,7 @@ public class DistillationTowerUI<R extends RecipeMap<?>> extends RecipeMapUI<R> 
                 ProgressWidget.MoveType.HORIZONTAL));
         addInventorySlotGroup(builder, importItems, importFluids, false, 9);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, 9);
-        if (this.specialTexture != null && this.specialTexturePosition != null) {
+        if (specialTexture() != null && specialTexturePosition() != null) {
             addSpecialTexture(builder);
         }
         return builder;

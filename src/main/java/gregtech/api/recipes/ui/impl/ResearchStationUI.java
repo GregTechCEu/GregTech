@@ -1,4 +1,4 @@
-package gregtech.api.recipes.ui;
+package gregtech.api.recipes.ui.impl;
 
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -7,6 +7,7 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.util.GTUtility;
 
 import net.minecraftforge.items.IItemHandlerModifiable;

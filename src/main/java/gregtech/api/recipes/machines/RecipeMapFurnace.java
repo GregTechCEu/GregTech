@@ -4,7 +4,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.ui.RecipeMapUI;
+import gregtech.api.recipes.ui.RecipeMapUIFunction;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
 
 @ApiStatus.Internal
 public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
@@ -24,7 +23,7 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
     public static final int RECIPE_DURATION = 128;
 
     public RecipeMapFurnace(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
-                            @NotNull Function<@NotNull RecipeMap<?>, @NotNull RecipeMapUI<?>> recipeMapUI) {
+                            @NotNull RecipeMapUIFunction recipeMapUI) {
         super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 1, 1, 0, 0);
     }
 

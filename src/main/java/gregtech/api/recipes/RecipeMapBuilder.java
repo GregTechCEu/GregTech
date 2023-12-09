@@ -3,13 +3,12 @@ package gregtech.api.recipes;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.ui.RecipeMapUI;
+import gregtech.api.recipes.ui.RecipeMapUIFunction;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 import static gregtech.api.recipes.ui.RecipeMapUI.computeOverlayKey;
 
@@ -35,7 +34,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private @Nullable TextureArea specialTexture;
     private int @Nullable [] specialTextureLocation;
 
-    private Function<@NotNull RecipeMap<?>, @NotNull RecipeMapUI<?>> recipeMapUIFunction = this::buildUI;
+    private RecipeMapUIFunction recipeMapUIFunction = this::buildUI;
 
     /**
      * @param unlocalizedName      the name of the recipemap
@@ -196,7 +195,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
      * @param recipeMapUIFunction the custom function for creating the RecipeMap's ui
      * @return this
      */
-    public @NotNull RecipeMapBuilder<B> ui(@NotNull Function<@NotNull RecipeMap<?>, @NotNull RecipeMapUI<?>> recipeMapUIFunction) {
+    public @NotNull RecipeMapBuilder<B> ui(@NotNull RecipeMapUIFunction recipeMapUIFunction) {
         this.recipeMapUIFunction = recipeMapUIFunction;
         return this;
     }
