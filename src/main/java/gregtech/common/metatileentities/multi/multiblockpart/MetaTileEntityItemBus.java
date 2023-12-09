@@ -43,6 +43,7 @@ import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
@@ -325,8 +326,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
-                        .childIf(!hasGhostCircuit, GTGuiTextures.SLOT.asWidget()
-                                .overlay(GTGuiTextures.BUTTON_X)
+                        .childIf(!hasGhostCircuit, new Widget<>()
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.BUTTON_X)
                                 .tooltip(t -> t.addLine(
                                         IKey.lang("gregtech.gui.configurator_slot.unavailable.tooltip")))));
     }
