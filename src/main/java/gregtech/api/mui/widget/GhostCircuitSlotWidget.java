@@ -123,7 +123,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
                 .child(circuitPreview.asIcon().size(16).asWidget()
                         .size(18)
                         .top(19).alignX(0.5f)
-                        .background(GTGuiTextures.SLOT))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
                 .child(new Grid()
                         .left(7).right(7).top(41).height(4 * 18)
                         .matrix(options)

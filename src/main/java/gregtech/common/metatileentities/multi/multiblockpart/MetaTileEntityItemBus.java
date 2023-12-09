@@ -39,9 +39,14 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
@@ -264,7 +269,10 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         int rowSize = (int) Math.sqrt(getInventorySize());
         guiSyncManager.registerSlotGroup("item_inv", rowSize);
 
-        int backgroundWidth = rowSize > 6 ? 176 + (rowSize - 6) * 18 : 176;
+        int backgroundWidth = Math.max(
+                9 * 18 + 18 + 14 + 5,   // Player Inv width
+                rowSize * 18 + 14); // Bus Inv width
+        int backgroundHeight = 18 + 18 * rowSize + 94;
 
         List<List<IWidget>> widgets = new ArrayList<>();
         for (int i = 0; i < rowSize; i++) {
@@ -278,19 +286,49 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             }
         }
 
-        return GTGuis.createPanel(this, backgroundWidth, 18 + 18 * rowSize + 94)
+        BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
+        guiSyncManager.syncValue("working_state", workingStateValue);
+        BooleanSyncValue collapseStateValue = new BooleanSyncValue(() -> autoCollapse, val -> autoCollapse = val);
+        guiSyncManager.syncValue("collapse_state", collapseStateValue);
+
+        boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
+
+        return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .bindPlayerInventory()
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child(new Grid()
                         .top(18).height(rowSize * 18)
                         .minElementMargin(0, 0)
                         .minColWidth(18).minRowHeight(18)
                         .alignX(0.5f)
                         .matrix(widgets))
-                .childIf(hasGhostCircuitInventory() && this.circuitInventory != null, new GhostCircuitSlotWidget()
-                        .slot(SyncHandlers.itemSlot(circuitInventory, 0))
-                        .left(backgroundWidth - 18 - 7).bottom(18 * 4 + 22)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
+                .child(new Column()
+                        .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
+                        .width(18).height(18 * 4 + 5)
+                        .child(GTGuiTextures.GREGTECH_LOGO.asWidget().size(17).top(18 * 3 + 5))
+                        .child(new ToggleButton()
+                                .top(18 * 2)
+                                .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
+                                        workingStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                                .tooltipBuilder(t -> t.addLine(workingStateValue.getBoolValue() ?
+                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
+                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))))
+                        .child(new ToggleButton()
+                                .top(18)
+                                .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,
+                                        collapseStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_AUTO_COLLAPSE)
+                                .tooltipBuilder(t -> t.addLine(collapseStateValue.getBoolValue() ?
+                                        IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
+                                        IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled"))))
+                        .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
+                                .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
+                        .childIf(!hasGhostCircuit, GTGuiTextures.SLOT.asWidget()
+                                .overlay(GTGuiTextures.BUTTON_X)
+                                .tooltip(t -> t.addLine(
+                                        IKey.lang("gregtech.gui.configurator_slot.unavailable.tooltip")))));
     }
 
     @Override
