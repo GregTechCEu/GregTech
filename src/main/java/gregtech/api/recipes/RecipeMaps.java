@@ -2,6 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
@@ -25,6 +26,7 @@ import gregtech.api.recipes.machines.RecipeMapScanner;
 import gregtech.api.recipes.ui.CokeOvenUI;
 import gregtech.api.recipes.ui.CrackerUnitUI;
 import gregtech.api.recipes.ui.DistillationTowerUI;
+import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.ItemMaterialInfo;
@@ -56,7 +58,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.ALLOY_SMELTER_RECIPES.recipeBuilder()
      *         .input(OrePrefix.ingot, Materials.Tin)
@@ -82,7 +84,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.ARC_FURNACE_RECIPES.recipeBuilder()
      *         .input(OrePrefix.ingot, Materials.Iron)
@@ -128,7 +130,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
      *         .circuitMeta(2)
@@ -172,7 +174,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
      *         .input(OrePrefix.stickLong, Materials.SamariumMagnetic)
@@ -197,7 +199,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.AUTOCLAVE_RECIPES.recipeBuilder()
      *         .inputs(OreDictUnifier.get(OrePrefix.dust, Materials.Carbon, 16))
@@ -223,7 +225,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.BENDER_RECIPES.recipeBuilder()
      *         .input(OrePrefix.plate, Materials.Tin, 12)
@@ -249,7 +251,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.BLAST_RECIPES.recipeBuilder()
      *         .inputs(OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
@@ -282,7 +284,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.BREWING_RECIPES.recipeBuilder()
      *         .input(MetaItems.BIO_CHAFF)
@@ -308,7 +310,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.CANNER_RECIPES.recipeBuilder()
      *         .input(MetaItems.BATTERY_HULL_LV)
@@ -325,12 +327,22 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> CANNER_RECIPES = new RecipeMapFluidCanner("canner",
-            new SimpleRecipeBuilder())
+            new SimpleRecipeBuilder(), recipeMap -> {
+
+        RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+        ui.setItemSlotOverlay(GuiTextures.CANNER_OVERLAY, false, false);
+        ui.setItemSlotOverlay(GuiTextures.CANISTER_OVERLAY, false, true);
+        ui.setItemSlotOverlay(GuiTextures.CANISTER_OVERLAY, true);
+        ui.setFluidSlotOverlay(GuiTextures.DARK_CANISTER_OVERLAY, false);
+        ui.setFluidSlotOverlay(GuiTextures.DARK_CANISTER_OVERLAY, true);
+        ui.setProgressBar(GuiTextures.PROGRESS_BAR_CANNER, ProgressWidget.MoveType.HORIZONTAL);
+        return ui;
+    })
                     .setSound(GTSoundEvents.BATH);
 
     /**
      * Examples:
-     * 
+     *
      * <pre>
      * RecipeMap.CENTRIFUGE_RECIPES.recipeBuilder()
      *         .fluidInputs(Materials.ImpureNaquadriaSolution.getFluid(2000))
@@ -363,7 +375,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.CHEMICAL_BATH_RECIPES.recipeBuilder()
      *         .input(OrePrefix.gem, Materials.EnderEye)
@@ -388,7 +400,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      *      RecipeMap.CHEMICAL_RECIPES.recipeBuilder()
      * 				.circuitMeta(1))
@@ -442,7 +454,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
      *         .input(MetaItems.BASIC_CIRCUIT_BOARD)
@@ -495,7 +507,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.COKE_OVEN_RECIPES.recipeBuilder()
      *         .input(OrePrefix.log, Materials.Wood)
@@ -519,7 +531,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.COMPRESSOR_RECIPES.recipeBuilder()
      *         .input(OrePrefix.dust, Materials.Fireclay)
@@ -544,7 +556,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      *      RecipeMap.CRACKING_RECIPES.recipeBuilder()
      *              .circuitMeta(1))
@@ -568,7 +580,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.CUTTER_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(Blocks.LOG, 1, GTValues.W))
@@ -633,7 +645,7 @@ public final class RecipeMaps {
 
     /**
      * Examples:
-     * 
+     *
      * <pre>
      * RecipeMap.DISTILLATION_RECIPES.recipeBuilder()
      *         .fluidInputs(Materials.CoalTar.getFluid(1000))
@@ -669,7 +681,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.DISTILLERY_RECIPES.recipeBuilder()
      *         .circuitMeta(1)
@@ -697,7 +709,7 @@ public final class RecipeMaps {
 
     /**
      * Examples:
-     * 
+     *
      * <pre>
      * RecipeMap.ELECTROLYZER_RECIPES.recipeBuilder()
      *         .fluidInputs(Materials.SaltWater.getFluid(1000))
@@ -725,7 +737,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
      *         .input(OrePrefix.dustPure, Materials.Aluminium)
@@ -750,7 +762,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.EXTRACTOR_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(MetaBlocks.RUBBER_LEAVES, 16))
@@ -775,7 +787,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.EXTRUDER_RECIPES.recipeBuilder()
      *         .input(OrePrefix.ingot, Materials.BorosilicateGlass)
@@ -798,7 +810,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.FERMENTING_RECIPES.recipeBuilder()
      *         .fluidInputs(Materials.Biomass.getFluid(100))
@@ -823,7 +835,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.FLUID_HEATER_RECIPES.recipeBuilder()
      *         .circuitMeta(1)
@@ -848,7 +860,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
      *         .notConsumable(MetaItems.SHAPE_MOLD_CYLINDER)
@@ -871,7 +883,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.FORGE_HAMMER_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(Blocks.STONE))
@@ -894,7 +906,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.FORMING_PRESS_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(Blocks.STONE))
@@ -912,7 +924,7 @@ public final class RecipeMaps {
     /**
      *
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.FURNACE_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(Blocks.SAND))
@@ -931,12 +943,17 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = new RecipeMapFurnace("electric_furnace",
-            new SimpleRecipeBuilder())
+            new SimpleRecipeBuilder(), recipeMap -> {
+        RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+        ui.setItemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false);
+        ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
+        return ui;
+    })
                     .setSound(GTSoundEvents.FURNACE);
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.FUSION_RECIPES.recipeBuilder()
      *         .fluidInputs(Materials.Lithium.getFluid(16), Materials.Tungsten.getFluid(16))
@@ -978,7 +995,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.IMPLOSION_RECIPES.recipeBuilder()
      *         .input(OreDictUnifier.get(OrePrefix.gem, Materials.Coal, 64))
@@ -1025,7 +1042,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.LARGE_CHEMICAL_RECIPES.recipeBuilder()
      *         .fluidInputs(Materials.NitrogenDioxide.getFluid(4000))
@@ -1062,7 +1079,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.LASER_ENGRAVER_RECIPES.recipeBuilder()
      *         .input(MetaItems.SILICON_WAFER)
@@ -1084,7 +1101,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.LATHE_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W))
@@ -1109,7 +1126,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.MACERATOR_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(Items.CHICKEN))
@@ -1152,7 +1169,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * 		RecipeMap.MIXER_RECIPES.recipeBuilder()
      * 				.input(OrePrefix.dust, Materials.Redstone, 5)
@@ -1178,7 +1195,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * 		RecipeMap.ORE_WASHER_RECIPES.recipeBuilder()
      * 				.input(OrePrefix.crushed, Materials.Aluminum)
@@ -1205,7 +1222,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * 		RecipeMap.PACKER_RECIPES.recipeBuilder()
      * 				.inputs(new ItemStack(Items.WHEAT, 9))
@@ -1231,7 +1248,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.POLARIZER_RECIPES.recipeBuilder()
      *         .inputs(OreDictUnifier.get(OrePrefix.plate, Materials.Iron))
@@ -1252,7 +1269,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      *      RecipeMap.PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder()
      *     			.input(OrePrefix.ingot, Materials.Iron)
@@ -1280,7 +1297,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.PYROLYSE_RECIPES.recipeBuilder()
      *         .input(OrePrefix.log, Materials.Wood, 16)
@@ -1341,7 +1358,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMaps.SCANNER_RECIPES.recipeBuilder()
      *         .inputNBT(MetaItems.TOOL_DATA_STICK, NBTMatcher.ANY, NBTCondition.ANY)
@@ -1354,12 +1371,18 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SCANNER_RECIPES = new RecipeMapScanner("scanner",
-            new SimpleRecipeBuilder())
+            new SimpleRecipeBuilder(), recipeMap -> {
+        RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+        ui.setItemSlotOverlay(GuiTextures.DATA_ORB_OVERLAY, false, false);
+        ui.setItemSlotOverlay(GuiTextures.SCANNER_OVERLAY, false, true);
+        ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
+        return ui;
+    })
                     .setSound(GTSoundEvents.ELECTROLYZER);
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.SIFTER_RECIPES.recipeBuilder()
      *         .inputs(new ItemStack(Blocks.SAND))
@@ -1384,7 +1407,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
      *         .input(OrePrefix.crushed, Materials.Aluminum)
@@ -1412,7 +1435,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.VACUUM_RECIPES.recipeBuilder()
      *         .fluidInputs(Air.getFluid(4000))
@@ -1435,7 +1458,7 @@ public final class RecipeMaps {
 
     /**
      * Example:
-     * 
+     *
      * <pre>
      * RecipeMap.WIREMILL_RECIPES.recipeBuilder()
      *         .input(OrePrefix.ingot, Materials.Iron)

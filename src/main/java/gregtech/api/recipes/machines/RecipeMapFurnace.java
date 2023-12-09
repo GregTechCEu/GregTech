@@ -1,7 +1,5 @@
 package gregtech.api.recipes.machines;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -17,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Function;
 
 @ApiStatus.Internal
 public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
@@ -24,15 +23,9 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
     public static final int RECIPE_EUT = 4;
     public static final int RECIPE_DURATION = 128;
 
-    public RecipeMapFurnace(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder) {
-        super(unlocalizedName, defaultRecipeBuilder, RecipeMapFurnace::createUI, 1, 1, 0, 0);
-    }
-
-    private static @NotNull RecipeMapUI<?> createUI(@NotNull RecipeMap<?> recipeMap) {
-        RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
-        ui.setItemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false);
-        ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
-        return ui;
+    public RecipeMapFurnace(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
+                            @NotNull Function<@NotNull RecipeMap<?>, @NotNull RecipeMapUI<?>> recipeMapUI) {
+        super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 1, 1, 0, 0);
     }
 
     @Override

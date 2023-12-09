@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.DoubleSupplier;
 
+@ApiStatus.Experimental
 public class RecipeMapUI<R extends RecipeMap<?>> {
 
     protected final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
@@ -31,10 +32,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     private final boolean modifyItemOutputs;
     private final boolean modifyFluidInputs;
     private final boolean modifyFluidOutputs;
-    protected TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
+    private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
+    private ProgressWidget.MoveType moveType = ProgressWidget.MoveType.HORIZONTAL;
+
     protected @Nullable TextureArea specialTexture;
     protected int @Nullable [] specialTexturePosition;
-    private ProgressWidget.MoveType moveType = ProgressWidget.MoveType.HORIZONTAL;
     private boolean isJEIVisible = true;
 
     /**

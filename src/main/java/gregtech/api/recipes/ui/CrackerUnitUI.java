@@ -51,7 +51,7 @@ public class CrackerUnitUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
         Pair<DoubleSupplier, DoubleSupplier> suppliers = GTUtility.createPairedSupplier(200, 41, 0.5);
         builder.widget(new RecipeProgressWidget(suppliers.getLeft(), 42, 24 + yOffset + 18, 21, 19,
                 GuiTextures.PROGRESS_BAR_CRACKING_INPUT, ProgressWidget.MoveType.VERTICAL, recipeMap()));
-        builder.widget(new RecipeProgressWidget(suppliers.getRight(), 78, 23 + yOffset, 20, 20, progressBarTexture,
+        builder.widget(new RecipeProgressWidget(suppliers.getRight(), 78, 23 + yOffset, 20, 20, progressBarTexture(),
                 progressBarMoveType(), recipeMap()));
         return builder;
     }
