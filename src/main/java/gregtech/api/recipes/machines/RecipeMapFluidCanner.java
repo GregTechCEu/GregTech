@@ -1,24 +1,40 @@
 package gregtech.api.recipes.machines;
 
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.ui.RecipeMapUI;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@ApiStatus.Internal
 public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
 
-    public RecipeMapFluidCanner(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs,
-                                int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapFluidCanner(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder) {
+        super(unlocalizedName, defaultRecipeBuilder, RecipeMapFluidCanner::createUI, 2, 2, 1, 1);
+    }
+
+    private static @NotNull RecipeMapUI<?> createUI(@NotNull RecipeMap<?> recipeMap) {
+        RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+        ui.setItemSlotOverlay(GuiTextures.CANNER_OVERLAY, false, false);
+        ui.setItemSlotOverlay(GuiTextures.CANISTER_OVERLAY, false, true);
+        ui.setItemSlotOverlay(GuiTextures.CANISTER_OVERLAY, true);
+        ui.setFluidSlotOverlay(GuiTextures.DARK_CANISTER_OVERLAY, false);
+        ui.setFluidSlotOverlay(GuiTextures.DARK_CANISTER_OVERLAY, true);
+        ui.setProgressBar(GuiTextures.PROGRESS_BAR_CANNER, ProgressWidget.MoveType.HORIZONTAL);
+        return ui;
     }
 
     @Override

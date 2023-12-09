@@ -1,26 +1,38 @@
 package gregtech.api.recipes.machines;
 
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@ApiStatus.Internal
 public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
 
     public static final int RECIPE_EUT = 4;
     public static final int RECIPE_DURATION = 128;
 
-    public RecipeMapFurnace(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs,
-                            int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapFurnace(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder) {
+        super(unlocalizedName, defaultRecipeBuilder, RecipeMapFurnace::createUI, 1, 1, 0, 0);
+    }
+
+    private static @NotNull RecipeMapUI<?> createUI(@NotNull RecipeMap<?> recipeMap) {
+        RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+        ui.setItemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false);
+        ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
+        return ui;
     }
 
     @Override

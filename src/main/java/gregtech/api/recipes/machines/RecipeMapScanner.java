@@ -1,25 +1,37 @@
 package gregtech.api.recipes.machines;
 
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.ui.RecipeMapUI;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ApiStatus.Internal
 public class RecipeMapScanner extends RecipeMap<SimpleRecipeBuilder> implements IScannerRecipeMap {
 
     private static final List<ICustomScannerLogic> CUSTOM_SCANNER_LOGICS = new ArrayList<>();
 
-    public RecipeMapScanner(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs,
-                            int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapScanner(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder) {
+        super(unlocalizedName, defaultRecipeBuilder, RecipeMapScanner::createUI, 2, 1, 1, 0);
+    }
+
+    private static @NotNull RecipeMapUI<?> createUI(@NotNull RecipeMap<?> recipeMap) {
+        RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+        ui.setItemSlotOverlay(GuiTextures.DATA_ORB_OVERLAY, false, false);
+        ui.setItemSlotOverlay(GuiTextures.SCANNER_OVERLAY, false, true);
+        ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
+        return ui;
     }
 
     @Override

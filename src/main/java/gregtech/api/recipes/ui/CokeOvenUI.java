@@ -1,22 +1,24 @@
-package gregtech.api.recipes.machines;
+package gregtech.api.recipes.ui;
 
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class RecipeMapCokeOven<R extends RecipeBuilder<R>> extends RecipeMap<R> {
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
-    public RecipeMapCokeOven(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs,
-                             boolean modifyItemOutputs,
-                             int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs,
-                             boolean modifyFluidOutputs, R defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs,
-                modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipe, isHidden);
+@ApiStatus.Internal
+public class CokeOvenUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
+
+    /**
+     * @param recipeMap the recipemap corresponding to this ui
+     */
+    public CokeOvenUI(@NotNull R recipeMap) {
+        super(recipeMap, false, false, false, false);
     }
 
     @Override
