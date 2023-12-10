@@ -1,5 +1,19 @@
 package gregtech.api.metatileentity;
 
+import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+
+import com.cleanroommc.modularui.widgets.ToggleButton;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
@@ -21,6 +35,8 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -478,6 +494,104 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         clearInventory(itemBuffer, chargerInventory);
     }
 
+    @Override
+    public boolean usesMui2() {
+        RecipeMap<?> recipeMap = getRecipeMap();
+        if (recipeMap == null) return false;
+        return recipeMap.getRecipeMapUI().usesMui2();
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
+                                boolean isClient) {
+        RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
+        int yOffset = 0;
+        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
+                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
+            yOffset = FONT_HEIGHT;
+        }
+
+        ModularPanel panel = GTGuis.createPanel(this, 176, 166 + yOffset);
+        Widget<?> widget = workableRecipeMap.getRecipeMapUI().buildWidget(workable::getProgressPercent, importItems,
+                        exportItems, importFluids, exportFluids, yOffset);
+
+        panel.child(widget)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(chargerInventory, 0))
+                        // todo block shift-clicking into this slot
+                        .pos(79, 62 + yOffset)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
+                        .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
+                                GTValues.VNF[getTier()]))))
+                .child(new Widget<>()
+                        .size(18, 18)
+                        .pos(79, 42 + yOffset)
+                        .background(GTGuiTextures.INDICATOR_NO_ENERGY)
+                        // todo this isnt synced, and flicker appears on ui open even when it has enough energy
+                        .setEnabledIf($ -> workable.isHasNotEnoughEnergy()))
+                .bindPlayerInventory();
+
+        int leftButtonStartX = 7;
+
+        if (exportItems.getSlots() > 0) {
+            BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val);
+            guiSyncManager.syncValue("item_output", outputValue);
+
+            ToggleButton outputButton = new ToggleButton();
+            outputButton.value(
+                    new BoolValue.Dynamic(outputValue::getBoolValue, val -> {
+                        outputValue.setBoolValue(val);
+                        outputButton.markTooltipDirty();
+                    }))
+                    .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                    .tooltipBuilder(t -> t.addLine(outputValue.getBoolValue() ?
+                            IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
+                            IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
+
+            panel.child(outputButton.pos(leftButtonStartX, 62 + yOffset));
+            leftButtonStartX += 18;
+        }
+
+        if (exportFluids.getTanks() > 0) {
+            BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val);
+            guiSyncManager.syncValue("fluid_output", outputValue);
+
+            ToggleButton outputButton = new ToggleButton();
+            outputButton.value(
+                    new BoolValue.Dynamic(outputValue::getBoolValue, val -> {
+                        outputValue.setBoolValue(val);
+                        outputButton.markTooltipDirty();
+                    }))
+                    .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
+                    .tooltipBuilder(t -> t.addLine(outputValue.getBoolValue() ?
+                            IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled") :
+                            IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled")));
+
+            panel.child(outputButton.pos(leftButtonStartX, 62 + yOffset));
+        }
+
+        if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
+            panel.child(new Widget<>()
+                    .size(17)
+                    .pos(152, 63 + yOffset)
+                    .background(GTGuiTextures.getLogo()));
+
+            if (hasGhostCircuitInventory() && circuitInventory != null) {
+                panel.child(new gregtech.api.mui.widget.GhostCircuitSlotWidget()
+                        .pos(124, 62 + yOffset)
+                        .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY));
+            }
+        }
+        return panel;
+    }
+
+    @Override
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
+    }
+
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
         RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
@@ -555,11 +669,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
     }
 
     @Override

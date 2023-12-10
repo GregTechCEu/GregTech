@@ -1,5 +1,17 @@
 package gregtech.api.recipes.ui;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.drawable.UITexture;
+
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.ParentWidget;
+
+import com.cleanroommc.modularui.widget.Widget;
+
+import com.cleanroommc.modularui.widgets.FluidSlot;
+
+import com.cleanroommc.modularui.widgets.ItemSlot;
+
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -8,6 +20,8 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 
@@ -26,8 +40,6 @@ import java.util.function.DoubleSupplier;
 @ApiStatus.Experimental
 public class RecipeMapUI<R extends RecipeMap<?>> {
 
-    private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
-
     private final R recipeMap;
     private final boolean modifyItemInputs;
     private final boolean modifyItemOutputs;
@@ -36,12 +48,26 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     private final boolean isGenerator;
 
+    private int @Nullable [] specialTexturePosition;
+    private boolean isJEIVisible = true;
+
+    /*                   MUI 1                   */
+
+    private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
+
     private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
     private ProgressWidget.MoveType moveType = ProgressWidget.MoveType.HORIZONTAL;
     private @Nullable TextureArea specialTexture;
-    private int @Nullable [] specialTexturePosition;
 
-    private boolean isJEIVisible = true;
+    /*                   MUI 2                   */
+
+    private final Byte2ObjectMap<UITexture> slotTextureOverlays = new Byte2ObjectOpenHashMap<>();
+
+    private boolean usesMui2 = false;
+    private UITexture progressTexture = GTGuiTextures.PROGRESS_BAR_ARROW;
+    private com.cleanroommc.modularui.widgets.ProgressWidget.Direction progressDirection =
+            com.cleanroommc.modularui.widgets.ProgressWidget.Direction.RIGHT;
+    private @Nullable UITexture specialTextureNew;
 
     /**
      * @param recipeMap          the recipemap corresponding to this ui
@@ -106,6 +132,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return new int[] { itemSlotsToLeft, itemSlotsToDown };
     }
 
+    /*                   MUI 1                   */
+
     /**
      * Create a JEI UI Template
      *
@@ -116,6 +144,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param yOffset      the y offset for the gui
      * @return the populated builder
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
                                                  FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
@@ -140,6 +170,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param yOffset          the y offset for the gui
      * @return the populated builder
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
                                               IItemHandlerModifiable exportItems, FluidTankList importFluids,
                                               FluidTankList exportFluids, int yOffset) {
@@ -166,6 +198,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param yOffset          the y offset for the gui
      * @return the populated builder
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public ModularUI.Builder createUITemplateNoOutputs(DoubleSupplier progressSupplier,
                                                        IItemHandlerModifiable importItems,
                                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
@@ -188,6 +222,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isOutputs    if slots should be output slots
      * @param yOffset      the y offset for the gui
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     protected void addInventorySlotGroup(@NotNull ModularUI.Builder builder,
                                          @NotNull IItemHandlerModifiable itemHandler,
                                          @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
@@ -249,6 +285,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param isFluid      if the slot is a fluid slot
      * @param isOutputs    if slots should be output slots
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
                            FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
         if (!isFluid) {
@@ -262,23 +300,10 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     }
 
     /**
-     * @param isOutput if the slot is an output slot
-     * @param isFluid  if the slot is a fluid slot
-     * @param isLast   if the slot is the last slot of its type
-     * @return the overlays for a slot
-     */
-    protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
-        TextureArea base = isFluid ? GuiTextures.FLUID_SLOT : GuiTextures.SLOT;
-        byte overlayKey = computeOverlayKey(isOutput, isFluid, isLast);
-        if (slotOverlays.containsKey(overlayKey)) {
-            return new TextureArea[] { base, slotOverlays.get(overlayKey) };
-        }
-        return new TextureArea[] { base };
-    }
-
-    /**
      * @return the height used to determine size of background texture in JEI
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public int getPropertyHeightShift() {
         int maxPropertyCount = 0;
         if (shouldShiftWidgets()) {
@@ -295,14 +320,35 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return widgets should be shifted
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     private boolean shouldShiftWidgets() {
         return recipeMap.getMaxInputs() + recipeMap.getMaxOutputs() >= 6 ||
                 recipeMap.getMaxFluidInputs() + recipeMap.getMaxFluidOutputs() >= 6;
     }
 
     /**
+     * @param isOutput if the slot is an output slot
+     * @param isFluid  if the slot is a fluid slot
+     * @param isLast   if the slot is the last slot of its type
+     * @return the overlays for a slot
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
+        TextureArea base = isFluid ? GuiTextures.FLUID_SLOT : GuiTextures.SLOT;
+        byte overlayKey = computeOverlayKey(isOutput, isFluid, isLast);
+        if (slotOverlays.containsKey(overlayKey)) {
+            return new TextureArea[] { base, slotOverlays.get(overlayKey) };
+        }
+        return new TextureArea[] { base };
+    }
+
+    /**
      * @return the progress bar's move type
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull ProgressWidget.MoveType progressBarMoveType() {
         return moveType;
     }
@@ -310,6 +356,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @param moveType the new progress bar move type
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setProgressBarMoveType(@NotNull ProgressWidget.MoveType moveType) {
         this.moveType = moveType;
     }
@@ -317,6 +365,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return the texture of the progress bar
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull TextureArea progressBarTexture() {
         return progressBarTexture;
     }
@@ -324,6 +374,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @param progressBarTexture the new progress bar texture
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setProgressBarTexture(@NotNull TextureArea progressBarTexture) {
         this.progressBarTexture = progressBarTexture;
     }
@@ -332,6 +384,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param progressBarTexture the new progress bar texture
      * @param moveType           the new progress bar move type
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setProgressBar(@NotNull TextureArea progressBarTexture, @NotNull ProgressWidget.MoveType moveType) {
         this.progressBarTexture = progressBarTexture;
         this.moveType = moveType;
@@ -344,6 +398,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param width          the width of the texture
      * @param height         the height of the texture
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setSpecialTexture(@NotNull TextureArea specialTexture, int x, int y, int width, int height) {
         setSpecialTexture(specialTexture, new int[] { x, y, width, height });
     }
@@ -352,6 +408,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param specialTexture the special texture to set
      * @param position       the position of the texture: [x, y, width, height]
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setSpecialTexture(@NotNull TextureArea specialTexture, int @NotNull [] position) {
         this.specialTexture = specialTexture;
         this.specialTexturePosition = position;
@@ -360,6 +418,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return the special texture
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @Nullable TextureArea specialTexture() {
         return this.specialTexture;
     }
@@ -377,6 +437,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param builder the builder to add to
      * @return the updated builder
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull ModularUI.Builder addSpecialTexture(@NotNull ModularUI.Builder builder) {
         if (specialTexturePosition != null) {
             builder.image(specialTexturePosition[0], specialTexturePosition[1],
@@ -384,6 +446,214 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                     specialTexturePosition[3], specialTexture);
         }
         return builder;
+    }
+
+    /**
+     * @return if this UI represents an energy generating recipemap
+     */
+    public boolean isGenerator() {
+        return isGenerator;
+    }
+
+    /**
+     * @param texture  the texture to set
+     * @param isOutput if the slot is an output slot
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public void setItemSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
+        this.slotOverlays.put(computeOverlayKey(isOutput, false, false), texture);
+        this.slotOverlays.put(computeOverlayKey(isOutput, false, true), texture);
+    }
+
+    /**
+     * @param texture    the texture to set
+     * @param isOutput   if the slot is an output slot
+     * @param isLastSlot if the slot is the last slot
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public void setItemSlotOverlay(@NotNull TextureArea texture, boolean isOutput, boolean isLastSlot) {
+        this.slotOverlays.put(computeOverlayKey(isOutput, false, isLastSlot), texture);
+    }
+
+    /**
+     * @param texture  the texture to set
+     * @param isOutput if the slot is an output slot
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public void setFluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
+        this.slotOverlays.put(computeOverlayKey(isOutput, true, false), texture);
+        this.slotOverlays.put(computeOverlayKey(isOutput, true, true), texture);
+    }
+
+    /**
+     * @param texture    the texture to set
+     * @param isOutput   if the slot is an output slot
+     * @param isLastSlot if the slot is the last slot
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public void setFluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput, boolean isLastSlot) {
+        this.slotOverlays.put(computeOverlayKey(isOutput, true, isLastSlot), texture);
+    }
+
+    /**
+     * @param key     the key to store the slot's texture with
+     * @param texture the texture to store
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @ApiStatus.Internal
+    public void setSlotOverlay(byte key, @NotNull TextureArea texture) {
+        this.slotOverlays.put(key, texture);
+    }
+
+    /*                   MUI 2                   */
+
+    public ParentWidget<?> buildWidget(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
+                                       IItemHandlerModifiable exportItems, FluidTankList importFluids,
+                                       FluidTankList exportFluids, int yOffset) {
+        ParentWidget<?> group = new ParentWidget<>().size(176, 166 + yOffset);
+        // todo import
+        group.child(new com.cleanroommc.modularui.widgets.ProgressWidget()
+                .size(20)
+                .alignX(0.5f).top(23 + yOffset)
+                .progress(progressSupplier)
+                .texture(progressTexture, 20)
+                .direction(progressDirection));
+        addInventorySlotGroup(group, importItems, importFluids, false, yOffset);
+        addInventorySlotGroup(group, exportItems, exportFluids, true, yOffset);
+        if (specialTextureNew != null && specialTexturePosition != null) {
+            group.child(new Widget<>()
+                    .pos(specialTexturePosition[0], specialTexturePosition[1])
+                    .size(specialTexturePosition[2], specialTexturePosition[3])
+                    .background(specialTextureNew));
+        }
+        return group;
+    }
+
+    protected void addInventorySlotGroup(@NotNull ParentWidget<?> group,
+                                         @NotNull IItemHandlerModifiable itemHandler,
+                                         @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+        int itemInputsCount = itemHandler.getSlots();
+        int fluidInputsCount = fluidHandler.getTanks();
+        boolean invertFluids = false;
+        if (itemInputsCount == 0) {
+            int tmp = itemInputsCount;
+            itemInputsCount = fluidInputsCount;
+            fluidInputsCount = tmp;
+            invertFluids = true;
+        }
+        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
+        int itemSlotsToLeft = inputSlotGrid[0];
+        int itemSlotsToDown = inputSlotGrid[1];
+        int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
+        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
+        boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
+        if (wasGroup) startInputsY -= 9;
+        else if (itemHandler.getSlots() >= 6 && fluidHandler.getTanks() >= 2 && !isOutputs) startInputsY -= 9;
+        for (int i = 0; i < itemSlotsToDown; i++) {
+            for (int j = 0; j < itemSlotsToLeft; j++) {
+                int slotIndex = i * itemSlotsToLeft + j;
+                if (slotIndex >= itemInputsCount) break;
+                int x = startInputsX + 18 * j;
+                int y = startInputsY + 18 * i;
+                addSlot(group, x, y, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
+            }
+        }
+        if (wasGroup) startInputsY += 2;
+        if (fluidInputsCount > 0 || invertFluids) {
+            if (itemSlotsToDown >= fluidInputsCount && itemSlotsToLeft < 3) {
+                int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
+                for (int i = 0; i < fluidInputsCount; i++) {
+                    int y = startInputsY + 18 * i;
+                    addSlot(group, startSpecX, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                }
+            } else {
+                int startSpecY = startInputsY + itemSlotsToDown * 18;
+                for (int i = 0; i < fluidInputsCount; i++) {
+                    int x = isOutputs ? startInputsX + 18 * (i % 3) :
+                            startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
+                    int y = startSpecY + (i / 3) * 18;
+                    addSlot(group, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                }
+            }
+        }
+    }
+
+    protected void addSlot(ParentWidget<?> group, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
+        if (!isFluid) {
+            group.child(new ItemSlot()
+                    .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
+                            .accessibility(!isOutputs, true))
+                    .pos(x, y)
+                    .background(getOverlaysForSlotNew(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
+        } else {
+            group.child(new FluidSlot()
+                    .syncHandler(SyncHandlers.fluidSlot(fluidHandler.getTankAt(slotIndex))
+                            .canFillSlot(!isOutputs))
+                    .alwaysShowFull(true)
+                    .pos(x, y)
+                    .background(getOverlaysForSlotNew(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1)));
+        }
+    }
+
+    @ApiStatus.Experimental
+    protected IDrawable[] getOverlaysForSlotNew(boolean isOutput, boolean isFluid, boolean isLast) {
+        UITexture base = isFluid ? GTGuiTextures.FLUID_SLOT : GTGuiTextures.SLOT;
+        byte overlayKey = computeOverlayKey(isOutput, isFluid, isLast);
+        if (slotTextureOverlays.containsKey(overlayKey)) {
+            return new UITexture[] { base, slotTextureOverlays.get(overlayKey) };
+        }
+        return new UITexture[] { base };
+    }
+
+    /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
+    @ApiStatus.Experimental
+    @ApiStatus.Internal
+    public void setUsesMui2() {
+        this.usesMui2 = true;
+    }
+
+    /** Marked experimental as this method will be removed when all GTCEu UIs are ported to MUI2. */
+    @ApiStatus.Experimental
+    public boolean usesMui2() {
+        return usesMui2;
+    }
+
+    /**
+     * @param progressTexture the new progress bar texture
+     */
+    public void setProgressBarTexture(@NotNull UITexture progressTexture) {
+        this.progressTexture = progressTexture;
+    }
+
+    /**
+     * @param direction the new progress bar move type
+     */
+    public void setProgressBarDirection(@NotNull com.cleanroommc.modularui.widgets.ProgressWidget.Direction direction) {
+        this.progressDirection = direction;
+    }
+
+    /**
+     * @param specialTexture the special texture to set
+     * @param position       the position of the texture: [x, y, width, height]
+     */
+    public void setSpecialTexture(@NotNull UITexture specialTexture, int @NotNull [] position) {
+        this.specialTextureNew = specialTexture;
+        this.specialTexturePosition = position;
+    }
+
+    /**
+     * @param key     the key to store the slot's texture with
+     * @param texture the texture to store
+     */
+    @ApiStatus.Internal
+    public void setSlotOverlay(byte key, @NotNull UITexture texture) {
+        this.slotTextureOverlays.put(key, texture);
     }
 
     /**
@@ -426,58 +696,6 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     public boolean canModifyFluidOutputs() {
         return modifyFluidOutputs;
-    }
-
-    /**
-     * @return if this UI represents an energy generating recipemap
-     */
-    public boolean isGenerator() {
-        return isGenerator;
-    }
-
-    /**
-     * @param texture  the texture to set
-     * @param isOutput if the slot is an output slot
-     */
-    public void setItemSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
-        this.slotOverlays.put(computeOverlayKey(isOutput, false, false), texture);
-        this.slotOverlays.put(computeOverlayKey(isOutput, false, true), texture);
-    }
-
-    /**
-     * @param texture    the texture to set
-     * @param isOutput   if the slot is an output slot
-     * @param isLastSlot if the slot is the last slot
-     */
-    public void setItemSlotOverlay(@NotNull TextureArea texture, boolean isOutput, boolean isLastSlot) {
-        this.slotOverlays.put(computeOverlayKey(isOutput, false, isLastSlot), texture);
-    }
-
-    /**
-     * @param texture  the texture to set
-     * @param isOutput if the slot is an output slot
-     */
-    public void setFluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput) {
-        this.slotOverlays.put(computeOverlayKey(isOutput, true, false), texture);
-        this.slotOverlays.put(computeOverlayKey(isOutput, true, true), texture);
-    }
-
-    /**
-     * @param texture    the texture to set
-     * @param isOutput   if the slot is an output slot
-     * @param isLastSlot if the slot is the last slot
-     */
-    public void setFluidSlotOverlay(@NotNull TextureArea texture, boolean isOutput, boolean isLastSlot) {
-        this.slotOverlays.put(computeOverlayKey(isOutput, true, isLastSlot), texture);
-    }
-
-    /**
-     * @param key     the key to store the slot's texture with
-     * @param texture the texture to store
-     */
-    @ApiStatus.Internal
-    public void setSlotOverlay(byte key, @NotNull TextureArea texture) {
-        this.slotOverlays.put(key, texture);
     }
 
     /**
