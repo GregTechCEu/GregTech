@@ -12,7 +12,10 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
+
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -519,7 +522,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(chargerInventory, 0))
-                        // todo block shift-clicking into this slot
                         .pos(79, 62 + yOffset)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.CHARGER_OVERLAY)
                         .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
