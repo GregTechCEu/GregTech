@@ -137,8 +137,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 // Exclude the ghost circuit inventory from the auto collapse, so it does not extract any ghost circuits
                 // from the slot
                 IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : super.getImportItems());
-                if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) :
-                        this.getNotifiedItemInputList().contains(inventory)) {
+                if (!isAttachedToMultiBlock() || (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) :
+                        this.getNotifiedItemInputList().contains(inventory))) {
                     collapseInventorySlotContents(inventory);
                 }
             }
@@ -386,21 +386,15 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                       CuboidRayTraceResult hitResult) {
-        boolean isAttached = false;
         if (this.isAttachedToMultiBlock()) {
             setAutoCollapse(!this.autoCollapse);
-            isAttached = true;
         }
 
         if (!getWorld().isRemote) {
-            if (isAttached) {
-                if (this.autoCollapse) {
-                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_true"), true);
-                } else {
-                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_false"), true);
-                }
+            if (this.autoCollapse) {
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_true"), true);
             } else {
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse.error"), true);
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_false"), true);
             }
         }
         return true;
