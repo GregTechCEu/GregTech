@@ -1,5 +1,7 @@
 package gregtech.api.mui;
 
+import com.cleanroommc.modularui.api.ITheme;
+
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -60,6 +62,10 @@ public class GTGuiTheme {
 
     public String getId() {
         return themeId;
+    }
+
+    public ITheme getMuiTheme() {
+        return IThemeApi.get().getTheme(themeId);
     }
 
     private void register() {
