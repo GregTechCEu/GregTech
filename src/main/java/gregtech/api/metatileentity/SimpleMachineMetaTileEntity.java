@@ -540,18 +540,15 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val);
             guiSyncManager.syncValue("item_output", outputValue);
 
-            ToggleButton outputButton = new ToggleButton();
-            outputButton.value(
-                    new BoolValue.Dynamic(outputValue::getBoolValue, val -> {
-                        outputValue.setBoolValue(val);
-                        outputButton.markTooltipDirty();
-                    }))
+            panel.child(new ToggleButton()
+                    .pos(leftButtonStartX, 62 + yOffset)
+                    .value(new BoolValue.Dynamic(outputValue::getBoolValue, outputValue::setBoolValue))
                     .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
-                    .tooltipBuilder(t -> t.addLine(outputValue.getBoolValue() ?
-                            IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
-                            IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
-
-            panel.child(outputButton.pos(leftButtonStartX, 62 + yOffset));
+                    .tooltipBuilder(t -> t
+                            .setAutoUpdate(true)
+                            .addLine(outputValue.getBoolValue() ?
+                                    IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
+                                    IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))));
             leftButtonStartX += 18;
         }
 
@@ -559,18 +556,15 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val);
             guiSyncManager.syncValue("fluid_output", outputValue);
 
-            ToggleButton outputButton = new ToggleButton();
-            outputButton.value(
-                    new BoolValue.Dynamic(outputValue::getBoolValue, val -> {
-                        outputValue.setBoolValue(val);
-                        outputButton.markTooltipDirty();
-                    }))
+            panel.child(new ToggleButton()
+                    .pos(leftButtonStartX, 62 + yOffset)
+                    .value(new BoolValue.Dynamic(outputValue::getBoolValue, outputValue::setBoolValue))
                     .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
-                    .tooltipBuilder(t -> t.addLine(outputValue.getBoolValue() ?
-                            IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled") :
-                            IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled")));
-
-            panel.child(outputButton.pos(leftButtonStartX, 62 + yOffset));
+                    .tooltipBuilder(t -> t
+                            .setAutoUpdate(true)
+                            .addLine(outputValue.getBoolValue() ?
+                                    IKey.lang("gregtech.gui.fluid_auto_output.tooltip.enabled") :
+                                    IKey.lang("gregtech.gui.fluid_auto_output.tooltip.disabled"))));
         }
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
