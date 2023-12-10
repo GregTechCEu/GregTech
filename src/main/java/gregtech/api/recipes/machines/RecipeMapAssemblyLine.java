@@ -52,8 +52,9 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
             ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
             if (data != null) {
                 for (ResearchPropertyData.ResearchEntry entry : data) {
-                    return removeDataStickEntry(entry.getResearchId(), recipe);
+                    removeDataStickEntry(entry.getResearchId(), recipe);
                 }
+                return true;
             }
             return false;
         }
