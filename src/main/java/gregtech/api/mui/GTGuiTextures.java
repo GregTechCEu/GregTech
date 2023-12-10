@@ -4,6 +4,15 @@ import gregtech.api.GTValues;
 
 import com.cleanroommc.modularui.drawable.UITexture;
 
+import org.jetbrains.annotations.ApiStatus;
+
+/**
+ * GT MUI textures.<br>
+ * Marked experimental as some of these textures may disappear or be renamed at some point
+ * while MUI port is still ongoing. When MUI port is done, this annotation will be removed.
+ */
+// TODO ^
+@ApiStatus.Experimental
 public class GTGuiTextures {
 
     /** Keys used for GT assets registered for use in Themes */
@@ -249,6 +258,149 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_X = fullImage("textures/gui/widget/button_x_overlay.png", true);
 
     // PROGRESS BARS
+    public static final UITexture PROGRESS_BAR_ARC_FURNACE =
+            progressBar("textures/gui/progress_bar/progress_bar_arc_furnace.png", true);
+    public static final UITexture PROGRESS_BAR_ARROW =
+            progressBar("textures/gui/progress_bar/progress_bar_arrow.png", true);
+    public static final UITexture PROGRESS_BAR_ARROW_BRONZE =
+            progressBar("textures/gui/progress_bar/progress_bar_arrow_bronze.png");
+    public static final UITexture PROGRESS_BAR_ARROW_STEEL =
+            progressBar("textures/gui/progress_bar/progress_bar_arrow_steel.png");
+    public static final UITexture PROGRESS_BAR_ARROW_MULTIPLE =
+            progressBar("textures/gui/progress_bar/progress_bar_arrow_multiple.png", true);
+    public static final UITexture PROGRESS_BAR_BATH =
+            progressBar("textures/gui/progress_bar/progress_bar_bath.png", true);
+    public static final UITexture PROGRESS_BAR_BENDING =
+            progressBar("textures/gui/progress_bar/progress_bar_bending.png", true);
+    public static final UITexture PROGRESS_BAR_CANNER =
+            progressBar("textures/gui/progress_bar/progress_bar_canner.png", true);
+    public static final UITexture PROGRESS_BAR_CIRCUIT =
+            progressBar("textures/gui/progress_bar/progress_bar_circuit.png", true);
+    public static final UITexture PROGRESS_BAR_CIRCUIT_ASSEMBLER =
+            progressBar("textures/gui/progress_bar/progress_bar_circuit_assembler.png", true);
+    public static final UITexture PROGRESS_BAR_COMPRESS =
+            progressBar("textures/gui/progress_bar/progress_bar_compress.png", true);
+    public static final UITexture PROGRESS_BAR_COMPRESS_BRONZE =
+            progressBar("textures/gui/progress_bar/progress_bar_compress_bronze.png");
+    public static final UITexture PROGRESS_BAR_COMPRESS_STEEL =
+            progressBar("textures/gui/progress_bar/progress_bar_compress_steel.png");
+    public static final UITexture PROGRESS_BAR_CRACKING =
+            progressBar("textures/gui/progress_bar/progress_bar_cracking.png", true);
+    public static final UITexture PROGRESS_BAR_CRACKING_INPUT =
+            progressBar("textures/gui/progress_bar/progress_bar_cracking_2.png", 21, 38, true);
+    public static final UITexture PROGRESS_BAR_CRYSTALLIZATION =
+            progressBar("textures/gui/progress_bar/progress_bar_crystallization.png", true);
+    public static final UITexture PROGRESS_BAR_EXTRACT =
+            progressBar("textures/gui/progress_bar/progress_bar_extract.png", true);
+    public static final UITexture PROGRESS_BAR_EXTRACT_BRONZE =
+            progressBar("textures/gui/progress_bar/progress_bar_extract_bronze.png");
+    public static final UITexture PROGRESS_BAR_EXTRACT_STEEL =
+            progressBar("textures/gui/progress_bar/progress_bar_extract_steel.png");
+    public static final UITexture PROGRESS_BAR_EXTRUDER =
+            progressBar("textures/gui/progress_bar/progress_bar_extruder.png", true);
+    public static final UITexture PROGRESS_BAR_FUSION =
+            progressBar("textures/gui/progress_bar/progress_bar_fusion.png", true);
+    public static final UITexture PROGRESS_BAR_GAS_COLLECTOR =
+            progressBar("textures/gui/progress_bar/progress_bar_gas_collector.png", true);
+    public static final UITexture PROGRESS_BAR_HAMMER =
+            progressBar("textures/gui/progress_bar/progress_bar_hammer.png", true);
+    public static final UITexture PROGRESS_BAR_HAMMER_BRONZE =
+            progressBar("textures/gui/progress_bar/progress_bar_hammer_bronze.png");
+    public static final UITexture PROGRESS_BAR_HAMMER_STEEL =
+            progressBar("textures/gui/progress_bar/progress_bar_hammer_steel.png");
+    public static final UITexture PROGRESS_BAR_HAMMER_BASE =
+            fullImage("textures/gui/progress_bar/progress_bar_hammer_base.png", true);
+    public static final UITexture PROGRESS_BAR_HAMMER_BASE_BRONZE =
+            fullImage("textures/gui/progress_bar/progress_bar_hammer_base_bronze.png");
+    public static final UITexture PROGRESS_BAR_HAMMER_BASE_STEEL =
+            fullImage("textures/gui/progress_bar/progress_bar_hammer_base_steel.png");
+    public static final UITexture PROGRESS_BAR_LATHE =
+            progressBar("textures/gui/progress_bar/progress_bar_lathe.png", true);
+    public static final UITexture PROGRESS_BAR_LATHE_BASE =
+            fullImage("textures/gui/progress_bar/progress_bar_lathe_base.png", true);
+    public static final UITexture PROGRESS_BAR_MACERATE =
+            progressBar("textures/gui/progress_bar/progress_bar_macerate.png", true);
+    public static final UITexture PROGRESS_BAR_MACERATE_BRONZE =
+            progressBar("textures/gui/progress_bar/progress_bar_macerate_bronze.png");
+    public static final UITexture PROGRESS_BAR_MACERATE_STEEL =
+            progressBar("textures/gui/progress_bar/progress_bar_macerate_steel.png");
+    public static final UITexture PROGRESS_BAR_MAGNET =
+            progressBar("textures/gui/progress_bar/progress_bar_magnet.png", true);
+    public static final UITexture PROGRESS_BAR_MASS_FAB =
+            progressBar("textures/gui/progress_bar/progress_bar_mass_fab.png", true);
+    public static final UITexture PROGRESS_BAR_MIXER =
+            progressBar("textures/gui/progress_bar/progress_bar_mixer.png", true);
+    public static final UITexture PROGRESS_BAR_PACKER =
+            progressBar("textures/gui/progress_bar/progress_bar_packer.png", true);
+    public static final UITexture PROGRESS_BAR_RECYCLER =
+            progressBar("textures/gui/progress_bar/progress_bar_recycler.png", true);
+    public static final UITexture PROGRESS_BAR_REPLICATOR =
+            progressBar("textures/gui/progress_bar/progress_bar_replicator.png", true);
+    public static final UITexture PROGRESS_BAR_SIFT =
+            progressBar("textures/gui/progress_bar/progress_bar_sift.png", true);
+    public static final UITexture PROGRESS_BAR_SLICE =
+            progressBar("textures/gui/progress_bar/progress_bar_slice.png", true);
+    public static final UITexture PROGRESS_BAR_UNPACKER =
+            progressBar("textures/gui/progress_bar/progress_bar_unpacker.png", true);
+    public static final UITexture PROGRESS_BAR_WIREMILL =
+            progressBar("textures/gui/progress_bar/progress_bar_wiremill.png", true);
+
+    // more custom progress bars
+    // todo these boiler empty bars can probably be replaced by using a resized steam slot texture
+    public static final UITexture PROGRESS_BAR_BOILER_EMPTY_BRONZE = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/progress_bar/progress_bar_boiler_empty_bronze.png")
+            .imageSize(10, 54)
+            .adaptable(1)
+            .build();
+    public static final UITexture PROGRESS_BAR_BOILER_EMPTY_STEEL = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/progress_bar/progress_bar_boiler_empty_steel.png")
+            .imageSize(10, 54)
+            .adaptable(1)
+            .build();
+    public static final UITexture PROGRESS_BAR_BOILER_FUEL_BRONZE =
+            progressBar("textures/gui/progress_bar/progress_bar_boiler_fuel_bronze.png", 18, 36);
+    public static final UITexture PROGRESS_BAR_BOILER_FUEL_STEEL =
+            progressBar("textures/gui/progress_bar/progress_bar_boiler_fuel_steel.png", 18, 36);
+    public static final UITexture PROGRESS_BAR_BOILER_HEAT =
+            progressBar("textures/gui/progress_bar/progress_bar_boiler_heat.png", true);
+    public static final UITexture PROGRESS_BAR_ASSEMBLY_LINE =
+            progressBar("textures/gui/progress_bar/progress_bar_assembly_line.png", 54, 144, true);
+    public static final UITexture PROGRESS_BAR_ASSEMBLY_LINE_ARROW =
+            progressBar("textures/gui/progress_bar/progress_bar_assembly_line_arrow.png", 10, 36, true);
+    public static final UITexture PROGRESS_BAR_COKE_OVEN =
+            progressBar("textures/gui/progress_bar/progress_bar_coke_oven.png", 36, 36, true);
+    public static final UITexture PROGRESS_BAR_DISTILLATION_TOWER =
+            progressBar("textures/gui/progress_bar/progress_bar_distillation_tower.png", 66, 116, true);
+    public static final UITexture PROGRESS_BAR_SOLAR_BRONZE =
+            progressBar("textures/gui/progress_bar/progress_bar_solar_bronze.png", 10, 20);
+    public static final UITexture PROGRESS_BAR_SOLAR_STEEL =
+            progressBar("textures/gui/progress_bar/progress_bar_solar_steel.png", 10, 20);
+    public static final UITexture PROGRESS_BAR_RESEARCH_STATION_1 =
+            progressBar("textures/gui/progress_bar/progress_bar_research_station_1.png", 54, 10, true);
+    public static final UITexture PROGRESS_BAR_RESEARCH_STATION_2 =
+            progressBar("textures/gui/progress_bar/progress_bar_research_station_2.png", 10, 36, true);
+    public static final UITexture PROGRESS_BAR_RESEARCH_STATION_BASE =
+            fullImage("textures/gui/progress_bar/progress_bar_research_station_base.png", true);
+    public static final UITexture PROGRESS_BAR_FUSION_ENERGY =
+            progressBar("textures/gui/progress_bar/progress_bar_fusion_energy.png", 94, 14);
+    public static final UITexture PROGRESS_BAR_FUSION_HEAT =
+            progressBar("textures/gui/progress_bar/progress_bar_fusion_heat.png", 94, 14);
+    public static final UITexture PROGRESS_BAR_MULTI_ENERGY_YELLOW =
+            progressBar("textures/gui/progress_bar/progress_bar_multi_energy_yellow.png", 190, 14);
+    public static final UITexture PROGRESS_BAR_HPCA_COMPUTATION =
+            progressBar("textures/gui/progress_bar/progress_bar_hpca_computation.png", 94, 14);
+    public static final UITexture PROGRESS_BAR_LCE_FUEL =
+            progressBar("textures/gui/progress_bar/progress_bar_lce_fuel.png", 62, 14);
+    public static final UITexture PROGRESS_BAR_LCE_LUBRICANT =
+            progressBar("textures/gui/progress_bar/progress_bar_lce_lubricant.png", 62, 14);
+    public static final UITexture PROGRESS_BAR_LCE_OXYGEN =
+            progressBar("textures/gui/progress_bar/progress_bar_lce_oxygen.png", 62, 14);
+    public static final UITexture PROGRESS_BAR_TURBINE_ROTOR_SPEED =
+            progressBar("textures/gui/progress_bar/progress_bar_turbine_rotor_speed.png", 62, 14);
+    public static final UITexture PROGRESS_BAR_TURBINE_ROTOR_DURABILITY =
+            progressBar("textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png", 62, 14);
+    public static final UITexture PROGRESS_BAR_FLUID_RIG_DEPLETION =
+            progressBar("textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png", 190, 14);
 
     // MISC
 
@@ -260,5 +412,25 @@ public class GTGuiTextures {
 
     private static UITexture fullImage(String path, boolean canApplyTheme) {
         return UITexture.fullImage(GTValues.MODID, path, canApplyTheme);
+    }
+
+    private static UITexture progressBar(String path) {
+        return progressBar(path, 20, 40, false);
+    }
+
+    private static UITexture progressBar(String path, boolean canApplyTheme) {
+        return progressBar(path, 20, 40, canApplyTheme);
+    }
+
+    private static UITexture progressBar(String path, int width, int height) {
+        return progressBar(path, width, height, false);
+    }
+
+    private static UITexture progressBar(String path, int width, int height, boolean canApplyTheme) {
+        UITexture.Builder builder = new UITexture.Builder()
+                .location(GTValues.MODID, path)
+                .imageSize(width, height);
+        if (canApplyTheme) builder.canApplyTheme();
+        return builder.build();
     }
 }
