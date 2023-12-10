@@ -19,7 +19,11 @@ public class GTGuiTheme {
 
     public static final GTGuiTheme STANDARD = new Builder("gregtech_standard")
             .panel(GTGuiTextures.IDs.STANDARD_BACKGROUND)
+            .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
+            .toggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
+                    GTGuiTextures.IDs.STANDARD_SLOT,
+                    ConfigHolder.client.defaultUIColor)
             .build();
 
     public static final GTGuiTheme BRONZE = new Builder("gregtech_bronze")
@@ -243,6 +247,10 @@ public class GTGuiTheme {
 
         public Builder toggleButton(String toggleButtonId, String selectedBackgroundId) {
             return toggleButton(toggleButtonId, selectedBackgroundId, 0xFFFFFFFF, true);
+        }
+
+        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int selectedColor) {
+            return toggleButton(toggleButtonId, selectedBackgroundId, 0xFFFFFFFF, true, null, selectedColor);
         }
 
         public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor,

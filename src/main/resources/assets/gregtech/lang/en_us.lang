@@ -45,8 +45,8 @@ gregtech.multiblock.steam.low_steam=Not enough Steam to run!
 gregtech.multiblock.steam.steam_stored=Steam: %s
 gregtech.machine.steam_hatch.name=Steam Hatch
 gregtech.machine.steam.steam_hatch.tooltip=§eAccepted Fluid: §fSteam
-gregtech.machine.steam_import_bus.name=Input Bus (Steam)
-gregtech.machine.steam_export_bus.name=Output Bus (Steam)
+gregtech.machine.steam_import_bus.name=Steam Input Bus
+gregtech.machine.steam_export_bus.name=Steam Output Bus
 gregtech.machine.steam_bus.tooltip=Does not work with non-steam multiblocks
 gregtech.machine.steam_oven.name=Steam Oven
 gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Requires at least 6 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch. Steam Hatch must be on the bottom layer, no more than one.
@@ -4938,7 +4938,6 @@ gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
 gregtech.bus.collapse_true=Bus will collapse Items
 gregtech.bus.collapse_false=Bus will not collapse Items
-gregtech.bus.collapse.error=Bus must be attached to multiblock first
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -5371,9 +5370,12 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.item_auto_collapse.tooltip.enabled=Item Auto-Collapse Enabled
+gregtech.gui.item_auto_collapse.tooltip.disabled=Item Auto-Collapse Disabled
 gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s batteries§r/n§7Charges %s tools and batteries
-gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r/n§aConfigured Value: §f%d§7/n/n§7LMB/RMB/Scroll to cycle through the list/n§7Shift-right-click to clear
+gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r\n§aConfigured Value: §f%d§7\n\n§7LMB/RMB/Scroll to cycle through the list\n§7Shift-left-click to open selector\n§7Shift-right-click to clear
 gregtech.gui.configurator_slot.no_value=None
+gregtech.gui.configurator_slot.unavailable.tooltip=Programmed Circuit slot unavailable
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
