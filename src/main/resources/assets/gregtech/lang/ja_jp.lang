@@ -2723,11 +2723,6 @@ gregtech.machine.crate.titanium.name=チタン製クレート
 gregtech.machine.crate.tungstensteel.name=タングステンスチール製クレート
 gregtech.crate.tooltip.taped_movement=テープを使うと撤去時に中身を保持できる
 
-# Safe
-gregtech.machine.locked_safe.name=金庫
-gregtech.machine.locked_safe.malfunctioning=§c故障中!
-gregtech.machine.locked_safe.requirements=§7要交換部品:
-
 # Workbench
 gregtech.machine.workbench.name=クラフティングステーション
 gregtech.machine.workbench.tooltip1=Forestryのワークベンチより優秀
