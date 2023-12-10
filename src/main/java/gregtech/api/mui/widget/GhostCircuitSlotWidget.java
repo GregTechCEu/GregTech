@@ -162,12 +162,14 @@ public class GhostCircuitSlotWidget extends ItemSlot {
 
         private void setCircuitValue(int value) {
             GhostCircuitItemStackHandler handler = getGhostCircuitHandler();
-            handler.setCircuitValue(value);
-            syncToClient(1, buf -> {
-                buf.writeBoolean(false);
-                buf.writeItemStack(handler.getStackInSlot(0));
-                buf.writeBoolean(false);
-            });
+            if (handler.getCircuitValue() != value) {
+                handler.setCircuitValue(value);
+                syncToClient(1, buf -> {
+                    buf.writeBoolean(false);
+                    buf.writeItemStack(handler.getStackInSlot(0));
+                    buf.writeBoolean(false);
+                });
+            }
         }
 
         @Override
