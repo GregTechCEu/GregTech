@@ -54,6 +54,7 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
                 for (ResearchPropertyData.ResearchEntry entry : data) {
                     removeDataStickEntry(entry.getResearchId(), recipe);
                 }
+                return true;
             }
             return false;
         }
