@@ -328,7 +328,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 .child(new Column()
                         .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
                         .width(18).height(18 * 4 + 5)
-                        .child(GTGuiTextures.GREGTECH_LOGO.asWidget().size(17).top(18 * 3 + 5))
+                        .child(GTGuiTextures.getLogo().asWidget().size(17).top(18 * 3 + 5))
                         .child(workingButton.top(18 * 2))
                         .child(collapseButton.top(18))
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()

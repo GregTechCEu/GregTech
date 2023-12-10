@@ -33,11 +33,20 @@ public class GTGuiTextures {
         public static final String STANDARD_BUTTON = "gregtech_standard_button";
     }
 
-    // GT LOGOS
+    // ICONS
+    /** @apiNote You may want {@link GTGuiTextures#getLogo()} instead. */
     public static final UITexture GREGTECH_LOGO = fullImage("textures/gui/icon/gregtech_logo.png");
+    /** @apiNote You may want {@link GTGuiTextures#getLogo()} instead. */
     public static final UITexture GREGTECH_LOGO_XMAS = fullImage("textures/gui/icon/gregtech_logo_xmas.png");
     public static final UITexture GREGTECH_LOGO_DARK = fullImage("textures/gui/icon/gregtech_logo_dark.png");
     // todo blinking GT logos
+
+    public static final UITexture INDICATOR_NO_ENERGY = fullImage("textures/gui/base/indicator_no_energy.png");
+    public static final UITexture INDICATOR_NO_STEAM_BRONZE =
+            fullImage("textures/gui/base/indicator_no_steam_bronze.png");
+    public static final UITexture INDICATOR_NO_STEAM_STEEL =
+            fullImage("textures/gui/base/indicator_no_steam_steel.png");
+    public static final UITexture TANK_ICON = fullImage("textures/gui/base/tank_icon.png");
 
     // BACKGROUNDS
     public static final UITexture BACKGROUND = UITexture.builder()
@@ -253,6 +262,8 @@ public class GTGuiTextures {
     // BUTTON OVERLAYS
 
     public static final UITexture BUTTON_ITEM_OUTPUT = fullImage("textures/gui/widget/button_item_output_overlay.png");
+    public static final UITexture BUTTON_FLUID_OUTPUT =
+            fullImage("textures/gui/widget/button_fluid_output_overlay.png");
     public static final UITexture BUTTON_AUTO_COLLAPSE =
             fullImage("textures/gui/widget/button_auto_collapse_overlay.png");
     public static final UITexture BUTTON_X = fullImage("textures/gui/widget/button_x_overlay.png", true);
@@ -432,5 +443,10 @@ public class GTGuiTextures {
                 .imageSize(width, height);
         if (canApplyTheme) builder.canApplyTheme();
         return builder.build();
+    }
+
+    // todo steam logos? multi indicator blinking logos?
+    public static UITexture getLogo() {
+        return GTValues.XMAS.get() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
     }
 }
