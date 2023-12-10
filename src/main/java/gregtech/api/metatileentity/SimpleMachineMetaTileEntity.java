@@ -1,22 +1,5 @@
 package gregtech.api.metatileentity;
 
-import com.cleanroommc.modularui.api.IThemeApi;
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.manager.GuiCreationContext;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.BoolValue;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
-
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
-
-import com.cleanroommc.modularui.widgets.slot.SlotGroup;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
@@ -73,6 +56,16 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -516,7 +509,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
         ModularPanel panel = GTGuis.createPanel(this, 176, 166 + yOffset);
         Widget<?> widget = workableRecipeMap.getRecipeMapUI().buildWidget(workable::getProgressPercent, importItems,
-                        exportItems, importFluids, exportFluids, yOffset);
+                exportItems, importFluids, exportFluids, yOffset);
 
         panel.child(widget)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
@@ -538,7 +531,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
         if (exportItems.getSlots() > 0) {
             BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputItems, val -> autoOutputItems = val);
-            guiSyncManager.syncValue("item_output", outputValue);
+            guiSyncManager.syncValue("item_auto_output", outputValue);
 
             panel.child(new ToggleButton()
                     .pos(leftButtonStartX, 62 + yOffset)
@@ -554,7 +547,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
         if (exportFluids.getTanks() > 0) {
             BooleanSyncValue outputValue = new BooleanSyncValue(() -> autoOutputFluids, val -> autoOutputFluids = val);
-            guiSyncManager.syncValue("fluid_output", outputValue);
+            guiSyncManager.syncValue("fluid_auto_output", outputValue);
 
             panel.child(new ToggleButton()
                     .pos(leftButtonStartX, 62 + yOffset)
