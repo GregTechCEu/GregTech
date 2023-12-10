@@ -2454,11 +2454,6 @@ gregtech.machine.crate.stainless_steel.name=Ящик из нержавеющей
 gregtech.machine.crate.titanium.name=Титановый ящик
 gregtech.machine.crate.tungstensteel.name=Ящик из вольфрамовой стали
 
-# Safe
-gregtech.machine.locked_safe.name=Закрытый сейф
-gregtech.machine.locked_safe.malfunctioning=§cСломан!
-gregtech.machine.locked_safe.requirements=§7Требуется замена:
-
 # Workbench
 gregtech.machine.workbench.name=Инженерный верстак
 gregtech.machine.workbench.tooltip1=Лучше, чем в Forestry
