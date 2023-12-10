@@ -4,12 +4,22 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IGhostSlotConfigurable;
-import gregtech.api.capability.impl.*;
+import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
+import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.cover.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
@@ -478,7 +488,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             yOffset = FONT_HEIGHT;
         }
 
-        ModularUI.Builder builder = workableRecipeMap
+        ModularUI.Builder builder = workableRecipeMap.getRecipeMapUI()
                 .createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids,
                         yOffset)
                 .widget(new LabelWidget(5, 5, getMetaFullName()))
