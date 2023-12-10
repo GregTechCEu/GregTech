@@ -87,6 +87,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                         .size(18)
                         .background(GTGuiTextures.SLOT,
                                 new ItemDrawable(IntCircuitIngredient.getIntegratedCircuit(index)).asIcon().size(16))
+                        .disableHoverBackground()
                         .syncHandler("config", index));
             }
         }

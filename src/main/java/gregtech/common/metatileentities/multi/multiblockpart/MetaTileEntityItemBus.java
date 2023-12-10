@@ -300,6 +300,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                     workingButton.markTooltipDirty();
                 }))
                 .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                .disableHoverBackground()
                 .tooltipBuilder(t -> t.addLine(workingStateValue.getBoolValue() ?
                         IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
                         IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
@@ -311,6 +312,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                     collapseButton.markTooltipDirty();
                 }))
                 .overlay(GTGuiTextures.BUTTON_AUTO_COLLAPSE)
+                .disableHoverBackground()
                 .tooltipBuilder(t -> t.addLine(collapseStateValue.getBoolValue() ?
                         IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
                         IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled")));

@@ -114,6 +114,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
                         .size(18)
                         .background(GTGuiTextures.SLOT, new ItemDrawable(
                                 IntCircuitIngredient.getIntegratedCircuit(index)).asIcon())
+                        .disableHoverBackground()
                         .onMousePressed(mouseButton -> {
                             getSyncHandler().syncToServer(SYNC_CIRCUIT_INDEX, buf -> buf.writeShort(index));
                             circuitPreview.setItem(IntCircuitIngredient.getIntegratedCircuit(index));
