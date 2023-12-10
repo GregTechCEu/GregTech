@@ -1,35 +1,27 @@
 package gregtech.api.recipes.ui;
 
-import com.cleanroommc.modularui.api.drawable.IDrawable;
-import com.cleanroommc.modularui.drawable.UITexture;
-
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.ParentWidget;
-
-import com.cleanroommc.modularui.widget.Widget;
-
-import com.cleanroommc.modularui.widgets.FluidSlot;
-
-import com.cleanroommc.modularui.widgets.ItemSlot;
-
-import com.cleanroommc.modularui.widgets.slot.SlotGroup;
-
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.FluidSlot;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
@@ -54,22 +46,28 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     private int @Nullable [] specialTexturePosition;
     private boolean isJEIVisible = true;
 
-    /*                   MUI 1                   */
+    /* *********************** MUI 1 *********************** */
 
+    @Deprecated
     private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectOpenHashMap<>();
 
+    @Deprecated
     private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
-    private ProgressWidget.MoveType moveType = ProgressWidget.MoveType.HORIZONTAL;
+    @Deprecated
+    private gregtech.api.gui.widgets.ProgressWidget.MoveType moveType = gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL;
+    @Deprecated
     private @Nullable TextureArea specialTexture;
 
-    /*                   MUI 2                   */
+    /* *********************** MUI 2 *********************** */
 
+    // todo try to store this better
     private final Byte2ObjectMap<UITexture> slotTextureOverlays = new Byte2ObjectOpenHashMap<>();
 
+    @ApiStatus.Experimental
     private boolean usesMui2 = false;
     private UITexture progressTexture = GTGuiTextures.PROGRESS_BAR_ARROW;
-    private com.cleanroommc.modularui.widgets.ProgressWidget.Direction progressDirection =
-            com.cleanroommc.modularui.widgets.ProgressWidget.Direction.RIGHT;
+    private ProgressWidget.Direction progressDirection = ProgressWidget.Direction.RIGHT;
+    // todo sus name
     private @Nullable UITexture specialTextureNew;
 
     /**
@@ -135,7 +133,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         return new int[] { itemSlotsToLeft, itemSlotsToDown };
     }
 
-    /*                   MUI 1                   */
+    /* *********************** MUI 1 *********************** */
 
     /**
      * Create a JEI UI Template
@@ -352,7 +350,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public @NotNull ProgressWidget.MoveType progressBarMoveType() {
+    public @NotNull gregtech.api.gui.widgets.ProgressWidget.MoveType progressBarMoveType() {
         return moveType;
     }
 
@@ -361,7 +359,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public void setProgressBarMoveType(@NotNull ProgressWidget.MoveType moveType) {
+    public void setProgressBarMoveType(@NotNull gregtech.api.gui.widgets.ProgressWidget.MoveType moveType) {
         this.moveType = moveType;
     }
 
@@ -389,7 +387,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public void setProgressBar(@NotNull TextureArea progressBarTexture, @NotNull ProgressWidget.MoveType moveType) {
+    public void setProgressBar(@NotNull TextureArea progressBarTexture,
+                               @NotNull gregtech.api.gui.widgets.ProgressWidget.MoveType moveType) {
         this.progressBarTexture = progressBarTexture;
         this.moveType = moveType;
     }
@@ -513,14 +512,13 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         this.slotOverlays.put(key, texture);
     }
 
-    /*                   MUI 2                   */
+    /* *********************** MUI 2 *********************** */
 
     public ParentWidget<?> buildWidget(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
                                        FluidTankList exportFluids, int yOffset) {
         ParentWidget<?> group = new ParentWidget<>().size(176, 166 + yOffset);
-        // todo import
-        group.child(new com.cleanroommc.modularui.widgets.ProgressWidget()
+        group.child(new ProgressWidget()
                 .size(20)
                 .alignX(0.5f).top(23 + yOffset)
                 .progress(progressSupplier)
@@ -602,7 +600,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     }
 
     protected ItemSlot makeItemSlot(SlotGroup group, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
-                               boolean isOutputs) {
+                                    boolean isOutputs) {
         return new ItemSlot()
                 .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
                         .slotGroup(group)
@@ -653,7 +651,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @param direction the new progress bar move type
      */
-    public void setProgressBarDirection(@NotNull com.cleanroommc.modularui.widgets.ProgressWidget.Direction direction) {
+    public void setProgressBarDirection(@NotNull ProgressWidget.Direction direction) {
         this.progressDirection = direction;
     }
 
