@@ -435,6 +435,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public final ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
         return new GregTechGuiScreen(mainPanel, getUITheme());

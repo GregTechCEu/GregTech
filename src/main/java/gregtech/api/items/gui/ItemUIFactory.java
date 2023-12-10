@@ -6,6 +6,8 @@ import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
@@ -26,6 +28,7 @@ public interface ItemUIFactory extends IItemComponent, IGuiHolder {
     }
 
     @ApiStatus.NonExtendable
+    @SideOnly(Side.CLIENT)
     @Override
     default ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
         return new GregTechGuiScreen(mainPanel, getUITheme());
