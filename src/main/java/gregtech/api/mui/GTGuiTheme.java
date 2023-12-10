@@ -1,13 +1,12 @@
 package gregtech.api.mui;
 
-import com.cleanroommc.modularui.screen.Tooltip;
-
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
 
