@@ -20,6 +20,7 @@ public class GTGuiTheme {
     public static final GTGuiTheme STANDARD = new Builder("gregtech_standard")
             .panel(GTGuiTextures.IDs.STANDARD_BACKGROUND)
             .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
+            .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
             .toggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
                     GTGuiTextures.IDs.STANDARD_SLOT,
