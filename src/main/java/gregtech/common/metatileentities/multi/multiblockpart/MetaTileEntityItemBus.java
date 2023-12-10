@@ -386,9 +386,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                       CuboidRayTraceResult hitResult) {
-        if (this.isAttachedToMultiBlock()) {
-            setAutoCollapse(!this.autoCollapse);
-        }
+        setAutoCollapse(!this.autoCollapse);
 
         if (!getWorld().isRemote) {
             if (this.autoCollapse) {
