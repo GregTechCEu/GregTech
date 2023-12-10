@@ -7,6 +7,7 @@ import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
+import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
@@ -26,6 +27,7 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
     public RecipeMapFormingPress(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
                                  @NotNull RecipeMapUIFunction recipeMapUI) {
         super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 6, 1, 0, 0);
+        setSound(GTSoundEvents.COMPRESSOR);
     }
 
     @Override

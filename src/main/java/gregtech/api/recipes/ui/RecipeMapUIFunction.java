@@ -13,5 +13,6 @@ public interface RecipeMapUIFunction {
      * @param recipeMap the recipemap to associate with the ui
      * @return the ui
      */
-    @NotNull RecipeMapUI<?> apply(@NotNull RecipeMap<?> recipeMap);
+    @NotNull
+    RecipeMapUI<?> apply(@NotNull RecipeMap<?> recipeMap);
 }

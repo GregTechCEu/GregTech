@@ -6,6 +6,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.ResearchProperty;
 import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
+import gregtech.core.sound.GTSoundEvents;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -25,6 +26,7 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     public RecipeMapAssemblyLine(@NotNull String unlocalizedName, @NotNull R defaultRecipeBuilder,
                                  @NotNull RecipeMapUIFunction recipeMapUI) {
         super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 16, 1, 4, 0);
+        setSound(GTSoundEvents.ASSEMBLER);
     }
 
     @Override

@@ -5,6 +5,8 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 
+import net.minecraft.util.SoundEvent;
+
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,9 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private int @Nullable [] specialTextureLocation;
 
     private RecipeMapUIFunction recipeMapUIFunction = this::buildUI;
+
+    private SoundEvent sound;
+    private boolean allowEmptyOutputs;
 
     /**
      * @param unlocalizedName      the name of the recipemap
@@ -204,7 +209,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
      * @param recipeMap the recipemap associated with the ui
      * @return the RecipeMap's ui
      */
-    protected @NotNull RecipeMapUI<?> buildUI(@NotNull RecipeMap<?> recipeMap) {
+    private @NotNull RecipeMapUI<?> buildUI(@NotNull RecipeMap<?> recipeMap) {
         RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
                 modifyFluidOutputs);
         if (progressBar != null) {
@@ -224,12 +229,37 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
+     * @param sound the sound to use
+     * @return this
+     */
+    public @NotNull RecipeMapBuilder<B> sound(@NotNull SoundEvent sound) {
+        this.sound = sound;
+        return this;
+    }
+
+    /**
+     * Make the recipemap accept recipes without any outputs
+     *
+     * @return this
+     */
+    public @NotNull RecipeMapBuilder<B> allowEmptyOutputs() {
+        this.allowEmptyOutputs = true;
+        return this;
+    }
+
+    /**
      * <strong>Do not call this twice. RecipeMapBuilders are not re-usable.</strong>
      *
      * @return a new RecipeMap
      */
     public @NotNull RecipeMap<B> build() {
-        return new RecipeMap<>(unlocalizedName, defaultRecipeBuilder, this.recipeMapUIFunction, itemInputs,
+        RecipeMap<B> recipeMap = new RecipeMap<>(unlocalizedName, defaultRecipeBuilder, this.recipeMapUIFunction,
+                itemInputs,
                 itemOutputs, fluidInputs, fluidOutputs);
+        recipeMap.setSound(sound);
+        if (allowEmptyOutputs) {
+            recipeMap.allowEmptyOutput();
+        }
+        return recipeMap;
     }
 }

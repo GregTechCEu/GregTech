@@ -1286,7 +1286,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 .collect(Collectors.toList());
     }
 
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return sound;
     }
 

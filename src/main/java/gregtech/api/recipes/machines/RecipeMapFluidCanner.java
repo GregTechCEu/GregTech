@@ -5,6 +5,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
+import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,6 +24,7 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
     public RecipeMapFluidCanner(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
                                 @NotNull RecipeMapUIFunction recipeMapUI) {
         super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 2, 2, 1, 1);
+        setSound(GTSoundEvents.BATH);
     }
 
     @Override

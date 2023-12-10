@@ -4,6 +4,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
+import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,6 +24,7 @@ public class RecipeMapScanner extends RecipeMap<SimpleRecipeBuilder> implements 
     public RecipeMapScanner(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
                             @NotNull RecipeMapUIFunction recipeMapUI) {
         super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 2, 1, 1, 0);
+        setSound(GTSoundEvents.ELECTROLYZER);
     }
 
     @Override
