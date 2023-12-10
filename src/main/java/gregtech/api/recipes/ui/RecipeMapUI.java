@@ -12,6 +12,8 @@ import com.cleanroommc.modularui.widgets.FluidSlot;
 
 import com.cleanroommc.modularui.widgets.ItemSlot;
 
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
+
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -25,6 +27,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
@@ -554,13 +557,20 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
         if (wasGroup) startInputsY -= 9;
         else if (itemHandler.getSlots() >= 6 && fluidHandler.getTanks() >= 2 && !isOutputs) startInputsY -= 9;
+
+        SlotGroup slotGroup = new SlotGroup(isOutputs ? "output_items" : "input_items", itemSlotsToLeft, 1, !isOutputs);
+
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
                 if (slotIndex >= itemInputsCount) break;
                 int x = startInputsX + 18 * j;
                 int y = startInputsY + 18 * i;
-                addSlot(group, x, y, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
+                if (invertFluids) {
+                    group.child(makeFluidSlot(x, y, slotIndex, fluidHandler, isOutputs));
+                } else {
+                    group.child(makeItemSlot(slotGroup, x, y, slotIndex, itemHandler, isOutputs));
+                }
             }
         }
         if (wasGroup) startInputsY += 2;
@@ -569,7 +579,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int y = startInputsY + 18 * i;
-                    addSlot(group, startSpecX, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    if (!invertFluids) {
+                        group.child(makeFluidSlot(startSpecX, y, i, fluidHandler, isOutputs));
+                    } else {
+                        group.child(makeItemSlot(slotGroup, startSpecX, y, i, itemHandler, isOutputs));
+                    }
                 }
             } else {
                 int startSpecY = startInputsY + itemSlotsToDown * 18;
@@ -577,28 +591,33 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                     int x = isOutputs ? startInputsX + 18 * (i % 3) :
                             startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
-                    addSlot(group, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    if (!invertFluids) {
+                        group.child(makeFluidSlot(x, y, i, fluidHandler, isOutputs));
+                    } else {
+                        group.child(makeItemSlot(slotGroup, x, y, i, itemHandler, isOutputs));
+                    }
                 }
             }
         }
     }
 
-    protected void addSlot(ParentWidget<?> group, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
-                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
-        if (!isFluid) {
-            group.child(new ItemSlot()
-                    .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
-                            .accessibility(!isOutputs, true))
-                    .pos(x, y)
-                    .background(getOverlaysForSlotNew(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
-        } else {
-            group.child(new FluidSlot()
-                    .syncHandler(SyncHandlers.fluidSlot(fluidHandler.getTankAt(slotIndex))
-                            .canFillSlot(!isOutputs))
-                    .alwaysShowFull(true)
-                    .pos(x, y)
-                    .background(getOverlaysForSlotNew(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1)));
-        }
+    protected ItemSlot makeItemSlot(SlotGroup group, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+                               boolean isOutputs) {
+        return new ItemSlot()
+                .slot(SyncHandlers.itemSlot(itemHandler, slotIndex)
+                        .slotGroup(group)
+                        .accessibility(!isOutputs, true))
+                .pos(x, y)
+                .background(getOverlaysForSlotNew(isOutputs, false, slotIndex == itemHandler.getSlots() - 1));
+    }
+
+    protected FluidSlot makeFluidSlot(int x, int y, int slotIndex, FluidTankList fluidHandler, boolean isOutputs) {
+        return new FluidSlot()
+                .syncHandler(SyncHandlers.fluidSlot(fluidHandler.getTankAt(slotIndex))
+                        .canFillSlot(!isOutputs))
+                .alwaysShowFull(true)
+                .pos(x, y)
+                .background(getOverlaysForSlotNew(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1));
     }
 
     @ApiStatus.Experimental
