@@ -4,6 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.recipes.builders.CircuitAssemblerRecipeBuilder;
@@ -77,8 +79,8 @@ public final class RecipeMaps {
             new SimpleRecipeBuilder())
                     .itemInputs(2)
                     .itemOutputs(1)
-                    .itemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false)
-                    .progressBar(GuiTextures.PROGRESS_BAR_ARROW)
+                    .itemSlotOverlay(GTGuiTextures.FURNACE_OVERLAY_1, false)
+                    .progressBar(GTGuiTextures.PROGRESS_BAR_ARROW)
                     .sound(GTSoundEvents.FURNACE)
                     .build();
 
