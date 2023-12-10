@@ -218,7 +218,7 @@ public final class RecipeMaps {
                     .itemInputs(2)
                     .itemOutputs(2)
                     .fluidInputs(1)
-                    .fluidInputs(1)
+                    .fluidOutputs(1)
                     .itemSlotOverlay(GuiTextures.DUST_OVERLAY, false)
                     .itemSlotOverlay(GuiTextures.CRYSTAL_OVERLAY, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION)
@@ -756,7 +756,7 @@ public final class RecipeMaps {
                     .itemInputs(1)
                     .itemOutputs(3)
                     .itemSlotOverlay(GuiTextures.CRUSHED_ORE_OVERLAY, false)
-                    .itemSlotOverlay(GuiTextures.CRUSHED_ORE_OVERLAY, true)
+                    .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_MAGNET)
                     .sound(GTSoundEvents.ARC)
                     .build();
