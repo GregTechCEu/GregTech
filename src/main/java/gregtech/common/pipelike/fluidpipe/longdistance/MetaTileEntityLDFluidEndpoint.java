@@ -27,6 +27,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEndpoint {
@@ -101,7 +102,7 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
 
     private static class FluidHandlerWrapper extends FluidHandlerDelegate {
 
-        public FluidHandlerWrapper(IFluidHandler delegate) {
+        public FluidHandlerWrapper(@NotNull IFluidHandler delegate) {
             super(delegate);
         }
 

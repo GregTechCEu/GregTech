@@ -110,8 +110,12 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public <T> T getCapability(@NotNull Capability<T> capability, T defaultValue) {
+    public <T> T getCapability(@NotNull Capability<T> capability, @Nullable T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (defaultValue == null) {
+                return null;
+            }
+
             IFluidHandler delegate = (IFluidHandler) defaultValue;
             if (fluidHandler == null || fluidHandler.delegate != delegate) {
                 this.fluidHandler = new FluidHandlerFiltered(delegate);
@@ -141,7 +145,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {
 
-        public FluidHandlerFiltered(IFluidHandler delegate) {
+        public FluidHandlerFiltered(@NotNull IFluidHandler delegate) {
             super(delegate);
         }
 
