@@ -1,15 +1,14 @@
 package gregtech.api.recipes;
 
-import com.cleanroommc.modularui.drawable.UITexture;
-
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
+import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -52,22 +51,27 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
 
     private boolean sortToBack;
 
-    /*                   MUI 1                   */
+    /* *********************** MUI 1 *********************** */
 
+    @Deprecated
     private final Byte2ObjectMap<TextureArea> slotOverlays = new Byte2ObjectArrayMap<>();
-
+    @Deprecated
     private @Nullable TextureArea progressBar;
-    private @Nullable ProgressWidget.MoveType moveType;
-
+    @Deprecated
+    private @Nullable gregtech.api.gui.widgets.ProgressWidget.MoveType moveType;
+    @Deprecated
     private @Nullable TextureArea specialTexture;
 
-    /*                   MUI 2                   */
+    /* *********************** MUI 2 *********************** */
 
+    // todo try to store this better
     private final Byte2ObjectMap<UITexture> slotOverlayTextures = new Byte2ObjectArrayMap<>();
 
+    @ApiStatus.Experimental
     private boolean usesMui2 = false;
     private @Nullable UITexture progressTexture;
-    private @Nullable com.cleanroommc.modularui.widgets.ProgressWidget.Direction progressDirection;
+    private @Nullable ProgressWidget.Direction progressDirection;
+    // todo sus name
     private @Nullable UITexture specialTextureNew;
 
     /**
@@ -192,7 +196,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull RecipeMapBuilder<B> progressBar(@Nullable TextureArea progressBar,
-                                                    @Nullable ProgressWidget.MoveType moveType) {
+                                                    @Nullable gregtech.api.gui.widgets.ProgressWidget.MoveType moveType) {
         this.progressBar = progressBar;
         this.moveType = moveType;
         return this;
@@ -204,7 +208,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
      * @return this
      */
     public @NotNull RecipeMapBuilder<B> progressBar(@Nullable UITexture progressBar,
-                                                    @Nullable com.cleanroommc.modularui.widgets.ProgressWidget.Direction moveType) {
+                                                    @Nullable ProgressWidget.Direction moveType) {
         this.usesMui2 = true;
         this.progressTexture = progressBar;
         this.progressDirection = moveType;
@@ -340,10 +344,9 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
-     * @apiNote Only needed if you do not set textures using MUI2 methods, i.e. the ones that accept
-     * {@link com.cleanroommc.modularui.drawable.UITexture}.
-     * <br>
-     * Marked experimental since this method will disappear once MUI2 is fully supported by all GTCEu UIs.
+     * @apiNote Only needed if you do not set textures using MUI2 methods, i.e. the ones that accept{@link UITexture}.
+     *          <br>
+     *          Marked experimental since this method will disappear once MUI2 is fully supported by all GTCEu UIs.
      */
     @ApiStatus.Experimental
     public @NotNull RecipeMapBuilder<B> usesMui2() {
