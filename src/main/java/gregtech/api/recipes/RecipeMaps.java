@@ -123,13 +123,12 @@ public final class RecipeMaps {
                     .fluidOutputs(1)
                     .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
                     .sound(GTSoundEvents.ARC)
-                    .build()
-                    .onRecipeBuild(recipeBuilder -> {
-                        recipeBuilder.invalidateOnBuildAction();
+                    .onBuild(recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
                             recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.getDuration()));
                         }
-                    });
+                    })
+                    .build();
 
     /**
      * Example:
@@ -152,9 +151,7 @@ public final class RecipeMaps {
                     .itemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false)
                     .progressBar(GuiTextures.PROGRESS_BAR_CIRCUIT)
                     .sound(GTSoundEvents.ASSEMBLER)
-                    .build()
-                    .onRecipeBuild(recipeBuilder -> {
-                        recipeBuilder.invalidateOnBuildAction();
+                    .onBuild(recipeBuilder -> {
                         var fluidInputs = recipeBuilder.getFluidInputs();
                         if (fluidInputs.size() == 1 && fluidInputs.get(0).getInputFluidStack().getFluid() ==
                                 Materials.SolderingAlloy.getFluid()) {
@@ -173,7 +170,8 @@ public final class RecipeMaps {
                                 OreDictUnifier.registerOre(outputStack, info);
                             }
                         }
-                    });
+                    })
+                    .build();
 
     /**
      * Example:
@@ -437,21 +435,18 @@ public final class RecipeMaps {
                     .fluidSlotOverlay(GuiTextures.VIAL_OVERLAY_2, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
                     .sound(GTValues.FOOLS.get() ? GTSoundEvents.SCIENCE : GTSoundEvents.CHEMICAL_REACTOR)
-                    .build()
-                    .onRecipeBuild(recipeBuilder -> {
-                        recipeBuilder.invalidateOnBuildAction();
-                        RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                                .inputs(recipeBuilder.getInputs().toArray(new GTRecipeInput[0]))
-                                .fluidInputs(recipeBuilder.getFluidInputs())
-                                .outputs(recipeBuilder.getOutputs())
-                                .chancedOutputs(recipeBuilder.getChancedOutputs())
-                                .fluidOutputs(recipeBuilder.getFluidOutputs())
-                                .chancedFluidOutputs(recipeBuilder.getChancedFluidOutputs())
-                                .cleanroom(recipeBuilder.getCleanroom())
-                                .duration(recipeBuilder.getDuration())
-                                .EUt(recipeBuilder.getEUt())
-                                .buildAndRegister();
-                    });
+                    .onBuild(recipeBuilder -> RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                            .inputs(recipeBuilder.getInputs().toArray(new GTRecipeInput[0]))
+                            .fluidInputs(recipeBuilder.getFluidInputs())
+                            .outputs(recipeBuilder.getOutputs())
+                            .chancedOutputs(recipeBuilder.getChancedOutputs())
+                            .fluidOutputs(recipeBuilder.getFluidOutputs())
+                            .chancedFluidOutputs(recipeBuilder.getChancedFluidOutputs())
+                            .cleanroom(recipeBuilder.getCleanroom())
+                            .duration(recipeBuilder.getDuration())
+                            .EUt(recipeBuilder.getEUt())
+                            .buildAndRegister())
+                    .build();
 
     /**
      * Example:
@@ -489,9 +484,7 @@ public final class RecipeMaps {
                     .itemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false)
                     .progressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER)
                     .sound(GTSoundEvents.ASSEMBLER)
-                    .build()
-                    .onRecipeBuild(recipeBuilder -> {
-                        recipeBuilder.invalidateOnBuildAction();
+                    .onBuild(recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
                             recipeBuilder.copy()
                                     .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1,
@@ -504,7 +497,8 @@ public final class RecipeMaps {
                             recipeBuilder.fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L *
                                     recipeBuilder.getSolderMultiplier())));
                         }
-                    });
+                    })
+                    .build();
 
     /**
      * Example:
@@ -612,11 +606,8 @@ public final class RecipeMaps {
                     .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_SLICE)
                     .sound(GTSoundEvents.CUT)
-                    .build()
-                    .onRecipeBuild(recipeBuilder -> {
-                        recipeBuilder.invalidateOnBuildAction();
+                    .onBuild(recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
-
                             int duration = recipeBuilder.getDuration();
                             int eut = recipeBuilder.getEUt();
                             recipeBuilder
@@ -642,7 +633,8 @@ public final class RecipeMaps {
                                     .duration(Math.max(1, duration));
 
                         }
-                    });
+                    })
+                    .build();
 
     /**
      * Examples:

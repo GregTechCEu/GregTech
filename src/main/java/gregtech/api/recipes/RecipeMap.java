@@ -74,9 +74,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -123,9 +121,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
-    private Consumer<R> onRecipeBuildAction;
-    protected SoundEvent sound;
-    private RecipeMap<?> smallRecipeMap;
+    private @Nullable List<RecipeBuildAction<R>> recipeBuildActions;
+    protected @Nullable SoundEvent sound;
+    private @Nullable RecipeMap<?> smallRecipeMap;
 
     /**
      * Create and register new instance of RecipeMap with specified properties. All
@@ -139,7 +137,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
      *
-     * @deprecated {@link #RecipeMap(String, RecipeBuilder, Function, int, int, int, int)}
+     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
@@ -168,7 +166,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
      *
-     * @deprecated {@link #RecipeMap(String, RecipeBuilder, Function, int, int, int, int)}
+     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
@@ -310,9 +308,31 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> onRecipeBuild(Consumer<R> consumer) {
-        onRecipeBuildAction = consumer;
+    /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param action the action to perform
+     * @return this
+     */
+    public RecipeMap<R> onRecipeBuild(@NotNull RecipeBuildAction<R> action) {
+        if (recipeBuildActions == null) {
+            recipeBuildActions = new ArrayList<>();
+        }
+        recipeBuildActions.add(action);
         return this;
+    }
+
+    /**
+     * Overwrite the RecipeMap's build actions with new ones.
+     * <p>
+     * <strong>Use with caution</strong>. You probably want {@link #onRecipeBuild(RecipeBuildAction)} instead.
+     *
+     * @see #onRecipeBuild(RecipeBuildAction)
+     *
+     * @param actions the actions to set
+     */
+    public void setOnBuildActions(@NotNull List<@NotNull RecipeBuildAction<R>> actions) {
+        this.recipeBuildActions = actions;
     }
 
     public RecipeMap<R> allowEmptyOutput() {
@@ -1325,7 +1345,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy().onBuild(onRecipeBuildAction);
+        return recipeBuilderSample.copy().onBuild(recipeBuildActions);
     }
 
     /**

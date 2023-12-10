@@ -9,7 +9,11 @@ import gregtech.api.recipes.chance.output.ChancedOutputList;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
-import gregtech.api.recipes.ingredients.*;
+import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
@@ -39,11 +43,17 @@ import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @see Recipe
@@ -70,9 +80,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected GTRecipeCategory category;
     protected boolean isCTRecipe = false;
     protected int parallel = 0;
-    protected Consumer<R> onBuildAction = null;
+    protected @Nullable @UnmodifiableView List<RecipeBuildAction<R>> onBuildActions = null;
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
-    protected IRecipePropertyStorage recipePropertyStorage = null;
+    protected @Nullable IRecipePropertyStorage recipePropertyStorage = null;
     protected boolean recipePropertyStorageErrored = false;
 
     protected RecipeBuilder() {
@@ -121,8 +131,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
         this.category = recipeBuilder.category;
-        this.onBuildAction = recipeBuilder.onBuildAction;
-        this.recipePropertyStorage = recipeBuilder.recipePropertyStorage;
+        this.onBuildActions = recipeBuilder.onBuildActions == null ? null :
+                new ArrayList<>(recipeBuilder.onBuildActions);
+        this.recipePropertyStorage = recipeBuilder.recipePropertyStorage == null ? null :
+                recipeBuilder.recipePropertyStorage.copy();
         if (this.recipePropertyStorage != null) {
             this.recipePropertyStorage = this.recipePropertyStorage.copy();
         }
@@ -886,19 +898,26 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return out;
     }
 
-    protected R onBuild(Consumer<R> consumer) {
-        this.onBuildAction = consumer;
+    protected R onBuild(@NotNull List<@NotNull RecipeBuildAction<R>> actions) {
+        this.onBuildActions = actions;
         return (R) this;
     }
 
+    /**
+     * @deprecated Obsolete. Does not need calling.
+     */
+    @ApiStatus.Obsolete
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     protected R invalidateOnBuildAction() {
-        this.onBuildAction = null;
         return (R) this;
     }
 
     public void buildAndRegister() {
-        if (onBuildAction != null) {
-            onBuildAction.accept((R) this);
+        if (onBuildActions != null) {
+            for (RecipeBuildAction<R> action : onBuildActions) {
+                action.accept((R) this);
+            }
         }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);

@@ -12,6 +12,9 @@ import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static gregtech.api.recipes.ui.RecipeMapUI.computeOverlayKey;
 
 public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
@@ -40,6 +43,8 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
 
     private SoundEvent sound;
     private boolean allowEmptyOutputs;
+
+    private @Nullable List<RecipeBuildAction<B>> buildActions;
 
     /**
      * @param unlocalizedName      the name of the recipemap
@@ -248,6 +253,20 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param action the action to perform
+     * @return this
+     */
+    public @NotNull RecipeMapBuilder<B> onBuild(@NotNull RecipeBuildAction<B> action) {
+        if (buildActions == null) {
+            buildActions = new ArrayList<>();
+        }
+        buildActions.add(action);
+        return this;
+    }
+
+    /**
      * <strong>Do not call this twice. RecipeMapBuilders are not re-usable.</strong>
      *
      * @return a new RecipeMap
@@ -259,6 +278,9 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         recipeMap.setSound(sound);
         if (allowEmptyOutputs) {
             recipeMap.allowEmptyOutput();
+        }
+        if (buildActions != null) {
+            recipeMap.setOnBuildActions(buildActions);
         }
         return recipeMap;
     }
