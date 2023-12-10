@@ -3,8 +3,8 @@ package gregtech.api.cover;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.mui.GTGuiTheme;
-import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.GregTechGuiScreen;
+import gregtech.api.mui.factory.CoverGuiFactory;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,13 +12,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
-import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.ApiStatus;
 
-public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
+public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiData> {
 
     @ApiStatus.Experimental
     default boolean usesMui2() {
@@ -27,8 +27,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
 
     default void openUI(EntityPlayerMP player) {
         if (usesMui2()) {
-            GTGuis.getCoverUiInfo(getAttachedSide())
-                    .open(player, getCoverableView().getWorld(), getCoverableView().getPos());
+            CoverGuiFactory.open(player, this);
         } else {
             CoverUIFactory.INSTANCE.openUI(this, player);
         }
@@ -42,7 +41,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
     @ApiStatus.NonExtendable
     @SideOnly(Side.CLIENT)
     @Override
-    default ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
+    default ModularScreen createScreen(SidedPosGuiData guiData, ModularPanel mainPanel) {
         return new GregTechGuiScreen(mainPanel, getUITheme());
     }
 
@@ -51,8 +50,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder {
     }
 
     @Override
-    default ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
-                                 boolean isClient) {
+    default ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         return null;
     }
 

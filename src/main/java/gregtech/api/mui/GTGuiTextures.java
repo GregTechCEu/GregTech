@@ -52,7 +52,8 @@ public class GTGuiTextures {
             .location(GTValues.MODID, "textures/gui/base/background.png")
             .imageSize(176, 166)
             .adaptable(3)
-            .registerAsBackground(IDs.STANDARD_BACKGROUND, true)
+            .name(IDs.STANDARD_BACKGROUND)
+            .canApplyTheme()
             .build();
 
     // todo BORDERED/BOXED backgrounds will not be ported, if possible
@@ -61,14 +62,14 @@ public class GTGuiTextures {
             .location(GTValues.MODID, "textures/gui/base/background_bronze.png")
             .imageSize(176, 166)
             .adaptable(3)
-            .registerAsBackground(IDs.BRONZE_BACKGROUND)
+            .name(IDs.BRONZE_BACKGROUND)
             .build();
 
     public static final UITexture BACKGROUND_STEEL = UITexture.builder()
             .location(GTValues.MODID, "textures/gui/base/background_steel.png")
             .imageSize(176, 166)
             .adaptable(3)
-            .registerAsBackground(IDs.STEEL_BACKGROUND)
+            .name(IDs.STEEL_BACKGROUND)
             .build();
 
     // todo move to textures/gui/base
@@ -76,7 +77,7 @@ public class GTGuiTextures {
             .location(GTValues.MODID, "textures/gui/primitive/primitive_background.png")
             .imageSize(176, 166)
             .adaptable(3)
-            .registerAsBackground(IDs.PRIMITIVE_BACKGROUND)
+            .name(IDs.PRIMITIVE_BACKGROUND)
             .build();
 
     // todo clipboard backgrounds, may deserve some redoing
@@ -108,21 +109,22 @@ public class GTGuiTextures {
             .location(GTValues.MODID, "textures/gui/base/slot.png")
             .imageSize(18, 18)
             .adaptable(1)
-            .registerAsBackground(IDs.STANDARD_SLOT, true)
+            .name(IDs.STANDARD_SLOT)
+            .canApplyTheme()
             .build();
 
     public static final UITexture SLOT_BRONZE = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/slot_bronze.png")
             .imageSize(18, 18)
             .adaptable(1)
-            .registerAsBackground(IDs.BRONZE_SLOT)
+            .name(IDs.BRONZE_SLOT)
             .build();
 
     public static final UITexture SLOT_STEEL = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/slot_steel.png")
             .imageSize(18, 18)
             .adaptable(1)
-            .registerAsBackground(IDs.STEEL_SLOT)
+            .name(IDs.STEEL_SLOT)
             .build();
 
     // todo move to textures/gui/base
@@ -130,14 +132,15 @@ public class GTGuiTextures {
             .location(GTValues.MODID, "textures/gui/primitive/primitive_slot.png")
             .imageSize(18, 18)
             .adaptable(1)
-            .registerAsBackground(IDs.PRIMITIVE_SLOT)
+            .name(IDs.PRIMITIVE_SLOT)
             .build();
 
     public static final UITexture FLUID_SLOT = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/fluid_slot.png")
             .imageSize(18, 18)
             .adaptable(1)
-            .registerAsBackground(IDs.STANDARD_FLUID_SLOT, true)
+            .name(IDs.STANDARD_FLUID_SLOT)
+            .canApplyTheme()
             .build();
 
     // todo bronze/steel/primitive fluid slots?
@@ -253,7 +256,7 @@ public class GTGuiTextures {
             .location(GTValues.MODID, "textures/gui/widget/button.png")
             .imageSize(18, 18)
             .adaptable(1)
-            .registerAsIcon(IDs.STANDARD_BUTTON)
+            .name(IDs.STANDARD_BUTTON)
             .canApplyTheme()
             .build();
 
