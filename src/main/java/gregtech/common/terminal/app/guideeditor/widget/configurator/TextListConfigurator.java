@@ -1,14 +1,16 @@
 package gregtech.common.terminal.app.guideeditor.widget.configurator;
 
-import com.google.gson.*;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
 
+import com.google.gson.*;
+
 import java.util.Collections;
 import java.util.List;
 
-public class TextListConfigurator extends ConfiguratorWidget<List<String>>{
+public class TextListConfigurator extends ConfiguratorWidget<List<String>> {
+
     private TextEditorWidget editor;
 
     public TextListConfigurator(DraggableScrollableWidgetGroup group, int height, JsonObject config, String name) {
@@ -16,7 +18,8 @@ public class TextListConfigurator extends ConfiguratorWidget<List<String>>{
         init(height);
     }
 
-    public TextListConfigurator(DraggableScrollableWidgetGroup group, int height, JsonObject config, String name, String defaultValue) {
+    public TextListConfigurator(DraggableScrollableWidgetGroup group, int height, JsonObject config, String name,
+                                String defaultValue) {
         super(group, config, name, Collections.singletonList(defaultValue));
         init(height);
     }
@@ -29,7 +32,8 @@ public class TextListConfigurator extends ConfiguratorWidget<List<String>>{
             initValue = String.join("\n", init);
 
         }
-        editor = new TextEditorWidget(0, 15, 116, height, this::updateTextList, true).setContent(initValue).setBackground(new ColorRectTexture(0xA3FFFFFF));
+        editor = new TextEditorWidget(0, 15, 116, height, this::updateTextList, true).setContent(initValue)
+                .setBackground(new ColorRectTexture(0xA3FFFFFF));
         this.addWidget(editor);
     }
 

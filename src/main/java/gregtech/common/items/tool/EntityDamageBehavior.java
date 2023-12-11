@@ -2,6 +2,7 @@ package gregtech.common.items.tool;
 
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
@@ -10,8 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,20 +53,23 @@ public class EntityDamageBehavior implements IToolBehavior {
     }
 
     @Override
-    public void hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target, @Nonnull EntityLivingBase attacker) {
-        float damageBonus = shouldDoBonusList.stream().map(func -> func.apply(target)).filter(f -> f > 0).findFirst().orElse(0f);
+    public void hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
+                          @NotNull EntityLivingBase attacker) {
+        float damageBonus = shouldDoBonusList.stream().map(func -> func.apply(target)).filter(f -> f > 0).findFirst()
+                .orElse(0f);
         if (damageBonus != 0f) {
-            DamageSource source = attacker instanceof EntityPlayer
-                    ? DamageSources.getPlayerDamage((EntityPlayer) attacker)
-                    : DamageSources.getMobDamage(attacker);
+            DamageSource source = attacker instanceof EntityPlayer ?
+                    DamageSources.getPlayerDamage((EntityPlayer) attacker) : DamageSources.getMobDamage(attacker);
             target.attackEntityFrom(source, damageBonus);
         }
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         if (mobType != null && !mobType.isEmpty()) {
-            tooltip.add(I18n.format("item.gt.tool.behavior.damage_boost", I18n.format("item.gt.tool.behavior.damage_boost_" + mobType)));
+            tooltip.add(I18n.format("item.gt.tool.behavior.damage_boost",
+                    I18n.format("item.gt.tool.behavior.damage_boost_" + mobType)));
         }
     }
 }

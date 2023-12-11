@@ -1,17 +1,19 @@
 package gregtech.integration.forestry.recipes;
 
-import forestry.api.recipes.RecipeManagers;
-import forestry.apiculture.ModuleApiculture;
-import forestry.factory.MachineUIDs;
-import forestry.factory.ModuleFactory;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.integration.forestry.ForestryModule;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import forestry.api.recipes.RecipeManagers;
+import forestry.apiculture.ModuleApiculture;
+import forestry.factory.MachineUIDs;
+import forestry.factory.ModuleFactory;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -76,7 +78,8 @@ public class ForestryFrameRecipes {
                 ModuleApiculture.getItems().frameImpregnated.getItemStack());
     }
 
-    private static void registerRecipe(UnificationEntry cornerItem, UnificationEntry edgeItem, UnificationEntry centerItem,
+    private static void registerRecipe(UnificationEntry cornerItem, UnificationEntry edgeItem,
+                                       UnificationEntry centerItem,
                                        FluidStack fluid, ItemStack output, ItemStack frame) {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(4, OreDictUnifier.get(cornerItem)))

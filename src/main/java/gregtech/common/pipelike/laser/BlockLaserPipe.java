@@ -11,6 +11,7 @@ import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,20 +26,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
 
 public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties, WorldLaserPipeNet> {
 
     private final LaserPipeType pipeType;
     private final LaserPipeProperties properties;
 
-    public BlockLaserPipe(@Nonnull LaserPipeType pipeType) {
+    public BlockLaserPipe(@NotNull LaserPipeType pipeType) {
         this.pipeType = pipeType;
-        this.properties = new LaserPipeProperties();
+        this.properties = LaserPipeProperties.INSTANCE;
         setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
@@ -85,7 +85,7 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
 
     @Override
     protected LaserPipeProperties getFallbackType() {
-        return new LaserPipeProperties();
+        return LaserPipeProperties.INSTANCE;
     }
 
     @Override
@@ -97,7 +97,8 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public void setTileEntityData(TileEntityPipeBase<LaserPipeType, LaserPipeProperties> pipeTile, ItemStack itemStack) {
+    public void setTileEntityData(TileEntityPipeBase<LaserPipeType, LaserPipeProperties> pipeTile,
+                                  ItemStack itemStack) {
         pipeTile.setPipeData(this, pipeType);
     }
 
@@ -107,18 +108,21 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    protected boolean isPipeTool(@Nonnull ItemStack stack) {
+    protected boolean isPipeTool(@NotNull ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side, IPipeTile<LaserPipeType, LaserPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side,
+                                   IPipeTile<LaserPipeType, LaserPipeProperties> sideTile) {
         return selfTile instanceof TileEntityLaserPipe && sideTile instanceof TileEntityLaserPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side, @Nullable TileEntity tile) {
-        return tile != null && tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, side.getOpposite()) != null;
+    public boolean canPipeConnectToBlock(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side,
+                                         @Nullable TileEntity tile) {
+        return tile != null &&
+                tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, side.getOpposite()) != null;
     }
 
     @Override
@@ -131,16 +135,16 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
         return LaserPipeRenderer.INSTANCE.getBlockRenderType();
     }
 
     @Override
     public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.CUTOUT) return true;
-        return layer == BloomEffectUtil.getRealBloomLayer();
+        return layer == BloomEffectUtil.getEffectiveBloomLayer();
     }
 }

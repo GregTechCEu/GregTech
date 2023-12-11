@@ -1,12 +1,10 @@
 package gregtech.api.items.armor;
 
-
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,9 +20,12 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +42,8 @@ public class ArmorUtils {
     public static boolean isPossibleToCharge(ItemStack chargeable) {
         IElectricItem container = chargeable.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (container != null) {
-            return container.getCharge() < container.getMaxCharge() && (container.getCharge() + container.getTransferLimit()) <= container.getMaxCharge();
+            return container.getCharge() < container.getMaxCharge() &&
+                    (container.getCharge() + container.getTransferLimit()) <= container.getMaxCharge();
         }
         return false;
     }
@@ -66,35 +68,34 @@ public class ArmorUtils {
             }
         }
 
-        if(!openMainSlots.isEmpty()) {
+        if (!openMainSlots.isEmpty()) {
             inventorySlotMap.add(Pair.of(player.inventory.mainInventory, openMainSlots));
         }
 
-
         List<Integer> openArmorSlots = new ArrayList<>();
-        for(int i = 0; i < player.inventory.armorInventory.size(); i++) {
+        for (int i = 0; i < player.inventory.armorInventory.size(); i++) {
             ItemStack current = player.inventory.armorInventory.get(i);
             IElectricItem item = current.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-            if(item == null) {
+            if (item == null) {
                 continue;
             }
 
-            if(isPossibleToCharge(current) && item.getTier() <= tier) {
+            if (isPossibleToCharge(current) && item.getTier() <= tier) {
                 openArmorSlots.add(i);
             }
         }
 
-        if(!openArmorSlots.isEmpty()) {
+        if (!openArmorSlots.isEmpty()) {
             inventorySlotMap.add(Pair.of(player.inventory.armorInventory, openArmorSlots));
         }
 
         ItemStack offHand = player.inventory.offHandInventory.get(0);
         IElectricItem offHandItem = offHand.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(offHandItem == null) {
+        if (offHandItem == null) {
             return inventorySlotMap;
         }
 
-        if(isPossibleToCharge(offHand) && offHandItem.getTier() <= tier) {
+        if (isPossibleToCharge(offHand) && offHandItem.getTier() <= tier) {
             inventorySlotMap.add(Pair.of(player.inventory.offHandInventory, Collections.singletonList(0)));
         }
 
@@ -107,11 +108,12 @@ public class ArmorUtils {
     public static void spawnParticle(World world, EntityPlayer player, EnumParticleTypes type, double speedY) {
         if (type != null && SIDE.isClient()) {
             Vec3d forward = player.getForward();
-            world.spawnParticle(type, player.posX - forward.x, player.posY + 0.5D, player.posZ - forward.z, 0.0D, speedY, 0.0D);
+            world.spawnParticle(type, player.posX - forward.x, player.posY + 0.5D, player.posZ - forward.z, 0.0D,
+                    speedY, 0.0D);
         }
     }
 
-    public static void playJetpackSound(@Nonnull EntityPlayer player) {
+    public static void playJetpackSound(@NotNull EntityPlayer player) {
         if (player.world.isRemote) {
             float cons = (float) player.motionY + player.moveForward;
             cons = MathHelper.clamp(cons, 0.6F, 1.0F);
@@ -134,7 +136,8 @@ public class ArmorUtils {
     @SuppressWarnings("deprecation")
     public static void resetPlayerFloatingTime(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
-            ObfuscationReflectionHelper.setPrivateValue(NetHandlerPlayServer.class, ((EntityPlayerMP) player).connection, 0, "field_147365_f", "floatingTickCount");
+            ObfuscationReflectionHelper.setPrivateValue(NetHandlerPlayServer.class,
+                    ((EntityPlayerMP) player).connection, 0, "field_147365_f", "floatingTickCount");
         }
     }
 
@@ -151,7 +154,7 @@ public class ArmorUtils {
 
         ItemFood foodItem = (ItemFood) food.getItem();
         if (player.getFoodStats().needFood()) {
-            if(!player.isCreative()) {
+            if (!player.isCreative()) {
                 food.setCount(food.getCount() - 1);
             }
 
@@ -164,8 +167,10 @@ public class ArmorUtils {
             // Increase the saturation of the food if the food replenishes more than the amount of missing haunches
             saturation += (hunger - foodItem.getHealAmount(food)) < 0 ? foodItem.getHealAmount(food) - hunger : 1.0F;
 
-            // Use this method to add stats for compat with TFC, who overrides addStats(int amount, float saturation) for their food and does nothing
-            player.getFoodStats().addStats(new ItemFood(foodItem.getHealAmount(food), saturation, foodItem.isWolfsFavoriteMeat()), food);
+            // Use this method to add stats for compat with TFC, who overrides addStats(int amount, float saturation)
+            // for their food and does nothing
+            player.getFoodStats().addStats(
+                    new ItemFood(foodItem.getHealAmount(food), saturation, foodItem.isWolfsFavoriteMeat()), food);
 
             return new ActionResult<>(EnumActionResult.SUCCESS, food);
         } else {
@@ -180,7 +185,8 @@ public class ArmorUtils {
      * @return Formated list
      */
     public static List<ItemStack> format(List<ItemStack> input) {
-        Object2IntMap<ItemStack> items = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+        Object2IntMap<ItemStack> items = new Object2IntOpenCustomHashMap<>(
+                ItemStackHashStrategy.comparingAllButCount());
         List<ItemStack> output = new ArrayList<>();
         for (ItemStack itemStack : input) {
             if (items.containsKey(itemStack)) {
@@ -198,8 +204,7 @@ public class ArmorUtils {
         return output;
     }
 
-
-    @Nonnull
+    @NotNull
     public static String format(long value) {
         return new DecimalFormat("###,###.##").format(value);
     }
@@ -215,6 +220,7 @@ public class ArmorUtils {
      */
     @SideOnly(Side.CLIENT)
     public static class ModularHUD {
+
         private byte stringAmount = 0;
         private final List<String> stringList;
         private static final Minecraft mc = Minecraft.getMinecraft();
@@ -231,11 +237,12 @@ public class ArmorUtils {
         public void draw() {
             for (int i = 0; i < stringAmount; i++) {
                 Pair<Integer, Integer> coords = this.getStringCoord(i);
-                mc.ingameGUI.drawString(mc.fontRenderer, stringList.get(i), coords.getLeft(), coords.getRight(), 0xFFFFFF);
+                mc.ingameGUI.drawString(mc.fontRenderer, stringList.get(i), coords.getLeft(), coords.getRight(),
+                        0xFFFFFF);
             }
         }
 
-        @Nonnull
+        @NotNull
         private Pair<Integer, Integer> getStringCoord(int index) {
             int posX;
             int posY;
@@ -265,6 +272,5 @@ public class ArmorUtils {
             this.stringAmount = 0;
             this.stringList.clear();
         }
-
     }
 }

@@ -3,11 +3,16 @@ package gregtech.common.blocks;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType> {
 
@@ -20,6 +25,12 @@ public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType> 
         setHarvestLevel(ToolClasses.WRENCH, 1);
         setDefaultState(getState(SignType.MOB_SPAWNER_HAZARD));
         setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+    }
+
+    @Override
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
+        return false;
     }
 
     public enum SignType implements IStringSerializable {
@@ -40,7 +51,7 @@ public class BlockWarningSign1 extends VariantBlock<BlockWarningSign1.SignType> 
             this.name = name;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;

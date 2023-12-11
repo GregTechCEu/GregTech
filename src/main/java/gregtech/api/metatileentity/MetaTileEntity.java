@@ -1,17 +1,5 @@
 package gregtech.api.metatileentity;
 
-import appeng.api.util.AECableType;
-import appeng.api.util.AEPartLocation;
-import appeng.me.helpers.AENetworkProxy;
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.raytracer.IndexedCuboid6;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
-import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -27,6 +15,9 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
@@ -34,9 +25,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
@@ -53,7 +42,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -69,20 +57,40 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
+import appeng.me.helpers.AENetworkProxy;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable {
+public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable, IGuiHolder {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
 
@@ -178,18 +186,22 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
+    public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
+        return holder != null ? holder.getNeighbor(facing) : null;
+    }
+
+    @Override
     public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
         if (holder != null) {
             holder.writeCustomData(discriminator, dataWriter);
         }
     }
 
-    public void addDebugInfo(List<String> list) {
-    }
+    public void addDebugInfo(List<String> list) {}
 
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
-    }
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {}
 
     /**
      * Override this to add extended tool information to the "Hold SHIFT to show Tool Info" tooltip section.
@@ -215,7 +227,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
     }
 
-    /** Override this to completely remove the "Tool Info" tooltip section */
+    /**
+     * Override this to completely remove the "Tool Info" tooltip section
+     */
     public boolean showToolUsages() {
         return true;
     }
@@ -249,17 +263,20 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
-        IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite, BlockRenderLayer.CUTOUT_MIPPED);
+            Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite,
+                    BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
         return renderLayer == BlockRenderLayer.CUTOUT_MIPPED ||
-                renderLayer == BloomEffectUtil.getRealBloomLayer() ||
-                (renderLayer == BlockRenderLayer.TRANSLUCENT && !getWorld().getBlockState(getPos()).getValue(BlockMachine.OPAQUE));
+                renderLayer == BloomEffectUtil.getEffectiveBloomLayer() ||
+                (renderLayer == BlockRenderLayer.TRANSLUCENT &&
+                        !getWorld().getBlockState(getPos()).getValue(BlockMachine.OPAQUE));
     }
 
     @Override
@@ -279,17 +296,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * This method is typically used by torches or nether portals, as an example use-case
      */
     @SideOnly(Side.CLIENT)
-    public void randomDisplayTick() {
-
-    }
+    public void randomDisplayTick() {}
 
     /**
      * Called from ItemBlock to initialize this MTE with data contained in ItemStack
      *
      * @param itemStack itemstack of itemblock
      */
-    public void initFromItemStackData(NBTTagCompound itemStack) {
-    }
+    public void initFromItemStackData(NBTTagCompound itemStack) {}
 
     /**
      * Called to write MTE specific data when it is destroyed to save it's state
@@ -297,8 +311,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @param itemStack itemstack from which this MTE is being placed
      */
-    public void writeItemStackData(NBTTagCompound itemStack) {
-    }
+    public void writeItemStackData(NBTTagCompound itemStack) {}
 
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         subItems.add(getStackForm());
@@ -311,7 +324,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @param creativeTab The creative tab to check
      * @return Whether this MTE belongs in the creative tab or not
-     * @see gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs) MachineItemBlock#addCreativeTab(CreativeTabs)
+     * @see gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs)
+     *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
         return creativeTab == CreativeTabs.SEARCH || creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES;
@@ -364,7 +378,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @param trait trait object to add
      */
-    void addMetaTileEntityTrait(@Nonnull MTETrait trait) {
+    void addMetaTileEntityTrait(@NotNull MTETrait trait) {
         this.mteTraits.put(trait.getName(), trait);
         this.mteTraitByNetworkId.put(trait.getNetworkID(), trait);
     }
@@ -376,7 +390,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @return the trait associated with the name
      */
     @Nullable
-    public final MTETrait getMTETrait(@Nonnull String name) {
+    public final MTETrait getMTETrait(@NotNull String name) {
         return this.mteTraits.get(name);
     }
 
@@ -406,10 +420,35 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @param entityPlayer player opening inventory
      * @return freshly created UI instance
      */
-    protected abstract ModularUI createUI(EntityPlayer entityPlayer);
+    @Deprecated
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return null;
+    }
 
+    @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
+    }
+
+    @ApiStatus.Experimental
+    public boolean usesMui2() {
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public final ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
+        return new GregTechGuiScreen(mainPanel, getUITheme());
+    }
+
+    public GTGuiTheme getUITheme() {
+        return GTGuiTheme.STANDARD;
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
+                                boolean isClient) {
+        return null;
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
@@ -424,17 +463,23 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @return true if something happened, so animation will be played
      */
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
         ItemStack heldStack = playerIn.getHeldItem(hand);
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                if (usesMui2()) {
+                    GTGuis.MTE.open(playerIn, getWorld(), getPos());
+                } else {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                }
             }
             return true;
         } else {
             // Attempt to rename the MTE first
             if (heldStack.getItem() == Items.NAME_TAG) {
-                if (playerIn.isSneaking() && heldStack.getTagCompound() != null && heldStack.getTagCompound().hasKey("display")) {
+                if (playerIn.isSneaking() && heldStack.getTagCompound() != null &&
+                        heldStack.getTagCompound().hasKey("display")) {
                     MetaTileEntityHolder mteHolder = (MetaTileEntityHolder) getHolder();
 
                     mteHolder.setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
@@ -470,7 +515,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @return true if something happened, so tools will get damaged and animations will be played
      */
-    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult) {
+    public final boolean onToolClick(EntityPlayer playerIn, @NotNull Set<String> toolClasses, EnumHand hand,
+                                     CuboidRayTraceResult hitResult) {
         // the side hit from the machine grid
         EnumFacing gridSideHit = CoverRayTracer.determineGridSideHit(hitResult);
         Cover cover = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
@@ -503,7 +549,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @return true if something happened, so the tool will get damaged and animation will be played
      */
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide,
+                                 CuboidRayTraceResult hitResult) {
         if (!needsSneakToRotate() || playerIn.isSneaking()) {
             if (wrenchSide == getFrontFacing() || !isValidFrontFacing(wrenchSide) || !hasFrontFacing()) {
                 return false;
@@ -521,7 +568,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @return true if something happened, so the tool will get damaged and animation will be played
      */
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
         return false;
     }
 
@@ -530,7 +578,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @return true if something happened, so the tool will get damaged and animation will be played
      */
-    public boolean onCrowbarClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onCrowbarClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                  CuboidRayTraceResult hitResult) {
         if (getCoverAtSide(facing) != null) {
             removeCover(facing);
             return true;
@@ -543,7 +592,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @return true if something happened, so the tool will get damaged and animation will be played
      */
-    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
         IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
         if (controllable != null) {
             controllable.setWorkingEnabled(!controllable.isWorkingEnabled());
@@ -561,7 +611,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @return true if something happened, so the tool will get damaged and animation will be played
      */
-    public boolean onHardHammerClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onHardHammerClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
         toggleMuffled();
         if (!getWorld().isRemote) {
             playerIn.sendStatusMessage(new TextComponentTranslation(isMuffled() ?
@@ -570,8 +621,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return true;
     }
 
-    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
-    }
+    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {}
 
     /**
      * @return true if the player must sneak to rotate this metatileentity, otherwise false
@@ -649,12 +699,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    public void onUnload() {
-    }
+    public void onUnload() {}
 
     public final boolean canConnectRedstone(@Nullable EnumFacing side) {
-        //so far null side means either upwards or downwards redstone wire connection
-        //so check both top cover and bottom cover
+        // so far null side means either upwards or downwards redstone wire connection
+        // so check both top cover and bottom cover
         if (side == null) {
             return canConnectRedstone(EnumFacing.UP) ||
                     canConnectRedstone(EnumFacing.DOWN);
@@ -673,7 +722,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @Override
     public final int getInputRedstoneSignal(@NotNull EnumFacing side, boolean ignoreCover) {
         if (!ignoreCover && getCoverAtSide(side) != null) {
-            return 0; //covers block input redstone signal for machine
+            return 0; // covers block input redstone signal for machine
         }
         return sidedRedstoneInput[side.getIndex()];
     }
@@ -687,8 +736,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return false;
     }
 
-    public void onNeighborChanged() {
-    }
+    public void onNeighborChanged() {}
 
     public void updateInputRedstoneSignals() {
         for (EnumFacing side : EnumFacing.VALUES) {
@@ -705,7 +753,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     /**
-     * @deprecated Will be removed in 2.9. Comparators no longer supported for MetaTileEntities, as cover are interactions favored.
+     * @deprecated Will be removed in 2.9. Comparators no longer supported for MetaTileEntities, as cover are
+     *             interactions favored.
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
@@ -799,24 +848,27 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @param dropsList list of meta tile entity drops
      * @param harvester harvester of this meta tile entity, or null
      */
-    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
-    }
+    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {}
 
-    public ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
+    public final ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
         IndexedCuboid6 hitCuboid = result.cuboid6;
         if (hitCuboid.data instanceof CoverRayTracer.CoverSideData coverSideData) {
             Cover cover = getCoverAtSide(coverSideData.side);
             return cover == null ? ItemStack.EMPTY : cover.getPickItem();
         } else if (hitCuboid.data == null || hitCuboid.data instanceof CoverRayTracer.PrimaryBoxData) {
-            //data is null -> MetaTileEntity hull hit
+            // data is null -> MetaTileEntity hull hit
             Cover cover = getCoverAtSide(result.sideHit);
             if (cover != null) {
                 return cover.getPickItem();
             }
-            return getStackForm();
+            return getPickItem(player);
         } else {
             return ItemStack.EMPTY;
         }
+    }
+
+    public ItemStack getPickItem(EntityPlayer player) {
+        return getStackForm();
     }
 
     /**
@@ -928,13 +980,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_MTE) {
-            //cover removed event
+            // cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             this.covers.remove(placementSide);
             onCoverPlacementUpdate();
             scheduleRenderUpdate();
         } else if (dataId == UPDATE_COVER_DATA_MTE) {
-            //cover custom data received
+            // cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
@@ -951,7 +1003,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     public BlockFaceShape getCoverFaceShape(EnumFacing side) {
         if (getCoverAtSide(side) != null) {
-            return BlockFaceShape.SOLID; //covers are always solid
+            return BlockFaceShape.SOLID; // covers are always solid
         }
         return getFaceShape(side);
     }
@@ -975,8 +1027,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(getFluidInventory());
         } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY &&
                 getItemInventory().getSlots() > 0) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getItemInventory());
-        }
+                    return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getItemInventory());
+                }
         T capabilityResult = null;
         for (MTETrait mteTrait : this.mteTraits.values()) {
             capabilityResult = mteTrait.getCapability(capability);
@@ -987,7 +1039,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (side != null && capabilityResult instanceof IEnergyContainer) {
             IEnergyContainer energyContainer = (IEnergyContainer) capabilityResult;
             if (!energyContainer.inputsEnergy(side) && !energyContainer.outputsEnergy(side)) {
-                return null; //do not provide energy container if it can't input or output energy at all
+                return null; // do not provide energy container if it can't input or output energy at all
             }
         }
         return capabilityResult;
@@ -1000,13 +1052,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void fillInternalTankFromFluidContainer(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack inputContainerStack = importItems.extractItem(i, 1, true);
-            FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, false);
+            FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE,
+                    null, false);
             if (result.isSuccess()) {
                 ItemStack remainingItem = result.getResult();
                 if (ItemStack.areItemStacksEqual(inputContainerStack, remainingItem))
-                    continue; //do not fill if item stacks match
+                    continue; // do not fill if item stacks match
                 if (!remainingItem.isEmpty() && !GTTransferUtils.insertItem(exportItems, remainingItem, true).isEmpty())
-                    continue; //do not fill if can't put remaining item
+                    continue; // do not fill if can't put remaining item
                 FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE, null, true);
                 importItems.extractItem(i, 1, false);
                 GTTransferUtils.insertItem(exportItems, remainingItem, false);
@@ -1021,7 +1074,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void fillContainerFromInternalTank(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack emptyContainer = importItems.extractItem(i, 1, true);
-            FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null, false);
+            FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null,
+                    false);
             if (result.isSuccess()) {
                 ItemStack remainingItem = result.getResult();
                 if (!remainingItem.isEmpty() && !GTTransferUtils.insertItem(exportItems, remainingItem, true).isEmpty())
@@ -1034,38 +1088,39 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void pushFluidsIntoNearbyHandlers(EnumFacing... allowedFaces) {
-        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, GTTransferUtils::transferFluids, allowedFaces);
+        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, GTTransferUtils::transferFluids,
+                allowedFaces);
     }
 
     public void pullFluidsFromNearbyHandlers(EnumFacing... allowedFaces) {
-        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.transferFluids(otherCap, thisCap), allowedFaces);
+        transferToNearby(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                (thisCap, otherCap) -> GTTransferUtils.transferFluids(otherCap, thisCap), allowedFaces);
     }
 
     public void pushItemsIntoNearbyHandlers(EnumFacing... allowedFaces) {
-        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, GTTransferUtils::moveInventoryItems, allowedFaces);
+        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, GTTransferUtils::moveInventoryItems,
+                allowedFaces);
     }
 
     public void pullItemsFromNearbyHandlers(EnumFacing... allowedFaces) {
-        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (thisCap, otherCap) -> GTTransferUtils.moveInventoryItems(otherCap, thisCap), allowedFaces);
+        transferToNearby(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                (thisCap, otherCap) -> GTTransferUtils.moveInventoryItems(otherCap, thisCap), allowedFaces);
     }
 
     private <T> void transferToNearby(Capability<T> capability, BiConsumer<T, T> transfer, EnumFacing... allowedFaces) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
         for (EnumFacing nearbyFacing : allowedFaces) {
-            blockPos.setPos(getPos()).move(nearbyFacing);
-            TileEntity tileEntity = getWorld().getTileEntity(blockPos);
+            TileEntity tileEntity = getNeighbor(nearbyFacing);
             if (tileEntity == null) {
                 continue;
             }
             T otherCap = tileEntity.getCapability(capability, nearbyFacing.getOpposite());
-            //use getCoverCapability so item/ore dictionary filter covers will work properly
+            // use getCoverCapability so item/ore dictionary filter covers will work properly
             T thisCap = getCoverCapability(capability, nearbyFacing);
             if (otherCap == null || thisCap == null) {
                 continue;
             }
             transfer.accept(thisCap, otherCap);
         }
-        blockPos.release();
     }
 
     public final int getOutputRedstoneSignal(@Nullable EnumFacing side) {
@@ -1143,7 +1198,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     /**
      * @return true if this meta tile entity should serialize it's export and import inventories
-     * Useful when you use your own unified inventory and don't need these dummies to be saved
+     *         Useful when you use your own unified inventory and don't need these dummies to be saved
      */
     protected boolean shouldSerializeInventories() {
         return true;
@@ -1228,17 +1283,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
      */
-    public void onPlacement() {
-
-    }
+    public void onPlacement() {}
 
     /**
      * Called from breakBlock right before meta tile entity destruction
      * at this stage tile entity inventory is already dropped on ground, but drops aren't fetched yet
      * tile entity will still get getDrops called after this, if player broke block
      */
-    public void onRemoval() {
-    }
+    public void onRemoval() {}
 
     public void invalidate() {
         if (getWorld() != null && getWorld().isRemote) {
@@ -1360,8 +1412,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (trait instanceof AbstractRecipeLogic) {
             return ((AbstractRecipeLogic) trait);
         } else if (trait != null) {
-            throw new IllegalStateException("MTE Trait " + trait.getName() + " has name " + GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT +
-                    " but is not instanceof AbstractRecipeLogic");
+            throw new IllegalStateException(
+                    "MTE Trait " + trait.getName() + " has name " + GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT +
+                            " but is not instanceof AbstractRecipeLogic");
         }
         return null;
     }
@@ -1375,20 +1428,25 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return recipeLogic == null ? null : recipeLogic.getRecipeMap();
     }
 
-    public void checkWeatherOrTerrainExplosion(float explosionPower, double additionalFireChance, IEnergyContainer energyContainer) {
+    public void checkWeatherOrTerrainExplosion(float explosionPower, double additionalFireChance,
+                                               IEnergyContainer energyContainer) {
         World world = getWorld();
-        if (!world.isRemote && ConfigHolder.machines.doTerrainExplosion && !getIsWeatherOrTerrainResistant() && energyContainer.getEnergyStored() != 0) {
+        if (!world.isRemote && ConfigHolder.machines.doTerrainExplosion && !getIsWeatherOrTerrainResistant() &&
+                energyContainer.getEnergyStored() != 0) {
             if (GTValues.RNG.nextInt(1000) == 0) {
                 for (EnumFacing side : EnumFacing.VALUES) {
                     Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
-                    if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER || block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+                    if (block == Blocks.FIRE || block == Blocks.WATER || block == Blocks.FLOWING_WATER ||
+                            block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
                         doExplosion(explosionPower);
                         return;
                     }
                 }
             }
             if (GTValues.RNG.nextInt(1000) == 0) {
-                if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) || world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) || world.isRainingAt(getPos().south())) {
+                if (world.isRainingAt(getPos()) || world.isRainingAt(getPos().east()) ||
+                        world.isRainingAt(getPos().west()) || world.isRainingAt(getPos().north()) ||
+                        world.isRainingAt(getPos().south())) {
                     if (world.isThundering() && GTValues.RNG.nextInt(3) == 0) {
                         doExplosion(explosionPower);
                     } else if (GTValues.RNG.nextInt(10) == 0) {
@@ -1449,8 +1507,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return true;
     }
 
-    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
-        final String[] tools = {ToolClasses.WRENCH, ToolClasses.SCREWDRIVER};
+    public boolean canRenderMachineGrid(@NotNull ItemStack mainHandStack, @NotNull ItemStack offHandStack) {
+        final String[] tools = { ToolClasses.WRENCH, ToolClasses.SCREWDRIVER };
         return ToolHelper.isTool(mainHandStack, tools) ||
                 ToolHelper.isTool(offHandStack, tools);
     }
@@ -1469,9 +1527,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Method(modid = GTValues.MODID_APPENG)
-    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+    public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return AECableType.NONE;
     }
 
@@ -1482,6 +1540,5 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Method(modid = GTValues.MODID_APPENG)
-    public void gridChanged() {
-    }
+    public void gridChanged() {}
 }

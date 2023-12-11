@@ -4,10 +4,11 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR;
 
@@ -15,8 +16,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
 
     private boolean doDistilleryRecipes = true;
 
-    public UniversalDistillationRecipeBuilder() {
-    }
+    public UniversalDistillationRecipeBuilder() {}
 
     public UniversalDistillationRecipeBuilder(Recipe recipe, RecipeMap<UniversalDistillationRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
@@ -39,19 +39,24 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         }
 
         for (int i = 0; i < fluidOutputs.size(); i++) {
-            SimpleRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy().EUt(Math.max(1, this.EUt / 4)).circuitMeta(i + 1);
+            SimpleRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy()
+                    .EUt(Math.max(1, this.EUt / 4)).circuitMeta(i + 1);
 
-            int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i), !this.outputs.isEmpty() ? this.outputs.get(0) : null);
+            int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i),
+                    !this.outputs.isEmpty() ? this.outputs.get(0) : null);
 
             int recipeDuration = (int) (this.duration * STANDARD_OVERCLOCK_DURATION_DIVISOR);
 
             boolean shouldDivide = ratio != 1;
 
-            boolean fluidsDivisible = isFluidStackDivisibleForDistillery(this.fluidInputs.get(0).getInputFluidStack(), ratio) &&
+            boolean fluidsDivisible = isFluidStackDivisibleForDistillery(this.fluidInputs.get(0).getInputFluidStack(),
+                    ratio) &&
                     isFluidStackDivisibleForDistillery(this.fluidOutputs.get(i), ratio);
 
-            FluidStack dividedInputFluid = new FluidStack(this.fluidInputs.get(0).getInputFluidStack(), Math.max(1, this.fluidInputs.get(0).getAmount() / ratio));
-            FluidStack dividedOutputFluid = new FluidStack(this.fluidOutputs.get(i), Math.max(1, this.fluidOutputs.get(i).amount / ratio));
+            FluidStack dividedInputFluid = new FluidStack(this.fluidInputs.get(0).getInputFluidStack(),
+                    Math.max(1, this.fluidInputs.get(0).getAmount() / ratio));
+            FluidStack dividedOutputFluid = new FluidStack(this.fluidOutputs.get(i),
+                    Math.max(1, this.fluidOutputs.get(i).amount / ratio));
 
             if (shouldDivide && fluidsDivisible)
                 builder.fluidInputs(dividedInputFluid)
@@ -84,8 +89,9 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         super.buildAndRegister();
     }
 
-    private static int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, @Nullable ItemStack output) {
-        int[] divisors = new int[]{2, 5, 10, 25, 50};
+    private static int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput,
+                                             @Nullable ItemStack output) {
+        int[] divisors = new int[] { 2, 5, 10, 25, 50 };
         int ratio = -1;
 
         for (int divisor : divisors) {
@@ -114,5 +120,4 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         this.doDistilleryRecipes = false;
         return this;
     }
-
 }

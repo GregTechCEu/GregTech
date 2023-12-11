@@ -1,6 +1,6 @@
 package gregtech.api.util;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public final class SmallDigits {
 
@@ -12,18 +12,18 @@ public final class SmallDigits {
 
     private SmallDigits() {}
 
-    @Nonnull
+    @NotNull
     public static String toSmallUpNumbers(String string) {
         return convert(string, SMALL_UP_NUMBER_BASE);
     }
 
-    @Nonnull
+    @NotNull
     public static String toSmallDownNumbers(String string) {
         return convert(string, SMALL_DOWN_NUMBER_BASE);
     }
 
-    @Nonnull
-    private static String convert(@Nonnull String string, int base) {
+    @NotNull
+    private static String convert(@NotNull String string, int base) {
         boolean hasPrecedingDash = false;
         char[] charArray = string.toCharArray();
         for (int i = 0; i < charArray.length; i++) {

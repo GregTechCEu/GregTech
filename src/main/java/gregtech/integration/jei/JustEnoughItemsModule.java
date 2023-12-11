@@ -28,23 +28,26 @@ import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
-import gregtech.integration.jei.basic.*;
+import gregtech.integration.jei.basic.GTFluidVeinCategory;
+import gregtech.integration.jei.basic.GTFluidVeinInfo;
+import gregtech.integration.jei.basic.GTOreCategory;
+import gregtech.integration.jei.basic.GTOreInfo;
+import gregtech.integration.jei.basic.MaterialTree;
+import gregtech.integration.jei.basic.MaterialTreeCategory;
+import gregtech.integration.jei.basic.OreByProduct;
+import gregtech.integration.jei.basic.OreByProductCategory;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
-import gregtech.integration.jei.recipe.*;
+import gregtech.integration.jei.recipe.FacadeRegistryPlugin;
+import gregtech.integration.jei.recipe.GTRecipeWrapper;
+import gregtech.integration.jei.recipe.IntCircuitCategory;
+import gregtech.integration.jei.recipe.IntCircuitRecipeWrapper;
+import gregtech.integration.jei.recipe.RecipeMapCategory;
 import gregtech.integration.jei.utils.MachineSubtypeHandler;
 import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
 import gregtech.integration.jei.utils.ModularUIGuiHandler;
 import gregtech.integration.jei.utils.MultiblockInfoRecipeFocusShower;
 import gregtech.modules.GregTechModules;
-import mezz.jei.Internal;
-import mezz.jei.api.*;
-import mezz.jei.api.ingredients.IIngredientRegistry;
-import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeCategoryRegistration;
-import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
-import mezz.jei.config.Constants;
-import mezz.jei.input.IShowsRecipeFocuses;
-import mezz.jei.input.InputHandler;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -53,7 +56,23 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
+import mezz.jei.Internal;
+import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.IJeiHelpers;
+import mezz.jei.api.IJeiRuntime;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.IModRegistry;
+import mezz.jei.api.ISubtypeRegistry;
+import mezz.jei.api.JEIPlugin;
+import mezz.jei.api.ingredients.IIngredientRegistry;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
+import mezz.jei.config.Constants;
+import mezz.jei.input.IShowsRecipeFocuses;
+import mezz.jei.input.InputHandler;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
@@ -64,12 +83,11 @@ import java.util.stream.Stream;
 
 @JEIPlugin
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_JEI,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_JEI,
-        name = "GregTech JEI Integration",
-        description = "JustEnoughItems Integration Module"
-)
+                moduleID = GregTechModules.MODULE_JEI,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_JEI,
+                name = "GregTech JEI Integration",
+                description = "JustEnoughItems Integration Module")
 public class JustEnoughItemsModule extends IntegrationSubmodule implements IModPlugin {
 
     public static IIngredientRegistry ingredientRegistry;
@@ -84,28 +102,30 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     }
 
     @Override
-    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
+    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
         JustEnoughItemsModule.jeiRuntime = jeiRuntime;
     }
 
     @Override
-    public void registerItemSubtypes(@Nonnull ISubtypeRegistry subtypeRegistry) {
+    public void registerItemSubtypes(@NotNull ISubtypeRegistry subtypeRegistry) {
         MetaItemSubtypeHandler subtype = new MetaItemSubtypeHandler();
         for (MetaItem<?> metaItem : MetaItems.ITEMS) {
             subtypeRegistry.registerSubtypeInterpreter(metaItem, subtype);
         }
-        subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(MetaBlocks.MACHINE), new MachineSubtypeHandler());
+        subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(MetaBlocks.MACHINE),
+                new MachineSubtypeHandler());
     }
 
     @Override
-    public void registerCategories(@Nonnull IRecipeCategoryRegistration registry) {
+    public void registerCategories(@NotNull IRecipeCategoryRegistration registry) {
         guiHelper = registry.getJeiHelpers().getGuiHelper();
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if (!recipeMap.isHidden) {
+            if (recipeMap.getRecipeMapUI().isJEIVisible()) {
                 for (GTRecipeCategory category : recipeMap.getRecipesByCategory().keySet()) {
-                    registry.addRecipeCategories(new RecipeMapCategory(recipeMap, category, registry.getJeiHelpers().getGuiHelper()));
+                    registry.addRecipeCategories(
+                            new RecipeMapCategory(recipeMap, category, registry.getJeiHelpers().getGuiHelper()));
                 }
             }
         }
@@ -131,16 +151,19 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                 GTValues.MODID + ":material_tree",
                 VanillaRecipeCategoryUid.INFORMATION,
                 VanillaRecipeCategoryUid.FUEL);
-        registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler, Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler,
+                Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
 
         registry.addAdvancedGuiHandlers(modularUIGuiHandler);
         registry.addGhostIngredientHandler(modularUIGuiHandler.getGuiContainerClass(), modularUIGuiHandler);
         // register transfer handler for crafting recipes
-        ModularUIGuiHandler craftingStationGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
-        registry.getRecipeTransferRegistry().addRecipeTransferHandler(craftingStationGuiHandler, VanillaRecipeCategoryUid.CRAFTING);
+        ModularUIGuiHandler craftingStationGuiHandler = new ModularUIGuiHandler(
+                jeiHelpers.recipeTransferHandlerHelper());
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(craftingStationGuiHandler,
+                VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if (!recipeMap.isHidden) {
+            if (recipeMap.getRecipeMapUI().isJEIVisible()) {
                 for (Map.Entry<GTRecipeCategory, List<Recipe>> entry : recipeMap.getRecipesByCategory().entrySet()) {
                     Stream<Recipe> recipeStream = entry.getValue().stream()
                             .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
@@ -160,9 +183,8 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     }
 
                     registry.addRecipes(recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r))
-                                    .collect(Collectors.toList()),
-                            entry.getKey().getUniqueID()
-                    );
+                            .collect(Collectors.toList()),
+                            entry.getKey().getUniqueID());
                 }
             }
         }
@@ -171,7 +193,8 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             assert metaTileEntity != null;
             if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
-                IControllable workableCapability = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+                IControllable workableCapability = metaTileEntity
+                        .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
 
                 if (workableCapability instanceof AbstractRecipeLogic logic) {
                     if (metaTileEntity instanceof IMultipleRecipeMaps) {
@@ -199,7 +222,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
-        MetaTileEntity[][] machineLists = new MetaTileEntity[][]{
+        MetaTileEntity[][] machineLists = new MetaTileEntity[][] {
                 MetaTileEntities.MACERATOR,
                 MetaTileEntities.ORE_WASHER,
                 MetaTileEntities.CENTRIFUGE,
@@ -213,7 +236,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             registry.addRecipeCatalyst(machine[GTValues.LV].getStackForm(), oreByProductId);
         }
 
-        //Material Tree
+        // Material Tree
         List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.DUST)) {
@@ -222,7 +245,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
         registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
 
-        //Ore Veins
+        // Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
         List<GTOreInfo> oreInfoList = new CopyOnWriteArrayList<>();
         for (OreDepositDefinition vein : oreVeins) {
@@ -234,7 +257,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LV.getStackForm(), oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), oreSpawnID);
-        //Ore Veins End
+        // Ore Veins End
 
         // Fluid Veins
         List<BedrockFluidDepositDefinition> fluidVeins = WorldGenRegistry.getBedrockVeinDeposits();
@@ -263,14 +286,15 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     "gregtech.machine.canner.jei_description");
         }
 
-        //Multiblock info page registration
+        // Multiblock info page registration
         MultiblockInfoCategory.REGISTER.forEach(mte -> {
             String[] desc = mte.getDescription();
             if (desc.length > 0) {
                 registry.addIngredientInfo(mte.getStackForm(), VanillaTypes.ITEM, mte.getDescription());
             }
         });
-        registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM, I18n.format("tile.brittle_charcoal.tooltip.1", I18n.format("tile.brittle_charcoal.tooltip.2")));
+        registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM,
+                I18n.format("tile.brittle_charcoal.tooltip.1", I18n.format("tile.brittle_charcoal.tooltip.2")));
     }
 
     private void setupInputHandler() {
@@ -278,7 +302,8 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             Field inputHandlerField = Internal.class.getDeclaredField("inputHandler");
             inputHandlerField.setAccessible(true);
             InputHandler inputHandler = (InputHandler) inputHandlerField.get(null);
-            List<IShowsRecipeFocuses> showsRecipeFocuses = ObfuscationReflectionHelper.getPrivateValue(InputHandler.class, inputHandler, "showsRecipeFocuses");
+            List<IShowsRecipeFocuses> showsRecipeFocuses = ObfuscationReflectionHelper
+                    .getPrivateValue(InputHandler.class, inputHandler, "showsRecipeFocuses");
 
             showsRecipeFocuses.add(new MultiblockInfoRecipeFocusShower());
 
@@ -287,7 +312,8 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
     }
 
-    private void registerRecipeMapCatalyst(IModRegistry registry, RecipeMap<?> recipeMap, MetaTileEntity metaTileEntity) {
+    private void registerRecipeMapCatalyst(IModRegistry registry, RecipeMap<?> recipeMap,
+                                           MetaTileEntity metaTileEntity) {
         for (GTRecipeCategory category : recipeMap.getRecipesByCategory().keySet()) {
             RecipeMapCategory jeiCategory = RecipeMapCategory.getCategoryFor(category);
             if (jeiCategory != null) {
@@ -300,7 +326,8 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             return;
         }
         if (recipeMap.getSmallRecipeMap() != null) {
-            registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.getSmallRecipeMap().unlocalizedName);
+            registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
+                    GTValues.MODID + ":" + recipeMap.getSmallRecipeMap().unlocalizedName);
             return;
         }
 

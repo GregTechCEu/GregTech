@@ -1,15 +1,17 @@
 package gregtech.integration.forestry;
 
+import gregtech.api.GTValues;
+import gregtech.integration.IntegrationModule;
+import gregtech.integration.forestry.bees.GTCombType;
+import gregtech.integration.forestry.bees.GTDropType;
+
+import net.minecraft.item.ItemStack;
+
 import forestry.api.apiculture.IAlleleBeeEffect;
 import forestry.api.apiculture.IAlleleBeeSpecies;
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IAlleleFlowers;
 import forestry.modules.ModuleHelper;
-import gregtech.api.GTValues;
-import gregtech.integration.IntegrationModule;
-import gregtech.integration.forestry.bees.GTCombType;
-import gregtech.integration.forestry.bees.GTDropType;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +70,8 @@ public class ForestryUtil {
     @NotNull
     public static ItemStack getCombStack(@NotNull GTCombType type, int amount) {
         if (!ForestryConfig.enableGTBees) {
-            IntegrationModule.logger.error("Tried to get GregTech Comb stack, but GregTech Bees config is not enabled!");
+            IntegrationModule.logger
+                    .error("Tried to get GregTech Comb stack, but GregTech Bees config is not enabled!");
             return ItemStack.EMPTY;
         }
         if (!apicultureEnabled()) {
@@ -86,7 +89,8 @@ public class ForestryUtil {
     @NotNull
     public static ItemStack getDropStack(@NotNull GTDropType type, int amount) {
         if (!ForestryConfig.enableGTBees) {
-            IntegrationModule.logger.error("Tried to get GregTech Drop stack, but GregTech Bees config is not enabled!");
+            IntegrationModule.logger
+                    .error("Tried to get GregTech Drop stack, but GregTech Bees config is not enabled!");
             return ItemStack.EMPTY;
         }
         if (!apicultureEnabled()) {

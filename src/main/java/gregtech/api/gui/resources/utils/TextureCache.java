@@ -1,6 +1,7 @@
 package gregtech.api.gui.resources.utils;
 
 import net.minecraft.client.Minecraft;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 
@@ -12,6 +13,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class TextureCache {
+
     private File cacheDirectory = new File(Minecraft.getMinecraft().gameDir, "opframe_cache");
     private File index = new File(cacheDirectory, "index");
 
@@ -104,6 +106,7 @@ public class TextureCache {
     }
 
     public static class CacheEntry {
+
         private String url;
         private String etag;
         private long time;

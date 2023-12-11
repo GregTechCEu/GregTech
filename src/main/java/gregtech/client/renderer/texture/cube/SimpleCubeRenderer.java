@@ -1,17 +1,19 @@
 package gregtech.client.renderer.texture.cube;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 
 public class SimpleCubeRenderer implements ICubeRenderer {
 
@@ -43,8 +45,10 @@ public class SimpleCubeRenderer implements ICubeRenderer {
     }
 
     @Override
-    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
-        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, sprite, BlockRenderLayer.CUTOUT_MIPPED);
+    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                                    Cuboid6 bounds, EnumFacing frontFacing, boolean isActive,
+                                    boolean isWorkingEnabled) {
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, sprite,
+                BlockRenderLayer.CUTOUT_MIPPED);
     }
-
 }

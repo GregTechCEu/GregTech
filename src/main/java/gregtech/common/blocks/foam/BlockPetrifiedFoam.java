@@ -1,6 +1,7 @@
 package gregtech.common.blocks.foam;
 
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -9,7 +10,7 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockPetrifiedFoam extends BlockColored {
 
@@ -23,7 +24,8 @@ public class BlockPetrifiedFoam extends BlockColored {
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 }

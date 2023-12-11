@@ -1,19 +1,21 @@
 package gregtech.api.unification.ore;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.jei.basic.OreByProduct;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.Loader;
 
-import javax.annotation.Nonnull;
+import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -28,18 +30,18 @@ public class StoneType implements Comparable<StoneType> {
     public final Material stoneMaterial;
     public final Supplier<IBlockState> stone;
     public final SoundType soundType;
-    //we are using guava predicate because isReplaceableOreGen uses it
+    // we are using guava predicate because isReplaceableOreGen uses it
     @SuppressWarnings("Guava")
     private final com.google.common.base.Predicate<IBlockState> predicate;
     public final boolean shouldBeDroppedAsItem;
 
     public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
 
-    public StoneType(int id, String name, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
+    public StoneType(int id, String name, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial,
+                     Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
         Preconditions.checkArgument(
                 stoneMaterial.hasProperty(PropertyKey.DUST),
-                "Stone type must be made with a Material with the Dust Property!"
-        );
+                "Stone type must be made with a Material with the Dust Property!");
         this.name = name;
         this.soundType = soundType;
         this.processingPrefix = processingPrefix;
@@ -54,7 +56,7 @@ public class StoneType implements Comparable<StoneType> {
     }
 
     @Override
-    public int compareTo(@Nonnull StoneType stoneType) {
+    public int compareTo(@NotNull StoneType stoneType) {
         return STONE_TYPE_REGISTRY.getIDForObject(this) - STONE_TYPE_REGISTRY.getIDForObject(stoneType);
     }
 
@@ -65,7 +67,7 @@ public class StoneType implements Comparable<StoneType> {
     };
 
     public static void init() {
-        //noinspection ResultOfMethodCallIgnored
+        // noinspection ResultOfMethodCallIgnored
         StoneTypes.STONE.name.getBytes();
     }
 
@@ -84,7 +86,8 @@ public class StoneType implements Comparable<StoneType> {
                 }
             }
         } else if (dummy$isReplaceableOreGen) {
-            // It is not considered, but the test still returned true (this means the impl was probably very lazily done)
+            // It is not considered, but the test still returned true (this means the impl was probably very lazily
+            // done)
             // We have to test against the IBlockState ourselves to see if there's a suitable StoneType
             for (StoneType stoneType : STONE_TYPE_REGISTRY) {
                 if (stoneType.predicate.test(state)) {

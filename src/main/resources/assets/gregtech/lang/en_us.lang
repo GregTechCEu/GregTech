@@ -45,8 +45,8 @@ gregtech.multiblock.steam.low_steam=Not enough Steam to run!
 gregtech.multiblock.steam.steam_stored=Steam: %s
 gregtech.machine.steam_hatch.name=Steam Hatch
 gregtech.machine.steam.steam_hatch.tooltip=§eAccepted Fluid: §fSteam
-gregtech.machine.steam_import_bus.name=Input Bus (Steam)
-gregtech.machine.steam_export_bus.name=Output Bus (Steam)
+gregtech.machine.steam_import_bus.name=Steam Input Bus
+gregtech.machine.steam_export_bus.name=Steam Output Bus
 gregtech.machine.steam_bus.tooltip=Does not work with non-steam multiblocks
 gregtech.machine.steam_oven.name=Steam Oven
 gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Requires at least 6 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch. Steam Hatch must be on the bottom layer, no more than one.
@@ -2718,11 +2718,6 @@ gregtech.machine.crate.titanium.name=Titanium Crate
 gregtech.machine.crate.tungstensteel.name=Tungstensteel Crate
 gregtech.crate.tooltip.taped_movement=Can be Taped to keep inventory contents when broken
 
-# Safe
-gregtech.machine.locked_safe.name=Locked Safe
-gregtech.machine.locked_safe.malfunctioning=§cMalfunctioning!
-gregtech.machine.locked_safe.requirements=§7Replacements required:
-
 # Workbench
 gregtech.machine.workbench.name=Crafting Station
 gregtech.machine.workbench.tooltip1=Better than Forestry
@@ -4390,19 +4385,24 @@ gregtech.machine.fisher.requirement=Requires a %,dx%,d centered square of water 
 
 # World Accelerator
 gregtech.machine.world_accelerator.lv.name=Basic World Accelerator
+gregtech.machine.world_accelerator.lv.tooltip=Tick accelerates Blocks
 gregtech.machine.world_accelerator.mv.name=Advanced World Accelerator
+gregtech.machine.world_accelerator.mv.tooltip=Tick accelerates Blocks
 gregtech.machine.world_accelerator.hv.name=Advanced World Accelerator II
+gregtech.machine.world_accelerator.hv.tooltip=Tick accelerates Blocks
 gregtech.machine.world_accelerator.ev.name=Advanced World Accelerator III
+gregtech.machine.world_accelerator.ev.tooltip=Tick accelerates Blocks
 gregtech.machine.world_accelerator.iv.name=Elite World Accelerator
+gregtech.machine.world_accelerator.iv.tooltip=Time in a §mBottle§r§7 Block
 gregtech.machine.world_accelerator.luv.name=Elite World Accelerator II
+gregtech.machine.world_accelerator.luv.tooltip=Time in a §mBottle§r§7 Block
 gregtech.machine.world_accelerator.zpm.name=Elite World Accelerator III
+gregtech.machine.world_accelerator.zpm.tooltip=Time in a §mBottle§r§7 Block
 gregtech.machine.world_accelerator.uv.name=Ultimate World Accelerator
-gregtech.machine.world_accelerator.uhv.name=Epic World Accelerator
-gregtech.machine.world_accelerator.uev.name=Epic World Accelerator II
-gregtech.machine.world_accelerator.uiv.name=Epic World Accelerator III
-gregtech.machine.world_accelerator.uxv.name=Epic World Accelerator IV
-gregtech.machine.world_accelerator.opv.name=Legendary World Accelerator
-gregtech.machine.world_accelerator.description=Tick accelerates nearby blocks in one of 2 modes: §fTile Entity§7 or §fRandom Tick§7. Use Screwdriver to change mode.
+gregtech.machine.world_accelerator.uv.tooltip=Time Anomaly
+gregtech.machine.world_accelerator.description=Use §fScrewdriver§7 to change mode between §fRandom Tick§7 and §fTile Entity§7 modes.
+gregtech.machine.world_accelerator.power_usage=Uses up to §f%dA§7 in Random Tick mode, §f%dA§7 in Tile Entity mode.
+gregtech.machine.world_accelerator.acceleration=§dAccelerates up to: §f%dx
 gregtech.machine.world_accelerator.working_area=§bWorking Area:
 gregtech.machine.world_accelerator.working_area_tile=  Tile Entity Mode:§f Adjacent Blocks
 gregtech.machine.world_accelerator.working_area_random=  Random Tick Mode:§f %dx%d
@@ -4933,7 +4933,6 @@ gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
 gregtech.bus.collapse_true=Bus will collapse Items
 gregtech.bus.collapse_false=Bus will not collapse Items
-gregtech.bus.collapse.error=Bus must be attached to multiblock first
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -5366,9 +5365,12 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.item_auto_collapse.tooltip.enabled=Item Auto-Collapse Enabled
+gregtech.gui.item_auto_collapse.tooltip.disabled=Item Auto-Collapse Disabled
 gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s batteries§r/n§7Charges %s tools and batteries
-gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r/n§aConfigured Value: §f%d§7/n/n§7LMB/RMB/Scroll to cycle through the list/n§7Shift-right-click to clear
+gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r\n§aConfigured Value: §f%d§7\n\n§7LMB/RMB/Scroll to cycle through the list\n§7Shift-left-click to open selector\n§7Shift-right-click to clear
 gregtech.gui.configurator_slot.no_value=None
+gregtech.gui.configurator_slot.unavailable.tooltip=Programmed Circuit slot unavailable
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
@@ -5510,7 +5512,10 @@ gregtech.multiblock.invalid_structure=Invalid structure.
 gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI.
 gregtech.multiblock.validation_failed=Invalid amount of inputs/outputs.
 gregtech.multiblock.max_energy_per_tick=Max EU/t: %s (%s)
+gregtech.multiblock.max_energy_per_tick_hover=The maximum EU/t available for running recipes or overclocking
 gregtech.multiblock.max_energy_per_tick_amps=Max EU/t: %s (%sA %s)
+gregtech.multiblock.max_recipe_tier=Max Recipe Tier: %s
+gregtech.multiblock.max_recipe_tier_hover=The maximum tier of recipes that can be run
 gregtech.multiblock.generation_eu=Outputting: §a%s EU/t
 gregtech.multiblock.universal.no_problems=No Maintenance Problems!
 gregtech.multiblock.universal.has_problems=Has Maintenance Problems!

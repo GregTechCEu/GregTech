@@ -3,6 +3,7 @@ package gregtech.api.gui.widgets;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.items.IItemHandler;
@@ -17,15 +18,18 @@ public class BlockableSlotWidget extends SlotWidget {
 
     private BooleanSupplier isBlocked = () -> false;
 
-    public BlockableSlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
+    public BlockableSlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems,
+                               boolean canPutItems) {
         super(inventory, slotIndex, xPosition, yPosition, canTakeItems, canPutItems);
     }
 
-    public BlockableSlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
+    public BlockableSlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition,
+                               boolean canTakeItems, boolean canPutItems) {
         super(itemHandler, slotIndex, xPosition, yPosition, canTakeItems, canPutItems);
     }
 
-    public BlockableSlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems, boolean canShiftClickInto) {
+    public BlockableSlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition,
+                               boolean canTakeItems, boolean canPutItems, boolean canShiftClickInto) {
         super(itemHandler, slotIndex, xPosition, yPosition, canTakeItems, canPutItems, canShiftClickInto);
     }
 

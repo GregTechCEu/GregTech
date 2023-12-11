@@ -7,12 +7,14 @@ import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,11 +28,13 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip, @NotNull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         WireProperties wireProperties = blockPipe.createItemProperties(stack);
         int tier = GTUtility.getTierByVoltage(wireProperties.getVoltage());
-        if (wireProperties.isSuperconductor()) tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));
+        if (wireProperties.isSuperconductor())
+            tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));
         tooltip.add(I18n.format("gregtech.cable.voltage", wireProperties.getVoltage(), GTValues.VNF[tier]));
         tooltip.add(I18n.format("gregtech.cable.amperage", wireProperties.getAmperage()));
         tooltip.add(I18n.format("gregtech.cable.loss_per_block", wireProperties.getLossPerBlock()));
@@ -45,7 +49,8 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
 
         if (ConfigHolder.misc.debug) {
             BlockMaterialPipe<?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?>) blockPipe;
-            tooltip.add("MetaItem Id: " + blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(stack).toCamelCaseString());
+            tooltip.add("MetaItem Id: " + blockMaterialPipe.getPrefix().name +
+                    blockMaterialPipe.getItemMaterial(stack).toCamelCaseString());
         }
     }
 }

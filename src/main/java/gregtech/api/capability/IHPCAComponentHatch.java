@@ -36,8 +36,7 @@ public interface IHPCAComponentHatch {
     /**
      * Set this component as damaged (or undamaged).
      */
-    default void setDamaged(boolean damaged) {
-    }
+    default void setDamaged(boolean damaged) {}
 
     /**
      * If this component allows for bridging HPCAs to Network Switches.

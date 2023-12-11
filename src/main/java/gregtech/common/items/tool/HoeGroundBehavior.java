@@ -1,9 +1,9 @@
 package gregtech.common.items.tool;
 
-import com.google.common.collect.ImmutableSet;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.state.IBlockState;
@@ -22,13 +22,16 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.Set;
 
 /**
- * Used to allow a tool to hoe the ground, only if it cannot extend the {@link gregtech.api.items.toolitem.ItemGTHoe} class.
+ * Used to allow a tool to hoe the ground, only if it cannot extend the {@link gregtech.api.items.toolitem.ItemGTHoe}
+ * class.
  */
 public class HoeGroundBehavior implements IToolBehavior {
 
@@ -36,9 +39,11 @@ public class HoeGroundBehavior implements IToolBehavior {
 
     protected HoeGroundBehavior() {/**/}
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
+                                      float hitZ) {
         if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
 
         ItemStack stack = player.getHeldItem(hand);
@@ -57,7 +62,7 @@ public class HoeGroundBehavior implements IToolBehavior {
                 if (rayTraceResult.sideHit == null) return EnumActionResult.PASS;
 
                 blocks = getTillableBlocks(stack, aoeDefinition, world, player, rayTraceResult);
-                if(isBlockTillable(stack, world, player, rayTraceResult.getBlockPos(), null)) {
+                if (isBlockTillable(stack, world, player, rayTraceResult.getBlockPos(), null)) {
                     blocks.add(rayTraceResult.getBlockPos());
                 }
             }
@@ -81,7 +86,8 @@ public class HoeGroundBehavior implements IToolBehavior {
                         break;
                     }
                     case COARSE_DIRT: {
-                        tillGround(world, player, stack, blockPos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
+                        tillGround(world, player, stack, blockPos,
+                                Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
                         tilled = true;
                         break;
                     }
@@ -90,7 +96,8 @@ public class HoeGroundBehavior implements IToolBehavior {
         }
 
         if (tilled) {
-            world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_HOE_TILL, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_HOE_TILL,
+                    SoundCategory.PLAYERS, 1.0F, 1.0F);
             player.swingArm(hand);
             return EnumActionResult.SUCCESS;
         }
@@ -98,11 +105,14 @@ public class HoeGroundBehavior implements IToolBehavior {
         return EnumActionResult.PASS;
     }
 
-    public static Set<BlockPos> getTillableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
-        return ToolHelper.iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, HoeGroundBehavior::isBlockTillable);
+    public static Set<BlockPos> getTillableBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world,
+                                                  EntityPlayer player, RayTraceResult rayTraceResult) {
+        return ToolHelper.iterateAoE(stack, aoeDefinition, world, player, rayTraceResult,
+                HoeGroundBehavior::isBlockTillable);
     }
 
-    private static boolean isBlockTillable(ItemStack stack, World world, EntityPlayer player, BlockPos pos, @Nullable BlockPos hitBlockPos) {
+    private static boolean isBlockTillable(ItemStack stack, World world, EntityPlayer player, BlockPos pos,
+                                           @Nullable BlockPos hitBlockPos) {
         if (world.isAirBlock(pos.up())) {
             Block block = world.getBlockState(pos).getBlock();
             return block == Blocks.GRASS || block == Blocks.GRASS_PATH || block == Blocks.DIRT;
@@ -110,7 +120,8 @@ public class HoeGroundBehavior implements IToolBehavior {
         return false;
     }
 
-    private static void tillGround(@Nonnull World world, EntityPlayer player, ItemStack stack, BlockPos pos, IBlockState state) {
+    private static void tillGround(@NotNull World world, EntityPlayer player, ItemStack stack, BlockPos pos,
+                                   IBlockState state) {
         world.setBlockState(pos, state, 11);
         if (!player.isCreative()) {
             ToolHelper.damageItem(stack, player);
@@ -118,7 +129,8 @@ public class HoeGroundBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.ground_tilling"));
     }
 }

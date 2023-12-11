@@ -2,6 +2,7 @@ package gregtech.client.utils;
 
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.world.DummyWorld;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -10,12 +11,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.vecmath.Vector3f;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import javax.vecmath.Vector3f;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,6 +29,7 @@ import java.util.function.Predicate;
  */
 @SideOnly(Side.CLIENT)
 public class TrackedDummyWorld extends DummyWorld {
+
     public final Set<BlockPos> renderedBlocks = new HashSet<>();
     private Predicate<BlockPos> renderFilter;
     private final World proxyWorld;
@@ -37,11 +41,11 @@ public class TrackedDummyWorld extends DummyWorld {
         this.renderFilter = renderFilter;
     }
 
-    public TrackedDummyWorld(){
+    public TrackedDummyWorld() {
         proxyWorld = null;
     }
 
-    public TrackedDummyWorld(World world){
+    public TrackedDummyWorld(World world) {
         proxyWorld = world;
     }
 
@@ -57,22 +61,22 @@ public class TrackedDummyWorld extends DummyWorld {
     }
 
     @Override
-    public TileEntity getTileEntity(@Nonnull BlockPos pos) {
+    public TileEntity getTileEntity(@NotNull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return null;
         return proxyWorld != null ? proxyWorld.getTileEntity(pos) : super.getTileEntity(pos);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IBlockState getBlockState(@Nonnull BlockPos pos) {
+    public IBlockState getBlockState(@NotNull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
-            return Blocks.AIR.getDefaultState(); //return air if not rendering this block
+            return Blocks.AIR.getDefaultState(); // return air if not rendering this block
         return proxyWorld != null ? proxyWorld.getBlockState(pos) : super.getBlockState(pos);
     }
 
     @Override
-    public boolean setBlockState(@Nonnull BlockPos pos, IBlockState newState, int flags) {
+    public boolean setBlockState(@NotNull BlockPos pos, @NotNull IBlockState newState, int flags) {
         minPos.setX(Math.min(minPos.getX(), pos.getX()));
         minPos.setY(Math.min(minPos.getY(), pos.getY()));
         minPos.setZ(Math.min(minPos.getZ(), pos.getZ()));

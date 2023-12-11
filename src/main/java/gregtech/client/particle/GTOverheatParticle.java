@@ -1,37 +1,41 @@
 package gregtech.client.particle;
 
-import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
+import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.postprocessing.BloomEffect;
-import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.shader.postprocessing.BloomType;
+import gregtech.client.utils.EffectRenderContext;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.vec.Cuboid6;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
 /**
  * @author brachy84
  */
-public class GTOverheatParticle extends GTParticle {
+public class GTOverheatParticle extends GTBloomParticle {
 
     /**
-     * http://www.vendian.org/mncharity/dir3/blackbody/
+     * <a href="http://www.vendian.org/mncharity/dir3/blackbody/">Source</a>
      */
-    public static final int[] blackBodyColors = {
+    private static final int[] blackBodyColors = {
             0xFF3300, // 1000 K
             0xFF5300, // 1200 K
             0xFF6500, // 1400 K
@@ -138,28 +142,30 @@ public class GTOverheatParticle extends GTParticle {
         if (index >= blackBodyColors.length - 1)
             return blackBodyColors[blackBodyColors.length - 1];
         int color = blackBodyColors[index];
-        return RenderUtil.colorInterpolator(color, blackBodyColors[index + 1]).apply(temperature % 200 / 200f);
+        return RenderUtil.interpolateColor(color, blackBodyColors[index + 1], temperature % 200 / 200f);
     }
+
+    private final TileEntityCable tileEntity;
 
     protected final int meltTemp;
     protected int temperature = 293;
-    protected final BlockPos pos;
     protected List<Cuboid6> pipeBoxes;
     protected boolean insulated;
 
     protected float alpha = 0;
     protected int color = blackBodyColors[0];
 
-    public GTOverheatParticle(World worldIn, BlockPos pos, int meltTemp, List<Cuboid6> pipeBoxes, boolean insulated) {
-        super(worldIn, pos.getX(), pos.getY(), pos.getZ());
-        this.pos = pos;
+    public GTOverheatParticle(@NotNull TileEntityCable tileEntity, int meltTemp, @NotNull List<Cuboid6> pipeBoxes,
+                              boolean insulated) {
+        super(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
+        this.tileEntity = tileEntity;
         this.meltTemp = meltTemp;
+        this.pipeBoxes = pipeBoxes;
         updatePipeBoxes(pipeBoxes);
         this.insulated = insulated;
-        this.motionless = true;
     }
 
-    public void updatePipeBoxes(List<Cuboid6> pipeBoxes) {
+    public void updatePipeBoxes(@NotNull List<Cuboid6> pipeBoxes) {
         this.pipeBoxes = pipeBoxes;
         for (Cuboid6 cuboid : this.pipeBoxes) {
             cuboid.expand(0.001);
@@ -176,7 +182,7 @@ public class GTOverheatParticle extends GTParticle {
             alpha = 0f;
         } else if (temperature < 1000) {
             alpha = (temperature - 500f) / 500f;
-            alpha *= 0.8;
+            alpha *= 0.8f;
         } else {
             alpha = 0.8f;
         }
@@ -185,8 +191,7 @@ public class GTOverheatParticle extends GTParticle {
 
     @Override
     public void onUpdate() {
-        TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof TileEntityCable) || !((TileEntityCable) te).isParticleAlive()) {
+        if (tileEntity.isInvalid() || !tileEntity.isParticleAlive()) {
             setExpired();
             return;
         }
@@ -197,71 +202,88 @@ public class GTOverheatParticle extends GTParticle {
     }
 
     private void spawnSmoke() {
+        BlockPos pos = tileEntity.getPos();
         float xPos = pos.getX() + 0.5F;
         float yPos = pos.getY() + 0.9F;
         float zPos = pos.getZ() + 0.5F;
 
         float ySpd = 0.3F + 0.1F * GTValues.RNG.nextFloat();
-        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, 0, ySpd, 0);
+        tileEntity.getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, 0, ySpd, 0);
     }
 
     @Override
-    public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        if (insulated)
-            return;
-
-        BloomEffectUtil.requestCustomBloom(RENDER_HANDLER, buffer1 -> {
-            float red = (color >> 16) & 0xFF, green = (color >> 8) & 0xFF, blue = color & 0xFF;
-            red /= 255;
-            green /= 255;
-            blue /= 255;
-
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferbuilder = tessellator.getBuffer();
-            GlStateManager.pushMatrix();
-            GlStateManager.disableTexture2D();
-            GlStateManager.enableBlend();
-            GlStateManager.translate(posX - interpPosX, posY - interpPosY, posZ - interpPosZ);
-            buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-            for (Cuboid6 cuboid : pipeBoxes) {
-                RenderBufferHelper.renderCubeFace(bufferbuilder, cuboid, red, green, blue, alpha, true);
-            }
-            tessellator.draw();
-            GlStateManager.popMatrix();
-            GlStateManager.enableTexture2D();
-            GlStateManager.disableBlend();
-        });
+    public String toString() {
+        return "GTOverheatParticle{" +
+                "tileEntity=" + tileEntity +
+                ", meltTemp=" + meltTemp +
+                ", temperature=" + temperature +
+                ", pipeBoxes=" + pipeBoxes +
+                ", insulated=" + insulated +
+                ", alpha=" + alpha +
+                ", color=" + color +
+                '}';
     }
 
-    static BloomEffectUtil.IBloomRenderFast RENDER_HANDLER = new BloomEffectUtil.IBloomRenderFast() {
-        @Override
-        public int customBloomStyle() {
-            return ConfigHolder.client.shader.heatEffectBloom.useShader ? ConfigHolder.client.shader.heatEffectBloom.bloomStyle : -1;
+    @Nullable
+    @Override
+    protected IRenderSetup getBloomRenderSetup() {
+        return SETUP;
+    }
+
+    @NotNull
+    @Override
+    protected BloomType getBloomType() {
+        ConfigHolder.HeatEffectBloom heatEffectBloom = ConfigHolder.client.shader.heatEffectBloom;
+        return BloomType.fromValue(heatEffectBloom.useShader ? heatEffectBloom.bloomStyle : -1);
+    }
+
+    @Override
+    public void renderBloomEffect(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {
+        float red = ((color >> 16) & 0xFF) / 255f;
+        float green = ((color >> 8) & 0xFF) / 255f;
+        float blue = (color & 0xFF) / 255f;
+
+        buffer.setTranslation(posX - context.cameraX(), posY - context.cameraY(), posZ - context.cameraZ());
+        for (Cuboid6 cuboid : pipeBoxes) {
+            RenderBufferHelper.renderCubeFace(buffer, cuboid, red, green, blue, alpha, true);
         }
+    }
+
+    @Override
+    public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
+        return !this.insulated;
+    }
+
+    private static final IRenderSetup SETUP = new IRenderSetup() {
 
         float lastBrightnessX;
         float lastBrightnessY;
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void preDraw(BufferBuilder buffer) {
+        public void preDraw(@NotNull BufferBuilder buffer) {
             BloomEffect.strength = (float) ConfigHolder.client.shader.heatEffectBloom.strength;
             BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.heatEffectBloom.baseBrightness;
             BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.heatEffectBloom.highBrightnessThreshold;
             BloomEffect.lowBrightnessThreshold = (float) ConfigHolder.client.shader.heatEffectBloom.lowBrightnessThreshold;
             BloomEffect.step = 1;
 
-            lastBrightnessX = OpenGlHelper.lastBrightnessX;
-            lastBrightnessY = OpenGlHelper.lastBrightnessY;
+            this.lastBrightnessX = OpenGlHelper.lastBrightnessX;
+            this.lastBrightnessY = OpenGlHelper.lastBrightnessY;
             GlStateManager.color(1, 1, 1, 1);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
             GlStateManager.disableTexture2D();
+            GlStateManager.enableBlend();
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         }
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void postDraw(BufferBuilder buffer) {
+        public void postDraw(@NotNull BufferBuilder buffer) {
+            buffer.setTranslation(0, 0, 0);
+            Tessellator.getInstance().draw();
             GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
         }
     };

@@ -6,6 +6,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -55,34 +56,35 @@ public class ProgressWidget extends Widget {
         this(new TimedProgressSupplier(ticksPerCycle, width, false), x, y, width, height);
     }
 
-    public ProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType) {
+    public ProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea fullImage,
+                          MoveType moveType) {
         super(new Position(x, y), new Size(width, height));
         this.progressSupplier = progressSupplier;
         this.emptyBarArea = fullImage.getSubArea(0.0, 0.0, 1.0, 0.5);
         this.moveType = moveType;
         if (moveType == MoveType.CIRCULAR) {
-            this.filledBarArea = new TextureArea[]{
+            this.filledBarArea = new TextureArea[] {
                     fullImage.getSubArea(0.0, 0.75, 0.5, 0.25), // UP
                     fullImage.getSubArea(0.0, 0.5, 0.5, 0.25), // LEFT
                     fullImage.getSubArea(0.5, 0.5, 0.5, 0.25), // DOWN
                     fullImage.getSubArea(0.5, 0.75, 0.5, 0.25), // RIGHT
             };
         } else {
-            this.filledBarArea = new TextureArea[]{fullImage.getSubArea(0.0, 0.5, 1.0, 0.5)};
+            this.filledBarArea = new TextureArea[] { fullImage.getSubArea(0.0, 0.5, 1.0, 0.5) };
         }
     }
 
-    public ProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType) {
+    public ProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage,
+                          MoveType moveType) {
         this(new TimedProgressSupplier(
                 ticksPerCycle,
                 moveType == MoveType.HORIZONTAL ? width : height,
-                false
-        ), x, y, width, height, fullImage, moveType);
+                false), x, y, width, height, fullImage, moveType);
     }
 
     public ProgressWidget setProgressBar(TextureArea emptyBarArea, TextureArea filledBarArea, MoveType moveType) {
         this.emptyBarArea = emptyBarArea;
-        this.filledBarArea = new TextureArea[]{filledBarArea};
+        this.filledBarArea = new TextureArea[] { filledBarArea };
         this.moveType = moveType;
         return this;
     }
@@ -183,8 +185,7 @@ public class ProgressWidget extends Widget {
                         0.0,
                         1.0 - progressScaledDrawnHeight,
                         1.0,
-                        progressScaledDrawnHeight
-                );
+                        progressScaledDrawnHeight);
 
                 // TL, draw RIGHT
                 progressScaled = subAreas[1] * halfWidth;
@@ -198,8 +199,7 @@ public class ProgressWidget extends Widget {
                         0.0,
                         0.0,
                         progressScaledDrawnWidth,
-                        1.0
-                );
+                        1.0);
 
                 // TR, draw DOWN
                 progressScaled = subAreas[2] * halfWidth;
@@ -213,8 +213,7 @@ public class ProgressWidget extends Widget {
                         0.0,
                         0.0,
                         1.0,
-                        progressScaledDrawnHeight
-                );
+                        progressScaledDrawnHeight);
 
                 // BR, draw LEFT
                 progressScaled = subAreas[3] * halfWidth;
@@ -228,8 +227,7 @@ public class ProgressWidget extends Widget {
                         1.0 - progressScaledDrawnWidth,
                         0.0,
                         progressScaledDrawnWidth,
-                        1.0
-                );
+                        1.0);
             } else if (moveType == MoveType.VERTICAL_DOWNWARDS) {
                 double height = size.height * lastProgressValue;
                 if (!smooth) height = (int) height;

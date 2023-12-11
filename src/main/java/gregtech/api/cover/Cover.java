@@ -1,21 +1,24 @@
 package gregtech.api.cover;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.client.utils.BloomEffectUtil;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -30,9 +33,11 @@ public interface Cover {
     /**
      * @return the CoverableView containing this cover
      */
-    @NotNull CoverableView getCoverableView();
+    @NotNull
+    CoverableView getCoverableView();
 
-    @NotNull CoverDefinition getDefinition();
+    @NotNull
+    CoverDefinition getDefinition();
 
     /**
      * @return the World containing this cover
@@ -46,6 +51,23 @@ public interface Cover {
      */
     default @UnknownNullability BlockPos getPos() {
         return getCoverableView().getPos();
+    }
+
+    /**
+     * @return the tile entity at the cover's position
+     */
+    default @Nullable TileEntity getTileEntityHere() {
+        CoverableView view = getCoverableView();
+        return view.getWorld().getTileEntity(view.getPos());
+    }
+
+    /**
+     * @param facing the side to get the neighbor at
+     * @return the neighbor tile entity at the side
+     */
+    default @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
+        CoverableView view = getCoverableView();
+        return view.getNeighbor(facing);
     }
 
     /**
@@ -76,17 +98,11 @@ public interface Cover {
         return getCoverableView().getOffsetTimer();
     }
 
-    default void update() {}
-
-    default boolean isTickable() {
-        //noinspection InstanceofThis
-        return this instanceof ITickable;
-    }
-
     /**
      * @return the side the cover is attached to
      */
-    @NotNull EnumFacing getAttachedSide();
+    @NotNull
+    EnumFacing getAttachedSide();
 
     /**
      * @param coverable the CoverableView to attach to
@@ -94,7 +110,6 @@ public interface Cover {
      * @return if the cover can attach to the side
      */
     boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side);
-
 
     /**
      * Called when the cover is first attached on the Server Side.
@@ -105,7 +120,8 @@ public interface Cover {
      * @param player        the player attaching the cover
      * @param itemStack     the item used to place the cover
      */
-    default void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {}
+    default void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
+                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {}
 
     /**
      * Called when the cover is removed
@@ -148,7 +164,8 @@ public interface Cover {
      * @param hitResult the HitResult of the click
      * @return the action's result
      */
-    default @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    default @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                   @NotNull CuboidRayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -158,7 +175,8 @@ public interface Cover {
      * @param hitResult the HitResult of the click
      * @return the action's result
      */
-    default @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    default @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                         @NotNull CuboidRayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -168,7 +186,8 @@ public interface Cover {
      * @param hitResult the HitResult of the click
      * @return the action's result
      */
-    default @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    default @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -212,16 +231,18 @@ public interface Cover {
      * It will be automatically translated to prevent Z-fighting with machine faces
      */
     @SideOnly(Side.CLIENT)
-    void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, @NotNull IVertexOperation[] pipeline,
+    void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                     @NotNull IVertexOperation[] pipeline,
                      @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer);
 
     @SideOnly(Side.CLIENT)
     default boolean canRenderInLayer(@NotNull BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getRealBloomLayer();
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getEffectiveBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)
-    void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, @NotNull IVertexOperation[] pipeline,
+    void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                          @NotNull IVertexOperation[] pipeline,
                           @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer);
 
     default boolean canRenderBackside() {

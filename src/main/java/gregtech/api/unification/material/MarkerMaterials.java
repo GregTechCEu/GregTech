@@ -1,8 +1,10 @@
 package gregtech.api.unification.material;
 
-import com.google.common.collect.HashBiMap;
 import gregtech.api.GTValues;
+
 import net.minecraft.item.EnumDyeColor;
+
+import com.google.common.collect.HashBiMap;
 
 public class MarkerMaterials {
 
@@ -51,7 +53,8 @@ public class MarkerMaterials {
          * Arrays containing all possible color values (without Colorless!)
          */
         public static final MarkerMaterial[] VALUES = {
-                White, Orange, Magenta, LightBlue, Yellow, Lime, Pink, Gray, LightGray, Cyan, Purple, Blue, Brown, Green, Red, Black
+                White, Orange, Magenta, LightBlue, Yellow, Lime, Pink, Gray, LightGray, Cyan, Purple, Blue, Brown,
+                Green, Red, Black
         };
 
         /**
@@ -77,13 +80,13 @@ public class MarkerMaterials {
                 COLORS.put(color, Color.valueOf(color.getName()));
             }
         }
-
     }
 
     /**
      * Circuitry, batteries and other technical things
      */
     public static class Tier {
+
         public static final Material ULV = MarkerMaterial.create(GTValues.VN[GTValues.ULV].toLowerCase());
         public static final Material LV = MarkerMaterial.create(GTValues.VN[GTValues.LV].toLowerCase());
         public static final Material MV = MarkerMaterial.create(GTValues.VN[GTValues.MV].toLowerCase());
@@ -103,11 +106,11 @@ public class MarkerMaterials {
     }
 
     public static class Component {
+
         public static final Material Resistor = MarkerMaterial.create("resistor");
         public static final Material Transistor = MarkerMaterial.create("transistor");
         public static final Material Capacitor = MarkerMaterial.create("capacitor");
         public static final Material Diode = MarkerMaterial.create("diode");
         public static final Material Inductor = MarkerMaterial.create("inductor");
     }
-
 }

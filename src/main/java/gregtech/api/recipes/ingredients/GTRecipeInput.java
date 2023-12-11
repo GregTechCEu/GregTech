@@ -2,16 +2,18 @@ package gregtech.api.recipes.ingredients;
 
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectLists;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectLists;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -44,7 +46,8 @@ public abstract class GTRecipeInput {
      */
     public static final int SORTING_ORDER_INT_CIRCUIT = 10;
 
-    public static final Comparator<GTRecipeInput> RECIPE_INPUT_COMPARATOR = Comparator.comparingInt(GTRecipeInput::getSortingOrder);
+    public static final Comparator<GTRecipeInput> RECIPE_INPUT_COMPARATOR = Comparator
+            .comparingInt(GTRecipeInput::getSortingOrder);
 
     /**
      * All items will initially match the with is NBT (OreDicts have a null tag?)
@@ -180,9 +183,9 @@ public abstract class GTRecipeInput {
 
     /**
      * @return true if the input matches another input, while ignoring its amount field and
-     * non-consumable status.
-     * <p>
-     * used for unique input matching in RecipeMap
+     *         non-consumable status.
+     *         <p>
+     *         used for unique input matching in RecipeMap
      * @see gregtech.api.recipes.RecipeMap#uniqueIngredientsList(Collection) RecipeMap#uniqueIngredientsList(Collection)
      */
     public abstract boolean equalIgnoreAmount(GTRecipeInput input);
@@ -200,6 +203,7 @@ public abstract class GTRecipeInput {
     }
 
     protected static class ItemToMetaList implements Object2ObjectMap.Entry<Item, List<MetaToTAGList>> {
+
         protected Item item;
         protected List<MetaToTAGList> metaToTAGList;
 
@@ -232,6 +236,7 @@ public abstract class GTRecipeInput {
     }
 
     protected static class MetaToTAGList implements Int2ObjectMap.Entry<List<TagToStack>> {
+
         protected int meta;
         protected List<TagToStack> tagToStack;
 
@@ -269,6 +274,7 @@ public abstract class GTRecipeInput {
     }
 
     protected static class TagToStack implements Object2ObjectMap.Entry<NBTTagCompound, ItemStack> {
+
         NBTTagCompound tag;
         ItemStack stack;
 

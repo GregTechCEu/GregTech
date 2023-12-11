@@ -1,8 +1,9 @@
 package gregtech.common.terminal.app.prospector;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum ProspectorMode {
+
     ORE("ore_prospector", "metaitem.prospector.mode.ores"),
     FLUID("fluid_prospector", "metaitem.prospector.mode.fluid");
 
@@ -11,12 +12,12 @@ public enum ProspectorMode {
     public final String terminalName;
     public final String unlocalizedName;
 
-    ProspectorMode(@Nonnull String terminalName, @Nonnull String unlocalizedName) {
+    ProspectorMode(@NotNull String terminalName, @NotNull String unlocalizedName) {
         this.terminalName = terminalName;
         this.unlocalizedName = unlocalizedName;
     }
 
-    @Nonnull
+    @NotNull
     public ProspectorMode next() {
         int next = ordinal() + 1;
         if (next >= VALUES.length) {

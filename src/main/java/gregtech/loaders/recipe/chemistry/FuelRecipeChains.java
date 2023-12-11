@@ -8,7 +8,6 @@ import static gregtech.api.unification.material.Materials.*;
 public class FuelRecipeChains {
 
     public static void init() {
-
         // High Octane Gasoline
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
                 .fluidInputs(Naphtha.getFluid(16000))

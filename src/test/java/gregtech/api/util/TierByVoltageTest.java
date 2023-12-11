@@ -1,6 +1,5 @@
 package gregtech.api.util;
 
-
 import org.junit.jupiter.api.Test;
 
 import static gregtech.api.GTValues.*;

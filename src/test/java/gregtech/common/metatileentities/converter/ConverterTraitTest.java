@@ -6,10 +6,12 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -47,7 +49,8 @@ public class ConverterTraitTest {
         converter_1A.setFeToEu(true);
 
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
-        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
+        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                EnumFacing.NORTH);
         MatcherAssert.assertThat(storage, notNullValue());
         MatcherAssert.assertThat(container, notNullValue());
 
@@ -71,7 +74,8 @@ public class ConverterTraitTest {
         converter_1A.setFeToEu(true);
 
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
-        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
+        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                EnumFacing.NORTH);
         MatcherAssert.assertThat(storage, notNullValue());
         MatcherAssert.assertThat(container, notNullValue());
 
@@ -95,7 +99,8 @@ public class ConverterTraitTest {
         converter_1A.setFeToEu(true);
 
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
-        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
+        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                EnumFacing.NORTH);
         MatcherAssert.assertThat(storage, notNullValue());
         MatcherAssert.assertThat(container, notNullValue());
 
@@ -111,7 +116,8 @@ public class ConverterTraitTest {
         resetEnergyStorage();
         converter_1A.setFeToEu(false);
 
-        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.SOUTH);
+        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                EnumFacing.SOUTH);
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.NORTH);
         MatcherAssert.assertThat(container, notNullValue());
         MatcherAssert.assertThat(storage, notNullValue());
@@ -135,7 +141,8 @@ public class ConverterTraitTest {
         resetEnergyStorage();
         converter_1A.setFeToEu(false);
 
-        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.SOUTH);
+        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                EnumFacing.SOUTH);
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.NORTH);
         MatcherAssert.assertThat(container, notNullValue());
         MatcherAssert.assertThat(storage, notNullValue());
@@ -185,7 +192,8 @@ public class ConverterTraitTest {
         ConfigHolder.compat.energy.euToFeRatio = 1;
 
         IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
-        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
+        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                EnumFacing.NORTH);
         MatcherAssert.assertThat(storage, notNullValue());
         MatcherAssert.assertThat(container, notNullValue());
 
@@ -207,7 +215,8 @@ public class ConverterTraitTest {
     }
 
     private static void resetEnergyStorage() {
-        ((ConverterTraitTestWrapper) converter_1A.getCapability(GregtechCapabilities.CAPABILITY_CONVERTER, null)).drainStorage();
+        ((ConverterTraitTestWrapper) converter_1A.getCapability(GregtechCapabilities.CAPABILITY_CONVERTER, null))
+                .drainStorage();
         FEStorage.extractEnergy(Integer.MAX_VALUE, false);
         EUStorage.removeEnergy(Long.MAX_VALUE);
     }
@@ -230,9 +239,11 @@ public class ConverterTraitTest {
         public <T> T getCapability(Capability<T> capability, EnumFacing side) {
             if (side == null) return (T) converterTrait;
             if (isFeToEu()) {
-                return (T) (side == getFrontFacing() ? converterTrait.getEnergyEUContainer() : converterTrait.getEnergyFEContainer());
+                return (T) (side == getFrontFacing() ? converterTrait.getEnergyEUContainer() :
+                        converterTrait.getEnergyFEContainer());
             }
-            return (T) (side == getFrontFacing() ? converterTrait.getEnergyFEContainer() : converterTrait.getEnergyEUContainer());
+            return (T) (side == getFrontFacing() ? converterTrait.getEnergyFEContainer() :
+                    converterTrait.getEnergyEUContainer());
         }
 
         @Override

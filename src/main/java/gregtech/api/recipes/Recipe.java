@@ -1,6 +1,5 @@
 package gregtech.api.recipes;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
@@ -15,29 +14,40 @@ import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.integration.groovy.GroovyScriptModule;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
+
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
- * Class that represent machine recipe.<p>
+ * Class that represent machine recipe.
  * <p>
- * Recipes are created using {@link RecipeBuilder} or its subclasses in builder-alike pattern. To get RecipeBuilder use {@link RecipeMap#recipeBuilder()}.<p>
+ * <p>
+ * Recipes are created using {@link RecipeBuilder} or its subclasses in builder-alike pattern. To get RecipeBuilder use
+ * {@link RecipeMap#recipeBuilder()}.
+ * <p>
  * <p>
  * Example:
- * RecipeMap.POLARIZER_RECIPES.recipeBuilder().inputs(new ItemStack(Items.APPLE)).outputs(new ItemStack(Items.GOLDEN_APPLE)).duration(256).EUt(480).buildAndRegister();<p>
- * This will create and register Polarizer recipe with Apple as input and Golden apple as output, duration - 256 ticks and energy consumption of 480 EU/t.<p>
- * To get example for particular RecipeMap see {@link RecipeMap}<p>
+ * RecipeMap.POLARIZER_RECIPES.recipeBuilder().inputs(new ItemStack(Items.APPLE)).outputs(new
+ * ItemStack(Items.GOLDEN_APPLE)).duration(256).EUt(480).buildAndRegister();
+ * <p>
+ * This will create and register Polarizer recipe with Apple as input and Golden apple as output, duration - 256 ticks
+ * and energy consumption of 480 EU/t.
+ * <p>
+ * To get example for particular RecipeMap see {@link RecipeMap}
+ * <p>
  * <p>
  * Recipes are immutable.
  */
@@ -90,19 +100,20 @@ public class Recipe {
 
     private final int hashCode;
 
-    public Recipe(@Nonnull List<GTRecipeInput> inputs,
+    public Recipe(@NotNull List<GTRecipeInput> inputs,
                   List<ItemStack> outputs,
-                  @Nonnull ChancedOutputList<ItemStack, ChancedItemOutput> chancedOutputs,
+                  @NotNull ChancedOutputList<ItemStack, ChancedItemOutput> chancedOutputs,
                   List<GTRecipeInput> fluidInputs,
                   List<FluidStack> fluidOutputs,
-                  @Nonnull ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs,
+                  @NotNull ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs,
                   int duration,
                   int EUt,
                   boolean hidden,
                   boolean isCTRecipe,
                   IRecipePropertyStorage recipePropertyStorage,
-                  @Nonnull GTRecipeCategory recipeCategory) {
-        this.recipePropertyStorage = recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage;
+                  @NotNull GTRecipeCategory recipeCategory) {
+        this.recipePropertyStorage = recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE :
+                recipePropertyStorage;
         this.inputs = GTRecipeInputCache.deduplicateInputs(inputs);
         if (outputs.isEmpty()) {
             this.outputs = EMPTY;
@@ -123,7 +134,7 @@ public class Recipe {
         this.groovyRecipe = GroovyScriptModule.isCurrentlyRunning();
     }
 
-    @Nonnull
+    @NotNull
     public Recipe copy() {
         return new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs,
                 this.fluidOutputs, this.chancedFluidOutputs, this.duration,
@@ -139,7 +150,8 @@ public class Recipe {
      * @param fluidTrimLimit The Limit to which fluid outputs should be trimmed to, -1 for no trimming
      * @return A new Recipe whose outputs have been trimmed.
      */
-    public static Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit, int fluidTrimLimit) {
+    public static Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit,
+                                           int fluidTrimLimit) {
         // Fast return early if no trimming desired
         if (itemTrimLimit == -1 && fluidTrimLimit == -1) {
             return currentRecipe;
@@ -154,24 +166,27 @@ public class Recipe {
         builder.clearChancedFluidOutputs();
 
         // Chanced outputs are removed in this if they cannot fit the limit
-        Pair<List<ItemStack>, List<ChancedItemOutput>> recipeOutputs = currentRecipe.getItemAndChanceOutputs(itemTrimLimit);
+        Pair<List<ItemStack>, List<ChancedItemOutput>> recipeOutputs = currentRecipe
+                .getItemAndChanceOutputs(itemTrimLimit);
 
         // Add the trimmed chanced outputs and outputs
         builder.chancedOutputs(recipeOutputs.getRight());
         builder.outputs(recipeOutputs.getLeft());
 
-        Pair<List<FluidStack>, List<ChancedFluidOutput>> recipeFluidOutputs = currentRecipe.getFluidAndChanceOutputs(fluidTrimLimit);
+        Pair<List<FluidStack>, List<ChancedFluidOutput>> recipeFluidOutputs = currentRecipe
+                .getFluidAndChanceOutputs(fluidTrimLimit);
 
         // Add the trimmed fluid outputs
         builder.chancedFluidOutputs(recipeFluidOutputs.getRight());
         builder.fluidOutputs(recipeFluidOutputs.getLeft());
 
-
         return builder.build().getResult();
     }
 
-    public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
+    public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs,
+                                 IMultipleTankHandler fluidInputs) {
+        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs),
+                GTUtility.fluidHandlerToList(fluidInputs));
     }
 
     /**
@@ -340,7 +355,7 @@ public class Recipe {
         return otherRecipe.matchesItems(thisStackList).getLeft();
     }
 
-    public static int hashFluidList(@Nonnull List<GTRecipeInput> fluids) {
+    public static int hashFluidList(@NotNull List<GTRecipeInput> fluids) {
         int hash = 0;
         for (GTRecipeInput fluidInput : fluids) {
             hash = 31 * hash + fluidInput.hashCode();
@@ -383,7 +398,7 @@ public class Recipe {
     }
 
     ///////////////////
-    //    Getters    //
+    // Getters //
     ///////////////////
 
     public List<GTRecipeInput> getInputs() {
@@ -451,10 +466,8 @@ public class Recipe {
     public Pair<List<ItemStack>, List<ChancedItemOutput>> getItemAndChanceOutputs(int outputLimit) {
         List<ItemStack> outputs = new ArrayList<>();
 
-
         // Create an entry for the chanced outputs, and initially populate it
         List<ChancedItemOutput> chancedOutputs = new ArrayList<>(getChancedOutputs().getChancedEntries());
-
 
         // No limiting
         if (outputLimit == -1) {
@@ -462,7 +475,8 @@ public class Recipe {
         }
         // If just the regular outputs would satisfy the outputLimit
         else if (getOutputs().size() >= outputLimit) {
-            outputs.addAll(GTUtility.copyStackList(getOutputs()).subList(0, Math.min(outputLimit, getOutputs().size())));
+            outputs.addAll(
+                    GTUtility.copyStackList(getOutputs()).subList(0, Math.min(outputLimit, getOutputs().size())));
             // clear the chanced outputs, as we are only getting regular outputs
             chancedOutputs.clear();
         }
@@ -503,7 +517,6 @@ public class Recipe {
         return recipeOutputs;
     }
 
-
     public ChancedOutputList<ItemStack, ChancedItemOutput> getChancedOutputs() {
         return chancedOutputs;
     }
@@ -541,32 +554,32 @@ public class Recipe {
     public Pair<List<FluidStack>, List<ChancedFluidOutput>> getFluidAndChanceOutputs(int outputLimit) {
         List<FluidStack> outputs = new ArrayList<>();
 
-
         // Create an entry for the chanced outputs, and initially populate it
         List<ChancedFluidOutput> chancedOutputs = new ArrayList<>(getChancedFluidOutputs().getChancedEntries());
-
 
         // No limiting
         if (outputLimit == -1) {
             outputs.addAll(GTUtility.copyFluidList(getFluidOutputs()));
         }
         // If just the regular outputs would satisfy the outputLimit
-        else if (getOutputs().size() >= outputLimit) {
-            outputs.addAll(GTUtility.copyFluidList(getFluidOutputs()).subList(0, Math.min(outputLimit, getOutputs().size())));
+        else if (getFluidOutputs().size() >= outputLimit) {
+            outputs.addAll(
+                    GTUtility.copyFluidList(getFluidOutputs()).subList(0,
+                            Math.min(outputLimit, getFluidOutputs().size())));
             // clear the chanced outputs, as we are only getting regular outputs
             chancedOutputs.clear();
         }
         // If the regular outputs and chanced outputs are required to satisfy the outputLimit
-        else if (!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
+        else if (!getFluidOutputs().isEmpty() && (getFluidOutputs().size() + chancedOutputs.size()) >= outputLimit) {
             outputs.addAll(GTUtility.copyFluidList(getFluidOutputs()));
 
             // Calculate the number of chanced outputs after adding all the regular outputs
-            int numChanced = outputLimit - getOutputs().size();
+            int numChanced = outputLimit - getFluidOutputs().size();
 
             chancedOutputs = chancedOutputs.subList(0, Math.min(numChanced, chancedOutputs.size()));
         }
         // There are only chanced outputs to satisfy the outputLimit
-        else if (getOutputs().isEmpty()) {
+        else if (getFluidOutputs().isEmpty()) {
             chancedOutputs = chancedOutputs.subList(0, Math.min(outputLimit, chancedOutputs.size()));
         }
         // The number of outputs + chanced outputs is lower than the trim number, so just add everything
@@ -672,13 +685,13 @@ public class Recipe {
         return false;
     }
 
-    @Nonnull
+    @NotNull
     public GTRecipeCategory getRecipeCategory() {
         return this.recipeCategory;
     }
 
     ///////////////////////////////////////////////////////////
-    //               Property Helper Methods                 //
+    // Property Helper Methods //
     ///////////////////////////////////////////////////////////
     public <T> T getProperty(RecipeProperty<T> property, T defaultValue) {
         return recipePropertyStorage.getRecipePropertyValue(property, defaultValue);
@@ -709,11 +722,11 @@ public class Recipe {
     }
 
     public int getUnhiddenPropertyCount() {
-        return (int) recipePropertyStorage.getRecipeProperties().stream().filter((property) -> !property.getKey().isHidden()).count();
+        return (int) recipePropertyStorage.getRecipeProperties().stream()
+                .filter((property) -> !property.getKey().isHidden()).count();
     }
 
     public IRecipePropertyStorage getRecipePropertyStorage() {
         return recipePropertyStorage;
     }
-
 }

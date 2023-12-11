@@ -1,8 +1,5 @@
 package gregtech.api.worldgen.config;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -10,6 +7,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -17,7 +15,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import javax.annotation.Nonnull;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +57,7 @@ public class OreConfigUtils {
         return getOreForMaterial(material);
     }
 
-    @Nonnull
+    @NotNull
     public static Map<StoneType, IBlockState> getOreForMaterial(Material material) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
                 .filter(ore -> ore.material == material)
@@ -93,15 +95,15 @@ public class OreConfigUtils {
             JsonArray dataArray = element.getAsJsonArray();
             int max = dataArray.get(1).getAsInt();
             int min = Math.min(max, dataArray.get(0).getAsInt());
-            return new int[]{min, max};
+            return new int[] { min, max };
         } else if (element.isJsonObject()) {
             JsonObject dataObject = element.getAsJsonObject();
             int max = dataObject.get("max").getAsInt();
             int min = Math.min(max, dataObject.get("min").getAsInt());
-            return new int[]{min, max};
+            return new int[] { min, max };
         } else if (element.isJsonPrimitive()) {
             int size = element.getAsInt();
-            return new int[]{size, size};
+            return new int[] { size, size };
         } else {
             throw new IllegalArgumentException("size range not defined");
         }

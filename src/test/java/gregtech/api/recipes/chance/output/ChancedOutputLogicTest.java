@@ -1,8 +1,9 @@
 package gregtech.api.recipes.chance.output;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.recipes.chance.ChanceEntry;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
+
+import com.google.common.collect.ImmutableList;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,7 @@ import java.util.List;
 public class ChancedOutputLogicTest {
 
     private static class TestChancedOutput extends ChancedOutput<String> {
+
         public TestChancedOutput(@NotNull String ingredient, int chance) {
             super(ingredient, chance);
         }
@@ -24,7 +26,8 @@ public class ChancedOutputLogicTest {
         }
     }
 
-    private static <I, T extends ChancedOutput<I>> void listsMatch(@NotNull List<T> original, @Nullable List<T> rolled) {
+    private static <I, T extends ChancedOutput<I>> void listsMatch(@NotNull List<T> original,
+                                                                   @Nullable List<T> rolled) {
         MatcherAssert.assertThat(rolled, CoreMatchers.notNullValue());
         MatcherAssert.assertThat(rolled.size(), CoreMatchers.is(original.size()));
         for (int i = 0; i < original.size(); i++) {
@@ -37,8 +40,7 @@ public class ChancedOutputLogicTest {
         List<TestChancedOutput> chanceEntries = ImmutableList.of(
                 new TestChancedOutput("a", ChancedOutputLogic.getMaxChancedValue()),
                 new TestChancedOutput("b", ChancedOutputLogic.getMaxChancedValue()),
-                new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue())
-        );
+                new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue()));
 
         List<TestChancedOutput> list = ChancedOutputLogic.OR.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0);
         listsMatch(chanceEntries, list);
@@ -49,8 +51,7 @@ public class ChancedOutputLogicTest {
         List<TestChancedOutput> chanceEntries = ImmutableList.of(
                 new TestChancedOutput("a", ChancedOutputLogic.getMaxChancedValue()),
                 new TestChancedOutput("b", ChancedOutputLogic.getMaxChancedValue()),
-                new TestChancedOutput("c", 0)
-        );
+                new TestChancedOutput("c", 0));
 
         List<TestChancedOutput> list = ChancedOutputLogic.AND.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0);
         MatcherAssert.assertThat(list, CoreMatchers.nullValue());
@@ -58,8 +59,7 @@ public class ChancedOutputLogicTest {
         chanceEntries = ImmutableList.of(
                 new TestChancedOutput("a", ChancedOutputLogic.getMaxChancedValue()),
                 new TestChancedOutput("b", ChancedOutputLogic.getMaxChancedValue()),
-                new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue())
-        );
+                new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue()));
 
         list = ChancedOutputLogic.AND.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0);
         listsMatch(chanceEntries, list);
@@ -70,8 +70,7 @@ public class ChancedOutputLogicTest {
         List<TestChancedOutput> chanceEntries = ImmutableList.of(
                 new TestChancedOutput("a", ChancedOutputLogic.getMaxChancedValue()),
                 new TestChancedOutput("b", ChancedOutputLogic.getMaxChancedValue()),
-                new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue())
-        );
+                new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue()));
 
         List<TestChancedOutput> list = ChancedOutputLogic.XOR.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0);
         MatcherAssert.assertThat(list, CoreMatchers.notNullValue());
@@ -84,8 +83,7 @@ public class ChancedOutputLogicTest {
         List<TestChancedOutput> chanceEntries = ImmutableList.of(
                 new TestChancedOutput("a", ChancedOutputLogic.getMaxChancedValue()),
                 new TestChancedOutput("b", ChancedOutputLogic.getMaxChancedValue()),
-                new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue())
-        );
+                new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue()));
 
         List<TestChancedOutput> list = ChancedOutputLogic.NONE.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0);
         MatcherAssert.assertThat(list, CoreMatchers.nullValue());

@@ -1,20 +1,23 @@
 package gregtech.api.cover;
 
-import codechicken.lib.raytracer.IndexedCuboid6;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.*;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,8 +85,8 @@ public interface CoverHolder extends CoverableView {
     default void updateCovers() {
         for (EnumFacing facing : EnumFacing.VALUES) {
             Cover cover = getCoverAtSide(facing);
-            if (cover != null && cover.isTickable()) {
-                cover.update();
+            if (cover instanceof ITickable tickable) {
+                tickable.update();
             }
         }
     }
@@ -95,6 +98,7 @@ public interface CoverHolder extends CoverableView {
      * Also used to check whether cover placement is possible on a side, because a cover cannot be placed if the
      * collision boxes of the Holder and its plate overlap.
      * If zero, it is expected that machine is full block and plate doesn't need to be rendered.
+     * 
      * @return the cover plate thickness.
      */
     double getCoverPlateThickness();
@@ -111,11 +115,13 @@ public interface CoverHolder extends CoverableView {
     int getPaintingColorForRendering();
 
     @SideOnly(Side.CLIENT)
-    default void renderCovers(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, @NotNull BlockRenderLayer layer) {
+    default void renderCovers(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                              @NotNull BlockRenderLayer layer) {
         renderState.lightMatrix.locate(getWorld(), getPos());
         double coverPlateThickness = getCoverPlateThickness();
-        IVertexOperation[] platePipeline = {renderState.lightMatrix, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))};
-        IVertexOperation[] coverPipeline = {renderState.lightMatrix};
+        IVertexOperation[] platePipeline = { renderState.lightMatrix,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())) };
+        IVertexOperation[] coverPipeline = { renderState.lightMatrix };
 
         for (EnumFacing sideFacing : EnumFacing.values()) {
             Cover cover = getCoverAtSide(sideFacing);
@@ -128,17 +134,22 @@ public interface CoverHolder extends CoverableView {
             }
 
             if (cover.canRenderInLayer(layer)) {
-                cover.renderCover(renderState, RenderUtil.adjustTrans(translation, sideFacing, 2), coverPipeline, plateBox, layer);
+                cover.renderCover(renderState, RenderUtil.adjustTrans(translation, sideFacing, 2), coverPipeline,
+                        plateBox, layer);
                 if (coverPlateThickness == 0.0 && shouldRenderCoverBackSides() && cover.canRenderBackside()) {
-                    //machine is full block, but still not opaque - render cover on the back side too
+                    // machine is full block, but still not opaque - render cover on the back side too
                     Matrix4 backTranslation = translation.copy();
                     if (sideFacing.getAxis().isVertical()) {
                         REVERSE_VERTICAL_ROTATION.apply(backTranslation);
                     } else {
                         REVERSE_HORIZONTAL_ROTATION.apply(backTranslation);
                     }
-                    backTranslation.translate(-sideFacing.getXOffset(), -sideFacing.getYOffset(), -sideFacing.getZOffset());
-                    cover.renderCover(renderState, backTranslation, coverPipeline, plateBox, layer); // may need to translate the layer here as well
+                    backTranslation.translate(-sideFacing.getXOffset(), -sideFacing.getYOffset(),
+                            -sideFacing.getZOffset());
+                    cover.renderCover(renderState, backTranslation, coverPipeline, plateBox, layer); // may need to
+                                                                                                     // translate the
+                                                                                                     // layer here as
+                                                                                                     // well
                 }
             }
         }

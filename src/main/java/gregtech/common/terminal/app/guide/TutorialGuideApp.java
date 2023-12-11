@@ -1,9 +1,11 @@
 package gregtech.common.terminal.app.guide;
 
-import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.ItemStackTexture;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
+
+import com.google.gson.JsonObject;
 
 public class TutorialGuideApp extends GuideApp<String> {
 

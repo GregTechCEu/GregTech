@@ -7,6 +7,7 @@ import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockGlassCasing;
+
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
@@ -21,7 +22,6 @@ import static gregtech.common.metatileentities.MetaTileEntities.*;
 public class ComputerRecipes {
 
     public static void init() {
-
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ITEM_IMPORT_BUS[EV])
                 .inputNBT(TOOL_DATA_STICK, 4, NBTMatcher.ANY, NBTCondition.ANY)
@@ -48,7 +48,8 @@ public class ComputerRecipes {
                 .input(wireFine, Cobalt, 16)
                 .input(wireFine, Copper, 16)
                 .input(wireGtSingle, NiobiumTitanium, 2)
-                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.HIGH_POWER_CASING, ConfigHolder.recipes.casingsPerCraft))
+                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.HIGH_POWER_CASING,
+                        ConfigHolder.recipes.casingsPerCraft))
                 .duration(100).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -58,7 +59,8 @@ public class ComputerRecipes {
                 .input(wireFine, Cobalt, 32)
                 .input(wireFine, Copper, 32)
                 .input(wireGtSingle, VanadiumGallium, 2)
-                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING, ConfigHolder.recipes.casingsPerCraft))
+                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING,
+                        ConfigHolder.recipes.casingsPerCraft))
                 .duration(200).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -77,7 +79,8 @@ public class ComputerRecipes {
                 .input(pipeTinyFluid, StainlessSteel, 16)
                 .input(plate, Copper, 16)
                 .input(wireGtSingle, SamariumIronArsenicOxide)
-                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT, ConfigHolder.recipes.casingsPerCraft))
+                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT,
+                        ConfigHolder.recipes.casingsPerCraft))
                 .duration(100).EUt(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -281,24 +284,26 @@ public class ComputerRecipes {
                 .output(ACTIVE_TRANSFORMER)
                 .duration(300).EUt(VA[LuV]).buildAndRegister();
 
-/*      TODO UPSATUPDATE
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(lens, Diamond)
-                .input(EMITTER_LuV)
-                .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 2)
-                .output(LASER_OUTPUT_HATCH)
-                .circuitMeta(1)
-                .duration(300).EUt(VA[IV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(lens, Diamond)
-                .input(SENSOR_LuV)
-                .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 2)
-                .output(LASER_INPUT_HATCH)
-                .circuitMeta(2)
-                .duration(300).EUt(VA[IV]).buildAndRegister();*/
+        /*
+         * TODO UPSATUPDATE
+         * ASSEMBLER_RECIPES.recipeBuilder()
+         * .input(HULL[LuV])
+         * .input(lens, Diamond)
+         * .input(EMITTER_LuV)
+         * .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 2)
+         * .output(LASER_OUTPUT_HATCH)
+         * .circuitMeta(1)
+         * .duration(300).EUt(VA[IV]).buildAndRegister();
+         * 
+         * ASSEMBLER_RECIPES.recipeBuilder()
+         * .input(HULL[LuV])
+         * .input(lens, Diamond)
+         * .input(SENSOR_LuV)
+         * .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 2)
+         * .output(LASER_INPUT_HATCH)
+         * .circuitMeta(2)
+         * .duration(300).EUt(VA[IV]).buildAndRegister();
+         */
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.LAMINATED_GLASS))

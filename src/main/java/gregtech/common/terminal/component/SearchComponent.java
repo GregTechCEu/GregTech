@@ -9,6 +9,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.terminal.util.ISearch;
 import gregtech.api.terminal.util.SearchEngine;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.Tuple;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchComponent<T> extends WidgetGroup implements IMenuComponent {
+
     private final static TextureArea SEARCHING = TextureArea.fullImage("textures/gui/terminal/icon/search_hover.png");
     private final static int SIZE = 10;
     private final SearchEngine<T> engine;
@@ -26,14 +28,14 @@ public class SearchComponent<T> extends WidgetGroup implements IMenuComponent {
     private boolean isUp;
     private int offset;
 
-    public SearchComponent(IWidgetSearch<T> search){
-        super(0,0,280,20);
+    public SearchComponent(IWidgetSearch<T> search) {
+        super(0, 0, 280, 20);
         this.search = search;
         results = new ArrayList<>();
         engine = new SearchEngine<>(search, r -> results.add(new Tuple<>(r, search.resultDisplay(r))));
         this.addWidget(new TextFieldWidget(0, 5, 280, 20, new ColorRectTexture(0xcf000000), null, null)
-                .setValidator(s->true)
-                .setTextResponder(s->{
+                .setValidator(s -> true)
+                .setTextResponder(s -> {
                     results.clear();
                     engine.searchWord(s);
                     offset = 0;
@@ -107,8 +109,10 @@ public class SearchComponent<T> extends WidgetGroup implements IMenuComponent {
         return super.mouseWheelMove(mouseX, mouseY, wheelDelta);
     }
 
-    public interface IWidgetSearch<T> extends ISearch<T>{
+    public interface IWidgetSearch<T> extends ISearch<T> {
+
         String resultDisplay(T result);
+
         void selectResult(T result);
     }
 }

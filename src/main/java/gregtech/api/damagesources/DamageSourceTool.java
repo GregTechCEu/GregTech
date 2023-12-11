@@ -6,7 +6,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.translation.I18n;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class DamageSourceTool extends EntityDamageSource {
 
@@ -17,11 +17,12 @@ public class DamageSourceTool extends EntityDamageSource {
         this.deathMessage = deathMessage;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public ITextComponent getDeathMessage(@Nonnull EntityLivingBase target) {
-        if (deathMessage == null || damageSourceEntity == null || !I18n.canTranslate(deathMessage)) return super.getDeathMessage(target);
+    public ITextComponent getDeathMessage(@NotNull EntityLivingBase target) {
+        if (deathMessage == null || damageSourceEntity == null || !I18n.canTranslate(deathMessage))
+            return super.getDeathMessage(target);
         return new TextComponentTranslation(deathMessage, target.getDisplayName(), damageSourceEntity.getDisplayName());
     }
 }

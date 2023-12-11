@@ -1,6 +1,6 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 class AnyCharNode extends OreGlobNode {
 
@@ -22,7 +22,7 @@ class AnyCharNode extends OreGlobNode {
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
         return node instanceof AnyCharNode o && this.amount == o.amount && this.more == o.more;
     }
 

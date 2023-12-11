@@ -1,29 +1,39 @@
 package gregtech.common.metatileentities.steam.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
+
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
@@ -60,7 +70,8 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(TooltipHelper.BLINKING_ORANGE + I18n.format("gregtech.machine.steam_bus.tooltip"));
     }
@@ -75,26 +86,41 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
     }
 
     @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
+                                boolean isClient) {
+        guiSyncManager.registerSlotGroup("item_inv", 2);
+
+        List<List<IWidget>> widgets = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            widgets.add(new ArrayList<>());
+            for (int j = 0; j < 2; j++) {
+                widgets.get(i)
+                        .add(new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(isExportHatch ? exportItems : importItems, i * 2 + j)
+                                        .slotGroup("item_inv")
+                                        .accessibility(!isExportHatch, true)));
+            }
+        }
+
+        return GTGuis.createPanel(this, 176, 166)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .bindPlayerInventory()
+                .child(new Grid()
+                        .top(29).height(36)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .alignX(0.5f)
+                        .matrix(widgets));
+    }
+
+    @Override
     public int getDefaultPaintingColor() {
         return 0xFFFFFF;
     }
 
-    // Override UI to make it a Steam UI
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(IS_STEEL), 176, 166)
-                .label(6, 6, getMetaFullName());
-
-        for (int y = 0; y < 2; y++) {
-            for (int x = 0; x < 2; x++) {
-                int index = y * 2 + x;
-                builder.slot(isExportHatch ? exportItems : importItems, index, 70 + x * 18, 31 + y * 18, true, !isExportHatch,
-                        GuiTextures.SLOT_STEAM.get(IS_STEEL));
-            }
-        }
-        builder.shouldColor(false);
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(IS_STEEL), 7, 83);
-        return builder.build(getHolder(), entityPlayer);
+    public GTGuiTheme getUITheme() {
+        return IS_STEEL ? GTGuiTheme.STEEL : GTGuiTheme.BRONZE;
     }
 
     @Override

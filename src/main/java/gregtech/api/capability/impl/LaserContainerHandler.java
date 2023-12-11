@@ -4,21 +4,25 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
 public class LaserContainerHandler extends EnergyContainerHandler implements ILaserContainer {
 
-    public LaserContainerHandler(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage, long maxInputAmperage, long maxOutputVoltage, long maxOutputAmperage) {
+    public LaserContainerHandler(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage,
+                                 long maxInputAmperage, long maxOutputVoltage, long maxOutputAmperage) {
         super(tileEntity, maxCapacity, maxInputVoltage, maxInputAmperage, maxOutputVoltage, maxOutputAmperage);
     }
 
-    public static LaserContainerHandler emitterContainer(MetaTileEntity tileEntity, long maxCapacity, long maxOutputVoltage, long maxOutputAmperage) {
+    public static LaserContainerHandler emitterContainer(MetaTileEntity tileEntity, long maxCapacity,
+                                                         long maxOutputVoltage, long maxOutputAmperage) {
         return new LaserContainerHandler(tileEntity, maxCapacity, 0L, 0L, maxOutputVoltage, maxOutputAmperage);
     }
 
-    public static LaserContainerHandler receiverContainer(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage, long maxInputAmperage) {
+    public static LaserContainerHandler receiverContainer(MetaTileEntity tileEntity, long maxCapacity,
+                                                          long maxInputVoltage, long maxInputAmperage) {
         return new LaserContainerHandler(tileEntity, maxCapacity, maxInputVoltage, maxInputAmperage, 0L, 0L);
     }
 
@@ -50,10 +54,13 @@ public class LaserContainerHandler extends EnergyContainerHandler implements ILa
                 if (!outputsEnergy(side)) continue;
                 TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(side));
                 EnumFacing oppositeSide = side.getOpposite();
-                if (tileEntity != null && tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide)) {
-                    IEnergyContainer energyContainer = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
+                if (tileEntity != null &&
+                        tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide)) {
+                    IEnergyContainer energyContainer = tileEntity
+                            .getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
                     if (energyContainer == null || !energyContainer.inputsEnergy(oppositeSide)) continue;
-                    amperesUsed += energyContainer.acceptEnergyFromNetwork(oppositeSide, outputVoltage, outputAmperes - amperesUsed);
+                    amperesUsed += energyContainer.acceptEnergyFromNetwork(oppositeSide, outputVoltage,
+                            outputAmperes - amperesUsed);
                     if (amperesUsed == outputAmperes) break;
                 }
             }
@@ -75,5 +82,4 @@ public class LaserContainerHandler extends EnergyContainerHandler implements ILa
                 ", amps=" + amps +
                 '}';
     }
-
 }

@@ -2,7 +2,7 @@ package gregtech.api.metatileentity;
 
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface IVoidable {
 
@@ -10,7 +10,8 @@ public interface IVoidable {
 
     boolean canVoidRecipeFluidOutputs();
 
-    // -1 is taken into account as a skip case. I would have passed Integer.MAX_VALUE, but that would have been bad for some sublisting stuff
+    // -1 is taken into account as a skip case. I would have passed Integer.MAX_VALUE, but that would have been bad for
+    // some sublisting stuff
     default int getItemOutputLimit() {
         return -1;
     }
@@ -20,6 +21,7 @@ public interface IVoidable {
     }
 
     enum VoidingMode implements IStringSerializable {
+
         VOID_NONE("gregtech.gui.multiblock_no_voiding"),
         VOID_ITEMS("gregtech.gui.multiblock_item_voiding"),
         VOID_FLUIDS("gregtech.gui.multiblock_fluid_voiding"),
@@ -33,11 +35,10 @@ public interface IVoidable {
             this.localeName = name;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;
         }
     }
-
 }

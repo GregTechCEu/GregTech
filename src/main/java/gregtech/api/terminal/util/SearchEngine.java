@@ -1,21 +1,23 @@
 package gregtech.api.terminal.util;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Consumer;
 
-public  class SearchEngine<T> {
+public class SearchEngine<T> {
+
     private final ISearch<T> search;
     private final Consumer<T> result;
     private Thread thread;
 
-    public SearchEngine(@Nonnull ISearch<T> search, @Nonnull Consumer<T> result){
+    public SearchEngine(@NotNull ISearch<T> search, @NotNull Consumer<T> result) {
         this.search = search;
         this.result = result;
     }
 
     public void searchWord(String word) {
         dispose();
-        thread = new Thread(()-> search.search(word, result));
+        thread = new Thread(() -> search.search(word, result));
         thread.start();
     }
 
@@ -33,5 +35,4 @@ public  class SearchEngine<T> {
         }
         thread = null;
     }
-
 }

@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.util.world.DummyWorld;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -36,11 +37,13 @@ public class ModCompatibility {
     }
 
     private static class RefinedStorage {
+
         private final Method getPatternFromCacheMethod;
         private final Method getOutputsMethod;
 
         public RefinedStorage(Class<?> itemPatternClass) throws ReflectiveOperationException {
-            this.getPatternFromCacheMethod = itemPatternClass.getMethod("getPatternFromCache", World.class, ItemStack.class);
+            this.getPatternFromCacheMethod = itemPatternClass.getMethod("getPatternFromCache", World.class,
+                    ItemStack.class);
             this.getOutputsMethod = getPatternFromCacheMethod.getReturnType().getMethod("getOutputs");
         }
 

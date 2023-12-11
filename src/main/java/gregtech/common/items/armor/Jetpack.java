@@ -6,6 +6,7 @@ import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,7 +22,8 @@ import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class Jetpack extends ArmorLogicSuite implements IJetpack {
@@ -32,13 +34,13 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     public Jetpack(int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, EntityEquipmentSlot.CHEST);
         if (ArmorUtils.SIDE.isClient() && this.shouldDrawHUD()) {
-            //noinspection NewExpressionSideOnly
+            // noinspection NewExpressionSideOnly
             HUD = new ArmorUtils.ModularHUD();
         }
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
+    public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack stack) {
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
         byte toggleTimer = 0;
         boolean hover = false;
@@ -67,7 +69,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public boolean canUseEnergy(@Nonnull ItemStack stack, int amount) {
+    public boolean canUseEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
@@ -75,7 +77,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public void drainEnergy(@Nonnull ItemStack stack, int amount) {
+    public void drainEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return;
@@ -83,14 +85,14 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public boolean hasEnergy(@Nonnull ItemStack stack) {
+    public boolean hasEnergy(@NotNull ItemStack stack) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
         return container.getCharge() > 0;
     }
 
-    private static IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+    private static IElectricItem getIElectricItem(@NotNull ItemStack stack) {
         return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 
@@ -100,7 +102,8 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+    public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source,
+                                         double damage, EntityEquipmentSlot equipmentSlot) {
         return new ArmorProperties(0, 0, 0);
     }
 
@@ -111,7 +114,8 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
             if (data.hasKey("hover")) {
-                String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
+                String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") :
+                        I18n.format("metaarmor.hud.status.disabled"));
                 String result = I18n.format("metaarmor.hud.hover_mode", status);
                 this.HUD.newString(result);
             }

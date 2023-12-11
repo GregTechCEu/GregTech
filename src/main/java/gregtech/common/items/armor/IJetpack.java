@@ -2,15 +2,16 @@ package gregtech.common.items.armor;
 
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
 
-import javax.annotation.Nonnull;
-
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Logic from SimplyJetpacks2: https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java
+ * Logic from SimplyJetpacks2:
+ * https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java
  */
 public interface IJetpack {
 
@@ -58,7 +59,7 @@ public interface IJetpack {
 
     boolean hasEnergy(ItemStack stack);
 
-    default void performFlying(@Nonnull EntityPlayer player, boolean hover, ItemStack stack) {
+    default void performFlying(@NotNull EntityPlayer player, boolean hover, ItemStack stack) {
         double currentAccel = getVerticalAcceleration() * (player.motionY < 0.3D ? 2.5D : 1.0D);
         double currentSpeedVertical = getVerticalSpeed() * (player.isInWater() ? 0.4D : 1.0D);
         boolean flyKeyDown = KeyBind.VANILLA_JUMP.isKeyDown(player);
@@ -66,14 +67,16 @@ public interface IJetpack {
 
         if (!player.isInWater() && !player.isInLava() && canUseEnergy(stack, getEnergyPerUse())) {
             if (flyKeyDown || hover && !player.onGround) {
-                drainEnergy(stack, (int) (player.isSprinting() ? Math.round(getEnergyPerUse() * getSprintEnergyModifier()) : getEnergyPerUse()));
+                drainEnergy(stack, (int) (player.isSprinting() ?
+                        Math.round(getEnergyPerUse() * getSprintEnergyModifier()) : getEnergyPerUse()));
 
                 if (hasEnergy(stack)) {
                     if (flyKeyDown) {
                         if (!hover) {
                             player.motionY = Math.min(player.motionY + currentAccel, currentSpeedVertical);
                         } else {
-                            if (descendKeyDown) player.motionY = Math.min(player.motionY + currentAccel, getVerticalHoverSlowSpeed());
+                            if (descendKeyDown)
+                                player.motionY = Math.min(player.motionY + currentAccel, getVerticalHoverSlowSpeed());
                             else player.motionY = Math.min(player.motionY + currentAccel, getVerticalHoverSpeed());
                         }
                     } else if (descendKeyDown) {
@@ -81,8 +84,10 @@ public interface IJetpack {
                     } else {
                         player.motionY = Math.min(player.motionY + currentAccel, -getVerticalHoverSlowSpeed());
                     }
-                    float speedSideways = (float) (player.isSneaking() ? getSidewaysSpeed() * 0.5f : getSidewaysSpeed());
-                    float speedForward = (float) (player.isSprinting() ? speedSideways * getSprintSpeedModifier() : speedSideways);
+                    float speedSideways = (float) (player.isSneaking() ? getSidewaysSpeed() * 0.5f :
+                            getSidewaysSpeed());
+                    float speedForward = (float) (player.isSprinting() ? speedSideways * getSprintSpeedModifier() :
+                            speedSideways);
 
                     if (KeyBind.VANILLA_FORWARD.isKeyDown(player))
                         player.moveRelative(0, 0, speedForward, speedForward);

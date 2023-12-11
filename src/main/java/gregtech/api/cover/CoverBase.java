@@ -1,13 +1,10 @@
 package gregtech.api.cover;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
@@ -17,6 +14,11 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class CoverBase implements Cover {
@@ -62,13 +64,15 @@ public abstract class CoverBase implements Cover {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, @NotNull IVertexOperation[] pipeline,
-                                  @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+    public void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                                 @NotNull IVertexOperation[] pipeline,
+                                 @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         TextureAtlasSprite casingSide = getPlateSprite();
         for (EnumFacing coverPlateSide : EnumFacing.VALUES) {
             boolean isAttachedSide = getAttachedSide().getAxis() == coverPlateSide.getAxis();
             if (isAttachedSide || !getCoverableView().hasCover(coverPlateSide)) {
-                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide, BlockRenderLayer.CUTOUT_MIPPED);
+                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide,
+                        BlockRenderLayer.CUTOUT_MIPPED);
             }
         }
     }

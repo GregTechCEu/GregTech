@@ -4,17 +4,20 @@ import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class GhostCircuitItemStackHandler extends GTItemStackHandler implements IItemHandlerModifiable, INotifiableHandler {
+public class GhostCircuitItemStackHandler extends GTItemStackHandler
+                                          implements IItemHandlerModifiable, INotifiableHandler {
 
     /**
      * Special circuit value indicating no circuit value is set.
@@ -84,7 +87,7 @@ public class GhostCircuitItemStackHandler extends GTItemStackHandler implements 
      *
      * @param stack Item stack to read circuit value from
      */
-    public void setCircuitValueFromStack(@Nonnull ItemStack stack) {
+    public void setCircuitValueFromStack(@NotNull ItemStack stack) {
         setCircuitValue(!stack.isEmpty() && IntCircuitIngredient.isIntegratedCircuit(stack) ?
                 IntCircuitIngredient.getCircuitConfiguration(stack) : NO_CONFIG);
     }
@@ -103,7 +106,7 @@ public class GhostCircuitItemStackHandler extends GTItemStackHandler implements 
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         validateSlot(slot);
         setCircuitValueFromStack(stack);
     }
@@ -113,21 +116,21 @@ public class GhostCircuitItemStackHandler extends GTItemStackHandler implements 
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
         validateSlot(slot);
         return this.circuitStack;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         validateSlot(slot);
         return stack; // reject all item insertions
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount <= 0) return ItemStack.EMPTY;
@@ -159,14 +162,15 @@ public class GhostCircuitItemStackHandler extends GTItemStackHandler implements 
         this.notifiableEntities.remove(metaTileEntity);
     }
 
-    public void write(@Nonnull NBTTagCompound tag) {
+    public void write(@NotNull NBTTagCompound tag) {
         if (this.circuitValue != NO_CONFIG) {
             tag.setByte("GhostCircuit", (byte) this.circuitValue);
         }
     }
 
-    public void read(@Nonnull NBTTagCompound tag) {
-        int circuitValue = tag.hasKey("GhostCircuit", Constants.NBT.TAG_ANY_NUMERIC) ? tag.getInteger("GhostCircuit") : NO_CONFIG;
+    public void read(@NotNull NBTTagCompound tag) {
+        int circuitValue = tag.hasKey("GhostCircuit", Constants.NBT.TAG_ANY_NUMERIC) ? tag.getInteger("GhostCircuit") :
+                NO_CONFIG;
         if (circuitValue < IntCircuitIngredient.CIRCUIT_MIN || circuitValue > IntCircuitIngredient.CIRCUIT_MAX)
             circuitValue = NO_CONFIG;
         setCircuitValue(circuitValue);

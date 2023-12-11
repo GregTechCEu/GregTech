@@ -13,6 +13,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,8 +22,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class TerminalMenuWidget extends WidgetGroup {
+
     @SideOnly(Side.CLIENT)
     private Interpolator interpolator;
     private IGuiTexture background;
@@ -30,10 +31,9 @@ public class TerminalMenuWidget extends WidgetGroup {
     private final List<Tuple<IMenuComponent, WidgetGroup>> components;
     public boolean isHide;
 
-
     public TerminalMenuWidget(Position position, Size size, TerminalOSWidget os) {
         super(position, size);
-        addSelfPosition( -size.width, 0);
+        addSelfPosition(-size.width, 0);
         setVisible(false);
         isHide = true;
         this.os = os;
@@ -83,25 +83,25 @@ public class TerminalMenuWidget extends WidgetGroup {
                 .setColors(0, 0xFFFFFFFF, 0)
                 .setHoverText(component.hoverText())
                 .setIcon(component.buttonIcon());
-        button.setClickListener(c->{
-                    components.forEach(tuple -> {
-                        if (tuple.getFirst() instanceof Widget && tuple.getFirst() != component){
-                            ((Widget) tuple.getFirst()).setActive(false);
-                            ((Widget) tuple.getFirst()).setVisible(false);
-                            ((CircleButtonWidget) tuple.getSecond().widgets.get(0)).setFill(0);
-                        }
-                    });
-                    if (component instanceof Widget) {
-                        Widget widget = (Widget)component;
-                        widget.setVisible(!widget.isVisible());
-                        widget.setActive(!widget.isActive());
-                        button.setFill(widget.isVisible() ? 0xFF94E2C1 : 0);
-                    }
-                    component.click(c);
-                });
+        button.setClickListener(c -> {
+            components.forEach(tuple -> {
+                if (tuple.getFirst() instanceof Widget && tuple.getFirst() != component) {
+                    ((Widget) tuple.getFirst()).setActive(false);
+                    ((Widget) tuple.getFirst()).setVisible(false);
+                    ((CircleButtonWidget) tuple.getSecond().widgets.get(0)).setFill(0);
+                }
+            });
+            if (component instanceof Widget) {
+                Widget widget = (Widget) component;
+                widget.setVisible(!widget.isVisible());
+                widget.setActive(!widget.isActive());
+                button.setFill(widget.isVisible() ? 0xFF94E2C1 : 0);
+            }
+            component.click(c);
+        });
         group.addWidget(button);
         if (component instanceof Widget) {
-            Widget widget = (Widget)component;
+            Widget widget = (Widget) component;
             widget.setSelfPosition(new Position(x + 20, 0));
             widget.setVisible(false);
             widget.setActive(false);
@@ -119,7 +119,7 @@ public class TerminalMenuWidget extends WidgetGroup {
     }
 
     public void removeComponents() {
-        components.forEach(component->this.removeWidget(component.getSecond()));
+        components.forEach(component -> this.removeWidget(component.getSecond()));
         components.clear();
     }
 
@@ -127,9 +127,9 @@ public class TerminalMenuWidget extends WidgetGroup {
     public void hideMenu() {
         if (!isHide && interpolator == null) {
             int y = getSelfPosition().y;
-            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x - getSize().width, 6, Eases.EaseLinear,
-                    value-> setSelfPosition(new Position(value.intValue(), y)),
-                    value-> {
+            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x - getSize().width, 6, Eases.LINEAR,
+                    value -> setSelfPosition(new Position(value.intValue(), y)),
+                    value -> {
                         setVisible(false);
                         interpolator = null;
                         isHide = true;
@@ -144,9 +144,9 @@ public class TerminalMenuWidget extends WidgetGroup {
         if (isHide && interpolator == null) {
             setVisible(true);
             int y = getSelfPosition().y;
-            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x + getSize().width, 6, Eases.EaseLinear,
-                    value-> setSelfPosition(new Position(value.intValue(), y)),
-                    value-> {
+            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x + getSize().width, 6, Eases.LINEAR,
+                    value -> setSelfPosition(new Position(value.intValue(), y)),
+                    value -> {
                         interpolator = null;
                         isHide = false;
                     });
@@ -157,19 +157,20 @@ public class TerminalMenuWidget extends WidgetGroup {
 
     @Override
     public void updateScreenOnFrame() {
-        if(interpolator != null) interpolator.update();
+        if (interpolator != null) interpolator.update();
         super.updateScreenOnFrame();
     }
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        GlStateManager.color(1,1,1,0.5f);
-        if( background != null) {
+        GlStateManager.color(1, 1, 1, 0.5f);
+        if (background != null) {
             background.draw(this.getPosition().x, this.getPosition().y, this.getSize().width, this.getSize().height);
         } else {
-            drawGradientRect(this.getPosition().x, this.getPosition().y, this.getSize().width, this.getSize().height, 0xff000000, 0xff000000);
+            drawGradientRect(this.getPosition().x, this.getPosition().y, this.getSize().width, this.getSize().height,
+                    0xff000000, 0xff000000);
         }
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 

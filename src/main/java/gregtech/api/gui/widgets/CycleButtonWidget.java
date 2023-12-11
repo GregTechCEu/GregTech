@@ -10,6 +10,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -36,23 +37,27 @@ public class CycleButtonWidget extends Widget {
     protected int currentOption;
     protected String tooltipHoverString;
 
-    public CycleButtonWidget(int xPosition, int yPosition, int width, int height, String[] optionNames, IntSupplier currentOptionSupplier, IntConsumer setOptionExecutor) {
+    public CycleButtonWidget(int xPosition, int yPosition, int width, int height, String[] optionNames,
+                             IntSupplier currentOptionSupplier, IntConsumer setOptionExecutor) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.optionNames = optionNames;
         this.currentOptionSupplier = currentOptionSupplier;
         this.setOptionExecutor = setOptionExecutor;
     }
 
-    public <T extends Enum<T> & IStringSerializable> CycleButtonWidget(int xPosition, int yPosition, int width, int height, Class<T> enumClass, Supplier<T> supplier, Consumer<T> updater) {
+    public <T extends Enum<T> & IStringSerializable> CycleButtonWidget(int xPosition, int yPosition, int width,
+                                                                       int height, Class<T> enumClass,
+                                                                       Supplier<T> supplier, Consumer<T> updater) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         T[] enumConstantPool = enumClass.getEnumConstants();
-        //noinspection RedundantCast
+        // noinspection RedundantCast
         this.optionNames = GTUtility.mapToString(enumConstantPool, it -> ((IStringSerializable) it).getName());
         this.currentOptionSupplier = () -> supplier.get().ordinal();
         this.setOptionExecutor = (newIndex) -> updater.accept(enumConstantPool[newIndex]);
     }
 
-    public CycleButtonWidget(int xPosition, int yPosition, int width, int height, BooleanSupplier supplier, BooleanConsumer updater, String... optionNames) {
+    public CycleButtonWidget(int xPosition, int yPosition, int width, int height, BooleanSupplier supplier,
+                             BooleanConsumer updater, String... optionNames) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.optionNames = optionNames;
         this.currentOptionSupplier = () -> supplier.getAsBoolean() ? 1 : 0;
@@ -81,7 +86,8 @@ public class CycleButtonWidget extends Widget {
         Position pos = getPosition();
         Size size = getSize();
         if (buttonTexture instanceof SizedTextureArea) {
-            ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(pos.x, pos.y, size.width, size.height, 0.0, 1.0);
+            ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(pos.x, pos.y, size.width, size.height, 0.0,
+                    1.0);
         } else {
             buttonTexture.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0, 0.0, 1.0, 1.0);
         }
@@ -122,9 +128,9 @@ public class CycleButtonWidget extends Widget {
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
         if (isMouseOverElement(mouseX, mouseY)) {
-            //Allow only the RMB to reverse cycle
+            // Allow only the RMB to reverse cycle
             if (button == RIGHT_MOUSE) {
-                //Wrap from the first option to the last if needed
+                // Wrap from the first option to the last if needed
                 this.currentOption = currentOption == 0 ? optionNames.length - 1 : currentOption - 1;
             } else {
                 this.currentOption = (currentOption + 1) % optionNames.length;
@@ -137,7 +143,6 @@ public class CycleButtonWidget extends Widget {
         return false;
     }
 
-
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
         super.handleClientAction(id, buffer);
@@ -146,5 +151,4 @@ public class CycleButtonWidget extends Widget {
             setOptionExecutor.accept(currentOption);
         }
     }
-
 }

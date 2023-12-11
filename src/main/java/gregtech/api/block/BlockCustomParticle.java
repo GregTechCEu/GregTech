@@ -1,10 +1,10 @@
 package gregtech.api.block;
 
-import codechicken.lib.vec.Vector3;
 import gregtech.api.GregTechAPI;
+import gregtech.api.util.ParticleHandlerUtil;
 import gregtech.core.network.NetworkUtils;
 import gregtech.core.network.packets.PacketBlockParticle;
-import gregtech.api.util.ParticleHandlerUtil;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -19,9 +19,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
+import codechicken.lib.vec.Vector3;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BlockCustomParticle extends Block implements ICustomParticleBlock {
 
@@ -38,29 +39,35 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(@Nonnull IBlockState state, @Nonnull World worldObj, RayTraceResult target, @Nonnull ParticleManager manager) {
+    public boolean addHitEffects(@NotNull IBlockState state, @NotNull World worldObj, RayTraceResult target,
+                                 @NotNull ParticleManager manager) {
         Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(worldObj, target.getBlockPos());
-        ParticleHandlerUtil.addHitEffects(state, worldObj, target, atlasSprite.getLeft(), atlasSprite.getRight(), manager);
+        ParticleHandlerUtil.addHitEffects(state, worldObj, target, atlasSprite.getLeft(), atlasSprite.getRight(),
+                manager);
         return true;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addDestroyEffects(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull ParticleManager manager) {
+    public boolean addDestroyEffects(@NotNull World world, @NotNull BlockPos pos, @NotNull ParticleManager manager) {
         Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(world, pos);
-        ParticleHandlerUtil.addBlockDestroyEffects(world.getBlockState(pos), world, pos, atlasSprite.getLeft(), atlasSprite.getRight(), manager);
+        ParticleHandlerUtil.addBlockDestroyEffects(world.getBlockState(pos), world, pos, atlasSprite.getLeft(),
+                atlasSprite.getRight(), manager);
         return true;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void handleCustomParticle(World worldObj, BlockPos blockPos, ParticleManager particleManager, Vector3 entityPos, int numberOfParticles) {
+    public void handleCustomParticle(World worldObj, BlockPos blockPos, ParticleManager particleManager,
+                                     Vector3 entityPos, int numberOfParticles) {
         Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(worldObj, blockPos);
-        ParticleHandlerUtil.addBlockLandingEffects(worldObj, entityPos, atlasSprite.getLeft(), atlasSprite.getRight(), particleManager, numberOfParticles);
+        ParticleHandlerUtil.addBlockLandingEffects(worldObj, entityPos, atlasSprite.getLeft(), atlasSprite.getRight(),
+                particleManager, numberOfParticles);
     }
 
     @Override
-    public boolean addRunningEffects(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
+    public boolean addRunningEffects(@NotNull IBlockState state, World world, @NotNull BlockPos pos,
+                                     @NotNull Entity entity) {
         if (world.isRemote) {
             Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(world, pos);
             ParticleHandlerUtil.addBlockRunningEffects(world, entity, atlasSprite.getLeft(), atlasSprite.getRight());
@@ -69,9 +76,11 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
     }
 
     @Override
-    public boolean addLandingEffects(@Nonnull IBlockState state, @Nonnull WorldServer worldObj, @Nonnull BlockPos blockPosition, @Nonnull IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
-        PacketBlockParticle
-                packet = new PacketBlockParticle(blockPosition, new Vector3(entity.posX, entity.posY, entity.posZ), numberOfParticles);
+    public boolean addLandingEffects(@NotNull IBlockState state, @NotNull WorldServer worldObj,
+                                     @NotNull BlockPos blockPosition, @NotNull IBlockState iblockstate,
+                                     EntityLivingBase entity, int numberOfParticles) {
+        PacketBlockParticle packet = new PacketBlockParticle(blockPosition,
+                new Vector3(entity.posX, entity.posY, entity.posZ), numberOfParticles);
         GregTechAPI.networkHandler.sendToAllTracking(packet, NetworkUtils.blockPoint(worldObj, blockPosition));
         return true;
     }

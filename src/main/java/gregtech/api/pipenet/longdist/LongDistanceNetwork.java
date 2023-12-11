@@ -1,12 +1,7 @@
 package gregtech.api.pipenet.longdist;
 
 import gregtech.api.pipenet.WorldPipeNet;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,6 +12,13 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,7 +126,7 @@ public class LongDistanceNetwork {
         if (this.endpoints.remove(endpoint)) {
             invalidateEndpoints();
         }
-        onRemovePipe(endpoint.getPos());
+        onRemovePipe(endpoint.pos());
     }
 
     /**
@@ -140,8 +142,8 @@ public class LongDistanceNetwork {
      */
     public void onPlaceEndpoint(ILDEndpoint endpoint) {
         addEndpoint(endpoint);
-        this.longDistancePipeBlocks.add(endpoint.getPos());
-        this.world.putNetwork(endpoint.getPos(), this);
+        this.longDistancePipeBlocks.add(endpoint.pos());
+        this.world.putNetwork(endpoint.pos(), this);
     }
 
     /**
@@ -149,7 +151,8 @@ public class LongDistanceNetwork {
      */
     protected void mergePipeNet(LongDistanceNetwork network) {
         if (getPipeType() != network.getPipeType()) {
-            throw new IllegalStateException("Can't merge unequal pipe types, " + getPipeType().getName() + " and " + network.getPipeType().getName() + " !");
+            throw new IllegalStateException("Can't merge unequal pipe types, " + getPipeType().getName() + " and " +
+                    network.getPipeType().getName() + " !");
         }
         for (BlockPos pos : network.longDistancePipeBlocks) {
             this.world.putNetwork(pos, this);
@@ -261,9 +264,9 @@ public class LongDistanceNetwork {
     }
 
     public boolean isIOIndexInvalid() {
-        return (this.activeInputIndex >= 0 && this.activeInputIndex >= this.endpoints.size())
-                || (this.activeOutputIndex >= 0 && this.activeOutputIndex >= this.endpoints.size())
-                || this.activeInputIndex < 0 != this.activeOutputIndex < 0;
+        return (this.activeInputIndex >= 0 && this.activeInputIndex >= this.endpoints.size()) ||
+                (this.activeOutputIndex >= 0 && this.activeOutputIndex >= this.endpoints.size()) ||
+                this.activeInputIndex < 0 != this.activeOutputIndex < 0;
     }
 
     public ILDEndpoint getActiveInputIndex() {
@@ -439,7 +442,7 @@ public class LongDistanceNetwork {
                 NBTTagList endpoints = new NBTTagList();
                 tag.setTag("endpoints", endpoints);
                 for (ILDEndpoint endpoint : network.endpoints) {
-                    endpoints.appendTag(new NBTTagLong(endpoint.getPos().toLong()));
+                    endpoints.appendTag(new NBTTagLong(endpoint.pos().toLong()));
                 }
             }
             nbtTagCompound.setTag("nets", list);

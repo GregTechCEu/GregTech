@@ -1,12 +1,14 @@
 package gregtech.client.renderer.cclop;
 
-import codechicken.lib.vec.uv.UV;
-import codechicken.lib.vec.uv.UVTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.vec.uv.UV;
+import codechicken.lib.vec.uv.UVTransformation;
+
 @SideOnly(Side.CLIENT)
 public class UVMirror extends UVTransformation {
+
     public final double minU;
     public final double maxU;
     public final double minV;
@@ -37,5 +39,4 @@ public class UVMirror extends UVTransformation {
     public UVTransformation inverse() {
         return null;
     }
-
 }

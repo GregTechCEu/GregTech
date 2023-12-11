@@ -1,5 +1,14 @@
 package gregtech.integration.forestry.bees;
 
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.machines.IScannerRecipeMap;
+import gregtech.integration.forestry.ForestryUtil;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidStack;
+
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IIndividual;
 import forestry.apiculture.ModuleApiculture;
@@ -9,13 +18,6 @@ import forestry.arboriculture.genetics.TreeDefinition;
 import forestry.core.fluids.Fluids;
 import forestry.lepidopterology.ModuleLepidopterology;
 import forestry.lepidopterology.genetics.ButterflyDefinition;
-import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.machines.IScannerRecipeMap;
-import gregtech.integration.forestry.ForestryUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,7 +30,8 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
     private static final int HONEY_AMOUNT = 100;
 
     @Override
-    public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
+    public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
+                                     boolean exactVoltage) {
         FluidStack fluidStack = fluidInputs.get(0);
         if (fluidStack != null && fluidStack.containsFluid(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))) {
             for (ItemStack stack : inputs) {
@@ -117,7 +120,8 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
 
         if (ForestryUtil.lepidopterologyEnabled()) {
             outputStack = ModuleLepidopterology.getItems().butterflyGE.getItemStack();
-            outputStack.setTagCompound(ButterflyDefinition.CabbageWhite.getIndividual().writeToNBT(new NBTTagCompound()));
+            outputStack
+                    .setTagCompound(ButterflyDefinition.CabbageWhite.getIndividual().writeToNBT(new NBTTagCompound()));
             outputStack.setTranslatableName("gregtech.scanner.forestry.butterfly");
             recipes.add(RecipeMaps.SCANNER_RECIPES.recipeBuilder()
                     .inputs(ModuleLepidopterology.getItems().butterflyGE.getWildcard())
@@ -126,7 +130,8 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .duration(DURATION).EUt(EUT).build().getResult());
 
             outputStack = ModuleLepidopterology.getItems().serumGE.getItemStack();
-            outputStack.setTagCompound(ButterflyDefinition.CabbageWhite.getIndividual().writeToNBT(new NBTTagCompound()));
+            outputStack
+                    .setTagCompound(ButterflyDefinition.CabbageWhite.getIndividual().writeToNBT(new NBTTagCompound()));
             outputStack.setTranslatableName("gregtech.scanner.forestry.serum");
             recipes.add(RecipeMaps.SCANNER_RECIPES.recipeBuilder()
                     .inputs(ModuleLepidopterology.getItems().serumGE.getWildcard())
@@ -135,7 +140,8 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .duration(DURATION).EUt(EUT).build().getResult());
 
             outputStack = ModuleLepidopterology.getItems().caterpillarGE.getItemStack();
-            outputStack.setTagCompound(ButterflyDefinition.CabbageWhite.getIndividual().writeToNBT(new NBTTagCompound()));
+            outputStack
+                    .setTagCompound(ButterflyDefinition.CabbageWhite.getIndividual().writeToNBT(new NBTTagCompound()));
             outputStack.setTranslatableName("gregtech.scanner.forestry.caterpillar");
             recipes.add(RecipeMaps.SCANNER_RECIPES.recipeBuilder()
                     .inputs(ModuleLepidopterology.getItems().caterpillarGE.getWildcard())

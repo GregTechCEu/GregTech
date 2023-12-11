@@ -1,4 +1,3 @@
 package gregtech.api.items.metaitem.stats;
 
-public interface IItemModelManager extends IItemComponent {
-}
+public interface IItemModelManager extends IItemComponent {}

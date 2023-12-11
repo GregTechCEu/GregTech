@@ -7,6 +7,7 @@ import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GradientUtil;
+
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockTNT;
@@ -30,10 +31,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.util.List;
 
@@ -56,13 +58,15 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         this(null, usesFluid, hasMultipleUses, canOpen);
     }
 
-    public LighterBehaviour(boolean usesFluid, boolean hasMultipleUses, boolean canOpen, Item destroyItem, int maxUses) {
+    public LighterBehaviour(boolean usesFluid, boolean hasMultipleUses, boolean canOpen, Item destroyItem,
+                            int maxUses) {
         this(null, usesFluid, hasMultipleUses, canOpen);
         this.maxUses = maxUses;
         this.destroyItem = destroyItem;
     }
 
-    public LighterBehaviour(@Nullable ResourceLocation overrideLocation, boolean usesFluid, boolean hasMultipleUses, boolean canOpen) {
+    public LighterBehaviour(@Nullable ResourceLocation overrideLocation, boolean usesFluid, boolean hasMultipleUses,
+                            boolean canOpen) {
         this.overrideLocation = overrideLocation;
         this.usesFluid = usesFluid;
         this.hasMultipleUses = hasMultipleUses;
@@ -75,7 +79,8 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
             NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
             // If this item does not have opening mechanics, or if it does and is currently open
             if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
-                player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
+                player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
+                        SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
                 ((EntityCreeper) entity).ignite();
                 return true;
             }
@@ -84,7 +89,8 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, BlockPos pos,
+                                           EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
 
@@ -97,7 +103,8 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         if (!player.canPlayerEdit(pos, side, player.getHeldItem(hand))) return EnumActionResult.FAIL;
         // If this item does not have opening mechanics, or if it does and is currently open
         if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
-            player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
+            player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
+                    SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
             IBlockState blockState = world.getBlockState(pos);
             Block block = blockState.getBlock();
             if (block instanceof BlockTNT) {
@@ -118,7 +125,7 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, @Nonnull List<String> lines) {
+    public void addInformation(ItemStack itemStack, @NotNull List<String> lines) {
         lines.add(I18n.format(usesFluid ? "behaviour.lighter.fluid.tooltip" : "behaviour.lighter.tooltip"));
         if (hasMultipleUses && !usesFluid) {
             lines.add(I18n.format("behaviour.lighter.uses", getUsesLeft(itemStack)));
@@ -139,9 +146,10 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         return false;
     }
 
-    private int getUsesLeft(@Nonnull ItemStack stack) {
+    private int getUsesLeft(@NotNull ItemStack stack) {
         if (usesFluid) {
-            IFluidHandlerItem fluidHandlerItem = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandlerItem = stack
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null)
                 return 0;
 
@@ -160,9 +168,10 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         return stack.getCount();
     }
 
-    private void setUsesLeft(EntityPlayer entity, @Nonnull ItemStack stack, int usesLeft) {
+    private void setUsesLeft(EntityPlayer entity, @NotNull ItemStack stack, int usesLeft) {
         if (usesFluid) {
-            IFluidHandlerItem fluidHandlerItem = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandlerItem = stack
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem != null) {
                 FluidStack drained = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
                 if (drained != null) {
@@ -182,10 +191,11 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     }
 
     @Override
-    public void addPropertyOverride(@Nonnull Item item) {
+    public void addPropertyOverride(@NotNull Item item) {
         if (overrideLocation != null) {
             item.addPropertyOverride(overrideLocation,
-                    (stack, world, entity) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F : 0.0F);
+                    (stack, world, entity) -> GTUtility.getOrCreateNbtCompound(stack).getBoolean(LIGHTER_OPEN) ? 1.0F :
+                            0.0F);
         }
     }
 
@@ -193,7 +203,8 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     public double getDurabilityForDisplay(ItemStack itemStack) {
         if (usesFluid) {
             // Lighters
-            IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandlerItem = itemStack
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null) return 0.0;
             IFluidTankProperties properties = fluidHandlerItem.getTankProperties()[0];
             FluidStack fluidStack = properties.getContents();
@@ -242,7 +253,8 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
         if (usesFluid) {
             // Show Lighters as filled in JEI
             ItemStack copy = itemStack.copy();
-            IFluidHandlerItem fluidHandlerItem = copy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandlerItem = copy
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem != null) {
                 fluidHandlerItem.fill(Materials.Butane.getFluid(Integer.MAX_VALUE), true);
                 subItems.add(copy);

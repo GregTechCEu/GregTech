@@ -2,17 +2,20 @@ package gregtech.integration.xaero;
 
 import java.awt.*;
 
-//  ****************************************************************************************
-/** Utilities for converting between various colour spaces. Note that the default scaling
- *  for RGB is 0-1 and hue is expressed as degrees (0-360). For other values, see
- *  documentation for each conversion routine.
- *  @author Jo Wood,giCentre, City University London. Includes modified code from Duane
- *  Schwartzwald and Harry Parker.
- *  @version 3.4, 5th February, 2016.
+// ****************************************************************************************
+/**
+ * Utilities for converting between various colour spaces. Note that the default scaling
+ * for RGB is 0-1 and hue is expressed as degrees (0-360). For other values, see
+ * documentation for each conversion routine.
+ * 
+ * @author Jo Wood,giCentre, City University London. Includes modified code from Duane
+ *         Schwartzwald and Harry Parker.
+ * @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
-/* This file is part of giCentre utilities library. gicentre.utils is free software: you can
+/*
+ * This file is part of giCentre utilities library. gicentre.utils is free software: you can
  * redistribute it and/or modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3 of the License, or (at your
  * option) any later version.
@@ -27,6 +30,7 @@ import java.awt.*;
  */
 
 public class ColorUtility {
+
     public enum WhitePoint {
         // Tristimulus values taken from Schanda, J. (19xx) Colorimetry, p.74
 
@@ -54,7 +58,7 @@ public class ColorUtility {
         private double[] params;
 
         private WhitePoint(double X, double Y, double Z) {
-            params = new double[]{X, Y, Z};
+            params = new double[] { X, Y, Z };
         }
 
         /**
@@ -67,13 +71,12 @@ public class ColorUtility {
         }
     }
 
-
     /**
      * sRGB to XYZ conversion matrix (3x3)
      */
-    static final double[][] M = {{0.4124, 0.3576, 0.1805},       // RX, GX, BX
-            {0.2126, 0.7152, 0.0722},       // RY, GY, BY
-            {0.0193, 0.1192, 0.9505}};      // RZ, GZ, BZ
+    static final double[][] M = { { 0.4124, 0.3576, 0.1805 },       // RX, GX, BX
+            { 0.2126, 0.7152, 0.0722 },       // RY, GY, BY
+            { 0.0193, 0.1192, 0.9505 } };      // RZ, GZ, BZ
 
     /**
      * Finds the CIELab triplet representing the given colour. CIELab L value scaled between 0-100,
@@ -98,7 +101,7 @@ public class ColorUtility {
         double r = colour.getRed() / 255.0;
         double g = colour.getGreen() / 255.0;
         double b = colour.getBlue() / 255.0;
-        return RGBtoXYZ(new double[]{r, g, b});
+        return RGBtoXYZ(new double[] { r, g, b });
     }
 
     /**
@@ -163,7 +166,6 @@ public class ColorUtility {
             z = (7.787 * z) + (16.0 / 116.0);
         }
 
-        return new double[]{116 * y - 16, 500 * (x - y), 200 * (y - z)};
+        return new double[] { 116 * y - 16, 500 * (x - y), 200 * (y - z) };
     }
-
 }

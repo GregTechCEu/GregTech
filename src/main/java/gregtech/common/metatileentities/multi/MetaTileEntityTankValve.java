@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.ModularUI;
@@ -15,6 +12,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,11 +23,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidHandler> {
+public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart
+                                     implements IMultiblockAbilityPart<IFluidHandler> {
 
     private final boolean isMetal;
 
@@ -67,9 +70,11 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0L && isAttachedToMultiBlock() && getFrontFacing() == EnumFacing.DOWN) {
-            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
-            IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
+        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0L && isAttachedToMultiBlock() &&
+                getFrontFacing() == EnumFacing.DOWN) {
+            TileEntity tileEntity = getNeighbor(getFrontFacing());
+            IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
             if (fluidHandler != null) {
                 GTTransferUtils.transferFluids(fluidInventory, fluidHandler);
             }
@@ -83,7 +88,8 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     }
 
     /**
-     * When this block is not connected to any multiblock it uses dummy inventory to prevent problems with capability checks
+     * When this block is not connected to any multiblock it uses dummy inventory to prevent problems with capability
+     * checks
      */
     private void initializeDummyInventory() {
         this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), new FluidTankList(false));
@@ -92,7 +98,8 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
-        this.fluidInventory = controllerBase.getFluidInventory(); //directly use controllers fluid inventory as there is no reason to proxy it
+        this.fluidInventory = controllerBase.getFluidInventory(); // directly use controllers fluid inventory as there
+                                                                  // is no reason to proxy it
     }
 
     @Override
@@ -122,7 +129,7 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IFluidHandler> abilityList) {
+    public void registerAbilities(@NotNull List<IFluidHandler> abilityList) {
         abilityList.add(this.getImportFluids());
     }
 
@@ -132,7 +139,8 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.tank_valve.tooltip"));
     }

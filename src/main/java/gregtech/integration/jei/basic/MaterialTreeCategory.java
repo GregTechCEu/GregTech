@@ -1,6 +1,5 @@
 package gregtech.integration.jei.basic;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -8,6 +7,13 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.integration.jei.utils.render.DrawableRegistry;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+
+import com.google.common.collect.ImmutableList;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -16,13 +22,9 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,32 +45,32 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
     // XY positions of ingredients
     protected final static ImmutableList<Integer> ITEM_LOCATIONS = ImmutableList.of(
             // corresponds pair-to-one with PREFIXES in MaterialTree.java
-            4, 67,      // dustTiny  0
+            4, 67,      // dustTiny 0
             4, 101,     // dust
             4, 135,     // dustSmall
             29, 55,     // cableGtSingle
             29, 85,     // ingotHot
-            29, 117,    // ingot  5
+            29, 117,    // ingot 5
             29, 117,    // gem
             29, 147,    // block
             54, 55,     // wireGtSingle
             54, 85,     // stick
-            54, 117,    // nugget  10
+            54, 117,    // nugget 10
             54, 147,    // plate
             79, 55,     // wireFine
             79, 85,     // frameGt
             79, 117,    // round
-            79, 147,    // pipeNormalFluid  15
+            79, 147,    // pipeNormalFluid 15
             79, 147,    // pipeNormalItem
             104, 55,    // screw
             104, 85,    // bolt
             104, 117,   // gear
-            104, 147,   // plateDouble  20
+            104, 147,   // plateDouble 20
             129, 55,    // spring
             129, 85,    // stickLong
             129, 117,   // gearSmall
             129, 147,   // plateDense
-            154, 55,    // springSmall  25
+            154, 55,    // springSmall 25
             154, 78,    // ring
             154, 124,   // lens
             154, 147    // foil
@@ -83,16 +85,18 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
                 guiHelper.createBlankDrawable(176, 166),
                 guiHelper);
 
-        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18)
+                .build();
         this.icon = guiHelper.createDrawableIngredient(OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium));
 
-        /* couldn't think of a better way to register all these
-        generated with bash, requires imagemagick and sed
-        for file in ./*.png; do
-            dimstring=$(identify -ping -format '%w, %h' "$file")
-            basename "$file" .png | sed "s/\(.*\)/registerArrow(guiHelper, \"\1\", $dimstring);/"
-        done
-        */
+        /*
+         * couldn't think of a better way to register all these
+         * generated with bash, requires imagemagick and sed
+         * for file in ./*.png; do
+         * dimstring=$(identify -ping -format '%w, %h' "$file")
+         * basename "$file" .png | sed "s/\(.*\)/registerArrow(guiHelper, \"\1\", $dimstring);/"
+         * done
+         */
         registerArrow(guiHelper, "2d12", 5, 12);
         registerArrow(guiHelper, "2d16", 5, 16);
         registerArrow(guiHelper, "2r16d37", 18, 40);
@@ -123,7 +127,7 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull MaterialTree recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @NotNull MaterialTree recipeWrapper, IIngredients ingredients) {
         // place and check existence of items
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         List<List<ItemStack>> itemInputs = ingredients.getInputs(VanillaTypes.ITEM);
@@ -154,9 +158,9 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         materialAvgN = I18n.format("gregtech.jei.materials.average_neutrons", recipeWrapper.getAvgN());
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IRecipeWrapper getRecipeWrapper(@Nonnull MaterialTree recipe) {
+    public IRecipeWrapper getRecipeWrapper(@NotNull MaterialTree recipe) {
         return recipe;
     }
 
@@ -167,7 +171,7 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         // item slot rendering
         for (int i = 0; i < ITEM_LOCATIONS.size(); i += 2) {
             if (itemExists.get(i / 2))
@@ -186,12 +190,12 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         drawArrow(minecraft, "2d16", 10, 85, itemExists.get(0) && itemExists.get(1));
         // dust <-> dustSmall
         drawArrow(minecraft, "2d16", 10, 119, itemExists.get(1) && itemExists.get(2));
-        // dust <-> block  (if no ingot or gem)
+        // dust <-> block (if no ingot or gem)
         drawArrow(minecraft, "2r16d37", 22, 107, !itemExists.get(5) &&
                 !itemExists.get(6) && itemExists.get(1) && itemExists.get(7));
         // dust -> ingotHot
         drawArrow(minecraft, "r3u15r4", 22, 92, itemExists.get(1) && itemExists.get(4));
-        // dust -> ingot/gem  (if no ingotHot)
+        // dust -> ingot/gem (if no ingotHot)
         drawArrow(minecraft, "r3d16r4", 22, 109, !itemExists.get(4) &&
                 itemExists.get(1) && (itemExists.get(5) || itemExists.get(6)));
         // ingotHot -> ingot
@@ -273,7 +277,8 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         }
         // don't think theres a good way to get the coil tier other than this
         if (materialBFTemp != 0) {
-            TemperatureProperty.getInstance().drawInfo(minecraft, 0, FONT_HEIGHT * linesDrawn, 0x111111, materialBFTemp);
+            TemperatureProperty.getInstance().drawInfo(minecraft, 0, FONT_HEIGHT * linesDrawn, 0x111111,
+                    materialBFTemp);
             linesDrawn++;
         }
         minecraft.fontRenderer.drawString(materialAvgM, 0, FONT_HEIGHT * linesDrawn, 0x111111);
@@ -285,7 +290,8 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
 
     // a couple wrappers to make the code look less terrible
     private static void registerArrow(IGuiHelper guiHelper, String name, int width, int height) {
-        DrawableRegistry.initDrawable(guiHelper, GTValues.MODID + ":textures/gui/arrows/" + name + ".png", width, height, name);
+        DrawableRegistry.initDrawable(guiHelper, GTValues.MODID + ":textures/gui/arrows/" + name + ".png", width,
+                height, name);
     }
 
     private static void drawArrow(Minecraft minecraft, String name, int x, int y, boolean shown) {

@@ -1,6 +1,7 @@
 package gregtech.common.terminal.app.recipechart;
 
 import gregtech.api.gui.Widget;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;

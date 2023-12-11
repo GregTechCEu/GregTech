@@ -2,6 +2,7 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -13,9 +14,10 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -132,7 +134,9 @@ public class TextFieldWidget2 extends Widget {
         String text = getRenderText();
         if (cursorPos != cursorPos2) {
             // render marked text background
-            float startX = fontRenderer.getStringWidth(text.substring(0, toRenderTextIndex(Math.min(cursorPos, cursorPos2)))) * scale + textX;
+            float startX = fontRenderer
+                    .getStringWidth(text.substring(0, toRenderTextIndex(Math.min(cursorPos, cursorPos2)))) * scale +
+                    textX;
             String marked = getSelectedText();
             float width = fontRenderer.getStringWidth(marked);
             drawSelectionBox(startX * scaleFactor, y, width);

@@ -8,7 +8,8 @@ public class SuppliedImageWidget extends ImageWidget {
 
     private final Supplier<IGuiTexture> areaSupplier;
 
-    public SuppliedImageWidget(int xPosition, int yPosition, int width, int height, Supplier<IGuiTexture> areaSupplier) {
+    public SuppliedImageWidget(int xPosition, int yPosition, int width, int height,
+                               Supplier<IGuiTexture> areaSupplier) {
         super(xPosition, yPosition, width, height);
         this.areaSupplier = areaSupplier;
     }

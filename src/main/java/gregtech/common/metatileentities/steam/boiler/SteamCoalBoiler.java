@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
@@ -15,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SteamCoalBoiler extends SteamBoiler {
 
@@ -38,14 +39,14 @@ public class SteamCoalBoiler extends SteamBoiler {
         ItemStack fuelInSlot = importItems.extractItem(0, 1, true);
         if (fuelInSlot.isEmpty()) return;
         // Prevent consuming buckets with burn time
-        if(FluidUtil.getFluidHandler(fuelInSlot) != null) {
+        if (FluidUtil.getFluidHandler(fuelInSlot) != null) {
             return;
         }
         int burnTime = TileEntityFurnace.getItemBurnTime(fuelInSlot);
         if (burnTime <= 0) return;
         importItems.extractItem(0, 1, false);
         ItemStack remainderAsh = ModHandler.getBurningFuelRemainder(fuelInSlot);
-        if (!remainderAsh.isEmpty()) { //we don't care if we can't insert ash - it's chanced anyway
+        if (!remainderAsh.isEmpty()) { // we don't care if we can't insert ash - it's chanced anyway
             exportItems.insertItem(0, remainderAsh, false);
         }
         setFuelMaxBurnTime(burnTime);
@@ -69,9 +70,10 @@ public class SteamCoalBoiler extends SteamBoiler {
     @Override
     public IItemHandlerModifiable createImportItemHandler() {
         return new GTItemStackHandler(this, 1) {
-            @Nonnull
+
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 if (TileEntityFurnace.getItemBurnTime(stack) <= 0)
                     return stack;
                 return super.insertItem(slot, stack, simulate);

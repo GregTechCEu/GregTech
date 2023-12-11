@@ -1,6 +1,7 @@
 package gregtech.core.network.internal;
 
 import gregtech.api.network.IPacket;
+
 import net.minecraft.util.IntIdentityHashBiMap;
 
 public class PacketHandler {
@@ -31,4 +32,3 @@ public class PacketHandler {
         return packetMap.get(packetId);
     }
 }
-

@@ -14,6 +14,7 @@ import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.common.terminal.component.SearchComponent;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,6 +22,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -45,7 +47,7 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
         this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
         this.addWidget(new LabelWidget(10, 10, "terminal.vtank_viewer.title", -1));
         this.addWidget(new RectButtonWidget(216, 7, 110, 18)
-                .setClickListener(cd->{
+                .setClickListener(cd -> {
                     if (cd.isClient) {
                         reloadWidgets(cacheClient);
                     }
@@ -71,7 +73,8 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
     private List<Pair<UUID, String>> findVirtualTanks() {
         List<Pair<UUID, String>> result = new LinkedList<>();
         Map<UUID, Map<String, IFluidTank>> tankMap = VirtualTankRegistry.getTankMap();
-        for (UUID uuid : tankMap.keySet().stream().sorted(Comparator.nullsLast(UUID::compareTo)).collect(Collectors.toList())) {
+        for (UUID uuid : tankMap.keySet().stream().sorted(Comparator.nullsLast(UUID::compareTo))
+                .collect(Collectors.toList())) {
             if (uuid == null || uuid.equals(gui.entityPlayer.getUniqueID())) {
                 for (String key : tankMap.get(uuid).keySet().stream().sorted().collect(Collectors.toList())) {
                     result.add(new ImmutablePair<>(uuid, key));
@@ -116,7 +119,7 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
                 }
             }
             if (!toUpdated.isEmpty()) {
-                writeUpdateInfo(-2, buffer->{ // update specific info
+                writeUpdateInfo(-2, buffer -> { // update specific info
                     buffer.writeVarInt(toUpdated.size());
                     for (Pair<UUID, String> update : toUpdated) {
                         buffer.writeBoolean(update.getKey() != null);
@@ -227,7 +230,8 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
     @Override
     public String resultDisplay(Pair<UUID, String> result) {
         FluidStack fluidStack = VirtualTankRegistry.getTankMap().get(result.getKey()).get(result.getValue()).getFluid();
-        return String.format("Lock: %b, ID: %s, Fluid: %s", result.getKey() != null, result.getValue(), fluidStack == null ? "-" : fluidStack.getLocalizedName());
+        return String.format("Lock: %b, ID: %s, Fluid: %s", result.getKey() != null, result.getValue(),
+                fluidStack == null ? "-" : fluidStack.getLocalizedName());
     }
 
     @Override
@@ -243,7 +247,8 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
             return;
         for (Map.Entry<Pair<UUID, String>, IFluidTank> access : cacheClient.entrySet()) {
             Pair<UUID, String> accessingCover = access.getKey();
-            if (accessingCover.getValue() != null && accessingCover.getValue().toLowerCase().contains(word.toLowerCase())) {
+            if (accessingCover.getValue() != null &&
+                    accessingCover.getValue().toLowerCase().contains(word.toLowerCase())) {
                 find.accept(accessingCover);
             } else {
                 FluidStack fluidStack = access.getValue().getFluid();

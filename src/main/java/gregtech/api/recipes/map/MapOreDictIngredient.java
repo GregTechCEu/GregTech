@@ -20,5 +20,4 @@ public class MapOreDictIngredient extends AbstractMapIngredient {
         }
         return false;
     }
-
 }

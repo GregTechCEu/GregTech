@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -12,6 +9,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,10 +19,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
+public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblockPart implements
+                                                IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
     public MetaTileEntityAutoMaintenanceHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 3);
@@ -57,12 +60,10 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void setTaped(boolean ignored) {
-    }
+    public void setTaped(boolean ignored) {}
 
     @Override
-    public void storeMaintenanceData(byte ignored1, int ignored2) {
-    }
+    public void storeMaintenanceData(byte ignored1, int ignored2) {}
 
     @Override
     public boolean hasMaintenanceData() {

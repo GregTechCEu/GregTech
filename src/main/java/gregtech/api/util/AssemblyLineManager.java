@@ -14,14 +14,16 @@ import gregtech.api.recipes.machines.RecipeMapScanner;
 import gregtech.api.recipes.recipeproperties.ScanProperty;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.ApiStatus;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -30,12 +32,12 @@ public final class AssemblyLineManager {
     public static final String RESEARCH_NBT_TAG = "assemblylineResearch";
     public static final String RESEARCH_ID_NBT_TAG = "researchId";
 
-    @Nonnull
+    @NotNull
     public static ItemStack getDefaultScannerItem() {
         return MetaItems.TOOL_DATA_STICK.getStackForm();
     }
 
-    @Nonnull
+    @NotNull
     public static ItemStack getDefaultResearchStationItem(int cwut) {
         if (cwut > 32) {
             return MetaItems.TOOL_DATA_MODULE.getStackForm();
@@ -54,7 +56,7 @@ public final class AssemblyLineManager {
      * @param stackCompound the compound contained on the ItemStack to write to
      * @param researchId    the research id
      */
-    public static void writeResearchToNBT(@Nonnull NBTTagCompound stackCompound, @Nonnull String researchId) {
+    public static void writeResearchToNBT(@NotNull NBTTagCompound stackCompound, @NotNull String researchId) {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setString(RESEARCH_ID_NBT_TAG, researchId);
         stackCompound.setTag(RESEARCH_NBT_TAG, compound);
@@ -65,7 +67,7 @@ public final class AssemblyLineManager {
      * @return the research id
      */
     @Nullable
-    public static String readResearchId(@Nonnull ItemStack stack) {
+    public static String readResearchId(@NotNull ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
         if (!hasResearchTag(compound)) return null;
 
@@ -79,8 +81,8 @@ public final class AssemblyLineManager {
      * @param isDataBank if the caller is a Data Bank. Pass "true" here if your use-case does not matter for this check.
      * @return if the stack is a data item
      */
-    public static boolean isStackDataItem(@Nonnull ItemStack stack, boolean isDataBank) {
-        if (stack.getItem() instanceof MetaItem<?> metaItem) {
+    public static boolean isStackDataItem(@NotNull ItemStack stack, boolean isDataBank) {
+        if (stack.getItem() instanceof MetaItem<?>metaItem) {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(stack);
             if (valueItem == null) return false;
             for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
@@ -96,13 +98,13 @@ public final class AssemblyLineManager {
      * @param stack the stack to check
      * @return if the stack has the research NBTTagCompound
      */
-    public static boolean hasResearchTag(@Nonnull ItemStack stack) {
+    public static boolean hasResearchTag(@NotNull ItemStack stack) {
         return hasResearchTag(stack.getTagCompound());
     }
 
     /**
      * @param compound the compound to check
-     * @return if the tag has  the research NBTTagCompound
+     * @return if the tag has the research NBTTagCompound
      */
     private static boolean hasResearchTag(@Nullable NBTTagCompound compound) {
         if (compound == null || compound.isEmpty()) return false;
@@ -114,15 +116,17 @@ public final class AssemblyLineManager {
      *
      * @param builder the builder to retrieve recipe info from
      */
-    public static void createDefaultResearchRecipe(@Nonnull AssemblyLineRecipeBuilder builder) {
+    public static void createDefaultResearchRecipe(@NotNull AssemblyLineRecipeBuilder builder) {
         if (!ConfigHolder.machines.enableResearch) return;
 
         for (AssemblyLineRecipeBuilder.ResearchRecipeEntry entry : builder.getRecipeEntries()) {
-            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(), entry.getDuration(), entry.getEUt(), entry.getCWUt());
+            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(),
+                    entry.getDuration(), entry.getEUt(), entry.getCWUt());
         }
     }
 
-    public static void createDefaultResearchRecipe(@Nonnull String researchId, @Nonnull ItemStack researchItem, @Nonnull ItemStack dataItem, int duration, int EUt, int CWUt) {
+    public static void createDefaultResearchRecipe(@NotNull String researchId, @NotNull ItemStack researchItem,
+                                                   @NotNull ItemStack dataItem, int duration, int EUt, int CWUt) {
         if (!ConfigHolder.machines.enableResearch) return;
 
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(dataItem);
@@ -155,7 +159,8 @@ public final class AssemblyLineManager {
         private static final int DURATION = 100;
 
         @Override
-        public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
+        public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
+                                         boolean exactVoltage) {
             if (inputs.size() > 1) {
                 // try the data recipe both ways, prioritizing overwriting the first
                 Recipe recipe = createDataRecipe(inputs.get(0), inputs.get(1));
@@ -167,7 +172,7 @@ public final class AssemblyLineManager {
         }
 
         @Nullable
-        private Recipe createDataRecipe(@Nonnull ItemStack first, @Nonnull ItemStack second) {
+        private Recipe createDataRecipe(@NotNull ItemStack first, @NotNull ItemStack second) {
             NBTTagCompound compound = second.getTagCompound();
             if (compound == null) return null;
 

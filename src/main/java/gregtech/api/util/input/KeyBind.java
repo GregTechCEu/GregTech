@@ -1,8 +1,9 @@
 package gregtech.api.util.input;
 
 import gregtech.api.GregTechAPI;
-import gregtech.core.network.packets.PacketKeysPressed;
 import gregtech.api.util.GTLog;
+import gregtech.core.network.packets.PacketKeysPressed;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,12 +12,12 @@ import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -152,5 +153,4 @@ public enum KeyBind {
             return pair != null && pair.right;
         }
     }
-
 }

@@ -1,13 +1,10 @@
 package gregtech.api.gui.resources;
 
-import codechicken.lib.vec.Rotation;
-import codechicken.lib.vec.Transformation;
-import codechicken.lib.vec.Translation;
-import codechicken.lib.vec.Vector3;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,6 +13,11 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.vec.Rotation;
+import codechicken.lib.vec.Transformation;
+import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
 
 /**
  * Represents a texture area of image
@@ -44,7 +46,8 @@ public class TextureArea implements IGuiTexture {
         return new TextureArea(GTUtility.gregtechId(imageLocation), 0.0, 0.0, 1.0, 1.0);
     }
 
-    public static TextureArea areaOfImage(String imageLocation, int imageSizeX, int imageSizeY, int u, int v, int width, int height) {
+    public static TextureArea areaOfImage(String imageLocation, int imageSizeX, int imageSizeY, int u, int v, int width,
+                                          int height) {
         return new TextureArea(new ResourceLocation(imageLocation),
                 u / (imageSizeX * 1.0),
                 v / (imageSizeY * 1.0),
@@ -66,7 +69,8 @@ public class TextureArea implements IGuiTexture {
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0.0f);
         transformation.glApply();
-        draw(positionedRect.position.x, positionedRect.position.y, positionedRect.size.width, positionedRect.size.height);
+        draw(positionedRect.position.x, positionedRect.position.y, positionedRect.size.width,
+                positionedRect.size.height);
         GlStateManager.popMatrix();
     }
 
@@ -106,8 +110,9 @@ public class TextureArea implements IGuiTexture {
     }
 
     @SideOnly(Side.CLIENT)
-    public void drawSubArea(double x, double y, double width, double height, double drawnU, double drawnV, double drawnWidth, double drawnHeight) {
-        //sub area is just different width and height
+    public void drawSubArea(double x, double y, double width, double height, double drawnU, double drawnV,
+                            double drawnWidth, double drawnHeight) {
+        // sub area is just different width and height
         double imageU = this.offsetX + (this.imageWidth * drawnU);
         double imageV = this.offsetY + (this.imageHeight * drawnV);
         double imageWidth = this.imageWidth * drawnWidth;

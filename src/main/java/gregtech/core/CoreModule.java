@@ -13,6 +13,8 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -48,12 +50,25 @@ import gregtech.core.advancement.AdvancementTriggers;
 import gregtech.core.advancement.internal.AdvancementManager;
 import gregtech.core.command.internal.CommandManager;
 import gregtech.core.network.internal.NetworkHandler;
-import gregtech.core.network.packets.*;
+import gregtech.core.network.packets.PacketBlockParticle;
+import gregtech.core.network.packets.PacketClipboard;
+import gregtech.core.network.packets.PacketClipboardNBTUpdate;
+import gregtech.core.network.packets.PacketClipboardUIWidgetUpdate;
+import gregtech.core.network.packets.PacketFluidVeinList;
+import gregtech.core.network.packets.PacketKeysPressed;
+import gregtech.core.network.packets.PacketNotifyCapeChange;
+import gregtech.core.network.packets.PacketPluginSynced;
+import gregtech.core.network.packets.PacketRecoverMTE;
+import gregtech.core.network.packets.PacketReloadShaders;
+import gregtech.core.network.packets.PacketUIClientAction;
+import gregtech.core.network.packets.PacketUIOpen;
+import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
 import gregtech.core.unification.material.internal.MaterialRegistryManager;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -61,28 +76,36 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.relauncher.Side;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 import static gregtech.api.GregTechAPI.*;
 
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_CORE,
-        containerID = GTValues.MODID,
-        name = "GregTech Core",
-        description = "Core GregTech content. Disabling this disables the entire mod and all its addons.",
-        coreModule = true
-)
+                moduleID = GregTechModules.MODULE_CORE,
+                containerID = GTValues.MODID,
+                name = "GregTech Core",
+                description = "Core GregTech content. Disabling this disables the entire mod and all its addons.",
+                coreModule = true)
 public class CoreModule implements IGregTechModule {
 
     public static final Logger logger = LogManager.getLogger("GregTech Core");
 
-    @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.client.ClientProxy", serverSide = "gregtech.common.CommonProxy")
+    @SidedProxy(modId = GTValues.MODID,
+                clientSide = "gregtech.client.ClientProxy",
+                serverSide = "gregtech.common.CommonProxy")
     public static CommonProxy proxy;
 
     public CoreModule() {
@@ -92,7 +115,7 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Logger getLogger() {
         return logger;
@@ -106,6 +129,10 @@ public class CoreModule implements IGregTechModule {
 
         GregTechAPI.soundManager = SoundManager.getInstance();
         GTSoundEvents.register();
+
+        /* MUI Initialization */
+        GTGuiTextures.init();
+        GTGuiTheme.registerThemes();
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
@@ -204,10 +231,12 @@ public class CoreModule implements IGregTechModule {
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {
             logger.fatal("Seems like invalid recipe was found.");
-            //crash if config setting is set to false, or we are in deobfuscated environment
+            // crash if config setting is set to false, or we are in deobfuscated environment
             if (!ConfigHolder.misc.ignoreErrorOrInvalidRecipes || !FMLForgePlugin.RUNTIME_DEOBF) {
-                logger.fatal("Loading cannot continue. Either fix or report invalid recipes, or enable ignoreErrorOrInvalidRecipes in the config as a temporary solution");
-                throw new LoaderException("Found at least one invalid recipe. Please read the log above for more details.");
+                logger.fatal(
+                        "Loading cannot continue. Either fix or report invalid recipes, or enable ignoreErrorOrInvalidRecipes in the config as a temporary solution");
+                throw new LoaderException(
+                        "Found at least one invalid recipe. Please read the log above for more details.");
             } else {
                 logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 logger.fatal("Ignoring invalid recipes and continuing loading");
@@ -230,6 +259,7 @@ public class CoreModule implements IGregTechModule {
         /* End Cover Definition Registration */
 
         DungeonLootLoader.init();
+        MetaBlocks.registerWalkingSpeedBonus();
     }
 
     @Override
@@ -273,7 +303,8 @@ public class CoreModule implements IGregTechModule {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
             if (!world.isRemote) {
-                BedrockFluidVeinSaveData saveData = (BedrockFluidVeinSaveData) world.loadData(BedrockFluidVeinSaveData.class, BedrockFluidVeinSaveData.dataName);
+                BedrockFluidVeinSaveData saveData = (BedrockFluidVeinSaveData) world
+                        .loadData(BedrockFluidVeinSaveData.class, BedrockFluidVeinSaveData.dataName);
                 if (saveData == null) {
                     saveData = new BedrockFluidVeinSaveData(BedrockFluidVeinSaveData.dataName);
                     world.setData(BedrockFluidVeinSaveData.dataName, saveData);

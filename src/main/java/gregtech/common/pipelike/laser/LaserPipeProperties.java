@@ -1,12 +1,6 @@
 package gregtech.common.pipelike.laser;
 
-import javax.annotation.Nonnull;
-
 public class LaserPipeProperties {
-    public LaserPipeProperties() {
-    }
 
-    public LaserPipeProperties(@Nonnull LaserPipeProperties ignoredOther) {
-
-    }
+    public static final LaserPipeProperties INSTANCE = new LaserPipeProperties();
 }

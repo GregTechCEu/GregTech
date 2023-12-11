@@ -1,13 +1,15 @@
 package gregtech.common.blocks.properties;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+
 import net.minecraft.block.properties.PropertyHelper;
 
-import javax.annotation.Nonnull;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -28,15 +30,15 @@ public class PropertyMaterial extends PropertyHelper<Material> {
         return new PropertyMaterial(name, Arrays.asList(allowedValues));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ImmutableList<Material> getAllowedValues() {
         return allowedValues;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Optional<Material> parseValue(@Nonnull String value) {
+    public Optional<Material> parseValue(@NotNull String value) {
         int index = value.indexOf("__");
         String materialName = index < 0 ? value : value.substring(0, index) + ':' + value.substring(index + 2);
         Material material = GregTechAPI.materialManager.getMaterial(materialName);
@@ -46,9 +48,9 @@ public class PropertyMaterial extends PropertyHelper<Material> {
         return Optional.of(Materials.NULL);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getName(@Nonnull Material material) {
+    public String getName(@NotNull Material material) {
         // Use double underscore to prevent ${modid}_${material_name} being ambiguous with ${material_name} when parsing
         return material.getModid() + "__" + material.getName();
     }

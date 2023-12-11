@@ -1,11 +1,12 @@
 package gregtech.api.util;
 
 import gregtech.api.GTValues;
+
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class GTControlledRegistry<K, V> extends RegistryNamespaced<K, V> {
 
@@ -49,7 +50,7 @@ public class GTControlledRegistry<K, V> extends RegistryNamespaced<K, V> {
         return container != null && container.getModId().equals(GTValues.MODID);
     }
 
-    public void register(int id, @Nonnull K key, @Nonnull V value) {
+    public void register(int id, @NotNull K key, @NotNull V value) {
         if (id < 0 || id >= maxId) {
             throw new IndexOutOfBoundsException("Id is out of range: " + id);
         }
@@ -58,14 +59,15 @@ public class GTControlledRegistry<K, V> extends RegistryNamespaced<K, V> {
 
         V objectWithId = getObjectById(id);
         if (objectWithId != null) {
-            throw new IllegalArgumentException(String.format("Tried to reassign id %d to %s (%s), but it is already assigned to %s (%s)!",
-                    id, value, key, objectWithId, getNameForObject(objectWithId)));
+            throw new IllegalArgumentException(
+                    String.format("Tried to reassign id %d to %s (%s), but it is already assigned to %s (%s)!",
+                            id, value, key, objectWithId, getNameForObject(objectWithId)));
         }
         underlyingIntegerMap.put(value, id);
     }
 
     @Override
-    public void putObject(@Nonnull K key, @Nonnull V value) {
+    public void putObject(@NotNull K key, @NotNull V value) {
         throw new UnsupportedOperationException("Use #register(int, String, T)");
     }
 

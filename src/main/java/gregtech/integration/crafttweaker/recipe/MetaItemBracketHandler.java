@@ -1,12 +1,5 @@
 package gregtech.integration.crafttweaker.recipe;
 
-import com.cleanroommc.groovyscript.api.GroovyLog;
-import crafttweaker.CraftTweakerAPI;
-import crafttweaker.annotations.BracketHandler;
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.item.IItemStack;
-import crafttweaker.mc1120.item.MCItemStack;
-import crafttweaker.zenscript.IBracketHandler;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
@@ -19,8 +12,17 @@ import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.integration.groovy.GroovyScriptModule;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.item.ItemStack;
+
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import crafttweaker.CraftTweakerAPI;
+import crafttweaker.annotations.BracketHandler;
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.mc1120.item.MCItemStack;
+import crafttweaker.zenscript.IBracketHandler;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
 import stanhebben.zenscript.expression.ExpressionString;
@@ -35,6 +37,7 @@ import java.util.Objects;
 @BracketHandler
 @ZenRegister
 public class MetaItemBracketHandler implements IBracketHandler {
+
     private static final Map<String, Map<String, ItemStack>> metaItemNames = new Object2ObjectOpenHashMap<>();
     private static final Map<String, Map<String, ItemStack>> metaBlockNames = new Object2ObjectOpenHashMap<>();
 
@@ -48,7 +51,8 @@ public class MetaItemBracketHandler implements IBracketHandler {
         metaItemNames.clear();
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
             String namespace = Objects.requireNonNull(item.getRegistryName()).getNamespace();
-            Map<String, ItemStack> map = metaItemNames.computeIfAbsent(namespace, k -> new Object2ObjectOpenHashMap<>());
+            Map<String, ItemStack> map = metaItemNames.computeIfAbsent(namespace,
+                    k -> new Object2ObjectOpenHashMap<>());
 
             for (MetaValueItem entry : item.getAllItems()) {
                 if (!"meta_item".equals(entry.unlocalizedName)) {
@@ -150,5 +154,4 @@ public class MetaItemBracketHandler implements IBracketHandler {
         return position -> new ExpressionCallStatic(position, environment, method,
                 new ExpressionString(position, nameBuilder.toString()));
     }
-
 }

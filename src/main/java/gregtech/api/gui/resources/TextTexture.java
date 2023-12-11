@@ -11,7 +11,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.Collections;
 import java.util.List;
 
-public class TextTexture implements IGuiTexture{
+public class TextTexture implements IGuiTexture {
+
     public String text;
     public int color;
     public int width;
@@ -87,7 +88,7 @@ public class TextTexture implements IGuiTexture{
         GlStateManager.color(1, 1, 1, 1);
     }
 
-    public enum TextType{
+    public enum TextType {
         NORMAL,
         HIDE,
         ROLL

@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.fluids.store.FluidStorageKeys;
+
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.*;
@@ -12,7 +13,6 @@ import static gregtech.api.unification.ore.OrePrefix.ingot;
 public class ChemistryRecipes {
 
     public static void init() {
-
         PetrochemRecipes.init();
         DistillationRecipes.init();
         SeparationRecipes.init();
@@ -29,7 +29,6 @@ public class ChemistryRecipes {
         PlatGroupMetalsRecipes.init();
         NaquadahRecipes.init();
         AcidRecipes.init();
-
 
         // A Few Random Recipes
         FLUID_HEATER_RECIPES.recipeBuilder()

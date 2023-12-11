@@ -3,6 +3,7 @@ package gregtech.common.crafting;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.FacadeItem;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -12,8 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
@@ -28,7 +29,7 @@ public class FacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements I
     }
 
     @Override
-    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
+    public boolean matches(@NotNull InventoryCrafting inv, @NotNull World worldIn) {
         boolean[] matched = new boolean[ingredients.size()];
         mainLoop:
         for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -36,11 +37,11 @@ public class FacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements I
             if (itemStack.isEmpty()) continue;
             for (int j = 0; j < matched.length; j++) {
                 if (!ingredients.get(j).apply(itemStack)) continue;
-                if (matched[j]) return false; //already matched
+                if (matched[j]) return false; // already matched
                 matched[j] = true;
                 continue mainLoop;
             }
-            //reached there, no match
+            // reached there, no match
             return false;
         }
         for (boolean b : matched) {
@@ -49,9 +50,9 @@ public class FacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements I
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
+    public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
         ItemStack resultStack = getRecipeOutput();
         ItemStack facadeStack = ItemStack.EMPTY;
         for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -66,13 +67,13 @@ public class FacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements I
         return resultStack;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getRecipeOutput() {
         return resultStack.copy();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NonNullList<Ingredient> getIngredients() {
         return this.ingredients;
@@ -88,13 +89,14 @@ public class FacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements I
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getGroup() {
         return group == null ? "" : group.toString();
     }
 
     private static class FacadeIngredient extends Ingredient {
+
         public static final FacadeIngredient INSTANCE = new FacadeIngredient();
 
         private FacadeIngredient() {

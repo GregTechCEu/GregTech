@@ -1,13 +1,5 @@
 package gregtech.api.items.toolitem;
 
-import appeng.api.implementations.items.IAEWrench;
-import buildcraft.api.tools.IToolWrench;
-import cofh.api.item.IToolHammer;
-import com.enderio.core.common.interfaces.IOverlayRenderAware;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import crazypants.enderio.api.tool.ITool;
-import forestry.api.arboriculture.IToolGrafter;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
@@ -36,8 +28,7 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -67,8 +58,19 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import appeng.api.implementations.items.IAEWrench;
+import buildcraft.api.tools.IToolWrench;
+import cofh.api.item.IToolHammer;
+import com.enderio.core.common.interfaces.IOverlayRenderAware;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import crazypants.enderio.api.tool.ITool;
+import forestry.api.arboriculture.IToolGrafter;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -89,8 +91,10 @@ import static gregtech.api.items.toolitem.ToolHelper.*;
         @Optional.Interface(modid = GTValues.MODID_COFH, iface = "cofh.api.item.IToolHammer"),
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "crazypants.enderio.api.tool.ITool"),
         @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter"),
-        @Optional.Interface(modid = GTValues.MODID_ECORE, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")})
-public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter, IOverlayRenderAware {
+        @Optional.Interface(modid = GTValues.MODID_ECORE,
+                            iface = "com.enderio.core.common.interfaces.IOverlayRenderAware") })
+public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter,
+                         IOverlayRenderAware {
 
     /**
      * @return the modid of the tool
@@ -116,7 +120,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @Nullable
     String getOreDictName();
 
-    @Nonnull
+    @NotNull
     List<String> getSecondaryOreDicts();
 
     @Nullable
@@ -156,12 +160,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
 
         // Durability formula we are working with:
-        // Final Durability = (material durability * material durability multiplier) + (tool definition durability * definition durability multiplier) - 1
+        // Final Durability = (material durability * material durability multiplier) + (tool definition durability *
+        // definition durability multiplier) - 1
         // Subtracts 1 internally since Minecraft treats "0" as a valid durability, but we don't want to display this.
 
         int durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
 
-        // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So apply the multiplier to the material durability if that would happen
+        // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So
+        // apply the multiplier to the material durability if that would happen
         if (toolStats.getBaseDurability(stack) == 0) {
             durability *= toolStats.getDurabilityMultiplier(stack);
         } else {
@@ -176,8 +182,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // Set tool and material enchantments
         Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
-        toolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment, level.getLevel(toolProperty.getToolHarvestLevel())));
-        toolStats.getDefaultEnchantments(stack).forEach((enchantment, level) -> enchantments.put(enchantment, level.getLevel(toolProperty.getToolHarvestLevel())));
+        toolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment,
+                level.getLevel(toolProperty.getToolHarvestLevel())));
+        toolStats.getDefaultEnchantments(stack).forEach((enchantment, level) -> enchantments.put(enchantment,
+                level.getLevel(toolProperty.getToolHarvestLevel())));
         enchantments.forEach((enchantment, level) -> {
             if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
                 stack.addEnchantment(enchantment, level);
@@ -187,7 +195,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         // Set behaviours
         NBTTagCompound behaviourTag = getBehaviorsTag(stack);
         getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
-
 
         if (aoeDefinition != AoESymmetrical.none()) {
             behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
@@ -208,7 +215,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default ItemStack get(Material material, long defaultCharge, long defaultMaxCharge) {
         ItemStack stack = get(material);
         if (isElectric()) {
-            ElectricItem electricItem = (ElectricItem) stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            ElectricItem electricItem = (ElectricItem) stack
+                    .getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             if (electricItem != null) {
                 electricItem.setMaxChargeOverride(defaultMaxCharge);
                 electricItem.setCharge(defaultCharge);
@@ -296,7 +304,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (toolTag.hasKey(TOOL_SPEED_KEY, Constants.NBT.TAG_FLOAT)) {
             return toolTag.getFloat(TOOL_SPEED_KEY);
         }
-        float toolSpeed = getToolStats().getEfficiencyMultiplier(stack) * getMaterialToolSpeed(stack) + getToolStats().getBaseEfficiency(stack);
+        float toolSpeed = getToolStats().getEfficiencyMultiplier(stack) * getMaterialToolSpeed(stack) +
+                getToolStats().getBaseEfficiency(stack);
         toolTag.setFloat(TOOL_SPEED_KEY, toolSpeed);
         return toolSpeed;
     }
@@ -336,8 +345,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         int maxDurability = getMaterialDurability(stack);
         int builderDurability = (int) (toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack));
 
-        // If there is no durability set in the tool builder, multiply the builder AOE multiplier to the material durability
-        maxDurability = builderDurability == 0 ? (int) (maxDurability * toolStats.getDurabilityMultiplier(stack)) : maxDurability + builderDurability;
+        // If there is no durability set in the tool builder, multiply the builder AOE multiplier to the material
+        // durability
+        maxDurability = builderDurability == 0 ? (int) (maxDurability * toolStats.getDurabilityMultiplier(stack)) :
+                maxDurability + builderDurability;
 
         toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);
         return maxDurability;
@@ -431,9 +442,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return false;
     }
 
-    default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
+    default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos,
+                                                EntityLivingBase entityLiving) {
         if (!worldIn.isRemote) {
-            getToolStats().getBehaviors().forEach(behavior -> behavior.onBlockDestroyed(stack, worldIn, state, pos, entityLiving));
+            getToolStats().getBehaviors()
+                    .forEach(behavior -> behavior.onBlockDestroyed(stack, worldIn, state, pos, entityLiving));
 
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
                 damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
@@ -477,24 +490,31 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return false;
     }
 
-    default Multimap<String, AttributeModifier> definition$getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack) {
+    default Multimap<String, AttributeModifier> definition$getAttributeModifiers(EntityEquipmentSlot equipmentSlot,
+                                                                                 ItemStack stack) {
         Multimap<String, AttributeModifier> multimap = HashMultimap.create();
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
-            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getTotalAttackDamage(stack), 0));
-            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", Math.max(-3.9D, getTotalAttackSpeed(stack)), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(),
+                    new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getTotalAttackDamage(stack), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER,
+                    "Weapon modifier", Math.max(-3.9D, getTotalAttackSpeed(stack)), 0));
         }
         return multimap;
     }
 
-    default int definition$getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
+    default int definition$getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player,
+                                           @Nullable IBlockState blockState) {
         return get().getToolClasses(stack).contains(toolClass) ? getTotalHarvestLevel(stack) : -1;
     }
 
-    default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
-        return getToolStats().getBehaviors().stream().anyMatch(behavior -> behavior.canDisableShield(stack, shield, entity, attacker));
+    default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity,
+                                                EntityLivingBase attacker) {
+        return getToolStats().getBehaviors().stream()
+                .anyMatch(behavior -> behavior.canDisableShield(stack, shield, entity, attacker));
     }
 
-    default boolean definition$doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    default boolean definition$doesSneakBypassUse(@NotNull ItemStack stack, @NotNull IBlockAccess world,
+                                                  @NotNull BlockPos pos, @NotNull EntityPlayer player) {
         return getToolStats().doesSneakBypassUse();
     }
 
@@ -528,7 +548,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return stack;
     }
 
-    default boolean definition$shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+    default boolean definition$shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack,
+                                                           boolean slotChanged) {
         if (getCharge(oldStack) != getCharge(newStack)) {
             return slotChanged;
         }
@@ -540,7 +561,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return false;
     }
 
-    default boolean definition$canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player) {
+    default boolean definition$canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack,
+                                                         EntityPlayer player) {
         return true;
     }
 
@@ -598,9 +620,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return new CombinedCapabilityProvider(providers);
     }
 
-    default EnumActionResult definition$onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+    default EnumActionResult definition$onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
+                                                       @NotNull BlockPos pos, @NotNull EnumFacing facing, float hitX,
+                                                       float hitY, float hitZ, @NotNull EnumHand hand) {
         for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand) == EnumActionResult.SUCCESS)  {
+            if (behavior.onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand) ==
+                    EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
             }
         }
@@ -608,9 +633,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return EnumActionResult.PASS;
     }
 
-    default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                                  EnumFacing facing, float hitX, float hitY, float hitZ) {
         for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)  {
+            if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
             }
         }
@@ -636,7 +662,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return ActionResult.newResult(EnumActionResult.PASS, stack);
     }
 
-    default void definition$getSubItems(@Nonnull NonNullList<ItemStack> items) {
+    default void definition$getSubItems(@NotNull NonNullList<ItemStack> items) {
         if (getMarkerItem() != null) {
             items.add(getMarkerItem().get());
         } else if (isElectric()) {
@@ -649,7 +675,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Client-side methods
 
     @SideOnly(Side.CLIENT)
-    default void definition$addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, ITooltipFlag flag) {
+    default void definition$addInformation(@NotNull ItemStack stack, @Nullable World world,
+                                           @NotNull List<String> tooltip, ITooltipFlag flag) {
         if (!(stack.getItem() instanceof IGTTool)) return;
         IGTTool tool = (IGTTool) stack.getItem();
 
@@ -668,29 +695,36 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // durability info
         if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
-            // Plus 1 to match vanilla behavior where tools can still be used once at zero durability. We want to not show this
+            // Plus 1 to match vanilla behavior where tools can still be used once at zero durability. We want to not
+            // show this
             int damageRemaining = tool.getTotalMaxDurability(stack) - stack.getItemDamage() + 1;
             if (toolStats.isSuitableForCrafting(stack)) {
-                tooltip.add(I18n.format("item.gt.tool.tooltip.crafting_uses", TextFormattingUtil.formatNumbers(damageRemaining / Math.max(1, toolStats.getToolDamagePerCraft(stack)))));
+                tooltip.add(I18n.format("item.gt.tool.tooltip.crafting_uses", TextFormattingUtil
+                        .formatNumbers(damageRemaining / Math.max(1, toolStats.getToolDamagePerCraft(stack)))));
             }
 
-            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses", TextFormattingUtil.formatNumbers(damageRemaining)));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses",
+                    TextFormattingUtil.formatNumbers(damageRemaining)));
         }
 
         // attack info
         if (toolStats.isSuitableForAttacking(stack)) {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage", TextFormattingUtil.formatNumbers(2 + tool.getTotalAttackDamage(stack))));
-            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed", TextFormattingUtil.formatNumbers(4 + tool.getTotalAttackSpeed(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage",
+                    TextFormattingUtil.formatNumbers(2 + tool.getTotalAttackDamage(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed",
+                    TextFormattingUtil.formatNumbers(4 + tool.getTotalAttackSpeed(stack))));
         }
 
         // mining info
         if (toolStats.isSuitableForBlockBreak(stack)) {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed", TextFormattingUtil.formatNumbers(tool.getTotalToolSpeed(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed",
+                    TextFormattingUtil.formatNumbers(tool.getTotalToolSpeed(stack))));
 
             int harvestLevel = tool.getTotalHarvestLevel(stack);
             String harvestName = "item.gt.tool.harvest_level." + harvestLevel;
             if (I18n.hasKey(harvestName)) { // if there's a defined name for the harvest level, use it
-                tooltip.add(I18n.format("item.gt.tool.tooltip.harvest_level_extra", harvestLevel, I18n.format(harvestName)));
+                tooltip.add(I18n.format("item.gt.tool.tooltip.harvest_level_extra", harvestLevel,
+                        I18n.format(harvestName)));
             } else {
                 tooltip.add(I18n.format("item.gt.tool.tooltip.harvest_level", harvestLevel));
             }
@@ -733,8 +767,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         tooltip.add(I18n.format("item.gt.tool.usable_as",
                 stack.getItem().getToolClasses(stack).stream()
                         .map(s -> I18n.format("gt.tool.class." + s))
-                        .collect(Collectors.joining(", "))
-        ));
+                        .collect(Collectors.joining(", "))));
 
         // repair info
         if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
@@ -764,7 +797,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
     }
 
-    default boolean definition$canApplyAtEnchantingTable(@Nonnull ItemStack stack, Enchantment enchantment) {
+    default boolean definition$canApplyAtEnchantingTable(@NotNull ItemStack stack, Enchantment enchantment) {
         if (stack.isEmpty()) return false;
 
         // special case enchants from other mods
@@ -776,11 +809,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             case "enchantment.cofhcore.smelting": // cofhcore
             case "enchantment.as.smelting": // astral sorcery
                 // block autosmelt enchants from AoE and Tree-Felling tools
-                return getToolStats().getAoEDefinition(stack) == AoESymmetrical.none() && !getBehaviorsTag(stack).hasKey(TREE_FELLING_KEY);
+                return getToolStats().getAoEDefinition(stack) == AoESymmetrical.none() &&
+                        !getBehaviorsTag(stack).hasKey(TREE_FELLING_KEY);
         }
 
         // Block Mending and Unbreaking on Electric tools
-        if (isElectric() && (enchantment instanceof EnchantmentMending || enchantment instanceof EnchantmentDurability)) {
+        if (isElectric() &&
+                (enchantment instanceof EnchantmentMending || enchantment instanceof EnchantmentDurability)) {
             return false;
         }
 
@@ -834,7 +869,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (ConfigHolder.client.toolCraftingSounds && getSound() != null && player != null) {
             if (canPlaySound(stack)) {
                 setLastCraftingSoundTime(stack);
-                player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(), SoundCategory.PLAYERS, 1F, 1F);
+                player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(),
+                        SoundCategory.PLAYERS, 1F, 1F);
             }
         }
     }
@@ -849,7 +885,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default void playSound(EntityPlayer player) {
         if (ConfigHolder.client.toolUseSounds && getSound() != null) {
-            player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(), SoundCategory.PLAYERS, 1F, 1F);
+            player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(),
+                    SoundCategory.PLAYERS, 1F, 1F);
         }
     }
 
@@ -884,12 +921,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                     AoESymmetrical.decreaseLayer(tag, defaultDefinition);
                     holder.markAsDirty();
                 }))
-                .widget(new DynamicLabelWidget(23, 65, () ->
-                        Integer.toString(1 + 2 * AoESymmetrical.getColumn(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(58, 65, () ->
-                        Integer.toString(1 + 2 * AoESymmetrical.getRow(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(93, 65, () ->
-                        Integer.toString(1 + AoESymmetrical.getLayer(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(23, 65, () -> Integer.toString(
+                        1 + 2 * AoESymmetrical.getColumn(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(58, 65, () -> Integer.toString(
+                        1 + 2 * AoESymmetrical.getRow(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(93, 65,
+                        () -> Integer.toString(1 +
+                                AoESymmetrical.getLayer(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
                 .build(holder, entityPlayer);
     }
 
@@ -913,25 +951,29 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // IToolWrench
 
-    /*** Called to ensure that the wrench can be used.
+    /***
+     * Called to ensure that the wrench can be used.
      *
-     * @param player - The player doing the wrenching
-     * @param hand - Which hand was holding the wrench
-     * @param wrench - The item stack that holds the wrench
+     * @param player   - The player doing the wrenching
+     * @param hand     - Which hand was holding the wrench
+     * @param wrench   - The item stack that holds the wrench
      * @param rayTrace - The object that is being wrenched
      *
-     * @return true if wrenching is allowed, false if not */
+     * @return true if wrenching is allowed, false if not
+     */
     @Override
     default boolean canWrench(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
         return get().getToolClasses(wrench).contains(ToolClasses.WRENCH);
     }
 
-    /*** Callback after the wrench has been used. This can be used to decrease durability or for other purposes.
+    /***
+     * Callback after the wrench has been used. This can be used to decrease durability or for other purposes.
      *
-     * @param player - The player doing the wrenching
-     * @param hand - Which hand was holding the wrench
-     * @param wrench - The item stack that holds the wrench
-     * @param rayTrace - The object that is being wrenched */
+     * @param player   - The player doing the wrenching
+     * @param hand     - Which hand was holding the wrench
+     * @param wrench   - The item stack that holds the wrench
+     * @param rayTrace - The object that is being wrenched
+     */
     @Override
     default void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
         damageItem(player.getHeldItem(hand), player);
@@ -964,19 +1006,19 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // ITool
     @Override
-    default boolean canUse(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+    default boolean canUse(@NotNull EnumHand hand, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
         return get().getToolClasses(player.getHeldItem(hand)).contains(ToolClasses.WRENCH);
     }
 
     @Override
-    default void used(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+    default void used(@NotNull EnumHand hand, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
         damageItem(player.getHeldItem(hand), player);
         playSound(player);
     }
 
     // IHideFacades
     @Override
-    default boolean shouldHideFacades(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+    default boolean shouldHideFacades(@NotNull ItemStack stack, @NotNull EntityPlayer player) {
         return get().getToolClasses(stack).contains(ToolClasses.WRENCH);
     }
 
@@ -997,7 +1039,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // IOverlayRenderAware
     @Override
-    default void renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition) {
+    default void renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
         ToolChargeBarRenderer.renderBarsTool(this, stack, xPosition, yPosition);
     }
 }

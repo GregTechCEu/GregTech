@@ -1,6 +1,5 @@
 package gregtech.integration.jei.basic;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.unification.OreDictUnifier;
@@ -10,18 +9,22 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.metatileentities.MetaTileEntities;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeWrapper;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -42,8 +45,7 @@ public class OreByProduct implements IRecipeWrapper {
             OrePrefix.crushedPurified,
             OrePrefix.dustImpure,
             OrePrefix.dustPure,
-            OrePrefix.crushedCentrifuged
-    );
+            OrePrefix.crushedCentrifuged);
 
     private static ImmutableList<ItemStack> ALWAYS_MACHINES;
 
@@ -67,14 +69,13 @@ public class OreByProduct implements IRecipeWrapper {
                     MetaTileEntities.THERMAL_CENTRIFUGE[GTValues.LV].getStackForm(),
                     MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
                     MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-                    MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm()
-            );
+                    MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm());
         }
         OreProperty property = material.getProperty(PropertyKey.ORE);
         int oreMultiplier = property.getOreMultiplier();
         int byproductMultiplier = property.getByProductMultiplier();
         currentSlot = 0;
-        Material[] byproducts = new Material[]{
+        Material[] byproducts = new Material[] {
                 property.getOreByProduct(0, material),
                 property.getOreByProduct(1, material),
                 property.getOreByProduct(2, material),
@@ -148,7 +149,8 @@ public class OreByProduct implements IRecipeWrapper {
         // direct smelt
         if (hasDirectSmelt) {
             ItemStack smeltingResult;
-            Material smeltingMaterial = property.getDirectSmeltResult() == null ? material : property.getDirectSmeltResult();
+            Material smeltingMaterial = property.getDirectSmeltResult() == null ? material :
+                    property.getDirectSmeltResult();
             if (smeltingMaterial.hasProperty(PropertyKey.INGOT)) {
                 smeltingResult = OreDictUnifier.get(OrePrefix.ingot, smeltingMaterial);
             } else if (smeltingMaterial.hasProperty(PropertyKey.GEM)) {
@@ -236,9 +238,11 @@ public class OreByProduct implements IRecipeWrapper {
 
         // electromagnetic separator
         if (hasSeparator) {
-            OrePrefix prefix = (separatedInto.get(separatedInto.size() - 1).getBlastTemperature() == 0 && separatedInto.get(separatedInto.size() - 1).hasProperty(PropertyKey.INGOT))
-                    ? OrePrefix.nugget : OrePrefix.dust;
-            ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedInto.get(separatedInto.size() - 1), prefix == OrePrefix.nugget ? 2 : 1);
+            OrePrefix prefix = (separatedInto.get(separatedInto.size() - 1).getBlastTemperature() == 0 &&
+                    separatedInto.get(separatedInto.size() - 1).hasProperty(PropertyKey.INGOT)) ? OrePrefix.nugget :
+                            OrePrefix.dust;
+            ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedInto.get(separatedInto.size() - 1),
+                    prefix == OrePrefix.nugget ? 2 : 1);
 
             addToOutputs(material, OrePrefix.dust, 1);
             addToOutputs(separatedInto.get(0), OrePrefix.dust, 1);
@@ -293,7 +297,7 @@ public class OreByProduct implements IRecipeWrapper {
             ChancedItemOutput entry = chances.get(slotIndex);
             double chance = entry.getChance() / 100.0;
             double boost = entry.getChanceBoost() / 100.0;
-            tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
+            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance", chance, boost));
         }
     }
 

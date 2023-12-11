@@ -6,6 +6,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TerminalDesktopWidget extends WidgetGroup {
+
     private final TerminalOSWidget os;
     private final WidgetGroup appDiv;
     private final List<Widget> topWidgets;
@@ -26,12 +28,12 @@ public class TerminalDesktopWidget extends WidgetGroup {
         this.topWidgets = new LinkedList<>();
     }
 
-    public void installApplication(AbstractApplication application){
+    public void installApplication(AbstractApplication application) {
         int r = 12;
         int index = appDiv.widgets.size();
         int x = this.getSize().width / 2 + (3 * r) * (index % rowCount - rowCount / 2);
         int y = (index / rowCount) * (3 * r) + 40;
-        CircleButtonWidget button = new CircleButtonWidget(x,y)
+        CircleButtonWidget button = new CircleButtonWidget(x, y)
                 .setColors(TerminalTheme.COLOR_B_2.getColor(),
                         application.getThemeColor(),
                         TerminalTheme.COLOR_B_2.getColor())

@@ -1,24 +1,52 @@
 package gregtech.api.util.interpolate;
 
-public enum Eases implements IEase{
-    EaseLinear(input-> input),
-    EaseQuadIn(input-> input * input),
-    EaseQuadInOut(input->{
-        if((input /= 0.5f) < 1) {
-            return 0.5f * input * input;
+import org.jetbrains.annotations.ApiStatus;
+
+public enum Eases implements IEase {
+
+    LINEAR {
+
+        @Override
+        public float getInterpolation(float t) {
+            return t;
         }
-        return -0.5f * ((--input) * (input - 2) - 1);
-    }),
-    EaseQuadOut(input->-input * (input - 2));
+    },
+    QUAD_IN {
 
+        @Override
+        public float getInterpolation(float t) {
+            return t * t;
+        }
+    },
+    QUAD_IN_OUT {
 
-    IEase ease;
+        @Override
+        public float getInterpolation(float t) {
+            if (t <= 0.5f) return 2f * t * t;
+            t = -2f * t + 2f;
+            return 1f - t * t * 0.5f;
+        }
+    },
+    QUAD_OUT {
 
-    Eases(IEase ease){
-        this.ease = ease;
-    }
-    @Override
-    public float getInterpolation(float t) {
-        return ease.getInterpolation(t);
-    }
+        @Override
+        public float getInterpolation(float t) {
+            return -t * (t - 2);
+        }
+    };
+
+    // Deprecated names below - will be removed on future update
+
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public static final Eases EaseLinear = LINEAR;
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public static final Eases EaseQuadIn = QUAD_IN;
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public static final Eases EaseQuadInOut = QUAD_IN_OUT;
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public static final Eases EaseQuadOut = QUAD_OUT;
 }

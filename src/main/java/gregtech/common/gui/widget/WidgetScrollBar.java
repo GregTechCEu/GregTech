@@ -6,8 +6,9 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -17,6 +18,7 @@ import java.text.DecimalFormat;
 import java.util.function.Consumer;
 
 public class WidgetScrollBar extends Widget {
+
     protected final float min;
     protected final float max;
     protected final float dur;
@@ -29,7 +31,6 @@ public class WidgetScrollBar extends Widget {
     protected String title;
     protected int titleColor;
     protected Consumer<Float> onChanged;
-
 
     public WidgetScrollBar(int x, int y, int width, float min, float max, float dur, Consumer<Float> onChanged) {
         super(new Position(x, y), new Size(width, 20));
@@ -78,25 +79,29 @@ public class WidgetScrollBar extends Widget {
         Size size = this.getSize();
         RenderUtil.renderRect(position.x, position.y + 15 - 0.5f, size.width, 1, 0, lineColor);
         if (this.buttonTexture instanceof SizedTextureArea) {
-            ((SizedTextureArea)this.buttonTexture).drawHorizontalCutSubArea(position.x + xOffset - buttonWidth / 2, position.y + 15 - buttonHeight / 2, buttonWidth, buttonHeight, 0.0D, 1.0D);
+            ((SizedTextureArea) this.buttonTexture).drawHorizontalCutSubArea(position.x + xOffset - buttonWidth / 2,
+                    position.y + 15 - buttonHeight / 2, buttonWidth, buttonHeight, 0.0D, 1.0D);
         } else {
-            this.buttonTexture.drawSubArea(position.x + xOffset - buttonWidth * 0.5f, position.y + 15 - buttonHeight * 0.5f, buttonWidth, buttonHeight, 0.0D, 0.0D, 1.0D, 1.0D);
+            this.buttonTexture.drawSubArea(position.x + xOffset - buttonWidth * 0.5f,
+                    position.y + 15 - buttonHeight * 0.5f, buttonWidth, buttonHeight, 0.0D, 0.0D, 1.0D, 1.0D);
         }
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = I18n.format(this.title);
         text += ": " + new DecimalFormat("#.00").format(getValue());
-        fontRenderer.drawString(text, position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2, position.y - 3 + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, this.titleColor);
+        fontRenderer.drawString(text, position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
+                position.y - 3 + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, this.titleColor);
     }
 
     private boolean isOnScrollPane(int mouseX, int mouseY) {
         Position position = this.getPosition();
         Size size = this.getSize();
-        return isMouseOver(position.x - buttonWidth / 2, position.y + 15 - buttonHeight / 2, size.width + buttonWidth / 2, buttonHeight, mouseX, mouseY);
+        return isMouseOver(position.x - buttonWidth / 2, position.y + 15 - buttonHeight / 2,
+                size.width + buttonWidth / 2, buttonHeight, mouseX, mouseY);
     }
 
     private float getValue() {
-        return (float) (min + Math.floor((max - min) * xOffset * 1.0f / this.getSize().width / dur) * dur) ;
+        return (float) (min + Math.floor((max - min) * xOffset * 1.0f / this.getSize().width / dur) * dur);
     }
 
     @Override
@@ -115,7 +120,7 @@ public class WidgetScrollBar extends Widget {
             Size size = this.getSize();
             if (mouseX > position.x + size.width) {
                 this.xOffset = size.width;
-            } else if(mouseX < position.x) {
+            } else if (mouseX < position.x) {
                 this.xOffset = 0;
             } else {
                 this.xOffset = mouseX - this.getPosition().x;
@@ -130,7 +135,7 @@ public class WidgetScrollBar extends Widget {
 
     @Override
     public boolean mouseReleased(int mouseX, int mouseY, int button) {
-        if(this.draggedOnScrollBar) {
+        if (this.draggedOnScrollBar) {
             this.writeClientAction(2, packetBuffer -> packetBuffer.writeFloat(getValue()));
         }
         this.draggedOnScrollBar = false;
@@ -142,7 +147,7 @@ public class WidgetScrollBar extends Widget {
         super.handleClientAction(id, buffer);
         if (id == 2) {
             float value = buffer.readFloat();
-            if(this.onChanged != null) {
+            if (this.onChanged != null) {
                 onChanged.accept(value);
             }
         }

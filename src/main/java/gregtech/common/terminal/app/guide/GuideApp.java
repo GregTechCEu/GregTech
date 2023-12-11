@@ -1,7 +1,5 @@
 package gregtech.common.terminal.app.guide;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.IGuiTexture;
@@ -17,10 +15,14 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
 import gregtech.common.terminal.component.SearchComponent;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +34,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class GuideApp<T> extends AbstractApplication implements
-        SearchComponent.IWidgetSearch<Stack<TreeNode<String, T>>> {
+                              SearchComponent.IWidgetSearch<Stack<TreeNode<String, T>>> {
+
     private GuidePageWidget pageWidget;
     private TreeListWidget<String, T> tree;
     private TreeNode<String, T> ROOT;
@@ -90,6 +93,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
 
     /**
      * Should return a localised representation of the item
+     * 
      * @param item item
      * @return localised name
      */
@@ -130,7 +134,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         jsonObjectMap = new HashMap<>();
         for (JsonObject json : jsons) {
             T t = ofJson(json);
-            if(t != null) {
+            if (t != null) {
                 registerItem(t, json.get("section").getAsString());
                 jsonObjectMap.put(t, json);
             }
@@ -153,13 +157,14 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     @Override
     public void search(String word, Consumer<Stack<TreeNode<String, T>>> find) {
         Stack<TreeNode<String, T>> stack = new Stack<>();
-        if(getTree() != null) {
+        if (getTree() != null) {
             stack.push(getTree());
             dfsSearch(Thread.currentThread(), stack, word.toLowerCase(), find);
         }
     }
 
-    private boolean dfsSearch(Thread thread, Stack<TreeNode<String, T>> stack, String regex, Consumer<Stack<TreeNode<String, T>>> find) {
+    private boolean dfsSearch(Thread thread, Stack<TreeNode<String, T>> stack, String regex,
+                              Consumer<Stack<TreeNode<String, T>>> find) {
         if (thread.isInterrupted()) {
             return true;
         } else {
@@ -191,7 +196,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
             String[] parts = path.split("/");
             TreeNode<String, T> child = ROOT;
             if (!parts[0].isEmpty()) {
-                for(String sub : parts) {
+                for (String sub : parts) {
                     child = child.getOrCreateChild(sub);
                 }
             }
@@ -211,13 +216,13 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     @Override
     public String resultDisplay(Stack<TreeNode<String, T>> result) {
         Iterator<TreeNode<String, T>> iterator = result.iterator();
-        if(!iterator.hasNext()) return "";
+        if (!iterator.hasNext()) return "";
         iterator.next(); // skip root
         StringBuilder builder = new StringBuilder();
         while (iterator.hasNext()) {
             TreeNode<String, T> node = iterator.next();
             builder.append(node.getContent() == null ? node.getKey() : itemName(node.getContent()));
-            if(iterator.hasNext())
+            if (iterator.hasNext())
                 builder.append(" / ");
         }
         return builder.toString();
@@ -229,11 +234,12 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     }
 
     private void buildTree() {
-        this.tree = new TreeListWidget<>(0, 0, getOs().getSize().width - 200, getOs().getSize().height, getTree(), this::loadPage).setContentIconSupplier(this::itemIcon)
-                .setContentNameSupplier(this::itemName)
-                .setKeyNameSupplier(key -> key)
-                .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
-                .setLeafTexture(GuiTextures.SLOT_DARKENED);
+        this.tree = new TreeListWidget<>(0, 0, getOs().getSize().width - 200, getOs().getSize().height, getTree(),
+                this::loadPage).setContentIconSupplier(this::itemIcon)
+                        .setContentNameSupplier(this::itemName)
+                        .setKeyNameSupplier(key -> key)
+                        .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
+                        .setLeafTexture(GuiTextures.SLOT_DARKENED);
         this.addWidget(this.tree);
     }
 
@@ -244,13 +250,12 @@ public abstract class GuideApp<T> extends AbstractApplication implements
             Position position = this.pageWidget.getPosition();
             mouseX = (int) ((mouseX - position.x * (1 - scale)) / scale);
             mouseY = (int) (mouseY / scale);
-            GlStateManager.translate(position.x * (1- scale), 0, 0);
+            GlStateManager.translate(position.x * (1 - scale), 0, 0);
             GlStateManager.scale(scale, scale, 1);
             this.pageWidget.drawInBackground(mouseX, mouseY, partialTicks, context);
             GlStateManager.scale(1 / scale, 1 / scale, 1);
             GlStateManager.translate(position.x * (scale - 1), 0, 0);
         }
-
     }
 
     @Override
@@ -260,11 +265,11 @@ public abstract class GuideApp<T> extends AbstractApplication implements
             Position position = this.pageWidget.getPosition();
             mouseX = (int) ((mouseX - position.x * (1 - scale)) / scale);
             mouseY = (int) (mouseY / scale);
-            GlStateManager.translate(position.x * (1- scale), 0, 0);
+            GlStateManager.translate(position.x * (1 - scale), 0, 0);
             GlStateManager.scale(scale, scale, 1);
             this.pageWidget.drawInForeground(mouseX, mouseY);
             GlStateManager.scale(1 / scale, 1 / scale, 1);
-            GlStateManager.translate(position.x * (scale - 1) , 0, 0);
+            GlStateManager.translate(position.x * (scale - 1), 0, 0);
         }
     }
 

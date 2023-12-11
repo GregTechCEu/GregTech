@@ -1,6 +1,5 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -10,11 +9,14 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +34,8 @@ public class ToggleButtonWidget extends Widget {
     protected boolean isPressed;
     private boolean shouldUseBaseBackground;
 
-    public ToggleButtonWidget(int xPosition, int yPosition, int width, int height, BooleanSupplier isPressedCondition, BooleanConsumer setPressedExecutor) {
+    public ToggleButtonWidget(int xPosition, int yPosition, int width, int height, BooleanSupplier isPressedCondition,
+                              BooleanConsumer setPressedExecutor) {
         this(xPosition, yPosition, width, height, GuiTextures.VANILLA_BUTTON, isPressedCondition, setPressedExecutor);
     }
 
@@ -76,12 +79,14 @@ public class ToggleButtonWidget extends Widget {
         Position pos = getPosition();
         Size size = getSize();
         if (shouldUseBaseBackground) {
-            GuiTextures.TOGGLE_BUTTON_BACK.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0, isPressed ? 0.5 : 0.0, 1.0, 0.5);
+            GuiTextures.TOGGLE_BUTTON_BACK.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0,
+                    isPressed ? 0.5 : 0.0, 1.0, 0.5);
             GlStateManager.color(1, 1, 1, 1);
             buttonTexture.draw(pos.x, pos.y, size.width, size.height);
         } else {
             if (buttonTexture instanceof SizedTextureArea) {
-                ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(pos.x, pos.y, size.width, size.height, isPressed ? 0.5 : 0.0, 0.5);
+                ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(pos.x, pos.y, size.width, size.height,
+                        isPressed ? 0.5 : 0.0, 0.5);
             } else {
                 buttonTexture.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0, isPressed ? 0.5 : 0.0, 1.0, 0.5);
             }
@@ -135,7 +140,6 @@ public class ToggleButtonWidget extends Widget {
         return false;
     }
 
-
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
         super.handleClientAction(id, buffer);
@@ -144,5 +148,4 @@ public class ToggleButtonWidget extends Widget {
             setPressedExecutor.apply(isPressed);
         }
     }
-
 }

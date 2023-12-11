@@ -1,12 +1,12 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.longdist.LongDistancePipeType;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,18 +14,21 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity implements ILDEndpoint, IDataInfoProvider {
+public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity
+                                                         implements ILDEndpoint, IDataInfoProvider {
 
     private final LongDistancePipeType pipeType;
     private IOType ioType = IOType.NONE;
@@ -60,7 +63,8 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         }
     }
 
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide,
+                                 CuboidRayTraceResult hitResult) {
         return super.onWrenchClick(playerIn, hand, wrenchSide.getOpposite(), hitResult);
     }
 
@@ -207,7 +211,8 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.3"));
@@ -220,13 +225,13 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     }
 
     @Override
-    public void addToolUsages(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addToolUsages(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> textComponents = new ArrayList<>();
@@ -237,8 +242,8 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             textComponents.add(new TextComponentString("Network:"));
             textComponents.add(new TextComponentString(" - " + network.getTotalSize() + " pipes"));
             ILDEndpoint in = network.getActiveInputIndex(), out = network.getActiveOutputIndex();
-            textComponents.add(new TextComponentString(" - input: " + (in == null ? "none" : in.getPos())));
-            textComponents.add(new TextComponentString(" - output: " + (out == null ? "none" : out.getPos())));
+            textComponents.add(new TextComponentString(" - input: " + (in == null ? "none" : in.pos())));
+            textComponents.add(new TextComponentString(" - output: " + (out == null ? "none" : out.pos())));
         }
         if (isInput()) {
             textComponents.add(new TextComponentString("Input endpoint"));
@@ -248,4 +253,20 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         }
         return textComponents;
     }
+
+    @Override
+    public World world() {
+        return getWorld();
+    }
+
+    @Override
+    public BlockPos pos() {
+        return getPos();
+    }
+
+    @Override
+    public void onNeighborChanged(@NotNull EnumFacing facing) {}
+
+    @Override
+    public void markAsDirty() {}
 }

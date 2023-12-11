@@ -3,7 +3,7 @@ package gregtech.api.capability.impl;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemHandlerDelegate implements IItemHandler {
 
@@ -18,19 +18,19 @@ public class ItemHandlerDelegate implements IItemHandler {
         return delegate.getSlots();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
         return delegate.getStackInSlot(slot);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         return delegate.insertItem(slot, stack, simulate);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return delegate.extractItem(slot, amount, simulate);

@@ -7,6 +7,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.XSTR;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.core.network.packets.PacketFluidVeinList;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,8 +17,9 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,7 +38,6 @@ public class BedrockFluidVeinHandler {
      */
     public static int saveDataVersion;
 
-
     public static final int MAX_FLUID_SAVE_DATA_VERSION = 2;
 
     public static final int VEIN_CHUNK_SIZE = 8; // veins are 8x8 chunk squares
@@ -52,11 +53,12 @@ public class BedrockFluidVeinHandler {
      * @return The FluidVeinWorldInfo corresponding with the given chunk
      */
     @Nullable
-    public static FluidVeinWorldEntry getFluidVeinWorldEntry(@Nonnull World world, int chunkX, int chunkZ) {
+    public static FluidVeinWorldEntry getFluidVeinWorldEntry(@NotNull World world, int chunkX, int chunkZ) {
         if (world.isRemote)
             return null;
 
-        ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), getVeinCoord(chunkX), getVeinCoord(chunkZ));
+        ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), getVeinCoord(chunkX),
+                getVeinCoord(chunkZ));
 
         FluidVeinWorldEntry worldEntry = veinCache.get(coords);
         if (worldEntry == null) {
@@ -87,7 +89,8 @@ public class BedrockFluidVeinHandler {
                 if (definition.getMaximumYield() - definition.getMinimumYield() <= 0) {
                     maximumYield = definition.getMinimumYield();
                 } else {
-                    maximumYield = random.nextInt(definition.getMaximumYield() - definition.getMinimumYield()) + definition.getMinimumYield();
+                    maximumYield = random.nextInt(definition.getMaximumYield() - definition.getMinimumYield()) +
+                            definition.getMinimumYield();
                 }
                 maximumYield = Math.min(maximumYield, definition.getMaximumYield());
             }
@@ -105,7 +108,7 @@ public class BedrockFluidVeinHandler {
      * @param biome    The biome type to check
      * @return The total weight associated with the dimension/biome pair
      */
-    public static int getTotalWeight(@Nonnull WorldProvider provider, Biome biome) {
+    public static int getTotalWeight(@NotNull WorldProvider provider, Biome biome) {
         int dim = provider.getDimension();
         if (!totalWeightMap.containsKey(dim)) {
             totalWeightMap.put(dim, new HashMap<>());
@@ -147,7 +150,8 @@ public class BedrockFluidVeinHandler {
         totalWeightMap.clear();
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !mutePackets) {
             HashMap<FluidVeinWorldEntry, Integer> packetMap = new HashMap<>();
-            for (Map.Entry<ChunkPosDimension, FluidVeinWorldEntry> entry : BedrockFluidVeinHandler.veinCache.entrySet()) {
+            for (Map.Entry<ChunkPosDimension, FluidVeinWorldEntry> entry : BedrockFluidVeinHandler.veinCache
+                    .entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null)
                     packetMap.put(entry.getValue(), entry.getValue().getDefinition().getWeight());
             }
@@ -250,6 +254,7 @@ public class BedrockFluidVeinHandler {
     }
 
     public static class FluidVeinWorldEntry {
+
         private BedrockFluidDepositDefinition vein;
         private int fluidYield;
         private int operationsRemaining;
@@ -260,9 +265,7 @@ public class BedrockFluidVeinHandler {
             this.operationsRemaining = operationsRemaining;
         }
 
-        private FluidVeinWorldEntry() {
-
-        }
+        private FluidVeinWorldEntry() {}
 
         public BedrockFluidDepositDefinition getDefinition() {
             return this.vein;
@@ -295,8 +298,8 @@ public class BedrockFluidVeinHandler {
             return tag;
         }
 
-        @Nonnull
-        public static FluidVeinWorldEntry readFromNBT(@Nonnull NBTTagCompound tag) {
+        @NotNull
+        public static FluidVeinWorldEntry readFromNBT(@NotNull NBTTagCompound tag) {
             FluidVeinWorldEntry info = new FluidVeinWorldEntry();
             info.fluidYield = tag.getInteger("fluidYield");
             info.operationsRemaining = tag.getInteger("operationsRemaining");

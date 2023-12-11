@@ -1,21 +1,21 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IPropertyFluidFilter;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.metatileentity.IDataInfoProvider;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.EntityDamageUtil;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -37,10 +37,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.apache.commons.lang3.tuple.MutableTriple;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -109,7 +109,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     private void distributeFluid(int channel, FluidTank tank, FluidStack fluid) {
         // Tank, From, Amount to receive
-        List<MutableTriple<IFluidHandler, IFluidHandler, Integer>> tanks = new ArrayList<>();
+        List<FluidTransaction> tanks = new ArrayList<>();
         int amount = fluid.amount;
 
         FluidStack maxFluid = fluid.copy();
@@ -124,9 +124,11 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 continue;
             }
 
-            IFluidHandler fluidHandler = getFluidHandlerAt(facing, facing.getOpposite());
-            if (fluidHandler == null)
-                continue;
+            TileEntity neighbor = getNeighbor(facing);
+            if (neighbor == null) continue;
+            IFluidHandler fluidHandler = neighbor.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                    facing.getOpposite());
+            if (fluidHandler == null) continue;
 
             IFluidHandler pipeTank = tank;
             Cover cover = getCoverableImplementation().getCoverAtSide(facing);
@@ -135,19 +137,13 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             if (cover != null) {
                 pipeTank = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, pipeTank);
                 // Shutter covers return null capability when active, so check here to prevent NPE
-                if (pipeTank == null) continue;
+                if (pipeTank == null || checkForPumpCover(cover)) continue;
             } else {
-                MetaTileEntity tile = GTUtility.getMetaTileEntity(world, pos.offset(facing));
-                if (tile != null) cover = tile.getCoverAtSide(facing.getOpposite());
-            }
-
-            if (cover instanceof CoverPump coverPump) {
-                int pipeThroughput = getNodeData().getThroughput() * 20;
-                if (coverPump.getTransferRate() > pipeThroughput) {
-                    coverPump.setTransferRate(pipeThroughput);
-                }
-                if (coverPump.getManualImportExportMode() == ManualImportExportMode.DISABLED) {
-                    continue;
+                CoverableView coverable = neighbor.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER,
+                        facing.getOpposite());
+                if (coverable != null) {
+                    cover = coverable.getCoverAtSide(facing.getOpposite());
+                    if (checkForPumpCover(cover)) continue;
                 }
             }
 
@@ -159,7 +155,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             int filled = Math.min(fluidHandler.fill(maxFluid, false), drainable.amount);
 
             if (filled > 0) {
-                tanks.add(MutableTriple.of(fluidHandler, pipeTank, filled));
+                tanks.add(new FluidTransaction(fluidHandler, pipeTank, filled));
                 availableCapacity += filled;
             }
             maxFluid.amount = amount; // Because some mods do actually modify input fluid stack
@@ -172,29 +168,46 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         final double maxAmount = Math.min(getCapacityPerTank() / 2, fluid.amount);
 
         // Now distribute
-        for (MutableTriple<IFluidHandler, IFluidHandler, Integer> triple : tanks) {
+        for (FluidTransaction transaction : tanks) {
             if (availableCapacity > maxAmount) {
-                triple.setRight((int) Math.floor(triple.getRight() * maxAmount / availableCapacity)); // Distribute fluids based on percentage available space at destination
+                transaction.amount = (int) Math.floor(transaction.amount * maxAmount / availableCapacity); // Distribute
+                                                                                                           // fluids
+                                                                                                           // based on
+                                                                                                           // percentage
+                                                                                                           // available
+                                                                                                           // space at
+                                                                                                           // destination
             }
-            if (triple.getRight() == 0) {
-                if (tank.getFluidAmount() <= 0)
-                    break; // If there is no more stored fluid, stop transferring to prevent dupes
-                triple.setRight(1); // If the percent is not enough to give at least 1L, try to give 1L
-            } else if (triple.getRight() < 0) {
+            if (transaction.amount == 0) {
+                if (tank.getFluidAmount() <= 0) break; // If there is no more stored fluid, stop transferring to prevent
+                                                       // dupes
+                transaction.amount = 1; // If the percent is not enough to give at least 1L, try to give 1L
+            } else if (transaction.amount < 0) {
                 continue;
             }
 
             FluidStack toInsert = fluid.copy();
-            toInsert.amount = triple.getRight();
+            toInsert.amount = transaction.amount;
 
-            int inserted = triple.getLeft().fill(toInsert, true);
+            int inserted = transaction.target.fill(toInsert, true);
             if (inserted > 0) {
-                triple.getMiddle().drain(inserted, true);
+                transaction.pipeTank.drain(inserted, true);
             }
         }
     }
 
-    public void checkAndDestroy(@Nonnull FluidStack stack) {
+    private boolean checkForPumpCover(@Nullable Cover cover) {
+        if (cover instanceof CoverPump coverPump) {
+            int pipeThroughput = getNodeData().getThroughput() * 20;
+            if (coverPump.getTransferRate() > pipeThroughput) {
+                coverPump.setTransferRate(pipeThroughput);
+            }
+            return coverPump.getManualImportExportMode() == ManualImportExportMode.DISABLED;
+        }
+        return false;
+    }
+
+    public void checkAndDestroy(@NotNull FluidStack stack) {
         Fluid fluid = stack.getFluid();
         FluidPipeProperties prop = getNodeData();
 
@@ -229,23 +242,27 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
     }
 
-    public void destroyPipe(FluidStack stack, boolean isBurning, boolean isLeaking, boolean isCorroding, boolean isShattering, boolean isMelting) {
+    public void destroyPipe(FluidStack stack, boolean isBurning, boolean isLeaking, boolean isCorroding,
+                            boolean isShattering, boolean isMelting) {
         // prevent the sound from spamming when filled from anything not a pipe
         if (getOffsetTimer() % 10 == 0) {
             world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
         }
 
         if (isLeaking) {
-            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.SMOKE_NORMAL, 7 + GTValues.RNG.nextInt(2));
+            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.SMOKE_NORMAL,
+                    7 + GTValues.RNG.nextInt(2));
 
             // voids 10%
             stack.amount = Math.max(0, stack.amount * 9 / 10);
 
             // apply heat damage in area surrounding the pipe
             if (getOffsetTimer() % 20 == 0) {
-                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(2));
+                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class,
+                        new AxisAlignedBB(getPipePos()).grow(2));
                 for (EntityLivingBase entityLivingBase : entities) {
-                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack), 2.0F, 10);
+                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack),
+                            2.0F, 10);
                 }
             }
 
@@ -256,14 +273,16 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
 
         if (isCorroding) {
-            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.CRIT_MAGIC, 3 + GTValues.RNG.nextInt(2));
+            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.CRIT_MAGIC,
+                    3 + GTValues.RNG.nextInt(2));
 
             // voids 25%
             stack.amount = Math.max(0, stack.amount * 3 / 4);
 
             // apply chemical damage in area surrounding the pipe
             if (getOffsetTimer() % 20 == 0) {
-                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(1));
+                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class,
+                        new AxisAlignedBB(getPipePos()).grow(1));
                 for (EntityLivingBase entityLivingBase : entities) {
                     EntityDamageUtil.applyChemicalDamage(entityLivingBase, 2);
                 }
@@ -277,7 +296,8 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
 
         if (isBurning || isMelting) {
-            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.FLAME, (isMelting ? 7 : 3) + GTValues.RNG.nextInt(2));
+            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.FLAME,
+                    (isMelting ? 7 : 3) + GTValues.RNG.nextInt(2));
 
             // voids 75%
             stack.amount = Math.max(0, stack.amount / 4);
@@ -289,9 +309,11 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
             // apply heat damage in area surrounding the pipe
             if (isMelting && getOffsetTimer() % 20 == 0) {
-                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(2));
+                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class,
+                        new AxisAlignedBB(getPipePos()).grow(2));
                 for (EntityLivingBase entityLivingBase : entities) {
-                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack), 2.0F, 10);
+                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack),
+                            2.0F, 10);
                 }
             }
 
@@ -303,16 +325,19 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
 
         if (isShattering) {
-            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
+            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.CLOUD,
+                    3 + GTValues.RNG.nextInt(2));
 
             // voids 75%
             stack.amount = Math.max(0, stack.amount / 4);
 
             // apply frost damage in area surrounding the pipe
             if (getOffsetTimer() % 20 == 0) {
-                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(2));
+                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class,
+                        new AxisAlignedBB(getPipePos()).grow(2));
                 for (EntityLivingBase entityLivingBase : entities) {
-                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack), 2.0F, 10);
+                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack),
+                            2.0F, 10);
                 }
             }
 
@@ -383,9 +408,9 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return fluids;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < getFluidTanks().length; i++) {
@@ -402,7 +427,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound nbt) {
+    public void readFromNBT(@NotNull NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
         createTanksList();
@@ -414,7 +439,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
@@ -429,10 +454,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
                     allTanksEmpty = false;
                     list.add(new TextComponentTranslation("behavior.tricorder.tank", i,
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(fluids[i].amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getCapacityPerTank())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                            new TextComponentTranslation(fluids[i].getFluid().getLocalizedName(fluids[i])).setStyle(new Style().setColor(TextFormatting.GOLD))
-                    ));
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(fluids[i].amount))
+                                    .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getCapacityPerTank()))
+                                    .setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                            new TextComponentTranslation(fluids[i].getFluid().getLocalizedName(fluids[i]))
+                                    .setStyle(new Style().setColor(TextFormatting.GOLD))));
                 }
             }
 
@@ -440,5 +467,18 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
         }
         return list;
+    }
+
+    private static class FluidTransaction {
+
+        public final IFluidHandler target;
+        public final IFluidHandler pipeTank;
+        public int amount;
+
+        private FluidTransaction(IFluidHandler target, IFluidHandler pipeTank, int amount) {
+            this.target = target;
+            this.pipeTank = pipeTank;
+            this.amount = amount;
+        }
     }
 }

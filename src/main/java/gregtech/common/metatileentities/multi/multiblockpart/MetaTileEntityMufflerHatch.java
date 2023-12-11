@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.gui.GuiTextures;
@@ -17,14 +14,15 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -32,10 +30,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
+public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements
+                                        IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
 
     private final int recoveryChance;
     private final GTItemStackHandler inventory;
@@ -63,8 +67,9 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                 this.frontFaceFree = checkFrontFaceFree();
         }
 
-        if (getWorld().isRemote && getController() instanceof MultiblockWithDisplayBase controller && controller.isActive()) {
-            pollutionParticles();
+        if (getWorld().isRemote && getController() instanceof MultiblockWithDisplayBase controller &&
+                controller.isActive()) {
+            VanillaParticleEffects.MUFFLER_SMOKE.runEffect(this);
         }
     }
 
@@ -84,7 +89,6 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     private boolean calculateChance() {
         return recoveryChance >= 100 || recoveryChance > GTValues.RNG.nextInt(100);
     }
-
 
     /**
      * @return true if front face is free and contains only air blocks in 1x1 area
@@ -108,32 +112,12 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnow(blockState);
     }
 
+    /** @deprecated Use {@link VanillaParticleEffects#MUFFLER_SMOKE} instead. */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @SideOnly(Side.CLIENT)
     public void pollutionParticles() {
-        BlockPos pos = this.getPos();
-        EnumFacing facing = this.getFrontFacing();
-        float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.25F;
-        float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
-        float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.25F;
-
-        float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
-        float xSpd;
-        float zSpd;
-
-        if (facing.getYOffset() == -1) {
-            float temp = GTValues.RNG.nextFloat() * 2 * (float) Math.PI;
-            xSpd = (float) Math.sin(temp) * 0.1F;
-            zSpd = (float) Math.cos(temp) * 0.1F;
-        } else {
-            xSpd = facing.getXOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
-            zSpd = facing.getZOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
-        }
-        if (getController() instanceof MultiblockWithDisplayBase)
-            ((MultiblockWithDisplayBase) getController()).runMufflerEffect(
-                    xPos + GTValues.RNG.nextFloat() * 0.5F,
-                    yPos + GTValues.RNG.nextFloat() * 0.5F,
-                    zPos + GTValues.RNG.nextFloat() * 0.5F,
-                    xSpd, ySpd, zSpd);
+        VanillaParticleEffects.MUFFLER_SMOKE.runEffect(this);
     }
 
     @Override
@@ -178,7 +162,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize, int xOffset) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + xOffset * 2,
-                        18 + 18 * rowSize + 94)
+                18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
@@ -186,7 +170,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(inventory, index,
                         (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT));
+                                .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);

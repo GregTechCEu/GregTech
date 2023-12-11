@@ -1,20 +1,22 @@
 package gregtech.common.terminal.app.guide.widget;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.BooleanConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.ColorConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.NumberConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.TextListConfigurator;
-import gregtech.api.util.Position;
-import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class TextBoxWidget extends GuideWidget {
+
     public final static String NAME = "textbox";
 
     // config
@@ -34,7 +37,8 @@ public class TextBoxWidget extends GuideWidget {
 
     private transient List<String> textLines;
 
-    public TextBoxWidget(int x, int y, int width, List<String> content, int space, int fontSize, int fontColor, int fill, int stroke, boolean isCenter, boolean isShadow) {
+    public TextBoxWidget(int x, int y, int width, List<String> content, int space, int fontSize, int fontColor,
+                         int fill, int stroke, boolean isCenter, boolean isShadow) {
         super(x, y, width, 0);
         this.content = content;
         this.space = space;
@@ -67,7 +71,8 @@ public class TextBoxWidget extends GuideWidget {
     }
 
     @Override
-    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed,
+                                 Consumer<String> needUpdate) {
         group.addWidget(new TextListConfigurator(group, 200, config, "content").setOnUpdated(needUpdate));
         group.addWidget(new BooleanConfigurator(group, config, "isCenter", false).setOnUpdated(needUpdate));
         group.addWidget(new NumberConfigurator(group, config, "fontSize", 9).setOnUpdated(needUpdate));

@@ -11,6 +11,5 @@ public class GTLog {
 
     public static Logger logger = LogManager.getLogger("GregTech");
 
-    private GTLog() {
-    }
+    private GTLog() {}
 }

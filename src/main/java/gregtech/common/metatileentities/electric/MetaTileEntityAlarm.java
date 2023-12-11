@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
@@ -15,10 +12,10 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.terminal.gui.widgets.SelectorWidget;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -28,6 +25,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MetaTileEntityAlarm extends TieredMetaTileEntity {
+
     private SoundEvent selectedSound;
     private boolean isActive;
     private int radius = 64;
@@ -52,10 +54,12 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", BASE_EU_CONSUMPTION));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
     }
 
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
@@ -72,22 +76,25 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         return ModularUI.builder(GuiTextures.BACKGROUND, 240, 86)
                 .widget(new LabelWidget(10, 5, getMetaFullName()))
                 .widget(new SelectorWidget(10, 20, 220, 20,
-                        getSounds().stream().map((event) -> event.getSoundName().toString()).collect(Collectors.toList()),
+                        getSounds().stream().map((event) -> event.getSoundName().toString())
+                                .collect(Collectors.toList()),
                         0x555555, () -> this.selectedSound.getSoundName().toString(), true).setOnChanged((v) -> {
-                    GregTechAPI.soundManager.stopTileSound(getPos());
-                    SoundEvent newSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
-                    if (this.selectedSound != newSound) {
-                        this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
-                        this.writeCustomData(GregtechDataCodes.UPDATE_SOUND, (writer) -> writer.writeResourceLocation(this.selectedSound.getSoundName()));
-                    }
-                }))
+                            GregTechAPI.soundManager.stopTileSound(getPos());
+                            SoundEvent newSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
+                            if (this.selectedSound != newSound) {
+                                this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
+                                this.writeCustomData(GregtechDataCodes.UPDATE_SOUND,
+                                        (writer) -> writer.writeResourceLocation(this.selectedSound.getSoundName()));
+                            }
+                        }))
                 .widget(new ImageWidget(10, 54, 220, 20, GuiTextures.DISPLAY))
                 .label(10, 44, "gregtech.gui.alarm.radius")
                 .widget(new TextFieldWidget2(12, 60, 216, 16, () -> String.valueOf(radius), value -> {
                     if (!value.isEmpty()) {
                         int newRadius = Integer.parseInt(value);
                         if (newRadius != radius) {
-                            this.writeCustomData(GregtechDataCodes.UPDATE_RADIUS, (writer) -> writer.writeInt(newRadius));
+                            this.writeCustomData(GregtechDataCodes.UPDATE_RADIUS,
+                                    (writer) -> writer.writeInt(newRadius));
                             radius = newRadius;
                         }
                     }
@@ -114,7 +121,8 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         if (this.getWorld().isRemote) {
             return isActive;
         }
-        return this.isBlockRedstonePowered() && this.energyContainer.changeEnergy(-BASE_EU_CONSUMPTION) == -BASE_EU_CONSUMPTION;
+        return this.isBlockRedstonePowered() &&
+                this.energyContainer.changeEnergy(-BASE_EU_CONSUMPTION) == -BASE_EU_CONSUMPTION;
     }
 
     @Override

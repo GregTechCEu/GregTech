@@ -1,10 +1,10 @@
 package gregtech.api.util;
 
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.network.packets.PacketNotifyCapeChange;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +22,8 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -98,7 +100,8 @@ public class CapesRegistry {
         }
         comp.setTag("WornCapesValList", wornCapesTag);
         try {
-            CompressedStreamTools.safeWrite(comp, new File(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getSaveHandler().getWorldDirectory(), "gregtech_cape.dat"));
+            CompressedStreamTools.safeWrite(comp, new File(FMLCommonHandler.instance().getMinecraftServerInstance()
+                    .getWorld(0).getSaveHandler().getWorldDirectory(), "gregtech_cape.dat"));
         } catch (IOException exception) {
             GTLog.logger.error(exception);
         }
@@ -107,7 +110,8 @@ public class CapesRegistry {
     public static void load() {
         NBTTagCompound comp = null;
         try {
-            comp = CompressedStreamTools.read(new File(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getSaveHandler().getWorldDirectory(), "gregtech_cape.dat"));
+            comp = CompressedStreamTools.read(new File(FMLCommonHandler.instance().getMinecraftServerInstance()
+                    .getWorld(0).getSaveHandler().getWorldDirectory(), "gregtech_cape.dat"));
         } catch (IOException exception) {
             GTLog.logger.error(exception);
         }
@@ -145,9 +149,11 @@ public class CapesRegistry {
     }
 
     public static void checkAdvancements(World world) {
-        registerCape(GTUtility.gregtechId("ultimate_voltage/74_wetware_mainframe"), Textures.GREGTECH_CAPE_TEXTURE, world);
+        registerCape(GTUtility.gregtechId("ultimate_voltage/74_wetware_mainframe"), Textures.GREGTECH_CAPE_TEXTURE,
+                world);
         registerCape(GTUtility.gregtechId("steam/12_electronic_circuit"), Textures.RED_CAPE_TEXTURE, world);
-        registerCape(GTUtility.gregtechId("high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE, world);
+        registerCape(GTUtility.gregtechId("high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE,
+                world);
         registerCape(GTUtility.gregtechId("ludicrous_voltage/60_fusion"), Textures.GREEN_CAPE_TEXTURE, world);
         for (Tuple<ResourceLocation, ResourceLocation> tuple : ctRegisterCapes) {
             registerCape(tuple.getFirst(), tuple.getSecond(), world);
@@ -169,6 +175,7 @@ public class CapesRegistry {
 
     /**
      * Allows one to check what capes a specific player has unlocked through CapesRegistry.
+     * 
      * @param uuid The player data used to get what capes the player has through internal maps.
      * @return A list of ResourceLocations containing the cape textures that the player has unlocked.
      */
@@ -176,17 +183,18 @@ public class CapesRegistry {
         return UNLOCKED_CAPES.getOrDefault(uuid, Collections.emptyList());
     }
 
-
     /**
      * Links an advancement with a cape, which allows a player to unlock it when they receive the advancement.
      * This should only be called on world load, since advancements are only accessible then.
+     * 
      * @param advancement A ResourceLocation pointing to the advancement that is to be used for getting a cape.
      * @param cape        The ResourceLocation that points to the cape that can be unlocked through the advancement.
      * @param world       The world that may contain the advancement used for getting a cape.
      */
     public static void registerCape(ResourceLocation advancement, ResourceLocation cape, World world) {
         if (!world.isRemote) {
-            AdvancementManager advManager = ObfuscationReflectionHelper.getPrivateValue(World.class, world, "field_191951_C");
+            AdvancementManager advManager = ObfuscationReflectionHelper.getPrivateValue(World.class, world,
+                    "field_191951_C");
             Advancement advObject = advManager.getAdvancement(advancement);
             if (advObject != null) {
                 CAPE_ADVANCEMENTS.put(advObject, cape);
@@ -196,6 +204,7 @@ public class CapesRegistry {
 
     /**
      * Adds a cape that will always be unlocked for all players.
+     * 
      * @param cape A ResourceLocation pointing to the cape texture.
      */
     public static void addFreeCape(ResourceLocation cape) {
@@ -220,6 +229,7 @@ public class CapesRegistry {
     /**
      * Automatically gives a cape to a player, which may be used for a reward for something other than an advancement
      * DOES NOT SAVE AUTOMATICALLY; PLEASE CALL SAVE AFTER THIS FUNCTION IS USED IF THIS DATA IS MEANT TO PERSIST.
+     * 
      * @param uuid The UUID of the player to be given the cape.
      * @param cape The ResourceLocation that holds the cape used here.
      */
@@ -261,10 +271,13 @@ public class CapesRegistry {
     public static void loadWornCapeOnLogin(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
             UUID uuid = player.getPersistentID();
-            GregTechAPI.networkHandler.sendToAll(new PacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid))); // sync to others
-            for (EntityPlayerMP otherPlayer : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) { // sync to login
+            GregTechAPI.networkHandler.sendToAll(new PacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid))); // sync to
+                                                                                                          // others
+            for (EntityPlayerMP otherPlayer : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+                    .getPlayers()) { // sync to login
                 uuid = otherPlayer.getPersistentID();
-                GregTechAPI.networkHandler.sendTo(new PacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid)), (EntityPlayerMP) player);
+                GregTechAPI.networkHandler.sendTo(new PacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid)),
+                        (EntityPlayerMP) player);
             }
         }
     }
@@ -273,12 +286,14 @@ public class CapesRegistry {
     public static void detectNewCapes(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
             for (Map.Entry<Advancement, ResourceLocation> capeEntry : CAPE_ADVANCEMENTS.entrySet()) {
-                if ((UNLOCKED_CAPES.get(player.getPersistentID()) == null || !UNLOCKED_CAPES.get(player.getPersistentID()).contains(capeEntry.getValue())) &&
+                if ((UNLOCKED_CAPES.get(player.getPersistentID()) == null ||
+                        !UNLOCKED_CAPES.get(player.getPersistentID()).contains(capeEntry.getValue())) &&
                         ((EntityPlayerMP) player).getAdvancements().getProgress(capeEntry.getKey()).isDone()) {
                     unlockCapeOnAdvancement(player, capeEntry.getKey());
                 }
             }
-            if (UNLOCKED_CAPES.get(player.getPersistentID()) == null || !new HashSet<>(UNLOCKED_CAPES.get(player.getPersistentID())).containsAll(FREE_CAPES)) {
+            if (UNLOCKED_CAPES.get(player.getPersistentID()) == null ||
+                    !new HashSet<>(UNLOCKED_CAPES.get(player.getPersistentID())).containsAll(FREE_CAPES)) {
                 for (ResourceLocation cape : FREE_CAPES) {
                     unlockCape(player.getPersistentID(), cape);
                 }
@@ -286,5 +301,4 @@ public class CapesRegistry {
             }
         }
     }
-
 }

@@ -21,6 +21,7 @@ import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -33,12 +34,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 import java.util.*;
 
 public class MultiBlockPreviewARApp extends ARApplication {
+
     @SideOnly(Side.CLIENT)
     int lastMouseX;
     @SideOnly(Side.CLIENT)
@@ -58,18 +61,21 @@ public class MultiBlockPreviewARApp extends ARApplication {
         addWidget(new ImageWidget(10, 10, 313, 212, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
         addWidget(new ImageWidget(333 / 2, 20, 1, 222 - 40, new ColorRectTexture(-1)));
 
-        addWidget(new LabelWidget(10 + 313 / 4, 35, "terminal.multiblock_ar.tier.0", -1).setXCentered(true).setYCentered(true));
+        addWidget(new LabelWidget(10 + 313 / 4, 35, "terminal.multiblock_ar.tier.0", -1).setXCentered(true)
+                .setYCentered(true));
         addWidget(new RectButtonWidget(10 + (313 / 2 - bW) / 2, 50, bW, bH)
                 .setIcon(TextureArea.fullImage("textures/gui/terminal/multiblock_ar/profile.png"))
                 .setColors(-1, 0xff00ff00, 0)
                 .setHoverText("terminal.ar.open")
                 .setClickListener(clickData -> openAR()));
 
-        addWidget(new LabelWidget(333 / 2 + 313 / 4, 35, "terminal.multiblock_ar.tier.1", getAppTier() == 0 ? 0xffff0000 : -1).setXCentered(true).setYCentered(true));
+        addWidget(new LabelWidget(333 / 2 + 313 / 4, 35, "terminal.multiblock_ar.tier.1",
+                getAppTier() == 0 ? 0xffff0000 : -1).setXCentered(true).setYCentered(true));
         addWidget(new RectButtonWidget(333 / 2 + (313 / 2 - bW) / 2, 50, bW, bH)
                 .setIcon(this::drawBuilderButton)
                 .setColors(getAppTier() == 0 ? 0xffff0000 : -1, getAppTier() == 0 ? 0xffff0000 : 0xff00ff00, 0)
-                .setHoverText(getAppTier() > 0 ? "terminal.multiblock_ar.builder.hover" : "terminal.multiblock_ar.unlock")
+                .setHoverText(
+                        getAppTier() > 0 ? "terminal.multiblock_ar.builder.hover" : "terminal.multiblock_ar.unlock")
                 .setClickListener(clickData -> buildMode()));
         return this;
     }
@@ -93,11 +99,12 @@ public class MultiBlockPreviewARApp extends ARApplication {
                 uniformCache.glUniform1I("faceTexture", 0);
                 uniformCache.glUniform1I("baseTexture", 1);
                 uniformCache.glUniform1F("u_time", time);
-                uniformCache.glUniform3F("f_color", (color >> 16 & 255) / 255.0F, (color >> 8 & 255) / 255.0F, (color & 255) / 255.0F);
+                uniformCache.glUniform3F("f_color", (color >> 16 & 255) / 255.0F, (color >> 8 & 255) / 255.0F,
+                        (color & 255) / 255.0F);
                 uniformCache.glUniformBoolean("block", controllerBase != null);
-                if (isMouseOver((int)x, (int)y, width, height, lastMouseX, lastMouseY)) {
+                if (isMouseOver((int) x, (int) y, width, height, lastMouseX, lastMouseY)) {
                     uniformCache.glUniform2F("u_mouse",
-                            (float) (((lastMouseX - x) / 2 + width / 3)  * ConfigHolder.client.resolution),
+                            (float) (((lastMouseX - x) / 2 + width / 3) * ConfigHolder.client.resolution),
                             (float) (height / 2 * ConfigHolder.client.resolution));
                 }
             });
@@ -121,7 +128,8 @@ public class MultiBlockPreviewARApp extends ARApplication {
     private MultiblockControllerBase getController() {
         if (os.clickPos != null) {
             TileEntity te = gui.entityPlayer.world.getTileEntity(os.clickPos);
-            if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MultiblockControllerBase) {
+            if (te instanceof IGregTechTileEntity &&
+                    ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MultiblockControllerBase) {
                 return (MultiblockControllerBase) ((IGregTechTileEntity) te).getMetaTileEntity();
             }
         }
@@ -130,7 +138,8 @@ public class MultiBlockPreviewARApp extends ARApplication {
 
     private void buildMode() {
         if (getAppTier() == 0) {
-            TerminalDialogWidget.showInfoDialog(getOs(), "terminal.dialog.notice", "terminal.multiblock_ar.unlock").open();
+            TerminalDialogWidget.showInfoDialog(getOs(), "terminal.dialog.notice", "terminal.multiblock_ar.unlock")
+                    .open();
         } else if (getController() != null) {
             widgets.forEach(this::waitToRemoved);
             MultiblockControllerBase controllerBase = getController();
@@ -138,7 +147,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
             this.addWidget(builderWidget);
             builderWidget.addPlayerInventory();
             if (isClient) {
-                MachineSceneWidget sceneWidget  = new MachineSceneWidget(0, 16, 200, 200, controllerBase);
+                MachineSceneWidget sceneWidget = new MachineSceneWidget(0, 16, 200, 200, controllerBase);
                 builderWidget.setSceneWidget(sceneWidget);
                 this.addWidget(0, sceneWidget);
                 this.addWidget(new ImageWidget(0, 0, 333, 16, GuiTextures.UI_FRAME_SIDE_UP));
@@ -157,11 +166,9 @@ public class MultiBlockPreviewARApp extends ARApplication {
         lastMouseY = mouseY;
         this.partialTicks = partialTicks;
         super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
-
     }
 
-
-    //////////////////////////////////////AR/////////////////////////////////////////
+    ////////////////////////////////////// AR/////////////////////////////////////////
 
     @SideOnly(Side.CLIENT)
     private static Map<MultiblockControllerBase, MultiblockShapeInfo> controllerList;
@@ -194,7 +201,8 @@ public class MultiBlockPreviewARApp extends ARApplication {
             Iterator<MultiblockControllerBase> iterator = controllerList.keySet().iterator();
             if (iterator.hasNext()) {
                 MultiblockControllerBase controller = iterator.next();
-                if (!controller.isValid() || controller.isStructureFormed() || !inRange(player.getPosition(), controller.getPos())) {
+                if (!controller.isValid() || controller.isStructureFormed() ||
+                        !inRange(player.getPosition(), controller.getPos())) {
                     iterator.remove();
                     reRender = true;
                 }
@@ -213,7 +221,8 @@ public class MultiBlockPreviewARApp extends ARApplication {
             if (reRender) {
                 opList = GLAllocation.generateDisplayLists(1); // allocate op list
                 GlStateManager.glNewList(opList, GL11.GL_COMPILE);
-                controllerList.forEach((controller, shapes) -> MultiblockPreviewRenderer.renderControllerInList(controller, shapes, 0));
+                controllerList.forEach((controller, shapes) -> MultiblockPreviewRenderer
+                        .renderControllerInList(controller, shapes, 0));
                 GlStateManager.glEndList();
             }
         }
@@ -261,5 +270,4 @@ public class MultiBlockPreviewARApp extends ARApplication {
             GlStateManager.color(1F, 1F, 1F, 0F);
         }
     }
-
 }

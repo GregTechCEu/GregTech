@@ -1,14 +1,17 @@
 package gregtech.api.pipenet.longdist;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.interfaces.INeighborCache;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ILDEndpoint extends ILDNetworkPart{
+public interface ILDEndpoint extends ILDNetworkPart, INeighborCache {
 
     /**
      * @return the current type of this endpoint (input, output or none)
@@ -84,6 +87,8 @@ public interface ILDEndpoint extends ILDNetworkPart{
     }
 
     enum IOType {
-        NONE, INPUT, OUTPUT
+        NONE,
+        INPUT,
+        OUTPUT
     }
 }

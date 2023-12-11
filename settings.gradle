@@ -19,9 +19,9 @@ pluginManagement {
 }
 
 plugins {
-    id 'com.diffplug.blowdryerSetup' version '1.6.0'
+    id 'com.diffplug.blowdryerSetup' version '1.7.0'
     // Automatic toolchain provisioning
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.4.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
 }
 
 blowdryerSetup {

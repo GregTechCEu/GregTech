@@ -1,6 +1,5 @@
 package gregtech.integration.crafttweaker.material;
 
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttributes;
@@ -8,6 +7,8 @@ import gregtech.api.fluids.store.FluidStorage;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.*;
+
+import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -21,7 +22,7 @@ import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.valid
 public class MaterialPropertyExpansion {
 
     /////////////////////////////////////
-    //        Property Checkers        //
+    // Property Checkers //
     /////////////////////////////////////
 
     @ZenMethod
@@ -75,7 +76,7 @@ public class MaterialPropertyExpansion {
     }
 
     ////////////////////////////////////
-    //        Property Setters        //
+    // Property Setters //
     ////////////////////////////////////
 
     @ZenMethod
@@ -86,7 +87,9 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addBlastProperty(Material m, int blastTemp, @Optional String gasTier, @Optional int durationOverride, @Optional int eutOverride, @Optional int vacuumDurationOverride, @Optional int vacuumEUtOverride) {
+    public static void addBlastProperty(Material m, int blastTemp, @Optional String gasTier,
+                                        @Optional int durationOverride, @Optional int eutOverride,
+                                        @Optional int vacuumDurationOverride, @Optional int vacuumEUtOverride) {
         if (checkFrozen("add blast property")) return;
         if (m.hasProperty(PropertyKey.BLAST)) {
             BlastProperty property = m.getProperty(PropertyKey.BLAST);
@@ -98,9 +101,11 @@ public class MaterialPropertyExpansion {
             if (vacuumEUtOverride != 0) property.setVacuumEutOverride(vacuumEUtOverride);
         } else {
             BlastProperty.Builder builder = new BlastProperty.Builder();
-            builder.temp(blastTemp, gasTier == null ? BlastProperty.GasTier.LOW : BlastProperty.validateGasTier(gasTier));
+            builder.temp(blastTemp,
+                    gasTier == null ? BlastProperty.GasTier.LOW : BlastProperty.validateGasTier(gasTier));
             builder.blastStats(durationOverride == 0 ? -1 : durationOverride, eutOverride == 0 ? -1 : eutOverride);
-            builder.vacuumStats(vacuumEUtOverride == 0 ? -1 : vacuumEUtOverride, vacuumDurationOverride == 0 ? -1 : vacuumDurationOverride);
+            builder.vacuumStats(vacuumEUtOverride == 0 ? -1 : vacuumEUtOverride,
+                    vacuumDurationOverride == 0 ? -1 : vacuumDurationOverride);
             m.setProperty(PropertyKey.BLAST, builder.build());
         }
     }
@@ -121,7 +126,8 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof,
+                                     boolean acidProof, boolean cryoProof, boolean plasmaProof) {
         if (checkFrozen("add fluid pipes to a material")) return;
         if (m.hasProperty(PropertyKey.FLUID_PIPE)) {
             m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);
@@ -131,7 +137,8 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.FLUID_PIPE).setCryoProof(cryoProof);
             m.getProperty(PropertyKey.FLUID_PIPE).setPlasmaProof(plasmaProof);
         } else {
-            m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+            m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof,
+                    acidProof, cryoProof, plasmaProof));
         }
     }
 
@@ -178,7 +185,8 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addOre(Material m, @Optional int oreMultiplier, @Optional int byproductMultiplier, @Optional boolean emissive) {
+    public static void addOre(Material m, @Optional int oreMultiplier, @Optional int byproductMultiplier,
+                              @Optional boolean emissive) {
         if (checkFrozen("add an Ore to a material")) return;
         oreMultiplier = oreMultiplier == 0 ? 1 : oreMultiplier;
         byproductMultiplier = byproductMultiplier == 0 ? 1 : byproductMultiplier;
@@ -186,8 +194,7 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.ORE).setOreMultiplier(oreMultiplier);
             m.getProperty(PropertyKey.ORE).setByProductMultiplier(byproductMultiplier);
             m.getProperty(PropertyKey.ORE).setEmissive(emissive);
-        }
-        else m.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
+        } else m.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
     }
 
     @ZenMethod
@@ -204,13 +211,16 @@ public class MaterialPropertyExpansion {
         if (checkFrozen("add a Plasma to a material")) return;
         if (!m.hasProperty(PropertyKey.FLUID)) {
             FluidProperty property = new FluidProperty();
-            property.getStorage().enqueueRegistration(FluidStorageKeys.PLASMA, new FluidBuilder().state(FluidState.PLASMA));
+            property.getStorage().enqueueRegistration(FluidStorageKeys.PLASMA,
+                    new FluidBuilder().state(FluidState.PLASMA));
             m.setProperty(PropertyKey.FLUID, property);
         }
     }
 
     @ZenMethod
-    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, float toolAttackSpeed, int toolDurability, @Optional int toolHarvestLevel, @Optional int toolEnchantability, @Optional int durabilityMultiplier) {
+    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, float toolAttackSpeed,
+                                int toolDurability, @Optional int toolHarvestLevel, @Optional int toolEnchantability,
+                                @Optional int durabilityMultiplier) {
         if (checkFrozen("add Tools to a material")) return;
         if (toolEnchantability == 0) toolEnchantability = 10;
         if (durabilityMultiplier <= 0) durabilityMultiplier = 1;
@@ -222,12 +232,15 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.TOOL).setToolHarvestLevel(toolHarvestLevel);
             m.getProperty(PropertyKey.TOOL).setToolEnchantability(toolEnchantability);
             m.getProperty(PropertyKey.TOOL).setDurabilityMultiplier(durabilityMultiplier);
-        } else m.setProperty(PropertyKey.TOOL, ToolProperty.Builder.of(toolSpeed, toolAttackDamage, toolDurability, toolHarvestLevel)
-                .attackSpeed(toolAttackSpeed).enchantability(toolEnchantability).durabilityMultiplier(durabilityMultiplier).build());
+        } else m.setProperty(PropertyKey.TOOL,
+                ToolProperty.Builder.of(toolSpeed, toolAttackDamage, toolDurability, toolHarvestLevel)
+                        .attackSpeed(toolAttackSpeed).enchantability(toolEnchantability)
+                        .durabilityMultiplier(durabilityMultiplier).build());
     }
 
     @ZenMethod
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, @Optional boolean isSuperCon, @Optional int criticalTemp) {
+    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock,
+                                @Optional boolean isSuperCon, @Optional int criticalTemp) {
         if (checkFrozen("add Wires to a material")) return;
         if (m.hasProperty(PropertyKey.WIRE)) {
             m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
@@ -235,6 +248,7 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
             m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
             m.getProperty(PropertyKey.WIRE).setSuperconductorCriticalTemperature(criticalTemp);
-        } else m.setProperty(PropertyKey.WIRE, new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp));
+        } else m.setProperty(PropertyKey.WIRE,
+                new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp));
     }
 }

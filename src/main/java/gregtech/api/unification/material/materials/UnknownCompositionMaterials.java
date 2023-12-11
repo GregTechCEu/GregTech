@@ -1,8 +1,12 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttributes;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
+
+import net.minecraftforge.fluids.FluidRegistry;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
@@ -12,7 +16,6 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class UnknownCompositionMaterials {
 
     public static void register() {
-
         WoodGas = new Material.Builder(1500, gregtechId("wood_gas"))
                 .gas().color(0xDECD87).build();
 
@@ -45,7 +48,7 @@ public class UnknownCompositionMaterials {
                 .flags(STICKY).build();
 
         Diesel = new Material.Builder(1508, gregtechId("diesel"))
-                .liquid(new FluidBuilder().customStill())
+                .liquid(new FluidBuilder().customStill().alternativeName("fuel"))
                 .color(0xFCF404)
                 .flags(FLAMMABLE, EXPLOSIVE).build();
 
@@ -69,7 +72,7 @@ public class UnknownCompositionMaterials {
                 .color(0x0E2950).build();
 
         SeedOil = new Material.Builder(1514, gregtechId("seed_oil"))
-                .liquid(new FluidBuilder().customStill())
+                .liquid(new FluidBuilder().customStill().alternativeName("seed.oil"))
                 .color(0xE4FC8C)
                 .flags(STICKY, FLAMMABLE).build();
 
@@ -328,7 +331,7 @@ public class UnknownCompositionMaterials {
                 .flags(FLAMMABLE)
                 .build();
 
-        //Free IDs 1560-1575
+        // Free IDs 1560-1575
 
         LPG = new Material.Builder(1576, gregtechId("lpg"))
                 .liquid(new FluidBuilder().customStill())
@@ -428,7 +431,7 @@ public class UnknownCompositionMaterials {
                 .build();
 
         Lava = new Material.Builder(1600, gregtechId("lava"))
-                .fluid()
+                .fluid(FluidRegistry.LAVA, FluidStorageKeys.LIQUID, FluidState.LIQUID)
                 .color(0xFF4000)
                 .flags(GLOWING)
                 .build();
@@ -513,7 +516,8 @@ public class UnknownCompositionMaterials {
         Wood = new Material.Builder(1617, gregtechId("wood"))
                 .wood()
                 .color(0x896727).iconSet(WOOD)
-                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, GENERATE_GEAR, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, GENERATE_GEAR,
+                        GENERATE_FRAME)
                 .fluidPipeProperties(340, 5, false)
                 .build();
 

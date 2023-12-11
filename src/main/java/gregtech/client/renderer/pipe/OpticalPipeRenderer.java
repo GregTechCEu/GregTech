@@ -1,6 +1,5 @@
 package gregtech.client.renderer.pipe;
 
-import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -10,10 +9,13 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 
-import javax.annotation.Nullable;
+import codechicken.lib.vec.uv.IconTransformation;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.EnumMap;
 
 public final class OpticalPipeRenderer extends PipeRenderer {
@@ -31,7 +33,8 @@ public final class OpticalPipeRenderer extends PipeRenderer {
     }
 
     @Override
-    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material) {
+    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe,
+                              @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material) {
         if (pipeType instanceof OpticalPipeType) {
             renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)))
                     .addSideRender(false, new IconTransformation(Textures.OPTICAL_PIPE_SIDE));

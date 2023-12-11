@@ -1,7 +1,7 @@
 package gregtech.api.fluids;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
+import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.FluidUnifier;
@@ -10,12 +10,18 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import io.github.drmanganese.topaddons.reference.Colors;
+
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
+
+import com.google.common.base.Preconditions;
+import io.github.drmanganese.topaddons.reference.Colors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +44,7 @@ public class FluidBuilder {
 
     private final Collection<FluidAttribute> attributes = new ArrayList<>();
 
-    private FluidState state = FluidState.LIQUID;
+    private FluidState state = null;
     private int temperature = INFER_TEMPERATURE;
     private int color = INFER_COLOR;
     private boolean isColorEnabled = true;
@@ -53,6 +59,7 @@ public class FluidBuilder {
 
     private boolean hasFluidBlock = false;
     private boolean hasBucket = true;
+    private String alternativeName = null;
 
     public FluidBuilder() {}
 
@@ -137,6 +144,7 @@ public class FluidBuilder {
 
     /**
      * Converts a density value in g/cm^3 to an MC fluid density by comparison to air's density.
+     * 
      * @param density the density to convert
      * @return the MC integer density
      */
@@ -180,6 +188,7 @@ public class FluidBuilder {
 
     /**
      * Converts viscosity in Poise to MC viscosity
+     * 
      * @param viscosity the viscosity to convert
      * @return the converted value
      */
@@ -200,13 +209,23 @@ public class FluidBuilder {
      * @param attributes the attributes to add
      * @return this
      */
-    public @NotNull FluidBuilder attributes(@NotNull FluidAttribute @NotNull ... attributes) {
+    public @NotNull FluidBuilder attributes(@NotNull FluidAttribute @NotNull... attributes) {
         Collections.addAll(this.attributes, attributes);
         return this;
     }
 
     /**
+     * @param name Alternative registry name for this fluid to look for
+     * @return this
+     */
+    public @NotNull FluidBuilder alternativeName(@NotNull String name) {
+        this.alternativeName = name;
+        return this;
+    }
+
+    /**
      * Mark this fluid as having a custom still texture
+     * 
      * @return this
      */
     public @NotNull FluidBuilder customStill() {
@@ -217,6 +236,7 @@ public class FluidBuilder {
 
     /**
      * Mark this fluid as having a custom flowing texture
+     * 
      * @return this
      */
     public @NotNull FluidBuilder customFlow() {
@@ -226,7 +246,7 @@ public class FluidBuilder {
     }
 
     /**
-     * @param hasCustomStill if the fluid has a custom still texture
+     * @param hasCustomStill   if the fluid has a custom still texture
      * @param hasCustomFlowing if the fluid has a custom flowing texture
      * @return this
      */
@@ -265,19 +285,42 @@ public class FluidBuilder {
             throw new IllegalStateException("Could not determine fluid name");
         }
 
-        GTFluid fluid;
-        if (material == null) {
-            fluid = new GTFluid(name, still, flowing, state);
-        } else if (key != null) {
-            if (translationKey == null) {
-                translationKey = key.getTranslationKeyFor(material);
+        if (state == null) {
+            if (key != null && key.getDefaultFluidState() != null) {
+                state = key.getDefaultFluidState();
+            } else {
+                state = FluidState.LIQUID; // default fallback
             }
-            fluid = new GTFluid.GTMaterialFluid(name, still, flowing, state, translationKey, material);
-        } else {
-            throw new IllegalArgumentException("Fluids with materials must have a FluidStorageKey");
         }
 
-        attributes.forEach(fluid::addAttribute);
+        // try to find an already registered fluid that we can use instead of a new one
+        Fluid fluid = FluidRegistry.getFluid(name);
+        if (fluid == null && alternativeName != null) {
+            // try to use alternative fluid name if needed
+            fluid = FluidRegistry.getFluid(alternativeName);
+        }
+
+        boolean needsRegistration = false;
+        if (fluid == null) {
+            needsRegistration = true;
+            if (material == null) {
+                fluid = new GTFluid(name, still, flowing, state);
+            } else if (key != null) {
+                if (translationKey == null) {
+                    translationKey = key.getTranslationKeyFor(material);
+                }
+                fluid = new GTFluid.GTMaterialFluid(name, still, flowing, state, translationKey, material);
+            } else {
+                throw new IllegalArgumentException("Fluids with materials must have a FluidStorageKey");
+            }
+        }
+
+        if (fluid instanceof AttributedFluid attrFluid) {
+            attributes.forEach(attrFluid::addAttribute);
+        } else if (!attributes.isEmpty()) {
+            GTLog.logger
+                    .warn("Unable to set Fluid Attributes for Fluid {}, as it is owned by another mod! Skipping...");
+        }
 
         determineTemperature(material);
         fluid.setTemperature(temperature);
@@ -296,30 +339,50 @@ public class FluidBuilder {
         determineViscosity(material);
         fluid.setViscosity(viscosity);
 
-        GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
+        if (needsRegistration) {
+            GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
+        } else if (hasBucket) {
+            // In case it didn't have it before, but now it does
+            FluidRegistry.addBucketForFluid(fluid);
+        }
 
         if (material != null) {
             FluidUnifier.registerFluid(fluid, material);
         }
 
-        FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createGTFluidTooltip(fluid));
+        FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createFluidTooltip(material, fluid, state));
 
         if (hasFluidBlock) {
-            GTFluidBlock block;
-            if (material == null) {
-                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), false);
-                block = new GTFluidBlock(fluid, materialLiquid, false, false, false);
+            if (fluid.getBlock() == null) {
+                GTFluidBlock block;
+                if (material == null) {
+                    MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), false);
+                    block = new GTFluidBlock(fluid, materialLiquid, false, false, false);
+                } else {
+                    MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color),
+                            material.hasFlag(MaterialFlags.STICKY));
+                    block = new GTFluidBlock(fluid, materialLiquid, material);
+                }
+                block.setRegistryName(modid, "fluid." + name);
+                GTFluidRegistration.INSTANCE.registerFluidBlock(block);
+                fluid.setBlock(block);
+            } else if (fluid.getBlock() instanceof BlockFluidBase fluidBlock) {
+                // refresh the necessary fluid block stats to our new ones
+                fluidBlock.setDensity(fluid.getDensity());
+                fluidBlock.setTemperature(fluid.getTemperature());
+                fluidBlock.setMaxScaledLight(fluid.getLuminosity());
+                fluidBlock.setTickRate(fluid.getViscosity() / 200);
             } else {
-                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), material.hasFlag(MaterialFlags.STICKY));
-                block = new GTFluidBlock(fluid, materialLiquid, material);
+                GTLog.logger.warn(
+                        "Unable to set custom Fluid Block stats for Fluid {}, Fluid Block owned by other mod with unknown type!",
+                        fluid.getName());
             }
-            block.setRegistryName(modid, "fluid." + name);
-            GTFluidRegistration.INSTANCE.registerFluidBlock(block);
         }
 
         // register cross mod compat for colors
         if (Loader.isModLoaded(GTValues.MODID_TOP_ADDONS)) {
-            Colors.FLUID_NAME_COLOR_MAP.put(name, color);
+            int displayColor = isColorEnabled || material == null ? color : material.getMaterialRGB();
+            Colors.FLUID_NAME_COLOR_MAP.put(name, displayColor);
         }
 
         return fluid;
@@ -364,7 +427,12 @@ public class FluidBuilder {
                         yield ROOM_TEMPERATURE;
                     }
                     case GAS -> ROOM_TEMPERATURE;
-                    case PLASMA -> BASE_PLASMA_TEMPERATURE;
+                    case PLASMA -> {
+                        if (material.hasFluid()) {
+                            yield BASE_PLASMA_TEMPERATURE + material.getFluid().getTemperature();
+                        }
+                        yield BASE_PLASMA_TEMPERATURE;
+                    }
                 };
             } else {
                 temperature = property.getBlastTemperature() + switch (state) {

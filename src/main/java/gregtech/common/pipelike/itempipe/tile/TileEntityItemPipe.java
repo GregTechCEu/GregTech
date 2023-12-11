@@ -8,15 +8,17 @@ import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 
@@ -91,7 +93,7 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         ItemPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() &&
                 currentPipeNet.containsNode(getPipePos()))
-            return currentPipeNet; //if current net is valid and does contain position, return it
+            return currentPipeNet; // if current net is valid and does contain position, return it
         WorldItemPipeNet worldFluidPipeNet = (WorldItemPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
         currentPipeNet = worldFluidPipeNet.getNetFromPos(getPipePos());
         if (currentPipeNet != null) {
@@ -130,7 +132,7 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     // if 20 ticks passed since the last access it will reset it
     // this method is equal to
     // if (++time % 20 == 0) {
-    //    this.transferredItems = 0;
+    // this.transferredItems = 0;
     // }
     // if it was in a ticking TileEntity
     private void updateTransferredState() {

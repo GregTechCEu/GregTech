@@ -5,6 +5,7 @@ import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.IFluidTank;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEntityMultiblockPart {
+
     protected final boolean isExportHatch;
 
     public MetaTileEntityMultiblockNotifiablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
@@ -25,6 +27,8 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
             handler = (NotifiableItemStackHandler) getExportItems();
         } else if (!isExportHatch && getImportItems() instanceof NotifiableItemStackHandler) {
             handler = (NotifiableItemStackHandler) getImportItems();
+        } else if (getItemInventory() instanceof NotifiableItemStackHandler) {
+            handler = (NotifiableItemStackHandler) getItemInventory();
         }
         return handler;
     }
@@ -42,11 +46,9 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
     private List<INotifiableHandler> getPartHandlers() {
         List<INotifiableHandler> handlerList = new ArrayList<>();
 
-        if (this.itemInventory.getSlots() > 0) {
-            NotifiableItemStackHandler itemHandler = getItemHandler();
-            if (itemHandler != null) {
-                handlerList.add(itemHandler);
-            }
+        NotifiableItemStackHandler itemHandler = getItemHandler();
+        if (itemHandler != null && itemHandler.getSlots() > 0) {
+            handlerList.add(itemHandler);
         }
 
         if (this.fluidInventory.getTankProperties().length > 0) {

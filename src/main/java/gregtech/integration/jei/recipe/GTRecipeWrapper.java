@@ -28,16 +28,18 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.ingredients.VanillaTypes;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
@@ -67,8 +69,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     @Override
-    public void getIngredients(@Nonnull IIngredients ingredients) {
-
+    public void getIngredients(@NotNull IIngredients ingredients) {
         // Inputs
         if (!sortedInputs.isEmpty()) {
             List<List<ItemStack>> list = new ArrayList<>();
@@ -107,7 +108,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     if (researchId != null) break;
                 }
                 if (researchId != null) {
-                    Collection<Recipe> possibleRecipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId);
+                    Collection<Recipe> possibleRecipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES)
+                            .getDataStickEntry(researchId);
                     if (possibleRecipes != null) {
                         for (Recipe r : possibleRecipes) {
                             ItemStack researchItem = r.getOutputs().get(0);
@@ -145,7 +147,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     .map(FluidStack::copy)
                     .collect(Collectors.toList());
 
-            List<ChancedFluidOutput> chancedOutputs = new ArrayList<>(recipe.getChancedFluidOutputs().getChancedEntries());
+            List<ChancedFluidOutput> chancedOutputs = new ArrayList<>(
+                    recipe.getChancedFluidOutputs().getChancedEntries());
             for (ChancedFluidOutput chancedEntry : chancedOutputs) {
                 recipeOutputs.add(chancedEntry.getIngredient());
             }
@@ -162,7 +165,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             if (!recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
                 int outputIndex = slotIndex - recipeMap.getMaxInputs();
                 if (outputIndex >= recipe.getOutputs().size()) {
-                    entry = recipe.getChancedOutputs().getChancedEntries().get(outputIndex - recipe.getOutputs().size());
+                    entry = recipe.getChancedOutputs().getChancedEntries()
+                            .get(outputIndex - recipe.getOutputs().size());
                 }
             }
         }
@@ -181,17 +185,20 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
             int outputIndex = slotIndex - recipeMap.getMaxFluidInputs();
             if (outputIndex >= recipe.getFluidOutputs().size()) {
-                entry = recipe.getChancedFluidOutputs().getChancedEntries().get(outputIndex - recipe.getFluidOutputs().size());
+                entry = recipe.getChancedFluidOutputs().getChancedEntries()
+                        .get(outputIndex - recipe.getFluidOutputs().size());
             }
         }
 
-        addIngredientTooltips(tooltip, notConsumed, input, entry, recipe.getChancedFluidOutputs().getChancedOutputLogic());
+        addIngredientTooltips(tooltip, notConsumed, input, entry,
+                recipe.getChancedFluidOutputs().getChancedOutputLogic());
         addIngredientTooltips(tooltip, notConsumed, input, ingredient, null);
     }
 
-    public void addIngredientTooltips(@Nonnull Collection<String> tooltip, boolean notConsumed, boolean input, @Nullable Object ingredient, @Nullable Object ingredient2) {
+    public void addIngredientTooltips(@NotNull Collection<String> tooltip, boolean notConsumed, boolean input,
+                                      @Nullable Object ingredient, @Nullable Object ingredient2) {
         if (ingredient2 instanceof ChancedOutputLogic logic) {
-            if (ingredient instanceof BoostableChanceEntry<?> entry) {
+            if (ingredient instanceof BoostableChanceEntry<?>entry) {
                 double chance = entry.getChance() / 100.0;
                 double boost = entry.getChanceBoost() / 100.0;
                 if (logic != ChancedOutputLogic.NONE && logic != ChancedOutputLogic.OR) {
@@ -206,11 +213,12 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
         }
 
-        if (!input && this.recipeMap instanceof IScannerRecipeMap && ingredient instanceof ItemStack stack && !stack.isEmpty()) {
+        if (!input && this.recipeMap instanceof IScannerRecipeMap && ingredient instanceof ItemStack stack &&
+                !stack.isEmpty()) {
             // check for "normal" data items
             if (stack.getItem() instanceof IDataItem) return;
             // check for metaitem data items
-            if (stack.getItem() instanceof MetaItem<?> metaItem) {
+            if (stack.getItem() instanceof MetaItem<?>metaItem) {
                 for (IItemBehaviour behaviour : metaItem.getBehaviours(stack)) {
                     if (behaviour instanceof IDataItem) {
                         return;
@@ -225,7 +233,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     @Override
-    public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
         var properties = recipe.getPropertyTypes();
         boolean drawTotalEU = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU);
@@ -243,18 +251,26 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (drawTotalEU) {
             long eu = Math.abs((long) recipe.getEUt()) * recipe.getDuration();
             // sadly we still need a custom override here, since computation uses duration and EU/t very differently
-            if (recipe.hasProperty(TotalComputationProperty.getInstance()) && recipe.hasProperty(ComputationProperty.getInstance())) {
+            if (recipe.hasProperty(TotalComputationProperty.getInstance()) &&
+                    recipe.hasProperty(ComputationProperty.getInstance())) {
                 int minimumCWUt = recipe.getProperty(ComputationProperty.getInstance(), 1);
-                minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition, 0x111111);
+                minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition,
+                        0x111111);
             } else {
                 minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", eu), 0, yPosition, 0x111111);
             }
         }
         if (drawEUt) {
-            minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]), 0, yPosition += LINE_HEIGHT, 0x111111);
+            minecraft.fontRenderer.drawString(
+                    I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
+                            Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]),
+                    0, yPosition += LINE_HEIGHT, 0x111111);
         }
         if (drawDuration) {
-            minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)), 0, yPosition += LINE_HEIGHT, 0x111111);
+            minecraft.fontRenderer.drawString(
+                    I18n.format("gregtech.recipe.duration",
+                            TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)),
+                    0, yPosition += LINE_HEIGHT, 0x111111);
         }
 
         // Property custom entries
@@ -262,12 +278,13 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             if (!propertyEntry.getKey().isHidden()) {
                 RecipeProperty<?> property = propertyEntry.getKey();
                 Object value = propertyEntry.getValue();
-                property.drawInfo(minecraft, 0, yPosition += property.getInfoHeight(value), 0x111111, value, mouseX, mouseY);
+                property.drawInfo(minecraft, 0, yPosition += property.getInfoHeight(value), 0x111111, value, mouseX,
+                        mouseY);
             }
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         List<String> tooltips = new ArrayList<>();
@@ -286,10 +303,12 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         // do not add the X button if no tweaker mod is present
         if (!RecipeCompatUtil.isTweakerLoaded()) return;
 
-        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative();
+        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
+                Minecraft.getMinecraft().player.isCreative();
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() + " script, to remove this recipe, to the clipboard"))
+                .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() +
+                        " script, to remove this recipe, to the clipboard"))
                 .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
                     String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
                     String output = RecipeCompatUtil.getFirstOutputString(recipe);
@@ -298,7 +317,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     }
                     String copyString = output + recipeLine + "\n";
                     ClipboardUtil.copyToClipboard(copyString);
-                    Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
+                    Minecraft.getMinecraft().player.sendMessage(
+                            new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
                     return true;
                 })
                 .setActiveSupplier(creativePlayerCtPredicate));

@@ -1,6 +1,7 @@
 package gregtech.common.blocks.wood;
 
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;

@@ -1,13 +1,5 @@
 package gregtech.integration.groovy;
 
-import com.cleanroommc.groovyscript.GroovyScript;
-import com.cleanroommc.groovyscript.api.GroovyLog;
-import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
-import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
-import com.cleanroommc.groovyscript.compat.mods.ModSupport;
-import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
-import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -28,35 +20,47 @@ import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.crafttweaker.material.MaterialExpansion;
 import gregtech.integration.crafttweaker.material.MaterialPropertyExpansion;
 import gregtech.modules.GregTechModules;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.cleanroommc.groovyscript.GroovyScript;
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.cleanroommc.groovyscript.api.GroovyPlugin;
+import com.cleanroommc.groovyscript.api.IGameObjectHandler;
+import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
+import com.cleanroommc.groovyscript.gameobjects.GameObjectHandlerManager;
+import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+@Optional.Interface(modid = GTValues.MODID_GROOVYSCRIPT,
+                    iface = "com.cleanroommc.groovyscript.api.GroovyPlugin",
+                    striprefs = true)
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_GRS,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_GROOVYSCRIPT,
-        name = "GregTech GroovyScript Integration",
-        description = "GroovyScript Integration Module"
-)
-public class GroovyScriptModule extends IntegrationSubmodule {
+                moduleID = GregTechModules.MODULE_GRS,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_GROOVYSCRIPT,
+                name = "GregTech GroovyScript Integration",
+                description = "GroovyScript Integration Module")
+public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPlugin {
 
-    private static ModSupport.Container<Container> modSupportContainer;
+    private static GroovyContainer<?> modSupportContainer;
     private static final Map<String, Map<String, ItemStack>> metaItems = new Object2ObjectOpenHashMap<>();
 
-    @Nonnull
+    @NotNull
     @Override
     public List<Class<?>> getEventBusSubscribers() {
         return ImmutableList.of(GroovyHandCommand.class, GroovyScriptModule.class);
@@ -67,18 +71,13 @@ public class GroovyScriptModule extends IntegrationSubmodule {
         GroovyScriptModule.loadMetaItemBracketHandler();
     }
 
-    @Override
-    public void construction(FMLConstructionEvent event) {
-        modSupportContainer = new ModSupport.Container<>(GTValues.MODID, "GregTech", Container::new, "gt");
-    }
-
     public static boolean isCurrentlyRunning() {
-        return GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
-                && GroovyScript.getSandbox().isRunning();
+        return GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS) &&
+                GroovyScript.getSandbox().isRunning();
     }
 
-    public static Container getInstance() {
-        return modSupportContainer.get();
+    public static GroovyContainer<?> getInstance() {
+        return modSupportContainer;
     }
 
     public static boolean validateNonNull(Object o, Supplier<String> errorMsg) {
@@ -116,7 +115,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
     }
 
     public static String[] splitObjectName(String toSplit) {
-        String[] resultSplit = {GTValues.MODID, toSplit};
+        String[] resultSplit = { GTValues.MODID, toSplit };
         int i = toSplit.indexOf(':');
         if (i >= 0) {
             resultSplit[1] = toSplit.substring(i + 1);
@@ -174,7 +173,8 @@ public class GroovyScriptModule extends IntegrationSubmodule {
         }
 
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
-            Map<String, ItemStack> map = metaItems.computeIfAbsent(Objects.requireNonNull(item.getRegistryName()).getNamespace(),
+            Map<String, ItemStack> map = metaItems.computeIfAbsent(
+                    Objects.requireNonNull(item.getRegistryName()).getNamespace(),
                     (k) -> new Object2ObjectOpenHashMap<>());
             for (MetaItem<?>.MetaValueItem entry : item.getAllItems()) {
                 if (!entry.unlocalizedName.equals("meta_item")) {
@@ -184,30 +184,34 @@ public class GroovyScriptModule extends IntegrationSubmodule {
         }
     }
 
-    /**
-     * A GroovyScript mod compat container. This should not be referenced when GrS is not installed!
-     */
-    public static class Container extends ModPropertyContainer {
+    @Override
+    public @NotNull String getModId() {
+        return GTValues.MODID;
+    }
 
-        private Container() {
-        }
+    @Override
+    public @NotNull String getModName() {
+        return "GregTech";
+    }
 
-        @Override
-        protected void addRegistry(VirtualizedRegistry<?> registry) {
-            super.addRegistry(registry);
-        }
+    @Override
+    public void onCompatLoaded(GroovyContainer<?> groovyContainer) {
+        modSupportContainer = groovyContainer;
+        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "recipemap",
+                IGameObjectHandler.wrapStringGetter(RecipeMap::getByName));
 
-        @Override
-        public void initialize() {
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "recipemap", RecipeMap::getByName);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material", GregTechAPI.materialManager::getMaterial);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "oreprefix", OrePrefix::getPrefix);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "metaitem", GroovyScriptModule::getMetaItem, ItemStack.EMPTY);
+        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "material",
+                IGameObjectHandler.wrapStringGetter(GregTechAPI.materialManager::getMaterial));
 
-            ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
-            ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
-            ExpansionHelper.mixinClass(Material.Builder.class, GroovyMaterialBuilderExpansion.class);
-            ExpansionHelper.mixinClass(RecipeBuilder.class, GroovyRecipeBuilderExpansion.class);
-        }
+        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "oreprefix",
+                IGameObjectHandler.wrapStringGetter(OrePrefix::getPrefix));
+
+        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "metaitem",
+                IGameObjectHandler.wrapStringGetter(GroovyScriptModule::getMetaItem), ItemStack.EMPTY);
+
+        ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
+        ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
+        ExpansionHelper.mixinClass(Material.Builder.class, GroovyMaterialBuilderExpansion.class);
+        ExpansionHelper.mixinClass(RecipeBuilder.class, GroovyRecipeBuilderExpansion.class);
     }
 }

@@ -3,6 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,7 +40,8 @@ public class ToggleEnergyConsumerBehavior implements IItemBehaviour {
     }
 
     private boolean drainActivationEnergy(IElectricItem electricItem, boolean simulate) {
-        return electricItem.discharge(energyUsagePerTick, electricItem.getTier(), true, false, simulate) >= energyUsagePerTick;
+        return electricItem.discharge(energyUsagePerTick, electricItem.getTier(), true, false, simulate) >=
+                energyUsagePerTick;
     }
 
     @Override

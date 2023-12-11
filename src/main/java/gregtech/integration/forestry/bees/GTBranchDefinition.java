@@ -91,7 +91,7 @@ public enum GTBranchDefinition {
     private final Consumer<IAllele[]> branchProperties;
 
     GTBranchDefinition(String scientific, Consumer<IAllele[]> branchProperties) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         this.branch = BeeManager.beeFactory.createBranch(this.name().toLowerCase(), scientific);
         AlleleManager.alleleRegistry.getClassification("family.apidae").addMemberGroup(this.branch);
         this.branchProperties = branchProperties;

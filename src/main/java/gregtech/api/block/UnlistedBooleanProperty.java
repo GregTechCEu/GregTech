@@ -2,16 +2,17 @@ package gregtech.api.block;
 
 import net.minecraftforge.common.property.IUnlistedProperty;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class UnlistedBooleanProperty implements IUnlistedProperty<Boolean> {
+
     private final String name;
 
-    public UnlistedBooleanProperty(@Nonnull String name) {
+    public UnlistedBooleanProperty(@NotNull String name) {
         this.name = name;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return this.name;
@@ -22,14 +23,14 @@ public class UnlistedBooleanProperty implements IUnlistedProperty<Boolean> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<Boolean> getType() {
         return Boolean.class;
     }
 
     @Override
-    public String valueToString(@Nonnull Boolean value) {
+    public String valueToString(@NotNull Boolean value) {
         return value.toString();
     }
 }

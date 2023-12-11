@@ -11,18 +11,19 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public final class GTStringUtils {
 
     private GTStringUtils() {/**/}
 
-    @Nonnull
-    public static String prettyPrintItemStack(@Nonnull ItemStack stack) {
+    @NotNull
+    public static String prettyPrintItemStack(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
             MetaItem<?>.MetaValueItem metaValueItem = metaItem.getItem(stack);
@@ -30,7 +31,8 @@ public final class GTStringUtils {
                 if (metaItem instanceof MetaPrefixItem metaPrefixItem) {
                     Material material = metaPrefixItem.getMaterial(stack);
                     OrePrefix orePrefix = metaPrefixItem.getOrePrefix();
-                    return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
+                    return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " +
+                            stack.getCount();
                 }
             } else {
                 if (MetaItems.INTEGRATED_CIRCUIT.isItemEqual(stack)) {
@@ -61,8 +63,9 @@ public final class GTStringUtils {
                 return "(MetaBlock) " + id + " * " + stack.getCount();
             }
         }
-        //noinspection ConstantConditions
-        return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " + stack.getItemDamage() + ")";
+        // noinspection ConstantConditions
+        return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " +
+                stack.getItemDamage() + ")";
     }
 
     /**
@@ -72,8 +75,8 @@ public final class GTStringUtils {
      * @param stack the stack to convert
      * @return the string form of the stack
      */
-    @Nonnull
-    public static String itemStackToString(@Nonnull ItemStack stack) {
+    @NotNull
+    public static String itemStackToString(@NotNull ItemStack stack) {
         return stack.getCount() + "x" + stack.getItem().getTranslationKey(stack) + "@" + stack.getItemDamage();
     }
 
@@ -84,12 +87,12 @@ public final class GTStringUtils {
      * @param ticks the amount of ticks to convert
      * @return the time elapsed for the given number of ticks, in "mm:ss" format.
      */
-    @Nonnull
+    @NotNull
     public static String ticksToElapsedTime(int ticks) {
         int seconds = ticks / 20;
         int minutes = seconds / 60;
         seconds = seconds % 60;
-        //noinspection StringConcatenationMissingWhitespace
+        // noinspection StringConcatenationMissingWhitespace
         return seconds < 10 ? minutes + ":0" + seconds : minutes + ":" + seconds;
     }
 
@@ -102,13 +105,12 @@ public final class GTStringUtils {
      * @param maxLength    The maximum width of the String
      */
     public static void drawCenteredStringWithCutoff(String stringToDraw, FontRenderer fontRenderer, int maxLength) {
-
-        //Account for really long names
+        // Account for really long names
         if (fontRenderer.getStringWidth(stringToDraw) > maxLength) {
             stringToDraw = fontRenderer.trimStringToWidth(stringToDraw, maxLength - 3, false) + "...";
         }
 
-        //Ensure that the string is centered
+        // Ensure that the string is centered
         int startPosition = (maxLength - fontRenderer.getStringWidth(stringToDraw)) / 2;
 
         fontRenderer.drawString(stringToDraw, startPosition, 1, 0x111111);

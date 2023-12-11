@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.util.math.Vec2f;
 
 import java.util.ArrayList;
@@ -37,14 +38,17 @@ public class MazeWidget extends Widget {
         this.setSize(new Size(MAZE_SIZE * 10, MAZE_SIZE * 10));
         topWalls = new boolean[MAZE_SIZE][MAZE_SIZE];
         leftWalls = new boolean[MAZE_SIZE][MAZE_SIZE];
-
     }
 
     public void createBorder() {
         List<Vec2f> lineBuffer = new ArrayList<>();
         lineBuffer.add(new Vec2f(getPosition().x + 10, getPosition().y));
         lineBuffer.add(new Vec2f(this.getSize().width + getPosition().x, getPosition().y));
-        lineBuffer.add(new Vec2f(this.getSize().width + getPosition().x, this.getSize().height + getPosition().y + 2)); // Corrects for line width misalignment
+        lineBuffer.add(new Vec2f(this.getSize().width + getPosition().x, this.getSize().height + getPosition().y + 2)); // Corrects
+                                                                                                                        // for
+                                                                                                                        // line
+                                                                                                                        // width
+                                                                                                                        // misalignment
         drawLines(lineBuffer, 0xFFFFFFFF, 0xFFFFFFFF, 4);
         lineBuffer.clear();
         lineBuffer.add(new Vec2f(this.getSize().width + getPosition().x - 10, this.getSize().height + getPosition().y));
@@ -95,10 +99,11 @@ public class MazeWidget extends Widget {
             }
         }
 
-        includedSpots[(int) (Math.random() * MAZE_SIZE)][(int) (Math.random() * MAZE_SIZE)] = true; // Can seed our particular maze
+        includedSpots[(int) (Math.random() * MAZE_SIZE)][(int) (Math.random() * MAZE_SIZE)] = true; // Can seed our
+                                                                                                    // particular maze
         // Improves maze randomization.
         List<Integer> positions = new ArrayList<>();
-        for(int i = 0; i < MAZE_SIZE * MAZE_SIZE; i++) {
+        for (int i = 0; i < MAZE_SIZE * MAZE_SIZE; i++) {
             positions.add(i);
         }
         Collections.shuffle(positions);
@@ -107,7 +112,8 @@ public class MazeWidget extends Widget {
             if (!includedSpots[position / MAZE_SIZE][position % MAZE_SIZE]) {
                 do {
                     resetStuckCounter();
-                } while (!this.createPath(position / MAZE_SIZE, position % MAZE_SIZE, new boolean[MAZE_SIZE][MAZE_SIZE]));
+                } while (!this.createPath(position / MAZE_SIZE, position % MAZE_SIZE,
+                        new boolean[MAZE_SIZE][MAZE_SIZE]));
             }
         }
     }
@@ -115,11 +121,11 @@ public class MazeWidget extends Widget {
     // Wilson random walk maze generation
     public boolean createPath(int x, int y, boolean[][] walkedPaths) {
         squaresChecked++;
-        if(squaresChecked > 20000) // Probably stuck.
+        if (squaresChecked > 20000) // Probably stuck.
             return false;
-        if(walkedPaths[x][y])
+        if (walkedPaths[x][y])
             return false;
-        if(this.includedSpots[x][y])
+        if (this.includedSpots[x][y])
             return true;
         this.includedSpots[x][y] = true;
         walkedPaths[x][y] = true;

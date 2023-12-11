@@ -8,27 +8,31 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.common.ConfigHolder;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.IProbeInfoProvider;
-import mcjty.theoneprobe.api.ProbeMode;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.IProbeInfoProvider;
+import mcjty.theoneprobe.api.ProbeMode;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
+
     @Override
     public String getID() {
         return "gregtech:debug_pipe_net_provider";
     }
 
     @Override
-    public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull IBlockState blockState, @Nonnull IProbeHitData data) {
+    public void addProbeInfo(@NotNull ProbeMode mode, @NotNull IProbeInfo probeInfo, @NotNull EntityPlayer player,
+                             @NotNull World world, @NotNull IBlockState blockState, @NotNull IProbeHitData data) {
         if (ConfigHolder.misc.debug) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (tileEntity instanceof IGregTechTileEntity) {
@@ -57,11 +61,11 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     probeInfo.text(builder.toString());
                 }
                 probeInfo.text("tile open: " + pipeTile.getConnections());
-//                if (blockPipe instanceof BlockFluidPipe) {
-//                    if (pipeTile instanceof TileEntityFluidPipeTickable) {
-//                        probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());
-//                    }
-//                }
+                // if (blockPipe instanceof BlockFluidPipe) {
+                // if (pipeTile instanceof TileEntityFluidPipeTickable) {
+                // probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());
+                // }
+                // }
             }
         }
     }

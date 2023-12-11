@@ -9,14 +9,16 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.IItemList.InsertMode;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -73,7 +75,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private void setCreativeHeldItem(@Nonnull ItemStack itemStack) {
+    private void setCreativeHeldItem(@NotNull ItemStack itemStack) {
         InventoryPlayer inventory = gui.entityPlayer.inventory;
         if (!itemStack.isEmpty() && inventory.getItemStack().isEmpty()) {
             itemStack.setCount(itemStack.getMaxStackSize());
@@ -81,27 +83,28 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private static int getAmountToTake(@Nonnull ItemStack itemStack, int maxAmount, int button) {
+    private static int getAmountToTake(@NotNull ItemStack itemStack, int maxAmount, int button) {
         int maxStackSize = Math.min(itemStack.getMaxStackSize(), maxAmount);
         return button == 0 ? maxStackSize : (maxStackSize >= 2 ? maxStackSize / 2 : 1);
     }
 
-    //returns true if something actually happened
+    // returns true if something actually happened
     private boolean insertHeldItemStack(int button, boolean isClient) {
         InventoryPlayer inventory = gui.entityPlayer.inventory;
         int amountToInsert = button == 1 ? 1 : Integer.MAX_VALUE;
         if (!inventory.getItemStack().isEmpty()) {
             if (!isClient) {
-                //on server, we lookup item list to see how much we can actually insert
+                // on server, we lookup item list to see how much we can actually insert
                 ItemStack heldItemStack = inventory.getItemStack();
                 IItemList itemList = gridWidget.getItemList();
-                int amountInserted = itemList.insertItem(heldItemStack, Math.min(heldItemStack.getCount(), amountToInsert), false, InsertMode.LOWEST_PRIORITY);
+                int amountInserted = itemList.insertItem(heldItemStack,
+                        Math.min(heldItemStack.getCount(), amountToInsert), false, InsertMode.LOWEST_PRIORITY);
                 heldItemStack.shrink(amountInserted);
                 uiAccess.sendHeldItemUpdate();
                 gui.entityPlayer.openContainer.detectAndSendChanges();
                 return amountInserted > 0;
             } else {
-                //on client we assume we can insert full stack into the network
+                // on client we assume we can insert full stack into the network
                 inventory.getItemStack().shrink(amountToInsert);
                 return true;
             }
@@ -113,7 +116,7 @@ public class ItemListSlotWidget extends Widget {
         InventoryPlayer inventory = gui.entityPlayer.inventory;
         if (inventory.getItemStack().isEmpty()) {
             if (!isClient) {
-                //on server, we try to extract from the network
+                // on server, we try to extract from the network
                 IItemList itemList = gridWidget.getItemList();
                 int amountExtracted = itemList.extractItem(itemStack, amount, false);
                 if (amountExtracted > 0) {
@@ -123,7 +126,7 @@ public class ItemListSlotWidget extends Widget {
                 }
                 uiAccess.sendHeldItemUpdate();
             } else {
-                //on client we assume we can extract as much items as user wishes
+                // on client we assume we can extract as much items as user wishes
                 ItemStack resultStack = itemStack.copy();
                 resultStack.setCount(amount);
                 inventory.setItemStack(resultStack);
@@ -150,7 +153,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private void handleSelfShiftClick(@Nonnull IItemInfo itemInfo) {
+    private void handleSelfShiftClick(@NotNull IItemInfo itemInfo) {
         ItemStack itemStack = itemInfo.getItemStack().copy();
         itemStack.setCount(itemStack.getMaxStackSize());
         int currentStackSize = itemStack.getCount();

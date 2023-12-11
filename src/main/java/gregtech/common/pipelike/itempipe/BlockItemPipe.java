@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.itempipe;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
@@ -14,6 +13,7 @@ import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -28,9 +28,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
+import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +51,8 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     public void addPipeMaterial(Material material, ItemPipeProperties properties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(properties, "material %s itemPipeProperties was null", material);
-        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null, "material %s is not registered", material);
+        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null,
+                "material %s is not registered", material);
         this.enabledMaterials.put(material, properties);
     }
 
@@ -84,7 +87,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     public PipeRenderer getPipeRenderer() {
         return ItemPipeRenderer.INSTANCE;
@@ -95,20 +98,23 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
             items.add(getItem(material));
         }
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, IPipeTile<ItemPipeType, ItemPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side,
+                                   IPipeTile<ItemPipeType, ItemPipeProperties> sideTile) {
         return selfTile instanceof TileEntityItemPipe && sideTile instanceof TileEntityItemPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
-        return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
+    public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side,
+                                         TileEntity tile) {
+        return tile != null &&
+                tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
 
     @Override
@@ -121,12 +127,10 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
         return ItemPipeRenderer.INSTANCE.getBlockRenderType();
     }
-
-
 }

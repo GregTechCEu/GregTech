@@ -1,6 +1,5 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -9,11 +8,14 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+
+import com.google.common.base.Preconditions;
 import org.lwjgl.input.Mouse;
 
 import java.util.Arrays;
@@ -33,7 +35,8 @@ public class ClickButtonWidget extends Widget {
     private String tooltipText;
     private Object[] tooltipArgs;
 
-    public ClickButtonWidget(int xPosition, int yPosition, int width, int height, String displayText, Consumer<ClickData> onPressed) {
+    public ClickButtonWidget(int xPosition, int yPosition, int width, int height, String displayText,
+                             Consumer<ClickData> onPressed) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.displayText = displayText;
         this.onPressCallback = onPressed;
@@ -84,7 +87,8 @@ public class ClickButtonWidget extends Widget {
         Position position = getPosition();
         Size size = getSize();
         if (buttonTexture instanceof SizedTextureArea) {
-            ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(position.x, position.y, size.width, size.height, 0.0, 1.0);
+            ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(position.x, position.y, size.width, size.height,
+                    0.0, 1.0);
         } else {
             buttonTexture.drawSubArea(position.x, position.y, size.width, size.height, 0.0, 0.0, 1.0, 1.0);
         }

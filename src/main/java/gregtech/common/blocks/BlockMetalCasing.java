@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -11,7 +12,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingType> {
 
@@ -25,7 +26,8 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 
@@ -42,8 +44,7 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         COKE_BRICKS("coke_bricks", 1),
         PTFE_INERT_CASING("ptfe_inert", 0),
         HSSE_STURDY("hsse_sturdy", 3),
-        PALLADIUM_SUBSTATION("palladium_substation", 3)
-        ;
+        PALLADIUM_SUBSTATION("palladium_substation", 3);
 
         private final String name;
         private final int harvestLevel;
@@ -53,7 +54,7 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
             this.harvestLevel = harvestLevel;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;
@@ -69,5 +70,4 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
             return ToolClasses.WRENCH;
         }
     }
-
 }

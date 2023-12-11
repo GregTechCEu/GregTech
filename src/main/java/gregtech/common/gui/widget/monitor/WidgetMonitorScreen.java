@@ -3,12 +3,14 @@ package gregtech.common.gui.widget.monitor;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
+
 import net.minecraft.client.renderer.GlStateManager;
 
 public class WidgetMonitorScreen extends Widget {
+
     private final MetaTileEntityMonitorScreen screen;
 
     public WidgetMonitorScreen(int x, int y, int w, MetaTileEntityMonitorScreen screen) {
@@ -25,14 +27,14 @@ public class WidgetMonitorScreen extends Widget {
 
         if (screen != null && screen.isActive()) {
             GlStateManager.pushMatrix();
-            GlStateManager.translate(position.x + 2 + 0.5 * (size.width - 4), position.y + 2 + 0.5 * (size.height - 4),0);
+            GlStateManager.translate(position.x + 2 + 0.5 * (size.width - 4), position.y + 2 + 0.5 * (size.height - 4),
+                    0);
             GlStateManager.scale(size.getWidth(), size.getWidth(), 1.0f / size.getWidth());
-            GlStateManager.scale(1 / screen.scale,1 / screen.scale,1 / screen.scale);
+            GlStateManager.scale(1 / screen.scale, 1 / screen.scale, 1 / screen.scale);
             GlStateManager.translate(-(screen.scale - 1) * 0.5, -(screen.scale - 1) * 0.5, 0);
 
-            screen.renderScreen(0,null);
+            screen.renderScreen(0, null);
             GlStateManager.popMatrix();
         }
-
     }
 }

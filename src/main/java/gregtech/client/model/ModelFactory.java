@@ -1,8 +1,7 @@
 package gregtech.client.model;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.GTValues;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -17,10 +16,14 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.vecmath.Vector3f;
+import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
+
+import javax.vecmath.Vector3f;
 
 /**
  * Revamped from https://github.com/LoliKingdom/Zairyou/blob/main/src/main/java/zone/rong/zairyou/api/client/Bakery.java
@@ -28,25 +31,35 @@ import java.util.function.UnaryOperator;
 @SideOnly(Side.CLIENT)
 public class ModelFactory {
 
-    private static final Map<ItemCameraTransforms.TransformType, TRSRTransformation> blockTransformationMap = new EnumMap<>(ItemCameraTransforms.TransformType.class);
-    private static final Map<ItemCameraTransforms.TransformType, TRSRTransformation> itemTransformationMap = new EnumMap<>(ItemCameraTransforms.TransformType.class);
+    private static final Map<ItemCameraTransforms.TransformType, TRSRTransformation> blockTransformationMap = new EnumMap<>(
+            ItemCameraTransforms.TransformType.class);
+    private static final Map<ItemCameraTransforms.TransformType, TRSRTransformation> itemTransformationMap = new EnumMap<>(
+            ItemCameraTransforms.TransformType.class);
 
     private static FaceBakery INSTANCE;
 
     static {
         blockTransformationMap.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 30, 225, 0, 0.625f));
         blockTransformationMap.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.25f));
-        blockTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 45, 0, 0.4f));
-        blockTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 0, 0, 0.4f));
-        blockTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f));
-        blockTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND,
+                getTransform(0, 0, 0, 0, 45, 0, 0.4f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND,
+                getTransform(0, 0, 0, 0, 0, 0, 0.4f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND,
+                getTransform(0, 0, 0, 45, 0, 0, 0.4f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND,
+                getTransform(0, 0, 0, 45, 0, 0, 0.4f));
 
         itemTransformationMap.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 0, 0, 0, 1f));
         itemTransformationMap.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.5f));
-        itemTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f));
-        itemTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 3, 1, 0, 0, 0, 0.55f));
-        itemTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f));
-        itemTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0f, 4.0f, 0.5f, 0, 90, -55, 0.85f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND,
+                getTransform(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND,
+                getTransform(0, 3, 1, 0, 0, 0, 0.55f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND,
+                getTransform(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND,
+                getTransform(0f, 4.0f, 0.5f, 0, 90, -55, 0.85f));
     }
 
     public static FaceBakery getBakery() {
@@ -64,8 +77,10 @@ public class ModelFactory {
         return itemTransformationMap.get(transformType);
     }
 
-    private static TRSRTransformation getTransform(float tx, float ty, float tz, float ax, float ay, float az, float s) {
-        return new TRSRTransformation(new Vector3f(tx / 16, ty / 16, tz / 16), TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null);
+    private static TRSRTransformation getTransform(float tx, float ty, float tz, float ax, float ay, float az,
+                                                   float s) {
+        return new TRSRTransformation(new Vector3f(tx / 16, ty / 16, tz / 16),
+                TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null);
     }
 
     private final ModelTemplate template;

@@ -27,14 +27,13 @@ public class RecyclingRecipeHandler {
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("gem"),
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("cableGt"),
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("wireGt"),
-            (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("pipe")
-    );
+            (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("pipe"));
 
     private static final List<OrePrefix> IGNORE_ARC_SMELTING = Arrays.asList(
             OrePrefix.ingot, OrePrefix.gem, OrePrefix.nugget);
 
     public static void register() {
-        //registers universal maceration recipes for specified ore prefixes
+        // registers universal maceration recipes for specified ore prefixes
         for (OrePrefix orePrefix : OrePrefix.values()) {
             if (CRUSHING_PREFIXES.stream().anyMatch(object -> {
                 if (object instanceof OrePrefix)
@@ -50,11 +49,12 @@ public class RecyclingRecipeHandler {
         ArrayList<MaterialStack> materialStacks = new ArrayList<>();
         materialStacks.add(new MaterialStack(material, thingPrefix.getMaterialAmount(material)));
         materialStacks.addAll(thingPrefix.secondaryMaterials);
-        //only ignore arc smelting for blacklisted prefixes if yielded material is the same as input material
-        //if arc smelting gives different material, allow it
-        boolean ignoreArcSmelting = IGNORE_ARC_SMELTING.contains(thingPrefix) && !(
-                material.hasProperty(PropertyKey.INGOT)
-                        && material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != material);
-        RecyclingRecipes.registerRecyclingRecipes(OreDictUnifier.get(thingPrefix, material), materialStacks, ignoreArcSmelting, thingPrefix);
+        // only ignore arc smelting for blacklisted prefixes if yielded material is the same as input material
+        // if arc smelting gives different material, allow it
+        boolean ignoreArcSmelting = IGNORE_ARC_SMELTING.contains(thingPrefix) &&
+                !(material.hasProperty(PropertyKey.INGOT) &&
+                        material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != material);
+        RecyclingRecipes.registerRecyclingRecipes(OreDictUnifier.get(thingPrefix, material), materialStacks,
+                ignoreArcSmelting, thingPrefix);
     }
 }

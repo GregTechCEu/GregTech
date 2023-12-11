@@ -3,7 +3,8 @@ package gregtech.api.unification.stack;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 public class UnificationEntry {
@@ -44,5 +45,4 @@ public class UnificationEntry {
     public String toString() {
         return orePrefix.name() + (material != null ? material.toCamelCaseString() : "");
     }
-
 }

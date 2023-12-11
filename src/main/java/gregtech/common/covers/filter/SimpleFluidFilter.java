@@ -3,13 +3,15 @@ package gregtech.common.covers.filter;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.PhantomFluidWidget;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Consumer;
 
 public class SimpleFluidFilter extends FluidFilter {
@@ -21,6 +23,7 @@ public class SimpleFluidFilter extends FluidFilter {
     public SimpleFluidFilter() {
         for (int i = 0; i < MAX_FLUID_SLOTS; ++i) {
             fluidFilterTanks[i] = new FluidTank(1000) {
+
                 @Override
                 public void setFluid(@Nullable FluidStack fluid) {
                     super.setFluid(fluid);
@@ -61,7 +64,7 @@ public class SimpleFluidFilter extends FluidFilter {
         for (int i = 0; i < 9; ++i) {
             widgetGroup.accept((new PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
                     this.fluidFilterTanks[i]))
-                    .setBackgroundTexture(GuiTextures.SLOT).showTipSupplier(this::shouldShowTip));
+                            .setBackgroundTexture(GuiTextures.SLOT).showTipSupplier(this::shouldShowTip));
         }
     }
 
@@ -112,5 +115,4 @@ public class SimpleFluidFilter extends FluidFilter {
         }
         return limit;
     }
-
 }

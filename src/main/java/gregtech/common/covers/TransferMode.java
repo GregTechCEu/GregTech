@@ -2,9 +2,10 @@ package gregtech.common.covers;
 
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum TransferMode implements IStringSerializable {
+
     TRANSFER_ANY("cover.robotic_arm.transfer_mode.transfer_any", 1),
     TRANSFER_EXACT("cover.robotic_arm.transfer_mode.transfer_exact", 1024),
     KEEP_EXACT("cover.robotic_arm.transfer_mode.keep_exact", 1024);
@@ -17,11 +18,9 @@ public enum TransferMode implements IStringSerializable {
         this.maxStackSize = maxStackSize;
     }
 
-
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return localeName;
     }
 }
-

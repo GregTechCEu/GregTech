@@ -26,10 +26,6 @@ public class GregtechDataCodes {
     // Drum
     public static final int UPDATE_AUTO_OUTPUT = assignId();
 
-    // Safe
-    public static final int UPDATE_LOCKED_STATE = assignId();
-    public static final int UPDATE_CONTENTS_SEED = assignId();
-
     // Steam Machines
     public static final int NEEDS_VENTING = assignId();
     public static final int VENTING_SIDE = assignId();
@@ -158,7 +154,6 @@ public class GregtechDataCodes {
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_FRAGILE = "Fragile";
     public static final String TAG_KEY_MUFFLED = "Muffled";
-
 
     // MTE Trait Names
 

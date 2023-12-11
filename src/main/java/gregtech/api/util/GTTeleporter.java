@@ -6,6 +6,7 @@ import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 
 public class GTTeleporter extends Teleporter {
+
     private final WorldServer worldServerInstance;
 
     private final double x, y, z;

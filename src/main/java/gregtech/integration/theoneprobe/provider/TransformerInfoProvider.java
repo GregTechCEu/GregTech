@@ -6,14 +6,15 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nonnull;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.TextStyleClass;
+import org.jetbrains.annotations.NotNull;
 
 public class TransformerInfoProvider extends ElectricContainerInfoProvider {
 
@@ -23,7 +24,8 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IEnergyContainer capability, @Nonnull IProbeInfo probeInfo, EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull IEnergyContainer capability, @NotNull IProbeInfo probeInfo,
+                                EntityPlayer player, @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         if (tileEntity instanceof IGregTechTileEntity) {
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityTransformer) {
@@ -42,18 +44,19 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
                         .append("A)");
 
                 // Step Up/Step Down line
-                probeInfo.text(TextStyleClass.INFO + (((MetaTileEntityTransformer) metaTileEntity).isInverted()
-                        ? TextFormatting.RED + "{*gregtech.top.transform_up*} " + TextFormatting.RESET
-                        : TextFormatting.GREEN + "{*gregtech.top.transform_down*} " + TextFormatting.RESET)
-                        + input + " -> " + output);
+                probeInfo.text(TextStyleClass.INFO +
+                        (((MetaTileEntityTransformer) metaTileEntity).isInverted() ?
+                                TextFormatting.RED + "{*gregtech.top.transform_up*} " + TextFormatting.RESET :
+                                TextFormatting.GREEN + "{*gregtech.top.transform_down*} " + TextFormatting.RESET) +
+                        input + " -> " + output);
 
                 // Input/Output side line
                 if (capability.inputsEnergy(data.getSideHit())) {
-                    probeInfo.text(TextStyleClass.INFO
-                            + TextFormatting.GOLD.toString() + "{*gregtech.top.transform_input*} " + TextFormatting.RESET + input);
+                    probeInfo.text(TextStyleClass.INFO + TextFormatting.GOLD.toString() +
+                            "{*gregtech.top.transform_input*} " + TextFormatting.RESET + input);
                 } else if (capability.outputsEnergy(data.getSideHit())) {
-                    probeInfo.text(TextStyleClass.INFO
-                            + TextFormatting.BLUE.toString() + "{*gregtech.top.transform_output*} " + TextFormatting.RESET + output);
+                    probeInfo.text(TextStyleClass.INFO + TextFormatting.BLUE.toString() +
+                            "{*gregtech.top.transform_output*} " + TextFormatting.RESET + output);
                 }
             }
         }

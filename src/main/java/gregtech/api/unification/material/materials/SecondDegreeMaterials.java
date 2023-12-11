@@ -1,12 +1,12 @@
 package gregtech.api.unification.material.materials;
 
-import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
+
 import net.minecraft.init.Enchantments;
 
 import static gregtech.api.GTValues.*;
@@ -18,7 +18,6 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class SecondDegreeMaterials {
 
     public static void register() {
-
         Glass = new Material.Builder(2000, gregtechId("glass"))
                 .gem(0)
                 .liquid(new FluidBuilder().temperature(1200).customStill())
@@ -70,7 +69,8 @@ public class SecondDegreeMaterials {
         Lapis = new Material.Builder(2007, gregtechId("lapis"))
                 .gem(1).ore(6, 4)
                 .color(0x4646DC).iconSet(LAPIS)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING,
+                        EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         GENERATE_PLATE, GENERATE_ROD)
                 .components(Lazurite, 12, Sodalite, 2, Pyrite, 1, Calcite, 1)
                 .build();
@@ -79,7 +79,7 @@ public class SecondDegreeMaterials {
                 .dust(1)
                 .liquid(new FluidBuilder().temperature(4000).customStill())
                 .color(0xFFC800).iconSet(FINE)
-                .flags(NO_SMELTING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING) //todo burning flag
+                .flags(NO_SMELTING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING) // todo burning flag
                 .components(DarkAsh, 1, Sulfur, 1)
                 .build();
 
@@ -122,7 +122,7 @@ public class SecondDegreeMaterials {
                 .toolStats(ToolProperty.Builder.of(9.0F, 7.0F, 2048, 4)
                         .enchantability(14).build())
                 .rotorStats(8.0f, 4.0f, 2560)
-                .fluidPipeProperties(3587, 225, true)
+                .fluidPipeProperties(3587, 225, true, true, false, false)
                 .cableProperties(V[IV], 3, 2)
                 .blast(b -> b
                         .temp(4000, GasTier.MID)
@@ -415,7 +415,8 @@ public class SecondDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(58))
                 .color(0x4C3434)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(CarbonMonoxide, 144, CoalGas, 20, HydrogenSulfide, 15, SulfurDioxide, 15, Helium3, 5, Neon, 1, Ash, 1)
+                .components(CarbonMonoxide, 144, CoalGas, 20, HydrogenSulfide, 15, SulfurDioxide, 15, Helium3, 5, Neon,
+                        1, Ash, 1)
                 .build();
 
         EnderAir = new Material.Builder(2054, gregtechId("ender_air"))
@@ -429,7 +430,8 @@ public class SecondDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(36))
                 .color(0x283454)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(NitrogenDioxide, 122, Deuterium, 50, Helium, 15, Tritium, 10, Krypton, 1, Xenon, 1, Radon, 1, EnderPearl, 1)
+                .components(NitrogenDioxide, 122, Deuterium, 50, Helium, 15, Tritium, 10, Krypton, 1, Xenon, 1, Radon,
+                        1, EnderPearl, 1)
                 .build();
 
         AquaRegia = new Material.Builder(2056, gregtechId("aqua_regia"))

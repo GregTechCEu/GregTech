@@ -6,7 +6,8 @@ import gregtech.api.gui.widgets.WidgetGroup;
 
 import java.util.function.Consumer;
 
-public class GuiTextureSetter extends WidgetGroup implements ISetting{
+public class GuiTextureSetter extends WidgetGroup implements ISetting {
+
     private final String name;
     private Consumer<IGuiTexture> updated;
 

@@ -4,14 +4,16 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,16 +25,14 @@ import java.util.stream.Collectors;
  * @Description:
  */
 public class HardwareProvider implements ICapabilityProvider, IItemCapabilityProvider {
+
     private Map<String, Hardware> providers;
     private Map<String, ItemStack> itemCache;
     private Boolean isCreative;
     private ItemStack itemStack;
     private NBTTagCompound tag;
 
-
-    public HardwareProvider() {
-
-    }
+    public HardwareProvider() {}
 
     public void cleanCache(String name) {
         itemCache.remove(name);
@@ -68,11 +68,13 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
         if (TerminalBehaviour.isCreative(itemStack)) {
             return new ArrayList<>(providers.values());
         }
-        return getOrCreateHardwareCompound().getKeySet().stream().map(providers::get).filter(Objects::nonNull).collect(Collectors.toList());
+        return getOrCreateHardwareCompound().getKeySet().stream().map(providers::get).filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public boolean hasHardware(String name) {
-        return itemStack != null && (TerminalBehaviour.isCreative(getItemStack()) || getOrCreateHardwareCompound().hasKey(name));
+        return itemStack != null &&
+                (TerminalBehaviour.isCreative(getItemStack()) || getOrCreateHardwareCompound().hasKey(name));
     }
 
     public NBTTagCompound getHardwareNBT(String name) {
@@ -108,7 +110,7 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@NotNull Capability<?> capability, @Nullable EnumFacing facing) {
         if (providers != null) {
             for (Map.Entry<String, Hardware> entry : providers.entrySet()) {
                 Hardware provider = entry.getValue();
@@ -124,7 +126,7 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
         if (providers != null) {
             for (Map.Entry<String, Hardware> entry : providers.entrySet()) {
                 Hardware provider = entry.getValue();
@@ -135,6 +137,7 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
                 }
             }
         }
-        return capability == GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER ? GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER.cast(this) : null;
+        return capability == GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER ?
+                GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER.cast(this) : null;
     }
 }

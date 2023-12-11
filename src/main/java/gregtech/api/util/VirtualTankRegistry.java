@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.GTValues;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
@@ -11,15 +12,16 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class VirtualTankRegistry extends WorldSavedData {
 
-    private static final int DEFAULT_CAPACITY = 64000; //64B
+    private static final int DEFAULT_CAPACITY = 64000; // 64B
     private static final String DATA_ID = GTValues.MODID + ".vtank_data";
 
     protected static Map<UUID, Map<String, IFluidTank>> tankMap = new HashMap<>();
@@ -36,7 +38,8 @@ public class VirtualTankRegistry extends WorldSavedData {
 
     /**
      * Retrieves a tank from the registry
-     * @param key The name of the tank
+     * 
+     * @param key  The name of the tank
      * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @return The tank object
      */
@@ -46,7 +49,7 @@ public class VirtualTankRegistry extends WorldSavedData {
 
     /**
      * @return the internal Map of tanks.
-     * Do not use to modify the map!
+     *         Do not use to modify the map!
      */
     public static Map<UUID, Map<String, IFluidTank>> getTankMap() {
         return tankMap;
@@ -54,8 +57,9 @@ public class VirtualTankRegistry extends WorldSavedData {
 
     /**
      * Retrieves a tank from the registry, creating it if it does not exist
-     * @param key The name of the tank
-     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
+     * 
+     * @param key      The name of the tank
+     * @param uuid     The uuid of the player the tank is private to, or null if the tank is public
      * @param capacity The initial capacity of the tank
      * @return The tank object
      */
@@ -67,8 +71,10 @@ public class VirtualTankRegistry extends WorldSavedData {
     }
 
     /**
-     * Retrieves a tank from the registry, creating it with {@link #DEFAULT_CAPACITY the default capacity} if it does not exist
-     * @param key The name of the tank
+     * Retrieves a tank from the registry, creating it with {@link #DEFAULT_CAPACITY the default capacity} if it does
+     * not exist
+     * 
+     * @param key  The name of the tank
      * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @return The tank object
      */
@@ -78,13 +84,15 @@ public class VirtualTankRegistry extends WorldSavedData {
 
     /**
      * Adds a tank to the registry
-     * @param key The name of the tank
-     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
+     * 
+     * @param key      The name of the tank
+     * @param uuid     The uuid of the player the tank is private to, or null if the tank is public
      * @param capacity The initial capacity of the tank
      */
     public static void addTank(String key, UUID uuid, int capacity) {
-        if(tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
-            GTLog.logger.warn("Overwriting virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", this might cause fluid loss!");
+        if (tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
+            GTLog.logger.warn("Overwriting virtual tank " + key + "/" + (uuid == null ? "null" : uuid.toString()) +
+                    ", this might cause fluid loss!");
         } else if (!tankMap.containsKey(uuid)) {
             tankMap.put(uuid, new HashMap<>());
         }
@@ -93,7 +101,8 @@ public class VirtualTankRegistry extends WorldSavedData {
 
     /**
      * Adds a tank to the registry with {@link #DEFAULT_CAPACITY the default capacity}
-     * @param key The name of the tank
+     * 
+     * @param key  The name of the tank
      * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      */
     public static void addTank(String key, UUID uuid) {
@@ -102,8 +111,9 @@ public class VirtualTankRegistry extends WorldSavedData {
 
     /**
      * Removes a tank from the registry. Use with caution!
-     * @param key The name of the tank
-     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
+     * 
+     * @param key         The name of the tank
+     * @param uuid        The uuid of the player the tank is private to, or null if the tank is public
      * @param removeFluid Whether to remove the tank if it has fluid in it
      */
     public static void delTank(String key, UUID uuid, boolean removeFluid) {
@@ -115,7 +125,8 @@ public class VirtualTankRegistry extends WorldSavedData {
                 }
             }
         } else {
-            GTLog.logger.warn("Attempted to delete tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", which does not exist!");
+            GTLog.logger.warn("Attempted to delete tank " + key + "/" + (uuid == null ? "null" : uuid.toString()) +
+                    ", which does not exist!");
         }
     }
 
@@ -147,20 +158,21 @@ public class VirtualTankRegistry extends WorldSavedData {
                     NBTTagCompound tankCompound = privateTanks.getCompoundTag(key);
                     VirtualTankRegistry.addTank(key, uuid, tankCompound.getInteger("Capacity"));
                     if (!tankCompound.hasKey("Empty")) {
-                        VirtualTankRegistry.getTank(key, uuid).fill(FluidStack.loadFluidStackFromNBT(tankCompound), true);
+                        VirtualTankRegistry.getTank(key, uuid).fill(FluidStack.loadFluidStackFromNBT(tankCompound),
+                                true);
                     }
                 }
             }
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setTag("Private", new NBTTagCompound());
-        tankMap.forEach( (uuid, map) -> {
+        tankMap.forEach((uuid, map) -> {
             NBTTagCompound mapCompound = new NBTTagCompound();
-            map.forEach( (key, tank) -> {
+            map.forEach((key, tank) -> {
                 if (tank.getFluid() != null || tank.getCapacity() != DEFAULT_CAPACITY) {
                     NBTTagCompound tankCompound = new NBTTagCompound();
                     tankCompound.setInteger("Capacity", tank.getCapacity());
@@ -237,14 +249,15 @@ public class VirtualTankRegistry extends WorldSavedData {
         @Override
         public IFluidTankProperties[] getTankProperties() {
             if (this.tankProperties == null) {
-                this.tankProperties = new IFluidTankProperties[]{ new VirtualTankProperties(this) };
+                this.tankProperties = new IFluidTankProperties[] { new VirtualTankProperties(this) };
             }
             return this.tankProperties;
         }
 
         @Override
         public int fill(FluidStack fluidStack, boolean doFill) {
-            if (fluidStack == null || fluidStack.amount <= 0 || (this.fluid != null && !fluidStack.isFluidEqual(this.fluid)))
+            if (fluidStack == null || fluidStack.amount <= 0 ||
+                    (this.fluid != null && !fluidStack.isFluidEqual(this.fluid)))
                 return 0;
 
             int fillAmt = Math.min(fluidStack.amount, this.capacity - this.getFluidAmount());

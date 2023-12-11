@@ -1,17 +1,12 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
+import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,8 +16,25 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoverStorage extends CoverBase implements CoverWithUI {
 
@@ -31,7 +43,8 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     private static final int MAX_HEIGHT = 126;
     private static final int SLOT_SIZE = 18;
 
-    public CoverStorage(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+    public CoverStorage(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                        @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
     }
 
@@ -41,7 +54,8 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.STORAGE.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
@@ -51,7 +65,8 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                  @NotNull CuboidRayTraceResult hitResult) {
         if (!getCoverableView().getWorld().isRemote) {
             openUI((EntityPlayerMP) player);
         }
@@ -59,7 +74,8 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) player);
         }
@@ -67,21 +83,35 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, MAX_WIDTH, MAX_HEIGHT);
-        builder.label(5, 5, "cover.storage.title");
-        for (int index = 0; index < storageHandler.getSlots(); index++) {
-            builder.slot(storageHandler, index, (index * SLOT_SIZE) + 7, (MAX_HEIGHT - SLOT_SIZE * 5) / 2, true, true, GuiTextures.SLOT);
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
+                                boolean isClient) {
+        guiSyncManager.registerSlotGroup("item_inv", this.storageHandler.getSlots());
+
+        int rowSize = this.storageHandler.getSlots();
+        List<List<IWidget>> widgets = new ArrayList<>();
+        widgets.add(new ArrayList<>());
+        for (int i = 0; i < rowSize; i++) {
+            widgets.get(0)
+                    .add(new ItemSlot().slot(SyncHandlers.itemSlot(this.storageHandler, i).slotGroup("item_inv")));
         }
-
-        builder.bindPlayerInventory(player.inventory, (MAX_HEIGHT - SLOT_SIZE * 2) / 2 - 1);
-
-        return builder.build(this, player);
+        return GTGuis.createPanel(this, MAX_WIDTH, MAX_HEIGHT)
+                .child(IKey.lang("cover.storage.title").asWidget().pos(5, 5))
+                .bindPlayerInventory()
+                .child(new Grid()
+                        .top((MAX_HEIGHT - SLOT_SIZE * 5) / 2).left(7).right(7).height(18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .matrix(widgets));
     }
 
     /**
      * @deprecated Only exists for compatibility with the crafting table cover and will be removed in the future.
-     * Do not depend on this method.
+     *             Do not depend on this method.
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @ApiStatus.Internal

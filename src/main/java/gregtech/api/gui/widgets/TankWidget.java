@@ -9,6 +9,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.*;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -28,10 +29,11 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ApiStatus;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +65,8 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
     public TankWidget setClient() {
         this.isClient = true;
-        this.lastFluidInTank = fluidTank != null ? fluidTank.getFluid() != null ? fluidTank.getFluid().copy() : null : null;
+        this.lastFluidInTank = fluidTank != null ? fluidTank.getFluid() != null ? fluidTank.getFluid().copy() : null :
+                null;
         this.lastTankCapacity = fluidTank != null ? fluidTank.getCapacity() : 0;
         return this;
     }
@@ -100,7 +103,8 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
     public TankWidget setContainerClicking(boolean allowClickContainerFilling, boolean allowClickContainerEmptying) {
         if (!(fluidTank instanceof IFluidHandler))
-            throw new IllegalStateException("Container IO is only supported for fluid tanks that implement IFluidHandler");
+            throw new IllegalStateException(
+                    "Container IO is only supported for fluid tanks that implement IFluidHandler");
         this.allowClickFilling = allowClickContainerFilling;
         this.allowClickEmptying = allowClickContainerEmptying;
         return this;
@@ -149,7 +153,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 textureArea.draw(pos.x, pos.y, size.width, size.height);
             }
         }
-        //do not draw fluids if they are handled by JEI - it draws them itself
+        // do not draw fluids if they are handled by JEI - it draws them itself
         if (lastFluidInTank != null && !gui.isJEIHandled) {
             GlStateManager.disableBlend();
             FluidStack stackToDraw = lastFluidInTank;
@@ -170,7 +174,9 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 String s = TextFormattingUtil.formatLongToCompactString(lastFluidInTank.amount, 4) + "L";
 
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s,
+                        (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21,
+                        (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();
@@ -189,7 +195,8 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 tooltips.add(fluid.getLocalizedName(lastFluidInTank));
 
                 // Amount Tooltip
-                tooltips.add(LocalizationUtils.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
+                tooltips.add(
+                        LocalizationUtils.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
 
                 // Add various tooltips from the material
                 List<String> formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
@@ -207,15 +214,13 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 tooltips.add(LocalizationUtils.format("gregtech.fluid.empty"));
                 tooltips.add(LocalizationUtils.format("gregtech.fluid.amount", 0, lastTankCapacity));
             }
-            if(allowClickEmptying && allowClickFilling) {
+            if (allowClickEmptying && allowClickFilling) {
                 tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
                 tooltips.add(LocalizationUtils.format("gregtech.fluid.click_combined"));
-            }
-            else if (allowClickFilling) {
+            } else if (allowClickFilling) {
                 tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
                 tooltips.add(LocalizationUtils.format("gregtech.fluid.click_to_fill"));
-            }
-            else if (allowClickEmptying) {
+            } else if (allowClickEmptying) {
                 tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
                 tooltips.add(LocalizationUtils.format("gregtech.fluid.click_to_empty"));
             }
@@ -253,8 +258,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
         }
         if (fluidStack == null && lastFluidInTank != null) {
             this.lastFluidInTank = null;
-            writeUpdateInfo(1, buffer -> {
-            });
+            writeUpdateInfo(1, buffer -> {});
         } else if (fluidStack != null) {
             if (!fluidStack.isFluidEqual(lastFluidInTank)) {
                 this.lastFluidInTank = fluidStack.copy();
@@ -304,7 +308,8 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
         ItemStack heldItemSizedOne = currentStack.copy();
         heldItemSizedOne.setCount(1);
-        IFluidHandlerItem fluidHandlerItem = heldItemSizedOne.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem fluidHandlerItem = heldItemSizedOne
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (fluidHandlerItem == null) return ItemStack.EMPTY;
 
         FluidStack tankFluid = fluidTank.getFluid();
@@ -369,7 +374,8 @@ public class TankWidget extends Widget implements IIngredientSlot {
         ItemStack itemStackEmptied = ItemStack.EMPTY;
         int fluidAmountTaken = 0;
 
-        IFluidHandlerItem fluidHandler = heldItemSizedOne.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem fluidHandler = heldItemSizedOne
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (fluidHandler == null) return ItemStack.EMPTY;
 
         FluidStack drained = fluidHandler.drain(freeSpace, true);
@@ -406,7 +412,8 @@ public class TankWidget extends Widget implements IIngredientSlot {
         currentFluid = currentFluid.copy();
 
         int originalFluidAmount = fluidTank.getFluidAmount();
-        IFluidHandlerItem handler = heldItemSizedOne.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem handler = heldItemSizedOne.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                null);
         if (handler == null) return ItemStack.EMPTY;
         ItemStack filledContainer = fillFluidContainer(currentFluid, heldItemSizedOne);
         if (filledContainer != ItemStack.EMPTY) {
@@ -431,7 +438,8 @@ public class TankWidget extends Widget implements IIngredientSlot {
     }
 
     private ItemStack fillFluidContainer(FluidStack fluidStack, ItemStack itemStack) {
-        IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem fluidHandlerItem = itemStack
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (fluidHandlerItem == null) return ItemStack.EMPTY;
         int filledAmount = fluidHandlerItem.fill(fluidStack, true);
         if (filledAmount > 0) {

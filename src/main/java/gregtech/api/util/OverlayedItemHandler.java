@@ -3,14 +3,15 @@ package gregtech.api.util;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class OverlayedItemHandler {
+
     private final OverlayedItemHandlerSlot[] originalSlots;
     private final OverlayedItemHandlerSlot[] slots;
     private final IItemHandler overlayedHandler;
 
-    public OverlayedItemHandler(@Nonnull IItemHandler toOverlay) {
+    public OverlayedItemHandler(@NotNull IItemHandler toOverlay) {
         this.slots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
         this.originalSlots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
         this.overlayedHandler = toOverlay;
@@ -38,7 +39,6 @@ public class OverlayedItemHandler {
      * @param slot the slot to populate
      */
 
-
     private void initSlot(int slot) {
         if (this.originalSlots[slot] == null) {
             ItemStack stackToMirror = overlayedHandler.getStackInSlot(slot);
@@ -48,17 +48,16 @@ public class OverlayedItemHandler {
         }
     }
 
-
-    public int insertStackedItemStack(@Nonnull ItemStack stack, int amountToInsert) {
+    public int insertStackedItemStack(@NotNull ItemStack stack, int amountToInsert) {
         int lastKnownPopulatedSlot = 0;
-        //loop through all slots, looking for ones matching the key
+        // loop through all slots, looking for ones matching the key
         for (int i = 0; i < this.slots.length; i++) {
-            //populate the slot if it's not already populated
+            // populate the slot if it's not already populated
             initSlot(i);
             // if it's the same item or there is no item in the slot
             ItemStack slotKey = this.slots[i].getItemStack();
             if (slotKey.isEmpty() || ItemStackHashStrategy.comparingAllButCount().equals(slotKey, stack)) {
-                //if the slot is not full
+                // if the slot is not full
                 int canInsertUpTo = this.slots[i].getSlotLimit() - this.slots[i].getCount();
                 if (canInsertUpTo > 0) {
                     int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
@@ -77,10 +76,10 @@ public class OverlayedItemHandler {
 
         // if the amountToInsert is still greater than 0, we need to insert it into a new slot
         if (amountToInsert > 0) {
-            //loop through all slots, starting from after the last seen slot with items in it, looking for empty ones.
+            // loop through all slots, starting from after the last seen slot with items in it, looking for empty ones.
             for (int i = lastKnownPopulatedSlot + 1; i < this.slots.length; i++) {
                 OverlayedItemHandlerSlot slot = this.slots[i];
-                //if the slot is empty
+                // if the slot is empty
                 if (slot.getItemStack().isEmpty()) {
                     int canInsertUpTo = Math.min(stack.getMaxStackSize(), slot.getSlotLimit());
                     if (canInsertUpTo > 0) {
@@ -95,16 +94,17 @@ public class OverlayedItemHandler {
                 }
             }
         }
-        //return the amount that wasn't inserted
+        // return the amount that wasn't inserted
         return amountToInsert;
     }
 
     private static class OverlayedItemHandlerSlot {
+
         private ItemStack itemStack = ItemStack.EMPTY;
         private int count = 0;
         private int slotLimit;
 
-        protected OverlayedItemHandlerSlot(@Nonnull ItemStack stackToMirror, int slotLimit) {
+        protected OverlayedItemHandlerSlot(@NotNull ItemStack stackToMirror, int slotLimit) {
             if (!stackToMirror.isEmpty()) {
                 this.itemStack = stackToMirror.copy();
                 this.count = stackToMirror.getCount();
@@ -114,7 +114,7 @@ public class OverlayedItemHandler {
             }
         }
 
-        protected OverlayedItemHandlerSlot(@Nonnull ItemStack itemStack, int slotLimit, int count) {
+        protected OverlayedItemHandlerSlot(@NotNull ItemStack itemStack, int slotLimit, int count) {
             this.itemStack = itemStack;
             this.count = count;
             this.slotLimit = slotLimit;
@@ -130,14 +130,15 @@ public class OverlayedItemHandler {
 
         /**
          * Storage of this ItemStack elsewhere will require copying it
+         * 
          * @return the stored ItemStack
          */
-        @Nonnull
+        @NotNull
         public ItemStack getItemStack() {
             return this.itemStack;
         }
 
-        public void setItemStack(@Nonnull ItemStack itemStack) {
+        public void setItemStack(@NotNull ItemStack itemStack) {
             if (!ItemStackHashStrategy.comparingAllButCount().equals(this.itemStack, itemStack)) {
                 this.itemStack = itemStack;
                 this.slotLimit = Math.min(itemStack.getMaxStackSize(), slotLimit);
@@ -148,7 +149,7 @@ public class OverlayedItemHandler {
             this.count = count;
         }
 
-        @Nonnull
+        @NotNull
         OverlayedItemHandlerSlot copy() {
             return new OverlayedItemHandlerSlot(this.itemStack, this.slotLimit, this.count);
         }

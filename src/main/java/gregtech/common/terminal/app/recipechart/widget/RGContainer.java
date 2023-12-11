@@ -6,6 +6,7 @@ import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class RGContainer extends DraggableScrollableWidgetGroup {
+
     protected TerminalOSWidget os;
     private RGNode selectedNode;
     private RGLine selectedLine;
@@ -83,7 +85,8 @@ public class RGContainer extends DraggableScrollableWidgetGroup {
     }
 
     public void addOrUpdateLine(RGNode parent, RGNode child) {
-        Optional<RGLine> optional = lines.stream().filter(line -> line.getParent() == parent && line.getChild() == child).findFirst();
+        Optional<RGLine> optional = lines.stream()
+                .filter(line -> line.getParent() == parent && line.getChild() == child).findFirst();
         if (!optional.isPresent()) {
             RGLine line = new RGLine(parent, child, this);
             lines.add(line);
@@ -94,7 +97,8 @@ public class RGContainer extends DraggableScrollableWidgetGroup {
     }
 
     public RGLine getLine(RGNode parent, RGNode child) {
-        Optional<RGLine> optional = lines.stream().filter(line -> line.getParent() == parent && line.getChild() == child).findFirst();
+        Optional<RGLine> optional = lines.stream()
+                .filter(line -> line.getParent() == parent && line.getChild() == child).findFirst();
         return optional.orElse(null);
     }
 
@@ -115,11 +119,11 @@ public class RGContainer extends DraggableScrollableWidgetGroup {
             this.lines.clear();
             NBTTagList nodesList = nbt.getTagList("nodes", Constants.NBT.TAG_COMPOUND);
             for (NBTBase node : nodesList) { // build nodes
-                nodes.add(RGNode.deserializeNodeNBT((NBTTagCompound)node, this));
+                nodes.add(RGNode.deserializeNodeNBT((NBTTagCompound) node, this));
             }
             Iterator<NBTBase> iterator = nodesList.iterator(); // build relations
             for (RGNode node : nodes) {
-                NBTTagCompound nodeTag = (NBTTagCompound)iterator.next();
+                NBTTagCompound nodeTag = (NBTTagCompound) iterator.next();
                 node.deserializeRelationNBT(nodeTag.getTagList("parents", Constants.NBT.TAG_INT_ARRAY),
                         nodeTag.getTagList("children", Constants.NBT.TAG_INT_ARRAY));
                 this.addWidget(node);
@@ -130,7 +134,7 @@ public class RGContainer extends DraggableScrollableWidgetGroup {
             lines.clear();
             NBTTagList linesList = nbt.getTagList("lines", Constants.NBT.TAG_COMPOUND);
             for (NBTBase node : linesList) { // build nodes
-                RGLine line = RGLine.deserializeLineNBT((NBTTagCompound)node, this);
+                RGLine line = RGLine.deserializeLineNBT((NBTTagCompound) node, this);
                 lines.add(line);
                 this.addWidget(0, line);
             }
@@ -200,5 +204,4 @@ public class RGContainer extends DraggableScrollableWidgetGroup {
         }
         return false;
     }
-
 }

@@ -8,6 +8,7 @@ import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ColorWidget extends WidgetGroup {
+
     private int red = 255;
     private int green = 255;
     private int blue = 255;
@@ -46,44 +48,50 @@ public class ColorWidget extends WidgetGroup {
                 }, true)
                 .setTextSupplier(() -> Integer.toString(red), true)
                 .setValidator(ColorWidget::checkValid);
-        TextFieldWidget greenField = new TextFieldWidget(barWidth + 5, barHeight + 5, 30, barHeight, textFieldBackground, null, null)
-                .setTextResponder((t) -> {
-                    setGreen(t.isEmpty() ? 0 : Integer.parseInt(t));
-                    if (onColorChanged != null) {
-                        onColorChanged.accept(getColor());
-                    }
-                    writeClientAction(2, buffer -> buffer.writeInt(getColor()));
-                }, true)
-                .setTextSupplier(() -> Integer.toString(green), true)
-                .setValidator(ColorWidget::checkValid);
-        TextFieldWidget blueField = new TextFieldWidget(barWidth + 5, (barHeight + 5) * 2, 30, barHeight, textFieldBackground, null, null)
-                .setTextResponder((t) -> {
-                    setBlue(t.isEmpty() ? 0 : Integer.parseInt(t));
-                    if (onColorChanged != null) {
-                        onColorChanged.accept(getColor());
-                    }
-                    writeClientAction(2, buffer -> buffer.writeInt(getColor()));
-                }, true)
-                .setTextSupplier(() -> Integer.toString(blue), true)
-                .setValidator(ColorWidget::checkValid);
-        TextFieldWidget alphaField = new TextFieldWidget(barWidth + 5, (barHeight + 5) * 3, 30, barHeight, textFieldBackground, null, null)
-                .setTextResponder((t) -> {
-                    setAlpha(t.isEmpty() ? 0 : Integer.parseInt(t));
-                    if (onColorChanged != null) {
-                        onColorChanged.accept(getColor());
-                    }
-                    writeClientAction(2, buffer -> buffer.writeInt(getColor()));
-                }, true)
-                .setTextSupplier(() -> Integer.toString(alpha), true)
-                .setValidator(ColorWidget::checkValid);
+        TextFieldWidget greenField = new TextFieldWidget(barWidth + 5, barHeight + 5, 30, barHeight,
+                textFieldBackground, null, null)
+                        .setTextResponder((t) -> {
+                            setGreen(t.isEmpty() ? 0 : Integer.parseInt(t));
+                            if (onColorChanged != null) {
+                                onColorChanged.accept(getColor());
+                            }
+                            writeClientAction(2, buffer -> buffer.writeInt(getColor()));
+                        }, true)
+                        .setTextSupplier(() -> Integer.toString(green), true)
+                        .setValidator(ColorWidget::checkValid);
+        TextFieldWidget blueField = new TextFieldWidget(barWidth + 5, (barHeight + 5) * 2, 30, barHeight,
+                textFieldBackground, null, null)
+                        .setTextResponder((t) -> {
+                            setBlue(t.isEmpty() ? 0 : Integer.parseInt(t));
+                            if (onColorChanged != null) {
+                                onColorChanged.accept(getColor());
+                            }
+                            writeClientAction(2, buffer -> buffer.writeInt(getColor()));
+                        }, true)
+                        .setTextSupplier(() -> Integer.toString(blue), true)
+                        .setValidator(ColorWidget::checkValid);
+        TextFieldWidget alphaField = new TextFieldWidget(barWidth + 5, (barHeight + 5) * 3, 30, barHeight,
+                textFieldBackground, null, null)
+                        .setTextResponder((t) -> {
+                            setAlpha(t.isEmpty() ? 0 : Integer.parseInt(t));
+                            if (onColorChanged != null) {
+                                onColorChanged.accept(getColor());
+                            }
+                            writeClientAction(2, buffer -> buffer.writeInt(getColor()));
+                        }, true)
+                        .setTextSupplier(() -> Integer.toString(alpha), true)
+                        .setValidator(ColorWidget::checkValid);
         this.addWidget(redField);
         this.addWidget(greenField);
         this.addWidget(blueField);
         this.addWidget(alphaField);
         redButton = new CircleButtonWidget(barWidth, barHeight / 2, 4, 1, 0).setFill(0xffff0000).setStrokeAnima(-1);
-        greenButton = new CircleButtonWidget(barWidth, barHeight / 2 + barHeight + 5, 4, 1, 0).setFill(0xff00ff00).setStrokeAnima(-1);
-        blueButton = new CircleButtonWidget(barWidth, barHeight / 2 + 2 * (barHeight + 5), 4, 1, 0).setFill(0xff0000ff).setStrokeAnima(-1);
-        alphaButton = new CircleButtonWidget(barWidth, barHeight / 2 + 3 * (barHeight + 5), 4, 1, 0).setFill(-1).setStrokeAnima(-1);
+        greenButton = new CircleButtonWidget(barWidth, barHeight / 2 + barHeight + 5, 4, 1, 0).setFill(0xff00ff00)
+                .setStrokeAnima(-1);
+        blueButton = new CircleButtonWidget(barWidth, barHeight / 2 + 2 * (barHeight + 5), 4, 1, 0).setFill(0xff0000ff)
+                .setStrokeAnima(-1);
+        alphaButton = new CircleButtonWidget(barWidth, barHeight / 2 + 3 * (barHeight + 5), 4, 1, 0).setFill(-1)
+                .setStrokeAnima(-1);
         this.addWidget(redButton);
         this.addWidget(greenButton);
         this.addWidget(blueButton);
@@ -226,10 +234,14 @@ public class ColorWidget extends WidgetGroup {
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         int x = getPosition().x;
         int y = getPosition().y;
-        drawGradientRect(x, y + 2, barWidth, 5, (255 << 24) | (0) | (green << 8) | (blue), (255 << 24) | (255 << 16) | (green << 8) | (blue), true);
-        drawGradientRect(x, y + barHeight + 5 + 2, barWidth, 5, (255 << 24) | (red << 16) | (0) | (blue), (255 << 24) | (red << 16) | (255 << 8) | (blue), true);
-        drawGradientRect(x, y + 2 * (barHeight + 5) + 2, barWidth, 5, (255 << 24) | (red << 16) | (green << 8) | (0), (255 << 24) | (red << 16) | (green << 8) | (255), true);
-        drawGradientRect(x, y + 3 * (barHeight + 5) + 2, barWidth, 5, (0) | (red << 16) | (green << 8) | (blue), (255 << 24) | (red << 16) | (green << 8) | (blue), true);
+        drawGradientRect(x, y + 2, barWidth, 5, (255 << 24) | (0) | (green << 8) | (blue),
+                (255 << 24) | (255 << 16) | (green << 8) | (blue), true);
+        drawGradientRect(x, y + barHeight + 5 + 2, barWidth, 5, (255 << 24) | (red << 16) | (0) | (blue),
+                (255 << 24) | (red << 16) | (255 << 8) | (blue), true);
+        drawGradientRect(x, y + 2 * (barHeight + 5) + 2, barWidth, 5, (255 << 24) | (red << 16) | (green << 8) | (0),
+                (255 << 24) | (red << 16) | (green << 8) | (255), true);
+        drawGradientRect(x, y + 3 * (barHeight + 5) + 2, barWidth, 5, (0) | (red << 16) | (green << 8) | (blue),
+                (255 << 24) | (red << 16) | (green << 8) | (blue), true);
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 

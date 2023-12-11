@@ -1,7 +1,7 @@
 package gregtech.core.command.internal;
 
-import com.google.common.collect.Lists;
 import gregtech.api.util.ClipboardUtil;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,31 +12,34 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.server.command.CommandTreeBase;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 class GregTechCommand extends CommandTreeBase {
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "gregtech";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getAliases() {
         return Lists.newArrayList("gt");
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getUsage(@Nonnull ICommandSender sender) {
+    public String getUsage(@NotNull ICommandSender sender) {
         return "gregtech.command.usage";
     }
 
     @Override
-    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, String[] args) throws CommandException {
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender,
+                        String[] args) throws CommandException {
         if (args.length > 0) {
             if (args[0].equals("copy")) {
                 StringBuilder message = new StringBuilder();
@@ -50,14 +53,16 @@ class GregTechCommand extends CommandTreeBase {
                 if (sender.getCommandSenderEntity() instanceof EntityPlayerMP) {
                     ClipboardUtil.copyToClipboard((EntityPlayerMP) sender.getCommandSenderEntity(), message.toString());
                     sender.sendMessage(new TextComponentTranslation("gregtech.command.copy.copied_start")
-                            .appendSibling(new TextComponentString(message.toString()).setStyle(new Style().setColor(TextFormatting.GOLD)))
+                            .appendSibling(new TextComponentString(message.toString())
+                                    .setStyle(new Style().setColor(TextFormatting.GOLD)))
                             .appendSibling(new TextComponentTranslation("gregtech.command.copy.copied_end")));
                 }
                 return;
             }
             if (args[0].equals("util")) {
                 if (sender.getCommandSenderEntity() instanceof EntityPlayerMP) {
-                    sender.sendMessage(new TextComponentString("\u00A76/gt util hand\u00A7r was yeeted. The new command is \u00A76/gt hand\u00A7r"));
+                    sender.sendMessage(new TextComponentString(
+                            "\u00A76/gt util hand\u00A7r was yeeted. The new command is \u00A76/gt hand\u00A7r"));
                 }
                 return;
             }

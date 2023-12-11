@@ -10,15 +10,17 @@ import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaRegistrar;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -52,7 +54,8 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
 
     @NotNull
     @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor,
+                                     IWailaConfigHandler config) {
         if (!config.getConfig("gregtech.recipe_logic") || accessor.getTileEntity() == null) {
             return tooltip;
         }
@@ -67,8 +70,10 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
 
                 if (accessor.getTileEntity() instanceof IGregTechTileEntity gtte) {
                     MetaTileEntity mte = gtte.getMetaTileEntity();
-                    if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler || mte instanceof RecipeMapSteamMultiblockController) {
-                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " + I18n.format(Materials.Steam.getUnlocalizedName());
+                    if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
+                            mte instanceof RecipeMapSteamMultiblockController) {
+                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " +
+                                I18n.format(Materials.Steam.getUnlocalizedName());
                     }
                     AbstractRecipeLogic arl = mte.getRecipeLogic();
                     if (arl != null) {
@@ -76,7 +81,8 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                     }
                 }
                 if (endText == null) {
-                    endText = ": " + absEUt + TextFormatting.RESET + " EU/t (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.RESET + ")";
+                    endText = ": " + absEUt + TextFormatting.RESET + " EU/t (" +
+                            GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.RESET + ")";
                 }
 
                 if (EUt == 0) return tooltip;

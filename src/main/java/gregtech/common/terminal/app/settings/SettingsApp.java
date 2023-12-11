@@ -15,6 +15,7 @@ import gregtech.common.terminal.app.settings.widgets.OsSettings;
 import gregtech.common.terminal.app.settings.widgets.ThemeSettings;
 
 public class SettingsApp extends AbstractApplication {
+
     private TabGroup<AbstractWidgetGroup> tabGroup;
 
     public SettingsApp() {
@@ -25,7 +26,8 @@ public class SettingsApp extends AbstractApplication {
     public AbstractApplication initApp() {
         if (isClient) {
             this.addWidget(new ImageWidget(5, 15, 323, 212, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
-            this.tabGroup = new TabGroup<>(5, 15, new CustomTabListRenderer(TerminalTheme.COLOR_B_2, TerminalTheme.COLOR_F_2, 323 / 3, 10));
+            this.tabGroup = new TabGroup<>(5, 15,
+                    new CustomTabListRenderer(TerminalTheme.COLOR_B_2, TerminalTheme.COLOR_F_2, 323 / 3, 10));
             this.addWidget(this.tabGroup);
             this.tabGroup.setOnTabChanged(this::onPagesChanged);
             addTab("terminal.settings.theme", new ThemeSettings(getOs()));
@@ -47,7 +49,12 @@ public class SettingsApp extends AbstractApplication {
     }
 
     private void addTab(String name, AbstractWidgetGroup widget) {
-        tabGroup.addTab(new IGuiTextureTabInfo(new TextTexture(name, -1).setWidth(323 / 3 - 5).setType(tabGroup.getAllTag().isEmpty() ? TextTexture.TextType.ROLL : TextTexture.TextType.HIDE), name), widget);
+        tabGroup.addTab(
+                new IGuiTextureTabInfo(
+                        new TextTexture(name, -1).setWidth(323 / 3 - 5).setType(
+                                tabGroup.getAllTag().isEmpty() ? TextTexture.TextType.ROLL : TextTexture.TextType.HIDE),
+                        name),
+                widget);
     }
 
     @Override

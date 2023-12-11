@@ -1,6 +1,7 @@
 package gregtech.api.recipes.chance.output;
 
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -37,7 +38,8 @@ public class ChancedOutputList<I, T extends ChancedOutput<I>> {
      * @param machineTier   the tier the recipe is run at
      * @return a list of the rolled outputs
      */
-    public @Nullable @Unmodifiable List<T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
+    public @Nullable @Unmodifiable List<T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier,
+                                                int machineTier) {
         return chancedOutputLogic.roll(getChancedEntries(), boostFunction, baseTier, machineTier);
     }
 

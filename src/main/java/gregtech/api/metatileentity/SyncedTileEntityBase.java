@@ -5,8 +5,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
 import gregtech.api.util.GTLog;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,7 +13,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +28,11 @@ import java.util.function.Consumer;
 public abstract class SyncedTileEntityBase extends BlockStateTileEntity implements ISyncedTileEntity {
 
     private final PacketDataList updates = new PacketDataList();
+
+    public @Nullable TileEntity getNeighbor(EnumFacing facing) {
+        if (world == null || pos == null) return null;
+        return world.getTileEntity(pos.offset(facing));
+    }
 
     @Override
     public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
@@ -81,7 +90,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
                     if (className == null) {
                         className = this.getClass().getName();
                     }
-                    GTLog.logger.error("Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
+                    GTLog.logger.error(
+                            "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
                             className, discriminatorKey, backedBuffer.readableBytes());
                 }
             }

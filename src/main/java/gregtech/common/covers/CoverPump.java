@@ -1,11 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
-import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -17,19 +11,29 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.IncrementButtonWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -37,10 +41,16 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import com.google.common.math.IntMath;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Function;
 import java.util.function.IntSupplier;
 
@@ -132,21 +142,25 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     protected int doTransferFluids(int transferLimit) {
-        BlockPos pos = getPos().offset(getAttachedSide());
-        TileEntity tileEntity = getWorld().getTileEntity(pos);
-        IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide().getOpposite());
-        IFluidHandler myFluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
+        TileEntity tileEntity = getNeighbor(getAttachedSide());
+        IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide().getOpposite());
+        IFluidHandler myFluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                getAttachedSide());
         if (fluidHandler == null || myFluidHandler == null) {
             return 0;
         }
         return doTransferFluidsInternal(myFluidHandler, fluidHandler, transferLimit);
     }
 
-    protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler, int transferLimit) {
+    protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler,
+                                           int transferLimit) {
         if (pumpMode == PumpMode.IMPORT) {
-            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, fluidFilter::testFluidStack);
+            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit,
+                    fluidFilter::testFluidStack);
         } else if (pumpMode == PumpMode.EXPORT) {
-            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, fluidFilter::testFluidStack);
+            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit,
+                    fluidFilter::testFluidStack);
         }
         return 0;
     }
@@ -178,33 +192,35 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 .setDefaultTooltip()
                 .setShouldClientCallback(false));
 
-        TextFieldWidget2 textField = new TextFieldWidget2(45, 26, 60, 20, () -> bucketMode == BucketMode.BUCKET ? Integer.toString(transferRate / 1000) : Integer.toString(transferRate), val -> {
-            if (val != null && !val.isEmpty()) {
-                int amount = Integer.parseInt(val);
-                if (this.bucketMode == BucketMode.BUCKET) {
-                    amount = IntMath.saturatedMultiply(amount, 1000);
-                }
-                setTransferRate(amount);
-            }
-        })
-                .setCentered(true)
-                .setNumbersOnly(1, bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
-                .setMaxLength(8);
+        TextFieldWidget2 textField = new TextFieldWidget2(45, 26, 60, 20, () -> bucketMode == BucketMode.BUCKET ?
+                Integer.toString(transferRate / 1000) : Integer.toString(transferRate), val -> {
+                    if (val != null && !val.isEmpty()) {
+                        int amount = Integer.parseInt(val);
+                        if (this.bucketMode == BucketMode.BUCKET) {
+                            amount = IntMath.saturatedMultiply(amount, 1000);
+                        }
+                        setTransferRate(amount);
+                    }
+                })
+                        .setCentered(true)
+                        .setNumbersOnly(1,
+                                bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
+                        .setMaxLength(8);
         primaryGroup.addWidget(textField);
 
         primaryGroup.addWidget(new CycleButtonWidget(106, 20, 30, 20,
                 BucketMode.class, this::getBucketMode, mode -> {
-            if (mode != bucketMode) {
-                setBucketMode(mode);
-            }
-        }));
+                    if (mode != bucketMode) {
+                        setBucketMode(mode);
+                    }
+                }));
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 43, 75, 18,
                 PumpMode.class, this::getPumpMode, this::setPumpMode));
 
         primaryGroup.addWidget(new CycleButtonWidget(7, 160, 116, 20,
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
         this.fluidFilter.initUI(88, primaryGroup::addWidget);
 
@@ -238,7 +254,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     @Override
-    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
@@ -282,7 +299,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         if (pumpMode == PumpMode.EXPORT) {
             Textures.PUMP_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
@@ -347,6 +365,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     public enum PumpMode implements IStringSerializable, IIOMode {
+
         IMPORT("cover.pump.mode.import"),
         EXPORT("cover.pump.mode.export");
 
@@ -356,7 +375,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             this.localeName = localeName;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;
@@ -369,6 +388,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     public enum BucketMode implements IStringSerializable {
+
         BUCKET("cover.bucket.mode.bucket"),
         MILLI_BUCKET("cover.bucket.mode.milli_bucket");
 
@@ -378,7 +398,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             this.localeName = localeName;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;
@@ -387,7 +407,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     private class CoverableFluidHandlerWrapper extends FluidHandlerDelegate {
 
-        public CoverableFluidHandlerWrapper(IFluidHandler delegate) {
+        public CoverableFluidHandlerWrapper(@NotNull IFluidHandler delegate) {
             super(delegate);
         }
 
