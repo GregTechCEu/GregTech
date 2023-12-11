@@ -56,6 +56,13 @@ public class GTGuiTextures {
             .canApplyTheme()
             .build();
 
+    public static final UITexture BACKGROUND_POPUP = UITexture.builder()
+            .location(GTValues.MODID, "textures/gui/base/background_popup.png")
+            .imageSize(195, 136)
+            .adaptable(4)
+            .canApplyTheme()
+            .build();
+
     // todo BORDERED/BOXED backgrounds will not be ported, if possible
 
     public static final UITexture BACKGROUND_BRONZE = UITexture.builder()

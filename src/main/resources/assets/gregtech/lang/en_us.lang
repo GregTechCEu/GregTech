@@ -531,7 +531,7 @@ metaitem.tool.datamodule.name=Data Module
 metaitem.tool.datamodule.tooltip=Storage for Incredibly Complex Data/n§cCan only be read by a Data Bank
 metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
-metaitem.circuit.integrated.gui=Programmed Circuit Configuration
+metaitem.circuit.integrated.gui=Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
 item.glass.lens=Glass Lens (White)
