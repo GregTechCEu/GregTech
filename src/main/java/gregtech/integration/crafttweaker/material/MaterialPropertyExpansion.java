@@ -156,20 +156,27 @@ public class MaterialPropertyExpansion {
     public static void addFluid(Material m, @Optional String fluidTypeName, @Optional boolean hasBlock) {
         if (checkFrozen("add a Fluid to a material")) return;
         FluidState type = validateFluidState(fluidTypeName);
-        if (m.hasProperty(PropertyKey.FLUID)) {
-            FluidStorage storage = m.getProperty(PropertyKey.FLUID).getStorage();
-            FluidBuilder builder = new FluidBuilder();
-            if (hasBlock) builder.block();
+        FluidProperty property = m.getProperty(PropertyKey.FLUID);
+        if (property == null) {
+            property = new FluidProperty();
+            m.setProperty(PropertyKey.FLUID, property);
+        }
+
+        FluidStorage storage = property.getStorage();
+        FluidBuilder builder = switch (type) {
+            case LIQUID -> storage.getQueuedBuilder(FluidStorageKeys.LIQUID);
+            case GAS -> storage.getQueuedBuilder(FluidStorageKeys.GAS);
+            case PLASMA -> storage.getQueuedBuilder(FluidStorageKeys.PLASMA);
+        };
+        if (builder == null) {
+            builder = new FluidBuilder();
             switch (type) {
                 case LIQUID -> storage.enqueueRegistration(FluidStorageKeys.LIQUID, builder);
                 case GAS -> storage.enqueueRegistration(FluidStorageKeys.GAS, builder.state(FluidState.GAS));
                 case PLASMA -> storage.enqueueRegistration(FluidStorageKeys.PLASMA, builder.state(FluidState.PLASMA));
             }
-        } else {
-            FluidProperty property = new FluidProperty();
-            property.getStorage().enqueueRegistration(FluidStorageKeys.LIQUID, new FluidBuilder());
-            m.setProperty(PropertyKey.FLUID, property);
         }
+        if (hasBlock) builder.block();
     }
 
     @ZenMethod
