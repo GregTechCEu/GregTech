@@ -22,7 +22,7 @@ public class CTMaterialHelpers {
         if (fluidTypeName.equals("gas")) return FluidState.GAS;
         if (fluidTypeName.equals("plasma")) return FluidState.PLASMA;
 
-        String message = "Fluid Type must be either \"liquid\", \"gas\", or \"acid\"!";
+        String message = "Fluid Type must be either \"liquid\", \"gas\", or \"plasma\"!";
         CraftTweakerAPI.logError(message);
         throw new IllegalArgumentException(message);
     }
