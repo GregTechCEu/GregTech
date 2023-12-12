@@ -26,35 +26,6 @@ public enum VanillaParticleEffects implements IMachineParticleEffect {
         mte.getWorld().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, x, y, z, 0, 0, 0);
     }),
 
-    MUFFLER_SMOKE(mte -> {
-        if (mte.getWorld() == null || mte.getPos() == null) return;
-
-        BlockPos pos = mte.getPos();
-        EnumFacing facing = mte.getFrontFacing();
-        float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.25F;
-        float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
-        float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.25F;
-
-        float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
-        float xSpd;
-        float zSpd;
-
-        if (facing.getYOffset() == -1) {
-            float temp = GTValues.RNG.nextFloat() * 2 * (float) Math.PI;
-            xSpd = (float) Math.sin(temp) * 0.1F;
-            zSpd = (float) Math.cos(temp) * 0.1F;
-        } else {
-            xSpd = facing.getXOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
-            zSpd = facing.getZOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
-        }
-
-        xPos += GTValues.RNG.nextFloat() * 0.5F;
-        yPos += GTValues.RNG.nextFloat() * 0.5F;
-        zPos += GTValues.RNG.nextFloat() * 0.5F;
-
-        mte.getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, xSpd, ySpd, zSpd);
-    }),
-
     PBF_SMOKE(mte -> {
         if (mte.getWorld() == null || mte.getPos() == null) return;
 
@@ -200,5 +171,35 @@ public enum VanillaParticleEffects implements IMachineParticleEffect {
         for (EnumParticleTypes particle : particles) {
             mte.getWorld().spawnParticle(particle, x, y, z, 0, 0, 0);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void mufflerEffect(MetaTileEntity mte, EnumParticleTypes particle) {
+        if (mte.getWorld() == null || mte.getPos() == null) return;
+
+        BlockPos pos = mte.getPos();
+        EnumFacing facing = mte.getFrontFacing();
+        float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.25F;
+        float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
+        float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.25F;
+
+        float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
+        float xSpd;
+        float zSpd;
+
+        if (facing.getYOffset() == -1) {
+            float temp = GTValues.RNG.nextFloat() * 2 * (float) Math.PI;
+            xSpd = (float) Math.sin(temp) * 0.1F;
+            zSpd = (float) Math.cos(temp) * 0.1F;
+        } else {
+            xSpd = facing.getXOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
+            zSpd = facing.getZOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
+        }
+
+        xPos += GTValues.RNG.nextFloat() * 0.5F;
+        yPos += GTValues.RNG.nextFloat() * 0.5F;
+        zPos += GTValues.RNG.nextFloat() * 0.5F;
+
+        mte.getWorld().spawnParticle(particle, xPos, yPos, zPos, xSpd, ySpd, zSpd);
     }
 }
