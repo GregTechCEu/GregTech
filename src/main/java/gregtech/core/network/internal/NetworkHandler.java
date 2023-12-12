@@ -146,8 +146,10 @@ public final class NetworkHandler implements INetworkHandler {
         return new FMLProxyPacket(buf, GTValues.MODID);
     }
 
-    private @NotNull IPacket toGTPacket(@NotNull FMLProxyPacket proxyPacket)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private @NotNull IPacket toGTPacket(@NotNull FMLProxyPacket proxyPacket) throws NoSuchMethodException,
+                                                                             InvocationTargetException,
+                                                                             InstantiationException,
+                                                                             IllegalAccessException {
         PacketBuffer payload = (PacketBuffer) proxyPacket.payload();
         var clazz = packetHandler.getPacketClass(payload.readVarInt());
         IPacket packet = clazz.getConstructor().newInstance();
