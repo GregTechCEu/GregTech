@@ -38,6 +38,7 @@ import gregtech.modules.GregTechModules;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -58,6 +59,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -121,7 +123,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
-    private @Nullable List<RecipeBuildAction<R>> recipeBuildActions;
+    private final Map<ResourceLocation, RecipeBuildAction<R>> recipeBuildActions = new Object2ObjectOpenHashMap<>();
     protected @Nullable SoundEvent sound;
     private @Nullable RecipeMap<?> smallRecipeMap;
 
@@ -311,28 +313,41 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
      *
+     * @param name   the unique name of the action
      * @param action the action to perform
      * @return this
      */
-    public RecipeMap<R> onRecipeBuild(@NotNull RecipeBuildAction<R> action) {
-        if (recipeBuildActions == null) {
-            recipeBuildActions = new ArrayList<>();
+    public RecipeMap<R> onRecipeBuild(@NotNull ResourceLocation name, @NotNull RecipeBuildAction<R> action) {
+        if (recipeBuildActions.containsKey(name)) {
+            throw new IllegalArgumentException("Cannot register RecipeBuildAction with duplicate name: " + name);
         }
-        recipeBuildActions.add(action);
+        recipeBuildActions.put(name, action);
         return this;
     }
 
     /**
-     * Overwrite the RecipeMap's build actions with new ones.
-     * <p>
-     * <strong>Use with caution</strong>. You probably want {@link #onRecipeBuild(RecipeBuildAction)} instead.
-     *
-     * @see #onRecipeBuild(RecipeBuildAction)
-     *
-     * @param actions the actions to set
+     * @param name the name of the build action to remove
      */
-    public void setOnBuildActions(@NotNull List<@NotNull RecipeBuildAction<R>> actions) {
-        this.recipeBuildActions = actions;
+    public void removeBuildAction(@NotNull ResourceLocation name) {
+        recipeBuildActions.remove(name);
+    }
+
+    /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param actions the actions to perform
+     */
+    @ApiStatus.Internal
+    protected void onRecipeBuild(@NotNull Map<ResourceLocation, RecipeBuildAction<R>> actions) {
+        recipeBuildActions.putAll(actions);
+    }
+
+    /**
+     * @return the build actions for this RecipeMap's default RecipeBuilder
+     */
+    @ApiStatus.Internal
+    protected @UnmodifiableView @NotNull Collection<@NotNull RecipeBuildAction<R>> getBuildActions() {
+        return this.recipeBuildActions.values();
     }
 
     public RecipeMap<R> allowEmptyOutput() {
@@ -1345,7 +1360,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy().onBuild(recipeBuildActions);
+        return recipeBuilderSample.copy();
     }
 
     /**

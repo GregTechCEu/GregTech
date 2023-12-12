@@ -44,6 +44,7 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenProperty;
 
 import static gregtech.api.GTValues.*;
+import static gregtech.api.util.GTUtility.gregtechId;
 
 /**
  * Notes:
@@ -123,7 +124,7 @@ public final class RecipeMaps {
                     .fluidOutputs(1)
                     .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
                     .sound(GTSoundEvents.ARC)
-                    .onBuild(recipeBuilder -> {
+                    .onBuild(gregtechId("arc_furnace_oxygen"), recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
                             recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.getDuration()));
                         }
@@ -151,7 +152,7 @@ public final class RecipeMaps {
                     .itemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false)
                     .progressBar(GuiTextures.PROGRESS_BAR_CIRCUIT)
                     .sound(GTSoundEvents.ASSEMBLER)
-                    .onBuild(recipeBuilder -> {
+                    .onBuild(gregtechId("assembler_solder"), recipeBuilder -> {
                         var fluidInputs = recipeBuilder.getFluidInputs();
                         if (fluidInputs.size() == 1 && fluidInputs.get(0).getInputFluidStack().getFluid() ==
                                 Materials.SolderingAlloy.getFluid()) {
@@ -160,7 +161,8 @@ public final class RecipeMaps {
                             recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2))
                                     .buildAndRegister();
                         }
-
+                    })
+                    .onBuild(gregtechId("assembler_recycling"), recipeBuilder -> {
                         if (recipeBuilder.isWithRecycling()) {
                             // ignore input fluids for recycling
                             ItemStack outputStack = recipeBuilder.getOutputs().get(0);
@@ -195,7 +197,8 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<AssemblyLineRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>(
             "assembly_line", new AssemblyLineRecipeBuilder(), AssemblyLineUI::new)
-                    .onRecipeBuild(AssemblyLineManager::createDefaultResearchRecipe);
+                    .onRecipeBuild(gregtechId("default_research_recipe"),
+                            AssemblyLineManager::createDefaultResearchRecipe);
 
     /**
      * Example:
@@ -435,7 +438,7 @@ public final class RecipeMaps {
                     .fluidSlotOverlay(GuiTextures.VIAL_OVERLAY_2, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
                     .sound(GTValues.FOOLS.get() ? GTSoundEvents.SCIENCE : GTSoundEvents.CHEMICAL_REACTOR)
-                    .onBuild(recipeBuilder -> RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                    .onBuild(gregtechId("lcr_copy"), recipeBuilder -> RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
                             .inputs(recipeBuilder.getInputs().toArray(new GTRecipeInput[0]))
                             .fluidInputs(recipeBuilder.getFluidInputs())
                             .outputs(recipeBuilder.getOutputs())
@@ -484,7 +487,7 @@ public final class RecipeMaps {
                     .itemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false)
                     .progressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER)
                     .sound(GTSoundEvents.ASSEMBLER)
-                    .onBuild(recipeBuilder -> {
+                    .onBuild(gregtechId("circuit_assembler_solder"), recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
                             recipeBuilder.copy()
                                     .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1,
@@ -606,7 +609,7 @@ public final class RecipeMaps {
                     .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_SLICE)
                     .sound(GTSoundEvents.CUT)
-                    .onBuild(recipeBuilder -> {
+                    .onBuild(gregtechId("cutter_fluid"), recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
                             int duration = recipeBuilder.getDuration();
                             int eut = recipeBuilder.getEUt();

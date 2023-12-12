@@ -44,9 +44,9 @@ import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +80,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected GTRecipeCategory category;
     protected boolean isCTRecipe = false;
     protected int parallel = 0;
-    protected @Nullable @UnmodifiableView List<RecipeBuildAction<R>> onBuildActions = null;
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
     protected @Nullable IRecipePropertyStorage recipePropertyStorage = null;
     protected boolean recipePropertyStorageErrored = false;
@@ -131,8 +130,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
         this.category = recipeBuilder.category;
-        this.onBuildActions = recipeBuilder.onBuildActions == null ? null :
-                new ArrayList<>(recipeBuilder.onBuildActions);
         this.recipePropertyStorage = recipeBuilder.recipePropertyStorage == null ? null :
                 recipeBuilder.recipePropertyStorage.copy();
         if (this.recipePropertyStorage != null) {
@@ -898,11 +895,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return out;
     }
 
-    protected R onBuild(@NotNull List<@NotNull RecipeBuildAction<R>> actions) {
-        this.onBuildActions = actions;
-        return (R) this;
-    }
-
     /**
      * @deprecated Obsolete. Does not need calling.
      */
@@ -913,11 +905,16 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    /**
+     * Build and register the recipe, if valid.
+     * <strong>Do not call outside of the
+     * {@link net.minecraftforge.event.RegistryEvent.Register<net.minecraft.item.crafting.IRecipe>} event for recipes.
+     * </strong>
+     */
+    @MustBeInvokedByOverriders
     public void buildAndRegister() {
-        if (onBuildActions != null) {
-            for (RecipeBuildAction<R> action : onBuildActions) {
-                action.accept((R) this);
-            }
+        for (RecipeBuildAction<R> action : recipeMap.getBuildActions()) {
+            action.accept((R) this);
         }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);

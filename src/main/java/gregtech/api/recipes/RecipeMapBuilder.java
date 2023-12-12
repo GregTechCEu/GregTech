@@ -5,15 +5,16 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import static gregtech.api.recipes.ui.RecipeMapUI.computeOverlayKey;
 
@@ -44,7 +45,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private SoundEvent sound;
     private boolean allowEmptyOutputs;
 
-    private @Nullable List<RecipeBuildAction<B>> buildActions;
+    private @Nullable Map<ResourceLocation, RecipeBuildAction<B>> buildActions;
 
     /**
      * @param unlocalizedName      the name of the recipemap
@@ -255,14 +256,17 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     /**
      * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
      *
+     * @param name   the unique name of the action
      * @param action the action to perform
      * @return this
      */
-    public @NotNull RecipeMapBuilder<B> onBuild(@NotNull RecipeBuildAction<B> action) {
+    public @NotNull RecipeMapBuilder<B> onBuild(@NotNull ResourceLocation name, @NotNull RecipeBuildAction<B> action) {
         if (buildActions == null) {
-            buildActions = new ArrayList<>();
+            buildActions = new Object2ObjectOpenHashMap<>();
+        } else if (buildActions.containsKey(name)) {
+            throw new IllegalArgumentException("Cannot register RecipeBuildAction with duplicate name: " + name);
         }
-        buildActions.add(action);
+        buildActions.put(name, action);
         return this;
     }
 
@@ -280,7 +284,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
             recipeMap.allowEmptyOutput();
         }
         if (buildActions != null) {
-            recipeMap.setOnBuildActions(buildActions);
+            recipeMap.onRecipeBuild(buildActions);
         }
         return recipeMap;
     }
