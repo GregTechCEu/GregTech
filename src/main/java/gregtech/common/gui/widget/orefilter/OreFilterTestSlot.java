@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +30,9 @@ import java.util.stream.Collectors;
  * @author brachy84
  */
 public abstract class OreFilterTestSlot extends WidgetGroup {
+
+    private final ImageWidget match;
+    private final ImageWidget noMatch;
 
     @Nullable
     private OreGlob glob;
@@ -48,8 +50,7 @@ public abstract class OreFilterTestSlot extends WidgetGroup {
 
     private boolean initialized = false;
 
-    private final ImageWidget match;
-    private final ImageWidget noMatch;
+    private boolean matchAll;
 
     public OreFilterTestSlot(int xPosition, int yPosition) {
         super(xPosition, yPosition, 18, 18);
@@ -86,7 +87,14 @@ public abstract class OreFilterTestSlot extends WidgetGroup {
     }
 
     public void setGlob(@Nullable OreGlob glob) {
+        if (this.glob == glob) return;
         this.glob = glob;
+        updatePreview();
+    }
+
+    public void setMatchAll(boolean matchAll) {
+        if (this.matchAll == matchAll) return;
+        this.matchAll = matchAll;
         updatePreview();
     }
 
@@ -94,21 +102,26 @@ public abstract class OreFilterTestSlot extends WidgetGroup {
         if (!this.initialized) return;
         Set<String> oreDicts = getTestCandidates();
         if (oreDicts != null) {
-            boolean success;
             OreGlob glob = this.glob;
             if (oreDicts.isEmpty()) {
                 // no oredict entries
-                this.testResult = Object2BooleanMaps.singleton("", success = glob != null && glob.matches(""));
+                this.testResult = Object2BooleanMaps.singleton("", glob != null && glob.matches(""));
                 this.matchType = MatchType.NO_ORE_DICT_MATCH;
             } else {
                 this.testResult = new Object2BooleanAVLTreeMap<>();
-                success = false;
                 for (String oreDict : oreDicts) {
                     boolean matches = glob != null && glob.matches(oreDict);
                     this.testResult.put(oreDict, matches);
-                    success |= matches;
                 }
                 this.matchType = MatchType.ORE_DICT_MATCH;
+            }
+            boolean success = this.matchAll;
+            for (var e : testResult.object2BooleanEntrySet()) {
+                boolean result = e.getBooleanValue();
+                if (result == !this.matchAll) {
+                    success = !this.matchAll;
+                    break;
+                }
             }
             updateAndNotifyMatchSuccess(this.expectedResult == success);
             this.match.setVisible(this.expectedResult == success);
@@ -131,9 +144,8 @@ public abstract class OreFilterTestSlot extends WidgetGroup {
     }
 
     /**
-     * Get each test candidate for current state of test slot. An empty collection indicates that the
-     * match is for items without any ore dictionary entry. A {@code null} value indicates that the
-     * input state is invalid or empty.
+     * Get each test candidate for current state of test slot. An empty collection indicates that the match is for items
+     * without any ore dictionary entry. A {@code null} value indicates that the input state is invalid or empty.
      *
      * @return each test candidate for current state of test slot
      */
@@ -168,26 +180,17 @@ public abstract class OreFilterTestSlot extends WidgetGroup {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         if (isActive() && isMouseOverElement(mouseX, mouseY)) {
-            List<String> list;
-            switch (this.matchType) {
-                case NO_ORE_DICT_MATCH:
-                    list = Collections.singletonList(I18n.format(this.matchSuccess ?
-                            "cover.ore_dictionary_filter.test_slot.no_oredict.matches" :
-                            "cover.ore_dictionary_filter.test_slot.no_oredict.matches_not"));
-                    break;
-                case ORE_DICT_MATCH:
-                    list = this.testResult.object2BooleanEntrySet().stream().map(
-                            e -> I18n.format(e.getBooleanValue() ?
-                                    "cover.ore_dictionary_filter.test_slot.matches" :
-                                    "cover.ore_dictionary_filter.test_slot.matches_not", e.getKey()))
-                            .collect(Collectors.toList());
-                    break;
-                case INVALID:
-                default:
-                    list = Arrays.asList(LocalizationUtils.formatLines("cover.ore_dictionary_filter.test_slot.info"));
-                    break;
-            }
-            drawHoveringText(ItemStack.EMPTY, list, 300, mouseX, mouseY);
+            drawHoveringText(ItemStack.EMPTY, switch (this.matchType) {
+                case NO_ORE_DICT_MATCH -> Collections.singletonList(I18n.format(this.matchSuccess ?
+                        "cover.ore_dictionary_filter.test_slot.no_oredict.matches" :
+                        "cover.ore_dictionary_filter.test_slot.no_oredict.matches_not"));
+                case ORE_DICT_MATCH -> this.testResult.object2BooleanEntrySet().stream().map(
+                                e -> I18n.format(e.getBooleanValue() ?
+                                        "cover.ore_dictionary_filter.test_slot.matches" :
+                                        "cover.ore_dictionary_filter.test_slot.matches_not", e.getKey()))
+                        .collect(Collectors.toList());
+                default -> Arrays.asList(LocalizationUtils.formatLines("cover.ore_dictionary_filter.test_slot.info"));
+            }, 300, mouseX, mouseY);
         }
     }
 

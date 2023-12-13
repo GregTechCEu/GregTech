@@ -102,21 +102,28 @@ interface OreGlobMessages {
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unexpected_token_after_eof", token);
     }
 
+    // compilation flags are expected to be removed in future release
+
+    @Deprecated
+    @SuppressWarnings("DeprecatedIsStillUsed")
     static String compileErrorUnexpectedCompilationFlag() {
         // Compilation flags in the middle of expression
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unexpected_compilation_flag");
     }
 
+    @Deprecated
     static String compileErrorEmptyCompilationFlag() {
         // No compilation flags given
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "empty_compilation_flag");
     }
 
+    @Deprecated
     static String compileErrorUnknownCompilationFlag(String flag) {
         // Unknown compilation flag '%s'
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unknown_compilation_flag", flag);
     }
 
+    @Deprecated
     static String compileErrorRedundantCompilationFlag(String flag) {
         // Compilation flag '%s' written twice
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "redundant_compilation_flag", flag);

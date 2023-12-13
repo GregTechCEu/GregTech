@@ -15,7 +15,17 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 @Mod(modid = GTValues.MODID,
      name = "GregTech",
@@ -44,11 +54,12 @@ public class GregTechMod {
     public void onConstruction(FMLConstructionEvent event) {
         moduleManager = ModuleManager.getInstance();
         GregTechAPI.moduleManager = moduleManager;
-        OreGlob.setCompiler(input -> new OreGlobParser(input).compile());
         moduleManager.registerContainer(new GregTechModules());
         MinecraftForge.EVENT_BUS.post(new ModuleContainerRegistryEvent());
         moduleManager.setup(event.getASMHarvestedData(), Loader.instance().getConfigDir());
         moduleManager.onConstruction(event);
+
+        OreGlob.setCompiler((expr, ignoreCase) -> new OreGlobParser(expr, ignoreCase).compile());
     }
 
     @EventHandler
