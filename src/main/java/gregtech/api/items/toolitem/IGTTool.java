@@ -29,9 +29,6 @@ import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 
-import mods.railcraft.api.items.IToolCrowbar;
-import mrtjp.projectred.api.IScrewdriver;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -72,6 +69,8 @@ import crazypants.enderio.api.tool.ITool;
 import forestry.api.arboriculture.IToolGrafter;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import mods.railcraft.api.items.IToolCrowbar;
+import mrtjp.projectred.api.IScrewdriver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,7 +99,7 @@ import static gregtech.api.items.toolitem.ToolHelper.*;
         @Optional.Interface(modid = GTValues.MODID_ECORE,
                             iface = "com.enderio.core.common.interfaces.IOverlayRenderAware") })
 public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter,
-                                 IOverlayRenderAware, IScrewdriver, IToolCrowbar {
+                         IOverlayRenderAware, IScrewdriver, IToolCrowbar {
 
     /**
      * @return the modid of the tool
@@ -1076,7 +1075,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default boolean canLink(EntityPlayer player, EnumHand hand, ItemStack crowbar, EntityMinecart cart) {
         return get().getToolClasses(crowbar).contains(ToolClasses.CROWBAR);
     }
-
 
     @Override
     default void onLink(EntityPlayer player, EnumHand hand, ItemStack crowbar, EntityMinecart cart) {
