@@ -5,8 +5,8 @@
   "minVersion" : "0.8",
   "compatibilityLevel" : "JAVA_8",
   "mixins" : [
-    "CTMRenderInLayerMixin",
-    "ModelCTMLayersAccessor"
+    "AbstractCTMBakedModelMixin",
+    "CTMRenderInLayerMixin"
   ],
   "client" : [],
   "server" : []
