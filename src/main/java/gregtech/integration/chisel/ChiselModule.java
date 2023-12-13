@@ -26,11 +26,11 @@ import team.chisel.common.carving.Carving;
 import java.util.Objects;
 
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_CHISEL,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_CHISEL,
-        name = "GregTech Chisel Integration",
-        description = "Chisel Integration Module")
+                moduleID = GregTechModules.MODULE_CHISEL,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_CHISEL,
+                name = "GregTech Chisel Integration",
+                description = "Chisel Integration Module")
 public class ChiselModule extends IntegrationSubmodule {
 
     @Override
