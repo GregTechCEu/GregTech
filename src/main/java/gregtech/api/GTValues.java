@@ -157,7 +157,8 @@ public class GTValues {
             MODID_BOP = "biomesoplenty",
             MODID_TCON = "tconstruct",
             MODID_PROJRED_CORE = "projectred-core",
-            MODID_RC = "railcraft";
+            MODID_RC = "railcraft",
+            MODID_CHISEL = "chisel";
 
     private static Boolean isClient;
 
