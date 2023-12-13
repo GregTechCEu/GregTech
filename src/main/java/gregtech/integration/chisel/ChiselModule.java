@@ -41,6 +41,15 @@ public class ChiselModule extends IntegrationSubmodule {
         addVariations("gt_studs", MetaBlocks.STUDS);
         addVariations("gt_metal_sheet", MetaBlocks.METAL_SHEET);
         addVariations("gt_large_metal_sheet", MetaBlocks.LARGE_METAL_SHEET);
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            Block lamp = MetaBlocks.LAMPS.get(color);
+            Block lampBorderless = MetaBlocks.BORDERLESS_LAMPS.get(color);
+            String group = "gt_lamp_" + color.getName().toLowerCase();
+            for (int i = 0; i < 8; i++) {
+                addVariation(group, lamp, i);
+                addVariation(group, lampBorderless, i);
+            }
+        }
 
         // Chisel shared groups
         addVariations("marble", StoneType.MARBLE, false);
