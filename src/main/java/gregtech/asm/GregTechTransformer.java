@@ -2,11 +2,9 @@ package gregtech.asm;
 
 import gregtech.asm.util.ObfMapping;
 import gregtech.asm.util.TargetClassVisitor;
-import gregtech.asm.visitors.AbstractCTMBakedModelVisitor;
 import gregtech.asm.visitors.EnchantmentCanApplyVisitor;
 import gregtech.asm.visitors.JEIVisitor;
 import gregtech.asm.visitors.LittleTilesVisitor;
-import gregtech.asm.visitors.ModelCTMVisitor;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -118,20 +116,20 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
              * return classWriter.toByteArray();
              * }
              */
-            case ModelCTMVisitor.TARGET_CLASS_NAME: {
+            /*case ModelCTMVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(
                         new TargetClassVisitor(classWriter, ModelCTMVisitor.TARGET_METHOD, ModelCTMVisitor::new), 0);
                 return classWriter.toByteArray();
-            }
-            case AbstractCTMBakedModelVisitor.TARGET_CLASS_NAME: {
+            } */
+          /*  case AbstractCTMBakedModelVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(new TargetClassVisitor(classWriter, AbstractCTMBakedModelVisitor.TARGET_METHOD,
                         AbstractCTMBakedModelVisitor::new), 0);
                 return classWriter.toByteArray();
-            }
+            } */
             case LittleTilesVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
