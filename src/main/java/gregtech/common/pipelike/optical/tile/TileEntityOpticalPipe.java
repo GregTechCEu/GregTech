@@ -194,6 +194,12 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         }
     }
 
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        this.handlers.clear();
+    }
+
     private static class DefaultDataHandler implements IDataAccessHatch {
 
         @Override

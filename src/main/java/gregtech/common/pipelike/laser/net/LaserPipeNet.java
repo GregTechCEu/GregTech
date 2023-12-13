@@ -47,6 +47,11 @@ public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
     }
 
     @Override
+    public void onChunkUnload() {
+        netData.clear();
+    }
+
+    @Override
     protected void transferNodeData(Map<BlockPos, Node<LaserPipeProperties>> transferredNodes,
                                     PipeNet<LaserPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
