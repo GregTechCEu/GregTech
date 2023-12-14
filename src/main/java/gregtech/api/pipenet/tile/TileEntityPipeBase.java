@@ -535,9 +535,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, IBlockState oldState,
-                                 IBlockState newSate) {
-        return oldState.getBlock() != newSate.getBlock();
+    public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState oldState,
+                                 @NotNull IBlockState newSate) {
+        // always return true to ensure that the Chunk marks the old MTE as invalid
+        return true;
     }
 
     @MustBeInvokedByOverriders
