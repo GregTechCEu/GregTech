@@ -8,6 +8,7 @@ import gregtech.api.unification.FluidUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
@@ -429,7 +430,11 @@ public class FluidBuilder {
                     case GAS -> ROOM_TEMPERATURE;
                     case PLASMA -> {
                         if (material.hasFluid()) {
-                            yield BASE_PLASMA_TEMPERATURE + material.getFluid().getTemperature();
+                            FluidProperty prop = material.getProperty(PropertyKey.FLUID);
+                            if (prop.getStorage().getQueuedBuilder(prop.getPrimaryKey()) != null) {
+                                yield BASE_PLASMA_TEMPERATURE + material.getFluid().getTemperature();
+                            }
+                            yield BASE_PLASMA_TEMPERATURE;
                         }
                         yield BASE_PLASMA_TEMPERATURE;
                     }
