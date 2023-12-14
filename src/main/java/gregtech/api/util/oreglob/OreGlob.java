@@ -130,14 +130,14 @@ public abstract class OreGlob {
      * Tries to match each input. If any of them matches, {@code true} is returned.
      * </p>
      *
-     * @param inputs Collection of input strings
+     * @param inputs            Collection of input strings
      * @param specialEmptyMatch If {@code true}, this method will match an empty string ({@code ""}) if the input
-     *                         collection is empty. If {@code true}, this method will return {@code false} in such
-     *                         scenario.
+     *                          collection is empty. If {@code true}, this method will return {@code false} in such
+     *                          scenario.
      * @return Whether this instance matches the input
      */
     public final boolean matchesAny(@NotNull Collection<String> inputs, boolean specialEmptyMatch) {
-        if(specialEmptyMatch&&inputs.isEmpty()) return matches("");
+        if (specialEmptyMatch && inputs.isEmpty()) return matches("");
         for (String input : inputs) if (matches(input)) return true;
         return false;
     }
@@ -148,14 +148,14 @@ public abstract class OreGlob {
      * special case for empty inputs.
      * </p>
      *
-     * @param inputs Collection of input strings
+     * @param inputs            Collection of input strings
      * @param specialEmptyMatch If {@code true}, this method will match an empty string ({@code ""}) if the input
-     *                         collection is empty. If {@code true}, this method will return {@code true} in such
-     *                         scenario.
+     *                          collection is empty. If {@code true}, this method will return {@code true} in such
+     *                          scenario.
      * @return Whether this instance matches the input
      */
     public final boolean matchesAll(@NotNull Collection<String> inputs, boolean specialEmptyMatch) {
-        if(specialEmptyMatch&&inputs.isEmpty()) return matches("");
+        if (specialEmptyMatch && inputs.isEmpty()) return matches("");
         for (String input : inputs) if (!matches(input)) return false;
         return true;
     }

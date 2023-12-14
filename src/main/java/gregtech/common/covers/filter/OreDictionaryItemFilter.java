@@ -150,22 +150,22 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 }).setMaxLength(64));
         widgetGroup.accept(new ImageCycleButtonWidget(130, 38, 18, 18,
                 GuiTextures.ORE_FILTER_BUTTON_CASE_SENSITIVE, () -> this.caseSensitive, caseSensitive -> {
-            if (this.caseSensitive == caseSensitive) return;
-            this.caseSensitive = caseSensitive;
-            markDirty();
-            recompile(compileCallback);
-        }).setTooltipHoverString(i ->
-                "cover.ore_dictionary_filter.button.case_sensitive." + (i == 0 ? "disabled" : "enabled")));
+                    if (this.caseSensitive == caseSensitive) return;
+                    this.caseSensitive = caseSensitive;
+                    markDirty();
+                    recompile(compileCallback);
+                }).setTooltipHoverString(
+                        i -> "cover.ore_dictionary_filter.button.case_sensitive." + (i == 0 ? "disabled" : "enabled")));
         widgetGroup.accept(new ImageCycleButtonWidget(148, 38, 18, 18,
                 GuiTextures.ORE_FILTER_BUTTON_MATCH_ALL, () -> this.matchAll, matchAll -> {
-            this.matchAll = matchAll;
-            markDirty();
-            clearCache();
-            for (ItemOreFilterTestSlot slot : testSlot) {
-                slot.setMatchAll(matchAll);
-            }
-        }).setTooltipHoverString(i ->
-                "cover.ore_dictionary_filter.button.match_all." + (i == 0 ? "disabled" : "enabled")));
+                    this.matchAll = matchAll;
+                    markDirty();
+                    clearCache();
+                    for (ItemOreFilterTestSlot slot : testSlot) {
+                        slot.setMatchAll(matchAll);
+                    }
+                }).setTooltipHoverString(
+                        i -> "cover.ore_dictionary_filter.button.match_all." + (i == 0 ? "disabled" : "enabled")));
     }
 
     @Override

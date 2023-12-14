@@ -185,9 +185,9 @@ public abstract class OreFilterTestSlot extends WidgetGroup {
                         "cover.ore_dictionary_filter.test_slot.no_oredict.matches" :
                         "cover.ore_dictionary_filter.test_slot.no_oredict.matches_not"));
                 case ORE_DICT_MATCH -> this.testResult.object2BooleanEntrySet().stream().map(
-                                e -> I18n.format(e.getBooleanValue() ?
-                                        "cover.ore_dictionary_filter.test_slot.matches" :
-                                        "cover.ore_dictionary_filter.test_slot.matches_not", e.getKey()))
+                        e -> I18n.format(e.getBooleanValue() ?
+                                "cover.ore_dictionary_filter.test_slot.matches" :
+                                "cover.ore_dictionary_filter.test_slot.matches_not", e.getKey()))
                         .collect(Collectors.toList());
                 default -> Arrays.asList(LocalizationUtils.formatLines("cover.ore_dictionary_filter.test_slot.info"));
             }, 300, mouseX, mouseY);

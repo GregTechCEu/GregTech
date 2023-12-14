@@ -206,7 +206,7 @@ public final class OreGlobParser {
             // Eat through OR tokens as much as we can, to prevent scenario where
             // a disgusting C like lang users type || and complain their filter is broken
             // noinspection StatementWithEmptyBody
-            while (advanceIf(OR)) ;
+            while (advanceIf(OR));
             nodes.add(and());
         } while (advanceIf(OR));
         return OreGlobNodes.or(nodes);
@@ -221,7 +221,7 @@ public final class OreGlobParser {
             // Eat through AND tokens as much as we can, to prevent scenario where
             // a disgusting C like lang users type && and complain their filter is broken
             // noinspection StatementWithEmptyBody
-            while (advanceIf(AND)) ;
+            while (advanceIf(AND));
             nodes.add(xor());
         } while (advanceIf(AND));
         return OreGlobNodes.and(nodes);
