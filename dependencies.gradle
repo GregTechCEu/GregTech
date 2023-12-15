@@ -41,6 +41,7 @@ dependencies {
     compileOnlyApi rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
     compileOnlyApi rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2
     compileOnlyApi rfg.deobf("curse.maven:forestry-59751:2684780") // Forestry 5.8.2.387
+    compileOnlyApi rfg.deobf("curse.maven:chisel-235279:2915375") // Chisel 1.0.2.45
 
     // Mods with Soft compat but which have no need to be in code, such as isModLoaded() checks and getModItem() recipes.
     // Uncomment any of these to test them in-game.
