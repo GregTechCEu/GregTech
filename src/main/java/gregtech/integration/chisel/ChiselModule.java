@@ -3,7 +3,10 @@ package gregtech.integration.chisel;
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockColored;
+import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockWarningSign;
 import gregtech.common.blocks.BlockWarningSign1;
 import gregtech.common.blocks.MetaBlocks;
@@ -63,6 +66,9 @@ public class ChiselModule extends IntegrationSubmodule {
         if (doesGroupExist("treated_wood")) { // IE Treated Wood group
             addVariations("treated_wood", MetaBlocks.PLANKS, BlockGregPlanks.BlockType.TREATED_PLANK);
         }
+        if (doesGroupExist("certus")) { // AE2 Certus Quartz group
+            addVariation("certus", Materials.CertusQuartz);
+        }
     }
 
     @SafeVarargs
@@ -91,6 +97,12 @@ public class ChiselModule extends IntegrationSubmodule {
             int meta = block.getMetaFromState(block.getState(type));
             addVariation(group, block, meta);
         }
+    }
+
+    private void addVariation(String group, Material material) {
+        BlockCompressed block = MetaBlocks.COMPRESSED.get(material);
+        int meta = block.getMetaFromState(block.getBlock(material));
+        addVariation(group, block, meta);
     }
 
     private void addVariation(String group, Block block, int meta) {
