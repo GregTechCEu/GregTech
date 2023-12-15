@@ -587,7 +587,8 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 AlleleHelper.getInstance().set(template, TOLERATES_RAIN, true);
             },
             dis -> {
-                if (Loader.isModLoaded(GTValues.MODID_MB)) {
+                if (Loader.isModLoaded(GTValues.MODID_MB) && Loader.isModLoaded(GTValues.MODID_APPENG)) {
+                    // MB Skystone bee is only registered if AE2 is also active
                     dis.registerMutation(IRON, ForestryUtil.getSpecies(GTValues.MODID_MB, "AESkystone"), 17);
                 } else {
                     dis.registerMutation(IRON, BeeDefinition.IMPERIAL, 17);
