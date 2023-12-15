@@ -121,33 +121,56 @@ public final class AssemblyLineManager {
 
         for (AssemblyLineRecipeBuilder.ResearchRecipeEntry entry : builder.getRecipeEntries()) {
             createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(),
+                    entry.getIgnoreNBT(),
                     entry.getDuration(), entry.getEUt(), entry.getCWUt());
         }
     }
 
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static void createDefaultResearchRecipe(@NotNull String researchId, @NotNull ItemStack researchItem,
                                                    @NotNull ItemStack dataItem, int duration, int EUt, int CWUt) {
+        createDefaultResearchRecipe(researchId, researchItem, dataItem, true, duration, EUt, CWUt);
+    }
+
+    public static void createDefaultResearchRecipe(@NotNull String researchId, @NotNull ItemStack researchItem,
+                                                   @NotNull ItemStack dataItem, boolean ignoreNBT, int duration,
+                                                   int EUt, int CWUt) {
         if (!ConfigHolder.machines.enableResearch) return;
 
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(dataItem);
         writeResearchToNBT(compound, researchId);
 
         if (CWUt > 0) {
-            RecipeMaps.RESEARCH_STATION_RECIPES.recipeBuilder()
+            RecipeBuilder<?> researchBuilder = RecipeMaps.RESEARCH_STATION_RECIPES.recipeBuilder()
                     .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
-                    .inputs(researchItem)
                     .outputs(dataItem)
                     .EUt(EUt)
                     .CWUt(CWUt)
-                    .totalCWU(duration)
-                    .buildAndRegister();
+                    .totalCWU(duration);
+
+            if (ignoreNBT) {
+                researchBuilder.inputNBT(researchItem.getItem(), 1, researchItem.getMetadata(), NBTMatcher.ANY,
+                        NBTCondition.ANY);
+            } else {
+                researchBuilder.inputs(researchItem);
+            }
+
+            researchBuilder.buildAndRegister();
         } else {
             RecipeBuilder<?> builder = RecipeMaps.SCANNER_RECIPES.recipeBuilder()
                     .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
-                    .inputs(researchItem)
                     .outputs(dataItem)
                     .duration(duration)
                     .EUt(EUt);
+
+            if (ignoreNBT) {
+                builder.inputNBT(researchItem.getItem(), 1, researchItem.getMetadata(), NBTMatcher.ANY,
+                        NBTCondition.ANY);
+            } else {
+                builder.inputs(researchItem);
+            }
+
             builder.applyProperty(ScanProperty.getInstance(), true);
             builder.buildAndRegister();
         }
