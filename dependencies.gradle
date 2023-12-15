@@ -28,7 +28,7 @@ dependencies {
     implementation("com.cleanroommc:modularui:2.4.1") { transitive = false }
 
     // Shadowed Dependencies
-    shadowCompile 'org.jgrapht:jgrapht-core:1.5.1'
+    shadowCompile 'org.jgrapht:jgrapht-core:1.4.0'
 
     // Soft Dependencies
     // Can change any of these from compileOnlyApi -> implementation to test them in-game.

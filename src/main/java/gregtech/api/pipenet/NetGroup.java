@@ -39,9 +39,16 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         node.setGroup(this);
     }
 
-    protected void addNodes(Set<NodeG<PipeType, NodeDataType>> nodes) {
+    public void addNodes(Set<NodeG<PipeType, NodeDataType>> nodes) {
         this.nodes.addAll(nodes);
-        this.nodes.forEach(b -> b.setGroup(this));
+        nodes.forEach(a -> a.setGroup(this));
+    }
+
+    @SafeVarargs
+    public final void addNodes(NodeG<PipeType, NodeDataType>... nodes) {
+        for (NodeG<PipeType, NodeDataType> node : nodes) {
+            this.addNode(node);
+        }
     }
 
     /**

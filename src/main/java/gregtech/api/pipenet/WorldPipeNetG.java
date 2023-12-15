@@ -46,10 +46,6 @@ import java.util.stream.Collectors;
 
 public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldSavedData {
 
-    // create an executor for graph algorithm. Allows 2 threads per JVM processor, and keeps them alive for 5 seconds.
-    // note - should this be explicitly shut down at some point during server shutdown?
-    public static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(0, Runtime.getRuntime().availableProcessors() * 2, 5, TimeUnit.SECONDS, new SynchronousQueue<>());
-
     private WeakReference<World> worldRef = new WeakReference<>(null);
     private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> pipeGraph;
     private final Map<BlockPos, NodeG<PipeType, NodeDataType>> pipeMap = new Object2ObjectOpenHashMap<>();
@@ -248,7 +244,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight) {
         if (pipeGraph.addEdge(source, target) != null) {
             if (NetGroup.mergeEdge(source, target)) {
-                new NetGroup<>(this.pipeGraph).addNodes(Set.of(source, target));
+                new NetGroup<>(this.pipeGraph).addNodes(source, target);
             }
             pipeGraph.setEdgeWeight(source, target, weight);
             this.validPathsCache = false;
@@ -274,7 +270,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
     }
 
     protected void rebuildShortestPaths() {
-        this.shortestPaths = new ShortestPathsAlgorithm<>(pipeGraph, EXECUTOR);
+        this.shortestPaths = new ShortestPathsAlgorithm<>(pipeGraph);
         this.validPathsCache = true;
     }
 
@@ -331,8 +327,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
     // CHManyToManyShortestPaths is a very good algorithm because our graph will be extremely sparse.
     protected static final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData> extends CHManyToManyShortestPaths<NodeG<PT, NDT>, NetEdge> {
 
-        public ShortestPathsAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> graph, ThreadPoolExecutor executor) {
-            super(graph, executor);
+        public ShortestPathsAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> graph) {
+            super(graph);
         }
 
         public List<GraphPath<NodeG<PT, NDT>, NetEdge>> getPathsList(NodeG<PT, NDT> source) {
