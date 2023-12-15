@@ -5,7 +5,6 @@ import gregtech.api.pipenet.tile.IPipeTile;
 
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -32,10 +31,14 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     public int mark;
     public boolean isActive;
 
-    public IPipeTile<PipeType, NodeDataType> heldMTE;
+    public TileEntityPipeBase<PipeType, NodeDataType> heldMTE;
+
+    /**
+     * CANNOT BE CHANGED DURING THE LIFETIME OF A NODE OR THE GRAPH WILL BREAK (or so I've been told)
+     */
     private BlockPos nodePos;
 
-    public NodeG(NodeDataType data, int openConnections, int mark, boolean isActive, IPipeTile<PipeType, NodeDataType> heldMTE) {
+    public NodeG(NodeDataType data, int openConnections, int mark, boolean isActive, TileEntityPipeBase<PipeType, NodeDataType> heldMTE) {
         this.data = data;
         this.openConnections = openConnections;
         this.mark = mark;
@@ -47,8 +50,9 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     /**
      * For construction during NBT reading only
      */
-    public NodeG(NBTTagCompound tag) {
+    public NodeG(NBTTagCompound tag, WorldPipeNetG<NodeDataType, PipeType> net) {
         deserializeNBT(tag);
+        this.data = net.readNodeData(tag.getCompoundTag("Data"));
     }
 
     /**
@@ -62,8 +66,33 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
         return (openConnections & 1 << facing.getIndex()) == 0;
     }
 
+    void setBlocked(EnumFacing facing, boolean isBlocked) {
+        if (!isBlocked) {
+            this.openConnections |= 1 << facing.getIndex();
+        } else {
+            this.openConnections &= ~(1 << facing.getIndex());
+        }
+    }
+
     public BlockPos getNodePos() {
         return nodePos;
+    }
+
+    public long getLongPos() {
+        return nodePos.toLong();
+    }
+
+    void sync(NodeG<PipeType, NodeDataType> node) {
+        this.data = node.data;
+        this.mark = node.mark;
+        this.isActive = node.isActive;
+        this.openConnections = node.openConnections;
+        // if heldMTE is not null, then it is more up to date than the graph's version.
+        if (this.heldMTE == null) {
+            this.heldMTE = node.heldMTE;
+        } else {
+            node.heldMTE = this.heldMTE;
+        }
     }
 
     @Override

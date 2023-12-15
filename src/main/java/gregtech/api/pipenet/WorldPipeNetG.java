@@ -4,7 +4,12 @@ import gregtech.api.pipenet.block.IPipeType;
 
 import gregtech.api.pipenet.tile.IPipeTile;
 
+import gregtech.api.pipenet.tile.TileEntityPipeBase;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,34 +25,47 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
+import org.jgrapht.ListenableGraph;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.shortestpath.CHManyToManyShortestPaths;
-import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
-import org.jgrapht.util.ConcurrencyUtil;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldSavedData {
 
+    // create an executor for graph algorithm. Allows 2 threads per JVM processor, and keeps them alive for 5 seconds.
     // note - should this be shut down at some point during server shutdown?
-    public static ThreadPoolExecutor EXECUTOR =
-            ConcurrencyUtil.createThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2);
+    public static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(0, Runtime.getRuntime().availableProcessors() * 2, 5, TimeUnit.SECONDS, new SynchronousQueue<>());
 
     private WeakReference<World> worldRef = new WeakReference<>(null);
-    private final Graph<NodeG<PipeType, NodeDataType>, DefaultWeightedEdge> pipeGraph;
+    private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> backingGraph;
+    private final ListenableGraph<NodeG<PipeType, NodeDataType>, NetEdge> pipeGraph;
+    private final ConnectivityInspector<NodeG<PipeType, NodeDataType>, NetEdge> graphInspector;
     private final Map<BlockPos, NodeG<PipeType, NodeDataType>> pipeMap = new Object2ObjectOpenHashMap<>();
 
-    private ShortestPathsAlgorithm<NodeG<PipeType, NodeDataType>, DefaultWeightedEdge> shortestPaths;
+    private ShortestPathsAlgorithm<PipeType, NodeDataType> shortestPaths;
     // this is a monstrosity
-    private final Map<NodeG<PipeType, NodeDataType>, Map<NodeG<PipeType, NodeDataType>, GraphPath<NodeG<PipeType, NodeDataType>, DefaultWeightedEdge>>> shortestPathsCache = new Object2ObjectOpenHashMap<>();
-    private boolean validPathsCache = true;
+    private final Map<NodeG<PipeType, NodeDataType>, List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>>> shortestPathsCache = new Object2ObjectOpenHashMap<>();
+    private boolean validPathsCache = false;
 
     public WorldPipeNetG(String name) {
         super(name);
-        this.pipeGraph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+        this.backingGraph = new SimpleWeightedGraph<>(NetEdge.class);
+        // multithreading? in this economy?
+        this.pipeGraph = new DefaultListenableGraph<>(this.backingGraph, true);
+        this.graphInspector = new ConnectivityInspector<>(this.pipeGraph);
+        this.pipeGraph.addGraphListener(this.graphInspector);
     }
 
     public World getWorld() {
@@ -69,79 +87,72 @@ public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType
     }
 
     protected void onWorldSet(World world) {
-        for (NodeG<PipeType, NodeDataType> node : pipeGraph.vertexSet()) {
-            // do initial edge additions & fully initialize nodes
-            IPipeTile<PipeType, NodeDataType> pipe = castTE(world.getTileEntity(node.getNodePos()));
-            if (pipe != null) {
-                node.heldMTE = pipe;
-                node.data = pipe.getNodeData();
-                addNodeSilent(node);
-                addEdges(node);
-            }
-
-        }
-        rebuildShortestPaths();
+        this.rebuildShortestPaths();
     }
 
     /**
-     * Preferred override
-     * @param tile The {@link IPipeTile} that paths are being requested for
-     * @return the collection of paths associated with the {@link IPipeTile}
+     * Preferred override, reduces operational cost
+     * @param tile The {@link TileEntityPipeBase} that paths are being requested for
+     * @return the ordered list of paths associated with the {@link TileEntityPipeBase}
      */
-    public Map<NodeG<PipeType, NodeDataType>, GraphPath<NodeG<PipeType, NodeDataType>, DefaultWeightedEdge>> getPaths(IPipeTile<PipeType, NodeDataType> tile) {
+    public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> getPaths(TileEntityPipeBase<PipeType, NodeDataType> tile) {
         return getPaths(new NodeG<>(tile.getPipePos()), tile);
     }
 
     /**
      * Special-case override
      * @param pos The {@link BlockPos} that paths are being requested for
-     * @return the collection of paths associated with the {@link BlockPos}
+     * @return the ordered list of paths associated with the {@link BlockPos}
      */
-    public Map<NodeG<PipeType, NodeDataType>, GraphPath<NodeG<PipeType, NodeDataType>, DefaultWeightedEdge>> getPaths(BlockPos pos) {
+    public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> getPaths(BlockPos pos) {
         return getPaths(new NodeG<>(pos), null);
     }
 
-    public Map<NodeG<PipeType, NodeDataType>, GraphPath<NodeG<PipeType, NodeDataType>, DefaultWeightedEdge>> getPaths(
-            NodeG<PipeType, NodeDataType> node, @Nullable IPipeTile<PipeType, NodeDataType> tile) {
-        World world = this.worldRef.get();
-        if (world == null)
-            throw new RuntimeException("The world of a PipeNet should be set before getting paths from it!");
+    public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> getPaths(
+            NodeG<PipeType, NodeDataType> node, @Nullable TileEntityPipeBase<PipeType, NodeDataType> tile) {
+        node.heldMTE = tile;
 
         if (!this.validPathsCache) {
             this.rebuildShortestPaths();
             this.shortestPathsCache.clear();
         }
 
-        if (!node.heldMTE.isValidTile()) {
-            if (tile != null) {
-                node.heldMTE = tile;
-            } else {
-                IPipeTile<PipeType, NodeDataType> pipe = castTE(world.getTileEntity(node.getNodePos()));
-                if (pipe != null)
-                    node.heldMTE = pipe;
-            }
-        }
-
-        Map<NodeG<PipeType, NodeDataType>, GraphPath<NodeG<PipeType, NodeDataType>, DefaultWeightedEdge>> cache =
+        List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> cache =
                 this.shortestPathsCache.get(node);
-        if (cache != null) return cache;
+        if (cache != null) return verifyList(cache, node);
 
-        return this.shortestPaths.getPathsMap(node);
+        List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> list = this.shortestPaths.getPathsList(node);
+        this.shortestPathsCache.put(node, list);
+        return verifyList(list, node);
     }
 
-    protected IPipeTile<PipeType, NodeDataType> castTE(TileEntity te) {
-        if (te instanceof IPipeTile<?, ?> pipe) {
+    protected List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> verifyList(List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> list, NodeG<PipeType, NodeDataType> source) {
+        if (!verifyNode(source)) return new ObjectArrayList<>();
+        return list.stream().filter(a -> verifyNode(a.getEndVertex())).collect(Collectors.toList());
+    }
+
+    protected boolean verifyNode(NodeG<PipeType, NodeDataType> node) {
+        if (!getWorld().loadedTileEntityList.contains(node.heldMTE)) {
+            TileEntityPipeBase<PipeType, NodeDataType> pipe = castTE(getWorld().getTileEntity(node.getNodePos()));
+            if (pipe == null) return false;
+            node.heldMTE = pipe;
+        }
+        return true;
+    }
+
+    protected TileEntityPipeBase<PipeType, NodeDataType> castTE(TileEntity te) {
+        if (te instanceof TileEntityPipeBase<?, ?> pipe) {
             if (!getBasePipeClass().isAssignableFrom(pipe.getClass())) {
                 return null;
             }
-            return (IPipeTile<PipeType, NodeDataType>) pipe;
+            return (TileEntityPipeBase<PipeType, NodeDataType>) pipe;
         }
         return null;
     }
 
     protected abstract Class<IPipeTile<PipeType, NodeDataType>> getBasePipeClass();
 
-    public void addNode(BlockPos nodePos, NodeDataType nodeData, int mark, int openConnections, boolean isActive, IPipeTile<PipeType, NodeDataType> heldMTE) {
+    public void addNode(BlockPos nodePos, NodeDataType nodeData, int mark, int openConnections, boolean isActive, TileEntityPipeBase<PipeType, NodeDataType> heldMTE) {
         NodeG<PipeType, NodeDataType> node = new NodeG<>(nodeData, openConnections, mark, isActive, heldMTE);
         if (!canAttachNode(nodeData)) return;
 
@@ -181,6 +192,47 @@ public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType
         return true;
     }
 
+    public void updateBlockedConnections(BlockPos nodePos, EnumFacing side, boolean isBlocked) {
+        NodeG<PipeType, NodeDataType> node = pipeMap.get(nodePos);
+        if (node == null || node.isBlocked(side) == isBlocked) return;
+
+        node.setBlocked(side, isBlocked);
+        NodeG<PipeType, NodeDataType> nodeOffset = pipeMap.get(nodePos.offset(side));
+        if (nodeOffset == null) return;
+
+        if (!node.isBlocked(side) && !nodeOffset.isBlocked(side.getOpposite())) {
+            addEdge(node, nodeOffset);
+        } else {
+            removeEdge(node, nodeOffset);
+        }
+    }
+
+    public void updateMark(BlockPos nodePos, int newMark) {
+        NodeG<PipeType, NodeDataType> node = pipeMap.get(nodePos);
+        if (node == null) return;
+
+        int oldMark = node.mark;
+        node.mark = newMark;
+
+        for (EnumFacing side : EnumFacing.VALUES) {
+            NodeG<PipeType, NodeDataType> nodeOffset = pipeMap.get(nodePos.offset(side));
+            if (nodeOffset == null) continue;
+            if (!areNodeBlockedConnectionsCompatible(node, side, nodeOffset) ||
+                    !areNodesCustomContactable(node.data, nodeOffset.data)) continue;
+            if (areMarksCompatible(oldMark, nodeOffset.mark) == areMarksCompatible(newMark, nodeOffset.mark)) continue;
+
+            if (areMarksCompatible(newMark, nodeOffset.mark)) {
+                addEdge(node, nodeOffset);
+            } else {
+                removeEdge(node, nodeOffset);
+            }
+        }
+    }
+
+    public boolean hasNode(BlockPos pos) {
+        return pipeMap.containsKey(pos);
+    }
+
     public void addNodeSilent(NodeG<PipeType, NodeDataType> node) {
         pipeGraph.addVertex(node);
         this.pipeMap.put(node.getNodePos(), node);
@@ -197,15 +249,19 @@ public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType
         this.validPathsCache = false;
     }
 
-    public void addEdge(NodeG<PipeType, NodeDataType> node1, NodeG<PipeType, NodeDataType> node2, int weight) {
-        pipeGraph.addEdge(node1, node2);
-        pipeGraph.setEdgeWeight(node1, node2, weight);
-        this.validPathsCache = false;
+    public void addEdge(NodeG<PipeType, NodeDataType> node1, NodeG<PipeType, NodeDataType> node2, double weight) {
+        if (pipeGraph.addEdge(node1, node2) != null) {
+            pipeGraph.setEdgeWeight(node1, node2, weight);
+            this.validPathsCache = false;
+            this.markDirty();
+        }
     }
 
     public void removeEdge(NodeG<PipeType, NodeDataType> node1, NodeG<PipeType, NodeDataType> node2) {
-        if (pipeGraph.removeEdge(node1, node2) != null)
+        if (pipeGraph.removeEdge(node1, node2) != null) {
             this.validPathsCache = false;
+            this.markDirty();
+        }
     }
 
     public void removeNode(NodeG<PipeType, NodeDataType> node) {
@@ -216,16 +272,24 @@ public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType
     }
 
     protected void rebuildShortestPaths() {
-        this.shortestPaths = new ShortestPathsAlgorithm<>(pipeGraph, EXECUTOR);
+        this.shortestPaths = new ShortestPathsAlgorithm<>(pipeGraph, EXECUTOR, graphInspector);
         this.validPathsCache = true;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         NBTTagList allPipeNodes = nbt.getTagList("PipeNodes", Constants.NBT.TAG_COMPOUND);
+        NBTTagList allNetEdges = nbt.getTagList("NetEdges", Constants.NBT.TAG_COMPOUND);
+        Map<Long, NodeG<PipeType, NodeDataType>> longPosMap = new Long2ObjectOpenHashMap<>();
         for (int i = 0; i < allPipeNodes.tagCount(); i++) {
             NBTTagCompound pNodeTag = allPipeNodes.getCompoundTagAt(i);
-            this.addNodeSilent(new NodeG<>(pNodeTag));
+            NodeG<PipeType, NodeDataType> node = new NodeG<>(pNodeTag, this);
+            longPosMap.put(node.getLongPos(), node);
+            this.addNodeSilent(node);
+        }
+        for (int i = 0; i < allNetEdges.tagCount(); i++) {
+            NBTTagCompound gEdgeTag = allNetEdges.getCompoundTagAt(i);
+            new NetEdge.Builder<>(longPosMap, gEdgeTag, this::addEdge).addIfBuildable();
         }
     }
 
@@ -235,28 +299,62 @@ public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType
         NBTTagList allPipeNodes = new NBTTagList();
         for (NodeG<PipeType, NodeDataType> node : pipeGraph.vertexSet()) {
             NBTTagCompound nodeTag = node.serializeNBT();
+            NBTTagCompound dataTag = new NBTTagCompound();
+            writeNodeData(node.data, dataTag);
+            nodeTag.setTag("Data", dataTag);
             allPipeNodes.appendTag(nodeTag);
         }
         compound.setTag("PipeNodes", allPipeNodes);
+        
+        NBTTagList allNetEdges = new NBTTagList();
+        for (NetEdge edge : pipeGraph.edgeSet()) {
+            allNetEdges.appendTag(edge.serializeNBT());
+        }
+        compound.setTag("NetEdges", allNetEdges);
         return compound;
     }
 
-    // CHManyToManyShortestPaths is a very good algorithm because our graph will be extremely sparse.
-    protected static class ShortestPathsAlgorithm<V, E> extends CHManyToManyShortestPaths<V, E> {
+    /**
+     * Serializes node data into specified tag compound
+     * Used for writing persistent node data
+     */
+    protected abstract void writeNodeData(NodeDataType nodeData, NBTTagCompound tagCompound);
 
-        public ShortestPathsAlgorithm(Graph<V, E> graph, ThreadPoolExecutor executor) {
+    /**
+     * Deserializes node data from specified tag compound
+     * Used for reading persistent node data
+     */
+    protected abstract NodeDataType readNodeData(NBTTagCompound tagCompound);
+
+    // CHManyToManyShortestPaths is a very good algorithm because our graph will be extremely sparse.
+    protected static final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT> extends CHManyToManyShortestPaths<NodeG<PT, NDT>, NetEdge> {
+
+        private final ConnectivityInspector<NodeG<PT, NDT>, NetEdge> inspector;
+
+        public ShortestPathsAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> graph, ThreadPoolExecutor executor, ConnectivityInspector<NodeG<PT, NDT>, NetEdge> inspector) {
             super(graph, executor);
+            this.inspector = inspector;
         }
 
-        public Map<V, GraphPath<V, E>> getPathsMap(V source) {
+        public List<GraphPath<NodeG<PT, NDT>, NetEdge>> getPathsList(NodeG<PT, NDT> source) {
             if (!graph.containsVertex(source)) {
                 throw new IllegalArgumentException("graph must contain the source vertex");
             }
+            ManyToManyShortestPaths<NodeG<PT, NDT>, NetEdge> manyToManyPaths = getManyToManyPaths(Collections.singleton(source), inspector.connectedSetOf(source));
+            List<GraphPath<NodeG<PT, NDT>, NetEdge>> paths = new ObjectArrayList<>();
+            for (NodeG<PT, NDT> v : inspector.connectedSetOf(source)) {
+                // update mutably so that the returned paths are also updated
+                if (v.equals(source)) {
+                    source.sync(v);
+                    continue;
+                }
 
-            Map<V, GraphPath<V, E>> paths = new HashMap<>();
-            for (V v : graph.vertexSet()) {
-                paths.put(v, getPath(source, v));
+                GraphPath<NodeG<PT, NDT>, NetEdge> path = manyToManyPaths.getPath(source, v);
+                if (path != null) {
+                    paths.add(path);
+                }
             }
+            paths.sort(Comparator.comparingDouble(GraphPath::getWeight));
             return paths;
         }
     }
