@@ -5557,7 +5557,7 @@ gregtech.multiblock.pattern.error.batteries=§cMust have at least one non-empty 
 gregtech.multiblock.pattern.error.filters=§cAll filters must be the same§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
-gregtech.multiblock.pattern.single=§6Only this block can be used§r
+gregtech.multiblock.pattern.single=§6Only this block type can be used§r
 gregtech.multiblock.pattern.location_end=§cVery End§r
 gregtech.multiblock.pattern.replaceable_air=Replaceable by Air
 
