@@ -312,7 +312,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * sets the tier of the multi clamped between 0 and maxTier()
+     * sets the tier of the multi clamped between 1 and maxTier()
      */
     public void setTier(int structureTier) {
         if(this.structureTier != structureTier) {
@@ -325,9 +325,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     /**
      *  Override if you are using the multiblock tiered system
+     *  max tier of 0 means tiering is disabled
      */
     public int getMaxTier() {
-        return -1;
+        return 0;
     }
 
     @Override

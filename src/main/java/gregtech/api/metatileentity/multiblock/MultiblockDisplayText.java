@@ -424,7 +424,7 @@ public class MultiblockDisplayText {
         }
 
         public Builder addTieringLine(int tier) {
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.tier", tier));
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.structure_tier", tier));
             return this;
         }
 

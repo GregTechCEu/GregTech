@@ -209,7 +209,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private void toggleNextTier() {
-        if(++this.tierIndex > controller.getMaxTier()) {
+        if (++this.tierIndex > controller.getMaxTier()) {
             this.tierIndex = 0;
         }
         this.controller.setTier(tierIndex);
