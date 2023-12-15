@@ -39,7 +39,7 @@ public class MultiblockPreviewRenderer {
     private static long mbpEndTime;
     private static int opList = -1;
     private static int layer;
-    private static int shapeIndex = 0;
+    private static int tier;
 
     public static void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (mbpPos != null) {
@@ -48,6 +48,7 @@ public class MultiblockPreviewRenderer {
             if (opList == -1 || time > mbpEndTime || !(mc.world.getTileEntity(mbpPos) instanceof IGregTechTileEntity)) {
                 resetMultiblockRender();
                 layer = 0;
+                tier = 0;
                 return;
             }
             Entity entity = mc.getRenderViewEntity();
@@ -85,14 +86,15 @@ public class MultiblockPreviewRenderer {
         mbpEndTime = System.currentTimeMillis() + durTimeMillis;
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
+        if(tier != controller.getTier()) {
+            tier = controller.getTier();
+            controller.reinitializeStructurePattern();
+        }
         List<MultiblockShapeInfo> shapes = controller.getMatchingShapes();
-        if(shapeIndex > shapes.size()) shapeIndex = shapes.size() - 1;
-        if (!shapes.isEmpty()) renderControllerInList(controller, shapes.get(shapeIndex), layer);
+        if (!shapes.isEmpty()) {
+                renderControllerInList(controller, shapes.get(0), layer);
+        }
         GlStateManager.glEndList();
-    }
-
-    public static void setShapeInfoIndex(int index) {
-        shapeIndex = index;
     }
 
     public static void resetMultiblockRender() {

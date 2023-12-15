@@ -423,6 +423,11 @@ public class MultiblockDisplayText {
             return this;
         }
 
+        public Builder addTieringLine(int tier) {
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.tier", tier));
+            return this;
+        }
+
         /** Insert an empty line into the text list. */
         public Builder addEmptyLine() {
             textList.add(EMPTY_COMPONENT);
