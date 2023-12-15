@@ -10,6 +10,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> implements INBTSerializable<NBTTagCompound> {
@@ -38,6 +40,8 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
      */
     private BlockPos nodePos;
 
+    private NetGroup<PipeType, NodeDataType> group = null;
+
     public NodeG(NodeDataType data, int openConnections, int mark, boolean isActive, TileEntityPipeBase<PipeType, NodeDataType> heldMTE) {
         this.data = data;
         this.openConnections = openConnections;
@@ -60,6 +64,19 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
      */
     NodeG(BlockPos pos) {
         this.nodePos = pos;
+    }
+
+    @Nullable
+    NetGroup<PipeType, NodeDataType> getGroup() {
+        return group;
+    }
+
+    void setGroup(NetGroup<PipeType, NodeDataType> group) {
+        this.group = group;
+    }
+
+    void clearGroup() {
+        this.group = null;
     }
 
     public boolean isBlocked(EnumFacing facing) {
