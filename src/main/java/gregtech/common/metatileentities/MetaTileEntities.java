@@ -267,7 +267,7 @@ public class MetaTileEntities {
                                                                                                                                            // UHV
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[6]; // HV, EV, IV, LuV,
                                                                                                      // ZPM, UV
-    public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV]; // LV-UV
+    public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV + 1]; // LV-UV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
     public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
     public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
@@ -1137,12 +1137,13 @@ public class MetaTileEntities {
         CLEANING_MAINTENANCE_HATCH = registerMetaTileEntity(1401,
                 new MetaTileEntityCleaningMaintenanceHatch(gregtechId("maintenance_hatch_cleanroom_auto")));
 
-        // Muffler Hatches, IDs 1657-
-        for (int i = 0; i < MUFFLER_HATCH.length; i++) {
-            String voltageName = GTValues.VN[i + 1].toLowerCase();
-            MUFFLER_HATCH[i] = new MetaTileEntityMufflerHatch(gregtechId("muffler_hatch." + voltageName), i + 1);
+        // Muffler Hatches, IDs 1657-1664
+        for (int i = 0; i < MUFFLER_HATCH.length - 1; i++) {
+            int tier = i + 1;
+            String voltageName = GTValues.VN[tier].toLowerCase();
+            MUFFLER_HATCH[tier] = new MetaTileEntityMufflerHatch(gregtechId("muffler_hatch." + voltageName), tier);
 
-            registerMetaTileEntity(1657 + i, MUFFLER_HATCH[i]);
+            registerMetaTileEntity(1657 + i, MUFFLER_HATCH[tier]);
         }
 
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
