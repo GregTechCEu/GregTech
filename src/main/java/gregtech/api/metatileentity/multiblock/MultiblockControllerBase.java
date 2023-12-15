@@ -61,7 +61,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
     private boolean structureFormed;
-    private int tier = 0;
+    private int structureTier = 0;
 
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
@@ -308,15 +308,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * Grabs the current tier of the multi(whether in DummyWorld or Server) useful for whatever you want
      */
     public int getTier() {
-        return this.tier;
+        return this.structureTier;
     }
 
     /**
      * sets the tier of the multi clamped between 0 and maxTier()
      */
-    public void setTier(int tier) {
-        if(this.tier != tier) {
-            this.tier = MathHelper.clamp(tier, 0, getMaxTier());
+    public void setTier(int structureTier) {
+        if(this.structureTier != structureTier) {
+            this.structureTier = MathHelper.clamp(structureTier, 0, getMaxTier());
             if (getWorld() != null && !getWorld().isRemote) {
                 reinitializeStructurePattern();
             }
@@ -331,8 +331,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setInteger("structureTier", structureTier);
+        return data;
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
+        structureTier = data.getInteger("structureTier");
         this.reinitializeStructurePattern();
     }
 
@@ -340,14 +348,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(structureFormed);
-        buf.writeInt(tier);
+        buf.writeInt(structureTier);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.structureFormed = buf.readBoolean();
-        this.tier = buf.readInt();
+        this.structureTier = buf.readInt();
     }
 
     @Override
