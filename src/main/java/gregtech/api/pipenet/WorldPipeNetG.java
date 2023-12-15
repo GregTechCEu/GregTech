@@ -44,10 +44,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldSavedData {
+public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldSavedData {
 
     // create an executor for graph algorithm. Allows 2 threads per JVM processor, and keeps them alive for 5 seconds.
-    // note - should this be shut down at some point during server shutdown?
+    // note - should this be explicitly shut down at some point during server shutdown?
     public static ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(0, Runtime.getRuntime().availableProcessors() * 2, 5, TimeUnit.SECONDS, new SynchronousQueue<>());
 
     private WeakReference<World> worldRef = new WeakReference<>(null);
@@ -241,7 +241,7 @@ public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType
     }
 
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
-        addEdge(source, target, 1);
+        addEdge(source, target, source.data.getWeightFactor() + target.data.getWeightFactor());
         this.validPathsCache = false;
     }
 
@@ -329,7 +329,7 @@ public abstract class WorldPipeNetG<NodeDataType, PipeType extends Enum<PipeType
     protected abstract NodeDataType readNodeData(NBTTagCompound tagCompound);
 
     // CHManyToManyShortestPaths is a very good algorithm because our graph will be extremely sparse.
-    protected static final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT> extends CHManyToManyShortestPaths<NodeG<PT, NDT>, NetEdge> {
+    protected static final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData> extends CHManyToManyShortestPaths<NodeG<PT, NDT>, NetEdge> {
 
         public ShortestPathsAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> graph, ThreadPoolExecutor executor) {
             super(graph, executor);

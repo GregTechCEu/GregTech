@@ -37,7 +37,7 @@ class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagComp
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {}
 
-    static final class Builder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> {
+    static final class Builder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData> {
         private final NodeG<PipeType, NodeDataType> node1;
         private final NodeG<PipeType, NodeDataType> node2;
         private final double weight;

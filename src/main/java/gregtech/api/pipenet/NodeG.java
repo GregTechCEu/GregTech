@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> implements INBTSerializable<NBTTagCompound> {
+public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData> implements INBTSerializable<NBTTagCompound> {
 
     public static final int DEFAULT_MARK = 0;
 
