@@ -140,7 +140,10 @@ public class RecyclingRecipes {
             if (m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getMacerateInto() != m) {
                 m = m.getProperty(PropertyKey.INGOT).getMacerateInto();
             }
-            if (!m.hasProperty(PropertyKey.FLUID) || (prefix == OrePrefix.dust && m.hasProperty(PropertyKey.BLAST))) {
+            if (!m.hasProperty(PropertyKey.FLUID) || m.getFluid() == null) {
+                return;
+            }
+            if (prefix == OrePrefix.dust && m.hasProperty(PropertyKey.BLAST)) {
                 return;
             }
             RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
