@@ -157,16 +157,16 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         // Check if the item is a battery (or similar), and if we can receive some amount of energy
         if (electricItem.canProvideChargeExternally() && getEnergyCanBeInserted() > 0) {
 
-            // Drain from the battery if we are below half energy capacity, and if the tier matches
-            if (chargePercent <= 0.5 && chargeTier == machineTier) {
+            // Drain from the battery if we are below 1/3rd energy capacity, and if the tier matches
+            if (chargePercent <= 0.33 && chargeTier == machineTier) {
                 long dischargedBy = electricItem.discharge(getEnergyCanBeInserted(), machineTier, false, true, false);
                 addEnergy(dischargedBy);
                 return dischargedBy > 0L;
             }
         }
 
-        // Else, check if we have above 50% power
-        if (chargePercent > 0.5) {
+        // Else, check if we have above 2/3rds charge
+        if (chargePercent > 0.66) {
             long chargedBy = electricItem.charge(getEnergyStored(), chargeTier, false, false);
             removeEnergy(chargedBy);
             return chargedBy > 0;
@@ -178,7 +178,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
         double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
 
-        if (chargePercent > 0.5) {
+        if (chargePercent > 0.66) { // 2/3rds full
             long chargedBy = FeCompat.insertEu(energyStorage, GTValues.V[machineTier]);
             removeEnergy(chargedBy);
             return chargedBy > 0;
