@@ -651,8 +651,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to overclock
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @NotNull
-    protected int[] performOverclocking(@NotNull Recipe recipe) {
+    protected int @NotNull [] performOverclocking(@NotNull Recipe recipe) {
         int[] values = { recipe.getEUt(), recipe.getDuration(), getNumberOfOCs(recipe.getEUt()) };
         modifyOverclockPre(values, recipe.getRecipePropertyStorage());
 

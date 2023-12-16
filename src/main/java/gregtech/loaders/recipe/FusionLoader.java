@@ -38,16 +38,16 @@ public class FusionLoader {
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
                 .fluidInputs(Materials.Silicon.getFluid(16))
                 .fluidInputs(Materials.Magnesium.getFluid(16))
-                .fluidOutputs(Materials.Iron.getPlasma(16))
+                .fluidOutputs(Materials.Iron.getPlasma(144))
                 .duration(32)
                 .EUt(VA[IV])
-                .EUToStart(360_000_000)
+                .EUToStart(300_000_000)
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
                 .fluidInputs(Materials.Potassium.getFluid(16))
                 .fluidInputs(Materials.Fluorine.getFluid(125))
-                .fluidOutputs(Materials.Nickel.getPlasma(16))
+                .fluidOutputs(Materials.Nickel.getPlasma(144))
                 .duration(16)
                 .EUt(VA[LuV])
                 .EUToStart(480_000_000)
@@ -63,6 +63,24 @@ public class FusionLoader {
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
+                .fluidInputs(Materials.Plutonium241.getFluid(144))
+                .fluidInputs(Materials.Hydrogen.getFluid(2000))
+                .fluidOutputs(Materials.Americium.getPlasma(144))
+                .duration(64)
+                .EUt(98304)
+                .EUToStart(500_000_000)
+                .buildAndRegister();
+
+        RecipeMaps.FUSION_RECIPES.recipeBuilder()
+                .fluidInputs(Materials.Silver.getFluid(144))
+                .fluidInputs(Materials.Helium3.getFluid(375))
+                .fluidOutputs(Materials.Tin.getPlasma(144))
+                .duration(16)
+                .EUt(49152)
+                .EUToStart(280_000_000)
+                .buildAndRegister();
+
+        RecipeMaps.FUSION_RECIPES.recipeBuilder()
                 .fluidInputs(Materials.Neodymium.getFluid(16))
                 .fluidInputs(Materials.Hydrogen.getFluid(375))
                 .fluidOutputs(Materials.Europium.getFluid(16))
@@ -72,9 +90,9 @@ public class FusionLoader {
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
-                .fluidInputs(Materials.Lutetium.getFluid(32))
-                .fluidInputs(Materials.Chrome.getFluid(32))
-                .fluidOutputs(Materials.Americium.getFluid(32))
+                .fluidInputs(Materials.Lutetium.getFluid(16))
+                .fluidInputs(Materials.Chrome.getFluid(16))
+                .fluidOutputs(Materials.Americium.getFluid(16))
                 .duration(64)
                 .EUt(49152)
                 .EUToStart(200_000_000)
@@ -147,16 +165,16 @@ public class FusionLoader {
                 .fluidInputs(Materials.Gallium.getFluid(16))
                 .fluidInputs(Materials.Radon.getFluid(125))
                 .fluidOutputs(Materials.Duranium.getFluid(16))
-                .duration(64)
+                .duration(32)
                 .EUt(16384)
                 .EUToStart(140_000_000)
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
-                .fluidInputs(Materials.Titanium.getFluid(32))
+                .fluidInputs(Materials.Titanium.getFluid(48))
                 .fluidInputs(Materials.Duranium.getFluid(32))
                 .fluidOutputs(Materials.Tritanium.getFluid(16))
-                .duration(64)
+                .duration(16)
                 .EUt(VA[LuV])
                 .EUToStart(200_000_000)
                 .buildAndRegister();
