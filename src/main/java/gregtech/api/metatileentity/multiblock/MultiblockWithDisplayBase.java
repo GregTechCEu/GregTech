@@ -285,7 +285,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @SideOnly(Side.CLIENT)
-    public EnumParticleTypes getMufflerParticle() {
+    public @NotNull EnumParticleTypes getMufflerParticle() {
         return EnumParticleTypes.SMOKE_LARGE;
     }
 

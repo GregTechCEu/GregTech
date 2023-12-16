@@ -138,12 +138,12 @@ public enum VanillaParticleEffects implements IMachineParticleEffect {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void defaultFrontEffect(MetaTileEntity mte, EnumParticleTypes... particles) {
+    public static void defaultFrontEffect(@NotNull MetaTileEntity mte, EnumParticleTypes... particles) {
         defaultFrontEffect(mte, 0.0F, particles);
     }
 
     @SideOnly(Side.CLIENT)
-    public static void defaultFrontEffect(MetaTileEntity mte, float yOffset, EnumParticleTypes... particles) {
+    public static void defaultFrontEffect(@NotNull MetaTileEntity mte, float yOffset, EnumParticleTypes... particles) {
         if (particles == null || particles.length == 0) return;
         if (mte.getWorld() == null || mte.getPos() == null) return;
 
@@ -174,7 +174,7 @@ public enum VanillaParticleEffects implements IMachineParticleEffect {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void mufflerEffect(MetaTileEntity mte, EnumParticleTypes particle) {
+    public static void mufflerEffect(@NotNull MetaTileEntity mte, @NotNull EnumParticleTypes particle) {
         if (mte.getWorld() == null || mte.getPos() == null) return;
 
         BlockPos pos = mte.getPos();
