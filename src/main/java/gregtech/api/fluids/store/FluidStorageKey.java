@@ -24,6 +24,7 @@ public final class FluidStorageKey {
     private final Function<Material, String> translationKeyFunction;
     private final int hashCode;
     private final FluidState defaultFluidState;
+    private final int registrationPriority;
 
     public FluidStorageKey(@NotNull ResourceLocation resourceLocation, @NotNull MaterialIconType iconType,
                            @NotNull UnaryOperator<@NotNull String> registryNameOperator,
@@ -35,12 +36,20 @@ public final class FluidStorageKey {
                            @NotNull UnaryOperator<@NotNull String> registryNameOperator,
                            @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction,
                            @Nullable FluidState defaultFluidState) {
+        this(resourceLocation, iconType, registryNameOperator, translationKeyFunction, defaultFluidState, 0);
+    }
+
+    public FluidStorageKey(@NotNull ResourceLocation resourceLocation, @NotNull MaterialIconType iconType,
+                           @NotNull UnaryOperator<@NotNull String> registryNameOperator,
+                           @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction,
+                           @Nullable FluidState defaultFluidState, int registrationPriority) {
         this.resourceLocation = resourceLocation;
         this.iconType = iconType;
         this.registryNameOperator = registryNameOperator;
         this.translationKeyFunction = translationKeyFunction;
         this.hashCode = resourceLocation.hashCode();
         this.defaultFluidState = defaultFluidState;
+        this.registrationPriority = registrationPriority;
         if (keys.containsKey(resourceLocation)) {
             throw new IllegalArgumentException("Cannot create duplicate keys");
         }
@@ -79,6 +88,14 @@ public final class FluidStorageKey {
      */
     public @Nullable FluidState getDefaultFluidState() {
         return defaultFluidState;
+    }
+
+    /**
+     * @return The registration priority for this fluid type, determining the build order for fluids.
+     *         Useful for when your fluid building requires some properties from previous fluids.
+     */
+    public int getRegistrationPriority() {
+        return registrationPriority;
     }
 
     @Override
