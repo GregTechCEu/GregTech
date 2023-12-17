@@ -428,7 +428,7 @@ public class FluidBuilder {
                     }
                     case GAS -> ROOM_TEMPERATURE;
                     case PLASMA -> {
-                        if (material.hasFluid()) {
+                        if (material.hasFluid() && material.getFluid() != null) {
                             yield BASE_PLASMA_TEMPERATURE + material.getFluid().getTemperature();
                         }
                         yield BASE_PLASMA_TEMPERATURE;
