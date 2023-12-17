@@ -311,7 +311,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                                 .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
                                         workingStateValue::setBoolValue))
                                 .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
-                                .disableHoverBackground()
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(workingStateValue.getBoolValue() ?
                                                 IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
@@ -321,7 +320,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                                 .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,
                                         collapseStateValue::setBoolValue))
                                 .overlay(GTGuiTextures.BUTTON_AUTO_COLLAPSE)
-                                .disableHoverBackground()
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(collapseStateValue.getBoolValue() ?
                                                 IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
