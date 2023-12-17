@@ -15,6 +15,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
@@ -516,13 +518,16 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     public ParentWidget<?> buildWidget(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
-                                       FluidTankList exportFluids, int yOffset) {
+                                       FluidTankList exportFluids, int yOffset, GuiSyncManager syncManager) {
+        DoubleSyncValue progressValue = new DoubleSyncValue(progressSupplier, null);
+        syncManager.syncValue("recipe_progress", progressValue);
+
         ParentWidget<?> group = new ParentWidget<>().size(176, 166 + yOffset);
         group.child(new RecipeProgressWidget()
                 .recipeMap(recipeMap)
                 .size(20)
                 .alignX(0.5f).top(23 + yOffset)
-                .progress(progressSupplier)
+                .progress(progressValue::getDoubleValue)
                 .texture(progressTexture, 20)
                 .direction(progressDirection));
         addInventorySlotGroup(group, importItems, importFluids, false, yOffset);
