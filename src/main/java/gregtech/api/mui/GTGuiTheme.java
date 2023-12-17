@@ -5,14 +5,18 @@ import gregtech.common.ConfigHolder;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class GTGuiTheme {
 
@@ -24,7 +28,7 @@ public class GTGuiTheme {
             .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
             .button(GTGuiTextures.IDs.STANDARD_BUTTON)
-            .toggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
+            .simpleToggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
                     GTGuiTextures.IDs.STANDARD_SLOT,
                     ConfigHolder.client.defaultUIColor)
             .build();
@@ -51,6 +55,8 @@ public class GTGuiTheme {
     private final List<Consumer<JsonBuilder>> elementBuilder;
     private final JsonBuilder jsonBuilder;
 
+    private Supplier<UITexture> logo;
+
     private GTGuiTheme(String themeId) {
         this.themeId = themeId;
         this.jsonBuilder = new JsonBuilder();
@@ -60,6 +66,15 @@ public class GTGuiTheme {
 
     public String getId() {
         return themeId;
+    }
+
+    public ITheme getMuiTheme() {
+        return IThemeApi.get().getTheme(themeId);
+    }
+
+    public @Nullable UITexture getLogo() {
+        if (logo == null) return null;
+        return logo.get();
     }
 
     private void register() {
@@ -278,33 +293,90 @@ public class GTGuiTheme {
             return this;
         }
 
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId) {
-            return toggleButton(toggleButtonId, selectedBackgroundId, 0xFFFFFFFF, true);
+        /**
+         * Set the theme options for a ToggleButton widget.
+         *
+         * @param backgroundId              The main background for the unpressed button
+         * @param hoverBackgroundId         The on-hover background for the unpressed button
+         * @param selectedBackgroundId      The main background for the pressed button
+         * @param selectedHoverBackgroundId The on-hover background for the pressed button
+         * @param selectedColor             The color to apply to the pressed button
+         */
+        public Builder toggleButton(String backgroundId, String hoverBackgroundId,
+                                    String selectedBackgroundId, String selectedHoverBackgroundId, int selectedColor) {
+            return toggleButton(
+                    backgroundId, hoverBackgroundId,
+                    selectedBackgroundId, selectedHoverBackgroundId,
+                    selectedColor, 0xFFBBBBBB, false);
         }
 
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int selectedColor) {
-            return toggleButton(toggleButtonId, selectedBackgroundId, 0xFFFFFFFF, true, null, selectedColor);
-        }
-
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor,
-                                    boolean textShadow) {
-            return toggleButton(toggleButtonId, selectedBackgroundId, textColor, textShadow, null, 0xFFBBBBBB);
-        }
-
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor,
-                                    boolean textShadow, String selectedHoverBackgroundId, int selectedColor) {
+        /**
+         * Set the theme options for a ToggleButton widget.
+         *
+         * @param backgroundId              The main background for the unpressed button
+         * @param hoverBackgroundId         The on-hover background for the unpressed button
+         * @param selectedBackgroundId      The main background for the pressed button
+         * @param selectedHoverBackgroundId The on-hover background for the pressed button
+         * @param selectedColor             The color to apply to the pressed button
+         * @param textColor                 The color for text overlaid on this button
+         * @param textShadow                Whether to apply text shadow to text overlaid on this button
+         */
+        public Builder toggleButton(String backgroundId, String hoverBackgroundId,
+                                    String selectedBackgroundId, String selectedHoverBackgroundId,
+                                    int selectedColor, int textColor, boolean textShadow) {
             theme.elementBuilder.add(b -> b
                     .add("toggleButton", new JsonBuilder()
                             .add("background", new JsonBuilder()
                                     .add("type", "texture")
-                                    .add("id", toggleButtonId))
-                            .add("textColor", textColor)
-                            .add("textShadow", textShadow)
+                                    .add("id", backgroundId))
+                            .add("hoverBackground", new JsonBuilder()
+                                    .add("type", "texture")
+                                    .add("id", hoverBackgroundId))
                             .add("selectedBackground", new JsonBuilder()
                                     .add("type", "texture")
                                     .add("id", selectedBackgroundId))
-                            .add("selectedHoverBackground", selectedHoverBackgroundId)
-                            .add("selectedColor", selectedColor)));
+                            .add("selectedHoverBackground", new JsonBuilder()
+                                    .add("type", "texture")
+                                    .add("id", selectedHoverBackgroundId))
+                            .add("selectedColor", selectedColor)
+                            .add("textColor", textColor)
+                            .add("textShadow", textShadow)));
+            return this;
+        }
+
+        /**
+         * Simple toggle button configuration for when you want a button with no texture changes on hover.
+         *
+         * @param backgroundId         The unselected background texture
+         * @param selectedBackgroundId The selected background texture
+         * @param selectedColor        The background color when the button is selected
+         */
+        public Builder simpleToggleButton(String backgroundId, String selectedBackgroundId, int selectedColor) {
+            return simpleToggleButton(backgroundId, selectedBackgroundId, selectedColor, 0xFFBBBBBB, false);
+        }
+
+        /**
+         * Simple toggle button configuration for when you want a button with no texture changes on hover.
+         *
+         * @param backgroundId         The unselected background texture
+         * @param selectedBackgroundId The selected background texture
+         * @param selectedColor        The background color when the button is selected
+         * @param textColor            The color for text overlaid on this button
+         * @param textShadow           Whether to apply text shadow to text overlaid on this button
+         */
+        public Builder simpleToggleButton(String backgroundId, String selectedBackgroundId, int selectedColor,
+                                          int textColor, boolean textShadow) {
+            return toggleButton(
+                    backgroundId, backgroundId,
+                    selectedBackgroundId, selectedBackgroundId,
+                    selectedColor, textColor, textShadow);
+        }
+
+        /**
+         * Set a logo supplier for this theme.
+         */
+        public Builder logo(Supplier<UITexture> logo) {
+            theme.logo = logo;
             return this;
         }
 
