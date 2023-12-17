@@ -1,11 +1,12 @@
 package gregtech.integration.exnihilo;
 
 import gregtech.api.GTValues;
+
 import net.minecraftforge.common.config.Config;
 
 import static net.minecraftforge.common.config.Config.Comment;
-import static net.minecraftforge.common.config.Config.RequiresMcRestart;
 import static net.minecraftforge.common.config.Config.LangKey;
+import static net.minecraftforge.common.config.Config.RequiresMcRestart;
 
 @LangKey("gregtech.config.ex_nihilo")
 @Config(modid = GTValues.MODID, name = GTValues.MODID + "/ex_nihilo", category = "Ex Nihilo")

@@ -1,10 +1,7 @@
 package gregtech.integration.exnihilo.items;
 
-import exnihilocreatio.ExNihiloCreatio;
-import exnihilocreatio.entities.ProjectileStone;
-import exnihilocreatio.util.Data;
-import exnihilocreatio.util.IHasModel;
 import gregtech.integration.exnihilo.ExNihiloModule;
+
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,11 +15,16 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import exnihilocreatio.ExNihiloCreatio;
+import exnihilocreatio.entities.ProjectileStone;
+import exnihilocreatio.util.Data;
+import exnihilocreatio.util.IHasModel;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-
 public class ExNihiloPebble extends Item implements IHasModel {
+
     public ExNihiloPebble() {
         setTranslationKey("gtPebble");
         setRegistryName("gtPebble");
@@ -32,14 +34,14 @@ public class ExNihiloPebble extends Item implements IHasModel {
     }
 
     @Override
-    @Nonnull
-    public String getTranslationKey(@Nonnull ItemStack stack) {
+    @NotNull
+    public String getTranslationKey(@NotNull ItemStack stack) {
         return String.format("%s.%s", getTranslationKey(), GTPebbles.VALUES[stack.getItemDamage()].getName());
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    public void getSubItems(@Nullable CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         if (tab != null && isInCreativeTab(tab)) {
             for (GTPebbles pebble : GTPebbles.VALUES) {
                 list.add(new ItemStack(ExNihiloModule.GTPebbles, 1, pebble.ordinal()));
@@ -48,13 +50,15 @@ public class ExNihiloPebble extends Item implements IHasModel {
     }
 
     @Override
-    @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
+    @NotNull
+    public ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player,
+                                                    @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
         if (!stack.isEmpty()) {
             world.playSound(player, player.posX, player.posY, player.posZ,
-                    SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+                    SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F,
+                    0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 
             if (!world.isRemote) {
                 ItemStack thrown = stack.copy();
@@ -79,7 +83,8 @@ public class ExNihiloPebble extends Item implements IHasModel {
     public void initModel(ModelRegistryEvent e) {
         ModelResourceLocation[] locations = new ModelResourceLocation[GTPebbles.VALUES.length];
         for (GTPebbles pebble : GTPebbles.VALUES) {
-            locations[pebble.ordinal()] = new ModelResourceLocation(getRegistryName(), String.format("type=%s", pebble.getName()));
+            locations[pebble.ordinal()] = new ModelResourceLocation(getRegistryName(),
+                    String.format("type=%s", pebble.getName()));
         }
 
         ModelBakery.registerItemVariants(this, locations);
@@ -87,6 +92,7 @@ public class ExNihiloPebble extends Item implements IHasModel {
     }
 
     private enum GTPebbles implements IStringSerializable {
+
         BASALT("basalt"),
         BLACK_GRANITE("black_granite"),
         MARBLE("marble"),
@@ -100,7 +106,7 @@ public class ExNihiloPebble extends Item implements IHasModel {
         }
 
         @Override
-        @Nonnull
+        @NotNull
         public String getName() {
             return this.name;
         }

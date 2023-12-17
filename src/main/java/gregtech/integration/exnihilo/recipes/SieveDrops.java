@@ -1,12 +1,5 @@
 package gregtech.integration.exnihilo.recipes;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import exnihilocreatio.ModBlocks;
-import exnihilocreatio.blocks.BlockSieve;
-import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
-import exnihilocreatio.registries.types.Siftable;
-import exnihilocreatio.util.ItemInfo;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.FileUtility;
@@ -14,6 +7,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.exnihilo.ExNihiloConfig;
 import gregtech.integration.exnihilo.ExNihiloModule;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -21,6 +15,14 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import exnihilocreatio.ModBlocks;
+import exnihilocreatio.blocks.BlockSieve;
+import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
+import exnihilocreatio.registries.types.Siftable;
+import exnihilocreatio.util.ItemInfo;
 
 import java.io.File;
 
@@ -43,6 +45,7 @@ public class SieveDrops {
         }
         return true;
     }
+
     private static void processDrops(JsonElement element) {
         if (!element.isJsonObject()) {
             IntegrationModule.logger.error("Parsed JSONElement is not an JSON Object!");
@@ -72,20 +75,27 @@ public class SieveDrops {
             m.entrySet().forEach(material -> {
                 JsonObject values = material.getValue().getAsJsonObject();
                 ItemStack stack;
-                if (!validateDrops(material.getKey(), values.get("meshlevel").getAsInt(), values.get("chance").getAsFloat())) {
+                if (!validateDrops(material.getKey(), values.get("meshlevel").getAsInt(),
+                        values.get("chance").getAsFloat())) {
                     return;
                 }
                 if (oreDict != null || !(block == ModBlocks.netherrackCrushed || block == ModBlocks.endstoneCrushed)) {
                     stack = OreDictUnifier.get(oreChunk, GregTechAPI.materialManager.getMaterial(material.getKey()));
                 } else {
-                    stack = block == ModBlocks.netherrackCrushed
-                            ? OreDictUnifier.get(oreNetherChunk, GregTechAPI.materialManager.getMaterial(material.getKey()))
-                            : OreDictUnifier.get(oreEnderChunk, GregTechAPI.materialManager.getMaterial(material.getKey()));
+                    stack = block == ModBlocks.netherrackCrushed ?
+                            OreDictUnifier.get(oreNetherChunk,
+                                    GregTechAPI.materialManager.getMaterial(material.getKey())) :
+                            OreDictUnifier.get(oreEnderChunk,
+                                    GregTechAPI.materialManager.getMaterial(material.getKey()));
                 }
                 if (oreDict != null) {
-                    ExNihiloRegistryManager.SIEVE_REGISTRY.register(oreDict, new ItemInfo(stack.getItem(), stack.getMetadata()),  values.get("chance").getAsFloat(), values.get("meshlevel").getAsInt());
+                    ExNihiloRegistryManager.SIEVE_REGISTRY.register(oreDict,
+                            new ItemInfo(stack.getItem(), stack.getMetadata()), values.get("chance").getAsFloat(),
+                            values.get("meshlevel").getAsInt());
                 } else {
-                    ExNihiloRegistryManager.SIEVE_REGISTRY.register(block.getDefaultState(), new ItemInfo(stack.getItem(), stack.getMetadata()),  values.get("chance").getAsFloat(), values.get("meshlevel").getAsInt());
+                    ExNihiloRegistryManager.SIEVE_REGISTRY.register(block.getDefaultState(),
+                            new ItemInfo(stack.getItem(), stack.getMetadata()), values.get("chance").getAsFloat(),
+                            values.get("meshlevel").getAsInt());
                 }
             });
         });
@@ -103,16 +113,27 @@ public class SieveDrops {
                 return false;
             });
             ExNihiloRegistryManager.SIEVE_REGISTRY.getRegistry().clear();
-            ExNihiloRegistryManager.SIEVE_REGISTRY.getRegistry().put(Ingredient.fromStacks(new ItemStack(Blocks.DIRT)), siftable);
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 3), 0.1f, BlockSieve.MeshType.STRING.getID());
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles), 0.5f, BlockSieve.MeshType.STRING.getID());
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles), 0.1f, BlockSieve.MeshType.STRING.getID());
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 1), 0.5f, BlockSieve.MeshType.STRING.getID());
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 1), 0.1f, BlockSieve.MeshType.STRING.getID());
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 2), 0.5f, BlockSieve.MeshType.STRING.getID());
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 2), 0.1f, BlockSieve.MeshType.STRING.getID());
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 3), 0.5f, BlockSieve.MeshType.STRING.getID());
-            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(MetaBlocks.RUBBER_SAPLING.getBlockState().getBlock()), 0.1f, BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.getRegistry().put(Ingredient.fromStacks(new ItemStack(Blocks.DIRT)),
+                    siftable);
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 3), 0.1f,
+                    BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles), 0.5f,
+                    BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles), 0.1f,
+                    BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 1), 0.5f,
+                    BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 1), 0.1f,
+                    BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 2), 0.5f,
+                    BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 2), 0.1f,
+                    BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 3), 0.5f,
+                    BlockSieve.MeshType.STRING.getID());
+            ExNihiloRegistryManager.SIEVE_REGISTRY.register("dirt",
+                    new ItemInfo(MetaBlocks.RUBBER_SAPLING.getBlockState().getBlock()), 0.1f,
+                    BlockSieve.MeshType.STRING.getID());
         }
     }
 }

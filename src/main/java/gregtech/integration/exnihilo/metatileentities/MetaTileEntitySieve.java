@@ -11,10 +11,11 @@ import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.integration.exnihilo.ExNihiloModule;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MetaTileEntitySieve extends SimpleMachineMetaTileEntity {
 
@@ -28,13 +29,14 @@ public class MetaTileEntitySieve extends SimpleMachineMetaTileEntity {
     }
 
     @Override
-    protected ModularUI.Builder createGuiTemplate(@Nonnull EntityPlayer player) {
+    protected ModularUI.Builder createGuiTemplate(@NotNull EntityPlayer player) {
         ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176, 192)
                 .label(5, 5, this.getMetaFullName())
                 .slot(this.importItems, 0, 17, 25, GuiTextures.SLOT)
                 .slot(this.importItems, 1, 35, 25, GuiTextures.SLOT)
                 .progressBar(workable::getProgressPercent, 25, 50, 20, 20,
-                        GuiTextures.PROGRESS_BAR_SIFT, ProgressWidget.MoveType.VERTICAL_INVERTED, workable.getRecipeMap())
+                        GuiTextures.PROGRESS_BAR_SIFT, ProgressWidget.MoveType.VERTICAL_INVERTED,
+                        workable.getRecipeMap())
                 .widget(new ImageWidget(25, 69, 18, 18, GuiTextures.INDICATOR_NO_ENERGY).setIgnoreColor(true)
                         .setPredicate(workable::isHasNotEnoughEnergy))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 109);
@@ -47,13 +49,13 @@ public class MetaTileEntitySieve extends SimpleMachineMetaTileEntity {
 
         builder.widget(new ToggleButtonWidget(7, 87, 18, 18,
                 GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                .setTooltipText("gregtech.gui.item_auto_output.tooltip")
-                .shouldUseBaseBackground());
+                        .setTooltipText("gregtech.gui.item_auto_output.tooltip")
+                        .shouldUseBaseBackground());
 
         builder.widget(new CycleButtonWidget(25, 87, 18, 18,
                 workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
-                .setTooltipHoverString("gregtech.gui.overclock.description")
-                .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
+                        .setTooltipHoverString("gregtech.gui.overclock.description")
+                        .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
         return builder;
     }
