@@ -4,10 +4,10 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.widget.RecipeProgressWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 
@@ -150,8 +150,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
                                                  FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new RecipeProgressWidget(200, 78, 23 + yOffset, 20, 20, progressBarTexture,
-                moveType, recipeMap));
+        builder.widget(new gregtech.api.gui.widgets.RecipeProgressWidget(200, 78, 23 + yOffset, 20, 20,
+                progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         if (specialTexture != null && specialTexturePosition != null) {
@@ -178,8 +178,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                                               FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(
-                new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
-                        moveType, recipeMap));
+                new gregtech.api.gui.widgets.RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20,
+                        progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         if (specialTexture != null && specialTexturePosition != null) {
@@ -207,8 +207,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                                                        FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(
-                new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
-                        moveType, recipeMap));
+                new gregtech.api.gui.widgets.RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20,
+                        progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         if (specialTexture != null && specialTexturePosition != null) {
             addSpecialTexture(builder);
@@ -518,7 +518,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
                                        FluidTankList exportFluids, int yOffset) {
         ParentWidget<?> group = new ParentWidget<>().size(176, 166 + yOffset);
-        group.child(new ProgressWidget()
+        group.child(new RecipeProgressWidget()
+                .recipeMap(recipeMap)
                 .size(20)
                 .alignX(0.5f).top(23 + yOffset)
                 .progress(progressSupplier)
