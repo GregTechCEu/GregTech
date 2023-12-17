@@ -15,6 +15,7 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -131,6 +132,7 @@ public class CoreModule implements IGregTechModule {
         GTSoundEvents.register();
 
         /* MUI Initialization */
+        GTGuis.registerFactories();
         GTGuiTextures.init();
         GTGuiTheme.registerThemes();
 
