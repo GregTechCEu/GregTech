@@ -100,7 +100,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     static {
         FACE_BORDER_MAP.put(EnumFacing.DOWN,
-                borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.WEST));
+                borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST));
         FACE_BORDER_MAP.put(EnumFacing.UP,
                 borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST));
         FACE_BORDER_MAP.put(EnumFacing.NORTH,

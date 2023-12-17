@@ -15,12 +15,22 @@ public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> 
 
     protected ItemStack researchStack;
     protected ItemStack dataStack;
+    protected boolean ignoreNBT;
     protected String researchId;
     protected int eut;
 
     public T researchStack(@NotNull ItemStack researchStack) {
         if (!researchStack.isEmpty()) {
             this.researchStack = researchStack;
+            this.ignoreNBT = true;
+        }
+        return (T) this;
+    }
+
+    public T researchStack(@NotNull ItemStack researchStack, boolean ignoreNBT) {
+        if (!researchStack.isEmpty()) {
+            this.researchStack = researchStack;
+            this.ignoreNBT = ignoreNBT;
         }
         return (T) this;
     }
@@ -99,7 +109,8 @@ public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> 
             validateResearchItem();
             if (duration <= 0) duration = DEFAULT_SCANNER_DURATION;
             if (eut <= 0) eut = DEFAULT_SCANNER_EUT;
-            return new AssemblyLineRecipeBuilder.ResearchRecipeEntry(researchId, researchStack, dataStack, duration,
+            return new AssemblyLineRecipeBuilder.ResearchRecipeEntry(researchId, researchStack, dataStack, ignoreNBT,
+                    duration,
                     eut, 0);
         }
     }
@@ -148,7 +159,8 @@ public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> 
             int duration = totalCWU;
             if (eut <= 0) eut = DEFAULT_STATION_EUT;
 
-            return new AssemblyLineRecipeBuilder.ResearchRecipeEntry(researchId, researchStack, dataStack, duration,
+            return new AssemblyLineRecipeBuilder.ResearchRecipeEntry(researchId, researchStack, dataStack, ignoreNBT,
+                    duration,
                     eut, cwut);
         }
     }

@@ -275,13 +275,18 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     * @deprecated Use {@link gregtech.client.particle.VanillaParticleEffects#MUFFLER_SMOKE} instead.
+     * @deprecated Override {@link #getMufflerParticle()} instead.
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
     @SideOnly(Side.CLIENT)
     public void runMufflerEffect(float xPos, float yPos, float zPos, float xSpd, float ySpd, float zSpd) {
         getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, xSpd, ySpd, zSpd);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public @NotNull EnumParticleTypes getMufflerParticle() {
+        return EnumParticleTypes.SMOKE_LARGE;
     }
 
     /**
