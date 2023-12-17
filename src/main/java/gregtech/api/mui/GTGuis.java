@@ -9,7 +9,6 @@ import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 
 import net.minecraft.item.ItemStack;
 
-import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -65,15 +64,7 @@ public class GTGuis {
             flex().size(width, height).align(Alignment.Center);
             flex().endDefaultMode();
             background(GTGuiTextures.BACKGROUND_POPUP);
-            child(new ButtonWidget<>()
-                    .size(10, 10)
-                    .top(5).right(5)
-                    .background(GTGuiTextures.BUTTON) // todo
-                    .overlay(GuiTextures.CROSS_TINY)
-                    .onMousePressed(button -> {
-                        closeIfOpen();
-                        return true;
-                    }));
+            child(ButtonWidget.panelCloseButton().top(5).right(5));
             this.disableBelow = disableBelow;
             this.closeOnOutsideClick = closeOnOutsideClick;
         }
