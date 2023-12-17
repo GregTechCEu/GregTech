@@ -8,9 +8,20 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound> {
+
+    private List<Predicate<Object>> predicates;
+
+    public void setPredicates(List<Predicate<Object>> predicates) {
+        this.predicates = predicates;
+    }
+    public List<Predicate<Object>> getPredicates() {
+        return predicates;
+    }
 
     @Override
     protected NodeG<?, ?> getSource() {
@@ -38,7 +49,7 @@ class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagComp
     public void deserializeNBT(NBTTagCompound nbt) {}
 
     static final class Builder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-            NodeDataType extends INodeData> {
+            NodeDataType extends INodeData<NodeDataType>> {
 
         private final NodeG<PipeType, NodeDataType> node1;
         private final NodeG<PipeType, NodeDataType> node2;

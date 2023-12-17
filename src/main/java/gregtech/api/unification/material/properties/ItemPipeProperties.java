@@ -3,8 +3,9 @@ package gregtech.api.unification.material.properties;
 import gregtech.api.pipenet.INodeData;
 
 import java.util.Objects;
+import java.util.Set;
 
-public class ItemPipeProperties implements IMaterialProperty, INodeData {
+public class ItemPipeProperties implements IMaterialProperty, INodeData<ItemPipeProperties> {
 
     /**
      * Items will try to take the path with the lowest priority
@@ -77,15 +78,25 @@ public class ItemPipeProperties implements IMaterialProperty, INodeData {
 
     @Override
     public double getWeightFactor() {
-        // behold 200, the magic number
-        return Math.pow(2, (int) (Double.MAX_EXPONENT / (Math.log(this.getTransferRate() * 64) * 200)));
+        // 200 the magic number is dead ;-;
+        return priority;
+    }
+
+    @Override
+    public ItemPipeProperties getMinData(Set<ItemPipeProperties> datas) {
+        float transferRate = Integer.MAX_VALUE;
+        int priority = 0;
+        for (ItemPipeProperties data : datas) {
+            transferRate = Math.min(transferRate, data.getTransferRate());
+            priority += data.getPriority();
+        }
+        return new ItemPipeProperties(priority, transferRate);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemPipeProperties that = (ItemPipeProperties) o;
+        if (!(o instanceof ItemPipeProperties that)) return false;
         return priority == that.priority && Float.compare(that.transferRate, transferRate) == 0;
     }
 

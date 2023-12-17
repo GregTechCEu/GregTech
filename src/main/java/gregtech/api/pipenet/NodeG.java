@@ -3,7 +3,12 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -11,10 +16,16 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.GraphPath;
 
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData>
+public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>>
                   implements INBTSerializable<NBTTagCompound> {
 
     public static final int DEFAULT_MARK = 0;
@@ -34,7 +45,12 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     public int mark;
     public boolean isActive;
 
+    // TODO make weak reference
     public IPipeTile<PipeType, NodeDataType> heldMTE;
+    /**
+     * Connected tile entities
+     */
+    private Map<EnumFacing, WeakReference<TileEntity>> connecteds = new Object2ObjectOpenHashMap<>(6);
 
     /**
      * CANNOT BE CHANGED DURING THE LIFETIME OF A NODE OR THE GRAPH WILL BREAK (or so I've been told)
@@ -43,7 +59,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
 
     private NetGroup<PipeType, NodeDataType> group = null;
 
-    private List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> pathCache = null;
+    private List<NetPath<PipeType, NodeDataType>> pathCache = null;
 
     public NodeG(NodeDataType data, int openConnections, int mark, boolean isActive,
                  IPipeTile<PipeType, NodeDataType> heldMTE) {
@@ -63,13 +79,6 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
         this.data = net.readNodeData(tag.getCompoundTag("Data"));
     }
 
-    /**
-     * For internal usage only
-     */
-    NodeG(BlockPos pos) {
-        this.nodePos = pos;
-    }
-
     @Nullable
     NetGroup<PipeType, NodeDataType> getGroup() {
         return group;
@@ -81,6 +90,21 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
 
     void clearGroup() {
         this.group = null;
+    }
+
+    public boolean hasConnecteds() {
+        Optional<Boolean> o = this.connecteds.values().stream().map(a -> a.get() != null).reduce((a, b) -> a || b);
+        return o.isPresent() && o.get();
+    }
+
+    public Map<EnumFacing, TileEntity> getConnecteds() {
+        //noinspection DataFlowIssue
+        return this.connecteds.entrySet().stream().filter(a -> a.getValue().get() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, a -> a.getValue().get()));
+    }
+
+    public TileEntity getConnnected(EnumFacing facing) {
+        return this.connecteds.get(facing).get();
     }
 
     public boolean isBlocked(EnumFacing facing) {
@@ -116,8 +140,12 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
         }
     }
 
+    public NodeDataType getData() {
+        return data;
+    }
+
     @Nullable
-    public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> getPathCache() {
+    public List<NetPath<PipeType, NodeDataType>> getPathCache() {
         return pathCache;
     }
 
@@ -127,7 +155,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
      * @param pathCache The new cache.
      * @return The new cache.
      */
-    public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> setPathCache(List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> pathCache) {
+    public List<NetPath<PipeType, NodeDataType>> setPathCache(List<NetPath<PipeType, NodeDataType>> pathCache) {
         this.pathCache = pathCache;
         return pathCache;
     }

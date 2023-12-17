@@ -13,8 +13,9 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
-public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter, INodeData {
+public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter, INodeData<FluidPipeProperties> {
 
     private final Object2BooleanMap<FluidAttribute> containmentPredicate = new Object2BooleanOpenHashMap<>();
 
@@ -143,6 +144,25 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
     public double getWeightFactor() {
         // behold 170, the magic number
         return Math.pow(2, (int) (Double.MAX_EXPONENT / (Math.log(this.getThroughput()) * 170)));
+    }
+
+    @Override
+    public FluidPipeProperties getMinData(Set<FluidPipeProperties> datas) {
+        int maxFluidTemperature = Integer.MAX_VALUE;
+        int throughput = Integer.MAX_VALUE;
+        boolean gasProof = true;
+        boolean acidProof = true;
+        boolean cryoProof = true;
+        boolean plasmaProof = true;
+        for (FluidPipeProperties data : datas) {
+            maxFluidTemperature = Math.min(maxFluidTemperature, data.getMaxFluidTemperature());
+            throughput = Math.min(throughput, data.getThroughput());
+            gasProof &= data.isGasProof();
+            acidProof &= data.isAcidProof();
+            cryoProof &= data.isCryoProof();
+            plasmaProof &= data.isPlasmaProof();
+        }
+        return new FluidPipeProperties();
     }
 
     @Override

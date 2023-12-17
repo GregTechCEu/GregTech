@@ -5,10 +5,11 @@ import gregtech.api.pipenet.INodeData;
 import gregtech.api.unification.material.Material;
 
 import java.util.Objects;
+import java.util.Set;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 
-public class WireProperties implements IMaterialProperty, INodeData {
+public class WireProperties implements IMaterialProperty, INodeData<WireProperties> {
 
     private int voltage;
     private int amperage;
@@ -150,10 +151,20 @@ public class WireProperties implements IMaterialProperty, INodeData {
     }
 
     @Override
+    public WireProperties getMinData(Set<WireProperties> datas) {
+        int amperage = Integer.MAX_VALUE;
+        int lossPerBlock = 0;
+        for (WireProperties data : datas) {
+            amperage = Math.min(amperage, data.getAmperage());
+            lossPerBlock += data.getLossPerBlock();
+        }
+        return new WireProperties(-1, amperage, lossPerBlock);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof WireProperties)) return false;
-        WireProperties that = (WireProperties) o;
+        if (!(o instanceof WireProperties that)) return false;
         return voltage == that.voltage &&
                 amperage == that.amperage &&
                 lossPerBlock == that.lossPerBlock &&

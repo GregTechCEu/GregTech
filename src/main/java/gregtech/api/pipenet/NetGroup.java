@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData> {
+public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>> {
 
     private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph;
 

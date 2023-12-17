@@ -2,7 +2,14 @@ package gregtech.common.pipelike.optical;
 
 import gregtech.api.pipenet.INodeData;
 
-public class OpticalPipeProperties implements INodeData {
+import java.util.Set;
+
+public class OpticalPipeProperties implements INodeData<OpticalPipeProperties> {
 
     public static final OpticalPipeProperties INSTANCE = new OpticalPipeProperties();
+
+    @Override
+    public OpticalPipeProperties getMinData(Set<OpticalPipeProperties> datas) {
+        return this;
+    }
 }
