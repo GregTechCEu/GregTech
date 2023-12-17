@@ -25,7 +25,7 @@ dependencies {
     // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer
     // therefore we manually deobf the regular jar
     implementation rfg.deobf("curse.maven:codechicken-lib-1-8-242818:2779848") // CCL 3.2.3.358
-    implementation("com.cleanroommc:modularui:2.4.0") { transitive = false }
+    implementation("com.cleanroommc:modularui:2.4.1") { transitive = false }
 
     // Soft Dependencies
     // Can change any of these from compileOnlyApi -> implementation to test them in-game.
