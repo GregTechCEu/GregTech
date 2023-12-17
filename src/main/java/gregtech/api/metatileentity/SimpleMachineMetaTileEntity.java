@@ -57,7 +57,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
@@ -498,8 +498,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     }
 
     @Override
-    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
-                                boolean isClient) {
+    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
         RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
         if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
