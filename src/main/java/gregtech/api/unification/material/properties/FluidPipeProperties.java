@@ -5,6 +5,8 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
 
+import gregtech.api.pipenet.INodeData;
+
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +15,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collection;
 import java.util.Objects;
 
-public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter {
+public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter, INodeData {
 
     private final Object2BooleanMap<FluidAttribute> containmentPredicate = new Object2BooleanOpenHashMap<>();
 
@@ -136,6 +138,12 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
 
     public void setPlasmaProof(boolean plasmaProof) {
         this.plasmaProof = plasmaProof;
+    }
+
+    @Override
+    public double getWeightFactor() {
+        // behold 170, the magic number
+        return Math.pow(2, (int) (Double.MAX_EXPONENT / (Math.log(this.getThroughput()) * 170)));
     }
 
     @Override

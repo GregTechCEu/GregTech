@@ -1,8 +1,10 @@
 package gregtech.api.unification.material.properties;
 
+import gregtech.api.pipenet.INodeData;
+
 import java.util.Objects;
 
-public class ItemPipeProperties implements IMaterialProperty {
+public class ItemPipeProperties implements IMaterialProperty, INodeData {
 
     /**
      * Items will try to take the path with the lowest priority
@@ -71,6 +73,12 @@ public class ItemPipeProperties implements IMaterialProperty {
                     "Material " + properties.getMaterial() +
                             " has both Fluid and Item Pipe Property, which is not allowed!");
         }
+    }
+
+    @Override
+    public double getWeightFactor() {
+        // behold 200, the magic number
+        return Math.pow(2, (int) (Double.MAX_EXPONENT / (Math.log(this.getTransferRate() * 64) * 200)));
     }
 
     @Override
