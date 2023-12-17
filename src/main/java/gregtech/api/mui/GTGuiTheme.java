@@ -439,11 +439,38 @@ public class GTGuiTheme {
         }
 
         /**
+         * Simple toggle button configuration for when you want a button with no texture changes on hover.
+         *
+         * @param backgroundId         The unselected background texture
+         * @param selectedBackgroundId The selected background texture
+         * @param selectedColor        The background color when the button is selected
+         */
+        public Builder simpleToggleButton(String backgroundId, String selectedBackgroundId, int selectedColor) {
+            return simpleToggleButton(backgroundId, selectedBackgroundId, selectedColor, 0xFFBBBBBB, false);
+        }
+
+        /**
+         * Simple toggle button configuration for when you want a button with no texture changes on hover.
+         *
+         * @param backgroundId         The unselected background texture
+         * @param selectedBackgroundId The selected background texture
+         * @param selectedColor        The background color when the button is selected
+         * @param textColor            The color for text overlaid on this button
+         * @param textShadow           Whether to apply text shadow to text overlaid on this button
+         */
+        public Builder simpleToggleButton(String backgroundId, String selectedBackgroundId, int selectedColor,
+                                          int textColor, boolean textShadow) {
+            return toggleButton(
+                    backgroundId, backgroundId,
+                    selectedBackgroundId, selectedBackgroundId,
+                    selectedColor, textColor, textShadow);
+        }
+
+        /**
          * Sets the display background for this theme.
          */
         public Builder displayBackground(String displayBackground) {
             theme.displayBackground = displayBackground;
-            return this;
         }
 
         public GTGuiTheme build() {
