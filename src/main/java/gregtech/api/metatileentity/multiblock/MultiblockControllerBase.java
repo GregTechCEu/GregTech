@@ -307,16 +307,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * Grabs the current tier of the multi(whether in DummyWorld or Server) useful for whatever you want
      */
-    public int getTier() {
+    public int getStructureTier() {
         return this.structureTier;
     }
 
     /**
      * sets the tier of the multi clamped between 1 and maxTier()
      */
-    public void setTier(int structureTier) {
+    public void setStructureTier(int structureTier) {
         if(this.structureTier != structureTier) {
-            this.structureTier = MathHelper.clamp(structureTier, 0, getMaxTier());
+            this.structureTier = MathHelper.clamp(structureTier, 0, getMaxStructureTier());
             if (getWorld() != null && !getWorld().isRemote) {
                 reinitializeStructurePattern();
             }
@@ -327,7 +327,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      *  Override if you are using the multiblock tiered system
      *  max tier of 0 means tiering is disabled
      */
-    public int getMaxTier() {
+    public int getMaxStructureTier() {
         return 0;
     }
 

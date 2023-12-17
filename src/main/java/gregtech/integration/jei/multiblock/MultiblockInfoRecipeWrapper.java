@@ -137,7 +137,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         boolean isPagesDisabled = patterns.length == 1;
         this.buttonPreviousPattern.visible = !isPagesDisabled;
         this.buttonNextPattern.visible = !isPagesDisabled;
-        boolean isTieringEnabled = controller.getMaxTier() > 0;
+        boolean isTieringEnabled = controller.getMaxStructureTier() > 0;
         this.nextTierButton.visible = isTieringEnabled;
         this.predicates = new ArrayList<>();
     }
@@ -209,10 +209,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private void toggleNextTier() {
-        if (++this.tierIndex > controller.getMaxTier()) {
+        if (++this.tierIndex > controller.getMaxStructureTier()) {
             this.tierIndex = 0;
         }
-        this.controller.setTier(tierIndex);
+        this.controller.setStructureTier(tierIndex);
         controller.reinitializeStructurePattern();
         Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
         this.patterns = controller.getMatchingShapes().stream()
