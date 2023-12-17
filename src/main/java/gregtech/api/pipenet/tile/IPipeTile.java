@@ -1,6 +1,7 @@
 package gregtech.api.pipenet.tile;
 
 import gregtech.api.metatileentity.interfaces.INeighborCache;
+import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType>
+public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData>
                           extends INeighborCache {
 
     World getPipeWorld();

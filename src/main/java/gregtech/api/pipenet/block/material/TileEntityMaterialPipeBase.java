@@ -1,5 +1,6 @@
 package gregtech.api.pipenet.block.material;
 
+import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_MATERIAL;
 
 public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>,
-        NodeDataType> extends TileEntityPipeBase<PipeType, NodeDataType>
+        NodeDataType extends INodeData> extends TileEntityPipeBase<PipeType, NodeDataType>
                                                 implements IMaterialPipeTile<PipeType, NodeDataType> {
 
     private Material pipeMaterial = Materials.Aluminium;

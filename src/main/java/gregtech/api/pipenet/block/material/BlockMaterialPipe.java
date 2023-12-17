@@ -1,8 +1,8 @@
 package gregtech.api.pipenet.block.material;
 
 import gregtech.api.GTValues;
-import gregtech.api.pipenet.PipeNet;
-import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -27,8 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public abstract class BlockMaterialPipe<
-        PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType,
-        WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>>
+        PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>,
+        NodeDataType extends INodeData,
+        WorldPipeNetType extends WorldPipeNetG<NodeDataType, PipeType>>
                                        extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
 
     protected final PipeType pipeType;

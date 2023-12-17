@@ -3,8 +3,6 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +14,8 @@ import org.jgrapht.GraphPath;
 import java.util.List;
 import java.util.Objects;
 
-public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData> implements INBTSerializable<NBTTagCompound> {
+public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData>
+                  implements INBTSerializable<NBTTagCompound> {
 
     public static final int DEFAULT_MARK = 0;
 
@@ -35,7 +34,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     public int mark;
     public boolean isActive;
 
-    public TileEntityPipeBase<PipeType, NodeDataType> heldMTE;
+    public IPipeTile<PipeType, NodeDataType> heldMTE;
 
     /**
      * CANNOT BE CHANGED DURING THE LIFETIME OF A NODE OR THE GRAPH WILL BREAK (or so I've been told)
@@ -46,7 +45,8 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
 
     private List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> pathCache = null;
 
-    public NodeG(NodeDataType data, int openConnections, int mark, boolean isActive, TileEntityPipeBase<PipeType, NodeDataType> heldMTE) {
+    public NodeG(NodeDataType data, int openConnections, int mark, boolean isActive,
+                 IPipeTile<PipeType, NodeDataType> heldMTE) {
         this.data = data;
         this.openConnections = openConnections;
         this.mark = mark;
@@ -123,6 +123,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
 
     /**
      * Sets the path cache to the provided cache. Returns the provided cache for convenience.
+     * 
      * @param pathCache The new cache.
      * @return The new cache.
      */

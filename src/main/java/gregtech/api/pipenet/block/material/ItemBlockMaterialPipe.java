@@ -1,5 +1,6 @@
 package gregtech.api.pipenet.block.material;
 
+import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.unification.material.Material;
 
@@ -7,7 +8,8 @@ import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ItemBlockMaterialPipe<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>, NodeDataType>
+public class ItemBlockMaterialPipe<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>,
+        NodeDataType extends INodeData>
                                   extends ItemBlockPipe<PipeType, NodeDataType> {
 
     public ItemBlockMaterialPipe(BlockMaterialPipe<PipeType, NodeDataType, ?> block) {

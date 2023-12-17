@@ -5,8 +5,8 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
-import gregtech.api.pipenet.PipeNet;
-import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
@@ -35,7 +35,8 @@ import java.util.function.Consumer;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType> extends NeighborCacheTileEntityBase implements IPipeTile<PipeType, NodeDataType> {
+        NodeDataType extends INodeData> extends NeighborCacheTileEntityBase
+                                        implements IPipeTile<PipeType, NodeDataType> {
 
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
     protected int paintingColor = -1;
@@ -146,7 +147,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (pipeBlock == null) {
             Block block = getBlockState().getBlock();
             // noinspection unchecked
-            this.pipeBlock = block instanceof BlockPipe blockPipe ? blockPipe : null;
+            this.pipeBlock = block instanceof BlockPipe<?, ?, ?>blockPipe ?
+                    (BlockPipe<PipeType, NodeDataType, ?>) blockPipe : null;
         }
         return pipeBlock;
     }
@@ -217,7 +219,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             TileEntity tile = getNeighbor(side);
             // block connections if Pipe Types do not match
             if (connected &&
-                    tile instanceof IPipeTile pipeTile &&
+                    tile instanceof IPipeTile<?, ?>pipeTile &&
                     pipeTile.getPipeType().getClass() != this.getPipeType().getClass()) {
                 return;
             }
@@ -229,7 +231,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             });
             markDirty();
 
-            if (!fromNeighbor && tile instanceof IPipeTile pipeTile) {
+            if (!fromNeighbor && tile instanceof IPipeTile<?, ?>pipeTile) {
                 syncPipeConnections(side, pipeTile);
             }
         }
@@ -247,7 +249,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     private void updateNetworkConnection(EnumFacing side, boolean connected) {
-        WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+        WorldPipeNetG<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
         worldPipeNet.updateBlockedConnections(getPos(), side, !connected);
     }
 
@@ -268,11 +270,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                 buf.writeVarInt(blockedConnections);
             });
             markDirty();
-            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
-            PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
-            if (net != null) {
-                net.onPipeConnectionsUpdate();
-            }
+            WorldPipeNetG<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+            worldPipeNet.updateBlockedConnections(this.getPipePos(), side, blocked);
         }
     }
 
@@ -390,7 +389,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (compound.hasKey("PipeBlock", NBT.TAG_STRING)) {
             Block block = Block.REGISTRY.getObject(new ResourceLocation(compound.getString("PipeBlock")));
             // noinspection unchecked
-            this.pipeBlock = block instanceof BlockPipe blockPipe ? blockPipe : null;
+            this.pipeBlock = block instanceof BlockPipe<?, ?, ?>blockPipe ?
+                    (BlockPipe<PipeType, NodeDataType, ?>) blockPipe : null;
         }
         this.pipeType = getPipeTypeClass().getEnumConstants()[compound.getInteger("PipeType")];
 

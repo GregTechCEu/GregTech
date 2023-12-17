@@ -37,25 +37,29 @@ class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagComp
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {}
 
-    static final class Builder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData> {
+    static final class Builder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+            NodeDataType extends INodeData> {
+
         private final NodeG<PipeType, NodeDataType> node1;
         private final NodeG<PipeType, NodeDataType> node2;
         private final double weight;
         private final boolean buildable;
 
         private final TriConsumer<NodeG<PipeType, NodeDataType>, NodeG<PipeType, NodeDataType>, Double> edgeProducer;
-         Builder(Map<Long, NodeG<PipeType, NodeDataType>> longPosMap, NBTTagCompound tag, TriConsumer<NodeG<PipeType, NodeDataType>, NodeG<PipeType, NodeDataType>, Double> edgeProducer) {
-             this.node1 = longPosMap.get(tag.getLong("SourceLongPos"));
-             this.node2 = longPosMap.get(tag.getLong("TargetLongPos"));
-             this.weight = tag.getDouble("Weight");
-             this.edgeProducer = edgeProducer;
-             this.buildable = node1 != null && node2 != null;
-         }
 
-         void addIfBuildable() {
-             if (buildable) {
-                 edgeProducer.accept(node1, node2, weight);
-             }
-         }
+        Builder(Map<Long, NodeG<PipeType, NodeDataType>> longPosMap, NBTTagCompound tag,
+                TriConsumer<NodeG<PipeType, NodeDataType>, NodeG<PipeType, NodeDataType>, Double> edgeProducer) {
+            this.node1 = longPosMap.get(tag.getLong("SourceLongPos"));
+            this.node2 = longPosMap.get(tag.getLong("TargetLongPos"));
+            this.weight = tag.getDouble("Weight");
+            this.edgeProducer = edgeProducer;
+            this.buildable = node1 != null && node2 != null;
+        }
+
+        void addIfBuildable() {
+            if (buildable) {
+                edgeProducer.accept(node1, node2, weight);
+            }
+        }
     }
 }

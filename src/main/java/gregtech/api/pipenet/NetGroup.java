@@ -2,14 +2,11 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,6 +15,8 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph;
 
     private final Set<NodeG<PipeType, NodeDataType>> nodes;
+
+    private long lastUpdate;
 
     public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph) {
         this.graph = graph;
@@ -28,6 +27,14 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.graph = graph;
         this.nodes = nodes;
         this.nodes.forEach(b -> b.setGroup(this));
+    }
+
+    protected void onNodeConnectionsUpdate() {
+        this.lastUpdate = System.currentTimeMillis();
+    }
+
+    public long getLastUpdate() {
+        return lastUpdate;
     }
 
     private void clear() {
@@ -53,6 +60,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     /**
      * Merges the groups of an edge if necessary.
+     * 
      * @param source the source node of the edge
      * @param target the target node of the edge
      * @return True if both nodes belonged to no group, and no merge could be conducted.
@@ -81,6 +89,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     /**
      * Split this group by removing a node. Automatically removes the node from the graph.
+     * 
      * @param source node to remove
      * @return Whether the node existed in the graph
      */
@@ -92,8 +101,8 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             graph.removeVertex(source);
             while (!targets.isEmpty()) {
                 // get the lastmost target; if this throws a cast exception, something is very wrong with the graph.
-                NodeG<PipeType, NodeDataType> target =
-                        (NodeG<PipeType, NodeDataType>) targets.remove(targets.size() - 1);
+                NodeG<PipeType, NodeDataType> target = (NodeG<PipeType, NodeDataType>) targets
+                        .remove(targets.size() - 1);
 
                 Set<NodeG<PipeType, NodeDataType>> targetGroup = new ObjectOpenHashSet<>();
                 BreadthFirstIterator<NodeG<PipeType, NodeDataType>, NetEdge> i = new BreadthFirstIterator<>(graph,
@@ -121,6 +130,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     /**
      * Split this group by removing an edge. Automatically removes the edge from the graph.
+     * 
      * @param source source of the edge
      * @param target target of the edge
      * @return Whether the edge existed in the graph

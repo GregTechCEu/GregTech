@@ -4,7 +4,6 @@ import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
-
 import gregtech.api.pipenet.INodeData;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
