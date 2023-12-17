@@ -565,7 +565,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             panel.child(new Widget<>()
                     .size(17)
                     .pos(152, 63 + yOffset)
-                    .background(GTGuiTextures.getLogo()));
+                    .background(GTGuiTextures.getLogo(getUITheme())));
 
             if (hasGhostCircuitInventory() && circuitInventory != null) {
                 panel.child(new gregtech.api.mui.widget.GhostCircuitSlotWidget()
@@ -582,6 +582,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
     }
 
+    @Deprecated
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
         RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;

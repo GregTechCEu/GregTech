@@ -1,5 +1,6 @@
 package gregtech.api.mui;
 
+import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -7,6 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
@@ -14,6 +16,7 @@ import com.cleanroommc.modularui.utils.JsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class GTGuiTheme {
 
@@ -28,6 +31,7 @@ public class GTGuiTheme {
             .toggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
                     GTGuiTextures.IDs.STANDARD_SLOT,
                     ConfigHolder.client.defaultUIColor)
+            .logo(() -> GTValues.XMAS.get() ? GTGuiTextures.GREGTECH_LOGO_XMAS : GTGuiTextures.GREGTECH_LOGO)
             .build();
 
     // TODO Cover theme to utilize the GT5u-like button textures vs the standard ones
@@ -52,6 +56,8 @@ public class GTGuiTheme {
     private final List<Consumer<JsonBuilder>> elementBuilder;
     private final JsonBuilder jsonBuilder;
 
+    private Supplier<UITexture> logo;
+
     private GTGuiTheme(String themeId) {
         this.themeId = themeId;
         this.jsonBuilder = new JsonBuilder();
@@ -65,6 +71,10 @@ public class GTGuiTheme {
 
     public ITheme getMuiTheme() {
         return IThemeApi.get().getTheme(themeId);
+    }
+
+    public UITexture getLogo() {
+        return logo.get();
     }
 
     private void register() {
@@ -310,6 +320,11 @@ public class GTGuiTheme {
                                     .add("id", selectedBackgroundId))
                             .add("selectedHoverBackground", selectedHoverBackgroundId)
                             .add("selectedColor", selectedColor)));
+            return this;
+        }
+
+        public Builder logo(Supplier<UITexture> logo) {
+            theme.logo = logo;
             return this;
         }
 

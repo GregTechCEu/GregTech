@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 
 import com.cleanroommc.modularui.drawable.UITexture;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * GT MUI textures.<br>
@@ -454,7 +455,10 @@ public class GTGuiTextures {
     }
 
     // todo steam logos? multi indicator blinking logos?
-    public static UITexture getLogo() {
+    public static UITexture getLogo(@Nullable GTGuiTheme theme) {
+        if (theme != null) {
+            return theme.getLogo();
+        }
         return GTValues.XMAS.get() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
     }
 }
