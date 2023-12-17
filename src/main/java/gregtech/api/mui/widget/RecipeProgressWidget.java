@@ -1,18 +1,16 @@
 package gregtech.api.mui.widget;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.widgets.ProgressWidget;
-
 import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.RecipeMap;
-
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.recipe.RecipeMapCategory;
 import gregtech.modules.GregTechModules;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,11 +31,6 @@ public class RecipeProgressWidget extends ProgressWidget implements Interactable
 
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
-        return Interactable.super.onMousePressed(mouseButton);
-        // TODO Waiting for a MUI solution to do this.
-        // TODO Crashes when exiting the MUI ui after closing the JEI ui
-        // TODO that was opened by this widget.
-        /*
         if (recipeMap == null) {
             return Result.IGNORE;
         }
@@ -65,6 +58,6 @@ public class RecipeProgressWidget extends ProgressWidget implements Interactable
                 return Result.SUCCESS;
             }
         }
-        return Result.IGNORE;*/
+        return Result.IGNORE;
     }
 }
