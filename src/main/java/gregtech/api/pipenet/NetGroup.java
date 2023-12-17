@@ -2,11 +2,14 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,25 +30,22 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.nodes.forEach(b -> b.setGroup(this));
     }
 
-    /**
-     * Removes all nodes from a group
-     */
     private void clear() {
         this.nodes.clear();
     }
 
-    public void addNode(NodeG<PipeType, NodeDataType> node) {
+    protected void addNode(NodeG<PipeType, NodeDataType> node) {
         this.nodes.add(node);
         node.setGroup(this);
     }
 
-    public void addNodes(Set<NodeG<PipeType, NodeDataType>> nodes) {
+    protected void addNodes(Set<NodeG<PipeType, NodeDataType>> nodes) {
         this.nodes.addAll(nodes);
         nodes.forEach(a -> a.setGroup(this));
     }
 
     @SafeVarargs
-    public final void addNodes(NodeG<PipeType, NodeDataType>... nodes) {
+    protected final void addNodes(NodeG<PipeType, NodeDataType>... nodes) {
         for (NodeG<PipeType, NodeDataType> node : nodes) {
             this.addNode(node);
         }
@@ -63,17 +63,15 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         if (sourceGroup == targetGroup) return sourceGroup == null;
         if (sourceGroup != null) {
             sourceGroup.mergeNode(target);
+            sourceGroup.clearPathCaches();
         } else {
             targetGroup.mergeNode(source);
+            targetGroup.clearPathCaches();
         }
         return false;
     }
 
-    /**
-     * Adds a node to this group, merging its group if it has one.
-     * @param node the node to merge
-     */
-    void mergeNode(NodeG<?, ?> node) {
+    protected void mergeNode(NodeG<?, ?> node) {
         NodeG<PipeType, NodeDataType> cast = (NodeG<PipeType, NodeDataType>) node;
         if (cast.getGroup() != null) {
             this.addNodes(cast.getGroup().getNodes());
@@ -88,6 +86,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      */
     public boolean splitNode(NodeG<PipeType, NodeDataType> source) {
         if (graph.containsVertex(source)) {
+            this.clearPathCaches();
             List<NodeG<?, ?>> targets = graph.edgesOf(source).stream().map(NetEdge::getTarget)
                     .collect(Collectors.toList());
             graph.removeVertex(source);
@@ -128,7 +127,9 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      */
     public boolean splitEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
         if (graph.removeEdge(source, target) != null) {
+            this.clearPathCaches();
             Set<NodeG<PipeType, NodeDataType>> targetGroup = new ObjectOpenHashSet<>();
+            this.graph.removeEdge(source, target);
             BreadthFirstIterator<NodeG<PipeType, NodeDataType>, NetEdge> i = new BreadthFirstIterator<>(graph, target);
             NodeG<PipeType, NodeDataType> temp;
             while (i.hasNext()) {
@@ -155,5 +156,9 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      */
     Set<NodeG<PipeType, NodeDataType>> getNodes() {
         return nodes;
+    }
+
+    protected void clearPathCaches() {
+        this.nodes.forEach(NodeG::clearPathCache);
     }
 }

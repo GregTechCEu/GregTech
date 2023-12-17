@@ -6,7 +6,6 @@ import gregtech.api.pipenet.tile.IPipeTile;
 
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
@@ -26,22 +25,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.ListenableGraph;
-import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.shortestpath.CHManyToManyShortestPaths;
-import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
-import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldSavedData {
@@ -52,8 +43,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
 
     private ShortestPathsAlgorithm<PipeType, NodeDataType> shortestPaths;
     // this is a monstrosity
-    private final Map<NodeG<PipeType, NodeDataType>, List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>>> shortestPathsCache = new Object2ObjectOpenHashMap<>();
-    private boolean validPathsCache = false;
+    private boolean validAlgorithmInstance = false;
 
     public WorldPipeNetG(String name) {
         super(name);
@@ -83,41 +73,42 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
     }
 
     /**
-     * Preferred override, reduces operational cost
+     * Preferred override. Only collects a fresh TE from the server if the provided TE is not loaded.
      * @param tile The {@link TileEntityPipeBase} that paths are being requested for
      * @return the ordered list of paths associated with the {@link TileEntityPipeBase}
      */
     public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> getPaths(TileEntityPipeBase<PipeType, NodeDataType> tile) {
-        return getPaths(new NodeG<>(tile.getPipePos()), tile);
+        return getPaths(this.pipeMap.get(tile.getPipePos()), tile);
     }
 
     /**
-     * Special-case override
+     * Special-case override. Forces the collection of a fresh TE from the server.
      * @param pos The {@link BlockPos} that paths are being requested for
      * @return the ordered list of paths associated with the {@link BlockPos}
      */
     public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> getPaths(BlockPos pos) {
-        return getPaths(new NodeG<>(pos), null);
+        return getPaths(this.pipeMap.get(pos), null);
     }
 
     public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> getPaths(
-            NodeG<PipeType, NodeDataType> node, @Nullable TileEntityPipeBase<PipeType, NodeDataType> tile) {
+            @Nullable NodeG<PipeType, NodeDataType> node, @Nullable TileEntityPipeBase<PipeType, NodeDataType> tile) {
+        if (node == null) return new ObjectArrayList<>();
+        
         node.heldMTE = tile;
 
-        if (!this.validPathsCache) {
-            this.rebuildShortestPaths();
-            this.shortestPathsCache.clear();
-        }
+        if (!this.validAlgorithmInstance) this.rebuildShortestPaths();
 
         List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> cache =
-                this.shortestPathsCache.get(node);
-        if (cache != null) return verifyList(cache, node);
+                node.getPathCache();
+        if (cache != null) {
+            return node.setPathCache(verifyList(cache, node));
+        }
 
         List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> list = this.shortestPaths.getPathsList(node);
-        this.shortestPathsCache.put(node, list);
-        return verifyList(list, node);
+        return node.setPathCache(verifyList(list, node));
     }
 
+    // Verification removes paths ending in unloaded TEs, or removes all paths if the source TE is unloaded.
     protected List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> verifyList(List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> list, NodeG<PipeType, NodeDataType> source) {
         if (!verifyNode(source)) return new ObjectArrayList<>();
         return list.stream().filter(a -> verifyNode(a.getEndVertex())).collect(Collectors.toList());
@@ -238,7 +229,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
 
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
         addEdge(source, target, source.data.getWeightFactor() + target.data.getWeightFactor());
-        this.validPathsCache = false;
+        this.validAlgorithmInstance = false;
     }
 
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight) {
@@ -247,14 +238,14 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
                 new NetGroup<>(this.pipeGraph).addNodes(source, target);
             }
             pipeGraph.setEdgeWeight(source, target, weight);
-            this.validPathsCache = false;
+            this.validAlgorithmInstance = false;
             this.markDirty();
         }
     }
 
     public void removeEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
         if (source.getGroup() != null && source.getGroup().splitEdge(source, target)) {
-            this.validPathsCache = false;
+            this.validAlgorithmInstance = false;
             this.markDirty();
         }
     }
@@ -262,7 +253,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
     public void removeNode(NodeG<PipeType, NodeDataType> node) {
         if (node.getGroup() != null && node.getGroup().splitNode(node)) {
             // if the node has no group, then it isn't connected to anything, and thus the cache is still valid
-            this.validPathsCache = false;
+            this.validAlgorithmInstance = false;
         } else {
             this.pipeGraph.removeVertex(node);
         }
@@ -271,7 +262,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData, PipeType ext
 
     protected void rebuildShortestPaths() {
         this.shortestPaths = new ShortestPathsAlgorithm<>(pipeGraph);
-        this.validPathsCache = true;
+        this.validAlgorithmInstance = true;
     }
 
     @Override

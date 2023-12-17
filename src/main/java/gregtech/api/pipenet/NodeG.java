@@ -11,7 +11,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.Nullable;
+import org.jgrapht.GraphPath;
 
+import java.util.List;
 import java.util.Objects;
 
 public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData> implements INBTSerializable<NBTTagCompound> {
@@ -41,6 +43,8 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     private BlockPos nodePos;
 
     private NetGroup<PipeType, NodeDataType> group = null;
+
+    private List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> pathCache = null;
 
     public NodeG(NodeDataType data, int openConnections, int mark, boolean isActive, TileEntityPipeBase<PipeType, NodeDataType> heldMTE) {
         this.data = data;
@@ -110,6 +114,25 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
         } else {
             node.heldMTE = this.heldMTE;
         }
+    }
+
+    @Nullable
+    public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> getPathCache() {
+        return pathCache;
+    }
+
+    /**
+     * Sets the path cache to the provided cache. Returns the provided cache for convenience.
+     * @param pathCache The new cache.
+     * @return The new cache.
+     */
+    public List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> setPathCache(List<GraphPath<NodeG<PipeType, NodeDataType>, NetEdge>> pathCache) {
+        this.pathCache = pathCache;
+        return pathCache;
+    }
+
+    public void clearPathCache() {
+        this.pathCache = null;
     }
 
     @Override
