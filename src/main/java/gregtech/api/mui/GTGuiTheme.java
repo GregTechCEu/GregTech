@@ -5,39 +5,47 @@ import gregtech.common.ConfigHolder;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.IThemeApi;
+import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class GTGuiTheme {
 
     private static final List<GTGuiTheme> THEMES = new ArrayList<>();
 
-    public static final GTGuiTheme STANDARD = new Builder("gregtech_standard")
+    public static final GTGuiTheme STANDARD = templateBuilder("gregtech_standard")
             .panel(GTGuiTextures.IDs.STANDARD_BACKGROUND)
             .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
             .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
-            .toggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
+            .button(GTGuiTextures.IDs.STANDARD_BUTTON)
+            .simpleToggleButton(GTGuiTextures.IDs.STANDARD_BUTTON,
                     GTGuiTextures.IDs.STANDARD_SLOT,
                     ConfigHolder.client.defaultUIColor)
             .build();
 
-    public static final GTGuiTheme BRONZE = new Builder("gregtech_bronze")
+    // TODO Cover theme to utilize the GT5u-like button textures vs the standard ones
+
+    public static final GTGuiTheme BRONZE = templateBuilder("gregtech_bronze")
             .panel(GTGuiTextures.IDs.BRONZE_BACKGROUND)
             .itemSlot(GTGuiTextures.IDs.BRONZE_SLOT)
             .build();
 
-    public static final GTGuiTheme STEEL = new Builder("gregtech_steel")
+    public static final GTGuiTheme STEEL = templateBuilder("gregtech_steel")
             .panel(GTGuiTextures.IDs.STEEL_BACKGROUND)
             .itemSlot(GTGuiTextures.IDs.STEEL_SLOT)
             .build();
 
-    public static final GTGuiTheme PRIMITIVE = new Builder("gregtech_primitive")
+    public static final GTGuiTheme PRIMITIVE = templateBuilder("gregtech_primitive")
             .panel(GTGuiTextures.IDs.PRIMITIVE_BACKGROUND)
             .itemSlot(GTGuiTextures.IDs.PRIMITIVE_SLOT)
             .build();
@@ -46,6 +54,8 @@ public class GTGuiTheme {
 
     private final List<Consumer<JsonBuilder>> elementBuilder;
     private final JsonBuilder jsonBuilder;
+
+    private Supplier<UITexture> logo;
 
     private GTGuiTheme(String themeId) {
         this.themeId = themeId;
@@ -56,6 +66,15 @@ public class GTGuiTheme {
 
     public String getId() {
         return themeId;
+    }
+
+    public ITheme getMuiTheme() {
+        return IThemeApi.get().getTheme(themeId);
+    }
+
+    public @Nullable UITexture getLogo() {
+        if (logo == null) return null;
+        return logo.get();
     }
 
     private void register() {
@@ -75,6 +94,14 @@ public class GTGuiTheme {
     @SubscribeEvent
     public static void onReloadThemes(ReloadThemeEvent.Pre event) {
         THEMES.forEach(GTGuiTheme::buildJson);
+    }
+
+    public static Builder templateBuilder(String themeId) {
+        Builder builder = new Builder(themeId);
+        builder.openCloseAnimation(0);
+        builder.tooltipPos(Tooltip.Pos.NEXT_TO_MOUSE);
+        builder.smoothProgressBar(true);
+        return builder;
     }
 
     public static class Builder {
@@ -110,6 +137,28 @@ public class GTGuiTheme {
             return this;
         }
 
+        /**
+         * Set the window open/close animation speed. Overrides global cfg.
+         *
+         * @param rate the rate in frames to play the open/close animation over, or 0 for no animation
+         */
+        public Builder openCloseAnimation(int rate) {
+            theme.elementBuilder.add(b -> b.add("openCloseAnimation", rate));
+            return this;
+        }
+
+        /** Set whether progress bars should animate smoothly. Overrides global cfg. */
+        public Builder smoothProgressBar(boolean smoothBar) {
+            theme.elementBuilder.add(b -> b.add("smoothProgressBar", smoothBar));
+            return this;
+        }
+
+        /** Set the tooltip pos for this theme. Overrides global cfg. */
+        public Builder tooltipPos(Tooltip.Pos tooltipPos) {
+            theme.elementBuilder.add(b -> b.add("tooltipPos", tooltipPos.name()));
+            return this;
+        }
+
         /** Set a global UI coloration for this theme. */
         public Builder color(int color) {
             theme.elementBuilder.add(b -> b.add("color", color));
@@ -130,8 +179,6 @@ public class GTGuiTheme {
 
         /**
          * Set a custom panel (background texture) for UIs with this theme.
-         * This ID must correspond with a {@link com.cleanroommc.modularui.drawable.UITexture} that is
-         * registered using {@link com.cleanroommc.modularui.drawable.GuiTextures#registerBackground}!
          */
         public Builder panel(String panelId) {
             theme.elementBuilder.add(b -> b
@@ -144,28 +191,36 @@ public class GTGuiTheme {
 
         /**
          * Set a custom button texture for UIs with this theme.
-         * This ID must correspond with a {@link com.cleanroommc.modularui.drawable.UITexture} that is
-         * registered using {@link com.cleanroommc.modularui.drawable.GuiTextures#registerIcon}!
          */
         public Builder button(String buttonId) {
-            return button(buttonId, 0xFFFFFFFF, false);
+            return button(buttonId, buttonId, 0xFFFFFFFF, false);
         }
 
         /**
          * Set a custom button texture for UIs with this theme.
-         * This ID must correspond with a {@link com.cleanroommc.modularui.drawable.UITexture} that is
-         * registered using {@link com.cleanroommc.modularui.drawable.GuiTextures#registerIcon}!
+         *
+         * @param buttonId The ID of the button texture
+         * @param hoverId  The ID of the button texture while hovering over the button with your mouse
+         */
+        public Builder button(String buttonId, String hoverId) {
+            return button(buttonId, hoverId, 0xFFFFFFFF, false);
+        }
+
+        /**
+         * Set a custom button texture for UIs with this theme.
          *
          * @param buttonId   The ID of the button texture
+         * @param hoverId    The ID of the button texture while hovering over the button with your mouse
          * @param textColor  The color of text overlaid on this button
          * @param textShadow If text overlaid on this button should have a text shadow
          */
-        public Builder button(String buttonId, int textColor, boolean textShadow) {
+        public Builder button(String buttonId, String hoverId, int textColor, boolean textShadow) {
             theme.elementBuilder.add(b -> b
                     .add("button", new JsonBuilder()
                             .add("background", new JsonBuilder()
                                     .add("type", "texture")
                                     .add("id", buttonId))
+                            .add("hoverBackground", hoverId)
                             .add("textColor", textColor)
                             .add("textShadow", textShadow)));
             return this;
@@ -173,8 +228,6 @@ public class GTGuiTheme {
 
         /**
          * Set a custom item slot texture for UIs with this theme.
-         * This ID must correspond with a {@link com.cleanroommc.modularui.drawable.UITexture} that is
-         * registered using {@link com.cleanroommc.modularui.drawable.GuiTextures#registerIcon}!
          */
         public Builder itemSlot(String itemSlotId) {
             return itemSlot(itemSlotId, 0x60FFFFFF);
@@ -182,8 +235,6 @@ public class GTGuiTheme {
 
         /**
          * Set a custom item slot texture for UIs with this theme.
-         * This ID must correspond with a {@link com.cleanroommc.modularui.drawable.UITexture} that is
-         * registered using {@link com.cleanroommc.modularui.drawable.GuiTextures#registerIcon}!
          *
          * @param itemSlotId The ID of the item slot texture
          * @param hoverColor The color of the tooltip hover box for this widget
@@ -200,8 +251,6 @@ public class GTGuiTheme {
 
         /**
          * Set a custom fluid slot texture for UIs with this theme.
-         * This ID must correspond with a {@link com.cleanroommc.modularui.drawable.UITexture} that is
-         * registered using {@link com.cleanroommc.modularui.drawable.GuiTextures#registerIcon}!
          */
         public Builder fluidSlot(String fluidSlotId) {
             return fluidSlot(fluidSlotId, 0x60FFFFFF);
@@ -209,8 +258,6 @@ public class GTGuiTheme {
 
         /**
          * Set a custom fluid slot texture for UIs with this theme.
-         * This ID must correspond with a {@link com.cleanroommc.modularui.drawable.UITexture} that is
-         * registered using {@link com.cleanroommc.modularui.drawable.GuiTextures#registerIcon}!
          *
          * @param fluidSlotId The ID of the fluid slot texture
          * @param hoverColor  The color of the tooltip hover box for this widget
@@ -246,33 +293,90 @@ public class GTGuiTheme {
             return this;
         }
 
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId) {
-            return toggleButton(toggleButtonId, selectedBackgroundId, 0xFFFFFFFF, true);
+        /**
+         * Set the theme options for a ToggleButton widget.
+         *
+         * @param backgroundId              The main background for the unpressed button
+         * @param hoverBackgroundId         The on-hover background for the unpressed button
+         * @param selectedBackgroundId      The main background for the pressed button
+         * @param selectedHoverBackgroundId The on-hover background for the pressed button
+         * @param selectedColor             The color to apply to the pressed button
+         */
+        public Builder toggleButton(String backgroundId, String hoverBackgroundId,
+                                    String selectedBackgroundId, String selectedHoverBackgroundId, int selectedColor) {
+            return toggleButton(
+                    backgroundId, hoverBackgroundId,
+                    selectedBackgroundId, selectedHoverBackgroundId,
+                    selectedColor, 0xFFBBBBBB, false);
         }
 
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int selectedColor) {
-            return toggleButton(toggleButtonId, selectedBackgroundId, 0xFFFFFFFF, true, null, selectedColor);
-        }
-
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor,
-                                    boolean textShadow) {
-            return toggleButton(toggleButtonId, selectedBackgroundId, textColor, textShadow, null, 0xFFBBBBBB);
-        }
-
-        public Builder toggleButton(String toggleButtonId, String selectedBackgroundId, int textColor,
-                                    boolean textShadow, String selectedHoverBackgroundId, int selectedColor) {
+        /**
+         * Set the theme options for a ToggleButton widget.
+         *
+         * @param backgroundId              The main background for the unpressed button
+         * @param hoverBackgroundId         The on-hover background for the unpressed button
+         * @param selectedBackgroundId      The main background for the pressed button
+         * @param selectedHoverBackgroundId The on-hover background for the pressed button
+         * @param selectedColor             The color to apply to the pressed button
+         * @param textColor                 The color for text overlaid on this button
+         * @param textShadow                Whether to apply text shadow to text overlaid on this button
+         */
+        public Builder toggleButton(String backgroundId, String hoverBackgroundId,
+                                    String selectedBackgroundId, String selectedHoverBackgroundId,
+                                    int selectedColor, int textColor, boolean textShadow) {
             theme.elementBuilder.add(b -> b
                     .add("toggleButton", new JsonBuilder()
                             .add("background", new JsonBuilder()
                                     .add("type", "texture")
-                                    .add("id", toggleButtonId))
-                            .add("textColor", textColor)
-                            .add("textShadow", textShadow)
+                                    .add("id", backgroundId))
+                            .add("hoverBackground", new JsonBuilder()
+                                    .add("type", "texture")
+                                    .add("id", hoverBackgroundId))
                             .add("selectedBackground", new JsonBuilder()
                                     .add("type", "texture")
                                     .add("id", selectedBackgroundId))
-                            .add("selectedHoverBackground", selectedHoverBackgroundId)
-                            .add("selectedColor", selectedColor)));
+                            .add("selectedHoverBackground", new JsonBuilder()
+                                    .add("type", "texture")
+                                    .add("id", selectedHoverBackgroundId))
+                            .add("selectedColor", selectedColor)
+                            .add("textColor", textColor)
+                            .add("textShadow", textShadow)));
+            return this;
+        }
+
+        /**
+         * Simple toggle button configuration for when you want a button with no texture changes on hover.
+         *
+         * @param backgroundId         The unselected background texture
+         * @param selectedBackgroundId The selected background texture
+         * @param selectedColor        The background color when the button is selected
+         */
+        public Builder simpleToggleButton(String backgroundId, String selectedBackgroundId, int selectedColor) {
+            return simpleToggleButton(backgroundId, selectedBackgroundId, selectedColor, 0xFFBBBBBB, false);
+        }
+
+        /**
+         * Simple toggle button configuration for when you want a button with no texture changes on hover.
+         *
+         * @param backgroundId         The unselected background texture
+         * @param selectedBackgroundId The selected background texture
+         * @param selectedColor        The background color when the button is selected
+         * @param textColor            The color for text overlaid on this button
+         * @param textShadow           Whether to apply text shadow to text overlaid on this button
+         */
+        public Builder simpleToggleButton(String backgroundId, String selectedBackgroundId, int selectedColor,
+                                          int textColor, boolean textShadow) {
+            return toggleButton(
+                    backgroundId, backgroundId,
+                    selectedBackgroundId, selectedBackgroundId,
+                    selectedColor, textColor, textShadow);
+        }
+
+        /**
+         * Set a logo supplier for this theme.
+         */
+        public Builder logo(Supplier<UITexture> logo) {
+            theme.logo = logo;
             return this;
         }
 

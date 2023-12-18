@@ -114,6 +114,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
                         .size(18)
                         .background(GTGuiTextures.SLOT, new ItemDrawable(
                                 IntCircuitIngredient.getIntegratedCircuit(index)).asIcon())
+                        .disableHoverBackground()
                         .onMousePressed(mouseButton -> {
                             getSyncHandler().syncToServer(SYNC_CIRCUIT_INDEX, buf -> buf.writeShort(index));
                             circuitPreview.setItem(IntCircuitIngredient.getIntegratedCircuit(index));
@@ -122,7 +123,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
             }
         }
 
-        getPanel().getScreen().openPanel(GTGuis.createPanel("circuit_selector", 176, 120)
+        getPanel().getScreen().openPanel(GTGuis.createPopupPanel("circuit_selector", 176, 120)
                 .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
                 .child(circuitPreview.asIcon().size(16).asWidget()
                         .size(18)

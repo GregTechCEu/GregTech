@@ -37,7 +37,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
@@ -265,8 +265,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
-                                boolean isClient) {
+    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
         int rowSize = (int) Math.sqrt(getInventorySize());
         guiSyncManager.registerSlotGroup("item_inv", rowSize);
 
@@ -294,28 +293,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
         boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
 
-        ToggleButton workingButton = new ToggleButton();
-        workingButton.value(
-                new BoolValue.Dynamic(workingStateValue::getBoolValue, val -> {
-                    workingStateValue.setBoolValue(val);
-                    workingButton.markTooltipDirty();
-                }))
-                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
-                .tooltipBuilder(t -> t.addLine(workingStateValue.getBoolValue() ?
-                        IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
-                        IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")));
-
-        ToggleButton collapseButton = new ToggleButton();
-        collapseButton.value(
-                new BoolValue.Dynamic(collapseStateValue::getBoolValue, val -> {
-                    collapseStateValue.setBoolValue(val);
-                    collapseButton.markTooltipDirty();
-                }))
-                .overlay(GTGuiTextures.BUTTON_AUTO_COLLAPSE)
-                .tooltipBuilder(t -> t.addLine(collapseStateValue.getBoolValue() ?
-                        IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
-                        IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled")));
-
         return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
@@ -328,9 +305,25 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 .child(new Column()
                         .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
                         .width(18).height(18 * 4 + 5)
-                        .child(GTGuiTextures.getLogo().asWidget().size(17).top(18 * 3 + 5))
-                        .child(workingButton.top(18 * 2))
-                        .child(collapseButton.top(18))
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget().size(17).top(18 * 3 + 5))
+                        .child(new ToggleButton()
+                                .top(18 * 2)
+                                .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
+                                        workingStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                                .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                        .addLine(workingStateValue.getBoolValue() ?
+                                                IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
+                                                IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))))
+                        .child(new ToggleButton()
+                                .top(18)
+                                .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,
+                                        collapseStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_AUTO_COLLAPSE)
+                                .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                        .addLine(collapseStateValue.getBoolValue() ?
+                                                IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
+                                                IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled"))))
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
