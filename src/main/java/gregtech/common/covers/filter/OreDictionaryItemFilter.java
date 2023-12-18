@@ -2,6 +2,7 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
@@ -9,6 +10,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.ItemVariantMap;
 import gregtech.api.unification.stack.MultiItemVariantMap;
 import gregtech.api.unification.stack.SingleItemVariantMap;
+import gregtech.api.util.function.BooleanConsumer;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
@@ -19,6 +21,7 @@ import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -27,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class OreDictionaryItemFilter extends ItemFilter {
@@ -148,7 +152,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                         h.format(i + 1, TextFormatting.RESET);
                     }
                 }).setMaxLength(64));
-        widgetGroup.accept(new ImageCycleButtonWidget(130, 38, 18, 18,
+        widgetGroup.accept(new ForcedInitialSyncImageCycleButtonWidget(130, 38, 18, 18,
                 GuiTextures.ORE_FILTER_BUTTON_CASE_SENSITIVE, () -> this.caseSensitive, caseSensitive -> {
             if (this.caseSensitive == caseSensitive) return;
             this.caseSensitive = caseSensitive;
@@ -156,7 +160,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
             recompile(compileCallback);
         }).setTooltipHoverString(
                 i -> "cover.ore_dictionary_filter.button.case_sensitive." + (i == 0 ? "disabled" : "enabled")));
-        widgetGroup.accept(new ImageCycleButtonWidget(148, 38, 18, 18,
+        widgetGroup.accept(new ForcedInitialSyncImageCycleButtonWidget(148, 38, 18, 18,
                 GuiTextures.ORE_FILTER_BUTTON_MATCH_ALL, () -> this.matchAll, matchAll -> {
             if (this.matchAll == matchAll) return;
             this.matchAll = matchAll;
@@ -246,5 +250,31 @@ public class OreDictionaryItemFilter extends ItemFilter {
         this.caseSensitive = tag.getBoolean("caseSensitive");
         this.matchAll = tag.getBoolean("matchAll");
         recompile(null);
+    }
+
+    public static class ForcedInitialSyncImageCycleButtonWidget extends ImageCycleButtonWidget {
+
+        private final BooleanConsumer updater;
+
+        public ForcedInitialSyncImageCycleButtonWidget(int xPosition, int yPosition, int width, int height,
+                                                       TextureArea buttonTexture, BooleanSupplier supplier,
+                                                       BooleanConsumer updater) {
+            super(xPosition, yPosition, width, height, buttonTexture, supplier, updater);
+            this.currentOption = 0;
+            this.updater = updater;
+        }
+
+        @Override
+        public void readUpdateInfo(int id, PacketBuffer buffer) {
+            if (id == 1) {
+                int currentOptionCache = this.currentOption;
+                super.readUpdateInfo(id, buffer);
+                if (this.currentOption != currentOptionCache) {
+                    this.updater.apply(currentOption >= 1); // call updater to apply necessary state changes
+                }
+            } else {
+                super.readUpdateInfo(id, buffer);
+            }
+        }
     }
 }
