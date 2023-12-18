@@ -432,32 +432,49 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * <ol>
      * <li>The recipe is run in parallel if possible.</li>
      * <li>The potentially parallel recipe is then checked to exist.</li>
-     * <li>If it exists, it checks if the recipe is runnable with the current inputs.</li>
+     * <li>If it exists, it checks if the recipe is runnable with the inputs provided.</li>
      * </ol>
      * If the above conditions are met, the recipe is engaged to be run
      *
      * @param recipe the recipe to prepare
+     * @param inputInventory the inventory to draw items from
+     * @param inputFluidInventory the fluid tanks to draw fluid from
      * @return true if the recipe was successfully prepared, else false
      */
-    protected boolean prepareRecipe(Recipe recipe) {
+    protected boolean prepareRecipe(Recipe recipe, IItemHandlerModifiable inputInventory, IMultipleTankHandler inputFluidInventory) {
         recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
                 metaTileEntity.getFluidOutputLimit());
 
-        // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
                 recipe,
-                getInputInventory(),
-                getInputTank(),
+                inputInventory,
+                inputFluidInventory,
                 getOutputInventory(),
                 getOutputTank(),
                 getMaxParallelVoltage(),
                 getParallelLimit());
 
-        if (recipe != null && setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
+        if (recipe != null && setupAndConsumeRecipeInputs(recipe, inputInventory, inputFluidInventory)) {
             setupRecipe(recipe);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Prepares the recipe to be run.
+     * <ol>
+     * <li>The recipe is run in parallel if possible.</li>
+     * <li>The potentially parallel recipe is then checked to exist.</li>
+     * <li>If it exists, it checks if the recipe is runnable with the current inputs.</li>
+     * </ol>
+     * If the above conditions are met, the recipe is engaged to be run
+     *
+     * @param recipe the recipe to prepare
+     * @return true if the recipe was successfully prepared from the default inventory, else false
+     */
+    protected boolean prepareRecipe(Recipe recipe) {
+        return prepareRecipe(recipe, getInputInventory(), getInputTank());
     }
 
     /**
@@ -549,11 +566,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe          - The Recipe that will be consumed from the inputs and ran in the machine
      * @param importInventory - The inventory that the recipe should be consumed from.
      *                        Used mainly for Distinct bus implementation for multiblocks to specify
-     *                        a specific bus
+     *                        a specific bus, or for addons to use external inventories.
+     * @param importFluids    - The tanks that the recipe should be consumed from
+     *                        Used currently in addons to use external tanks.
      * @return - true if the recipe is successful, false if the recipe is not successful
      */
     protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
-                                                  @NotNull IItemHandlerModifiable importInventory) {
+                                                  @NotNull IItemHandlerModifiable importInventory,
+                                                  @NotNull IMultipleTankHandler importFluids) {
         this.overclockResults = calculateOverclock(recipe);
 
         modifyOverclockPost(overclockResults, recipe.getRecipePropertyStorage());
@@ -563,7 +583,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         IItemHandlerModifiable exportInventory = getOutputInventory();
-        IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
 
         // We have already trimmed outputs and chanced outputs at this time
@@ -588,6 +607,25 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
         return false;
     }
+
+    /**
+     * Determines if the provided recipe is possible to run from the provided inventory, or if there is anything
+     * preventing
+     * the Recipe from being completed.
+     * <p>
+     * Will consume the inputs of the Recipe if it is possible to run.
+     *
+     * @param recipe          - The Recipe that will be consumed from the inputs and ran in the machine
+     * @param importInventory - The inventory that the recipe should be consumed from.
+     *                        Used mainly for Distinct bus implementation for multiblocks to specify
+     *                        a specific bus
+     * @return - true if the recipe is successful, false if the recipe is not successful
+     */
+    protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                  @NotNull IItemHandlerModifiable importInventory) {
+        return setupAndConsumeRecipeInputs(recipe, importInventory, this.getInputTank());
+    }
+
 
     /**
      * @param resultOverclock the overclock data to use. Format: {@code [EUt, duration]}.
