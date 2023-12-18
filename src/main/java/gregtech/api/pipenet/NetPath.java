@@ -4,6 +4,8 @@ import gregtech.api.pipenet.block.IPipeType;
 
 import gregtech.api.util.FacingPos;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -29,6 +31,40 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, 
 
     private Iterator<EnumFacing> facingIterator;
 
+    /**
+     * Generates a loop NetPath for a node
+     * @param node the node to
+     */
+    public NetPath(NodeG<PipeType, NodeDataType> node) {
+        this.sourceNode = node;
+        this.targetNode = node;
+        this.nodeList = new ObjectArrayList<>(1);
+        this.nodeList.add(node);
+        this.weight = 0;
+        this.edgeList = new ObjectArrayList<>(0);
+        resetFacingIterator();
+    }
+
+    /**
+     * Generates a NetPath from an ordered list of nodes, edges, and a weight.
+     * Used exclusively for single path generation.
+     * @param nodes List of nodes.
+     * @param edges List of edges.
+     * @param weight Sum weight of the path.
+     */
+    public NetPath(List<NodeG<PipeType, NodeDataType>> nodes, List<NetEdge> edges, double weight) {
+        this.sourceNode = nodes.get(0);
+        this.targetNode = nodes.get(nodes.size() - 1);
+        this.nodeList = nodes;
+        this.weight = weight;
+        this.edgeList = edges;
+        resetFacingIterator();
+    }
+
+    /**
+     * Generates a NetPath from a GraphPath
+     * @param path the GraphPath
+     */
     public NetPath(GraphPath<NodeG<PipeType, NodeDataType>, NetEdge> path) {
         this.sourceNode = path.getStartVertex();
         this.targetNode = path.getEndVertex();

@@ -9,7 +9,6 @@ import gregtech.api.util.TaskScheduler;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
 import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.net.LaserNetHandler;
-import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,7 +21,6 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 
 public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties> {
@@ -30,7 +28,6 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     private final EnumMap<EnumFacing, LaserNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the LaserNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final ILaserContainer clientCapability = new DefaultLaserContainer();
-    private WeakReference<LaserPipeNet> currentPipeNet = new WeakReference<>(null);
     private LaserNetHandler defaultHandler;
 
     private int ticksActive = 0;
@@ -53,8 +50,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     private void initHandlers() {
-        LaserPipeNet net = getLaserPipeNet();
-        if (net == null) return;
+        WorldLaserPipeNet net = WorldLaserPipeNet.getWorldPipeNet(getPipeWorld());
         for (EnumFacing facing : EnumFacing.VALUES) {
             handlers.put(facing, new LaserNetHandler(net, this, facing));
         }
@@ -72,44 +68,15 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
                 initHandlers();
             }
 
-            checkNetwork();
             return GregtechTileCapabilities.CAPABILITY_LASER.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
     }
 
-    public void checkNetwork() {
-        if (defaultHandler != null) {
-            LaserPipeNet current = getLaserPipeNet();
-            if (defaultHandler.getNet() != current) {
-                defaultHandler.updateNetwork(current);
-                for (LaserNetHandler handler : handlers.values()) {
-                    handler.updateNetwork(current);
-                }
-            }
-        }
-    }
-
-    public LaserPipeNet getLaserPipeNet() {
-        if (world == null || world.isRemote) {
-            return null;
-        }
-        LaserPipeNet currentPipeNet = this.currentPipeNet.get();
-        if (currentPipeNet != null && currentPipeNet.isValid() && currentPipeNet.containsNode(getPipePos())) {
-            return currentPipeNet;
-        }
-        WorldLaserPipeNet worldNet = (WorldLaserPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
-        currentPipeNet = worldNet.getNetFromPos(getPipePos());
-        if (currentPipeNet != null) {
-            this.currentPipeNet = new WeakReference<>(currentPipeNet);
-        }
-        return currentPipeNet;
-    }
-
     @Override
     public void transferDataFrom(IPipeTile<LaserPipeType, LaserPipeProperties> tileEntity) {
         super.transferDataFrom(tileEntity);
-        if (getLaserPipeNet() == null) {
+        if (getPipeBlock().getWorldPipeNet(getPipeWorld()) == null) {
             return;
         }
 

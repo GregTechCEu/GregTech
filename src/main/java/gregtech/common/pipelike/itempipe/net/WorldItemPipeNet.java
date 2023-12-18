@@ -64,12 +64,12 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
 
     @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
-        tagCompound.setInteger("Resistance", nodeData.getPriority());
+        tagCompound.setInteger("Priority", nodeData.getPriority());
         tagCompound.setFloat("Rate", nodeData.getTransferRate());
     }
 
     @Override
     protected ItemPipeProperties readNodeData(NBTTagCompound tagCompound) {
-        return new ItemPipeProperties(tagCompound.getInteger("Range"), tagCompound.getFloat("Rate"));
+        return new ItemPipeProperties(tagCompound.getInteger("Priority"), tagCompound.getFloat("Rate"));
     }
 }

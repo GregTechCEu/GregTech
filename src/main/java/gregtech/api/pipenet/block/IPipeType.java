@@ -4,7 +4,7 @@ import gregtech.api.pipenet.INodeData;
 
 import net.minecraft.util.IStringSerializable;
 
-public interface IPipeType<NodeDataType extends INodeData> extends IStringSerializable {
+public interface IPipeType<NodeDataType extends INodeData<NodeDataType>> extends IStringSerializable {
 
     float getThickness();
 

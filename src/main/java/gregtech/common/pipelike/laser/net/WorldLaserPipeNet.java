@@ -1,18 +1,43 @@
 package gregtech.common.pipelike.laser.net;
 
 import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.pipenet.WorldPipeNetG;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
 
+import gregtech.common.pipelike.laser.LaserPipeType;
+
+import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
+
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.NotNull;
 
-public class WorldLaserPipeNet extends WorldPipeNet<LaserPipeProperties, LaserPipeNet> {
+public class WorldLaserPipeNet extends WorldPipeNetG<LaserPipeProperties, LaserPipeType> {
 
     private static final String DATA_ID = "gregtech.laser_pipe_net";
 
     public WorldLaserPipeNet(String name) {
         super(name);
+    }
+
+    @Override
+    protected boolean isSinglePath() {
+        return true;
+    }
+
+    @Override
+    protected Class<? extends IPipeTile<LaserPipeType, LaserPipeProperties>> getBasePipeClass() {
+        return TileEntityLaserPipe.class;
+    }
+
+    @Override
+    protected void writeNodeData(LaserPipeProperties nodeData, NBTTagCompound tagCompound) {}
+
+    @Override
+    protected LaserPipeProperties readNodeData(NBTTagCompound tagCompound) {
+        return new LaserPipeProperties();
     }
 
     @NotNull
@@ -24,10 +49,5 @@ public class WorldLaserPipeNet extends WorldPipeNet<LaserPipeProperties, LaserPi
         }
         netWorldData.setWorldAndInit(world);
         return netWorldData;
-    }
-
-    @Override
-    protected LaserPipeNet createNetInstance() {
-        return new LaserPipeNet(this);
     }
 }

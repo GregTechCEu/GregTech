@@ -80,7 +80,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     }
 
     @Nullable
-    NetGroup<PipeType, NodeDataType> getGroup() {
+    public NetGroup<PipeType, NodeDataType> getGroup() {
         return group;
     }
 

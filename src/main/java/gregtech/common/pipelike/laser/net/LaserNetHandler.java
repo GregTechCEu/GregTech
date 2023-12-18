@@ -1,50 +1,61 @@
 package gregtech.common.pipelike.laser.net;
 
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.pipenet.NetGroup;
+import gregtech.api.pipenet.NetPath;
+import gregtech.api.pipenet.NodeG;
+import gregtech.common.pipelike.laser.LaserPipeProperties;
+import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Map;
+
 public class LaserNetHandler implements ILaserContainer {
 
-    private LaserPipeNet net;
+    private final WorldLaserPipeNet net;
     private final TileEntityLaserPipe pipe;
     private final EnumFacing facing;
 
-    public LaserNetHandler(LaserPipeNet net, @NotNull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
+    public LaserNetHandler(WorldLaserPipeNet net, @NotNull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
     }
 
-    public void updateNetwork(LaserPipeNet net) {
-        this.net = net;
-    }
-
     private void setPipesActive() {
-        for (BlockPos pos : net.getAllNodes().keySet()) {
-            if (pipe.getWorld().getTileEntity(pos) instanceof TileEntityLaserPipe laserPipe) {
-                laserPipe.setActive(true, 100);
+        NetGroup<LaserPipeType, LaserPipeProperties> group = getNet().getNode(this.pipe.getPipePos()).getGroup();
+        if (group != null) {
+            for (NodeG<LaserPipeType, LaserPipeProperties> node : group.getNodes()) {
+                if (node.heldMTE instanceof TileEntityLaserPipe laserPipe) {
+                    laserPipe.setActive(true, 100);
+                }
             }
         }
     }
 
     @Nullable
     private ILaserContainer getInnerContainer() {
-        if (net == null || pipe == null || pipe.isInvalid() || facing == null) {
+        if (net == null || pipe.isInvalid() || facing == null) {
             return null;
         }
 
-        LaserRoutePath data = net.getNetData(pipe.getPipePos(), facing);
-        if (data == null) {
-            return null;
-        }
+        List<NetPath<LaserPipeType, LaserPipeProperties>> data = net.getPaths(this.pipe);
+        if (data == null || data.size() != 1) return null;
+        Map<EnumFacing, TileEntity> connecteds = data.get(0).getTargetTEs();
+        if (connecteds.size() != 1) return null;
+        EnumFacing facing = connecteds.keySet().iterator().next();
 
-        return data.getHandler();
+        return connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_LASER, facing.getOpposite());
     }
 
     @Override
@@ -101,7 +112,7 @@ public class LaserNetHandler implements ILaserContainer {
         return 0;
     }
 
-    public LaserPipeNet getNet() {
+    public WorldLaserPipeNet getNet() {
         return net;
     }
 

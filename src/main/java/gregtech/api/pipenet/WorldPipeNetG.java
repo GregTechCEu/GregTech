@@ -26,10 +26,12 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.CHManyToManyShortestPaths;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -55,9 +57,18 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     /**
      * Override to change whether this net needs directed graph handling.
      * Used to respect filter directions in the item net and fluid net, for example.
-     * @return true if the graph should be directed
+     * @return True if the graph should be directed.
      */
     protected boolean isDirected() {
+        return false;
+    }
+
+    /**
+     * Override to change whether this net allows only one source and one destination per group.
+     * Allows for optimizations in path lookup and cache invalidation.
+     * @return True if the graph should be single-pathed.
+     */
+    protected boolean isSinglePath() {
         return false;
     }
 
@@ -117,7 +128,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
             return verifyList(cache, node);
         }
 
-        List<NetPath<PipeType, NodeDataType>> list = this.shortestPaths.getPathsList(node);
+        List<NetPath<PipeType, NodeDataType>> list =
+                isSinglePath() ? this.singlePathList(node) : this.shortestPaths.getPathsList(node);
         return verifyList(node.setPathCache(list), node);
     }
 
@@ -388,7 +400,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     }
 
     protected void rebuildShortestPaths() {
-        this.shortestPaths = new ShortestPathsAlgorithm<>(pipeGraph);
+        // No need to calculate the ShortestPathsAlgorithm if we are single-pathed.
+        if (!this.isSinglePath()) this.shortestPaths = new ShortestPathsAlgorithm<>(pipeGraph);
         this.validAlgorithmInstance = true;
     }
 
@@ -452,10 +465,11 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
         public List<NetPath<PT, NDT>> getPathsList(NodeG<PT, NDT> source) {
             if (!graph.containsVertex(source)) {
-                throw new IllegalArgumentException("graph must contain the source vertex");
+                throw new IllegalArgumentException("Graph must contain the source vertex");
             }
             List<NetPath<PT, NDT>> paths = new ObjectArrayList<>();
-            // if the source has no group, it has no paths.
+            paths.add(new NetPath<>(source));
+            // if the source has no group, it has no paths other than the path to itself.
             if (source.getGroup() == null) return paths;
             ManyToManyShortestPaths<NodeG<PT, NDT>, NetEdge> manyToManyPaths = getManyToManyPaths(
                     Collections.singleton(source), source.getGroup().getNodes());
@@ -474,5 +488,45 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
             paths.sort(Comparator.comparingDouble(NetPath::getWeight));
             return paths;
         }
+    }
+
+    /**
+     * Special path lookup for single-path graphs.
+     * Allows us to skip calculating the ShortestPathsAlgorithm every time the graph updates.
+     * @param source Source node for the path.
+     * @return A list containing one or fewer paths.
+     */
+    private List<NetPath<PipeType, NodeDataType>> singlePathList(NodeG<PipeType, NodeDataType> source) {
+        if (!this.pipeGraph.containsVertex(source)) {
+            throw new IllegalArgumentException("Graph must contain the source vertex");
+        }
+        List<NetPath<PipeType, NodeDataType>> paths = new ObjectArrayList<>();
+        List<NetEdge> edges = new ObjectArrayList<>();
+        List<NodeG<PipeType, NodeDataType>> nodes = new ObjectArrayList<>();
+        nodes.add(source);
+        NodeG<PipeType, NodeDataType> lastNode = null;
+        NodeG<PipeType, NodeDataType> node = source;
+        NetEdge edge;
+        double sumWeight = source.data.getWeightFactor();
+        boolean valid = true;
+        while (valid) {
+            Iterator<NetEdge> i = this.pipeGraph.edgesOf(node).iterator();
+            if (!i.hasNext()) break; // we've reached the end, exit the loop while still valid
+            edge = i.next();
+            if (edge.getTarget() == lastNode) {
+                if (i.hasNext()) edge = i.next();
+                else break; // we've reached the end, exit the loop while still valid
+            } else if (i.hasNext()) i.next();
+            if (i.hasNext()) valid = false; // third edge detected - that's an invalid group
+            lastNode = node;
+            node = (NodeG<PipeType, NodeDataType>) edge.getTarget();
+            edges.add(edge);
+            nodes.add(node);
+            sumWeight += node.data.getWeightFactor();
+        }
+        if (!valid) return paths;
+        if (paths.size() == 0) paths.add(new NetPath<>(source));
+        else paths.add(new NetPath<>(nodes, edges, sumWeight));
+        return paths;
     }
 }

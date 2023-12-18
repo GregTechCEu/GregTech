@@ -164,7 +164,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     /**
      * For memory considerations, returns the uncloned set. Do not modify this directly.
      */
-    Set<NodeG<PipeType, NodeDataType>> getNodes() {
+    public Set<NodeG<PipeType, NodeDataType>> getNodes() {
         return nodes;
     }
 

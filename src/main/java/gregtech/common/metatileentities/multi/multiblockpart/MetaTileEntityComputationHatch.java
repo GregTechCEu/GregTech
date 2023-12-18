@@ -118,7 +118,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
         if (tileEntity == null) return null;
 
         if (tileEntity instanceof TileEntityOpticalPipe) {
-            return tileEntity.getCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER,
+            return tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER,
                     getFrontFacing().getOpposite());
         }
         return null;
@@ -161,8 +161,8 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (side == getFrontFacing() && capability == GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER) {
-            return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER.cast(this);
+        if (side == getFrontFacing() && capability == GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER) {
+            return GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER.cast(this);
         }
         return super.getCapability(capability, side);
     }

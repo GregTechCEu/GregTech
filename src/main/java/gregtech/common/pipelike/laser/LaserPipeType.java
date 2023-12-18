@@ -2,12 +2,14 @@ package gregtech.common.pipelike.laser;
 
 import gregtech.api.pipenet.block.IPipeType;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum LaserPipeType implements IPipeType<LaserPipeProperties> {
 
     NORMAL;
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "normal";
     }
 

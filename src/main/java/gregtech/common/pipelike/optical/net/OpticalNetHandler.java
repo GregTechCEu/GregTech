@@ -1,11 +1,20 @@
 package gregtech.common.pipelike.optical.net;
 
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
 import gregtech.api.capability.IOpticalDataAccessHatch;
+import gregtech.api.pipenet.NetGroup;
+import gregtech.api.pipenet.NetPath;
+import gregtech.api.pipenet.NodeG;
 import gregtech.api.recipes.Recipe;
+import gregtech.common.pipelike.laser.LaserPipeProperties;
+import gregtech.common.pipelike.laser.LaserPipeType;
+import gregtech.common.pipelike.optical.OpticalPipeProperties;
+import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -14,27 +23,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationProvider {
 
     private final TileEntityOpticalPipe pipe;
-    private final World world;
     private final EnumFacing facing;
 
-    private OpticalPipeNet net;
+    private final WorldOpticalPipeNet net;
 
-    public OpticalNetHandler(OpticalPipeNet net, @NotNull TileEntityOpticalPipe pipe, @Nullable EnumFacing facing) {
+    public OpticalNetHandler(WorldOpticalPipeNet net, @NotNull TileEntityOpticalPipe pipe, @Nullable EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
-        this.world = pipe.getWorld();
     }
 
-    public void updateNetwork(OpticalPipeNet net) {
-        this.net = net;
-    }
-
-    public OpticalPipeNet getNet() {
+    public WorldOpticalPipeNet getNet() {
         return net;
     }
 
@@ -68,25 +73,31 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     }
 
     private void setPipesActive() {
-        for (BlockPos pos : net.getAllNodes().keySet()) {
-            if (world.getTileEntity(pos) instanceof TileEntityOpticalPipe opticalPipe) {
-                opticalPipe.setActive(true, 100);
+        NetGroup<OpticalPipeType, OpticalPipeProperties> group = getNet().getNode(this.pipe.getPipePos()).getGroup();
+        if (group != null) {
+            for (NodeG<OpticalPipeType, OpticalPipeProperties> node : group.getNodes()) {
+                if (node.heldMTE instanceof TileEntityOpticalPipe opticalPipe) {
+                    opticalPipe.setActive(true, 100);
+                }
             }
         }
     }
 
     private boolean isNetInvalidForTraversal() {
-        return net == null || pipe == null || pipe.isInvalid();
+        return net == null || pipe.isInvalid() || facing == null;
     }
 
     private boolean traverseRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
         if (isNetInvalidForTraversal()) return false;
 
-        OpticalRoutePath inv = net.getNetData(pipe.getPipePos(), facing);
-        if (inv == null) return false;
+        List<NetPath<OpticalPipeType, OpticalPipeProperties>> inv = net.getPaths(this.pipe);
+        if (inv == null || inv.size() != 1) return false;
+        Map<EnumFacing, TileEntity> connecteds = inv.get(0).getTargetTEs();
+        if (connecteds.size() != 1) return false;
+        EnumFacing facing = connecteds.keySet().iterator().next();
 
-        IOpticalDataAccessHatch hatch = inv.getDataHatch();
-        if (hatch == null || seen.contains(hatch)) return false;
+        IDataAccessHatch access = connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, facing.getOpposite());
+        if (!(access instanceof IOpticalDataAccessHatch hatch) || seen.contains(hatch)) return false;
 
         if (hatch.isTransmitter()) {
             return hatch.isRecipeAvailable(recipe, seen);
@@ -116,10 +127,13 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     private IOpticalComputationProvider getComputationProvider(@NotNull Collection<IOpticalComputationProvider> seen) {
         if (isNetInvalidForTraversal()) return null;
 
-        OpticalRoutePath inv = net.getNetData(pipe.getPipePos(), facing);
-        if (inv == null) return null;
+        List<NetPath<OpticalPipeType, OpticalPipeProperties>> inv = net.getPaths(this.pipe);
+        if (inv == null || inv.size() != 1) return null;
+        Map<EnumFacing, TileEntity> connecteds = inv.get(0).getTargetTEs();
+        if (connecteds.size() != 1) return null;
+        EnumFacing facing = connecteds.keySet().iterator().next();
 
-        IOpticalComputationProvider hatch = inv.getComputationHatch();
+        IOpticalComputationProvider hatch = connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER, facing.getOpposite());;
         if (hatch == null || seen.contains(hatch)) return null;
         return hatch;
     }
