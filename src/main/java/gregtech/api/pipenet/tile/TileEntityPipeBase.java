@@ -26,6 +26,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -537,6 +538,17 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, IBlockState oldState,
                                  IBlockState newSate) {
         return oldState.getBlock() != newSate.getBlock();
+    }
+
+    @MustBeInvokedByOverriders
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+        PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
+        if (net != null) {
+            net.onChunkUnload();
+        }
     }
 
     public void doExplosion(float explosionPower) {

@@ -224,6 +224,12 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
     }
 
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        this.handlers.clear();
+    }
+
     private static class DefaultLaserContainer implements ILaserContainer {
 
         @Override

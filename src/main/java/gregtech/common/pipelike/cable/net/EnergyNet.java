@@ -11,7 +11,10 @@ import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class EnergyNet extends PipeNet<WireProperties> {
 
@@ -64,6 +67,11 @@ public class EnergyNet extends PipeNet<WireProperties> {
 
     @Override
     public void onPipeConnectionsUpdate() {
+        NET_DATA.clear();
+    }
+
+    @Override
+    public void onChunkUnload() {
         NET_DATA.clear();
     }
 
