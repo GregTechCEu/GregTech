@@ -62,13 +62,13 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     private List<NetPath<PipeType, NodeDataType>> pathCache = null;
 
     public NodeG(NodeDataType data, int openConnections, int mark, boolean isActive,
-                 IPipeTile<PipeType, NodeDataType> heldMTE) {
+                 IPipeTile<PipeType, NodeDataType> heldMTE, BlockPos pos) {
         this.data = data;
         this.openConnections = openConnections;
         this.mark = mark;
         this.isActive = isActive;
         this.heldMTE = heldMTE;
-        this.nodePos = heldMTE.getPipePos();
+        this.nodePos = pos;
     }
 
     /**
@@ -90,6 +90,10 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
 
     void clearGroup() {
         this.group = null;
+    }
+
+    public void addConnected(EnumFacing facing, TileEntity te) {
+        this.connecteds.put(facing, new WeakReference<>(te));
     }
 
     public boolean hasConnecteds() {

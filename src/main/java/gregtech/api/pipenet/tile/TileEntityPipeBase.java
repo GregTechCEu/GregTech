@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData> extends NeighborCacheTileEntityBase
+        NodeDataType extends INodeData<NodeDataType>> extends NeighborCacheTileEntityBase
                                         implements IPipeTile<PipeType, NodeDataType> {
 
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
@@ -110,6 +110,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void markDirty() {
         if (getWorld() != null && getPos() != null) {
             getWorld().markChunkDirty(getPos(), this);
+
         }
     }
 
@@ -424,7 +425,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void onLoad() {
         super.onLoad();
-        this.coverableImplementation.onLoad();
+        this.pipeBlock.getWorldPipeNet(this.getWorld()).addNode(this.getPipePos(), this.getNodeData(),
+                this.getCableMark(), ~(this.getBlockedConnections()), true, this);
     }
 
     protected void writePipeProperties(PacketBuffer buf) {

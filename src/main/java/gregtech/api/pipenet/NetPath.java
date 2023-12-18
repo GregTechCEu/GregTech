@@ -12,7 +12,6 @@ import org.jgrapht.GraphPath;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>> {
@@ -86,8 +85,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, 
 
     public boolean checkPredicate(Object o) {
         for (NetEdge edge : this.edgeList)
-            for (Predicate<Object> predicate : edge.getPredicates())
-                predicate.test(o);
+            if (!edge.getPredicate().test(o)) return false;
         return true;
     }
 

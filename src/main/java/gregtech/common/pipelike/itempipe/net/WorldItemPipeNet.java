@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.cover.Cover;
+import gregtech.api.pipenet.AbstractEdgePredicate;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -43,20 +44,17 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
     }
 
     @Override
-    protected Predicate<Object> getPredicate(Cover thisCover, Cover neighbourCover) {
-        return o -> {
-            if (!(o instanceof ItemStack s)) return false;
-            boolean b = true;
-            if (thisCover instanceof CoverItemFilter filter &&
-                    filter.getFilterMode() != ItemFilterMode.FILTER_INSERT) {
-                b = filter.testItemStack(s);
-            }
-            if (b && neighbourCover instanceof CoverItemFilter filter &&
-                    filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
-                b = filter.testItemStack(s);
-            }
-            return b;
-        };
+    protected AbstractEdgePredicate<?> getPredicate(Cover thisCover, Cover neighbourCover) {
+        ItemPredicate predicate = new ItemPredicate();
+        if (thisCover instanceof CoverItemFilter filter &&
+                filter.getFilterMode() != ItemFilterMode.FILTER_INSERT) {
+            predicate.setSourceFilter(filter.getItemFilter());
+        }
+        if (neighbourCover instanceof CoverItemFilter filter &&
+                filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
+            predicate.setTargetFilter(filter.getItemFilter());
+        }
+        return shutterify(predicate, thisCover, neighbourCover);
     }
 
     @Override

@@ -60,7 +60,7 @@ import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 
 @SuppressWarnings("deprecation")
 public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData,
+        NodeDataType extends INodeData<NodeDataType>,
         WorldPipeNetType extends WorldPipeNetG<NodeDataType, PipeType>> extends BuiltInRenderBlock
                                implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
