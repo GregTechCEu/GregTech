@@ -1175,7 +1175,7 @@ cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
 
 cover.ore_dictionary_filter.title=Ore Dictionary Filter
-cover.ore_dictionary_filter.info=§bAccepts complex expressions/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r for grouping/n§6*§r for wildcard (i.e. 0 or more characters)/n§6?§r for any 1 character/n§6()§r for matching empty entry (including items with no ore dictionary)/n§6$c§r at the start of expression for case-sensitive match/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
+cover.ore_dictionary_filter.info=§bAccepts complex expressions/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r for grouping/n§6*§r for wildcard (i.e. 0 or more characters)/n§6?§r for any 1 character/n§6()§r for matching empty entry (including items with no ore dictionary)/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
 cover.ore_dictionary_filter.test_slot.info=Insert a item to test if it matches the filter expression
 cover.ore_dictionary_filter.test_slot.matches=§a* %s
 cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
@@ -1186,6 +1186,10 @@ cover.ore_dictionary_filter.status.err_warn=§c%s error(s) and %s warning(s)
 cover.ore_dictionary_filter.status.warn=§7%s warning(s)
 cover.ore_dictionary_filter.status.no_issues=§aNo issues
 cover.ore_dictionary_filter.status.explain=Ore filter explanation:
+cover.ore_dictionary_filter.button.case_sensitive.disabled=Case insensitive match
+cover.ore_dictionary_filter.button.case_sensitive.enabled=Case sensitive match
+cover.ore_dictionary_filter.button.match_all.disabled=Match any one of ore dictionary entries
+cover.ore_dictionary_filter.button.match_all.enabled=Match all ore dictionary entries
 
 cover.ore_dictionary_filter.preview.next=<text>... followed by </text>
 cover.ore_dictionary_filter.preview.match=<node>'<value>%s</value>'</node>
