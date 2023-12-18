@@ -25,6 +25,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.CHManyToManyShortestPaths;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -46,7 +47,18 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     public WorldPipeNetG(String name) {
         super(name);
-        this.pipeGraph = new DirectedWeightedMultigraph<>(NetEdge.class);
+        if (isDirected())
+            this.pipeGraph = new DirectedWeightedMultigraph<>(NetEdge.class);
+        else this.pipeGraph = new SimpleWeightedGraph<>(NetEdge.class);
+    }
+
+    /**
+     * Override to change whether this net needs directed graph handling.
+     * Used to respect filter directions in the item net and fluid net, for example.
+     * @return true if the graph should be directed
+     */
+    protected boolean isDirected() {
+        return false;
     }
 
     public World getWorld() {
@@ -272,7 +284,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     public void addUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
         this.addEdge(source, target, null);
-        this.addEdge(target, source, null);
+        if (this.isDirected()) this.addEdge(target, source, null);
     }
 
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, @Nullable AbstractEdgePredicate<?> predicate) {
@@ -282,7 +294,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     public void addUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight) {
         this.addEdge(source, target, weight, null);
-        this.addEdge(target, source, weight, null);
+        if (this.isDirected()) this.addEdge(target, source, weight, null);
     }
 
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight, @Nullable AbstractEdgePredicate<?> predicate) {
@@ -316,7 +328,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     public void predicateUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, EnumFacing faceToNeighbour) {
         this.predicateEdge(source, target, faceToNeighbour);
-        this.predicateEdge(target, source, faceToNeighbour.getOpposite());
+        if (this.isDirected()) this.predicateEdge(target, source, faceToNeighbour.getOpposite());
     }
 
     public void predicateEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, EnumFacing faceToNeighbour) {

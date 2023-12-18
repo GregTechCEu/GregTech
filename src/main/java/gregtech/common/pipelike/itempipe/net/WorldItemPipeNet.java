@@ -39,6 +39,11 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
     }
 
     @Override
+    protected boolean isDirected() {
+        return true;
+    }
+
+    @Override
     protected Class<? extends IPipeTile<ItemPipeType, ItemPipeProperties>> getBasePipeClass() {
         return TileEntityItemPipe.class;
     }
