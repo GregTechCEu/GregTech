@@ -96,11 +96,11 @@ import java.util.Map;
 import static gregtech.api.GregTechAPI.*;
 
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_CORE,
-        containerID = GTValues.MODID,
-        name = "GregTech Core",
-        description = "Core GregTech content. Disabling this disables the entire mod and all its addons.",
-        coreModule = true)
+                moduleID = GregTechModules.MODULE_CORE,
+                containerID = GTValues.MODID,
+                name = "GregTech Core",
+                description = "Core GregTech content. Disabling this disables the entire mod and all its addons.",
+                coreModule = true)
 public class CoreModule implements IGregTechModule {
 
     public static final Logger logger = LogManager.getLogger("GregTech Core");
