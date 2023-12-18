@@ -26,13 +26,10 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.BoolValue;
-import com.cleanroommc.modularui.value.DoubleValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
@@ -43,20 +40,14 @@ import java.util.List;
 
 public class CoverMachineController extends CoverBase implements CoverWithUI {
 
-    private int minRedstoneStrength;
     private boolean isInverted;
     private ControllerMode controllerMode;
 
     public CoverMachineController(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                   @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
-        this.minRedstoneStrength = 1;
         this.isInverted = false;
         this.controllerMode = ControllerMode.MACHINE;
-    }
-
-    public int getMinRedstoneStrength() {
-        return minRedstoneStrength;
     }
 
     public ControllerMode getControllerMode() {
@@ -65,12 +56,6 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
 
     public boolean isInverted() {
         return isInverted;
-    }
-
-    public void setMinRedstoneStrength(int minRedstoneStrength) {
-        this.minRedstoneStrength = minRedstoneStrength;
-        updateRedstoneStatus();
-        getCoverableView().markDirty();
     }
 
     public void setInverted(boolean inverted) {
@@ -130,14 +115,11 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         EnumSyncValue<ControllerMode> controllerModeValue = new EnumSyncValue<>(ControllerMode.class,
                 this::getControllerMode, this::setControllerMode);
         BooleanSyncValue invertedValue = new BooleanSyncValue(this::isInverted, this::setInverted);
-        DoubleSyncValue minRedstoneValue = new DoubleSyncValue(this::getMinRedstoneStrength,
-                value -> setMinRedstoneStrength((int) value));
 
         guiSyncManager.syncValue("controller_mode", controllerModeValue);
         guiSyncManager.syncValue("inverted", invertedValue);
-        guiSyncManager.syncValue("min_redstone", minRedstoneValue);
 
-        return GTGuis.createPanel(this, 176, 150)
+        return GTGuis.createPanel(this, 176, 112)
                 .child(createTitleRow())
                 .child(new Column()
                         .widthRel(1.0f).margin(7, 0)
@@ -165,23 +147,6 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                                         .tooltip(t -> t.addLine(IKey.lang("cover.machine_controller.normal"))))
                                 .child(IKey.lang("cover.machine_controller.disable_with_redstone").asWidget()
                                         .heightRel(1.0f).left(20)))
-
-                        // Redstone value slider
-                        .child(createSettingsRow().marginTop(2).height(34)
-                                .child(new Column().heightRel(1.0f)
-                                        .child(IKey.lang("cover.machine_controller.redstone",
-                                                (int) minRedstoneValue.getDoubleValue()) // todo not dynamic
-                                                .alignment(Alignment.Center).asWidget().height(16).widthRel(1.0f))
-                                        .child(new SliderWidget()
-                                                .widthRel(1.0f).height(16)
-                                                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                                                .sliderTexture(GTGuiTextures.MC_BUTTON)
-                                                .bounds(0, 15).stopper(1)
-                                                .value(new DoubleValue.Dynamic(minRedstoneValue::getDoubleValue,
-                                                        minRedstoneValue::setDoubleValue))
-                                                .tooltipBuilder(t -> t.setAutoUpdate(true)
-                                                        .addLine(IKey.lang("cover.machine_controller.redstone",
-                                                                (int) minRedstoneValue.getDoubleValue()))))))
 
                         // Separating line
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
@@ -312,10 +277,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     private boolean shouldAllowWorking() {
-        boolean shouldAllowWorking = getCoverableView().getInputRedstoneSignal(getAttachedSide(), true) <
-                minRedstoneStrength;
-        // noinspection SimplifiableConditionalExpression
-        return isInverted ? !shouldAllowWorking : shouldAllowWorking;
+        int inputSignal = getCoverableView().getInputRedstoneSignal(getAttachedSide(), true);
+        return isInverted ? inputSignal > 0 : inputSignal == 0;
     }
 
     private boolean doesOtherAllowingWork() {
@@ -336,7 +299,6 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     @Override
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("MinRedstoneStrength", minRedstoneStrength);
         tagCompound.setBoolean("Inverted", isInverted);
         tagCompound.setInteger("ControllerMode", controllerMode.ordinal());
     }
@@ -344,7 +306,6 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.minRedstoneStrength = tagCompound.getInteger("MinRedstoneStrength");
         this.isInverted = tagCompound.getBoolean("Inverted");
         this.controllerMode = ControllerMode.values()[tagCompound.getInteger("ControllerMode")];
     }
