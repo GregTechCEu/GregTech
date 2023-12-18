@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.text.TextFormatting;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -20,8 +21,10 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.DoubleValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
@@ -134,27 +137,14 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         guiSyncManager.syncValue("inverted", invertedValue);
         guiSyncManager.syncValue("min_redstone", minRedstoneValue);
 
-        return GTGuis.createPanel(this, 176, 95) // todo maybe too small
+        return GTGuis.createPanel(this, 176, 150)
                 .child(createTitleRow())
                 .child(new Column()
                         .widthRel(1.0f).margin(7, 0)
-                        .top(22).coverChildrenHeight()
-                        .child(createSettingsRow().height(18)
-                                .child(modeButton(controllerModeValue, ControllerMode.MACHINE).left(0))
-                                .child(modeButton(controllerModeValue, ControllerMode.COVER_UP).left(24))
-                                .child(modeButton(controllerModeValue, ControllerMode.COVER_DOWN).left(44))
-                                .child(modeButton(controllerModeValue, ControllerMode.COVER_NORTH).left(64))
-                                .child(modeButton(controllerModeValue, ControllerMode.COVER_SOUTH).left(84))
-                                .child(modeButton(controllerModeValue, ControllerMode.COVER_EAST).left(104))
-                                .child(modeButton(controllerModeValue, ControllerMode.COVER_WEST).left(124)))
-                        .child(createSettingsRow()
-                                .child(new SliderWidget()
-                                        .widthRel(1.0f).height(16)
-                                        .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                                        .sliderTexture(GTGuiTextures.MC_BUTTON)
-                                        .bounds(0, 15).stopper(1)
-                                        .value(new DoubleValue.Dynamic(minRedstoneValue::getDoubleValue,
-                                                minRedstoneValue::setDoubleValue))))
+                        .top(24).coverChildrenHeight()
+
+                        // Inverted mode
+                        // todo make sure these buttons set the state properly (they might be backwards)
                         .child(createSettingsRow()
                                 .child(new ToggleButton()
                                         .size(16).left(0)
@@ -162,28 +152,88 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                                                 $ -> invertedValue.setValue(true)))
                                         .overlay(GTGuiTextures.BUTTON_REDSTONE_ON)
                                         .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED)
-                                        .tooltip(t -> t.addLine(IKey.lang("")))) // todo
+                                        .tooltip(t -> t.addLine(IKey.lang("cover.machine_controller.inverted"))))
+                                .child(IKey.lang("cover.machine_controller.enable_with_redstone").asWidget()
+                                        .heightRel(1.0f).left(20)))
+                        .child(createSettingsRow()
                                 .child(new ToggleButton()
-                                        .size(16).left(18)
+                                        .size(16).left(0)
                                         .value(new BoolValue.Dynamic(() -> !invertedValue.getValue(),
                                                 $ -> invertedValue.setValue(false)))
                                         .overlay(GTGuiTextures.BUTTON_REDSTONE_OFF)
                                         .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED)
-                                        .tooltip(t -> t.addLine(IKey.lang("")))))); // todo
+                                        .tooltip(t -> t.addLine(IKey.lang("cover.machine_controller.normal"))))
+                                .child(IKey.lang("cover.machine_controller.disable_with_redstone").asWidget()
+                                        .heightRel(1.0f).left(20)))
+
+                        // Redstone value slider
+                        .child(createSettingsRow().marginTop(2).height(34)
+                                .child(new Column().heightRel(1.0f)
+                                        .child(IKey.lang("cover.machine_controller.redstone",
+                                                (int) minRedstoneValue.getDoubleValue()) // todo not dynamic
+                                                .alignment(Alignment.Center).asWidget().height(16).widthRel(1.0f))
+                                        .child(new SliderWidget()
+                                                .widthRel(1.0f).height(16)
+                                                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                                                .sliderTexture(GTGuiTextures.MC_BUTTON)
+                                                .bounds(0, 15).stopper(1)
+                                                .value(new DoubleValue.Dynamic(minRedstoneValue::getDoubleValue,
+                                                        minRedstoneValue::setDoubleValue))
+                                                .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                                        .addLine(IKey.lang("cover.machine_controller.redstone",
+                                                                (int) minRedstoneValue.getDoubleValue()))))))
+
+                        // Separating line
+                        .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
+                                .height(1).widthRel(0.9f).alignX(0.5f).marginBottom(4).marginTop(4))
+
+                        // Controlling selector
+                        .child(createSettingsRow().height(16 + 2 + 16)
+                                .child(new Column().heightRel(1.0f).coverChildrenWidth()
+                                        .child(IKey.lang("cover.machine_controller.control").asWidget()
+                                                .left(0).height(16).marginBottom(2))
+                                        .child(modeButton(controllerModeValue, ControllerMode.MACHINE).left(0)))
+                                .child(modeColumn(controllerModeValue, ControllerMode.COVER_UP, IKey.str("U"))
+                                        .right(100))
+                                .child(modeColumn(controllerModeValue, ControllerMode.COVER_DOWN, IKey.str("D"))
+                                        .right(80))
+                                .child(modeColumn(controllerModeValue, ControllerMode.COVER_NORTH, IKey.str("N"))
+                                        .right(60))
+                                .child(modeColumn(controllerModeValue, ControllerMode.COVER_SOUTH, IKey.str("S"))
+                                        .right(40))
+                                .child(modeColumn(controllerModeValue, ControllerMode.COVER_EAST, IKey.str("E"))
+                                        .right(20))
+                                .child(modeColumn(controllerModeValue, ControllerMode.COVER_WEST, IKey.str("W"))
+                                        .right(0))));
+    }
+
+    private Column modeColumn(EnumSyncValue<ControllerMode> syncValue, ControllerMode mode, IKey title) {
+        return new Column().coverChildrenHeight().width(18)
+                .child(title.asWidget().size(16).marginBottom(2).alignment(Alignment.Center))
+                .child(modeButton(syncValue, mode));
     }
 
     private Widget<?> modeButton(EnumSyncValue<ControllerMode> syncValue, ControllerMode mode) {
         IControllable controllable = getControllable(mode);
         if (controllable == null) {
             // Nothing to control, put a placeholder widget
+
+            // 3 states possible here:
+            IKey detail;
+            if (mode.side == getAttachedSide()) {
+                // our own side, we can't control ourselves
+                detail = IKey.lang("cover.machine_controller.self_side");
+            } else if (mode.side != null) {
+                // some potential cover that either doesn't exist or isn't controllable
+                detail = IKey.lang("cover.machine_controller.not_controllable");
+            } else {
+                // cover holder is not controllable
+                detail = IKey.lang("cover.machine_controller.machine_not_controllable");
+            }
+
             return GTGuiTextures.MC_BUTTON.asWidget().size(18)
                     .overlay(GTGuiTextures.BUTTON_CROSS)
-                    .tooltip(t -> t.addLine(IKey.lang(mode.localeName))
-                            // todo 3 states to cover with this tooltip:
-                            // 1. Is this cover, say "Attached side" or something
-                            // 2. No controllable cover, say the cover side and "No controllable cover"
-                            // 3. Cover holder isn't controllable, say "Machine not controllable"
-                            .addLine(IKey.lang("")));
+                    .tooltip(t -> t.addLine(IKey.lang(mode.localeName)).addLine(detail));
         }
 
         ItemStack stack;
@@ -199,26 +249,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                 .value(boolValueOf(syncValue, mode))
                 .overlay(new ItemDrawable(stack).asIcon().size(16))
                 .tooltip(t -> t.addLine(IKey.lang(mode.localeName))
-                        .addLine(IKey.str(stack.getDisplayName())));
+                        .addLine(IKey.str(TextFormatting.GRAY + stack.getDisplayName())));
     }
-/*
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        updateDisplayInventory();
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 95)
-                .image(4, 4, 16, 16, GuiTextures.COVER_MACHINE_CONTROLLER)
-                .label(24, 8, "cover.machine_controller.title")
-                .widget(new SliderWidget("cover.machine_controller.redstone", 10, 24, 156, 20, 1.0f, 15.0f,
-                        minRedstoneStrength, it -> setMinRedstoneStrength((int) it)))
-                .widget(new ClickButtonWidget(10, 48, 134, 18, "", data -> cycleNextControllerMode()))
-                .widget(new SimpleTextWidget(77, 58, "", 0xFFFFFF, () -> getControllerMode().getName()).setShadow(true))
-                .widget(new SlotWidget(displayInventory, 0, 148, 48, false, false)
-                        .setBackgroundTexture(GuiTextures.SLOT))
-                .widget(new CycleButtonWidget(48, 70, 80, 18, this::isInverted, this::setInverted,
-                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
-                                .setTooltipHoverString("cover.machine_controller.inverted.description"))
-                .build(this, player);
-    }*/
 
     @Override
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,

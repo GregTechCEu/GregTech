@@ -1,5 +1,6 @@
 package gregtech.api.mui;
 
+import gregtech.api.cover.CoverWithUI;
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -38,6 +39,7 @@ public class GTGuiTheme {
             .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
             .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
+            .textColor(CoverWithUI.UI_TEXT_COLOR)
             .build();
 
     // TODO Multiblock theme for display texture, logo changes

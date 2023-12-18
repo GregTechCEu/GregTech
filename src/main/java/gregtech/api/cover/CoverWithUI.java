@@ -80,6 +80,16 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
     /* Helper methods for UI creation with covers that are commonly used */
 
     /**
+     * The color used for Cover UI titles, and used in {@link #createTitleRow}.
+     */
+    int UI_TITLE_COLOR = 0xFF222222;
+    /**
+     * The color used for Cover UI text. Available for reference, but is
+     * handled automatically by the {@link GTGuiTheme#COVER} theme.
+     */
+    int UI_TEXT_COLOR = 0xFF555555;
+
+    /**
      * Create the Title bar widget for a Cover.
      */
     default Row createTitleRow() {
@@ -88,7 +98,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
                 .pos(4, 4)
                 .height(16).coverChildrenWidth()
                 .child(new ItemDrawable(getDefinition().getDropItemStack()).asWidget().size(16).marginRight(4))
-                .child(IKey.str(item.getDisplayName()).asWidget().heightRel(1.0f));
+                .child(IKey.str(item.getDisplayName()).color(UI_TITLE_COLOR).asWidget().heightRel(1.0f));
     }
 
     /**
