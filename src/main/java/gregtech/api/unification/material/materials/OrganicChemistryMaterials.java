@@ -194,7 +194,6 @@ public class OrganicChemistryMaterials {
         Chloromethane = new Material.Builder(1024, gregtechId("chloromethane"))
                 .gas()
                 .color(0xC82CA0)
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1, Hydrogen, 3, Chlorine, 1)
                 .build();
 
@@ -221,12 +220,14 @@ public class OrganicChemistryMaterials {
         Propene = new Material.Builder(1028, gregtechId("propene"))
                 .gas()
                 .color(0xFFDD55)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 3, Hydrogen, 6)
                 .build();
 
         Ethane = new Material.Builder(1029, gregtechId("ethane"))
                 .gas()
                 .color(0xC8C8FF)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6)
                 .build();
 
@@ -268,7 +269,6 @@ public class OrganicChemistryMaterials {
         Ethenone = new Material.Builder(1035, gregtechId("ethenone"))
                 .fluid()
                 .color(0x141446)
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 2, Oxygen, 1)
                 .build();
 
@@ -331,7 +331,6 @@ public class OrganicChemistryMaterials {
         AceticAcid = new Material.Builder(1044, gregtechId("acetic_acid"))
                 .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xC8B4A0)
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4, Oxygen, 2)
                 .build();
 
@@ -373,7 +372,6 @@ public class OrganicChemistryMaterials {
         Acetone = new Material.Builder(1050, gregtechId("acetone"))
                 .fluid()
                 .color(0xAFAFAF)
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 3, Hydrogen, 6, Oxygen, 1)
                 .build();
 
