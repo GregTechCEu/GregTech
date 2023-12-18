@@ -1,20 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.drawable.ItemDrawable;
-import com.cleanroommc.modularui.factory.SidedPosGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.BoolValue;
-import com.cleanroommc.modularui.value.DoubleValue;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
-import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
-
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.*;
@@ -33,6 +18,20 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.DoubleValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,8 +124,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         // todo these don't sync properly
-        EnumSyncValue<ControllerMode> controllerModeValue =
-                new EnumSyncValue<>(ControllerMode.class, this::getControllerMode, this::setControllerMode);
+        EnumSyncValue<ControllerMode> controllerModeValue = new EnumSyncValue<>(ControllerMode.class,
+                this::getControllerMode, this::setControllerMode);
         BooleanSyncValue invertedValue = new BooleanSyncValue(this::isInverted, this::setInverted);
         DoubleSyncValue minRedstoneValue = new DoubleSyncValue(this::getMinRedstoneStrength,
                 value -> setMinRedstoneStrength((int) value));
@@ -149,7 +148,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                                 .child(modeButton(controllerModeValue, ControllerMode.COVER_EAST).left(104))
                                 .child(modeButton(controllerModeValue, ControllerMode.COVER_WEST).left(124)))
                         .child(createSettingsRow()
-                                .child(new com.cleanroommc.modularui.widgets.SliderWidget()
+                                .child(new SliderWidget()
                                         .widthRel(1.0f).height(16)
                                         .background(GTGuiTextures.MC_BUTTON_DISABLED)
                                         .sliderTexture(GTGuiTextures.MC_BUTTON)

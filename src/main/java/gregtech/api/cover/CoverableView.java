@@ -92,5 +92,6 @@ public interface CoverableView extends ICapabilityProvider {
     /**
      * @return an ItemStack representation of the CoverableView, or {@link ItemStack#EMPTY} if not possible.
      */
-    @NotNull ItemStack getStackForm();
+    @NotNull
+    ItemStack getStackForm();
 }
