@@ -5,6 +5,7 @@ import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public final class OreGlobParser {
                 case '^' -> setCurrentToken(XOR, start, 1);
                 case '*' -> setCurrentToken(ANY, start, 1);
                 case '?' -> setCurrentToken(ANY_CHAR, start, 1);
-                case '$' -> {
+                case '$' -> { // TODO: remove this switch case in 2.9
                     if (!first) {
                         error(OreGlobMessages.compileErrorUnexpectedCompilationFlag(), start, 1);
                     }
@@ -146,6 +147,9 @@ public final class OreGlobParser {
         }
     }
 
+    @Deprecated
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     private void gatherFlags(boolean add) {
         while (true) {
             int i = this.inputIndex;
@@ -173,6 +177,8 @@ public final class OreGlobParser {
         }
     }
 
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     private void addFlag(int flag) {
         if (flag == 'c' || flag == 'C') this.ignoreCase = false;
     }
@@ -206,7 +212,7 @@ public final class OreGlobParser {
             // Eat through OR tokens as much as we can, to prevent scenario where
             // a disgusting C like lang users type || and complain their filter is broken
             // noinspection StatementWithEmptyBody
-            while (advanceIf(OR));
+            while (advanceIf(OR)) ;
             nodes.add(and());
         } while (advanceIf(OR));
         return OreGlobNodes.or(nodes);
@@ -221,7 +227,7 @@ public final class OreGlobParser {
             // Eat through AND tokens as much as we can, to prevent scenario where
             // a disgusting C like lang users type && and complain their filter is broken
             // noinspection StatementWithEmptyBody
-            while (advanceIf(AND));
+            while (advanceIf(AND)) ;
             nodes.add(xor());
         } while (advanceIf(AND));
         return OreGlobNodes.and(nodes);

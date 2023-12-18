@@ -27,6 +27,7 @@ import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
+import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -42,6 +43,7 @@ import gregtech.common.command.CommandShaders;
 import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
+import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -94,11 +96,11 @@ import java.util.Map;
 import static gregtech.api.GregTechAPI.*;
 
 @GregTechModule(
-                moduleID = GregTechModules.MODULE_CORE,
-                containerID = GTValues.MODID,
-                name = "GregTech Core",
-                description = "Core GregTech content. Disabling this disables the entire mod and all its addons.",
-                coreModule = true)
+        moduleID = GregTechModules.MODULE_CORE,
+        containerID = GTValues.MODID,
+        name = "GregTech Core",
+        description = "Core GregTech content. Disabling this disables the entire mod and all its addons.",
+        coreModule = true)
 public class CoreModule implements IGregTechModule {
 
     public static final Logger logger = LogManager.getLogger("GregTech Core");
@@ -113,6 +115,8 @@ public class CoreModule implements IGregTechModule {
         // must be set here because of GroovyScript compat
         // trying to read this before the pre-init stage
         GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
+
+        OreGlob.setCompiler((expr, ignoreCase) -> new OreGlobParser(expr, ignoreCase).compile());
     }
 
     @NotNull

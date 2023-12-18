@@ -31,6 +31,7 @@ public abstract class OreGlob {
      */
     @NotNull
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static OreGlobCompileResult compile(@NotNull String expression) {
         return compile(expression, true);
     }
@@ -87,6 +88,7 @@ public abstract class OreGlob {
      * @deprecated use {@link #matchesAll(ItemStack)} or {@link #matchesAny(ItemStack)}
      */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public final boolean matches(@NotNull ItemStack stack) {
         return matchesAny(stack);
     }
