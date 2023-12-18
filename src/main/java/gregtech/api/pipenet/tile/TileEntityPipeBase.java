@@ -110,7 +110,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void markDirty() {
         if (getWorld() != null && getPos() != null) {
             getWorld().markChunkDirty(getPos(), this);
-
+            getPipeBlock().getWorldPipeNet(getWorld()).syncNode(this);
         }
     }
 
@@ -426,7 +426,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void onLoad() {
         super.onLoad();
         this.pipeBlock.getWorldPipeNet(this.getWorld()).addNode(this.getPipePos(), this.getNodeData(),
-                this.getCableMark(), ~(this.getBlockedConnections()), true, this);
+                this.getCableMark(), ~(this.getBlockedConnections()), false, this);
     }
 
     protected void writePipeProperties(PacketBuffer buf) {

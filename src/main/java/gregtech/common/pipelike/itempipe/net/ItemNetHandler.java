@@ -467,7 +467,7 @@ public class ItemNetHandler implements IItemHandler {
             pipe.getTransferred().merge(routePath.toFacingPos(), amount, Integer::sum);
     }
 
-    private boolean contains(ItemRoutePath routePath, boolean simulate) {
+    private boolean contains(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, boolean simulate) {
         return simulate ? simulatedTransfersGlobalRoundRobin.containsKey(routePath.toFacingPos()) :
                 pipe.getTransferred().containsKey(routePath.toFacingPos());
     }

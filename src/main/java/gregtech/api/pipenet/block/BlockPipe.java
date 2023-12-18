@@ -147,8 +147,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeTile != null) {
             int activeConnections = pipeTile.getConnections();
             boolean isActiveNode = activeConnections != 0;
-            getWorldPipeNet(worldIn).addNode(pos, createProperties(pipeTile), 0, activeConnections, isActiveNode,
-                    pipeTile);
             onActiveModeChange(worldIn, pos, isActiveNode, true);
         }
     }

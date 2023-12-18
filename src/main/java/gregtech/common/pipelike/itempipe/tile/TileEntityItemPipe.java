@@ -6,7 +6,6 @@ import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
-import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 
 import net.minecraft.util.EnumFacing;

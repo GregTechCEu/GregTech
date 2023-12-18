@@ -165,7 +165,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         if (heldMTE != null && this.pipeMap.containsKey(nodePos)) {
             this.syncNode(heldMTE);
             return;
-        } else if (heldMTE == null) {
+        }
+        if (heldMTE == null) {
             heldMTE = castTE(this.getWorld().getTileEntity(nodePos));
         }
         NodeG<PipeType, NodeDataType> node = new NodeG<>(nodeData, openConnections, mark, isActive, heldMTE, nodePos);
@@ -216,6 +217,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         node.setBlocked(side, isBlocked);
         NodeG<PipeType, NodeDataType> nodeOffset = pipeMap.get(nodePos.offset(side));
         if (nodeOffset == null) return;
+        this.predicateEdge(node, nodeOffset, side);
 
         if (!node.isBlocked(side) && !nodeOffset.isBlocked(side.getOpposite())) {
             addEdge(node, nodeOffset, null);
@@ -238,6 +240,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
                     !areNodesCustomContactable(node.data, nodeOffset.data))
                 continue;
             if (areMarksCompatible(oldMark, nodeOffset.mark) == areMarksCompatible(newMark, nodeOffset.mark)) continue;
+
+            this.predicateEdge(node, nodeOffset, side);
 
             if (areMarksCompatible(newMark, nodeOffset.mark)) {
                 addEdge(node, nodeOffset, null);
