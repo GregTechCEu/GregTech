@@ -1,11 +1,25 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.DoubleValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.*;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +27,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraftforge.items.ItemStackHandler;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -31,7 +44,6 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     private int minRedstoneStrength;
     private boolean isInverted;
     private ControllerMode controllerMode;
-    private final ItemStackHandler displayInventory = new ItemStackHandler(1);
 
     public CoverMachineController(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                   @NotNull EnumFacing attachedSide) {
@@ -69,16 +81,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         resetCurrentControllable();
         this.controllerMode = controllerMode;
         updateRedstoneStatus();
-        updateDisplayInventory();
         getCoverableView().markDirty();
-    }
-
-    private void cycleNextControllerMode() {
-        List<ControllerMode> allowedModes = getAllowedModes(getCoverableView(), getAttachedSide());
-        int nextIndex = allowedModes.indexOf(controllerMode) + 1;
-        if (!allowedModes.isEmpty()) {
-            setControllerMode(allowedModes.get(nextIndex % allowedModes.size()));
-        }
     }
 
     public List<ControllerMode> getAllowedModes(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
@@ -115,6 +118,92 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        // todo these don't sync properly
+        EnumSyncValue<ControllerMode> controllerModeValue =
+                new EnumSyncValue<>(ControllerMode.class, this::getControllerMode, this::setControllerMode);
+        BooleanSyncValue invertedValue = new BooleanSyncValue(this::isInverted, this::setInverted);
+        DoubleSyncValue minRedstoneValue = new DoubleSyncValue(this::getMinRedstoneStrength,
+                value -> setMinRedstoneStrength((int) value));
+
+        guiSyncManager.syncValue("controller_mode", controllerModeValue);
+        guiSyncManager.syncValue("inverted", invertedValue);
+        guiSyncManager.syncValue("min_redstone", minRedstoneValue);
+
+        return GTGuis.createPanel(this, 176, 95) // todo maybe too small
+                .child(createTitleRow())
+                .child(new Column()
+                        .widthRel(1.0f).margin(7, 0)
+                        .top(22).coverChildrenHeight()
+                        .child(createSettingsRow().height(18)
+                                .child(modeButton(controllerModeValue, ControllerMode.MACHINE).left(0))
+                                .child(modeButton(controllerModeValue, ControllerMode.COVER_UP).left(24))
+                                .child(modeButton(controllerModeValue, ControllerMode.COVER_DOWN).left(44))
+                                .child(modeButton(controllerModeValue, ControllerMode.COVER_NORTH).left(64))
+                                .child(modeButton(controllerModeValue, ControllerMode.COVER_SOUTH).left(84))
+                                .child(modeButton(controllerModeValue, ControllerMode.COVER_EAST).left(104))
+                                .child(modeButton(controllerModeValue, ControllerMode.COVER_WEST).left(124)))
+                        .child(createSettingsRow()
+                                .child(new com.cleanroommc.modularui.widgets.SliderWidget()
+                                        .widthRel(1.0f).height(16)
+                                        .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                                        .sliderTexture(GTGuiTextures.MC_BUTTON)
+                                        .bounds(0, 15).stopper(1)
+                                        .value(new DoubleValue.Dynamic(minRedstoneValue::getDoubleValue,
+                                                minRedstoneValue::setDoubleValue))))
+                        .child(createSettingsRow()
+                                .child(new ToggleButton()
+                                        .size(16).left(0)
+                                        .value(new BoolValue.Dynamic(invertedValue::getValue,
+                                                $ -> invertedValue.setValue(true)))
+                                        .overlay(GTGuiTextures.BUTTON_REDSTONE_ON)
+                                        .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED)
+                                        .tooltip(t -> t.addLine(IKey.lang("")))) // todo
+                                .child(new ToggleButton()
+                                        .size(16).left(18)
+                                        .value(new BoolValue.Dynamic(() -> !invertedValue.getValue(),
+                                                $ -> invertedValue.setValue(false)))
+                                        .overlay(GTGuiTextures.BUTTON_REDSTONE_OFF)
+                                        .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED)
+                                        .tooltip(t -> t.addLine(IKey.lang("")))))); // todo
+    }
+
+    private Widget<?> modeButton(EnumSyncValue<ControllerMode> syncValue, ControllerMode mode) {
+        IControllable controllable = getControllable(mode);
+        if (controllable == null) {
+            // Nothing to control, put a placeholder widget
+            return GTGuiTextures.MC_BUTTON.asWidget().size(18)
+                    .overlay(GTGuiTextures.BUTTON_CROSS)
+                    .tooltip(t -> t.addLine(IKey.lang(mode.localeName))
+                            // todo 3 states to cover with this tooltip:
+                            // 1. Is this cover, say "Attached side" or something
+                            // 2. No controllable cover, say the cover side and "No controllable cover"
+                            // 3. Cover holder isn't controllable, say "Machine not controllable"
+                            .addLine(IKey.lang("")));
+        }
+
+        ItemStack stack;
+        if (mode == ControllerMode.MACHINE) {
+            stack = getCoverableView().getStackForm();
+        } else {
+            // this can't be null because we already checked IControllable, and it was not null
+            // noinspection ConstantConditions
+            stack = getCoverableView().getCoverAtSide(mode.side).getDefinition().getDropItemStack();
+        }
+
+        return new ToggleButton().size(18)
+                .value(boolValueOf(syncValue, mode))
+                .overlay(new ItemDrawable(stack).asIcon().size(16))
+                .tooltip(t -> t.addLine(IKey.lang(mode.localeName))
+                        .addLine(IKey.str(stack.getDisplayName())));
+    }
+/*
+    @Override
     public ModularUI createUI(EntityPlayer player) {
         updateDisplayInventory();
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 95)
@@ -130,7 +219,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                         "cover.machine_controller.normal", "cover.machine_controller.inverted")
                                 .setTooltipHoverString("cover.machine_controller.inverted.description"))
                 .build(this, player);
-    }
+    }*/
 
     @Override
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
@@ -163,20 +252,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         updateRedstoneStatus();
     }
 
-    private void updateDisplayInventory() {
-        EnumFacing controlledSide = getControllerMode().side;
-        ItemStack resultStack = ItemStack.EMPTY;
-        if (controlledSide != null) {
-            Cover cover = getCoverableView().getCoverAtSide(controlledSide);
-            if (cover != null) {
-                resultStack = cover.getDefinition().getDropItemStack();
-            }
-        }
-        this.displayInventory.setStackInSlot(0, resultStack);
-    }
-
-    private @Nullable IControllable getControllable() {
-        EnumFacing side = controllerMode.side;
+    private @Nullable IControllable getControllable(ControllerMode mode) {
+        EnumFacing side = mode.side;
         if (side == null) {
             return getCoverableView().getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE,
                     getAttachedSide());
@@ -190,14 +267,14 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     private void resetCurrentControllable() {
-        IControllable controllable = getControllable();
+        IControllable controllable = getControllable(controllerMode);
         if (controllable != null) {
             controllable.setWorkingEnabled(doesOtherAllowingWork());
         }
     }
 
     private void updateRedstoneStatus() {
-        IControllable controllable = getControllable();
+        IControllable controllable = getControllable(controllerMode);
         if (controllable != null) {
             controllable.setWorkingEnabled(shouldAllowWorking() && doesOtherAllowingWork());
         }

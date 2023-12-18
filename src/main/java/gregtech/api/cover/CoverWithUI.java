@@ -1,5 +1,15 @@
 package gregtech.api.cover;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.value.BoolValue;
+
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.mui.GTGuiTheme;
@@ -8,6 +18,7 @@ import gregtech.api.mui.factory.CoverGuiFactory;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -46,7 +57,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
     }
 
     default GTGuiTheme getUITheme() {
-        return GTGuiTheme.STANDARD;
+        return GTGuiTheme.COVER;
     }
 
     @Override
@@ -67,5 +78,43 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
     @Override
     default void markAsDirty() {
         getCoverableView().markDirty();
+    }
+
+
+    /* Helper methods for UI creation with covers that are commonly used */
+
+    /**
+     * Create the Title bar widget for a Cover.
+     */
+    default Row createTitleRow() {
+        ItemStack item = getDefinition().getDropItemStack();
+        return new Row()
+                .pos(4, 4)
+                .height(16).coverChildrenWidth()
+                .child(new ItemDrawable(getDefinition().getDropItemStack()).asWidget().size(16).marginRight(4))
+                .child(IKey.str(item.getDisplayName()).asWidget().heightRel(1.0f));
+    }
+
+    /**
+     * Create a new settings row for a Cover setting.
+     */
+    default ParentWidget<?> createSettingsRow() {
+        return new ParentWidget<>().height(16).widthRel(1.0f).marginBottom(2);
+    }
+
+    /**
+     * Get a BoolValue for use with toggle buttons which are "linked together,"
+     * meaning only one of them can be pressed at a time.
+     */
+    default <T extends Enum<T>> BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
+        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
+    }
+
+    /**
+     * Get a BoolValue for use with toggle buttons which are "linked together,"
+     * meaning only one of them can be pressed at a time.
+     */
+    default BoolValue.Dynamic boolValueOf(IntSyncValue syncValue, int value) {
+        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
     }
 }

@@ -33,7 +33,14 @@ public class GTGuiTheme {
                     ConfigHolder.client.defaultUIColor)
             .build();
 
-    // TODO Cover theme to utilize the GT5u-like button textures vs the standard ones
+    public static final GTGuiTheme COVER = templateBuilder("gregtech_cover")
+            .panel(GTGuiTextures.IDs.COVER_BACKGROUND)
+            .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
+            .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
+            .color(ConfigHolder.client.defaultUIColor)
+            .build();
+
+    // TODO Multiblock theme for display texture, logo changes
 
     public static final GTGuiTheme BRONZE = templateBuilder("gregtech_bronze")
             .panel(GTGuiTextures.IDs.BRONZE_BACKGROUND)
