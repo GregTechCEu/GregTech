@@ -126,15 +126,13 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                         .top(24).coverChildrenHeight()
 
                         // Inverted mode
-                        // todo make sure these buttons set the state properly (they might be backwards)
                         .child(createSettingsRow()
                                 .child(new ToggleButton()
                                         .size(16).left(0)
                                         .value(new BoolValue.Dynamic(invertedValue::getValue,
                                                 $ -> invertedValue.setValue(true)))
                                         .overlay(GTGuiTextures.BUTTON_REDSTONE_ON)
-                                        .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED)
-                                        .tooltip(t -> t.addLine(IKey.lang("cover.machine_controller.inverted"))))
+                                        .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED))
                                 .child(IKey.lang("cover.machine_controller.enable_with_redstone").asWidget()
                                         .heightRel(1.0f).left(20)))
                         .child(createSettingsRow()
@@ -143,8 +141,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                                         .value(new BoolValue.Dynamic(() -> !invertedValue.getValue(),
                                                 $ -> invertedValue.setValue(false)))
                                         .overlay(GTGuiTextures.BUTTON_REDSTONE_OFF)
-                                        .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED)
-                                        .tooltip(t -> t.addLine(IKey.lang("cover.machine_controller.normal"))))
+                                        .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED))
                                 .child(IKey.lang("cover.machine_controller.disable_with_redstone").asWidget()
                                         .heightRel(1.0f).left(20)))
 
@@ -182,7 +179,6 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         IControllable controllable = getControllable(mode);
         if (controllable == null) {
             // Nothing to control, put a placeholder widget
-
             // 3 states possible here:
             IKey detail;
             if (mode.side == getAttachedSide()) {
