@@ -544,10 +544,12 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
-        PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
-        if (net != null) {
-            net.onChunkUnload();
+        if (!world.isRemote) {
+            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+            PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
+            if (net != null) {
+                net.onChunkUnload();
+            }
         }
     }
 
