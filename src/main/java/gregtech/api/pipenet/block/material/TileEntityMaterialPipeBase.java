@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_MATERIAL;
 
 public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>,
-        NodeDataType extends INodeData> extends TileEntityPipeBase<PipeType, NodeDataType>
+        NodeDataType extends INodeData<NodeDataType>> extends TileEntityPipeBase<PipeType, NodeDataType>
                                                 implements IMaterialPipeTile<PipeType, NodeDataType> {
 
     private Material pipeMaterial = Materials.Aluminium;

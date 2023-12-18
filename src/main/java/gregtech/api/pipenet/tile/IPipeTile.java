@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>>
-                          extends INeighborCache {
+public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>> extends INeighborCache {
 
     World getPipeWorld();
 

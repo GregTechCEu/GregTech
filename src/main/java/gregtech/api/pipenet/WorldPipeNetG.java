@@ -510,16 +510,19 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         double sumWeight = source.data.getWeightFactor();
         boolean valid = true;
         while (valid) {
-            Iterator<NetEdge> i = this.pipeGraph.edgesOf(node).iterator();
+            Iterator<NetEdge> i = this.pipeGraph.outgoingEdgesOf(node).iterator();
             if (!i.hasNext()) break; // we've reached the end, exit the loop while still valid
             edge = i.next();
-            if (edge.getTarget() == lastNode) {
+            // if we are directed, we know that the target is the target.
+            // if we aren't directed, we need to see if the edge's source was secretly the target
+            boolean reversedEdge = !this.isDirected() && edge.getSource() == lastNode;
+            if (edge.getTarget() == lastNode || reversedEdge) {
                 if (i.hasNext()) edge = i.next();
                 else break; // we've reached the end, exit the loop while still valid
             } else if (i.hasNext()) i.next();
             if (i.hasNext()) valid = false; // third edge detected - that's an invalid group
             lastNode = node;
-            node = (NodeG<PipeType, NodeDataType>) edge.getTarget();
+            node = (NodeG<PipeType, NodeDataType>) (reversedEdge ? edge.getSource() : edge.getTarget());
             edges.add(edge);
             nodes.add(node);
             sumWeight += node.data.getWeightFactor();

@@ -28,7 +28,7 @@ import java.util.Objects;
 
 public abstract class BlockMaterialPipe<
         PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>,
-        NodeDataType extends INodeData,
+        NodeDataType extends INodeData<NodeDataType>,
         WorldPipeNetType extends WorldPipeNetG<NodeDataType, PipeType>>
                                        extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
 

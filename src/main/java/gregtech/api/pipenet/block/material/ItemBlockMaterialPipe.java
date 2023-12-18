@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemBlockMaterialPipe<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>,
-        NodeDataType extends INodeData>
+        NodeDataType extends INodeData<NodeDataType>>
                                   extends ItemBlockPipe<PipeType, NodeDataType> {
 
     public ItemBlockMaterialPipe(BlockMaterialPipe<PipeType, NodeDataType, ?> block) {

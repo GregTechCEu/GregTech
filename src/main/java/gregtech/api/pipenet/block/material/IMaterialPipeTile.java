@@ -6,7 +6,7 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 
 public interface IMaterialPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData>
+        NodeDataType extends INodeData<NodeDataType>>
                                   extends IPipeTile<PipeType, NodeDataType> {
 
     Material getPipeMaterial();

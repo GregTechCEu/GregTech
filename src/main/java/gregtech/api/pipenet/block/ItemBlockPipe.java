@@ -15,8 +15,8 @@ import net.minecraft.world.World;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ItemBlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData>
-                          extends ItemBlock {
+public class ItemBlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>> extends ItemBlock {
 
     protected final BlockPipe<PipeType, NodeDataType, ?> blockPipe;
 
