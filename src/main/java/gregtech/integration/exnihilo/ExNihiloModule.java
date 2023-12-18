@@ -93,7 +93,7 @@ public class ExNihiloModule extends IntegrationSubmodule {
         getLogger().info("Registering Ex Nihilo Compat Items, Blocks, and Machines");
         GTPebbles = new ExNihiloPebble();
         registerMetaTileEntities();
-        FileUtility.extractJarFiles(String.format("/assets/%s/%s", GTValues.MODID, "exnihilo"),
+        FileUtility.extractJarFiles(String.format("/assets/%s/%s/%s", GTValues.MODID, "integration", "exnihilo"),
                 new File(Loader.instance().getConfigDir(), "gregtech"), false);
     }
 
