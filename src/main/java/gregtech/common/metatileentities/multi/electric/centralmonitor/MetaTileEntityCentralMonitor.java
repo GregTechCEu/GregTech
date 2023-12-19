@@ -73,7 +73,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     // run-time data
     public int width;
     private long lastUpdate;
-    private WeakReference<EnergyNet> currentEnergyNet;
+//    private WeakReference<EnergyNet> currentEnergyNet;
     private List<BlockPos> activeNodes;
     private Set<FacingPos> netCovers;
     private Set<FacingPos> remoteCovers;
@@ -89,7 +89,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         super(metaTileEntityId);
     }
 
-    private EnergyNet getEnergyNet() {
+//    private EnergyNet getEnergyNet() {
 //        if (!this.getWorld().isRemote) {
 //            TileEntity te = getNeighbor(frontFacing.getOpposite());
 //            if (te instanceof TileEntityCable) {
@@ -108,25 +108,25 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 //                return currentEnergyNet;
 //            }
 //        }
-        return null;
-    }
+//        return null;
+//    }
 
     private void updateNodes() {
-        EnergyNet energyNet = getEnergyNet();
-        if (energyNet == null) {
-            activeNodes.clear();
-            return;
-        }
-        if (energyNet.getLastUpdate() == lastUpdate) {
-            return;
-        }
-        lastUpdate = energyNet.getLastUpdate();
-        activeNodes.clear();
-        energyNet.getAllNodes().forEach((pos, node) -> {
-            if (node.isActive) {
-                activeNodes.add(pos);
-            }
-        });
+//        EnergyNet energyNet = getEnergyNet();
+//        if (energyNet == null) {
+//            activeNodes.clear();
+//            return;
+//        }
+//        if (energyNet.getLastUpdate() == lastUpdate) {
+//            return;
+//        }
+//        lastUpdate = energyNet.getLastUpdate();
+//        activeNodes.clear();
+//        energyNet.getAllNodes().forEach((pos, node) -> {
+//            if (node.isActive) {
+//                activeNodes.add(pos);
+//            }
+//        });
     }
 
     public void addRemoteCover(FacingPos cover) {
@@ -423,7 +423,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         lastUpdate = 0;
-        currentEnergyNet = new WeakReference<>(null);
+//        currentEnergyNet = new WeakReference<>(null);
         activeNodes = new ArrayList<>();
         netCovers = new HashSet<>();
         remoteCovers = new HashSet<>();
