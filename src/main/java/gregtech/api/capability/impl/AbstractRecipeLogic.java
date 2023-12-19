@@ -1,7 +1,11 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IMultiblockController;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
@@ -436,8 +440,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * </ol>
      * If the above conditions are met, the recipe is engaged to be run
      *
-     * @param recipe the recipe to prepare
-     * @param inputInventory the inventory to draw items from
+     * @param recipe              the recipe to prepare
+     * @param inputInventory      the inventory to draw items from
      * @param inputFluidInventory the fluid tanks to draw fluid from
      * @return true if the recipe was successfully prepared, else false
      */
@@ -626,7 +630,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                                                   @NotNull IItemHandlerModifiable importInventory) {
         return setupAndConsumeRecipeInputs(recipe, importInventory, this.getInputTank());
     }
-
 
     /**
      * @param resultOverclock the overclock data to use. Format: {@code [EUt, duration]}.
