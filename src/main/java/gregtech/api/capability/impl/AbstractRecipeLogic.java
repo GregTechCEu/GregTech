@@ -450,6 +450,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
                 metaTileEntity.getFluidOutputLimit());
 
+        // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
                 recipe,
                 inputInventory,
