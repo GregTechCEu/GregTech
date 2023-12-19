@@ -7,7 +7,6 @@
   "mixins" : [
     "LittleTilesRenderMangerMixin"
   ],
-  "client" : [
-  ],
+  "client": [],
   "server" : []
 }
