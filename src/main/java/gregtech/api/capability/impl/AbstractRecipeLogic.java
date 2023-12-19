@@ -441,7 +441,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param inputFluidInventory the fluid tanks to draw fluid from
      * @return true if the recipe was successfully prepared, else false
      */
-    protected boolean prepareRecipe(Recipe recipe, IItemHandlerModifiable inputInventory, IMultipleTankHandler inputFluidInventory) {
+    protected boolean prepareRecipe(Recipe recipe, IItemHandlerModifiable inputInventory,
+                                    IMultipleTankHandler inputFluidInventory) {
         recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
                 metaTileEntity.getFluidOutputLimit());
 
