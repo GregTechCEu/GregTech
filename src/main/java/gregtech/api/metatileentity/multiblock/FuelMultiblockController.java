@@ -10,6 +10,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -17,7 +18,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,38 +75,46 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         if (recipeMapWorkable.getMaxProgress() > 0) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
-            ));
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getProgress() / 20))
+                            .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(
+                            TextFormattingUtil.formatNumbers(recipeMapWorkable.getMaxProgress() / 20))
+                                    .setStyle(new Style().setColor(TextFormatting.YELLOW))));
         }
 
         list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
-        ));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored()))
+                        .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()))
+                        .setStyle(new Style().setColor(TextFormatting.YELLOW))));
 
         if (!recipeMapWorkable.consumesEnergy()) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(Math.abs(recipeMapWorkable.getInfoProviderEUt()))).setStyle(new Style().setColor(TextFormatting.RED)),
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getInfoProviderEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
-            ));
+                    new TextComponentTranslation(
+                            TextFormattingUtil.formatNumbers(Math.abs(recipeMapWorkable.getInfoProviderEUt())))
+                                    .setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(
+                            TextFormattingUtil.formatNumbers(recipeMapWorkable.getInfoProviderEUt() == 0 ? 0 : 1))
+                                    .setStyle(new Style().setColor(TextFormatting.RED))));
 
             list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_output",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                    new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
-            ));
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputVoltage()))
+                            .setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                    new TextComponentTranslation(
+                            GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())])
+                                    .setStyle(new Style().setColor(TextFormatting.YELLOW))));
         }
 
         if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
             list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
-            ));
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(getNumMaintenanceProblems()))
+                            .setStyle(new Style().setColor(TextFormatting.RED))));
         }
 
         return list;
@@ -122,7 +132,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 }
             }
         }
-        return new int[]{fluidAmount, fluidCapacity};
+        return new int[] { fluidAmount, fluidCapacity };
     }
 
     protected void addFuelText(List<ITextComponent> textList) {
@@ -140,7 +150,8 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         }
 
         if (fuelStack != null) {
-            ITextComponent fuelName = TextComponentUtil.translationWithColor(TextFormatting.GOLD, fuelStack.getUnlocalizedName());
+            ITextComponent fuelName = TextComponentUtil.setColor(GTUtility.getFluidTranslation(fuelStack),
+                    TextFormatting.GOLD);
             ITextComponent fuelInfo = new TextComponentTranslation("%s / %s L (%s)",
                     TextFormattingUtil.formatNumbers(fuelStored),
                     TextFormattingUtil.formatNumbers(fuelCapacity),

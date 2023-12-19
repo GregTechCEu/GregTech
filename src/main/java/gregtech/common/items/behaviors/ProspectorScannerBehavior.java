@@ -15,6 +15,7 @@ import gregtech.common.terminal.app.prospector.ProspectorMode;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.SearchComponent;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
@@ -74,7 +76,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
-    @Nonnull
+    @NotNull
     private static ProspectorMode getMode(ItemStack stack) {
         if (stack == ItemStack.EMPTY) {
             return ProspectorMode.ORE;
@@ -89,16 +91,16 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return ProspectorMode.ORE;
     }
 
-    private static void setMode(ItemStack stack, @Nonnull ProspectorMode mode) {
+    private static void setMode(ItemStack stack, @NotNull ProspectorMode mode) {
         NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(stack);
         tagCompound.setInteger("Mode", mode.ordinal());
     }
 
-    private boolean checkCanUseScanner(ItemStack stack, @Nonnull EntityPlayer player, boolean simulate) {
+    private boolean checkCanUseScanner(ItemStack stack, @NotNull EntityPlayer player, boolean simulate) {
         return player.isCreative() || drainEnergy(stack, GTValues.V[tier] / VOLTAGE_FACTOR, simulate);
     }
 
-    private static boolean drainEnergy(@Nonnull ItemStack stack, long amount, boolean simulate) {
+    private static boolean drainEnergy(@NotNull ItemStack stack, long amount, boolean simulate) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem == null) return false;
 
@@ -106,17 +108,19 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     }
 
     @Override
-    public ModularUI createUI(PlayerInventoryHolder holder, @Nonnull EntityPlayer entityPlayer) {
+    public ModularUI createUI(PlayerInventoryHolder holder, @NotNull EntityPlayer entityPlayer) {
         ProspectorMode mode = getMode(entityPlayer.getHeldItem(EnumHand.MAIN_HAND));
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 332, 200);
         this.widgetOreList = new WidgetOreList(32 * radius - 6, 18, 332 - 32 * radius, 176);
         builder.widget(this.widgetOreList);
         builder.widget(new WidgetProspectingMap(6, 18, radius, this.widgetOreList, mode, 1));
-        //Cardinal directions
+        // Cardinal directions
         builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14, "N", 0xAAAAAA).setShadow(true));
-        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14 + 16 * (radius * 2 - 1), "S", 0xAAAAAA).setShadow(true));
+        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14 + 16 * (radius * 2 - 1), "S", 0xAAAAAA)
+                .setShadow(true));
         builder.widget(new LabelWidget(3, 15 + (16 * (radius * 2 - 1)) / 2, "W", 0xAAAAAA).setShadow(true));
-        builder.widget(new LabelWidget(3 + 16 * (radius * 2 - 1), 15 + (16 * (radius * 2 - 1)) / 2, "E", 0xAAAAAA).setShadow(true));
+        builder.widget(new LabelWidget(3 + 16 * (radius * 2 - 1), 15 + (16 * (radius * 2 - 1)) / 2, "E", 0xAAAAAA)
+                .setShadow(true));
         return builder.label(6, 6, getTranslationKey()).build(holder, entityPlayer);
     }
 
@@ -170,7 +174,8 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
             if (player.openContainer instanceof ModularUIContainer) {
                 ModularUIContainer modularUIContainer = (ModularUIContainer) player.openContainer;
                 if (modularUIContainer.getModularUI().holder instanceof PlayerInventoryHolder) {
-                    if (((PlayerInventoryHolder) (modularUIContainer).getModularUI().holder).getCurrentItem() == itemStack) {
+                    if (((PlayerInventoryHolder) (modularUIContainer).getModularUI().holder).getCurrentItem() ==
+                            itemStack) {
                         if (!player.isCreative()) {
                             if (checkCanUseScanner(itemStack, player, true))
                                 drainEnergy(itemStack, GTValues.V[tier] / VOLTAGE_FACTOR, false);

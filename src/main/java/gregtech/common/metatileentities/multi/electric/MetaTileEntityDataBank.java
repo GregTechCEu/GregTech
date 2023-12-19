@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
@@ -22,6 +19,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -31,16 +29,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,7 +154,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -178,12 +177,12 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                 .build();
     }
 
-    @Nonnull
+    @NotNull
     private static IBlockState getOuterState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT);
     }
 
-    @Nonnull
+    @NotNull
     private static IBlockState getInnerState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.COMPUTER_CASING);
     }
@@ -195,31 +194,32 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        if (sourcePart instanceof IDataAccessHatch) {
-            return Textures.COMPUTER_CASING;
+        if (sourcePart != null) {
+            // part rendering
+            if (sourcePart instanceof IDataAccessHatch) {
+                return Textures.COMPUTER_CASING;
+            } else {
+                return Textures.HIGH_POWER_CASING;
+            }
+        } else {
+            // controller rendering
+            if (isStructureFormed()) {
+                return Textures.HIGH_POWER_CASING;
+            } else {
+                return Textures.COMPUTER_CASING;
+            }
         }
-        return Textures.HIGH_POWER_CASING;
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        renderTextures(renderState, translation, pipeline);
-    }
-
-    protected void renderTextures(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (isStructureFormed()) {
-            Textures.HIGH_POWER_CASING.render(renderState, translation, pipeline);
-        } else {
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                Textures.COMPUTER_CASING.renderSided(facing, renderState, translation, pipeline);
-            }
-        }
-        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(),
+                this.isWorkingEnabled());
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.DATA_BANK_OVERLAY;
@@ -237,13 +237,16 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.3"));
-        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.4", TextFormattingUtil.formatNumbers(EUT_PER_HATCH)));
-        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.5", TextFormattingUtil.formatNumbers(EUT_PER_HATCH_CHAINED)));
+        tooltip.add(
+                I18n.format("gregtech.machine.data_bank.tooltip.4", TextFormattingUtil.formatNumbers(EUT_PER_HATCH)));
+        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.5",
+                TextFormattingUtil.formatNumbers(EUT_PER_HATCH_CHAINED)));
     }
 
     @Override
@@ -295,7 +298,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @Override
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();

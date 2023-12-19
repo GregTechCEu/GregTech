@@ -1,11 +1,12 @@
 package gregtech.api.unification.material.materials;
 
-import gregtech.api.GTValues;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
+
 import net.minecraft.init.Enchantments;
 
 import static gregtech.api.GTValues.*;
@@ -17,13 +18,12 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class SecondDegreeMaterials {
 
     public static void register() {
-
         Glass = new Material.Builder(2000, gregtechId("glass"))
-                .gem(0).fluid()
-                .color(0xFAFAFA, false).iconSet(GLASS)
+                .gem(0)
+                .liquid(new FluidBuilder().temperature(1200).customStill())
+                .color(0xFAFAFA).iconSet(GLASS)
                 .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .fluidTemp(1200)
                 .build();
 
         Perlite = new Material.Builder(2001, gregtechId("perlite"))
@@ -69,17 +69,18 @@ public class SecondDegreeMaterials {
         Lapis = new Material.Builder(2007, gregtechId("lapis"))
                 .gem(1).ore(6, 4)
                 .color(0x4646DC).iconSet(LAPIS)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING,
+                        EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         GENERATE_PLATE, GENERATE_ROD)
                 .components(Lazurite, 12, Sodalite, 2, Pyrite, 1, Calcite, 1)
                 .build();
 
         Blaze = new Material.Builder(2008, gregtechId("blaze"))
-                .dust(1).fluid()
-                .color(0xFFC800, false).iconSet(FINE)
-                .flags(NO_SMELTING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING) //todo burning flag
+                .dust(1)
+                .liquid(new FluidBuilder().temperature(4000).customStill())
+                .color(0xFFC800).iconSet(FINE)
+                .flags(NO_SMELTING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING) // todo burning flag
                 .components(DarkAsh, 1, Sulfur, 1)
-                .fluidTemp(4000)
                 .build();
 
         // Free ID 2009
@@ -97,7 +98,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
                 .cableProperties(V[EV], 3, 2)
-                .blastTemp(1200, GasTier.LOW)
+                .blast(1200, GasTier.LOW)
                 .build();
 
         DamascusSteel = new Material.Builder(2012, gregtechId("damascus_steel"))
@@ -109,7 +110,7 @@ public class SecondDegreeMaterials {
                         .attackSpeed(0.3F).enchantability(33)
                         .enchantment(Enchantments.LOOTING, 3)
                         .enchantment(Enchantments.FORTUNE, 3).build())
-                .blastTemp(1500, GasTier.LOW)
+                .blast(1500, GasTier.LOW)
                 .build();
 
         TungstenSteel = new Material.Builder(2013, gregtechId("tungsten_steel"))
@@ -121,13 +122,17 @@ public class SecondDegreeMaterials {
                 .toolStats(ToolProperty.Builder.of(9.0F, 7.0F, 2048, 4)
                         .enchantability(14).build())
                 .rotorStats(8.0f, 4.0f, 2560)
-                .fluidPipeProperties(3587, 225, true)
+                .fluidPipeProperties(3587, 225, true, true, false, false)
                 .cableProperties(V[IV], 3, 2)
-                .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
+                .blast(b -> b
+                        .temp(4000, GasTier.MID)
+                        .blastStats(VA[EV], 1000)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         CobaltBrass = new Material.Builder(2014, gregtechId("cobalt_brass"))
-                .ingot().fluid()
+                .ingot()
+                .liquid(new FluidBuilder().temperature(1202))
                 .color(0xB4B4A0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Brass, 7, Aluminium, 1, Cobalt, 1)
@@ -135,7 +140,6 @@ public class SecondDegreeMaterials {
                         .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(8.0f, 2.0f, 256)
                 .itemPipeProperties(2048, 1)
-                .fluidTemp(1202)
                 .build();
 
         TricalciumPhosphate = new Material.Builder(2015, gregtechId("tricalcium_phosphate"))
@@ -259,11 +263,11 @@ public class SecondDegreeMaterials {
                 .build();
 
         Concrete = new Material.Builder(2034, gregtechId("concrete"))
-                .dust().fluid()
+                .dust()
+                .liquid(new FluidBuilder().temperature(286))
                 .color(0x646464).iconSet(ROUGH)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Stone, 1)
-                .fluidTemp(286)
                 .build();
 
         SteelMagnetic = new Material.Builder(2035, gregtechId("steel_magnetic"))
@@ -278,7 +282,8 @@ public class SecondDegreeMaterials {
         Steel.getProperty(PropertyKey.INGOT).setMagneticMaterial(SteelMagnetic);
 
         VanadiumSteel = new Material.Builder(2036, gregtechId("vanadium_steel"))
-                .ingot(3).fluid()
+                .ingot(3)
+                .liquid(new FluidBuilder().temperature(2073))
                 .color(0xc0c0c0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
@@ -286,25 +291,24 @@ public class SecondDegreeMaterials {
                         .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(7.0f, 3.0f, 1920)
                 .fluidPipeProperties(2073, 50, true, true, false, false)
-                .blastTemp(1453, GasTier.LOW)
-                .fluidTemp(2073)
+                .blast(1453, GasTier.LOW)
                 .build();
 
         Potin = new Material.Builder(2037, gregtechId("potin"))
-                .ingot().fluid()
+                .ingot()
+                .liquid(new FluidBuilder().temperature(1084))
                 .color(0xc99781).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Copper, 6, Tin, 2, Lead, 1)
-                .fluidPipeProperties(1456, 32, true)
-                .fluidTemp(1084)
+                .fluidPipeProperties(1456, 40, true)
                 .build();
 
         BorosilicateGlass = new Material.Builder(2038, gregtechId("borosilicate_glass"))
-                .ingot(1).fluid()
+                .ingot(1)
+                .liquid(new FluidBuilder().temperature(1921))
                 .color(0xE6F3E6).iconSet(SHINY)
                 .flags(GENERATE_FINE_WIRE, GENERATE_PLATE)
                 .components(Boron, 1, SiliconDioxide, 7)
-                .fluidTemp(1921)
                 .build();
 
         Andesite = new Material.Builder(2039, gregtechId("andesite"))
@@ -328,44 +332,47 @@ public class SecondDegreeMaterials {
                         .attackSpeed(0.3F).enchantability(33).magnetic().build())
                 .rotorStats(8.0f, 5.0f, 5120)
                 .cableProperties(V[UV], 2, 4)
-                .blastTemp(7200, GasTier.HIGH, VA[LuV], 1000)
+                .blast(b -> b
+                        .temp(7200, GasTier.HIGH)
+                        .blastStats(VA[LuV], 1000)
+                        .vacuumStats(VA[IV], 300))
                 .build();
 
         SulfuricNickelSolution = new Material.Builder(2043, gregtechId("sulfuric_nickel_solution"))
-                .fluid(FluidTypes.ACID)
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0x3EB640)
                 .components(Nickel, 1, Oxygen, 1, SulfuricAcid, 1)
                 .build();
 
         SulfuricCopperSolution = new Material.Builder(2044, gregtechId("sulfuric_copper_solution"))
-                .fluid(FluidTypes.ACID)
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0x48A5C0)
                 .components(Copper, 1, Oxygen, 1, SulfuricAcid, 1)
                 .build();
 
         LeadZincSolution = new Material.Builder(2045, gregtechId("lead_zinc_solution"))
-                .fluid()
-                .color(0x3C0404, false)
+                .liquid(new FluidBuilder().customStill())
+                .color(0x3C0404)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Lead, 1, Silver, 1, Zinc, 1, Sulfur, 3, Water, 1)
                 .build();
 
         NitrationMixture = new Material.Builder(2046, gregtechId("nitration_mixture"))
-                .fluid(FluidTypes.ACID)
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xE6E2AB)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, SulfuricAcid, 1)
                 .build();
 
         DilutedSulfuricAcid = new Material.Builder(2047, gregtechId("diluted_sulfuric_acid"))
-                .fluid(FluidTypes.ACID)
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xC07820)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(SulfuricAcid, 2, Water, 1)
                 .build();
 
         DilutedHydrochloricAcid = new Material.Builder(2048, gregtechId("diluted_hydrochloric_acid"))
-                .fluid(FluidTypes.ACID)
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0x99A7A3)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(HydrochloricAcid, 1, Water, 1)
@@ -382,52 +389,53 @@ public class SecondDegreeMaterials {
                 .build();
 
         Air = new Material.Builder(2050, gregtechId("air"))
-                .fluid(FluidTypes.GAS)
+                .gas(new FluidBuilder().customStill())
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 78, Oxygen, 21, Argon, 9)
                 .build();
 
         LiquidAir = new Material.Builder(2051, gregtechId("liquid_air"))
-                .fluid()
-                .color(0x84BCFC, false)
+                .liquid(new FluidBuilder()
+                        .temperature(79)
+                        .customStill())
+                .color(0x84BCFC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 70, Oxygen, 22, CarbonDioxide, 5, Helium, 2, Argon, 1, Ice, 1)
-                .fluidTemp(79)
                 .build();
 
         NetherAir = new Material.Builder(2052, gregtechId("nether_air"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x4C3434)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(CarbonMonoxide, 78, HydrogenSulfide, 21, Neon, 9)
                 .build();
 
         LiquidNetherAir = new Material.Builder(2053, gregtechId("liquid_nether_air"))
-                .fluid()
+                .liquid(new FluidBuilder().temperature(58))
                 .color(0x4C3434)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(CarbonMonoxide, 144, CoalGas, 20, HydrogenSulfide, 15, SulfurDioxide, 15, Helium3, 5, Neon, 1, Ash, 1)
-                .fluidTemp(58)
+                .components(CarbonMonoxide, 144, CoalGas, 20, HydrogenSulfide, 15, SulfurDioxide, 15, Helium3, 5, Neon,
+                        1, Ash, 1)
                 .build();
 
         EnderAir = new Material.Builder(2054, gregtechId("ender_air"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x283454)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitrogenDioxide, 78, Deuterium, 21, Xenon, 9)
                 .build();
 
         LiquidEnderAir = new Material.Builder(2055, gregtechId("liquid_ender_air"))
-                .fluid()
+                .liquid(new FluidBuilder().temperature(36))
                 .color(0x283454)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(NitrogenDioxide, 122, Deuterium, 50, Helium, 15, Tritium, 10, Krypton, 1, Xenon, 1, Radon, 1, EnderPearl, 1)
-                .fluidTemp(36)
+                .components(NitrogenDioxide, 122, Deuterium, 50, Helium, 15, Tritium, 10, Krypton, 1, Xenon, 1, Radon,
+                        1, EnderPearl, 1)
                 .build();
 
         AquaRegia = new Material.Builder(2056, gregtechId("aqua_regia"))
-                .fluid(FluidTypes.ACID)
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xFFB132)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, HydrochloricAcid, 2)
@@ -462,7 +470,7 @@ public class SecondDegreeMaterials {
                 .setFormula("NH4Cl", true);
 
         AcidicOsmiumSolution = new Material.Builder(2061, gregtechId("acidic_osmium_solution"))
-                .fluid(FluidTypes.ACID)
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xA3AA8A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
@@ -474,7 +482,10 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Palladium, 3, Rhodium, 1)
                 .rotorStats(12.0f, 3.0f, 1024)
-                .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[IV], 1200)
+                        .vacuumStats(VA[EV], 300))
                 .build();
 
         Clay = new Material.Builder(2063, gregtechId("clay"))
@@ -485,12 +496,12 @@ public class SecondDegreeMaterials {
                 .build();
 
         Redstone = new Material.Builder(2064, gregtechId("redstone"))
-                .dust().ore(5, 1, true).fluid()
+                .dust().ore(5, 1, true)
+                .liquid(new FluidBuilder().temperature(500))
                 .color(0xC80000).iconSet(ROUGH)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
-                .fluidTemp(500)
                 .build();
     }
 }

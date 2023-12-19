@@ -2,12 +2,13 @@ package gregtech.api.terminal.hardware;
 
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface IHardwareCapability {
-    default boolean hasCapability(@Nonnull Capability<?> capability) {
+
+    default boolean hasCapability(@NotNull Capability<?> capability) {
         return getCapability(capability) != null;
     }
 
-    <T> T getCapability(@Nonnull Capability<T> capability);
+    <T> T getCapability(@NotNull Capability<T> capability);
 }

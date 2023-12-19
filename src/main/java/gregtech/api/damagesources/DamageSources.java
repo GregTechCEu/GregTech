@@ -1,6 +1,7 @@
 package gregtech.api.damagesources;
 
 import gregtech.api.items.toolitem.IGTTool;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -8,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class DamageSources {
 
@@ -54,7 +55,7 @@ public class DamageSources {
         ItemStack stack = source != null ? source.getHeldItemMainhand() : ItemStack.EMPTY;
         if (!stack.isEmpty() && stack.getItem() instanceof IGTTool) {
             IGTTool tool = (IGTTool) stack.getItem();
-            return new DamageSourceTool("player", source, String.format("death.attack.%s", tool.getId()));
+            return new DamageSourceTool("player", source, String.format("death.attack.%s", tool.getToolId()));
         }
         return new EntityDamageSource("player", source);
     }
@@ -65,7 +66,7 @@ public class DamageSources {
         ItemStack stack = source != null ? source.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND) : ItemStack.EMPTY;
         if (!stack.isEmpty() && stack.getItem() instanceof IGTTool) {
             IGTTool tool = (IGTTool) stack.getItem();
-            return new DamageSourceTool("mob", source, String.format("death.attack.%s", tool.getId()));
+            return new DamageSourceTool("mob", source, String.format("death.attack.%s", tool.getToolId()));
         }
         return new EntityDamageSource("mob", source);
     }

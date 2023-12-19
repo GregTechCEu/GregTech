@@ -1,5 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.fluids.store.FluidStorageKeys;
+
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.*;
@@ -11,7 +13,6 @@ import static gregtech.api.unification.ore.OrePrefix.ingot;
 public class ChemistryRecipes {
 
     public static void init() {
-
         PetrochemRecipes.init();
         DistillationRecipes.init();
         SeparationRecipes.init();
@@ -28,7 +29,6 @@ public class ChemistryRecipes {
         PlatGroupMetalsRecipes.init();
         NaquadahRecipes.init();
         AcidRecipes.init();
-
 
         // A Few Random Recipes
         FLUID_HEATER_RECIPES.recipeBuilder()
@@ -65,12 +65,12 @@ public class ChemistryRecipes {
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(LiquidOxygen.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(FluidStorageKeys.LIQUID, 1000))
                 .duration(240).EUt(VA[EV]).buildAndRegister();
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Helium.getFluid(1000))
-                .fluidOutputs(LiquidHelium.getFluid(1000))
+                .fluidOutputs(Helium.getFluid(FluidStorageKeys.LIQUID, 1000))
                 .duration(240).EUt(VA[EV]).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()

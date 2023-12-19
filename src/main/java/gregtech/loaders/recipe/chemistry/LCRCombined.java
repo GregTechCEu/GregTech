@@ -8,7 +8,6 @@ import static gregtech.api.unification.ore.OrePrefix.dust;
 public class LCRCombined {
 
     static void init() {
-
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(24)
                 .fluidInputs(Methane.getFluid(3000))

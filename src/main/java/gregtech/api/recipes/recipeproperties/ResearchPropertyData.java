@@ -2,7 +2,8 @@ package gregtech.api.recipes.recipeproperties;
 
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,11 +17,11 @@ public final class ResearchPropertyData implements Iterable<ResearchPropertyData
     /**
      * @param entry the entry to add
      */
-    public void add(@Nonnull ResearchEntry entry) {
+    public void add(@NotNull ResearchEntry entry) {
         this.entries.add(entry);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Iterator<ResearchEntry> iterator() {
         return this.entries.iterator();
@@ -38,19 +39,19 @@ public final class ResearchPropertyData implements Iterable<ResearchPropertyData
 
         /**
          * @param researchId the id of the research
-         * @param dataItem the item allowed to contain the research
+         * @param dataItem   the item allowed to contain the research
          */
-        public ResearchEntry(@Nonnull String researchId, @Nonnull ItemStack dataItem) {
+        public ResearchEntry(@NotNull String researchId, @NotNull ItemStack dataItem) {
             this.researchId = researchId;
             this.dataItem = dataItem;
         }
 
-        @Nonnull
+        @NotNull
         public String getResearchId() {
             return researchId;
         }
 
-        @Nonnull
+        @NotNull
         public ItemStack getDataItem() {
             return dataItem;
         }

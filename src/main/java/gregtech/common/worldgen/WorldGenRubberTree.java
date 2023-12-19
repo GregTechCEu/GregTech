@@ -1,6 +1,7 @@
 package gregtech.common.worldgen;
 
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -11,7 +12,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.SaplingGrowTreeEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Random;
 
 import static gregtech.common.blocks.wood.BlockRubberLog.NATURAL;
@@ -26,11 +28,11 @@ public class WorldGenRubberTree extends WorldGenerator {
     }
 
     @Override
-    public boolean generate(@Nonnull World world, @Nonnull Random random, @Nonnull BlockPos pos) {
+    public boolean generate(@NotNull World world, @NotNull Random random, @NotNull BlockPos pos) {
         return generateImpl(world, random, new BlockPos.MutableBlockPos(pos));
     }
 
-    public boolean generateImpl(@Nonnull World world, @Nonnull Random random, BlockPos.MutableBlockPos pos) {
+    public boolean generateImpl(@NotNull World world, @NotNull Random random, BlockPos.MutableBlockPos pos) {
         pos.setPos(pos.getX() + 8, world.getHeight() - 1, pos.getZ() + 8);
         while (pos.getY() > 0 && world.isAirBlock(pos)) {
             pos.setY(pos.getY() - 1);
@@ -66,8 +68,9 @@ public class WorldGenRubberTree extends WorldGenerator {
                         int dx = Math.abs(cx - pos.getX());
                         int dz = Math.abs(cz - pos.getZ());
                         if ((dx <= 1 && dz <= 1) || (dx <= 1 && random
-                                .nextInt(chance) == 0) || (dz <= 1 && random
-                                .nextInt(chance) == 0)) {
+                                .nextInt(chance) == 0) || (dz <= 1 &&
+                                        random
+                                                .nextInt(chance) == 0)) {
                             tmpPos.setPos(cx, pos.getY() + cHeight, cz);
                             if (world.isAirBlock(tmpPos)) {
                                 setBlockAndNotifyAdequately(world, new BlockPos(tmpPos), leaves);
@@ -85,13 +88,13 @@ public class WorldGenRubberTree extends WorldGenerator {
         return true;
     }
 
-    public int getGrowHeight(@Nonnull World world, @Nonnull BlockPos pos) {
+    public int getGrowHeight(@NotNull World world, @NotNull BlockPos pos) {
         BlockPos below = pos.down();
         IBlockState baseState = world.getBlockState(below);
         Block baseBlock = baseState.getBlock();
         if (baseBlock.isAir(baseState, world, below) ||
-                !baseBlock.canSustainPlant(baseState, world, below, EnumFacing.UP, MetaBlocks.RUBBER_SAPLING) || (
-                !world.isAirBlock(pos.up()) && world.getBlockState(pos.up()).getBlock() != MetaBlocks.RUBBER_SAPLING))
+                !baseBlock.canSustainPlant(baseState, world, below, EnumFacing.UP, MetaBlocks.RUBBER_SAPLING) ||
+                (!world.isAirBlock(pos.up()) && world.getBlockState(pos.up()).getBlock() != MetaBlocks.RUBBER_SAPLING))
             return 0;
         int height = 1;
         pos = pos.up();

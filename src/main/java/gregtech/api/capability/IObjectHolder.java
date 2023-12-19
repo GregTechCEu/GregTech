@@ -3,15 +3,18 @@ package gregtech.api.capability;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandler;
+
 import org.jetbrains.annotations.NotNull;
 
 public interface IObjectHolder {
 
     /**
      * Get the item held in the object holder.
+     * 
      * @param remove Whether to also remove the item from its slot.
      */
-    @NotNull ItemStack getHeldItem(boolean remove);
+    @NotNull
+    ItemStack getHeldItem(boolean remove);
 
     /**
      * Set the item held in the object holder. Overwrites the currently held item.
@@ -20,9 +23,11 @@ public interface IObjectHolder {
 
     /**
      * Get the data item held in the object holder.
+     * 
      * @param remove Whether to also remove the item from its slot.
      */
-    @NotNull ItemStack getDataItem(boolean remove);
+    @NotNull
+    ItemStack getDataItem(boolean remove);
 
     /**
      * Set the data item held in the object holder. Overwrites the currently held data item.
@@ -39,5 +44,6 @@ public interface IObjectHolder {
     /**
      * @return the object holder's contents represented as an IItemHandler
      */
-    @NotNull IItemHandler getAsHandler();
+    @NotNull
+    IItemHandler getAsHandler();
 }

@@ -1,9 +1,11 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.items.toolitem.EnchantmentLevel;
+
+import net.minecraft.enchantment.Enchantment;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import net.minecraft.enchantment.Enchantment;
 
 public class ToolProperty implements IMaterialProperty {
 

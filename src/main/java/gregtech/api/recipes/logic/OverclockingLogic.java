@@ -1,8 +1,6 @@
 package gregtech.api.recipes.logic;
 
-import gregtech.common.ConfigHolder;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class for holding all the various Overclocking logics
@@ -10,7 +8,7 @@ import javax.annotation.Nonnull;
 public class OverclockingLogic {
 
     public static final double STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER = 4.0;
-    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.machines.overclockDivisor;
+    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = 2.0;
     public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
 
     public static final int COIL_EUT_DISCOUNT_TEMPERATURE = 900;
@@ -26,8 +24,9 @@ public class OverclockingLogic {
      * @param numberOfOCs       the maximum amount of overclocks allowed
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @Nonnull
-    public static int[] standardOverclockingLogic(int recipeEUt, long maxVoltage, int recipeDuration, int numberOfOCs, double durationDivisor, double voltageMultiplier) {
+    public static int @NotNull [] standardOverclockingLogic(int recipeEUt, long maxVoltage, int recipeDuration,
+                                                            int numberOfOCs,
+                                                            double durationDivisor, double voltageMultiplier) {
         double resultDuration = recipeDuration;
         double resultVoltage = recipeEUt;
 
@@ -53,7 +52,7 @@ public class OverclockingLogic {
             resultVoltage = potentialVoltage;
         }
 
-        return new int[]{(int) resultVoltage, (int) resultDuration};
+        return new int[] { (int) resultVoltage, (int) resultDuration };
     }
 
     /**
@@ -68,7 +67,7 @@ public class OverclockingLogic {
     /**
      * Handles applying the coil EU/t discount. Call before overclocking.
      *
-     * @param recipeEUt the EU/t of the recipe
+     * @param recipeEUt    the EU/t of the recipe
      * @param providedTemp the temperate provided by the machine
      * @param requiredTemp the required temperature of the recipe
      * @return the discounted EU/t
@@ -80,20 +79,25 @@ public class OverclockingLogic {
         return (int) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
     }
 
-    @Nonnull
-    public static int[] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
+    public static int @NotNull [] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration,
+                                                               int maxOverclocks, int currentTemp,
+                                                               int recipeRequiredTemp) {
         int amountPerfectOC = calculateAmountCoilEUtDiscount(currentTemp, recipeRequiredTemp) / 2;
 
         // perfect overclock for every 1800k over recipe temperature
         if (amountPerfectOC > 0) {
             // use the normal overclock logic to do perfect OCs up to as many times as calculated
-            int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, amountPerfectOC, PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
+            int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, amountPerfectOC,
+                    PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
 
             // overclock normally as much as possible after perfects are exhausted
-            return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1], maxOverclocks - amountPerfectOC, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
+            return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1],
+                    maxOverclocks - amountPerfectOC, STANDARD_OVERCLOCK_DURATION_DIVISOR,
+                    STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
         }
 
         // no perfects are performed, do normal overclocking
-        return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, maxOverclocks, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
+        return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, maxOverclocks,
+                STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
     }
 }

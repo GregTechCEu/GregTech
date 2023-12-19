@@ -5,6 +5,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 class DummyArmorLogic implements IArmorLogic {
+
     @Override
     public EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack) {
         return EntityEquipmentSlot.HEAD;

@@ -1,25 +1,24 @@
 package gregtech.api.block.machines;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.raytracer.IndexedCuboid6;
-import codechicken.lib.raytracer.RayTracer;
-import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.Cover;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.IBlockAppearance;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -55,10 +54,15 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.raytracer.RayTracer;
+import codechicken.lib.vec.Cuboid6;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 
 import static gregtech.api.util.GTUtility.getMetaTileEntity;
@@ -67,7 +71,7 @@ import static gregtech.api.util.GTUtility.getMetaTileEntity;
 public class BlockMachine extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
     private static final List<IndexedCuboid6> EMPTY_COLLISION_BOX = Collections.emptyList();
-    //used for rendering purposes of non-opaque machines like chests and tanks
+    // used for rendering purposes of non-opaque machines like chests and tanks
     public static final PropertyBool OPAQUE = PropertyBool.create("opaque");
 
     // Vanilla MC's getHarvestTool() and getHarvestLevel() only pass the state, which is
@@ -89,13 +93,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Nullable
     @Override
-    public String getHarvestTool(@Nonnull IBlockState state) {
+    public String getHarvestTool(@NotNull IBlockState state) {
         String value = ((IExtendedBlockState) state).getValue(HARVEST_TOOL);
         return value == null ? ToolClasses.WRENCH : value;
     }
 
     @Override
-    public int getHarvestLevel(@Nonnull IBlockState state) {
+    public int getHarvestLevel(@NotNull IBlockState state) {
         Integer value = ((IExtendedBlockState) state).getValue(HARVEST_LEVEL);
         return value == null ? 1 : value;
     }
@@ -105,9 +109,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         return state.getValue(OPAQUE);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
+    public IBlockState getActualState(@NotNull IBlockState state, @NotNull IBlockAccess worldIn,
+                                      @NotNull BlockPos pos) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         if (metaTileEntity == null) return state;
 
@@ -116,20 +121,22 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 .withProperty(HARVEST_LEVEL, metaTileEntity.getHarvestLevel());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this, new IProperty[]{OPAQUE}, new IUnlistedProperty[]{HARVEST_TOOL, HARVEST_LEVEL});
+        return new ExtendedBlockState(this, new IProperty[] { OPAQUE },
+                new IUnlistedProperty[] { HARVEST_TOOL, HARVEST_LEVEL });
     }
 
     @Override
-    public float getPlayerRelativeBlockHardness(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull World worldIn, @Nonnull BlockPos pos) {
+    public float getPlayerRelativeBlockHardness(@NotNull IBlockState state, @NotNull EntityPlayer player,
+                                                @NotNull World worldIn, @NotNull BlockPos pos) {
         // make sure our extended block state info is here for callers (since forge does not do it for us in this case)
         state = state.getBlock().getActualState(state, worldIn, pos);
         return super.getPlayerRelativeBlockHardness(state, player, worldIn, pos);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(OPAQUE, meta % 2 == 0);
@@ -141,18 +148,20 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public float getBlockHardness(@Nonnull IBlockState blockState, @Nonnull World worldIn, @Nonnull BlockPos pos) {
+    public float getBlockHardness(@NotNull IBlockState blockState, @NotNull World worldIn, @NotNull BlockPos pos) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         return metaTileEntity == null ? 1.0f : metaTileEntity.getBlockHardness();
     }
 
     @Override
-    public float getExplosionResistance(@Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity exploder, @Nonnull Explosion explosion) {
+    public float getExplosionResistance(@NotNull World world, @NotNull BlockPos pos, @Nullable Entity exploder,
+                                        @NotNull Explosion explosion) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 1.0f : metaTileEntity.getBlockResistance();
     }
@@ -167,13 +176,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public boolean doesSideBlockRendering(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public boolean doesSideBlockRendering(@NotNull IBlockState state, @NotNull IBlockAccess world,
+                                          @NotNull BlockPos pos, @NotNull EnumFacing face) {
         return state.isOpaqueCube() && getMetaTileEntity(world, pos) != null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public ItemStack getPickBlock(@NotNull IBlockState state, @NotNull RayTraceResult target, @NotNull World world,
+                                  @NotNull BlockPos pos, @NotNull EntityPlayer player) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         if (metaTileEntity == null)
             return ItemStack.EMPTY;
@@ -184,7 +195,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
+    public void addCollisionBoxToList(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos,
+                                      @NotNull AxisAlignedBB entityBox, @NotNull List<AxisAlignedBB> collidingBoxes,
+                                      @Nullable Entity entityIn, boolean isActualState) {
         for (Cuboid6 axisAlignedBB : getCollisionBox(worldIn, pos)) {
             AxisAlignedBB offsetBox = axisAlignedBB.aabb().offset(pos);
             if (offsetBox.intersects(entityBox)) collidingBoxes.add(offsetBox);
@@ -193,12 +206,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Nullable
     @Override
-    public RayTraceResult collisionRayTrace(@Nonnull IBlockState blockState, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+    public RayTraceResult collisionRayTrace(@NotNull IBlockState blockState, @NotNull World worldIn,
+                                            @NotNull BlockPos pos, @NotNull Vec3d start, @NotNull Vec3d end) {
         return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos));
     }
 
     @Override
-    public boolean rotateBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing axis) {
+    public boolean rotateBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing axis) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         if (metaTileEntity == null) return false;
         if (metaTileEntity.hasFrontFacing() && metaTileEntity.isValidFrontFacing(axis)) {
@@ -210,7 +224,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Nullable
     @Override
-    public EnumFacing[] getValidRotations(@Nonnull World world, @Nonnull BlockPos pos) {
+    public EnumFacing[] getValidRotations(@NotNull World world, @NotNull BlockPos pos) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         if (metaTileEntity == null || !metaTileEntity.hasFrontFacing()) return null;
         return Arrays.stream(EnumFacing.VALUES)
@@ -219,7 +233,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public boolean recolorBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, @Nonnull EnumDyeColor color) {
+    public boolean recolorBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing side,
+                                @NotNull EnumDyeColor color) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         if (metaTileEntity == null || metaTileEntity.getPaintingColor() == color.colorValue)
             return false;
@@ -228,7 +243,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                @NotNull EntityLivingBase placer, ItemStack stack) {
         IGregTechTileEntity holder = (IGregTechTileEntity) worldIn.getTileEntity(pos);
         MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
         if (holder != null && sampleMetaTileEntity != null) {
@@ -238,13 +254,23 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             }
             MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             if (stack.hasTagCompound()) {
-                //noinspection ConstantConditions
+                // noinspection ConstantConditions
                 metaTileEntity.initFromItemStackData(stack.getTagCompound());
             }
             if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+            }
+            if (metaTileEntity instanceof MultiblockControllerBase multi) {
+                if (multi.allowsExtendedFacing()) {
+                    EnumFacing frontFacing = multi.getFrontFacing();
+                    if (frontFacing == EnumFacing.UP) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing());
+                    } else if (frontFacing == EnumFacing.DOWN) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing().getOpposite());
+                    }
+                }
             }
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
                 if (metaTileEntity.getProxy() != null) {
@@ -255,9 +281,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             // Color machines on place if holding spray can in off-hand
             if (placer instanceof EntityPlayer) {
                 ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i  = 0; i < EnumDyeColor.values().length; i++) {
+                for (int i = 0; i < EnumDyeColor.values().length; i++) {
                     if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
+                                pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
                         break;
                     }
                 }
@@ -268,7 +295,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         if (metaTileEntity != null) {
             if (!metaTileEntity.keepsInventory()) {
@@ -287,14 +314,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
+    public void getDrops(@NotNull NonNullList<ItemStack> drops, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                         @NotNull IBlockState state, int fortune) {
         MetaTileEntity metaTileEntity = tileEntities.get() == null ? getMetaTileEntity(world, pos) : tileEntities.get();
         if (metaTileEntity == null) return;
         if (!metaTileEntity.shouldDropWhenDestroyed()) return;
         ItemStack itemStack = metaTileEntity.getStackForm();
         NBTTagCompound tagCompound = new NBTTagCompound();
         metaTileEntity.writeItemStackData(tagCompound);
-        //only set item tag if it's not empty, so newly created items will stack with dismantled
+        // only set item tag if it's not empty, so newly created items will stack with dismantled
         if (!tagCompound.isEmpty())
             itemStack.setTagCompound(tagCompound);
         // TODO Clean this up
@@ -309,7 +337,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                    @NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull EnumFacing facing,
+                                    float hitX, float hitY, float hitZ) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         CuboidRayTraceResult rayTraceResult = (CuboidRayTraceResult) RayTracer.retraceBlock(worldIn, playerIn, pos);
         ItemStack itemStack = playerIn.getHeldItem(hand);
@@ -330,7 +360,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public void onBlockClicked(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull EntityPlayer playerIn) {
+    public void onBlockClicked(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull EntityPlayer playerIn) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         if (metaTileEntity == null) return;
         CuboidRayTraceResult rayTraceResult = (CuboidRayTraceResult) RayTracer.retraceBlock(worldIn, playerIn, pos);
@@ -340,37 +370,57 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
+    public boolean canConnectRedstone(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                      @Nullable EnumFacing side) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity != null && metaTileEntity.canConnectRedstone(side == null ? null : side.getOpposite());
     }
 
     @Override
-    public boolean shouldCheckWeakPower(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public boolean shouldCheckWeakPower(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                        @NotNull EnumFacing side) {
         // The check in World::getRedstonePower in the vanilla code base is reversed. Setting this to false will
         // actually cause getWeakPower to be called, rather than prevent it.
         return false;
     }
 
     @Override
-    public int getWeakPower(@Nonnull IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public int getWeakPower(@NotNull IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos,
+                            @NotNull EnumFacing side) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(blockAccess, pos);
-        return metaTileEntity == null ? 0 : metaTileEntity.getOutputRedstoneSignal(side == null ? null : side.getOpposite());
+        return metaTileEntity == null ? 0 :
+                metaTileEntity.getOutputRedstoneSignal(side == null ? null : side.getOpposite());
     }
 
     @Override
-    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
-        if (metaTileEntity != null) {
-            metaTileEntity.updateInputRedstoneSignals();
-            metaTileEntity.onNeighborChanged();
+    public void neighborChanged(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos,
+                                @NotNull Block blockIn, @NotNull BlockPos fromPos) {
+        TileEntity holder = worldIn.getTileEntity(pos);
+        if (holder instanceof IGregTechTileEntity gregTechTile) {
+            EnumFacing facing = GTUtility.getFacingToNeighbor(pos, fromPos);
+            if (facing != null) gregTechTile.onNeighborChanged(facing);
+            MetaTileEntity metaTileEntity = gregTechTile.getMetaTileEntity();
+            if (metaTileEntity != null) {
+                metaTileEntity.updateInputRedstoneSignals();
+                metaTileEntity.onNeighborChanged();
+            }
+        }
+    }
+
+    @Override
+    public void onNeighborChange(IBlockAccess world, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
+        TileEntity holder = world.getTileEntity(pos);
+        if (holder instanceof IGregTechTileEntity gregTechTile) {
+            EnumFacing facing = GTUtility.getFacingToNeighbor(pos, neighbor);
+            if (facing != null) gregTechTile.onNeighborChanged(facing);
         }
     }
 
     protected final ThreadLocal<MetaTileEntity> tileEntities = new ThreadLocal<>();
 
     @Override
-    public void harvestBlock(@Nonnull World worldIn, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nullable TileEntity te, @Nonnull ItemStack stack) {
+    public void harvestBlock(@NotNull World worldIn, @NotNull EntityPlayer player, @NotNull BlockPos pos,
+                             @NotNull IBlockState state, @Nullable TileEntity te, @NotNull ItemStack stack) {
         tileEntities.set(te == null ? tileEntities.get() : ((IGregTechTileEntity) te).getMetaTileEntity());
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         tileEntities.set(null);
@@ -382,15 +432,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         return new MetaTileEntityHolder();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
         return MetaTileEntityRenderer.BLOCK_RENDER_TYPE;
     }
 
     @Override
-    public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
+    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         return true;
     }
 
@@ -404,29 +454,30 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         return state.getValue(OPAQUE);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@NotNull IBlockAccess worldIn, @NotNull IBlockState state,
+                                            @NotNull BlockPos pos, @NotNull EnumFacing face) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         return metaTileEntity == null ? BlockFaceShape.SOLID : metaTileEntity.getCoverFaceShape(face);
     }
 
     @Override
-    public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    public int getLightValue(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 0 : metaTileEntity.getLightValue();
     }
 
     @Override
-    public int getLightOpacity(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    public int getLightOpacity(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 0 : metaTileEntity.getLightOpacity();
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
         for (MetaTileEntity metaTileEntity : GregTechAPI.MTE_REGISTRY) {
             if (metaTileEntity.isInCreativeTab(tab)) {
                 metaTileEntity.getSubItems(tab, items);
@@ -434,28 +485,29 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side, @Nonnull BlockPos otherPos) {
+    public IBlockState getFacade(@NotNull IBlockAccess world, @NotNull BlockPos pos, @Nullable EnumFacing side,
+                                 @NotNull BlockPos otherPos) {
         return getFacade(world, pos, side);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
+    public IBlockState getFacade(@NotNull IBlockAccess world, @NotNull BlockPos pos, EnumFacing side) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         if (metaTileEntity != null && side != null) {
-            CoverBehavior coverBehavior = metaTileEntity.getCoverAtSide(side);
-            if (coverBehavior instanceof IFacadeCover) {
-                return ((IFacadeCover) coverBehavior).getVisualState();
+            Cover cover = metaTileEntity.getCoverAtSide(side);
+            if (cover instanceof IFacadeCover facadeCover) {
+                return facadeCover.getVisualState();
             }
         }
         return world.getBlockState(pos);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IBlockState getVisualState(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public IBlockState getVisualState(@NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing side) {
         return getFacade(world, pos, side);
     }
 
@@ -471,17 +523,20 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public boolean canEntityDestroy(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
+    public boolean canEntityDestroy(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull Entity entity) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if(metaTileEntity == null) {
+        if (metaTileEntity == null) {
             return super.canEntityDestroy(state, world, pos, entity);
         }
-        return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) && metaTileEntity.getWitherProof());
+        return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) &&
+                metaTileEntity.getWitherProof());
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void randomDisplayTick(@Nonnull IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
+    public void randomDisplayTick(@NotNull IBlockState stateIn, @NotNull World worldIn, @NotNull BlockPos pos,
+                                  @NotNull Random rand) {
         super.randomDisplayTick(stateIn, worldIn, pos, rand);
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         if (metaTileEntity != null) metaTileEntity.randomDisplayTick();

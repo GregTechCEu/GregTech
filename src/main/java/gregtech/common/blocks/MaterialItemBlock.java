@@ -1,10 +1,11 @@
 package gregtech.common.blocks;
 
 import gregtech.api.unification.ore.OrePrefix;
+
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MaterialItemBlock extends ItemBlock {
 
@@ -18,6 +19,7 @@ public class MaterialItemBlock extends ItemBlock {
         setHasSubtypes(true);
     }
 
+    @NotNull
     @Override
     public BlockMaterialBase getBlock() {
         return block;
@@ -28,9 +30,9 @@ public class MaterialItemBlock extends ItemBlock {
         return damage;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+    public String getItemStackDisplayName(@NotNull ItemStack stack) {
         return this.prefix.getLocalNameForItem(this.block.getGtMaterial(stack));
     }
 }

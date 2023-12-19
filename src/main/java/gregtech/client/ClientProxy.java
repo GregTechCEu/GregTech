@@ -1,12 +1,12 @@
 package gregtech.client;
 
-import codechicken.lib.texture.TextureUtils;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
@@ -25,6 +25,7 @@ import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -53,9 +54,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+
+import codechicken.lib.texture.TextureUtils;
+import org.jetbrains.annotations.NotNull;
 import paulscode.sound.SoundSystemConfig;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,9 +73,11 @@ public class ClientProxy extends CommonProxy {
         SoundSystemConfig.setNumberNormalChannels(ConfigHolder.client.maxNumSounds);
 
         if (!Loader.isModLoaded(GTValues.MODID_CTM)) {
-            Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(), MetadataSectionCTM.class);
+            Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(),
+                    MetadataSectionCTM.class);
             MinecraftForge.EVENT_BUS.register(CustomTextureModelHandler.INSTANCE);
-            ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
+            ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager())
+                    .registerReloadListener(CustomTextureModelHandler.INSTANCE);
         }
 
         MetaTileEntityRenderer.preInit();
@@ -82,8 +87,8 @@ public class ClientProxy extends CommonProxy {
         OpticalPipeRenderer.INSTANCE.preInit();
         LaserPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
-        MetaFluids.initIconFluidSprites();
-        TextureUtils.addIconRegister(MetaFluids::registerSprites);
+        TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
+        TextureUtils.addIconRegister(PipeRenderer::initializeRestrictor);
     }
 
     @Override
@@ -115,11 +120,12 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public static void addMaterialFormulaHandler(@Nonnull ItemTooltipEvent event) {
+    public static void addMaterialFormulaHandler(@NotNull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
         if (itemStack.getItem() instanceof ItemBlock) {
             Block block = ((ItemBlock) itemStack.getItem()).getBlock();
-            if (!(block instanceof BlockFrame) && !(block instanceof BlockCompressed) && !(block instanceof IBlockOre) && !(block instanceof IFluidBlock)) {
+            if (!(block instanceof BlockFrame) && !(block instanceof BlockCompressed) &&
+                    !(block instanceof IBlockOre) && !(block instanceof IFluidBlock)) {
                 // Do not apply this tooltip to blocks other than:
                 // - Frames
                 // - Compressed Blocks
@@ -138,30 +144,36 @@ public class ClientProxy extends CommonProxy {
         if (itemStack.getItem() instanceof MetaOreDictItem) { // Test for OreDictItems
             MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
             Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
-            if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get()) && !oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()).isEmpty()) {
+            if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get()) &&
+                    !oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()).isEmpty()) {
                 tooltips.add(TextFormatting.YELLOW + oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()));
             }
         } else if (unificationEntry != null && unificationEntry.material != null) {
-            if (unificationEntry.material.getChemicalFormula() != null && !unificationEntry.material.getChemicalFormula().isEmpty())
+            if (unificationEntry.material.getChemicalFormula() != null &&
+                    !unificationEntry.material.getChemicalFormula().isEmpty())
                 tooltips.add(TextFormatting.YELLOW + unificationEntry.material.getChemicalFormula());
         } else if (itemStack.hasTagCompound()) { // Test for Fluids
             // Vanilla bucket
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             tooltips = FluidTooltipUtil.getFluidTooltip(itemStack.getTagCompound().getString("FluidName"));
 
             // GTCE Cells, Forestry cans, some other containers
             if (tooltips == null || tooltips.size() == 0) {
-                //if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() == GregTechAPI.MACHINE && itemStack.getItemDamage())
+                // if (itemStack.getItem() instanceof ItemBlock && ((ItemBlock) itemStack.getItem()).getBlock() ==
+                // GregTechAPI.MACHINE && itemStack.getItemDamage())
                 NBTTagCompound compound = itemStack.getTagCompound();
-                if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
-                    FluidStack fstack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
+                if (compound != null &&
+                        compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
+                    FluidStack fstack = FluidStack
+                            .loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
                     tooltips = FluidTooltipUtil.getFluidTooltip(fstack);
                 }
             }
-        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water and Lava buckets have a separate registry name from other buckets
-            tooltips = FluidTooltipUtil.getWaterTooltip();
+        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water and Lava buckets have a separate registry
+                                                                     // name from other buckets
+            tooltips = FluidTooltipUtil.getFluidTooltip(Materials.Water.getFluid());
         } else if (itemStack.getItem().equals(Items.LAVA_BUCKET)) {
-            tooltips = FluidTooltipUtil.getLavaTooltip();
+            tooltips = FluidTooltipUtil.getFluidTooltip(Materials.Lava.getFluid());
         }
 
         if (tooltips != null) {
@@ -172,7 +184,7 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    private static final String[] clearRecipes = new String[]{
+    private static final String[] clearRecipes = new String[] {
             "quantum_tank",
             "quantum_chest",
             "super_chest",
@@ -204,7 +216,7 @@ public class ClientProxy extends CommonProxy {
                 if (stackResult == event.getItemStack()) {
                     if (!stackResult.isEmpty() && ItemStack.areItemsEqual(stackResult, event.getItemStack())) {
                         String unlocalizedName = stackResult.getTranslationKey();
-                        //noinspection ConstantConditions
+                        // noinspection ConstantConditions
                         String namespace = stackResult.getItem().getRegistryName().getNamespace();
                         for (String key : clearRecipes) {
                             if (unlocalizedName.contains(key) && namespace.equals(GTValues.MODID)) {
@@ -239,15 +251,19 @@ public class ClientProxy extends CommonProxy {
             // Remove durability keys. These can always be removed, as GT puts one of its own in the tooltip already.
             if (stack.getItem() instanceof IGTTool) {
                 // vanilla durability key
-                tooltip.remove(I18n.format("item.durability", stack.getMaxDamage() - stack.getItemDamage(), stack.getMaxDamage()));
+                tooltip.remove(I18n.format("item.durability", stack.getMaxDamage() - stack.getItemDamage(),
+                        stack.getMaxDamage()));
                 // EnderCore durability key
-                tooltip.remove(net.minecraft.util.text.translation.I18n.translateToLocal("endercore.tooltip.durability") + " " + (stack.getMaxDamage() - stack.getItemDamage()) + "/" + stack.getMaxDamage());
+                tooltip.remove(
+                        net.minecraft.util.text.translation.I18n.translateToLocal("endercore.tooltip.durability") +
+                                " " + (stack.getMaxDamage() - stack.getItemDamage()) + "/" + stack.getMaxDamage());
             }
 
             // MC and EnderCore debug tooltips. Remove these always, as we will format them differently later
             String nbtTags = null, registryName = null;
             if (stack.getTagCompound() != null) {
-                nbtTags = TextFormatting.DARK_GRAY + I18n.format("item.nbt_tags", stack.getTagCompound().getKeySet().size());
+                nbtTags = TextFormatting.DARK_GRAY +
+                        I18n.format("item.nbt_tags", stack.getTagCompound().getKeySet().size());
                 tooltip.remove(nbtTags);
             }
             if (stack.getItem().getRegistryName() != null) {
@@ -262,7 +278,8 @@ public class ClientProxy extends CommonProxy {
                 if (TooltipHelper.isShiftDown()) {
                     int[] oreIds = OreDictionary.getOreIDs(event.getItemStack());
                     if (oreIds.length > 0) {
-                        tooltip.remove(net.minecraft.util.text.translation.I18n.translateToLocal("endercore.tooltip.oreDictNames"));
+                        tooltip.remove(net.minecraft.util.text.translation.I18n
+                                .translateToLocal("endercore.tooltip.oreDictNames"));
                         for (int i : oreIds) {
                             tooltip.remove("  - " + OreDictionary.getOreName(i));
                         }
@@ -278,9 +295,11 @@ public class ClientProxy extends CommonProxy {
 
     private static boolean hasActuallyAdvancedInfo(List<String> tooltip) {
         // Actually Additions Keys
-        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.extraInfo.desc") + ":"))
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC +
+                I18n.format("tooltip.actuallyadditions.extraInfo.desc") + ":"))
             return true;
-        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("tooltip.actuallyadditions.ctrlForMoreInfo.desc")))
+        if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC +
+                I18n.format("tooltip.actuallyadditions.ctrlForMoreInfo.desc")))
             return true;
         // Actually Advanced Info Keys
         if (tooltip.contains(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + "Advanced Info:")) return true;

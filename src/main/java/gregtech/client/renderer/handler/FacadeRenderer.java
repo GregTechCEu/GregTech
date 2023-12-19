@@ -1,18 +1,6 @@
 package gregtech.client.renderer.handler;
 
-import codechicken.lib.colour.Colour;
-import codechicken.lib.colour.ColourARGB;
-import codechicken.lib.render.CCQuad;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.item.IItemRenderer;
-import codechicken.lib.util.TransformUtils;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
-import codechicken.lib.vec.Vector3;
-import codechicken.lib.vec.uv.UV;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverUtil;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.util.ModCompatibility;
 import gregtech.client.model.pipeline.VertexLighterFlatSpecial;
@@ -21,6 +9,7 @@ import gregtech.client.utils.AdvCCRSConsumer;
 import gregtech.client.utils.FacadeBlockAccess;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.behaviors.FacadeItem;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -45,6 +34,19 @@ import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.colour.Colour;
+import codechicken.lib.colour.ColourARGB;
+import codechicken.lib.render.CCQuad;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.item.IItemRenderer;
+import codechicken.lib.util.TransformUtils;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.UV;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -59,19 +61,23 @@ import java.util.concurrent.TimeUnit;
 @SideOnly(Side.CLIENT)
 public class FacadeRenderer implements IItemRenderer {
 
-    final static int[] sideOffsets = {1, 1, 2, 2, 0, 0};
-    final static float[] sideSoftBounds = {0, 1, 0, 1, 0, 1};
+    final static int[] sideOffsets = { 1, 1, 2, 2, 0, 0 };
+    final static float[] sideSoftBounds = { 0, 1, 0, 1, 0, 1 };
 
     private final static float FACADE_RENDER_OFFSET = 2.0f / 512.0f;
     private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
-    public static final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal.withInitial(() -> new VertexLighterFlatSpecial(Minecraft.getMinecraft().getBlockColors()));
-    public static final ThreadLocal<VertexLighterFlat> lighterSmooth = ThreadLocal.withInitial(() -> new VertexLighterSmoothAoSpecial(Minecraft.getMinecraft().getBlockColors()));
+    public static final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal
+            .withInitial(() -> new VertexLighterFlatSpecial(Minecraft.getMinecraft().getBlockColors()));
+    public static final ThreadLocal<VertexLighterFlat> lighterSmooth = ThreadLocal
+            .withInitial(() -> new VertexLighterSmoothAoSpecial(Minecraft.getMinecraft().getBlockColors()));
 
-    public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+    public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(1, TimeUnit.HOURS).build();
 
     public static void init() {
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> itemQuadCache.invalidateAll());
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager())
+                .registerReloadListener(resourceManager -> itemQuadCache.invalidateAll());
     }
 
     @Override
@@ -85,9 +91,9 @@ public class FacadeRenderer implements IItemRenderer {
         renderState.reset();
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
         try {
-            FacadeRenderer.renderItemCover(renderState, EnumFacing.NORTH.getIndex(), facadeStack, ICoverable.getCoverPlateBox(EnumFacing.NORTH, 2.0 / 16.0));
-        } catch (Throwable ignored) {
-        }
+            FacadeRenderer.renderItemCover(renderState, EnumFacing.NORTH.getIndex(), facadeStack,
+                    CoverUtil.getCoverPlateBox(EnumFacing.NORTH, 2.0 / 16.0));
+        } catch (Throwable ignored) {}
         renderState.draw();
     }
 
@@ -106,8 +112,8 @@ public class FacadeRenderer implements IItemRenderer {
         return false;
     }
 
-    public static boolean renderBlockCover(CCRenderState ccrs, Matrix4 translation, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds, BlockRenderLayer layer) {
-
+    public static boolean renderBlockCover(CCRenderState ccrs, Matrix4 translation, IBlockAccess world, BlockPos pos,
+                                           int side, IBlockState state, Cuboid6 bounds, BlockRenderLayer layer) {
         EnumFacing face = EnumFacing.VALUES[side];
         IBlockAccess coverAccess = new FacadeBlockAccess(world, pos, face, state);
         if (layer != null && !state.getBlock().canRenderInLayer(state, layer)) {
@@ -117,15 +123,13 @@ public class FacadeRenderer implements IItemRenderer {
 
         try {
             state = state.getActualState(coverAccess, pos);
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
 
         IBakedModel model = dispatcher.getModelForState(state);
 
         try {
             state = state.getBlock().getExtendedState(state, coverAccess, pos);
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
         long posRand = MathHelper.getPositionRandom(pos);
         List<BakedQuad> bakedQuads = new ArrayList<>(model.getQuads(state, null, posRand));
 
@@ -170,7 +174,6 @@ public class FacadeRenderer implements IItemRenderer {
         for (CCQuad quad : renderQuads) {
             quad.pipe(consumer);
         }
-
     }
 
     public static List<CCQuad> applyItemTint(List<CCQuad> quads, ItemStack stack) {
@@ -198,9 +201,10 @@ public class FacadeRenderer implements IItemRenderer {
         return retQuads;
     }
 
-
-    public static VertexLighterFlat setupLighter(CCRenderState ccrs, Matrix4 translation, IBlockState state, IBlockAccess access, BlockPos pos, IBakedModel model) {
-        boolean renderAO = Minecraft.isAmbientOcclusionEnabled() && state.getLightValue(access, pos) == 0 && model.isAmbientOcclusion();
+    public static VertexLighterFlat setupLighter(CCRenderState ccrs, Matrix4 translation, IBlockState state,
+                                                 IBlockAccess access, BlockPos pos, IBakedModel model) {
+        boolean renderAO = Minecraft.isAmbientOcclusionEnabled() && state.getLightValue(access, pos) == 0 &&
+                model.isAmbientOcclusion();
         VertexLighterFlat lighter = renderAO ? lighterSmooth.get() : lighterFlat.get();
 
         AdvCCRSConsumer consumer = new AdvCCRSConsumer(ccrs);
@@ -209,7 +213,8 @@ public class FacadeRenderer implements IItemRenderer {
         return lighter;
     }
 
-    public static boolean renderBlockQuads(VertexLighterFlat lighter, IBlockAccess access, IBlockState state, List<CCQuad> quads, BlockPos pos) {
+    public static boolean renderBlockQuads(VertexLighterFlat lighter, IBlockAccess access, IBlockState state,
+                                           List<CCQuad> quads, BlockPos pos) {
         if (!quads.isEmpty()) {
             lighter.setWorld(access);
             lighter.setState(state);
@@ -275,7 +280,8 @@ public class FacadeRenderer implements IItemRenderer {
                         quadPos[k2][j] = clampF(quadPos[k2][j], bounds, j);
                     } else {
                         if (flag && flag2 && flag3) {
-                            quadPos[k2][j] = MathHelper.clamp(quadPos[k2][j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
+                            quadPos[k2][j] = MathHelper.clamp(quadPos[k2][j], FACADE_RENDER_OFFSET,
+                                    FACADE_RENDER_OFFSET2);
                         }
                     }
                 }
@@ -312,13 +318,12 @@ public class FacadeRenderer implements IItemRenderer {
     }
 
     private final static EnumFacing[][] sides = {
-            {EnumFacing.WEST, EnumFacing.EAST},
-            {EnumFacing.DOWN, EnumFacing.UP},
-            {EnumFacing.NORTH, EnumFacing.SOUTH}
+            { EnumFacing.WEST, EnumFacing.EAST },
+            { EnumFacing.DOWN, EnumFacing.UP },
+            { EnumFacing.NORTH, EnumFacing.SOUTH }
     };
 
     private static double clampF(double x, Cuboid6 b, int j) {
-
         double l = b.getSide(sides[j][0]);
         double u = b.getSide(sides[j][1]);
 
@@ -370,7 +375,8 @@ public class FacadeRenderer implements IItemRenderer {
                         }
                         case COLOR -> {
                             Colour colour = colours[v];
-                            consumer.put(e, (colour.r & 0xFF) / 255F, (colour.g & 0xFF) / 255F, (colour.b & 0xFF) / 255F, (colour.a & 0xFF) / 255F);
+                            consumer.put(e, (colour.r & 0xFF) / 255F, (colour.g & 0xFF) / 255F,
+                                    (colour.b & 0xFF) / 255F, (colour.a & 0xFF) / 255F);
                         }
                         case UV -> {
                             if (element.getIndex() == 0) {
@@ -379,7 +385,8 @@ public class FacadeRenderer implements IItemRenderer {
                             } else {
                                 // fix
                                 int brightness = lightMaps[v];
-                                consumer.put(e, ((float) (brightness & 0xFFFF) / 0xFFFF) * 2, ((float) (brightness >> 16 & 0xFFFF) / 0xFFFF) * 2, 0, 1);
+                                consumer.put(e, ((float) (brightness & 0xFFFF) / 0xFFFF) * 2,
+                                        ((float) (brightness >> 16 & 0xFFFF) / 0xFFFF) * 2, 0, 1);
                             }
                         }
                         default -> consumer.put(e);

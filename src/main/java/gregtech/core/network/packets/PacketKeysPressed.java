@@ -3,8 +3,10 @@ package gregtech.core.network.packets;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;

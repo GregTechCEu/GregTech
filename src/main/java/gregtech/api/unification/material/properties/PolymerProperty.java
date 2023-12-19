@@ -6,12 +6,10 @@ public class PolymerProperty implements IMaterialProperty {
 
     @Override
     public void verifyProperty(MaterialProperties properties) {
-
         properties.ensureSet(PropertyKey.DUST, true);
         properties.ensureSet(PropertyKey.INGOT, true);
-        properties.ensureSet(PropertyKey.FLUID, true);
 
-        properties.getMaterial().addFlags(MaterialFlags.FLAMMABLE, MaterialFlags.NO_SMASHING, MaterialFlags.DISABLE_DECOMPOSITION);
-
+        properties.getMaterial().addFlags(MaterialFlags.FLAMMABLE, MaterialFlags.NO_SMASHING,
+                MaterialFlags.DISABLE_DECOMPOSITION);
     }
 }

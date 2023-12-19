@@ -1,10 +1,11 @@
 package gregtech.api.items.toolitem;
 
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -64,22 +65,22 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
-    public ToolBuilder<T> oreDict(@Nonnull String oreDict) {
+    public ToolBuilder<T> oreDict(@NotNull String oreDict) {
         this.oreDict = oreDict;
         return this;
     }
 
-    public ToolBuilder<T> oreDict(@Nonnull Enum<?> oreDict) {
+    public ToolBuilder<T> oreDict(@NotNull Enum<?> oreDict) {
         this.oreDict = oreDict.name();
         return this;
     }
 
-    public ToolBuilder<T> secondaryOreDicts(@Nonnull Enum<?>... oreDicts) {
+    public ToolBuilder<T> secondaryOreDicts(@NotNull Enum<?>... oreDicts) {
         Arrays.stream(oreDicts).map(Enum::name).forEach(this.secondaryOreDicts::add);
         return this;
     }
 
-    public ToolBuilder<T> secondaryOreDicts(@Nonnull String... oreDicts) {
+    public ToolBuilder<T> secondaryOreDicts(@NotNull String... oreDicts) {
         this.secondaryOreDicts.addAll(Arrays.asList(oreDicts));
         return this;
     }
@@ -102,11 +103,11 @@ public abstract class ToolBuilder<T extends IGTTool> {
         }
         IGTTool existing = ToolHelper.getToolFromSymbol(this.symbol);
         if (existing != null) {
-            throw new IllegalArgumentException(String.format("Symbol %s has been taken by %s already!", symbol, existing));
+            throw new IllegalArgumentException(
+                    String.format("Symbol %s has been taken by %s already!", symbol, existing));
         }
         T supplied = supply().get();
         ToolHelper.registerToolSymbol(this.symbol, supplied);
         return supplied;
     }
-
 }

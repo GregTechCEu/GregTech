@@ -21,6 +21,7 @@ import gregtech.common.items.behaviors.TerminalBehaviour;
 import gregtech.common.terminal.app.settings.widgets.OsSettings;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -38,6 +39,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
+
     public static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
     public static final TextureArea TERMINAL_HOME = TextureArea.fullImage("textures/gui/terminal/terminal_home.png");
     public static final int DEFAULT_WIDTH = 333;
@@ -65,7 +67,8 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.openedApps = new ArrayList<>();
         this.installedApps = new ArrayList<>();
         this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(DEFAULT_WIDTH, DEFAULT_HEIGHT), this);
-        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, DEFAULT_HEIGHT), this).setBackground(TerminalTheme.COLOR_B_2);
+        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, DEFAULT_HEIGHT), this)
+                .setBackground(TerminalTheme.COLOR_B_2);
         this.home = new TerminalHomeButtonWidget(this);
         this.addWidget(desktop);
         this.addWidget(menu);
@@ -116,7 +119,8 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public <T extends Hardware> List<T> getHardware(Class<T> clazz) {
-        return getHardware().stream().filter(hw -> hw.getClass() == clazz).map(hw -> (T) hw).collect(Collectors.toList());
+        return getHardware().stream().filter(hw -> hw.getClass() == clazz).map(hw -> (T) hw)
+                .collect(Collectors.toList());
     }
 
     public void installApplication(AbstractApplication application) {
@@ -128,8 +132,11 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         desktop.removeAllDialogs();
         NBTTagCompound nbt = tabletNBT.getCompoundTag(application.getRegistryName());
         if (!TerminalBehaviour.isCreative(itemStack)) {
-            List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName(), Math.min(nbt.getInteger("_tier"), application.getMaxTier()));
-            List<Hardware> unMatch = hwDemand.stream().filter(demand -> getHardware().stream().noneMatch(hw -> hw.isHardwareAdequate(demand))).collect(Collectors.toList());
+            List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName(),
+                    Math.min(nbt.getInteger("_tier"), application.getMaxTier()));
+            List<Hardware> unMatch = hwDemand.stream()
+                    .filter(demand -> getHardware().stream().noneMatch(hw -> hw.isHardwareAdequate(demand)))
+                    .collect(Collectors.toList());
             if (unMatch.size() > 0) {
                 if (isClient) {
                     StringBuilder tooltips = new StringBuilder("\n");
@@ -139,7 +146,8 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                         if (info == null) {
                             tooltips.append(name);
                         } else if (match instanceof BatteryHardware) {
-                            IElectricItem energyItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                            IElectricItem energyItem = itemStack
+                                    .getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
                             if (energyItem != null && energyItem.getCharge() <= 0) {
                                 tooltips.append(I18n.format("terminal.battery.low_energy"));
                             } else {
@@ -261,15 +269,15 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 NBTTagCompound synced = openedApp.closeApp();
                 if (synced != null && !synced.isEmpty()) {
                     tabletNBT.setTag(appName, synced);
-                    if (openedApp.isClientSideApp()) {//if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
+                    if (openedApp.isClientSideApp()) {// if its a clientSideApp and the nbt not null, meaning this nbt
+                                                      // should be synced to the server side.
                         nbt.setTag(appName, synced);
                     }
                 }
             }
             writeClientAction(-1, buffer -> buffer.writeCompoundTag(nbt));
-        } else { //request shutdown from the server side
-            writeUpdateInfo(-2, packetBuffer -> {
-            });
+        } else { // request shutdown from the server side
+            writeUpdateInfo(-2, packetBuffer -> {});
         }
     }
 
@@ -293,7 +301,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
 
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
-        if (id == -1) { //shutdown
+        if (id == -1) { // shutdown
             NBTTagCompound nbt = null;
             try {
                 nbt = buffer.readCompoundTag();
@@ -344,7 +352,8 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 for (AbstractApplication close : toClosed) {
                     this.closeApplication(close, true);
                 }
-                TerminalDialogWidget.showInfoDialog(this, "terminal.component.warning", "terminal.battery.low_energy").setClientSide().open();
+                TerminalDialogWidget.showInfoDialog(this, "terminal.component.warning", "terminal.battery.low_energy")
+                        .setClientSide().open();
             }
         } else if (id == -2) { // shutdown
             shutdown(true);
@@ -376,7 +385,8 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     private long disCharge() {
-        IElectricItem electricItem = hardwareProvider.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        IElectricItem electricItem = hardwareProvider.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
+                null);
         if (electricItem != null && !TerminalBehaviour.isCreative(itemStack)) {
             AtomicLong costs = new AtomicLong(0);
             List<AbstractApplication> charged = new ArrayList<>();
@@ -409,15 +419,17 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         Size size = getSize();
 
         // show menu when mouse near the left edge
-        if ((focusApp == null || focusApp.canOpenMenuOnEdge()) && isMouseOver(position.x, position.y, 7, size.height, mouseX, mouseY)) {
+        if ((focusApp == null || focusApp.canOpenMenuOnEdge()) &&
+                isMouseOver(position.x, position.y, 7, size.height, mouseX, mouseY)) {
             if (menu.isHide && !showMenuHover) {
                 menu.showMenu();
                 showMenuHover = true;
             }
-        } else if (!menu.isHide && showMenuHover && !isMouseOver(position.x - 10, position.y, 41, size.height, mouseX, mouseY)) {
-            menu.hideMenu();
-            showMenuHover = false;
-        }
+        } else if (!menu.isHide && showMenuHover &&
+                !isMouseOver(position.x - 10, position.y, 41, size.height, mouseX, mouseY)) {
+                    menu.hideMenu();
+                    showMenuHover = false;
+                }
 
         if (background != null) {
             background.draw(position.x, position.y, size.width, size.height);
@@ -445,26 +457,31 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
 
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
-        if (waitShutdown && (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode))) {
+        if (waitShutdown &&
+                (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode))) {
             shutdown(true);
             return true;
         }
         if (super.keyTyped(charTyped, keyCode)) {
             return true;
         }
-        if (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode)) { // hook esc and e
+        if (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode)) { // hook
+                                                                                                                  // esc
+                                                                                                                  // and
+                                                                                                                  // e
             waitShutdown = true;
             if (!OsSettings.DOUBLE_CHECK) {
                 shutdown(true);
                 return true;
             }
-            TerminalDialogWidget.showConfirmDialog(this, "terminal.component.warning", "terminal.os.shutdown_confirm", result -> {
-                if (result) {
-                    shutdown(true);
-                } else {
-                    waitShutdown = false;
-                }
-            }).setClientSide().open();
+            TerminalDialogWidget
+                    .showConfirmDialog(this, "terminal.component.warning", "terminal.os.shutdown_confirm", result -> {
+                        if (result) {
+                            shutdown(true);
+                        } else {
+                            waitShutdown = false;
+                        }
+                    }).setClientSide().open();
             return true;
         }
         waitShutdown = false;
@@ -490,7 +507,9 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.setSize(new Size(osWidth, osHeight));
         this.desktop.setSize(new Size(osWidth, osHeight));
         this.menu.setSize(new Size(31, osHeight));
-        this.home.setSelfPosition(this.maximize ? new Position((osWidth - this.home.getSize().width) / 2, osHeight - this.home.getSize().height - 10) : new Position(340, 104));
+        this.home.setSelfPosition(this.maximize ?
+                new Position((osWidth - this.home.getSize().width) / 2, osHeight - this.home.getSize().height - 10) :
+                new Position(340, 104));
         this.home.setIcon(this.maximize ? TERMINAL_HOME : null);
         gui.setSize(this.maximize ? osWidth : 380, this.maximize ? osHeight : 256);
         if (this.focusApp != null) {

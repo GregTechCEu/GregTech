@@ -7,15 +7,15 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ConverterTrait extends MTETrait {
 
@@ -24,7 +24,7 @@ public class ConverterTrait extends MTETrait {
 
     /**
      * If TRUE, the front facing of the machine will OUTPUT EU, other sides INPUT FE.
-     *
+     * <p>
      * If FALSE, the front facing of the machine will OUTPUT FE, other sides INPUT EU.
      */
     private boolean feToEu;
@@ -36,8 +36,6 @@ public class ConverterTrait extends MTETrait {
     private final long baseCapacity;
 
     private long usedAmps;
-
-    private BlockPos frontPos;
 
     public ConverterTrait(MetaTileEntityConverter mte, int amps, boolean feToEu) {
         super(mte);
@@ -71,7 +69,7 @@ public class ConverterTrait extends MTETrait {
         return voltage;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return GregtechDataCodes.ENERGY_CONVERTER_TRAIT;
@@ -89,7 +87,7 @@ public class ConverterTrait extends MTETrait {
         return change;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
@@ -99,7 +97,7 @@ public class ConverterTrait extends MTETrait {
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound nbt) {
+    public void deserializeNBT(@NotNull NBTTagCompound nbt) {
         this.storedEU = nbt.getLong("StoredEU");
         this.feToEu = nbt.getBoolean("feToEu");
     }
@@ -125,7 +123,8 @@ public class ConverterTrait extends MTETrait {
             if (ampsToInsert == 0) return;
 
             // send out energy
-            energyInserted = container.acceptEnergyFromNetwork(metaTileEntity.getFrontFacing().getOpposite(), voltage, ampsToInsert) * voltage;
+            energyInserted = container.acceptEnergyFromNetwork(metaTileEntity.getFrontFacing().getOpposite(), voltage,
+                    ampsToInsert) * voltage;
         } else { // push out FE
             // Get the FE capability in front of us
             IEnergyStorage storage = getCapabilityAtFront(CapabilityEnergy.ENERGY);
@@ -138,15 +137,10 @@ public class ConverterTrait extends MTETrait {
     }
 
     protected <T> T getCapabilityAtFront(Capability<T> capability) {
-        TileEntity tile = metaTileEntity.getWorld().getTileEntity(frontPos == null ? frontPos = metaTileEntity.getPos().offset(metaTileEntity.getFrontFacing()) : frontPos);
+        TileEntity tile = metaTileEntity.getNeighbor(metaTileEntity.getFrontFacing());
         if (tile == null) return null;
         EnumFacing opposite = metaTileEntity.getFrontFacing().getOpposite();
         return tile.getCapability(capability, opposite);
-    }
-
-    @Override
-    public void onFrontFacingSet(EnumFacing newFrontFacing) {
-        this.frontPos = null;
     }
 
     // -- GTCEu Energy--------------------------------------------

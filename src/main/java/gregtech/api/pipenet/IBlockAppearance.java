@@ -5,10 +5,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Implement this interface on blocks that can mimic the appearance of other blocks. Note that this is meant to be available server-side, so ensure the code is
+ * Implement this interface on blocks that can mimic the appearance of other blocks. Note that this is meant to be
+ * available server-side, so ensure the code is
  * server-safe and doesn't use client-side code.
  * <p>
  * Mostly based on and (copied from) CoFHCore with minor tweaks
@@ -23,11 +24,12 @@ public interface IBlockAppearance {
      * @param pos   The Position of the block.
      * @param side  The side of the block.
      */
-    @Nonnull
-    IBlockState getVisualState(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side);
+    @NotNull
+    IBlockState getVisualState(@NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing side);
 
     /**
-     * This function returns whether the block's renderer will visually connect to other blocks implementing IBlockAppearance.
+     * This function returns whether the block's renderer will visually connect to other blocks implementing
+     * IBlockAppearance.
      */
     boolean supportsVisualConnections();
 }

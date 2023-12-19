@@ -3,6 +3,7 @@ package gregtech.common.blocks.wood;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -18,12 +19,14 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Random;
 
 public abstract class BlockGregWoodSlab extends BlockSlab {
 
-    private static final PropertyEnum<BlockGregPlanks.BlockType> VARIANT = PropertyEnum.create("variant", BlockGregPlanks.BlockType.class);
+    private static final PropertyEnum<BlockGregPlanks.BlockType> VARIANT = PropertyEnum.create("variant",
+            BlockGregPlanks.BlockType.class);
 
     public BlockGregWoodSlab() {
         super(Material.WOOD);
@@ -36,7 +39,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         this.useNeighborBrightness = true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IProperty<BlockGregPlanks.BlockType> getVariantProperty() {
         return VARIANT;
@@ -47,26 +50,26 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         return state.getValue(VARIANT).ordinal();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
+    public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
         return Item.getItemFromBlock(MetaBlocks.WOOD_SLAB);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getTranslationKey(int meta) {
         return super.getTranslationKey() + "." + blockTypeFromMeta(meta).getName();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockGregPlanks.BlockType getTypeForItem(ItemStack stack) {
         return blockTypeFromMeta(stack.getMetadata());
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
         for (BlockGregPlanks.BlockType type : BlockGregPlanks.BlockType.values()) {
             items.add(new ItemStack(this, 1, type.ordinal()));
         }
@@ -89,7 +92,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return false;
         }
 
-        @Nonnull
+        @NotNull
         @SuppressWarnings("deprecation")
         @Override
         public IBlockState getStateFromMeta(int meta) {
@@ -107,14 +110,15 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return i;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         protected BlockStateContainer createBlockState() {
             return new BlockStateContainer(this, HALF, VARIANT);
         }
 
         @Override
-        public boolean doesSideBlockChestOpening(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+        public boolean doesSideBlockChestOpening(@NotNull IBlockState blockState, @NotNull IBlockAccess world,
+                                                 @NotNull BlockPos pos, @NotNull EnumFacing side) {
             return false;
         }
     }
@@ -131,7 +135,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return true;
         }
 
-        @Nonnull
+        @NotNull
         @SuppressWarnings("deprecation")
         @Override
         public IBlockState getStateFromMeta(int meta) {
@@ -143,7 +147,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return state.getValue(VARIANT).ordinal();
         }
 
-        @Nonnull
+        @NotNull
         @Override
         protected BlockStateContainer createBlockState() {
             return new BlockStateContainer(this, VARIANT);

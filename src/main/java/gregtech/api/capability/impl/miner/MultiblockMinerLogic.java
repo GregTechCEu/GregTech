@@ -4,6 +4,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +17,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MultiblockMinerLogic extends MinerLogic {
 
@@ -38,7 +39,8 @@ public class MultiblockMinerLogic extends MinerLogic {
      * @param speed          the speed in ticks per block mined
      * @param maximumRadius  the maximum radius (square shaped) the miner can mine in
      */
-    public MultiblockMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, RecipeMap<?> blockDropRecipeMap) {
+    public MultiblockMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius,
+                                RecipeMap<?> blockDropRecipeMap) {
         super(metaTileEntity, fortune, speed, maximumRadius, null);
         this.blockDropRecipeMap = blockDropRecipeMap;
     }
@@ -49,13 +51,16 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    protected void getSmallOreBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
-        // Small ores: use (fortune bonus + overclockAmount) value here for fortune, since every overclock increases the yield for small ores
+    protected void getSmallOreBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine,
+                                         IBlockState blockState) {
+        // Small ores: use (fortune bonus + overclockAmount) value here for fortune, since every overclock increases the
+        // yield for small ores
         super.getSmallOreBlockDrops(blockDrops, world, blockToMine, blockState);
     }
 
     @Override
-    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
+    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine,
+                                        @NotNull IBlockState blockState) {
         if (!isSilkTouchMode) // 3X the ore compared to the single blocks
             applyTieredHammerNoRandomDrops(blockState, blockDrops, 3, this.blockDropRecipeMap, this.voltageTier);
         else
@@ -63,13 +68,14 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    public void initPos(@Nonnull BlockPos pos, int currentRadius) {
+    public void initPos(@NotNull BlockPos pos, int currentRadius) {
         if (!isChunkMode) {
             super.initPos(pos, currentRadius);
         } else {
             WorldServer world = (WorldServer) this.metaTileEntity.getWorld();
             Chunk origin = world.getChunk(this.metaTileEntity.getPos());
-            ChunkPos startPos = (world.getChunk(origin.x - currentRadius / CHUNK_LENGTH, origin.z - currentRadius / CHUNK_LENGTH)).getPos();
+            ChunkPos startPos = (world.getChunk(origin.x - currentRadius / CHUNK_LENGTH,
+                    origin.z - currentRadius / CHUNK_LENGTH)).getPos();
             getX().set(startPos.getXStart());
             getY().set(this.metaTileEntity.getPos().getY() - 1);
             getZ().set(startPos.getZStart());
@@ -125,28 +131,28 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
         data.setBoolean("isChunkMode", isChunkMode);
         data.setBoolean("isSilkTouchMode", isSilkTouchMode);
         return super.writeToNBT(data);
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound data) {
+    public void readFromNBT(@NotNull NBTTagCompound data) {
         this.isChunkMode = data.getBoolean("isChunkMode");
         this.isSilkTouchMode = data.getBoolean("isSilkTouchMode");
         super.readFromNBT(data);
     }
 
     @Override
-    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isChunkMode);
         buf.writeBoolean(this.isSilkTouchMode);
     }
 
     @Override
-    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isChunkMode = buf.readBoolean();
         this.isSilkTouchMode = buf.readBoolean();

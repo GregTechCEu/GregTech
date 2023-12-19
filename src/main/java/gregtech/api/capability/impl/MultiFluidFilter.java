@@ -1,10 +1,12 @@
 package gregtech.api.capability.impl;
 
-import com.google.common.collect.Iterables;
 import gregtech.api.capability.IFilter;
+
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Iterables;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +19,7 @@ public final class MultiFluidFilter implements IFilter<FluidStack> {
     private final boolean blacklist;
     private final FluidStack[] fluids;
 
-    public MultiFluidFilter(boolean blacklist, @Nonnull FluidStack... fluids) {
+    public MultiFluidFilter(boolean blacklist, @NotNull FluidStack... fluids) {
         this.blacklist = blacklist;
         this.fluids = fluids;
     }
@@ -27,7 +29,7 @@ public final class MultiFluidFilter implements IFilter<FluidStack> {
         this.fluids = Iterables.toArray(fluids, FluidStack.class);
     }
 
-    @Nonnull
+    @NotNull
     public List<FluidStack> getFluids() {
         return Collections.unmodifiableList(Arrays.asList(fluids));
     }
@@ -41,7 +43,7 @@ public final class MultiFluidFilter implements IFilter<FluidStack> {
     }
 
     @Override
-    public boolean test(@Nonnull FluidStack fluidStack) {
+    public boolean test(@NotNull FluidStack fluidStack) {
         for (FluidStack fluid : this.fluids) {
             if (fluid.isFluidEqual(fluid)) return true;
         }
@@ -55,7 +57,7 @@ public final class MultiFluidFilter implements IFilter<FluidStack> {
                         IFilter.whitelistPriority(this.fluids.length);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IFilter<FluidStack> negate() {
         return new MultiFluidFilter(!this.blacklist, this.fluids);

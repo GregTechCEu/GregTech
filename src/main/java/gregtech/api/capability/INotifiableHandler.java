@@ -30,5 +30,4 @@ public interface INotifiableHandler {
     void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity);
 
     void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity);
-
 }

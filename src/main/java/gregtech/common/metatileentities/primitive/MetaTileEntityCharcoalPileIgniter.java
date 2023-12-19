@@ -1,11 +1,5 @@
 package gregtech.common.metatileentities.primitive;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.block.IBlock;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -25,8 +19,7 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.metatileentities.MetaTileEntities;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,11 +41,20 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.block.IBlock;
+import crafttweaker.api.minecraft.CraftTweakerMC;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -97,7 +99,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.CHARCOAL_PILE_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive, true);
+        Textures.CHARCOAL_PILE_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
+                isActive, true);
     }
 
     @Override
@@ -115,7 +118,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         updateMaxProgressTime();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         // update the structure's dimensions just before we create it
@@ -128,8 +131,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         if (rDist < 1) rDist = MIN_RADIUS;
         if (hDist < 2) hDist = MIN_DEPTH;
 
-        //swap the left and right distances if the front facing is east or west
-        //i guess allows BlockPattern checkPatternAt to get the correct relative position, somehow.
+        // swap the left and right distances if the front facing is east or west
+        // i guess allows BlockPattern checkPatternAt to get the correct relative position, somehow.
         if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
             int tmp = lDist;
             lDist = rDist;
@@ -138,7 +141,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
         StringBuilder wallBuilder = new StringBuilder();       // " XXX "
         StringBuilder floorBuilder = new StringBuilder();      // " BBB "
-        StringBuilder cornerBuilder = new StringBuilder();     // "     "
+        StringBuilder cornerBuilder = new StringBuilder();     // " "
         StringBuilder ctrlBuilder = new StringBuilder();       // " XSX "
         StringBuilder woodBuilder = new StringBuilder();       // "XCCCX"
 
@@ -181,7 +184,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         ctrlBuilder.append(" ");
         woodBuilder.append("X");
 
-        String[] wall = new String[hDist + 1]; // "     ", " XXX ", "     "
+        String[] wall = new String[hDist + 1]; // " ", " XXX ", " "
         Arrays.fill(wall, wallBuilder.toString());
         wall[0] = cornerBuilder.toString();
         wall[wall.length - 1] = cornerBuilder.toString();
@@ -191,7 +194,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         slice[0] = floorBuilder.toString();
 
         String[] center = Arrays.copyOf(slice, slice.length); // " BBB ", "XCCCX", " XSX "
-        //inverse the center slice if facing east or west.
+        // inverse the center slice if facing east or west.
         if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
             center[center.length - 1] = ctrlBuilder.reverse().toString();
         } else {
@@ -215,10 +218,11 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                 .build();
     }
 
-    @Nonnull
+    @NotNull
     private TraceabilityPredicate logPredicate() {
         return new TraceabilityPredicate(blockWorldState -> {
-            if (blockWorldState.getBlockState().getBlock().isWood(blockWorldState.getWorld(), blockWorldState.getPos())) {
+            if (blockWorldState.getBlockState().getBlock().isWood(blockWorldState.getWorld(),
+                    blockWorldState.getPos())) {
                 // store the position of every log, so we can easily turn them into charcoal
                 logPositions.add(blockWorldState.getPos());
                 return true;
@@ -269,11 +273,12 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         return true;
     }
 
-    private static boolean isBlockWall(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
+    private static boolean isBlockWall(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
+                                       @NotNull EnumFacing direction) {
         return WALL_BLOCKS.contains(world.getBlockState(pos.move(direction)).getBlock());
     }
 
-    private static boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos) {
+    private static boolean isBlockFloor(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos) {
         return world.getBlockState(pos.move(EnumFacing.DOWN)).getBlock() == Blocks.BRICK_BLOCK;
     }
 
@@ -342,7 +347,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.charcoal_pile.tooltip.2"));
@@ -438,14 +444,14 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
      * @param block the block to add
      */
     @SuppressWarnings("unused")
-    public static void addWallBlock(@Nonnull Block block) {
+    public static void addWallBlock(@NotNull Block block) {
         WALL_BLOCKS.add(block);
     }
 
     @ZenMethod("addWallBlock")
     @Optional.Method(modid = GTValues.MODID_CT)
     @SuppressWarnings("unused")
-    public static void addWallBlockCT(@Nonnull IBlock block) {
+    public static void addWallBlockCT(@NotNull IBlock block) {
         WALL_BLOCKS.add(CraftTweakerMC.getBlock(block));
     }
 
@@ -455,9 +461,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void setWorkingEnabled(boolean isActivationAllowed) {
-
-    }
+    public void setWorkingEnabled(boolean isActivationAllowed) {}
 
     @Override
     public int getProgress() {
@@ -484,7 +488,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @SubscribeEvent
-    public static void onItemUse(@Nonnull PlayerInteractEvent.RightClickBlock event) {
+    public static void onItemUse(@NotNull PlayerInteractEvent.RightClickBlock event) {
         TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
         MetaTileEntity mte = null;
         if (tileEntity instanceof IGregTechTileEntity) {
@@ -502,7 +506,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                     stack.damageItem(1, event.getEntityPlayer());
 
                     // flint and steel sound does not get played when handled like this
-                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
+                            SoundCategory.PLAYERS, 1.0F, 1.0F);
 
                     shouldActivate = true;
                 } else if (stack.getItem() instanceof ItemFireball) {
@@ -510,7 +515,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                     stack.shrink(1);
 
                     // fire charge sound does not get played when handled like this
-                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FIRECHARGE_USE,
+                            SoundCategory.PLAYERS, 1.0F, 1.0F);
 
                     shouldActivate = true;
                 } else if (stack.getItem() instanceof MetaItem) {
@@ -518,9 +524,11 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                     MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
                     if (valueItem != null) {
                         for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                            if (behaviour instanceof LighterBehaviour && ((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack)) {
+                            if (behaviour instanceof LighterBehaviour &&
+                                    ((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack)) {
                                 // lighter sound does not get played when handled like this
-                                event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                                event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
+                                        SoundCategory.PLAYERS, 1.0F, 1.0F);
 
                                 shouldActivate = true;
                                 break;
@@ -540,6 +548,16 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     @Override
     public boolean hasFrontFacing() {
+        return false;
+    }
+
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
+
+    @Override
+    public boolean allowsFlip() {
         return false;
     }
 }

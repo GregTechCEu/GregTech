@@ -2,11 +2,10 @@ package jabel;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
-
-import javax.annotation.Nonnull;
 
 /**
  * Tests to ensure compilation with Java 17 and running with Java 8 is functional
@@ -22,7 +21,7 @@ public class TestModernJavaSyntax {
         MatcherAssert.assertThat(getLengthSwitch("wrong"), CoreMatchers.is(-1));
     }
 
-    private static int getLengthSwitch(@Nonnull String s) {
+    private static int getLengthSwitch(@NotNull String s) {
         return switch (s) {
             case "hello" -> 5;
             case "goodbye" -> 7;

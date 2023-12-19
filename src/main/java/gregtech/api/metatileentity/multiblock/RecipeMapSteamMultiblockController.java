@@ -1,8 +1,5 @@
 package gregtech.api.metatileentity.multiblock;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -11,6 +8,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -19,6 +17,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -26,7 +25,10 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 
 import java.util.List;
 
@@ -41,7 +43,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler steamFluidTank;
 
-    public RecipeMapSteamMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, double conversionRate) {
+    public RecipeMapSteamMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap,
+                                              double conversionRate) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
         this.recipeMapWorkable = new SteamMultiblockRecipeLogic(this, recipeMap, steamFluidTank, conversionRate);
@@ -92,8 +95,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     private void resetTileAbilities() {
-        this.inputInventory = new ItemStackHandler(0);
-        this.outputInventory = new ItemStackHandler(0);
+        this.inputInventory = new GTItemStackHandler(this, 0);
+        this.outputInventory = new GTItemStackHandler(this, 0);
         this.steamFluidTank = new FluidTankList(true);
     }
 
@@ -147,7 +150,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
                                                boolean checkItemOut,
                                                boolean checkMuffler) {
         TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
-                .or(checkSteam ? abilities(MultiblockAbility.STEAM).setMinGlobalLimited(1).setPreviewCount(1) : new TraceabilityPredicate());
+                .or(checkSteam ? abilities(MultiblockAbility.STEAM).setMinGlobalLimited(1).setPreviewCount(1) :
+                        new TraceabilityPredicate());
         if (checkItemIn) {
             if (recipeMap.getMaxInputs() > 0) {
                 predicate = predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1));
@@ -155,7 +159,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         }
         if (checkItemOut) {
             if (recipeMap.getMaxOutputs() > 0) {
-                predicate =  predicate.or(abilities(MultiblockAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1));
+                predicate = predicate.or(abilities(MultiblockAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1));
             }
         }
         return predicate;
@@ -169,7 +173,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
+                recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
     }
 
     @Override
@@ -184,7 +189,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 176, 208);
+        ModularUI.Builder builder = ModularUI
+                .builder(GuiTextures.BACKGROUND_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 176, 208);
         builder.shouldColor(false);
         builder.image(4, 4, 168, 117, GuiTextures.DISPLAY_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks));
         builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
@@ -194,7 +200,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         builder.widget(new IndicatorImageWidget(152, 101, 17, 17, getLogo())
                 .setWarningStatus(getWarningLogo(), this::addWarningText)
                 .setErrorStatus(getErrorLogo(), this::addErrorText));
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 7, 125);
+        builder.bindPlayerInventory(entityPlayer.inventory,
+                GuiTextures.SLOT_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 7, 125);
         return builder;
     }
 }

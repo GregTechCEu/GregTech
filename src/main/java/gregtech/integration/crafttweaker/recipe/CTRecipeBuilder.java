@@ -1,13 +1,5 @@
 package gregtech.integration.crafttweaker.recipe;
 
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.data.DataMap;
-import crafttweaker.api.data.IData;
-import crafttweaker.api.item.IIngredient;
-import crafttweaker.api.item.IItemStack;
-import crafttweaker.api.liquid.ILiquidStack;
-import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.api.oredict.IOreDictEntry;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -16,14 +8,24 @@ import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.util.ItemStackHashStrategy;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.data.DataMap;
+import crafttweaker.api.data.IData;
+import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.liquid.ILiquidStack;
+import crafttweaker.api.minecraft.CraftTweakerMC;
+import crafttweaker.api.oredict.IOreDictEntry;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,22 +70,8 @@ public class CTRecipeBuilder {
         return null;
     }
 
-    private static void checkIfExists(IIngredient ingredient, String oreDict) {
-        if (ingredient == null) {
-            throw new IllegalArgumentException("Invalid ingredient: is null");
-        }
-
-        if (ingredient.getItems().isEmpty()) {
-            if (oreDict != null) {
-                throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
-            } else {
-                throw new IllegalArgumentException("Invalid Item [" + ingredient + "]: item not found");
-            }
-        }
-    }
-
     @ZenMethod
-    public CTRecipeBuilder inputs(@Nonnull IIngredient... ingredients) {
+    public CTRecipeBuilder inputs(@NotNull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             this.backingBuilder.input(getInputFromCTIngredient(ingredient));
         }
@@ -91,14 +79,14 @@ public class CTRecipeBuilder {
     }
 
     @ZenMethod
-    public CTRecipeBuilder notConsumable(@Nonnull IIngredient... ingredients) {
+    public CTRecipeBuilder notConsumable(@NotNull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             this.backingBuilder.notConsumable(getInputFromCTIngredient(ingredient));
         }
         return this;
     }
 
-    @Nonnull
+    @NotNull
     private static GTRecipeInput getInputFromCTIngredient(@Nullable IIngredient ingredient) {
         if (ingredient == null) {
             throw new IllegalArgumentException("Invalid ingredient: is null");
@@ -111,7 +99,7 @@ public class CTRecipeBuilder {
             if (items.isEmpty()) {
                 throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
             }
-            return GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount());
+            return new GTRecipeOreInput(oreDict, ingredient.getAmount());
         } else if (items.isEmpty()) {
             // no possible input from what was supplied
             throw new IllegalArgumentException("Invalid Item [" + ingredient + "]: item not found");
@@ -124,10 +112,11 @@ public class CTRecipeBuilder {
             // check for the empty tag specifically, so it is treated as a non-nbt input instead
             final NBTTagCompound tagCompound = data == DataMap.EMPTY ? null : CraftTweakerMC.getNBTCompound(data);
 
-            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount()), tagCompound);
+            return tryConstructNBTInput(new GTRecipeItemInput(stack, ingredient.getAmount()), tagCompound);
         } else {
             // multiple inputs for a single input entry
-            final Map<ItemStack, List<NBTTagCompound>> map = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingItemDamageCount());
+            final Map<ItemStack, List<NBTTagCompound>> map = new Object2ObjectOpenCustomHashMap<>(
+                    ItemStackHashStrategy.comparingItemDamageCount());
 
             ItemStack[] stacks = new ItemStack[items.size()];
             for (int i = 0; i < stacks.length; i++) {
@@ -150,7 +139,7 @@ public class CTRecipeBuilder {
                 }
             }
 
-            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stacks), map);
+            return tryConstructNBTInput(new GTRecipeItemInput(stacks), map);
         }
     }
 
@@ -161,8 +150,8 @@ public class CTRecipeBuilder {
      * @param compound the nbt compound to match
      * @return the nbt matching input if successful, otherwise the original recipe input
      */
-    @Nonnull
-    private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input, @Nullable NBTTagCompound compound) {
+    @NotNull
+    private static GTRecipeInput tryConstructNBTInput(@NotNull GTRecipeInput input, @Nullable NBTTagCompound compound) {
         if (compound == null) return input; // do not use nbt matching, if there is no tag to check
         if (compound.isEmpty()) {
             // special case which considers an empty nbt tag as allowing any or no NBT
@@ -178,8 +167,9 @@ public class CTRecipeBuilder {
      * @param map   a mapping of stacks to compounds. The map's key hashing should ignore NBT compounds
      * @return the nbt matching input if successful, otherwise the original recipe input
      */
-    @Nonnull
-    private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input, @Nonnull Map<ItemStack, List<NBTTagCompound>> map) {
+    @NotNull
+    private static GTRecipeInput tryConstructNBTInput(@NotNull GTRecipeInput input,
+                                                      @NotNull Map<ItemStack, List<NBTTagCompound>> map) {
         if (map.isEmpty()) return input; // do not use nbt matching, if there are no tags to check
         return input.setNBTMatchingCondition(new CTNBTMultiItemMatcher(map), null);
     }
@@ -196,12 +186,12 @@ public class CTRecipeBuilder {
         return this;
     }
 
-    //note that fluid input predicates are not supported
+    // note that fluid input predicates are not supported
     @ZenMethod
     public CTRecipeBuilder fluidInputs(ILiquidStack... ingredients) {
         this.backingBuilder.fluidInputs(Arrays.stream(ingredients)
                 .map(CraftTweakerMC::getLiquidStack)
-                .map(fluidStack -> GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount))
+                .map(GTRecipeFluidInput::new)
                 .collect(Collectors.toList()));
         return this;
     }
@@ -289,7 +279,8 @@ public class CTRecipeBuilder {
         if (!applied) {
             throw new IllegalArgumentException("Property " +
                     key + " cannot be applied to recipe type " +
-                    backingBuilder.getClass().getSimpleName() + " for Item " + CraftTweakerMC.getItemStack(item).getDisplayName());
+                    backingBuilder.getClass().getSimpleName() + " for Item " +
+                    CraftTweakerMC.getItemStack(item).getDisplayName());
         }
         return this;
     }
@@ -304,5 +295,4 @@ public class CTRecipeBuilder {
     public String toString() {
         return this.backingBuilder.toString();
     }
-
 }

@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -17,6 +13,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -29,9 +26,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
@@ -48,7 +50,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
-                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                ArrayUtils.add(pipeline,
+                        new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
                 this.getFrontFacing(), this.getTier());
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (this.getOutputFacing() != null) {
@@ -57,7 +60,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
             }
         }
-        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.fluidTank, getWorld(), getPos(), getFrontFacing());
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.fluidTank, getWorld(), getPos(),
+                getFrontFacing());
     }
 
     @Override
@@ -77,8 +81,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 .bindPlayerInventory(entityPlayer.inventory, 126);
         builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
                 () -> this.fluidTank.getFluid(), data -> {
-            this.fluidTank.setFluid(data);
-        }).showTip(false));
+                    this.fluidTank.setFluid(data);
+                }).showTip(false));
         builder.label(7, 9, "gregtech.creative.tank.fluid");
         builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
@@ -96,8 +100,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "gregtech.creative.tank.tpc");
 
-
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value,
+                "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         return builder.build(getHolder(), entityPlayer);
     }
@@ -105,12 +109,14 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     @Override
     public void update() {
         super.update();
-        if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null
-                || getWorld().isRemote || !active) return;
+        if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null ||
+                getWorld().isRemote || !active)
+            return;
 
-        TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getOutputFacing()));
+        TileEntity tile = getNeighbor(getOutputFacing());
         if (tile != null) {
-            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getOutputFacing().getOpposite());
+            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                    getOutputFacing().getOpposite());
             if (fluidHandler == null || fluidHandler.getTankProperties().length == 0)
                 return;
 
@@ -155,9 +161,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.creative_tooltip.1")
-                + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
-                + I18n.format("gregtech.creative_tooltip.3"));
+        tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
+                I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
         // do not append the normal tooltips
     }
 }

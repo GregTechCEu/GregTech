@@ -1,11 +1,13 @@
 package gregtech.common.gui.widget;
 
 import gregtech.api.gui.widgets.TextFieldWidget2;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -16,7 +18,8 @@ public class HighlightedTextField extends TextFieldWidget2 {
     @Nullable
     private TextHighlighter formatResult;
 
-    public HighlightedTextField(int x, int y, int width, int height, Supplier<String> supplier, Consumer<String> setter) {
+    public HighlightedTextField(int x, int y, int width, int height, Supplier<String> supplier,
+                                Consumer<String> setter) {
         super(x, y, width, height, supplier, setter);
     }
 

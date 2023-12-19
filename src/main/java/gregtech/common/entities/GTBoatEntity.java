@@ -3,6 +3,7 @@ package gregtech.common.entities;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityBoat;
@@ -21,7 +22,8 @@ import net.minecraft.world.World;
 
 public class GTBoatEntity extends EntityBoat {
 
-    private static final DataParameter<Integer> GT_BOAT_TYPE = EntityDataManager.createKey(GTBoatEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> GT_BOAT_TYPE = EntityDataManager.createKey(GTBoatEntity.class,
+            DataSerializers.VARINT);
 
     public GTBoatEntity(World world) {
         super(world);
@@ -60,14 +62,16 @@ public class GTBoatEntity extends EntityBoat {
             return false;
         }
         if (!this.world.isRemote && !this.isDead) {
-            if (source instanceof EntityDamageSourceIndirect && source.getTrueSource() != null && this.isPassenger(source.getTrueSource())) {
+            if (source instanceof EntityDamageSourceIndirect && source.getTrueSource() != null &&
+                    this.isPassenger(source.getTrueSource())) {
                 return false;
             }
             this.setForwardDirection(-this.getForwardDirection());
             this.setTimeSinceHit(10);
             this.setDamageTaken(this.getDamageTaken() + amount * 10);
             this.markVelocityChanged();
-            boolean flag = source.getTrueSource() instanceof EntityPlayer && ((EntityPlayer) source.getTrueSource()).capabilities.isCreativeMode;
+            boolean flag = source.getTrueSource() instanceof EntityPlayer &&
+                    ((EntityPlayer) source.getTrueSource()).capabilities.isCreativeMode;
 
             if (flag || this.getDamageTaken() > 40) {
                 if (!flag && this.world.getGameRules().getBoolean("doEntityDrops")) {
@@ -124,7 +128,8 @@ public class GTBoatEntity extends EntityBoat {
     }
 
     /**
-     * @deprecated Vanilla boat types do not affect GTBoat instances; use {@link GTBoatEntity#setGTBoatType(GTBoatType)}.
+     * @deprecated Vanilla boat types do not affect GTBoat instances; use
+     *             {@link GTBoatEntity#setGTBoatType(GTBoatType)}.
      */
     @Deprecated
     @Override

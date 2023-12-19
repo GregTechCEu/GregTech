@@ -13,6 +13,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GradientUtil;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -32,10 +33,11 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
@@ -54,13 +56,14 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
 
     public PowerlessJetpack() {
         if (ArmorUtils.SIDE.isClient())
-            //noinspection NewExpressionSideOnly
+            // noinspection NewExpressionSideOnly
             HUD = new ArmorUtils.ModularHUD();
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
-        IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+    public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack stack) {
+        IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                null);
         if (internalTank == null)
             return;
 
@@ -84,6 +87,8 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
             }
         }
 
+        // This causes a caching issue. currentRecipe is only set to null in findNewRecipe, so the fuel is never updated
+        // Rewrite in Armor Rework
         if (currentRecipe == null)
             findNewRecipe(stack);
 
@@ -96,7 +101,6 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         data.setShort("burnTimer", (short) burnTimer);
         data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
-
     }
 
     @Override
@@ -105,7 +109,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     }
 
     @Override
-    public void addToolComponents(@Nonnull ArmorMetaValueItem mvi) {
+    public void addToolComponents(@NotNull ArmorMetaValueItem mvi) {
         mvi.addComponents(new Behaviour(tankCapacity));
     }
 
@@ -116,20 +120,22 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawHUD(@Nonnull ItemStack item) {
+    public void drawHUD(@NotNull ItemStack item) {
         IFluidHandlerItem tank = item.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (tank != null) {
             IFluidTankProperties[] prop = tank.getTankProperties();
             if (prop[0] != null) {
                 if (prop[0].getContents() != null) {
                     if (prop[0].getContents().amount == 0) return;
-                    String formated = String.format("%.1f", (prop[0].getContents().amount * 100.0F / prop[0].getCapacity()));
+                    String formated = String.format("%.1f",
+                            (prop[0].getContents().amount * 100.0F / prop[0].getCapacity()));
                     this.HUD.newString(I18n.format("metaarmor.hud.fuel_lvl", formated + "%"));
                     NBTTagCompound data = item.getTagCompound();
 
                     if (data != null) {
                         if (data.hasKey("hover")) {
-                            String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
+                            String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") :
+                                    I18n.format("metaarmor.hud.status.disabled"));
                             String result = I18n.format("metaarmor.hud.hover_mode", status);
                             this.HUD.newString(result);
                         }
@@ -149,8 +155,9 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     @Override
     public boolean canUseEnergy(ItemStack stack, int amount) {
         FluidStack fuel = getFuel();
-        if (fuel == null)
+        if (fuel == null) {
             return false;
+        }
 
         IFluidHandlerItem fluidHandlerItem = getIFluidHandlerItem(stack);
         if (fluidHandlerItem == null)
@@ -179,19 +186,22 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         return burnTimer > 0 || currentRecipe != null;
     }
 
-    private static IFluidHandlerItem getIFluidHandlerItem(@Nonnull ItemStack stack) {
+    private static IFluidHandlerItem getIFluidHandlerItem(@NotNull ItemStack stack) {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
     }
 
-    public void findNewRecipe(@Nonnull ItemStack stack) {
+    public void findNewRecipe(@NotNull ItemStack stack) {
         IFluidHandlerItem internalTank = getIFluidHandlerItem(stack);
         if (internalTank != null) {
             FluidStack fluidStack = internalTank.drain(1, false);
-            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getFluidInputs().get(0).getInputFluidStack()) && fluidStack.amount > 0) {
+            if (previousRecipe != null && fluidStack != null &&
+                    fluidStack.isFluidEqual(previousRecipe.getFluidInputs().get(0).getInputFluidStack()) &&
+                    fluidStack.amount > 0) {
                 currentRecipe = previousRecipe;
                 return;
             } else if (fluidStack != null) {
-                Recipe recipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull));
+                Recipe recipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(),
+                        Collections.singletonList(fluidStack), (Objects::nonNull));
                 if (recipe != null) {
                     previousRecipe = recipe;
                     currentRecipe = previousRecipe;
@@ -202,9 +212,15 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         currentRecipe = null;
     }
 
+    public void resetRecipe() {
+        currentRecipe = null;
+        previousRecipe = null;
+    }
+
     public FluidStack getFuel() {
-        if (currentRecipe != null)
+        if (currentRecipe != null) {
             return currentRecipe.getFluidInputs().get(0).getInputFluidStack();
+        }
 
         return null;
     }
@@ -212,8 +228,10 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem) {
             ItemStack armor = player.getHeldItem(hand);
-            if (armor.getItem() instanceof ArmorMetaItem && player.inventory.armorInventory.get(getEquipmentSlot(player.getHeldItem(hand)).getIndex()).isEmpty() && !player.isSneaking()) {
-                player.inventory.armorInventory.set(getEquipmentSlot(player.getHeldItem(hand)).getIndex(), armor.copy());
+            if (armor.getItem() instanceof ArmorMetaItem && player.inventory.armorInventory
+                    .get(getEquipmentSlot(player.getHeldItem(hand)).getIndex()).isEmpty() && !player.isSneaking()) {
+                player.inventory.armorInventory.set(getEquipmentSlot(player.getHeldItem(hand)).getIndex(),
+                        armor.copy());
                 player.setHeldItem(hand, ItemStack.EMPTY);
                 player.playSound(new SoundEvent(new ResourceLocation("item.armor.equip_generic")), 1.0F, 1.0F);
                 return ActionResult.newResult(EnumActionResult.SUCCESS, armor);
@@ -224,23 +242,27 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     }
 
     @Override
-    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, @Nonnull DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor,
+                                                       @NotNull DamageSource source, double damage,
+                                                       EntityEquipmentSlot equipmentSlot) {
         int damageLimit = (int) Math.min(Integer.MAX_VALUE, burnTimer * 1.0 / 32 * 25.0);
         if (source.isUnblockable()) return new ISpecialArmor.ArmorProperties(0, 0.0, 0);
         return new ISpecialArmor.ArmorProperties(0, 0, damageLimit);
     }
 
     @Override
-    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
+    public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         return 0;
     }
 
     public class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour, ISubItemHandler {
 
         private static final IFilter<FluidStack> JETPACK_FUEL_FILTER = new IFilter<>() {
+
             @Override
-            public boolean test(@Nonnull FluidStack fluidStack) {
-                return RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull)) != null;
+            public boolean test(@NotNull FluidStack fluidStack) {
+                return RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(),
+                        Collections.singletonList(fluidStack), (Objects::nonNull)) != null;
             }
 
             @Override
@@ -258,8 +280,9 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         }
 
         @Override
-        public double getDurabilityForDisplay(@Nonnull ItemStack itemStack) {
-            IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        public double getDurabilityForDisplay(@NotNull ItemStack itemStack) {
+            IFluidHandlerItem fluidHandlerItem = itemStack
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null) return 0;
             IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
             FluidStack fluidStack = fluidTankProperties.getContents();
@@ -303,7 +326,8 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         @Override
         public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
             ItemStack copy = itemStack.copy();
-            IFluidHandlerItem fluidHandlerItem = copy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandlerItem = copy
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem != null) {
                 fluidHandlerItem.fill(Materials.Diesel.getFluid(tankCapacity), true);
                 subItems.add(copy);

@@ -10,7 +10,9 @@ import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -71,24 +73,30 @@ public class SteamRockBreaker extends SteamMetaTileEntity {
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(1, this, false);
+        return new NotifiableItemStackHandler(this, 1, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(4, this, true);
+        return new NotifiableItemStackHandler(this, 4, this, true);
     }
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
         return createUITemplate(player)
-                .slot(importItems, 0, 53, 34, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.DUST_OVERLAY_STEAM.get(isHighPressure))
+                .slot(importItems, 0, 53, 34, GuiTextures.SLOT_STEAM.get(isHighPressure),
+                        GuiTextures.DUST_OVERLAY_STEAM.get(isHighPressure))
                 .progressBar(workableHandler::getProgressPercent, 79, 35, 21, 18,
-                        GuiTextures.PROGRESS_BAR_MACERATE_STEAM.get(isHighPressure), MoveType.HORIZONTAL, workableHandler.getRecipeMap())
-                .slot(exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
-                .slot(exportItems, 1, 125, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
-                .slot(exportItems, 2, 107, 43, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
-                .slot(exportItems, 3, 125, 43, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
+                        GuiTextures.PROGRESS_BAR_MACERATE_STEAM.get(isHighPressure), MoveType.HORIZONTAL,
+                        workableHandler.getRecipeMap())
+                .slot(exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure),
+                        GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
+                .slot(exportItems, 1, 125, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure),
+                        GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
+                .slot(exportItems, 2, 107, 43, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure),
+                        GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
+                .slot(exportItems, 3, 125, 43, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure),
+                        GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
     }
 
@@ -109,13 +117,16 @@ public class SteamRockBreaker extends SteamMetaTileEntity {
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
-        getWorld().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, x, y + 0.4F, z, 0, 0, 0);
+    public void randomDisplayTick() {
+        if (isActive()) {
+            VanillaParticleEffects.defaultFrontEffect(this, 0.4F, EnumParticleTypes.SMOKE_NORMAL);
+        }
     }
 
     protected class SteamRockBreakerRecipeLogic extends RecipeLogicSteam {
 
-        public SteamRockBreakerRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, boolean isHighPressure, IFluidTank steamFluidTank, double conversionRate) {
+        public SteamRockBreakerRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, boolean isHighPressure,
+                                           IFluidTank steamFluidTank, double conversionRate) {
             super(tileEntity, recipeMap, isHighPressure, steamFluidTank, conversionRate);
         }
 

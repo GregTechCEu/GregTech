@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
@@ -11,13 +8,16 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,14 +34,18 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.function.Consumer;
 
-public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank>, IControllable {
+public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
+                                      implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
     private static final int INITIAL_INVENTORY_SIZE = 8000;
 
@@ -86,11 +90,13 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             this.workingEnabled = data.getBoolean("workingEnabled");
         }
         if (data.hasKey("ContainerInventory")) {
-            MetaTileEntityQuantumTank.legacyTankItemHandlerNBTReading(this, data.getCompoundTag("ContainerInventory"), 0, 1);
+            MetaTileEntityQuantumTank.legacyTankItemHandlerNBTReading(this, data.getCompoundTag("ContainerInventory"),
+                    0, 1);
         }
         if (isExportHatch) {
             this.locked = data.getBoolean("IsLocked");
-            this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) : null;
+            this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) :
+                    null;
         }
     }
 
@@ -164,7 +170,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         if (shouldRenderOverlay()) {
             SimpleOverlayRenderer renderer = isExportHatch ? Textures.PIPE_OUT_OVERLAY : Textures.PIPE_IN_OVERLAY;
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            SimpleOverlayRenderer overlay = isExportHatch ? Textures.FLUID_HATCH_OUTPUT_OVERLAY : Textures.FLUID_HATCH_INPUT_OVERLAY;
+            SimpleOverlayRenderer overlay = isExportHatch ? Textures.FLUID_HATCH_OUTPUT_OVERLAY :
+                    Textures.FLUID_HATCH_INPUT_OVERLAY;
             overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
@@ -185,12 +192,13 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new FilteredItemHandler(1).setFillPredicate(FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
+        return new FilteredItemHandler(this, 1).setFillPredicate(
+                FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(1);
+        return new GTItemStackHandler(this, 1);
     }
 
     @Override
@@ -230,15 +238,15 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                             this.lockedFluid.amount = 1;
                         }
                     })
-                    .setAlwaysShowFull(true).setDrawHoveringText(false);
+                            .setAlwaysShowFull(true).setDrawHoveringText(false);
 
             builder.image(7, 16, 81, 46, GuiTextures.DISPLAY)
                     .widget(new SlotWidget(exportItems, 0, 90, 44, true, false)
                             .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
                     .widget(new ToggleButtonWidget(7, 64, 18, 18,
                             GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
-                            .setTooltipText("gregtech.gui.fluid_lock.tooltip")
-                            .shouldUseBaseBackground());
+                                    .setTooltipText("gregtech.gui.fluid_lock.tooltip")
+                                    .shouldUseBaseBackground());
         } else {
             tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
                     .setAlwaysShowFull(true).setDrawHoveringText(false);
@@ -262,19 +270,14 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
 
     private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
         return (list) -> {
-            String fluidName = "";
-            // If there is no fluid in the tank
-            if (tankWidget.getFluidUnlocalizedName().isEmpty()) {
-                // But there is a locked fluid
-                if (this.lockedFluid != null) {
-                    fluidName = this.lockedFluid.getUnlocalizedName();
-                }
-            } else {
-                fluidName = tankWidget.getFluidUnlocalizedName();
+            TextComponentTranslation translation = tankWidget.getFluidTextComponent();
+            // If there is no fluid in the tank, but there is a locked fluid
+            if (translation == null) {
+                translation = GTUtility.getFluidTranslation(this.lockedFluid);
             }
 
-            if (!fluidName.isEmpty()) {
-                list.add(new TextComponentTranslation(fluidName));
+            if (translation != null) {
+                list.add(translation);
             }
         };
     }
@@ -299,7 +302,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         if (this.isExportHatch)
             tooltip.add(I18n.format("gregtech.machine.fluid_hatch.export.tooltip"));
         else
@@ -370,7 +374,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
 
         @Override
-        public boolean test(@Nonnull FluidStack fluidStack) {
+        public boolean test(@NotNull FluidStack fluidStack) {
             if (!isExportHatch) return true;
             return !locked || lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
         }

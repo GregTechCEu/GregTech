@@ -1,6 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Implement this interface in order to make a TileEntity into a block that provides a Cleanroom to other blocks
@@ -11,7 +11,7 @@ public interface ICleanroomProvider {
      * @param type the type to check
      * @return if the type is fulfilled
      */
-    boolean checkCleanroomType(@Nonnull CleanroomType type);
+    boolean checkCleanroomType(@NotNull CleanroomType type);
 
     /**
      * Sets the cleanroom's clean amount

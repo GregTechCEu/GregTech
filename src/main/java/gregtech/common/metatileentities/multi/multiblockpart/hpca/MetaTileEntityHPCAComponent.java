@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.hpca;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IHPCAComponentHatch;
@@ -12,13 +9,16 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -28,12 +28,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IHPCAComponentHatch>, IHPCAComponentHatch {
+public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblockPart implements
+                                                  IMultiblockAbilityPart<IHPCAComponentHatch>, IHPCAComponentHatch {
 
     private boolean damaged;
 
@@ -86,9 +91,13 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
             }
             if (renderer != null) {
                 EnumFacing facing = getFrontFacing();
-                // always render this outwards, in case it is not placed outwards in structure
-                if (controller != null) {
-                    facing = controller.getFrontFacing().rotateY();
+                // Always render this outwards in the HPCA, in case it is not placed outwards in structure.
+                // Check for HPCA specifically since these components could potentially be used in other multiblocks.
+                if (controller instanceof MetaTileEntityHPCA) {
+                    facing = RelativeDirection.RIGHT.getRelativeFacing(
+                            controller.getFrontFacing(),
+                            controller.getUpwardsFacing(),
+                            controller.isFlipped());
                 }
                 renderer.renderSided(facing, renderState, translation, pipeline);
             }
@@ -111,7 +120,8 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         if (isBridge()) {
             tooltip.add(I18n.format("gregtech.machine.hpca.component_type.bridge"));
         }
@@ -131,14 +141,16 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
                 tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_active_coolant",
                         provider.getMaxCoolantPerTick(), I18n.format(Materials.PCBCoolant.getUnlocalizedName())));
             } else {
-                    tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_passive"));
+                tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_passive"));
             }
-            tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_cooling", provider.getCoolingAmount()));
+            tooltip.add(
+                    I18n.format("gregtech.machine.hpca.component_type.cooler_cooling", provider.getCoolingAmount()));
         }
 
         if (this instanceof IHPCAComputationProvider provider) {
             tooltip.add(I18n.format("gregtech.machine.hpca.component_type.computation_cwut", provider.getCWUPerTick()));
-            tooltip.add(I18n.format("gregtech.machine.hpca.component_type.computation_cooling", provider.getCoolingPerTick()));
+            tooltip.add(I18n.format("gregtech.machine.hpca.component_type.computation_cooling",
+                    provider.getCoolingPerTick()));
         }
 
         if (canBeDamaged()) {
@@ -227,9 +239,11 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
         if (canBeDamaged() && isDamaged()) {
             if (isAdvanced()) {
-                dropsList.add(MetaBlocks.COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.ADVANCED_COMPUTER_CASING));
+                dropsList.add(MetaBlocks.COMPUTER_CASING
+                        .getItemVariant(BlockComputerCasing.CasingType.ADVANCED_COMPUTER_CASING));
             } else {
-                dropsList.add(MetaBlocks.COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING));
+                dropsList
+                        .add(MetaBlocks.COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING));
             }
         }
     }

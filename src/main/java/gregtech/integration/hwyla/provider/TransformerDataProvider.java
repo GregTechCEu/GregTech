@@ -5,15 +5,17 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaRegistrar;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
+
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -59,10 +61,11 @@ public class TransformerDataProvider extends ElectricContainerDataProvider {
 
     @NotNull
     @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig("gregtech.transformer")
-                || !(accessor.getTileEntity() instanceof IGregTechTileEntity gtte)
-                || !(gtte.getMetaTileEntity() instanceof MetaTileEntityTransformer)) {
+    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor,
+                                     IWailaConfigHandler config) {
+        if (!config.getConfig("gregtech.transformer") ||
+                !(accessor.getTileEntity() instanceof IGregTechTileEntity gtte) ||
+                !(gtte.getMetaTileEntity() instanceof MetaTileEntityTransformer)) {
             return tooltip;
         }
         if (accessor.getNBTData().hasKey("gregtech.MetaTileEntityTransformer")) {
@@ -91,10 +94,8 @@ public class TransformerDataProvider extends ElectricContainerDataProvider {
                     .append("A)");
 
             // Step Up/Step Down line
-            tooltip.add((isTransformUp
-                    ? I18n.format("gregtech.top.transform_up")
-                    : I18n.format("gregtech.top.transform_down"))
-                    + input + " -> " + output);
+            tooltip.add((isTransformUp ? I18n.format("gregtech.top.transform_up") :
+                    I18n.format("gregtech.top.transform_down")) + input + " -> " + output);
 
             // Input/Output side line
             EnumFacing hitFace = accessor.getSide();

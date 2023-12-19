@@ -1,12 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import appeng.api.config.Actionable;
-import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.data.IAEFluidStack;
-import appeng.me.GridAccessException;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -21,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,8 +33,16 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import appeng.api.config.Actionable;
+import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.me.GridAccessException;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +52,8 @@ import java.util.List;
  * @Description The Input Hatch that can auto fetch fluid ME storage network.
  * @Date 2023/4/20-21:21
  */
-public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IFluidTank> {
+public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
+                                        implements IMultiblockAbilityPart<IFluidTank> {
 
     public final static String FLUID_BUFFER_TAG = "FluidTanks";
     public final static String WORKING_TAG = "WorkingEnabled";
@@ -66,7 +69,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     @Override
     protected void initializeInventory() {
         this.aeFluidTanks = new ExportOnlyAEFluid[CONFIG_SIZE];
-        for (int i = 0; i < CONFIG_SIZE; i ++) {
+        for (int i = 0; i < CONFIG_SIZE; i++) {
             this.aeFluidTanks[i] = new ExportOnlyAEFluid(this, null, null, this.getController());
         }
         super.initializeInventory();
@@ -89,7 +92,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
                         IAEFluidStack exceedFluid = aeTank.exceedStack();
                         if (exceedFluid != null) {
                             long total = exceedFluid.getStackSize();
-                            IAEFluidStack notInserted = aeNetwork.injectItems(exceedFluid, Actionable.MODULATE, this.getActionSource());
+                            IAEFluidStack notInserted = aeNetwork.injectItems(exceedFluid, Actionable.MODULATE,
+                                    this.getActionSource());
                             if (notInserted != null && notInserted.getStackSize() > 0) {
                                 aeTank.drain((int) (total - notInserted.getStackSize()), true);
                                 continue;
@@ -100,14 +104,14 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
                         // Fill it
                         IAEFluidStack reqFluid = aeTank.requestStack();
                         if (reqFluid != null) {
-                            IAEFluidStack extracted = aeNetwork.extractItems(reqFluid, Actionable.MODULATE, this.getActionSource());
+                            IAEFluidStack extracted = aeNetwork.extractItems(reqFluid, Actionable.MODULATE,
+                                    this.getActionSource());
                             if (extracted != null) {
                                 aeTank.addStack(extracted);
                             }
                         }
                     }
-                } catch (GridAccessException ignore) {
-                }
+                } catch (GridAccessException ignore) {}
             }
         }
     }
@@ -125,8 +129,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
                     aeNetwork.injectItems(stock, Actionable.MODULATE, this.getActionSource());
                 }
             }
-        } catch (GridAccessException ignore) {
-        }
+        } catch (GridAccessException ignore) {}
         super.onRemoval();
     }
 
@@ -142,8 +145,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
                 .label(10, 5, getMetaFullName());
         // ME Network status
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                        I18n.format("gregtech.gui.me_network.online") :
-                        I18n.format("gregtech.gui.me_network.offline"),
+                I18n.format("gregtech.gui.me_network.online") :
+                I18n.format("gregtech.gui.me_network.offline"),
                 0xFFFFFFFF);
 
         // Config slots
@@ -192,7 +195,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         super.writeToNBT(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);
         NBTTagList tanks = new NBTTagList();
-        for (int i = 0; i < CONFIG_SIZE; i ++) {
+        for (int i = 0; i < CONFIG_SIZE; i++) {
             ExportOnlyAEFluid tank = this.aeFluidTanks[i];
             NBTTagCompound tankTag = new NBTTagCompound();
             tankTag.setInteger("slot", i);
@@ -228,7 +231,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.fluid_import.tooltip"));
@@ -245,7 +249,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         list.addAll(Arrays.asList(this.aeFluidTanks));
     }
 
-    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, INotifiableHandler, IFluidHandler {
+    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack>
+                                          implements IFluidTank, INotifiableHandler, IFluidHandler {
+
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
         private MetaTileEntity holder;
 
@@ -390,9 +396,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
                     this.holder,
                     this.config == null ? null : this.config.copy(),
                     this.stock == null ? null : this.stock.copy(),
-                    null
-            );
+                    null);
         }
     }
-
 }

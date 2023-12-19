@@ -6,25 +6,36 @@ import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTStringUtils;
+
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> {
 
     protected ItemStack researchStack;
     protected ItemStack dataStack;
+    protected boolean ignoreNBT;
     protected String researchId;
     protected int eut;
 
-    public T researchStack(@Nonnull ItemStack researchStack) {
+    public T researchStack(@NotNull ItemStack researchStack) {
         if (!researchStack.isEmpty()) {
             this.researchStack = researchStack;
+            this.ignoreNBT = true;
         }
         return (T) this;
     }
 
-    public T dataStack(@Nonnull ItemStack dataStack) {
+    public T researchStack(@NotNull ItemStack researchStack, boolean ignoreNBT) {
+        if (!researchStack.isEmpty()) {
+            this.researchStack = researchStack;
+            this.ignoreNBT = ignoreNBT;
+        }
+        return (T) this;
+    }
+
+    public T dataStack(@NotNull ItemStack dataStack) {
         if (!dataStack.isEmpty()) {
             this.dataStack = dataStack;
         }
@@ -55,7 +66,7 @@ public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> 
         }
 
         boolean foundBehavior = false;
-        if (dataStack.getItem() instanceof MetaItem<?> metaItem) {
+        if (dataStack.getItem() instanceof MetaItem<?>metaItem) {
             for (IItemBehaviour behaviour : metaItem.getBehaviours(dataStack)) {
                 if (behaviour instanceof IDataItem) {
                     foundBehavior = true;
@@ -98,7 +109,9 @@ public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> 
             validateResearchItem();
             if (duration <= 0) duration = DEFAULT_SCANNER_DURATION;
             if (eut <= 0) eut = DEFAULT_SCANNER_EUT;
-            return new AssemblyLineRecipeBuilder.ResearchRecipeEntry(researchId, researchStack, dataStack, duration, eut, 0);
+            return new AssemblyLineRecipeBuilder.ResearchRecipeEntry(researchId, researchStack, dataStack, ignoreNBT,
+                    duration,
+                    eut, 0);
         }
     }
 
@@ -146,7 +159,9 @@ public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> 
             int duration = totalCWU;
             if (eut <= 0) eut = DEFAULT_STATION_EUT;
 
-            return new AssemblyLineRecipeBuilder.ResearchRecipeEntry(researchId, researchStack, dataStack, duration, eut, cwut);
+            return new AssemblyLineRecipeBuilder.ResearchRecipeEntry(researchId, researchStack, dataStack, ignoreNBT,
+                    duration,
+                    eut, cwut);
         }
     }
 }

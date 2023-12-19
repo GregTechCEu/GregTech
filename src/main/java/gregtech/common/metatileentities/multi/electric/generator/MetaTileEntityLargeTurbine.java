@@ -17,6 +17,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -29,11 +30,13 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public class MetaTileEntityLargeTurbine extends FuelMultiblockController implements ITieredMetaTileEntity, IProgressBarMultiblock {
+public class MetaTileEntityLargeTurbine extends FuelMultiblockController
+                                        implements ITieredMetaTileEntity, IProgressBarMultiblock {
 
     public final int tier;
 
@@ -47,7 +50,9 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     public IFluidHandler exportFluidHandler;
 
-    public MetaTileEntityLargeTurbine(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int tier, IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer, boolean hasMufflerHatch, ICubeRenderer frontOverlay) {
+    public MetaTileEntityLargeTurbine(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int tier,
+                                      IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer,
+                                      boolean hasMufflerHatch, ICubeRenderer frontOverlay) {
         super(metaTileEntityId, recipeMap, tier);
         this.casingState = casingState;
         this.gearboxState = gearboxState;
@@ -61,7 +66,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityLargeTurbine(metaTileEntityId, recipeMap, tier, casingState, gearboxState, casingRenderer, hasMufflerHatch, frontOverlay);
+        return new MetaTileEntityLargeTurbine(metaTileEntityId, recipeMap, tier, casingState, gearboxState,
+                casingRenderer, hasMufflerHatch, frontOverlay);
     }
 
     public IRotorHolder getRotorHolder() {
@@ -79,7 +85,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     /**
      * @return true if turbine is formed and it's face is free and contains
-     * only air blocks in front of rotor holder
+     *         only air blocks in front of rotor holder
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isRotorFaceFree() {
@@ -98,10 +104,10 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     @Override
     protected long getMaxVoltage() {
-        long maxProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).getMaxVoltage();
+        long maxProduction = recipeMapWorkable.getMaxVoltage();
         long currentProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).boostProduction((int) maxProduction);
-        if (isActive() && currentProduction < maxProduction) {
-            return ((LargeTurbineWorkableHandler) recipeMapWorkable).getMaxVoltage();
+        if (isActive() && currentProduction <= maxProduction) {
+            return recipeMapWorkable.getMaxVoltage();
         } else {
             return 0L;
         }
@@ -119,7 +125,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
                         IRotorHolder rotorHolder = getRotorHolder();
                         if (rotorHolder.getRotorEfficiency() > 0) {
                             ITextComponent efficiencyInfo = TextComponentUtil.stringWithColor(
-                                    TextFormatting.AQUA, TextFormattingUtil.formatNumbers(rotorHolder.getTotalEfficiency()) + "%");
+                                    TextFormatting.AQUA,
+                                    TextFormattingUtil.formatNumbers(rotorHolder.getTotalEfficiency()) + "%");
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.turbine.efficiency",
@@ -155,13 +162,16 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         super.addErrorText(textList);
         if (isStructureFormed()) {
             if (!isRotorFaceFree()) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.turbine.obstructed"));
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.turbine.obstructed.desc"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
+                        "gregtech.multiblock.turbine.obstructed"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                        "gregtech.multiblock.turbine.obstructed.desc"));
             }
 
             IRotorHolder rotorHolder = getRotorHolder();
             if (rotorHolder.getRotorEfficiency() <= 0) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.turbine.no_rotor"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
+                        "gregtech.multiblock.turbine.no_rotor"));
             }
         }
     }
@@ -183,19 +193,20 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
                 .where('G', states(getGearBoxState()))
                 .where('C', states(getCasingState()))
                 .where('R', metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.ROTOR_HOLDER).stream()
-                        .filter(mte -> (mte instanceof ITieredMetaTileEntity) && (((ITieredMetaTileEntity) mte).getTier() >= tier))
+                        .filter(mte -> (mte instanceof ITieredMetaTileEntity) &&
+                                (((ITieredMetaTileEntity) mte).getTier() >= tier))
                         .toArray(MetaTileEntity[]::new))
-                        .addTooltips("gregtech.multiblock.pattern.clear_amount_3")
-                        .addTooltip("gregtech.multiblock.pattern.error.limited.1", GTValues.VN[tier])
-                        .setExactLimit(1)
-                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY)).setExactLimit(1))
+                                .addTooltips("gregtech.multiblock.pattern.clear_amount_3")
+                                .addTooltip("gregtech.multiblock.pattern.error.limited.1", GTValues.VN[tier])
+                                .setExactLimit(1)
+                                .or(abilities(MultiblockAbility.OUTPUT_ENERGY)).setExactLimit(1))
                 .where('H', states(getCasingState()).or(autoAbilities(false, true, false, false, true, true, true)))
                 .build();
     }
 
     @Override
     public String[] getDescription() {
-        return new String[]{I18n.format("gregtech.multiblock.large_turbine.description")};
+        return new String[] { I18n.format("gregtech.multiblock.large_turbine.description") };
     }
 
     public IBlockState getCasingState() {
@@ -213,7 +224,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return frontOverlay;
@@ -296,7 +307,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
             // Rotor speed
             IRotorHolder rotorHolder = getRotorHolder();
             if (rotorHolder == null || rotorHolder.getRotorEfficiency() <= 0) {
-                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.turbine.no_rotor"));
+                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                        "gregtech.multiblock.turbine.no_rotor"));
             } else {
                 int rotorSpeed = rotorHolder.getRotorSpeed();
                 int rotorMaxSpeed = rotorHolder.getMaxRotorHolderSpeed();
@@ -319,7 +331,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
             IRotorHolder rotorHolder = getRotorHolder();
             if (rotorHolder == null || rotorHolder.getRotorEfficiency() <= 0) {
                 // No rotor found
-                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.turbine.no_rotor"));
+                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                        "gregtech.multiblock.turbine.no_rotor"));
             } else {
                 int rotorDurability = rotorHolder.getRotorDurabilityPercent();
                 ITextComponent rotorInfo = TextComponentUtil.stringWithColor(

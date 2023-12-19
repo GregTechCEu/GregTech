@@ -1,6 +1,7 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -17,16 +18,14 @@ public class RegionRenderCacheBuilderVisitor extends MethodVisitor implements Op
             "initBloomRenderLayer",
             "([Lnet/minecraft/client/renderer/BufferBuilder;)V");
 
-
     public RegionRenderCacheBuilderVisitor(MethodVisitor mv) {
         super(ASM5, mv);
     }
 
-
     @Override
     public void visitInsn(int opcode) {
         if (opcode == RETURN) {
-            super.visitVarInsn(ALOAD,0);
+            super.visitVarInsn(ALOAD, 0);
             FIELD_WORLD_RENDERERS.visitFieldInsn(this, GETFIELD);
             METHOD_BLOOM_HOOKS.visitMethodInsn(this, INVOKESTATIC);
         }

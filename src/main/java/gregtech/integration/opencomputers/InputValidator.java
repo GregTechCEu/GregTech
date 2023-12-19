@@ -52,12 +52,14 @@ public class InputValidator {
             colorString = colorString.substring(2);
         }
         if (colorString.length() != 8) {
-            throw new IllegalArgumentException("String " + colorString + " is not valid, must be 8 characters long beyond \"0x\".");
+            throw new IllegalArgumentException(
+                    "String " + colorString + " is not valid, must be 8 characters long beyond \"0x\".");
         }
         try {
             Long.parseLong(colorString, 16);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("String " + colorString + " is not a valid code, must be only numbers (0-9) and letters (A-F).");
+            throw new IllegalArgumentException(
+                    "String " + colorString + " is not a valid code, must be only numbers (0-9) and letters (A-F).");
         }
         return colorString;
     }

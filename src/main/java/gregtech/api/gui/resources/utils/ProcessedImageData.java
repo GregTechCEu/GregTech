@@ -8,8 +8,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
-
 public class ProcessedImageData {
+
     private final int width;
     private final int height;
     private final Frame[] frames;
@@ -75,14 +75,14 @@ public class ProcessedImageData {
     }
 
     private static int uploadFrame(ByteBuffer buffer, boolean hasAlpha, int width, int height) {
-        int textureID = GL11.glGenTextures(); //Generate texture ID
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); //Bind texture ID
+        int textureID = GL11.glGenTextures(); // Generate texture ID
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); // Bind texture ID
 
-        //Setup wrap mode
+        // Setup wrap mode
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 
-        //Setup texture scaling filtering
+        // Setup texture scaling filtering
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
@@ -90,10 +90,11 @@ public class ProcessedImageData {
             GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
         }
 
-        //Send texel data to OpenGL
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasAlpha ? GL11.GL_RGBA8 : GL11.GL_RGB8, width, height, 0, hasAlpha ? GL11.GL_RGBA : GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
+        // Send texel data to OpenGL
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, hasAlpha ? GL11.GL_RGBA8 : GL11.GL_RGB8, width, height, 0,
+                hasAlpha ? GL11.GL_RGBA : GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
 
-        //Return the texture ID so we can bind it later again
+        // Return the texture ID so we can bind it later again
         return textureID;
     }
 
@@ -126,6 +127,7 @@ public class ProcessedImageData {
     }
 
     private static class Frame {
+
         private final ByteBuffer buffer;
         private final boolean hasAlpha;
 

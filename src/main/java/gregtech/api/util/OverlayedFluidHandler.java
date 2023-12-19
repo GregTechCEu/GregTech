@@ -2,11 +2,13 @@ package gregtech.api.util;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IMultipleTankHandler.MultiFluidTankEntry;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +20,7 @@ public class OverlayedFluidHandler {
 
     private final List<OverlayedTank> overlayedTanks;
 
-    public OverlayedFluidHandler(@Nonnull IMultipleTankHandler tank) {
+    public OverlayedFluidHandler(@NotNull IMultipleTankHandler tank) {
         this.overlayedTanks = new ArrayList<>();
         MultiFluidTankEntry[] entries = tank.getFluidTanks().toArray(new MultiFluidTankEntry[0]);
         Arrays.sort(entries, IMultipleTankHandler.ENTRY_COMPARATOR);
@@ -46,7 +48,7 @@ public class OverlayedFluidHandler {
      * @param amountToInsert Amount of the fluid to insert
      * @return Amount of fluid inserted into tanks
      */
-    public int insertFluid(@Nonnull FluidStack fluid, int amountToInsert) {
+    public int insertFluid(@NotNull FluidStack fluid, int amountToInsert) {
         if (amountToInsert <= 0) {
             return 0;
         }
@@ -130,7 +132,7 @@ public class OverlayedFluidHandler {
         @Nullable
         private FluidStack fluid;
 
-        OverlayedTank(@Nonnull IFluidTankProperties property, boolean allowSameFluidFill) {
+        OverlayedTank(@NotNull IFluidTankProperties property, boolean allowSameFluidFill) {
             this.property = property;
             this.allowSameFluidFill = allowSameFluidFill;
             reset();
@@ -150,7 +152,7 @@ public class OverlayedFluidHandler {
          * @param amount Amount of the fluid to insert
          * @return Amount of fluid inserted into this tank
          */
-        public int tryInsert(@Nonnull FluidStack fluid, int amount) {
+        public int tryInsert(@NotNull FluidStack fluid, int amount) {
             if (this.fluid == null) {
                 this.fluid = fluid.copy();
                 return this.fluid.amount = Math.min(this.property.getCapacity(), amount);

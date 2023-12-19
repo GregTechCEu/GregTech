@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IMultipleTankHandler;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -9,8 +10,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,14 +30,15 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
         this.allowSameFluidFill = allowSameFluidFill;
     }
 
-    public FluidTankList(boolean allowSameFluidFill, @Nonnull List<? extends IFluidTank> fluidTanks) {
+    public FluidTankList(boolean allowSameFluidFill, @NotNull List<? extends IFluidTank> fluidTanks) {
         ArrayList<MultiFluidTankEntry> list = new ArrayList<>();
         for (IFluidTank tank : fluidTanks) list.add(wrapIntoEntry(tank));
         this.fluidTanks = list.toArray(new MultiFluidTankEntry[0]);
         this.allowSameFluidFill = allowSameFluidFill;
     }
 
-    public FluidTankList(boolean allowSameFluidFill, @Nonnull IMultipleTankHandler parent, IFluidTank... additionalTanks) {
+    public FluidTankList(boolean allowSameFluidFill, @NotNull IMultipleTankHandler parent,
+                         IFluidTank... additionalTanks) {
         ArrayList<MultiFluidTankEntry> list = new ArrayList<>(parent.getFluidTanks());
         for (IFluidTank tank : additionalTanks) list.add(wrapIntoEntry(tank));
         this.fluidTanks = list.toArray(new MultiFluidTankEntry[0]);
@@ -46,7 +49,7 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
         return tank instanceof MultiFluidTankEntry entry ? entry : new MultiFluidTankEntry(this, tank);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<MultiFluidTankEntry> getFluidTanks() {
         return Collections.unmodifiableList(Arrays.asList(fluidTanks));
@@ -57,13 +60,13 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
         return fluidTanks.length;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public MultiFluidTankEntry getTankAt(int index) {
         return fluidTanks[index];
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IFluidTankProperties[] getTankProperties() {
         ArrayList<IFluidTankProperties> propertiesList = new ArrayList<>();

@@ -14,20 +14,20 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A recipe which inputs a single Fluid Container, and outputs the same Fluid Container with a new contained Fluid
  */
 public class FluidReplaceRecipe extends GTShapedOreRecipe {
 
-    public FluidReplaceRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+    public FluidReplaceRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
         super(isClearing, group, result, recipe);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+    public NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {
@@ -44,19 +44,22 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
+    public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
         IFluidHandlerItem recipeCap = output.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-        if (recipeCap == null) throw new IllegalStateException("FluidReplaceRecipe output did not have an IFluidHandlerItem capability");
+        if (recipeCap == null)
+            throw new IllegalStateException("FluidReplaceRecipe output did not have an IFluidHandlerItem capability");
 
         FluidStack outputFluid = recipeCap.drain(Integer.MAX_VALUE, false);
         if (outputFluid == null) throw new IllegalStateException("FluidReplaceRecipe output did not have a fluid");
-        if (outputFluid.amount != 1000) throw new IllegalStateException("FluidReplaceRecipe output must have exactly 1000mB of fluid");
+        if (outputFluid.amount != 1000)
+            throw new IllegalStateException("FluidReplaceRecipe output must have exactly 1000mB of fluid");
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack input = inv.getStackInSlot(i);
-            IFluidHandlerItem inputCap = input.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem inputCap = input.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                    null);
             if (inputCap == null) continue;
 
             // if the input has a fluid, it must only hold 1000mB
@@ -73,7 +76,8 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
                 isBucket = false;
             }
 
-            IFluidHandlerItem outputCap = output.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem outputCap = output.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                    null);
             if (outputCap == null) return ItemStack.EMPTY;
             outputCap.drain(Integer.MAX_VALUE, true); // ensure the output is empty
 
@@ -97,7 +101,8 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
         return ItemStack.EMPTY;
     }
 
-    private static boolean isBucket(@Nonnull Item item) {
-        return item == Items.WATER_BUCKET || item == Items.LAVA_BUCKET || item == Items.MILK_BUCKET || item == ForgeModContainer.getInstance().universalBucket;
+    private static boolean isBucket(@NotNull Item item) {
+        return item == Items.WATER_BUCKET || item == Items.LAVA_BUCKET || item == Items.MILK_BUCKET ||
+                item == ForgeModContainer.getInstance().universalBucket;
     }
 }

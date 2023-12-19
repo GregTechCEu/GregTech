@@ -1,12 +1,9 @@
 package gregtech.common.blocks;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.longdist.BlockLongDistancePipe;
-import gregtech.common.pipelike.fluidpipe.longdistance.LDFluidPipeType;
-import gregtech.common.pipelike.itempipe.longdistance.LDItemPipeType;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -14,17 +11,30 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityTESR;
-import gregtech.client.renderer.pipe.*;
+import gregtech.client.renderer.pipe.CableRenderer;
+import gregtech.client.renderer.pipe.FluidPipeRenderer;
+import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.renderer.pipe.LaserPipeRenderer;
+import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
-import gregtech.common.blocks.wood.*;
+import gregtech.common.blocks.wood.BlockGregFence;
+import gregtech.common.blocks.wood.BlockGregFenceGate;
+import gregtech.common.blocks.wood.BlockGregPlanks;
+import gregtech.common.blocks.wood.BlockGregWoodSlab;
+import gregtech.common.blocks.wood.BlockRubberDoor;
+import gregtech.common.blocks.wood.BlockRubberLeaves;
+import gregtech.common.blocks.wood.BlockRubberLog;
+import gregtech.common.blocks.wood.BlockRubberSapling;
+import gregtech.common.blocks.wood.BlockWoodenDoor;
 import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
@@ -32,10 +42,12 @@ import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
+import gregtech.common.pipelike.fluidpipe.longdistance.LDFluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
+import gregtech.common.pipelike.itempipe.longdistance.LDItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import gregtech.common.pipelike.laser.BlockLaserPipe;
@@ -44,12 +56,16 @@ import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 import gregtech.common.pipelike.optical.BlockOpticalPipe;
 import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.*;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFence;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockLog.EnumAxis;
+import net.minecraft.block.BlockSlab;
 import net.minecraft.block.BlockSlab.EnumBlockHalf;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -70,9 +86,20 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import java.util.*;
+import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -115,7 +142,8 @@ public class MetaBlocks {
 
     public static BlockAsphalt ASPHALT;
 
-    public static final EnumMap<StoneVariantBlock.StoneVariant, StoneVariantBlock> STONE_BLOCKS = new EnumMap<>(StoneVariantBlock.StoneVariant.class);
+    public static final EnumMap<StoneVariantBlock.StoneVariant, StoneVariantBlock> STONE_BLOCKS = new EnumMap<>(
+            StoneVariantBlock.StoneVariant.class);
 
     public static BlockFoam FOAM;
     public static BlockFoam REINFORCED_FOAM;
@@ -138,6 +166,10 @@ public class MetaBlocks {
     public static BlockWoodenDoor TREATED_WOOD_DOOR;
 
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
+
+    public static BlockColored METAL_SHEET;
+    public static BlockColored LARGE_METAL_SHEET;
+    public static BlockColored STUDS;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new Object2ObjectOpenHashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new Object2ObjectOpenHashMap<>();
@@ -284,19 +316,31 @@ public class MetaBlocks {
         BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
         BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
 
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
+        METAL_SHEET = new BlockColored(net.minecraft.block.material.Material.IRON, "metal_sheet", 2.0f, 5.0f,
+                SoundType.METAL, EnumDyeColor.WHITE);
+        METAL_SHEET.setRegistryName("metal_sheet");
+        LARGE_METAL_SHEET = new BlockColored(net.minecraft.block.material.Material.IRON, "large_metal_sheet", 2.0f,
+                5.0f, SoundType.METAL, EnumDyeColor.WHITE);
+        LARGE_METAL_SHEET.setRegistryName("large_metal_sheet");
+        STUDS = new BlockColored(net.minecraft.block.material.Material.CARPET, "studs", 1.5f, 2.5f, SoundType.CLOTH,
+                EnumDyeColor.BLACK);
+        STUDS.setRegistryName("studs");
+
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME),
+                MetaBlocks::createFrameBlock);
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST),
+                MetaBlocks::createSurfaceRockBlock);
 
         createGeneratedBlock(
-                material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM) || material.hasFlag(FORCE_GENERATE_BLOCK))
-                        && !OrePrefix.block.isIgnored(material),
+                material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM) ||
+                        material.hasFlag(FORCE_GENERATE_BLOCK)) && !OrePrefix.block.isIgnored(material),
                 MetaBlocks::createCompressedBlock);
-
 
         registerTileEntity();
 
-        //not sure if that's a good place for that, but i don't want to make a dedicated method for that
-        //could possibly override block methods, but since these props don't depend on state why not just use nice and simple vanilla method
+        // not sure if that's a good place for that, but i don't want to make a dedicated method for that
+        // could possibly override block methods, but since these props don't depend on state why not just use nice and
+        // simple vanilla method
         Blocks.FIRE.setFireInfo(RUBBER_LOG, 5, 5);
         Blocks.FIRE.setFireInfo(RUBBER_LEAVES, 30, 60);
         Blocks.FIRE.setFireInfo(PLANKS, 5, 20);
@@ -314,7 +358,8 @@ public class MetaBlocks {
     }
 
     /**
-     * Deterministically populates a category of MetaBlocks based on the unique registry ID of each qualifying Material.
+     * Deterministically populates a category of MetaBlocks based on the unique registry ID of each qualifying
+     * Material.
      *
      * @param materialPredicate a filter for determining if a Material qualifies for generation in the category.
      * @param blockGenerator    a function which accepts a Materials set to pack into a MetaBlock, and the ordinal this
@@ -384,16 +429,19 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerItemModels() {
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE),
+                stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             for (BlockCable cable : CABLES.get(registry.getModid())) cable.onModelRegister();
             for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) pipe.onModelRegister();
             for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid())) pipe.onModelRegister();
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> OpticalPipeRenderer.INSTANCE.getModelLocation());
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
+                    stack -> OpticalPipeRenderer.INSTANCE.getModelLocation());
         for (BlockLaserPipe pipe : LASER_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> LaserPipeRenderer.INSTANCE.getModelLocation());
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
+                    stack -> LaserPipeRenderer.INSTANCE.getModelLocation());
 
         registerItemModel(BOILER_CASING);
         registerItemModel(METAL_CASING);
@@ -427,10 +475,16 @@ public class MetaBlocks {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TREATED_WOOD_FENCE), 0,
                 new ModelResourceLocation(Objects.requireNonNull(TREATED_WOOD_FENCE.getRegistryName()), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_WOOD_FENCE_GATE), 0,
-                new ModelResourceLocation(Objects.requireNonNull(RUBBER_WOOD_FENCE_GATE.getRegistryName()), "inventory"));
+                new ModelResourceLocation(Objects.requireNonNull(RUBBER_WOOD_FENCE_GATE.getRegistryName()),
+                        "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TREATED_WOOD_FENCE_GATE), 0,
-                new ModelResourceLocation(Objects.requireNonNull(TREATED_WOOD_FENCE_GATE.getRegistryName()), "inventory"));
+                new ModelResourceLocation(Objects.requireNonNull(TREATED_WOOD_FENCE_GATE.getRegistryName()),
+                        "inventory"));
         registerItemModel(BRITTLE_CHARCOAL);
+
+        registerItemModel(METAL_SHEET);
+        registerItemModel(LARGE_METAL_SHEET);
+        registerItemModel(STUDS);
 
         BOILER_FIREBOX_CASING.onModelRegister();
         WIRE_COIL.onModelRegister();
@@ -449,7 +503,7 @@ public class MetaBlocks {
     @SideOnly(Side.CLIENT)
     private static void registerItemModel(Block block) {
         for (IBlockState state : block.getBlockState().getValidStates()) {
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block),
                     block.getMetaFromState(state),
                     new ModelResourceLocation(block.getRegistryName(),
@@ -462,7 +516,7 @@ public class MetaBlocks {
         for (IBlockState state : block.getBlockState().getValidStates()) {
             Map<IProperty<?>, Comparable<?>> stringProperties = new Object2ObjectOpenHashMap<>(state.getProperties());
             stringProperties.putAll(stateOverrides);
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block),
                     block.getMetaFromState(state),
                     new ModelResourceLocation(block.getRegistryName(),
@@ -504,9 +558,10 @@ public class MetaBlocks {
         }
 
         normalStateMapper = new StateMapperBase() {
-            @Nonnull
+
+            @NotNull
             @Override
-            protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+            protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
                 return new ModelResourceLocation(Block.REGISTRY.getNameForObject(state.getBlock()), "normal");
             }
         };
@@ -528,54 +583,63 @@ public class MetaBlocks {
         BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
         ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
 
-        blockColors.registerBlockColorHandler((s, w, p, i) ->
-                        s.getValue(BlockColored.COLOR).colorValue,
+        blockColors.registerBlockColorHandler(
+                (s, w, p, i) -> s.getValue(net.minecraft.block.BlockColored.COLOR).colorValue,
                 FOAM, REINFORCED_FOAM, PETRIFIED_FOAM, REINFORCED_PETRIFIED_FOAM);
 
         final int rubberLeavesColor = 0x98de4b;
 
-        blockColors.registerBlockColorHandler((s, w, p, i) ->
-                rubberLeavesColor, RUBBER_LEAVES);
-        itemColors.registerItemColorHandler((s, i) ->
-                rubberLeavesColor, RUBBER_LEAVES);
+        blockColors.registerBlockColorHandler((s, w, p, i) -> rubberLeavesColor, RUBBER_LEAVES);
+        itemColors.registerItemColorHandler((s, i) -> rubberLeavesColor, RUBBER_LEAVES);
 
         for (BlockCompressed block : COMPRESSED_BLOCKS) {
-            blockColors.registerBlockColorHandler((s, w, p, i) ->
-                    block.getGtMaterial(s).getMaterialRGB(), block);
-            itemColors.registerItemColorHandler((s, i) ->
-                    block.getGtMaterial(s).getMaterialRGB(), block);
+            blockColors.registerBlockColorHandler((s, w, p, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
+            itemColors.registerItemColorHandler((s, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
         }
 
         for (BlockFrame block : FRAME_BLOCKS) {
-            blockColors.registerBlockColorHandler((s, w, p, i) ->
-                    block.getGtMaterial(s).getMaterialRGB(), block);
-            itemColors.registerItemColorHandler((s, i) ->
-                    block.getGtMaterial(s).getMaterialRGB(), block);
+            blockColors.registerBlockColorHandler((s, w, p, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
+            itemColors.registerItemColorHandler((s, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
         }
 
         for (BlockSurfaceRock block : SURFACE_ROCK_BLOCKS) {
-            blockColors.registerBlockColorHandler((s, w, p, i) ->
-                    i == 1 ? block.getGtMaterial(s).getMaterialRGB() : -1, block);
+            blockColors.registerBlockColorHandler((s, w, p, i) -> i == 1 ? block.getGtMaterial(s).getMaterialRGB() : -1,
+                    block);
         }
 
         for (BlockOre block : ORES) {
-            blockColors.registerBlockColorHandler((s, w, p, i) ->
-                    i == 1 ? block.material.getMaterialRGB() : 0xFFFFFF, block);
-            itemColors.registerItemColorHandler((s, i) ->
-                    i == 1 ? block.material.getMaterialRGB() : 0xFFFFFF, block);
+            blockColors.registerBlockColorHandler((s, w, p, i) -> i == 1 ? block.material.getMaterialRGB() : 0xFFFFFF,
+                    block);
+            itemColors.registerItemColorHandler((s, i) -> i == 1 ? block.material.getMaterialRGB() : 0xFFFFFF, block);
         }
 
-        blockColors.registerBlockColorHandler((s, w, p, i) ->
-                MACHINE_CASING.getState(s) == BlockMachineCasing.MachineCasingType.ULV ?
-                        0xFFFFFF : ConfigHolder.client.defaultPaintingColor, MACHINE_CASING);
-        itemColors.registerItemColorHandler((s, i) ->
-                MACHINE_CASING.getState(s) == BlockMachineCasing.MachineCasingType.ULV ?
-                        0xFFFFFF : ConfigHolder.client.defaultPaintingColor, MACHINE_CASING);
+        blockColors.registerBlockColorHandler(
+                (s, w, p, i) -> MACHINE_CASING.getState(s) == BlockMachineCasing.MachineCasingType.ULV ?
+                        0xFFFFFF : ConfigHolder.client.defaultPaintingColor,
+                MACHINE_CASING);
+        itemColors.registerItemColorHandler(
+                (s, i) -> MACHINE_CASING.getState(s) == BlockMachineCasing.MachineCasingType.ULV ?
+                        0xFFFFFF : ConfigHolder.client.defaultPaintingColor,
+                MACHINE_CASING);
 
-        blockColors.registerBlockColorHandler((s, w, p, i) ->
-                ConfigHolder.client.defaultPaintingColor, HERMETIC_CASING);
-        itemColors.registerItemColorHandler((s, i) ->
-                ConfigHolder.client.defaultPaintingColor, HERMETIC_CASING);
+        blockColors.registerBlockColorHandler((s, w, p, i) -> ConfigHolder.client.defaultPaintingColor,
+                HERMETIC_CASING);
+        itemColors.registerItemColorHandler((s, i) -> ConfigHolder.client.defaultPaintingColor, HERMETIC_CASING);
+    }
+
+    public static void registerWalkingSpeedBonus() {
+        for (IBlockState state : ASPHALT.getBlockState().getValidStates()) {
+            BlockUtility.setWalkingSpeedBonus(state, BlockUtility.ASPHALT_WALKING_SPEED_BONUS);
+        }
+        for (IBlockState state : STUDS.getBlockState().getValidStates()) {
+            BlockUtility.setWalkingSpeedBonus(state, BlockUtility.STUDS_WALKING_SPEED_BONUS);
+        }
+        for (StoneVariantBlock block : STONE_BLOCKS.values()) {
+            BlockUtility.setWalkingSpeedBonus(block.getState(StoneVariantBlock.StoneType.CONCRETE_DARK),
+                    BlockUtility.ASPHALT_WALKING_SPEED_BONUS);
+            BlockUtility.setWalkingSpeedBonus(block.getState(StoneVariantBlock.StoneType.CONCRETE_LIGHT),
+                    BlockUtility.ASPHALT_WALKING_SPEED_BONUS);
+        }
     }
 
     public static void registerOreDict() {

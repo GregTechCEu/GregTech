@@ -1,6 +1,5 @@
 package gregtech.api.items;
 
-
 public enum OreDictNames {
 
     string,

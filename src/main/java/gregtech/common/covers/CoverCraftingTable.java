@@ -1,166 +1,141 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
+import gregtech.api.GregTechAPI;
+import gregtech.api.cover.*;
+import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.GTUtility;
+import gregtech.common.inventory.handlers.ToolItemStackHandler;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.base.Preconditions;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.storage.ICraftingStorage;
-import gregtech.client.renderer.texture.Textures;
-import gregtech.common.inventory.handlers.SingleItemStackHandler;
-import gregtech.common.inventory.handlers.ToolItemStackHandler;
-import gregtech.common.inventory.itemsource.ItemSources;
-import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
-import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
-import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
-import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
-import net.minecraft.world.World;
-import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static gregtech.api.metatileentity.MetaTileEntity.clearInventory;
-
 /**
- * Code from this class is mostly copied from {@link MetaTileEntityWorkbench}
+ * @deprecated Will be removed
  */
-public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, ITickable, ICraftingStorage {
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+@Deprecated
+public class CoverCraftingTable extends CoverBase implements ITickable {
+
+    private static final ResourceLocation STORAGE_COVER_LOCATION = GTUtility.gregtechId("storage");
+    private static @Nullable CoverDefinition storageCoverDefinition = null;
+    private static boolean attemptedStorageCoverLookup = false;
 
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
-    private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
-    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9);
-    private CraftingRecipeLogic recipeLogic = null;
-    private int itemsCrafted = 0;
-
-    public CoverCraftingTable(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
+    public CoverCraftingTable(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                              @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     @Override
-    public boolean canAttach() {
+    public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         return true;
     }
 
     @Override
-    public boolean shouldAutoConnect() {
+    public boolean shouldAutoConnectToPipes() {
         return false;
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.CRAFTING.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
-    }
-
-    private void createCraftingRecipeLogic() {
-        this.recipeLogic = new CraftingRecipeLogic(this);
-        this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
-        ItemSources itemSources = this.recipeLogic.getItemSourceList();
-        itemSources.addItemHandler(new InventoryItemSource(coverHolder.getWorld(), toolInventory, -2));
-        itemSources.addItemHandler(new InventoryItemSource(coverHolder.getWorld(), internalInventory, -1));
-        this.recipeLogic.checkNeighbourInventories(coverHolder.getPos());
-    }
-
-    @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!playerIn.world.isRemote) {
-            this.openUI((EntityPlayerMP) playerIn);
-        }
-        return EnumActionResult.SUCCESS;
-    }
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {}
 
     @Override
     public void update() {
-        if (!coverHolder.getWorld().isRemote && recipeLogic == null) {
-            createCraftingRecipeLogic();
+        if (getWorld().isRemote) {
+            return;
         }
-        if (!coverHolder.getWorld().isRemote) {
-            getRecipeLogic().update();
+        CoverableView coverableView = getCoverableView();
+        if (coverableView instanceof CoverHolder holder) {
+            EnumFacing coverSide = getAttachedSide();
+            holder.removeCover(coverSide);
+
+            if (!attemptedStorageCoverLookup) {
+                storageCoverDefinition = GregTechAPI.COVER_REGISTRY.getObject(STORAGE_COVER_LOCATION);
+                attemptedStorageCoverLookup = true;
+            }
+
+            if (storageCoverDefinition == null) {
+                // Could not find a storage cover to convert to
+                // so drop contents on the ground instead
+                dropContents();
+                return;
+            }
+
+            Cover cover = storageCoverDefinition.createCover(holder, coverSide);
+            if (!holder.canPlaceCoverOnSide(coverSide) || !cover.canAttach(holder, coverSide)) {
+                // could not attach for some reason
+                // so drop contents on the ground instead
+                dropContents();
+                return;
+            }
+
+            holder.addCover(coverSide, cover);
+            cover.onAttachment(holder, coverSide, null, storageCoverDefinition.getDropItemStack());
+
+            IItemHandler itemHandler;
+            if (cover instanceof CoverStorage coverStorage) {
+                itemHandler = coverStorage.getStorageHandler();
+            } else {
+                itemHandler = null;
+            }
+
+            if (itemHandler == null) {
+                // could not retrieve item handler from the cover
+                // so drop contents on the ground instead
+                dropContents();
+                return;
+            }
+
+            // transfer what can fit into the storage cover
+            GTTransferUtils.moveInventoryItems(internalInventory, itemHandler);
+            GTTransferUtils.moveInventoryItems(toolInventory, itemHandler);
+
+            // drop everything else on the ground
+            dropContents();
         }
     }
 
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
-        clearInventory(itemBuffer, internalInventory);
-        clearInventory(itemBuffer, toolInventory);
-    }
-
-    private CraftingRecipeLogic getRecipeLogic() {
-        Preconditions.checkState(coverHolder.getWorld() != null, "getRecipeResolver called too early");
-        return recipeLogic;
+    private void dropContents() {
+        dropInventoryContents(internalInventory);
+        dropInventoryContents(toolInventory);
     }
 
     @Override
-    public List<ItemStack> getDrops() {
-        List<ItemStack> itemStacks = new ArrayList<>();
-        for (int i = 0; i < internalInventory.getSlots(); i++) {
-            itemStacks.add(internalInventory.getStackInSlot(i));
-        }
-        for (int i = 0; i < toolInventory.getSlots(); i++) {
-            itemStacks.add(toolInventory.getStackInSlot(i));
-        }
-        itemStacks.add(getPickItem());
-
-        return itemStacks;
+    public @NotNull List<ItemStack> getDrops() {
+        return Collections.emptyList();
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
-                .bindPlayerInventory(player.inventory, 139);
-        builder.label(5, 5, "metaitem.cover.crafting.name");
-
-        builder.widget(MetaTileEntityWorkbench.createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
-
-        return builder.build(this, player);
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setTag("CraftingGridInventory", craftingGrid.serializeNBT());
         tagCompound.setTag("ToolInventory", toolInventory.serializeNBT());
         tagCompound.setTag("InternalInventory", internalInventory.serializeNBT());
-        tagCompound.setInteger("ItemsCrafted", recipeLogic == null ? itemsCrafted : recipeLogic.getItemsCraftedAmount());
-        tagCompound.setTag("RecipeMemory", recipeMemory.serializeNBT());
-
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.craftingGrid.deserializeNBT(tagCompound.getCompoundTag("CraftingGridInventory"));
         this.toolInventory.deserializeNBT(tagCompound.getCompoundTag("ToolInventory"));
         this.internalInventory.deserializeNBT(tagCompound.getCompoundTag("InternalInventory"));
-        this.itemsCrafted = tagCompound.getInteger("ItemsCrafted");
-        this.recipeMemory.deserializeNBT(tagCompound.getCompoundTag("RecipeMemory"));
-    }
-
-    @Override
-    public World getWorld() {
-        return coverHolder.getWorld();
-    }
-
-    @Override
-    public ItemStackHandler getCraftingGrid() {
-        return craftingGrid;
-    }
-
-    @Override
-    public CraftingRecipeMemory getRecipeMemory() {
-        return recipeMemory;
     }
 }

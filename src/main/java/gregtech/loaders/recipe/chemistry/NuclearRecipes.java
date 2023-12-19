@@ -8,7 +8,6 @@ import static gregtech.api.unification.ore.OrePrefix.dust;
 public class NuclearRecipes {
 
     public static void init() {
-
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dust, Uraninite, 3)
                 .fluidInputs(HydrofluoricAcid.getFluid(4000))
@@ -34,6 +33,5 @@ public class NuclearRecipes {
                 .output(dust, Uranium238)
                 .fluidOutputs(Fluorine.getFluid(6000))
                 .buildAndRegister();
-
     }
 }

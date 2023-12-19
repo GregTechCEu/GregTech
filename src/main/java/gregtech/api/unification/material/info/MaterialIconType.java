@@ -1,15 +1,17 @@
 package gregtech.api.unification.material.info;
 
+import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.util.GTUtility;
+
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import gregtech.api.gui.resources.ResourceHelper;
-import gregtech.api.util.GTUtility;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,7 +86,9 @@ public class MaterialIconType {
     public static final MaterialIconType turbineBlade = new MaterialIconType("turbineBlade");
 
     // BLOCK TEXTURES
-    public static final MaterialIconType fluid = new MaterialIconType("fluid");
+    public static final MaterialIconType liquid = new MaterialIconType("liquid");
+    public static final MaterialIconType gas = new MaterialIconType("gas");
+    public static final MaterialIconType plasma = new MaterialIconType("plasma");
     public static final MaterialIconType ore = new MaterialIconType("ore");
     public static final MaterialIconType oreSmall = new MaterialIconType("oreSmall");
 
@@ -97,9 +101,12 @@ public class MaterialIconType {
     public static final MaterialIconType crop = new MaterialIconType("crop");
     public static final MaterialIconType essence = new MaterialIconType("essence");
 
-    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> ITEM_MODEL_CACHE = HashBasedTable.create();
-    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_TEXTURE_CACHE = HashBasedTable.create();
-    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_MODEL_CACHE = HashBasedTable.create();
+    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> ITEM_MODEL_CACHE = HashBasedTable
+            .create();
+    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_TEXTURE_CACHE = HashBasedTable
+            .create();
+    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_MODEL_CACHE = HashBasedTable
+            .create();
 
     private static final String BLOCK_TEXTURE_PATH_FULL = "textures/blocks/material_sets/%s/%s.png";
     private static final String BLOCK_TEXTURE_PATH = "blocks/material_sets/%s/%s";
@@ -115,23 +122,24 @@ public class MaterialIconType {
 
     public MaterialIconType(String name) {
         this.name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
-        Preconditions.checkArgument(!ICON_TYPES.containsKey(this.name), "MaterialIconType " + this.name + " already registered!");
+        Preconditions.checkArgument(!ICON_TYPES.containsKey(this.name),
+                "MaterialIconType " + this.name + " already registered!");
         this.id = idCounter++;
         ICON_TYPES.put(this.name, this);
     }
 
-    @Nonnull
-    public ResourceLocation getBlockTexturePath(@Nonnull MaterialIconSet materialIconSet) {
+    @NotNull
+    public ResourceLocation getBlockTexturePath(@NotNull MaterialIconSet materialIconSet) {
         return recurseIconsetPath(materialIconSet, BLOCK_TEXTURE_CACHE, BLOCK_TEXTURE_PATH_FULL, BLOCK_TEXTURE_PATH);
     }
 
-    @Nonnull
-    public ResourceLocation getItemModelPath(@Nonnull MaterialIconSet materialIconSet) {
+    @NotNull
+    public ResourceLocation getItemModelPath(@NotNull MaterialIconSet materialIconSet) {
         return recurseIconsetPath(materialIconSet, ITEM_MODEL_CACHE, ITEM_MODEL_PATH_FULL, ITEM_MODEL_PATH);
     }
 
-    @Nonnull
-    public ResourceLocation getBlockModelPath(@Nonnull MaterialIconSet materialIconSet) {
+    @NotNull
+    public ResourceLocation getBlockModelPath(@NotNull MaterialIconSet materialIconSet) {
         return recurseIconsetPath(materialIconSet, BLOCK_MODEL_CACHE, BLOCK_MODEL_PATH_FULL, BLOCK_MODEL_PATH);
     }
 
@@ -144,10 +152,10 @@ public class MaterialIconType {
      * @param path     the abbreviated path to the asset with formatting (%s) for IconSet and IconType names
      * @return the location of the asset
      */
-    @Nonnull
-    public ResourceLocation recurseIconsetPath(@Nonnull MaterialIconSet iconSet,
-                                               @Nonnull Table<MaterialIconType, MaterialIconSet, ResourceLocation> cache,
-                                               @Nonnull String fullPath, @Nonnull String path) {
+    @NotNull
+    public ResourceLocation recurseIconsetPath(@NotNull MaterialIconSet iconSet,
+                                               @NotNull Table<MaterialIconType, MaterialIconSet, ResourceLocation> cache,
+                                               @NotNull String fullPath, @NotNull String path) {
         if (cache.contains(this, iconSet)) {
             return cache.get(this, iconSet);
         }

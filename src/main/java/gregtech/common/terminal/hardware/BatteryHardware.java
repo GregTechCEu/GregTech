@@ -9,12 +9,14 @@ import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.IHardwareCapability;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -27,14 +29,15 @@ import java.util.function.BiConsumer;
  * @Description:
  */
 public class BatteryHardware extends Hardware implements IElectricItem, IHardwareCapability {
+
     protected final List<BiConsumer<ItemStack, Long>> listeners = new ArrayList<>();
 
-    public BatteryHardware() {
-    }
+    public BatteryHardware() {}
 
     @Override
     public boolean isHardwareAdequate(Hardware demand) {
-        return demand instanceof BatteryHardware && ((BatteryHardware) demand).getTier() <= this.getTier() && this.getCharge() > 0;
+        return demand instanceof BatteryHardware && ((BatteryHardware) demand).getTier() <= this.getTier() &&
+                this.getCharge() > 0;
     }
 
     @Override
@@ -127,7 +130,8 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
     }
 
     @Override
-    public long discharge(long amount, int chargerTier, boolean ignoreTransferLimit, boolean externally, boolean simulate) {
+    public long discharge(long amount, int chargerTier, boolean ignoreTransferLimit, boolean externally,
+                          boolean simulate) {
         if (provider.getItemStack().getCount() != 1) {
             return 0L;
         }
@@ -151,14 +155,15 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability) {
+    public boolean hasCapability(@NotNull Capability<?> capability) {
         return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability) {
-        return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ? GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM.cast(this) : null;
+    public <T> T getCapability(@NotNull Capability<T> capability) {
+        return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ?
+                GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM.cast(this) : null;
     }
 
     @Override

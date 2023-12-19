@@ -6,8 +6,7 @@ import java.awt.*;
 
 public class GradientUtil {
 
-    private GradientUtil() {
-    }
+    private GradientUtil() {}
 
     public static Pair<Color, Color> getGradient(Color rgb, int luminanceDifference) {
         float[] hsl = RGBtoHSL(rgb);
@@ -64,7 +63,7 @@ public class GradientUtil {
             s = (max - min) / (2 - max - min);
         }
 
-        return new float[] {h, s * 100, l * 100};
+        return new float[] { h, s * 100, l * 100 };
     }
 
     public static Color toRGB(float[] hsv) {
@@ -109,10 +108,10 @@ public class GradientUtil {
             return p + ((q - p) * 6 * h);
         }
         if (2 * h < 1) {
-            return  q;
+            return q;
         }
         if (3 * h < 2) {
-            return p + ( (q - p) * 6 * ((2.0F / 3.0F) - h) );
+            return p + ((q - p) * 6 * ((2.0F / 3.0F) - h));
         }
         return p;
     }

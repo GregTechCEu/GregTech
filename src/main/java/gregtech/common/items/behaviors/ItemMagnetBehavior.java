@@ -6,6 +6,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.integration.baubles.BaublesModule;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -28,7 +29,8 @@ import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class ItemMagnetBehavior implements IItemBehaviour {
@@ -43,9 +45,10 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, @Nonnull EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, @NotNull EntityPlayer player, EnumHand hand) {
         if (!player.world.isRemote && player.isSneaking()) {
-            player.sendStatusMessage(new TextComponentTranslation(toggleActive(player.getHeldItem(hand)) ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"), true);
+            player.sendStatusMessage(new TextComponentTranslation(toggleActive(player.getHeldItem(hand)) ?
+                    "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"), true);
         }
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
@@ -69,7 +72,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         stack.getTagCompound().setBoolean("IsActive", !isActive);
         return !isActive;
     }
@@ -78,13 +81,16 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     public void onUpdate(ItemStack stack, Entity entity) {
         // Adapted logic from Draconic Evolution
         // https://github.com/Draconic-Inc/Draconic-Evolution/blob/1.12.2/src/main/java/com/brandon3055/draconicevolution/items/tools/Magnet.java
-        if (!entity.isSneaking() && entity.ticksExisted % 10 == 0 && isActive(stack) && entity instanceof EntityPlayer player) {
+        if (!entity.isSneaking() && entity.ticksExisted % 10 == 0 && isActive(stack) &&
+                entity instanceof EntityPlayer player) {
             World world = entity.getEntityWorld();
             if (!drainEnergy(true, stack, energyDraw)) {
                 return;
             }
 
-            List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(entity.posX, entity.posY, entity.posZ, entity.posX, entity.posY, entity.posZ).grow(range, range, range));
+            List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class,
+                    new AxisAlignedBB(entity.posX, entity.posY, entity.posZ, entity.posX, entity.posY, entity.posZ)
+                            .grow(range, range, range));
 
             boolean didMoveEntity = false;
             for (EntityItem itemEntity : items) {
@@ -97,7 +103,8 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                     continue;
                 }
 
-                if (itemEntity.getThrower() != null && itemEntity.getThrower().equals(entity.getName()) && itemEntity.pickupDelay > 0) {
+                if (itemEntity.getThrower() != null && itemEntity.getThrower().equals(entity.getName()) &&
+                        itemEntity.pickupDelay > 0) {
                     continue;
                 }
 
@@ -111,16 +118,21 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                         itemEntity.pickupDelay = 0;
                     }
                     itemEntity.motionX = itemEntity.motionY = itemEntity.motionZ = 0;
-                    itemEntity.setPosition(entity.posX - 0.2 + (world.rand.nextDouble() * 0.4), entity.posY - 0.6, entity.posZ - 0.2 + (world.rand.nextDouble() * 0.4));
+                    itemEntity.setPosition(entity.posX - 0.2 + (world.rand.nextDouble() * 0.4), entity.posY - 0.6,
+                            entity.posZ - 0.2 + (world.rand.nextDouble() * 0.4));
                     didMoveEntity = true;
                 }
             }
 
             if (didMoveEntity) {
-                world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.1F, 0.5F * ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 2F));
+                world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP,
+                        SoundCategory.PLAYERS, 0.1F,
+                        0.5F * ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 2F));
             }
 
-            List<EntityXPOrb> xp = world.getEntitiesWithinAABB(EntityXPOrb.class, new AxisAlignedBB(entity.posX, entity.posY, entity.posZ, entity.posX, entity.posY, entity.posZ).grow(4, 4, 4));
+            List<EntityXPOrb> xp = world.getEntitiesWithinAABB(EntityXPOrb.class,
+                    new AxisAlignedBB(entity.posX, entity.posY, entity.posZ, entity.posX, entity.posY, entity.posZ)
+                            .grow(4, 4, 4));
 
             for (EntityXPOrb orb : xp) {
                 if (!world.isRemote && !orb.isDead) {
@@ -128,7 +140,9 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                         if (MinecraftForge.EVENT_BUS.post(new PlayerPickupXpEvent(player, orb))) {
                             continue;
                         }
-                        world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.1F, 0.5F * ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.8F));
+                        world.playSound(null, entity.posX, entity.posY, entity.posZ,
+                                SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.1F,
+                                0.5F * ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.8F));
                         player.onItemPickup(orb, 1);
                         player.addExperience(orb.xpValue);
                         orb.setDead();
@@ -144,7 +158,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     }
 
     @SubscribeEvent
-    public void onItemToss(@Nonnull ItemTossEvent event) {
+    public void onItemToss(@NotNull ItemTossEvent event) {
         if (event.getPlayer() == null) return;
 
         IInventory inventory = event.getPlayer().inventory;
@@ -161,8 +175,8 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         }
     }
 
-    private boolean isMagnet(@Nonnull ItemStack stack) {
-        if (stack.getItem() instanceof MetaItem<?> metaItem) {
+    private boolean isMagnet(@NotNull ItemStack stack) {
+        if (stack.getItem() instanceof MetaItem<?>metaItem) {
             for (var behavior : metaItem.getBehaviours(stack)) {
                 if (behavior instanceof ItemMagnetBehavior) {
                     return true;
@@ -172,7 +186,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         return false;
     }
 
-    private static boolean drainEnergy(boolean simulate, @Nonnull ItemStack stack, long amount) {
+    private static boolean drainEnergy(boolean simulate, @NotNull ItemStack stack, long amount) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem == null)
             return false;

@@ -2,16 +2,15 @@ package gregtech.common.pipelike.optical;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -22,29 +21,28 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProperties, WorldOpticalPipeNet> {
 
     private final OpticalPipeType pipeType;
     private final OpticalPipeProperties properties;
 
-    public BlockOpticalPipe(@Nonnull OpticalPipeType pipeType) {
+    public BlockOpticalPipe(@NotNull OpticalPipeType pipeType) {
         this.pipeType = pipeType;
-        this.properties = new OpticalPipeProperties();
+        this.properties = OpticalPipeProperties.INSTANCE;
         setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
 
     @Override
-    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(@Nonnull World world, BlockPos blockPos) {
+    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(@NotNull World world, BlockPos blockPos) {
         return OpticalPipeRenderer.INSTANCE.getParticleTexture((TileEntityOpticalPipe) world.getTileEntity(blockPos));
     }
 
@@ -64,14 +62,14 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public OpticalPipeProperties createProperties(@Nonnull IPipeTile<OpticalPipeType, OpticalPipeProperties> pipeTile) {
+    public OpticalPipeProperties createProperties(@NotNull IPipeTile<OpticalPipeType, OpticalPipeProperties> pipeTile) {
         OpticalPipeType pipeType = pipeTile.getPipeType();
         if (pipeType == null) return getFallbackType();
         return this.pipeType.modifyProperties(properties);
     }
 
     @Override
-    public OpticalPipeProperties createItemProperties(@Nonnull ItemStack itemStack) {
+    public OpticalPipeProperties createItemProperties(@NotNull ItemStack itemStack) {
         if (itemStack.getItem() instanceof ItemBlockOpticalPipe pipe) {
             return ((BlockOpticalPipe) pipe.getBlock()).properties;
         }
@@ -85,11 +83,11 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
 
     @Override
     protected OpticalPipeProperties getFallbackType() {
-        return new OpticalPipeProperties();
+        return OpticalPipeProperties.INSTANCE;
     }
 
     @Override
-    public OpticalPipeType getItemPipeType(@Nonnull ItemStack itemStack) {
+    public OpticalPipeType getItemPipeType(@NotNull ItemStack itemStack) {
         if (itemStack.getItem() instanceof ItemBlockOpticalPipe pipe) {
             return ((BlockOpticalPipe) pipe.getBlock()).pipeType;
         }
@@ -97,27 +95,30 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public void setTileEntityData(@Nonnull TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> pipeTile, ItemStack itemStack) {
+    public void setTileEntityData(@NotNull TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> pipeTile,
+                                  ItemStack itemStack) {
         pipeTile.setPipeData(this, pipeType);
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
         items.add(new ItemStack(this, 1, this.pipeType.ordinal()));
     }
 
     @Override
-    protected boolean isPipeTool(@Nonnull ItemStack stack) {
+    protected boolean isPipeTool(@NotNull ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side, IPipeTile<OpticalPipeType, OpticalPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side,
+                                   IPipeTile<OpticalPipeType, OpticalPipeProperties> sideTile) {
         return selfTile instanceof TileEntityOpticalPipe && sideTile instanceof TileEntityOpticalPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side, @Nullable TileEntity tile) {
+    public boolean canPipeConnectToBlock(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side,
+                                         @Nullable TileEntity tile) {
         if (tile == null) return false;
         if (tile.hasCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, side.getOpposite())) return true;
         return tile.hasCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER, side.getOpposite());
@@ -133,17 +134,10 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
-    }
-
-    @Override
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
         return OpticalPipeRenderer.INSTANCE.getBlockRenderType();
     }
 }

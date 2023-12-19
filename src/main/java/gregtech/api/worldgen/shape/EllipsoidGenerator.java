@@ -1,8 +1,10 @@
 package gregtech.api.worldgen.shape;
 
-import com.google.gson.JsonObject;
 import gregtech.api.worldgen.config.OreConfigUtils;
+
 import net.minecraft.util.math.Vec3i;
+
+import com.google.gson.JsonObject;
 
 import java.util.Random;
 
@@ -11,8 +13,7 @@ public class EllipsoidGenerator extends ShapeGenerator {
     private int radiusMin;
     private int radiusMax;
 
-    public EllipsoidGenerator() {
-    }
+    public EllipsoidGenerator() {}
 
     @Override
     public void loadFromConfig(JsonObject object) {

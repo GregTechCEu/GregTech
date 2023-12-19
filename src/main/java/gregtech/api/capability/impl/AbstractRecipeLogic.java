@@ -16,6 +16,7 @@ import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -28,8 +29,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +112,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * @return the maximum voltage the machine can use/handle for recipe searching
      */
-    protected abstract long getMaxVoltage();
+    public abstract long getMaxVoltage();
 
     /**
      *
@@ -155,7 +157,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public final String getName() {
         // this is final so machines are not accidentally given multiple workable instances
@@ -185,7 +187,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 if (progressTime > 0) {
                     updateRecipeProgress();
                 }
-                //check everything that would make a recipe never start here.
+                // check everything that would make a recipe never start here.
                 if (progressTime == 0 && shouldSearchForRecipes()) {
                     trySearchNewRecipe();
                 }
@@ -205,6 +207,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @return the current RecipeMap of the logic
      */
+    @Override
     @Nullable
     public RecipeMap<?> getRecipeMap() {
         return this.recipeMap;
@@ -265,8 +268,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
         if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
 
-        //the change in inputs (especially by removal of ingredient by the player) might change the current valid recipe.
-        //and if the previous recipe produced fluids and the new recipe doesn't, then outputs are not full.
+        // the change in inputs (especially by removal of ingredient by the player) might change the current valid
+        // recipe.
+        // and if the previous recipe produced fluids and the new recipe doesn't, then outputs are not full.
         this.isOutputsFull = false;
         this.invalidInputsForRecipes = false;
         this.metaTileEntity.getNotifiedItemInputList().clear();
@@ -277,6 +281,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Invalidate the current state of input inventory contents
      */
+    @Override
     public void invalidateInputs() {
         this.invalidInputsForRecipes = true;
     }
@@ -284,6 +289,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Invalidate the current state of output inventory contents
      */
+    @Override
     public void invalidateOutputs() {
         this.isOutputsFull = true;
     }
@@ -293,6 +299,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @param amount the amount to set
      */
+    @Override
     public void setParallelRecipesPerformed(int amount) {
         this.parallelRecipesPerformed = amount;
     }
@@ -306,7 +313,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected void updateRecipeProgress() {
         if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
             drawEnergy(recipeEUt, false);
-            //as recipe starts with progress on 1 this has to be > only not => to compensate for it
+            // as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
                 completeRecipe();
             }
@@ -314,8 +321,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 this.hasNotEnoughEnergy = false;
             }
         } else if (recipeEUt > 0) {
-            //only set hasNotEnoughEnergy if this recipe is consuming recipe
-            //generators always have enough energy
+            // only set hasNotEnoughEnergy if this recipe is consuming recipe
+            // generators always have enough energy
             this.hasNotEnoughEnergy = true;
             decreaseProgress();
         }
@@ -325,7 +332,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * Decrease the recipe progress time in the case that some state was not right, like available EU to drain.
      */
     protected void decreaseProgress() {
-        //if current progress value is greater than 2, decrement it by 2
+        // if current progress value is greater than 2, decrement it by 2
         if (progressTime >= 2) {
             if (ConfigHolder.machines.recipeProgressLowEnergy) {
                 this.progressTime = 1;
@@ -395,7 +402,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to check
      * @return true if the recipe is allowed to be used, else false
      */
-    public boolean checkRecipe(@Nonnull Recipe recipe) {
+    public boolean checkRecipe(@NotNull Recipe recipe) {
         return checkCleanroomRequirement(recipe);
     }
 
@@ -403,7 +410,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to check
      * @return if the cleanroom requirement is met
      */
-    protected boolean checkCleanroomRequirement(@Nonnull Recipe recipe) {
+    protected boolean checkCleanroomRequirement(@NotNull Recipe recipe) {
         CleanroomType requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
         if (requiredType == null) return true;
 
@@ -433,11 +440,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe was successfully prepared, else false
      */
     protected boolean prepareRecipe(Recipe recipe) {
-        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
+        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
+                metaTileEntity.getFluidOutputLimit());
 
         // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
-                this,
                 recipe,
                 getInputInventory(),
                 getInputTank(),
@@ -464,6 +471,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Set the parallel limit
+     * 
      * @param amount the amount to set
      */
     public void setParallelLimit(int amount) {
@@ -473,8 +481,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * @return the parallel logic type to use for recipes
      */
-    @Nonnull
-    public Enum<ParallelLogicType> getParallelLogicType() {
+    @Override
+    @NotNull
+    public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY;
     }
 
@@ -482,7 +491,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param tanks the tanks to check
      * @return the minimum fluid capacity of the tanks
      */
-    protected static int getMinTankCapacity(@Nonnull IMultipleTankHandler tanks) {
+    protected static int getMinTankCapacity(@NotNull IMultipleTankHandler tanks) {
         if (tanks.getTanks() == 0) {
             return 0;
         }
@@ -495,8 +504,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Find a recipe using inputs
-     * @param maxVoltage the maximum voltage the recipe can have
-     * @param inputs the item inputs used to search for the recipe
+     * 
+     * @param maxVoltage  the maximum voltage the recipe can have
+     * @param inputs      the item inputs used to search for the recipe
      * @param fluidInputs the fluid inputs used to search for the recipe
      * @return the recipe if found, otherwise null
      */
@@ -514,7 +524,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipeMap the recipemap to check
      * @return true if the recipemap is valid for recipe search
      */
-    public boolean isRecipeMapValid(@Nonnull RecipeMap<?> recipeMap) {
+    public boolean isRecipeMapValid(@NotNull RecipeMap<?> recipeMap) {
         return true;
     }
 
@@ -523,14 +533,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param stackB the second stack to check
      * @return true if both ItemStacks are equal
      */
-    protected static boolean areItemStacksEqual(@Nonnull ItemStack stackA, @Nonnull ItemStack stackB) {
+    protected static boolean areItemStacksEqual(@NotNull ItemStack stackA, @NotNull ItemStack stackB) {
         return (stackA.isEmpty() && stackB.isEmpty()) ||
                 (ItemStack.areItemsEqual(stackA, stackB) &&
                         ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
 
     /**
-     * Determines if the provided recipe is possible to run from the provided inventory, or if there is anything preventing
+     * Determines if the provided recipe is possible to run from the provided inventory, or if there is anything
+     * preventing
      * the Recipe from being completed.
      * <p>
      * Will consume the inputs of the Recipe if it is possible to run.
@@ -541,7 +552,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *                        a specific bus
      * @return - true if the recipe is successful, false if the recipe is not successful
      */
-    protected boolean setupAndConsumeRecipeInputs(@Nonnull Recipe recipe, @Nonnull IItemHandlerModifiable importInventory) {
+    protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                  @NotNull IItemHandlerModifiable importInventory) {
         this.overclockResults = calculateOverclock(recipe);
 
         modifyOverclockPost(overclockResults, recipe.getRecipePropertyStorage());
@@ -556,13 +568,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // We have already trimmed outputs and chanced outputs at this time
         // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
-        if (!metaTileEntity.canVoidRecipeItemOutputs() && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
+        if (!metaTileEntity.canVoidRecipeItemOutputs() &&
+                !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
 
         // We have already trimmed fluid outputs at this time
-        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!metaTileEntity.canVoidRecipeFluidOutputs() &&
+                !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getAllFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -579,11 +593,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param resultOverclock the overclock data to use. Format: {@code [EUt, duration]}.
      * @return true if there is enough energy to continue recipe progress
      */
-    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+    protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
         // Format of resultOverclock: EU/t, duration
         int totalEUt = resultOverclock[0] * resultOverclock[1];
 
-        //RIP Ternary
+        // RIP Ternary
         // Power Consumption case
         if (totalEUt >= 0) {
             int capacity;
@@ -614,9 +628,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * Is always called, even if no overclocks are performed.
      *
      * @param overclockResults The overclocked recipe EUt and duration, in format [EUt, duration]
-     * @param storage the RecipePropertyStorage of the recipe being processed
+     * @param storage          the RecipePropertyStorage of the recipe being processed
      */
-    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {}
+    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {}
 
     /**
      * Calculates the overclocked Recipe's final duration and EU/t
@@ -624,8 +638,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to run
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @Nonnull
-    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+    @NotNull
+    protected int[] calculateOverclock(@NotNull Recipe recipe) {
         // perform the actual overclocking
         return performOverclocking(recipe);
     }
@@ -637,17 +651,17 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to overclock
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @Nonnull
-    protected int[] performOverclocking(@Nonnull Recipe recipe) {
-        int[] values = {recipe.getEUt(), recipe.getDuration(), getNumberOfOCs(recipe.getEUt())};
+    protected int @NotNull [] performOverclocking(@NotNull Recipe recipe) {
+        int[] values = { recipe.getEUt(), recipe.getDuration(), getNumberOfOCs(recipe.getEUt()) };
         modifyOverclockPre(values, recipe.getRecipePropertyStorage());
 
         if (values[2] <= 0) {
             // number of OCs is <= 0, so do not overclock
-            return new int[]{values[0], values[1]};
+            return new int[] { values[0], values[1] };
         }
 
-        return runOverclockingLogic(recipe.getRecipePropertyStorage(), values[0], getMaximumOverclockVoltage(), values[1], values[2]);
+        return runOverclockingLogic(recipe.getRecipePropertyStorage(), values[0], getMaximumOverclockVoltage(),
+                values[1], values[2]);
     }
 
     /**
@@ -676,7 +690,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param values  an array of [recipeEUt, recipeDuration, numberOfOCs]
      * @param storage the RecipePropertyStorage of the recipe being processed
      */
-    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {}
+    protected void modifyOverclockPre(@NotNull int[] values, @NotNull IRecipePropertyStorage storage) {}
 
     /**
      * Calls the desired overclocking logic to be run for the recipe.
@@ -690,16 +704,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param amountOC        the maximum amount of overclocks to perform
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @Nonnull
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int amountOC) {
+    @NotNull
+    protected int[] runOverclockingLogic(@NotNull IRecipePropertyStorage propertyStorage, int recipeEUt,
+                                         long maxVoltage, int duration, int amountOC) {
         return standardOverclockingLogic(
                 Math.abs(recipeEUt),
                 maxVoltage,
                 duration,
                 amountOC,
                 getOverclockingDurationDivisor(),
-                getOverclockingVoltageMultiplier()
-        );
+                getOverclockingVoltageMultiplier());
     }
 
     /**
@@ -717,7 +731,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Finds the maximum tier that a recipe can overclock to, when provided the maximum voltage a recipe can overclock to.
+     * Finds the maximum tier that a recipe can overclock to, when provided the maximum voltage a recipe can overclock
+     * to.
      *
      * @param voltage The maximum voltage the recipe is allowed to overclock to.
      * @return the highest voltage tier the machine should use to overclock with
@@ -728,7 +743,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Creates an array of Voltage Names that the machine/multiblock can overclock to.
-     * Since this is for use with the customizable overclock button, all tiers up to {@link AbstractRecipeLogic#getMaxVoltage()}
+     * Since this is for use with the customizable overclock button, all tiers up to
+     * {@link AbstractRecipeLogic#getMaxVoltage()}
      * are allowed, since the button is initialized to this value.
      *
      * @return a String array of the voltage names allowed to be used for overclocking
@@ -750,12 +766,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.progressTime = 1;
         setMaxProgress(overclockResults[1]);
         this.recipeEUt = overclockResults[0];
-        this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(
-                GTUtility.getTierByVoltage(recipe.getEUt()),
-                getOverclockForTier(getMaximumOverclockVoltage()),
-                getRecipeMap())
-        );
+        int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
+        int machineTier = getOverclockForTier(getMaximumOverclockVoltage());
+        this.fluidOutputs = GTUtility
+                .copyFluidList(recipe.getResultFluidOutputs(recipeTier, machineTier, getRecipeMap()));
+        this.itemOutputs = GTUtility
+                .copyStackList(recipe.getResultItemOutputs(recipeTier, machineTier, getRecipeMap()));
 
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
@@ -777,7 +793,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
         this.parallelRecipesPerformed = 0;
-        this.overclockResults = new int[]{0, 0};
+        this.overclockResults = new int[] { 0, 0 };
     }
 
     /**
@@ -952,7 +968,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
             getMetaTileEntity().scheduleRenderUpdate();
@@ -963,18 +979,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void writeInitialData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
-    public void receiveInitialData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.workingEnabled = buf.readBoolean();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
@@ -1001,7 +1017,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         this.workingEnabled = compound.getBoolean("WorkEnabled");
         this.canRecipeProgress = compound.getBoolean("CanRecipeProgress");
         this.progressTime = compound.getInteger("Progress");
@@ -1024,5 +1040,4 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             }
         }
     }
-
 }

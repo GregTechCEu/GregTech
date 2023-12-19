@@ -1,11 +1,8 @@
 package gregtech.common.crafting;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSyntaxException;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -23,23 +20,30 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Set;
 
 public class GTShapedOreRecipe extends ShapedOreRecipe {
-    boolean isClearing;
-    public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class, ItemStack.class);
 
-    public GTShapedOreRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+    boolean isClearing;
+    public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class,
+            ItemStack.class);
+
+    public GTShapedOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
         super(group, result, parseShaped(isClearing, recipe));
         this.isClearing = isClearing;
     }
 
-    //a copy of the CraftingHelper.ShapedPrimer.parseShaped method.
-    //the on difference is calling getIngredient of this class.
+    // a copy of the CraftingHelper.ShapedPrimer.parseShaped method.
+    // the on difference is calling getIngredient of this class.
 
     public static CraftingHelper.ShapedPrimer parseShaped(boolean isClearing, Object... recipe) {
         CraftingHelper.ShapedPrimer ret = new CraftingHelper.ShapedPrimer();
@@ -108,7 +112,8 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
         for (char chr : shape.toString().toCharArray()) {
             Ingredient ing = itemMap.get(chr);
             if (ing == null) {
-                throw new IllegalArgumentException("Pattern references symbol '" + chr + "' but it's not defined in the key");
+                throw new IllegalArgumentException(
+                        "Pattern references symbol '" + chr + "' but it's not defined in the key");
             }
             ret.input.set(x++, ing);
             keys.remove(chr);
@@ -121,15 +126,16 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
         return ret;
     }
 
-    //a copy of the CraftingHelper getIngredient method.
-    //the only difference is checking for a filled bucket and making
-    //it an GTFluidCraftingIngredient
+    // a copy of the CraftingHelper getIngredient method.
+    // the only difference is checking for a filled bucket and making
+    // it an GTFluidCraftingIngredient
     protected static Ingredient getIngredient(boolean isClearing, Object obj) {
         if (obj instanceof Ingredient) return (Ingredient) obj;
         else if (obj instanceof ItemStack) {
             ItemStack ing = (ItemStack) obj;
             if (ing.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                IFluidHandlerItem handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                IFluidHandlerItem handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                        null);
                 if (handler != null) {
                     FluidStack drained = handler.drain(Integer.MAX_VALUE, false);
                     if (drained != null && drained.amount > 0) {
@@ -158,7 +164,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
     }
 
     @Override
-    public @Nonnull NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {

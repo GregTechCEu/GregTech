@@ -1,20 +1,23 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
+
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotifiableItemStackHandler extends ItemStackHandler implements IItemHandlerModifiable, INotifiableHandler {
+public class NotifiableItemStackHandler extends GTItemStackHandler
+                                        implements IItemHandlerModifiable, INotifiableHandler {
 
     List<MetaTileEntity> notifiableEntities = new ArrayList<>();
     private final boolean isExport;
 
-    public NotifiableItemStackHandler(int slots, MetaTileEntity entityToNotify, boolean isExport) {
-        super(slots);
+    public NotifiableItemStackHandler(MetaTileEntity metaTileEntity, int slots, MetaTileEntity entityToNotify,
+                                      boolean isExport) {
+        super(metaTileEntity, slots);
         if (entityToNotify != null) {
             this.notifiableEntities.add(entityToNotify);
         }

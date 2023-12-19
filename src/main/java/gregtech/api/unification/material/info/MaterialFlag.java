@@ -3,6 +3,7 @@ package gregtech.api.unification.material.info;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTLog;
+
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.Arrays;
@@ -30,7 +31,8 @@ public class MaterialFlag {
     protected Set<MaterialFlag> verifyFlag(Material material) {
         requiredProperties.forEach(key -> {
             if (!material.hasProperty(key)) {
-                GTLog.logger.warn("Material {} does not have required property {} for flag {}!", material.getUnlocalizedName(), key.toString(), this.name);
+                GTLog.logger.warn("Material {} does not have required property {} for flag {}!",
+                        material.getUnlocalizedName(), key.toString(), this.name);
             }
         });
 

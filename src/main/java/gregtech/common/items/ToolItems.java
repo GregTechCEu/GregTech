@@ -6,6 +6,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.items.tool.*;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.monster.EntityGolem;
@@ -15,7 +16,8 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +112,7 @@ public final class ToolItems {
                 .sound(GTSoundEvents.SOFT_MALLET_TOOL)
                 .symbol('r')
                 .toolClasses(ToolClasses.SOFT_MALLET)
-                .markerItem(() -> ToolHelper.getAndSetToolData(SOFT_MALLET, Materials.Wood, 48, 1, 4F, 1F)));
+                .markerItem(() -> ToolHelper.getAndSetToolData(SOFT_MALLET, Materials.Wood, 47, 1, 4F, 1F)));
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
@@ -180,7 +182,8 @@ public final class ToolItems {
                 .toolStats(b -> b.blockBreaking().attacking()
                         .attackDamage(5.0F).attackSpeed(-3.0F).durabilityMultiplier(3.0F)
                         .aoe(2, 2, 2)
-                        .behaviors(HoeGroundBehavior.INSTANCE, HarvestCropsBehavior.INSTANCE).canApplyEnchantment(EnumEnchantmentType.DIGGER))
+                        .behaviors(HoeGroundBehavior.INSTANCE, HarvestCropsBehavior.INSTANCE)
+                        .canApplyEnchantment(EnumEnchantmentType.DIGGER))
                 .oreDict(ToolOreDict.toolScythe)
                 .toolClasses(ToolClasses.SCYTHE, ToolClasses.HOE));
         KNIFE = register(ItemGTSword.Builder.of(GTValues.MODID, "knife")
@@ -250,7 +253,8 @@ public final class ToolItems {
                         .efficiencyMultiplier(2.0F)
                         .attackDamage(5.0F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
-                        .behaviors(HarvestIceBehavior.INSTANCE, DisableShieldBehavior.INSTANCE, TreeFellingBehavior.INSTANCE))
+                        .behaviors(HarvestIceBehavior.INSTANCE, DisableShieldBehavior.INSTANCE,
+                                TreeFellingBehavior.INSTANCE))
                 .oreDict(ToolOreDict.toolAxe)
                 .secondaryOreDicts(ToolOreDict.toolChainsaw)
                 .sound(GTSoundEvents.CHAINSAW_TOOL, true)
@@ -314,16 +318,16 @@ public final class ToolItems {
                 .sound(GTSoundEvents.PLUNGER_TOOL)
                 .oreDict(ToolOreDict.toolPlunger)
                 .toolClasses(ToolClasses.PLUNGER)
-                .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 256, 1, 4F, 0F)));
+                .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 255, 1, 4F, 0F)));
     }
 
-    public static IGTTool register(@Nonnull ToolBuilder<?> builder) {
+    public static IGTTool register(@NotNull ToolBuilder<?> builder) {
         IGTTool tool = builder.build();
         TOOLS.add(tool);
         return tool;
     }
 
-    public static IGTTool register(@Nonnull IGTTool tool) {
+    public static IGTTool register(@NotNull IGTTool tool) {
         TOOLS.add(tool);
         return tool;
     }
@@ -333,7 +337,8 @@ public final class ToolItems {
     }
 
     public static void registerColors() {
-        TOOLS.forEach(tool -> Minecraft.getMinecraft().getItemColors().registerItemColorHandler(tool::getColor, tool.get()));
+        TOOLS.forEach(
+                tool -> Minecraft.getMinecraft().getItemColors().registerItemColorHandler(tool::getColor, tool.get()));
     }
 
     public static void registerOreDict() {

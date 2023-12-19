@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi;
 
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.block.state.IBlockState;
 
 import static gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType.*;
@@ -70,7 +71,6 @@ public enum BoilerType {
                ICubeRenderer fireboxIdleRenderer,
                ICubeRenderer fireboxActiveRenderer,
                ICubeRenderer frontOverlay) {
-
         this.steamPerTick = steamPerTick;
         this.ticksToBoiling = ticksToBoiling;
 
@@ -93,11 +93,15 @@ public enum BoilerType {
     }
 
     public int runtimeBoost(int ticks) {
-        switch(this) {
-            case BRONZE:        return ticks * 2;
-            case STEEL:         return ticks * 150 / 100;
-            case TITANIUM:      return ticks * 120 / 100;
-            case TUNGSTENSTEEL: return ticks;
+        switch (this) {
+            case BRONZE:
+                return ticks * 2;
+            case STEEL:
+                return ticks * 150 / 100;
+            case TITANIUM:
+                return ticks * 120 / 100;
+            case TUNGSTENSTEEL:
+                return ticks;
         }
         return 0;
     }

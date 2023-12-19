@@ -1,12 +1,8 @@
 package gregtech.client.renderer.texture.custom;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
@@ -15,7 +11,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.texture.TextureUtils.IIconRegister;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+
 public class DrumRenderer implements IIconRegister {
+
     private final String basePath;
 
     @SideOnly(Side.CLIENT)
@@ -37,11 +40,13 @@ public class DrumRenderer implements IIconRegister {
     }
 
     @SideOnly(Side.CLIENT)
-    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing rotation) {
-
+    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                       EnumFacing rotation) {
         for (EnumFacing renderSide : EnumFacing.VALUES) {
-            TextureAtlasSprite baseSprite = renderSide == EnumFacing.UP ? textures[0] : renderSide == EnumFacing.DOWN ? textures[2] : textures[1];
-            Textures.renderFace(renderState, translation, pipeline, renderSide, Cuboid6.full, baseSprite, BlockRenderLayer.CUTOUT_MIPPED);
+            TextureAtlasSprite baseSprite = renderSide == EnumFacing.UP ? textures[0] :
+                    renderSide == EnumFacing.DOWN ? textures[2] : textures[1];
+            Textures.renderFace(renderState, translation, pipeline, renderSide, Cuboid6.full, baseSprite,
+                    BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 
@@ -49,5 +54,4 @@ public class DrumRenderer implements IIconRegister {
     public TextureAtlasSprite getParticleTexture() {
         return textures[0];
     }
-
 }

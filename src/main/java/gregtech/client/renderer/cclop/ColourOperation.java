@@ -1,12 +1,14 @@
 package gregtech.client.renderer.cclop;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+
 @SideOnly(Side.CLIENT)
 public class ColourOperation implements IVertexOperation {
+
     public static final int operationIndex = CCRenderState.registerOperation();
     int colour;
 

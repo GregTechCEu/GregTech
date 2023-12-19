@@ -1,7 +1,7 @@
 package gregtech.api.gui.widgets.tab;
 
-import com.google.common.collect.Lists;
 import gregtech.api.gui.resources.IGuiTexture;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
+
+import com.google.common.collect.Lists;
 
 public class ItemTabInfo implements ITabInfo {
 
@@ -25,13 +27,15 @@ public class ItemTabInfo implements ITabInfo {
         tabTexture.draw(posX, posY, xSize, ySize);
         GlStateManager.enableRescaleNormal();
         RenderHelper.enableGUIStandardItemLighting();
-        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(iconStack, posX + xSize / 2 - 8, posY + ySize / 2 - 8);
+        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(iconStack, posX + xSize / 2 - 8,
+                posY + ySize / 2 - 8);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableRescaleNormal();
     }
 
     @Override
-    public void renderHoverText(int posX, int posY, int xSize, int ySize, int guiWidth, int guiHeight, boolean isSelected, int mouseX, int mouseY) {
+    public void renderHoverText(int posX, int posY, int xSize, int ySize, int guiWidth, int guiHeight,
+                                boolean isSelected, int mouseX, int mouseY) {
         if (nameLocale != null) {
             String localizedText = I18n.format(nameLocale);
             Minecraft mc = Minecraft.getMinecraft();

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class BlockStateMatcher implements IMatcher{
+public class BlockStateMatcher implements IMatcher {
+
     private final IBlockState reference;
     private final List<IProperty<?>> properties = new ArrayList<>();
     private final int meta;
@@ -17,7 +18,8 @@ public class BlockStateMatcher implements IMatcher{
         this.reference = state;
         for (final IProperty<?> property : state.getPropertyKeys()) {
             if (Objects.equals(property.getName(), "variant") || // Vanilla Minecraft.
-                    Objects.equals(property.getName(), "type") || // E.g. ThermalFoundation, TiCon, IC2, Immersive Engineering.
+                    Objects.equals(property.getName(), "type") || // E.g. ThermalFoundation, TiCon, IC2, Immersive
+                                                                  // Engineering.
                     Objects.equals(property.getName(), "ore") || // E.g. BigReactors.
                     Objects.equals(property.getName(), "oretype") || // E.g. DeepResonance.
                     Objects.equals(property.getName(), "stone_type") || // E.g. gtce.
@@ -27,7 +29,6 @@ public class BlockStateMatcher implements IMatcher{
         }
         this.meta = reference.getBlock().getMetaFromState(reference);
         this.color = color;
-
     }
 
     public boolean match(final IBlockState state) {
@@ -56,7 +57,7 @@ public class BlockStateMatcher implements IMatcher{
     }
 
     @Override
-    public int getColor()  {
+    public int getColor() {
         return color;
     }
 

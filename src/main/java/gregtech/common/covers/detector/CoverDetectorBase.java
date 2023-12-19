@@ -1,8 +1,9 @@
 package gregtech.common.covers.detector;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverableView;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -11,16 +12,21 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import org.jetbrains.annotations.NotNull;
+
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_INVERTED;
 
-public abstract class CoverDetectorBase extends CoverBehavior {
+public abstract class CoverDetectorBase extends CoverBase {
+
     protected static final String NBT_KEY_IS_INVERTED = "isInverted";
 
-    private boolean isInverted;
+    private boolean isInverted = false;
+    private int redstoneSignalOutput = 0;
 
-    public CoverDetectorBase(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
-        isInverted = false;
+    public CoverDetectorBase(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                             @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     protected boolean isInverted() {
@@ -34,38 +40,51 @@ public abstract class CoverDetectorBase extends CoverBehavior {
     private void toggleInvertedWithNotification() {
         setInverted(!isInverted());
 
-        if (!this.coverHolder.getWorld().isRemote) {
-            this.coverHolder.writeCoverData(this, UPDATE_INVERTED, b -> b.writeBoolean(isInverted()));
-            this.coverHolder.notifyBlockUpdate();
-            this.coverHolder.markDirty();
+        CoverableView coverable = getCoverableView();
+        if (!coverable.getWorld().isRemote) {
+            coverable.writeCoverData(this, UPDATE_INVERTED, b -> b.writeBoolean(isInverted()));
+            coverable.notifyBlockUpdate();
+            coverable.markDirty();
         }
     }
 
+    public final void setRedstoneSignalOutput(int redstoneSignalOutput) {
+        this.redstoneSignalOutput = redstoneSignalOutput;
+        getCoverableView().notifyBlockUpdate();
+        getCoverableView().markDirty();
+    }
+
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public int getRedstoneSignalOutput() {
+        return this.redstoneSignalOutput;
+    }
+
+    @Override
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean(NBT_KEY_IS_INVERTED, isInverted());
-
-        return tagCompound;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-
-        if (tagCompound.hasKey(NBT_KEY_IS_INVERTED)) { //compatibility check
-            setInverted(tagCompound.getBoolean(NBT_KEY_IS_INVERTED));
+        if (redstoneSignalOutput > 0) {
+            tagCompound.setInteger("RedstoneSignal", redstoneSignalOutput);
         }
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        if (tagCompound.hasKey(NBT_KEY_IS_INVERTED)) { // compatibility check
+            setInverted(tagCompound.getBoolean(NBT_KEY_IS_INVERTED));
+        }
+        this.redstoneSignalOutput = tagCompound.getInteger("RedstoneSignal");
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeBoolean(isInverted());
     }
 
     @Override
-    public void readInitialSyncData(PacketBuffer packetBuffer) {
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         setInverted(packetBuffer.readBoolean());
     }
@@ -76,15 +95,15 @@ public abstract class CoverDetectorBase extends CoverBehavior {
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (this.coverHolder.getWorld().isRemote) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
+        if (getWorld().isRemote) {
             return EnumActionResult.SUCCESS;
         }
 
-        String translationKey = isInverted()
-                ? "gregtech.cover.detector_base.message_inverted_state"
-                : "gregtech.cover.detector_base.message_normal_state";
-        playerIn.sendMessage(new TextComponentTranslation(translationKey));
+        String translationKey = isInverted() ? "gregtech.cover.detector_base.message_inverted_state" :
+                "gregtech.cover.detector_base.message_normal_state";
+        playerIn.sendStatusMessage(new TextComponentTranslation(translationKey), true);
 
         toggleInvertedWithNotification();
 

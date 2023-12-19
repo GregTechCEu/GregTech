@@ -6,19 +6,21 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Supplier;
 
 public class FuelRecipeLogic extends RecipeLogicEnergy {
 
-    public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
+    public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap,
+                           Supplier<IEnergyContainer> energyContainer) {
         super(tileEntity, recipeMap, energyContainer);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Enum<ParallelLogicType> getParallelLogicType() {
-        return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS
+    public ParallelLogicType getParallelLogicType() {
+        return ParallelLogicType.MULTIPLY; // TODO APPEND_FLUIDS
     }
 
     @Override
@@ -27,13 +29,13 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     }
 
     @Override
-    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+    protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
         // generators always have enough power to run recipes
         return true;
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
         super.modifyOverclockPost(overclockResults, storage);
         // make EUt negative so it is consumed
         overclockResults[0] = -overclockResults[0];
@@ -43,5 +45,10 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     public int getParallelLimit() {
         // parallel is limited by voltage
         return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public boolean isAllowOverclocking() {
+        return false;
     }
 }

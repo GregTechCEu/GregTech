@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class RecipeProperty<T> {
+
     private final Class<T> type;
     private final String key;
 
@@ -25,8 +26,7 @@ public abstract class RecipeProperty<T> {
     }
 
     @SideOnly(Side.CLIENT)
-    public void getTooltipStrings(List<String> tooltip, int mouseX, int mouseY, Object value) {
-    }
+    public void getTooltipStrings(List<String> tooltip, int mouseX, int mouseY, Object value) {}
 
     public int getInfoHeight(Object value) {
         return 10; // GTRecipeWrapper#LINE_HEIGHT

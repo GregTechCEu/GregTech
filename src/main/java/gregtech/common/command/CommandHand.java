@@ -11,6 +11,7 @@ import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTLog;
 import gregtech.integration.RecipeCompatUtil;
 import gregtech.modules.GregTechModules;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -27,25 +28,27 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Set;
 
 public class CommandHand extends CommandBase {
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "hand";
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getUsage(@Nonnull ICommandSender sender) {
+    public String getUsage(@NotNull ICommandSender sender) {
         return "gregtech.command.hand.usage";
     }
 
     @Override
-    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) throws CommandException {
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender,
+                        @NotNull String[] args) throws CommandException {
         if (sender instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) sender;
             ItemStack stackInHand = player.getHeldItemMainhand();
@@ -56,19 +59,21 @@ public class CommandHand extends CommandBase {
                 }
             }
             String registryName;
-            ResourceLocation registryLocation =  stackInHand.getItem().getRegistryName();
-            if  (registryLocation != null) {
+            ResourceLocation registryLocation = stackInHand.getItem().getRegistryName();
+            if (registryLocation != null) {
                 registryName = registryLocation.toString();
             } else {
                 registryName = "ERROR";
                 GTLog.logger.warn("ItemStack {} has a null registry name", stackInHand.getTranslationKey());
             }
             ClickEvent itemNameEvent = new ClickEvent(Action.OPEN_URL, registryName);
-            player.sendMessage(new TextComponentTranslation("gregtech.command.hand.item_id", registryName, stackInHand.getItemDamage())
-                    .setStyle(new Style().setClickEvent(itemNameEvent)));
+            player.sendMessage(new TextComponentTranslation("gregtech.command.hand.item_id", registryName,
+                    stackInHand.getItemDamage())
+                            .setStyle(new Style().setClickEvent(itemNameEvent)));
 
             IElectricItem electricItem = stackInHand.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-            IFluidHandlerItem fluidHandlerItem = stackInHand.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandlerItem = stackInHand
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (electricItem != null) {
                 player.sendMessage(new TextComponentTranslation("gregtech.command.hand.electric",
                         electricItem.getCharge(),
@@ -86,7 +91,9 @@ public class CommandHand extends CommandBase {
                             properties.getCapacity(),
                             Boolean.toString(properties.canFill()), Boolean.toString(properties.canDrain())));
                     if (contents != null) {
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.hand.fluid2", fluidName).appendSibling(new TextComponentString(" " + fluidName).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                        player.sendMessage(new TextComponentTranslation("gregtech.command.hand.fluid2", fluidName)
+                                .appendSibling(new TextComponentString(" " + fluidName)
+                                        .setStyle(new Style().setColor(TextFormatting.GREEN)))
                                 .setStyle(getCopyStyle("<liquid:" + fluidName + ">", false)));
                     }
                 }
@@ -96,26 +103,33 @@ public class CommandHand extends CommandBase {
             if (id != null) {
                 String ctId = "<metaitem:" + id + ">";
                 ClipboardUtil.copyToClipboard(player, ctId);
-                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.meta_item", id).appendSibling(new TextComponentString(" " + id).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.meta_item", id)
+                        .appendSibling(
+                                new TextComponentString(" " + id).setStyle(new Style().setColor(TextFormatting.GREEN)))
                         .setStyle(getCopyStyle(ctId, true)));
             }
 
             // tool info
             if (stackInHand.getItem() instanceof IGTTool) {
                 IGTTool tool = (IGTTool) stackInHand.getItem();
-                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats", tool.getToolClasses(stackInHand)));
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats",
+                        tool.getToolClasses(stackInHand)));
             }
 
             // material info
             MaterialStack material = OreDictUnifier.getMaterial(stackInHand);
             if (material != null) {
-                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.material").appendSibling(new TextComponentString(" " + material.material).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.material")
+                        .appendSibling(new TextComponentString(" " + material.material)
+                                .setStyle(new Style().setColor(TextFormatting.GREEN)))
                         .setStyle(getCopyStyle("<material:" + material.material + ">", false)));
             }
             // ore prefix info
             OrePrefix orePrefix = OreDictUnifier.getPrefix(stackInHand);
             if (orePrefix != null) {
-                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.ore_prefix").appendSibling(new TextComponentString(" " + orePrefix.name).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.ore_prefix")
+                        .appendSibling(new TextComponentString(" " + orePrefix.name)
+                                .setStyle(new Style().setColor(TextFormatting.GREEN)))
                         .setStyle(getCopyStyle(orePrefix.name, false)));
             }
 
@@ -142,10 +156,13 @@ public class CommandHand extends CommandBase {
         style.setClickEvent(click);
 
         ITextComponent text = alreadyCopied ?
-                new TextComponentString("").appendSibling(new TextComponentString(copyMessage + " ").setStyle(new Style().setColor(TextFormatting.GOLD)))
+                new TextComponentString("")
+                        .appendSibling(new TextComponentString(copyMessage + " ")
+                                .setStyle(new Style().setColor(TextFormatting.GOLD)))
                         .appendSibling(new TextComponentTranslation("gregtech.command.copy.copied_and_click")) :
                 new TextComponentTranslation("gregtech.command.copy.click_to_copy")
-                        .appendSibling(new TextComponentString(" " + copyMessage).setStyle(new Style().setColor(TextFormatting.GOLD)));
+                        .appendSibling(new TextComponentString(" " + copyMessage)
+                                .setStyle(new Style().setColor(TextFormatting.GOLD)));
 
         style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, text));
         return style;

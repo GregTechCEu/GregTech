@@ -3,18 +3,21 @@ package gregtech.integration.jei;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.integration.jei.multiblock.MultiblockInfoRecipeWrapper;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Optional;
+
 import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Optional;
 
 import java.util.List;
 
 public class JEIOptional {
+
     @Optional.Method(modid = "jei")
-    public static WorldSceneRenderer getWorldSceneRenderer(MultiblockControllerBase controllerBase){
+    public static WorldSceneRenderer getWorldSceneRenderer(MultiblockControllerBase controllerBase) {
         IRecipeRegistry rr = JustEnoughItemsModule.jeiRuntime.getRecipeRegistry();
         IFocus<ItemStack> focus = rr.createFocus(IFocus.Mode.INPUT, controllerBase.getStackForm());
         return rr.getRecipeCategories(focus)

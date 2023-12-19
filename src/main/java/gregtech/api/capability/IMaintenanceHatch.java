@@ -11,14 +11,16 @@ public interface IMaintenanceHatch {
 
     /**
      * Sets this Maintenance Hatch as being duct taped
+     * 
      * @param isTaped is the state of the hatch being taped or not
      */
     void setTaped(boolean isTaped);
 
     /**
      * Stores maintenance data to this MetaTileEntity
+     * 
      * @param maintenanceProblems is the byte value representing the problems
-     * @param timeActive is the int value representing the total time the parent multiblock has been active
+     * @param timeActive          is the int value representing the total time the parent multiblock has been active
      */
     void storeMaintenanceData(byte maintenanceProblems, int timeActive);
 
@@ -30,6 +32,7 @@ public interface IMaintenanceHatch {
 
     /**
      * reads this MetaTileEntity's maintenance data
+     * 
      * @return Tuple of Byte, Integer corresponding to the maintenance problems, and total time active
      */
     Tuple<Byte, Integer> readMaintenanceData();

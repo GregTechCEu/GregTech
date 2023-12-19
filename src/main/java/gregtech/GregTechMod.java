@@ -3,36 +3,37 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
-import gregtech.api.util.oreglob.OreGlob;
 import gregtech.client.utils.BloomEffectUtil;
-import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 @Mod(modid = GTValues.MODID,
-        name = "GregTech",
-        acceptedMinecraftVersions = "[1.12.2,1.13)",
-        version = GTInternalTags.VERSION,
-        dependencies = "required:forge@[14.23.5.2847,);"
-                + "required-after:codechickenlib@[3.2.3,);"
-                + "after:appliedenergistics2;"
-                + "after:forestry;"
-                + "after:extrabees;"
-                + "after:extratrees;"
-                + "after:genetics;"
-                + "after:magicbees;"
-                + "after:jei@[4.15.0,);"
-                + "after:crafttweaker@[4.1.20,);"
-                + "after:groovyscript@[0.6.0,);"
-                + "after:theoneprobe;"
-                + "after:hwyla;")
+     name = "GregTech",
+     acceptedMinecraftVersions = "[1.12.2,1.13)",
+     version = GTInternalTags.VERSION,
+     dependencies = "required:forge@[14.23.5.2847,);" + "required-after:codechickenlib@[3.2.3,);" +
+             "required-after:modularui@[2.3,);" + "required-after:mixinbooter@[8.0,);" + "after:appliedenergistics2;" +
+             "after:forestry;" + "after:extrabees;" + "after:extratrees;" + "after:genetics;" + "after:magicbees;" +
+             "after:jei@[4.15.0,);" + "after:crafttweaker@[4.1.20,);" + "after:groovyscript@[0.7.0,);" +
+             "after:theoneprobe;" + "after:hwyla;")
 public class GregTechMod {
 
     // Hold this so that we can reference non-interface methods without
@@ -51,7 +52,6 @@ public class GregTechMod {
     public void onConstruction(FMLConstructionEvent event) {
         moduleManager = ModuleManager.getInstance();
         GregTechAPI.moduleManager = moduleManager;
-        OreGlob.setCompiler(input -> new OreGlobParser(input).compile());
         moduleManager.registerContainer(new GregTechModules());
         MinecraftForge.EVENT_BUS.post(new ModuleContainerRegistryEvent());
         moduleManager.setup(event.getASMHarvestedData(), Loader.instance().getConfigDir());

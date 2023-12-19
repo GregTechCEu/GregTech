@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+
 import net.minecraft.util.ResourceLocation;
 
 public class MetaTileEntityHPCAComputation extends MetaTileEntityHPCAComponent implements IHPCAComputationProvider {
@@ -38,14 +39,17 @@ public class MetaTileEntityHPCAComputation extends MetaTileEntityHPCAComponent i
     @Override
     public TextureArea getComponentIcon() {
         if (isDamaged()) {
-            return advanced ? GuiTextures.HPCA_ICON_DAMAGED_ADVANCED_COMPUTATION_COMPONENT : GuiTextures.HPCA_ICON_DAMAGED_COMPUTATION_COMPONENT;
+            return advanced ? GuiTextures.HPCA_ICON_DAMAGED_ADVANCED_COMPUTATION_COMPONENT :
+                    GuiTextures.HPCA_ICON_DAMAGED_COMPUTATION_COMPONENT;
         }
-        return advanced ? GuiTextures.HPCA_ICON_ADVANCED_COMPUTATION_COMPONENT : GuiTextures.HPCA_ICON_COMPUTATION_COMPONENT;
+        return advanced ? GuiTextures.HPCA_ICON_ADVANCED_COMPUTATION_COMPONENT :
+                GuiTextures.HPCA_ICON_COMPUTATION_COMPONENT;
     }
 
     @Override
     public SimpleOverlayRenderer getFrontActiveOverlay() {
-        if (isDamaged()) return advanced ? Textures.HPCA_ADVANCED_DAMAGED_ACTIVE_OVERLAY : Textures.HPCA_DAMAGED_ACTIVE_OVERLAY;
+        if (isDamaged())
+            return advanced ? Textures.HPCA_ADVANCED_DAMAGED_ACTIVE_OVERLAY : Textures.HPCA_DAMAGED_ACTIVE_OVERLAY;
         return advanced ? Textures.HPCA_ADVANCED_COMPUTATION_ACTIVE_OVERLAY : Textures.HPCA_COMPUTATION_ACTIVE_OVERLAY;
     }
 

@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -11,10 +12,8 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
 
-@ParametersAreNonnullByDefault
 public class BlockTurbineCasing extends VariantBlock<BlockTurbineCasing.TurbineCasingType> {
 
     public BlockTurbineCasing() {
@@ -27,7 +26,8 @@ public class BlockTurbineCasing extends VariantBlock<BlockTurbineCasing.TurbineC
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 
@@ -53,7 +53,7 @@ public class BlockTurbineCasing extends VariantBlock<BlockTurbineCasing.TurbineC
         }
 
         @Override
-        @Nonnull
+        @NotNull
         public String getName() {
             return this.name;
         }
@@ -68,5 +68,4 @@ public class BlockTurbineCasing extends VariantBlock<BlockTurbineCasing.TurbineC
             return ToolClasses.WRENCH;
         }
     }
-
 }

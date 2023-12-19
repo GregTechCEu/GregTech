@@ -5,6 +5,7 @@ import net.minecraft.util.ITickable;
 import java.util.function.Consumer;
 
 public class Interpolator implements ITickable {
+
     private final float from;
     private final float to;
     private final int duration;
@@ -18,7 +19,8 @@ public class Interpolator implements ITickable {
         this(from, to, duration, ease, interpolate, null);
     }
 
-    public Interpolator(float from, float to, int duration, IEase ease, Consumer<Number> interpolate, Consumer<Number> callback) {
+    public Interpolator(float from, float to, int duration, IEase ease, Consumer<Number> interpolate,
+                        Consumer<Number> callback) {
         this.from = from;
         this.to = to;
         this.duration = duration;
@@ -36,7 +38,7 @@ public class Interpolator implements ITickable {
         return this;
     }
 
-    public boolean isFinish(){
+    public boolean isFinish() {
         return tick == duration;
     }
 

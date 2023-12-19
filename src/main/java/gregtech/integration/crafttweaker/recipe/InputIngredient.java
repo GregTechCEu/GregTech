@@ -1,11 +1,12 @@
 package gregtech.integration.crafttweaker.recipe;
 
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.player.IPlayer;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 

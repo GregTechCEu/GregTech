@@ -1,26 +1,29 @@
 package gregtech.api.util;
 
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.GTFluid;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.PropertyKey;
+
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Supplier;
+
+import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
 
 public class FluidTooltipUtil {
 
     /**
      * Registry Mapping of <Fluid, Tooltip>
      */
-    private static final Map<Fluid, List<String>> tooltips = new HashMap<>();
+    private static final Map<Fluid, List<Supplier<List<String>>>> tooltips = new HashMap<>();
 
     /**
      * Used to register a tooltip to a Fluid.
@@ -28,22 +31,9 @@ public class FluidTooltipUtil {
      * @param fluid   The fluid to register a tooltip for.
      * @param tooltip The tooltip.
      */
-    public static void registerTooltip(Fluid fluid, String tooltip) {
-        if (fluid != null && tooltip != null) {
-            tooltips.computeIfAbsent(fluid, k -> new ArrayList<>()).add(tooltip);
-        }
-    }
-
-    /**
-     * Used to register a tooltip to a Fluid.
-     *
-     * @param fluid   The fluid to register a tooltip for.
-     * @param tooltip The tooltip.
-     */
-    public static void registerTooltip(Fluid fluid, List<String> tooltip) {
-        if (fluid != null && tooltip != null && !tooltip.isEmpty()) {
-            tooltips.put(fluid, tooltip);
-        }
+    public static void registerTooltip(@NotNull Fluid fluid, @NotNull Supplier<List<String>> tooltip) {
+        List<Supplier<List<String>>> list = tooltips.computeIfAbsent(fluid, $ -> new ArrayList<>(1));
+        list.add(tooltip);
     }
 
     /**
@@ -57,7 +47,13 @@ public class FluidTooltipUtil {
             return null;
         }
 
-        return tooltips.get(fluid);
+        var list = tooltips.get(fluid);
+        if (list == null) return Collections.emptyList();
+        List<String> tooltip = new ArrayList<>();
+        for (var supplier : list) {
+            tooltip.addAll(supplier.get());
+        }
+        return tooltip;
     }
 
     /**
@@ -88,38 +84,30 @@ public class FluidTooltipUtil {
         return getFluidTooltip(FluidRegistry.getFluid(fluidName));
     }
 
-    /**
-     * A simple helper method to get the tooltip for Water, since it is an edge case of fluids.
-     */
-    @Nonnull
-    public static List<String> getWaterTooltip() {
-        return getMaterialTooltip(Materials.Water, Materials.Water.getProperty(PropertyKey.FLUID).getFluidTemperature(), false);
+    public static Supplier<List<String>> createGTFluidTooltip(@NotNull GTFluid fluid) {
+        Material material = fluid instanceof GTFluid.GTMaterialFluid matFluid ? matFluid.getMaterial() : null;
+        return createFluidTooltip(material, fluid, fluid.getState());
     }
 
-    /**
-     * A simple helper method to get the tooltip for Lava, since it is an edge case of fluids.
-     */
-    @Nonnull
-    public static List<String> getLavaTooltip() {
-        return getMaterialTooltip(Materials.Lava, Materials.Lava.getProperty(PropertyKey.FLUID).getFluidTemperature(), false);
-    }
+    public static Supplier<List<String>> createFluidTooltip(@Nullable Material material, @NotNull Fluid fluid,
+                                                            @NotNull FluidState fluidState) {
+        return () -> {
+            List<String> tooltip = new ArrayList<>();
+            if (material != null && !material.getChemicalFormula().isEmpty()) {
+                tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
+            }
 
-    @Nonnull
-    public static List<String> getMaterialTooltip(@Nonnull Material material, int temperature, boolean isPlasma) {
-        List<String> tooltip = new ArrayList<>();
-        if (!material.getChemicalFormula().isEmpty())
-            tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
-        tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature", temperature));
-        if (isPlasma) {
-            tooltip.add(LocalizationUtils.format(FluidTypes.PLASMA.getUnlocalizedTooltip()));
-        } else {
-            tooltip.add(LocalizationUtils.format(material.getProperty(PropertyKey.FLUID).getFluidType().getUnlocalizedTooltip()));
-        }
-        tooltip.addAll(material.getProperty(PropertyKey.FLUID).getFluidType().getAdditionalTooltips());
-        if (temperature < 120) {
-            // fluids colder than 120K are cryogenic
-            tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature.cryogenic"));
-        }
-        return tooltip;
+            tooltip.add(I18n.format("gregtech.fluid.temperature", fluid.getTemperature()));
+            tooltip.add(I18n.format(fluidState.getTranslationKey()));
+            if (fluid instanceof GTFluid gtFluid) {
+                gtFluid.getAttributes().forEach(a -> a.appendFluidTooltips(tooltip));
+            }
+
+            if (fluid.getTemperature() < CRYOGENIC_FLUID_THRESHOLD) {
+                tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
+            }
+
+            return tooltip;
+        };
     }
 }

@@ -6,12 +6,14 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.util.math.MathHelper;
 
 public class DraggableScrollableWidgetGroup extends WidgetGroup {
+
     protected int scrollXOffset;
     protected int scrollYOffset;
     protected int xBarHeight;
@@ -33,7 +35,6 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     private boolean draggedPanel;
     private boolean draggedOnXScrollBar;
     private boolean draggedOnYScrollBar;
-
 
     public DraggableScrollableWidgetGroup(int x, int y, int width, int height) {
         super(new Position(x, y), new Size(width, height));
@@ -90,7 +91,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     public void addWidget(Widget widget) {
         maxHeight = Math.max(maxHeight, widget.getSize().height + widget.getSelfPosition().y);
         maxWidth = Math.max(maxWidth, widget.getSize().width + widget.getSelfPosition().x);
-        Position newPos = widget.addSelfPosition(- scrollXOffset, - scrollYOffset);
+        Position newPos = widget.addSelfPosition(-scrollXOffset, -scrollYOffset);
         widget.setVisible(newPos.x < getSize().width - yBarWidth && newPos.x + widget.getSize().width > 0);
         widget.setVisible(newPos.y < getSize().height - xBarHeight && newPos.y + widget.getSize().height > 0);
         super.addWidget(widget);
@@ -116,7 +117,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         super.setSize(size);
         maxHeight = Math.max(size.height, maxHeight);
         maxWidth = Math.max(size.width, maxWidth);
-//        computeMax();
+        // computeMax();
         for (Widget widget : widgets) {
             Position newPos = widget.getSelfPosition();
             widget.setVisible(newPos.x < getSize().width - yBarWidth && newPos.x + widget.getSize().width > 0);
@@ -155,7 +156,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
                 offsetX = scrollXOffset;
             }
             scrollXOffset -= offsetX;
-        }else if (mw < getSize().width) {
+        } else if (mw < getSize().width) {
             offsetX = maxWidth - getSize().width;
             maxWidth = getSize().width;
             if (scrollXOffset - offsetX < 0) {
@@ -193,7 +194,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         int offset = scrollXOffset - this.scrollXOffset;
         this.scrollXOffset = scrollXOffset;
         for (Widget widget : widgets) {
-            Position newPos = widget.addSelfPosition( - offset, 0);
+            Position newPos = widget.addSelfPosition(-offset, 0);
             widget.setVisible(newPos.x < getSize().width - yBarWidth && newPos.x + widget.getSize().width > 0);
         }
     }
@@ -204,7 +205,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         int offset = scrollYOffset - this.scrollYOffset;
         this.scrollYOffset = scrollYOffset;
         for (Widget widget : widgets) {
-            Position newPos = widget.addSelfPosition(0, - offset);
+            Position newPos = widget.addSelfPosition(0, -offset);
             widget.setVisible(newPos.y < getSize().height - xBarHeight && newPos.y + widget.getSize().height > 0);
         }
     }
@@ -235,13 +236,13 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
             background.draw(x, y, width, height);
         }
         if (useScissor) {
-            RenderUtil.useScissor(x, y, width - yBarWidth, height - xBarHeight, ()->{
-                if(!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
+            RenderUtil.useScissor(x, y, width - yBarWidth, height - xBarHeight, () -> {
+                if (!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
                     super.drawInBackground(mouseX, mouseY, partialTicks, context);
                 }
             });
         } else {
-            if(!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
+            if (!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
                 super.drawInBackground(mouseX, mouseY, partialTicks, context);
             }
         }
@@ -252,16 +253,18 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
             }
             if (xBarF != null) {
                 int barWidth = (int) (width * 1.0f / getMaxWidth() * width);
-                xBarF.draw(x + scrollXOffset * width * 1.0f / getMaxWidth(), y + height - xBarHeight, barWidth, xBarHeight);
+                xBarF.draw(x + scrollXOffset * width * 1.0f / getMaxWidth(), y + height - xBarHeight, barWidth,
+                        xBarHeight);
             }
         }
         if (yBarWidth > 0) {
             if (yBarB != null) {
-                yBarB.draw(x + width  - yBarWidth, y, yBarWidth, height);
+                yBarB.draw(x + width - yBarWidth, y, yBarWidth, height);
             }
             if (yBarF != null) {
                 int barHeight = (int) (height * 1.0f / getMaxHeight() * height);
-                yBarF.draw(x + width  - yBarWidth, y + scrollYOffset * height * 1.0f / getMaxHeight(), yBarWidth, barHeight);
+                yBarF.draw(x + width - yBarWidth, y + scrollYOffset * height * 1.0f / getMaxHeight(), yBarWidth,
+                        barHeight);
             }
         }
     }
@@ -274,12 +277,11 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
             this.draggedOnXScrollBar = true;
             focus = true;
             return true;
-        }
-        else if (yBarWidth > 0 && isOnYScrollPane(mouseX, mouseY)) {
+        } else if (yBarWidth > 0 && isOnYScrollPane(mouseX, mouseY)) {
             this.draggedOnYScrollBar = true;
             focus = true;
             return true;
-        } else if(isMouseOverElement(mouseX, mouseY)){
+        } else if (isMouseOverElement(mouseX, mouseY)) {
             focus = true;
             if (checkClickedDragged(mouseX, mouseY, button)) {
                 return true;
@@ -300,8 +302,8 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         draggedWidget = null;
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible()) {
-                if(widget.mouseClicked(mouseX, mouseY, button)) {
+            if (widget.isVisible()) {
+                if (widget.mouseClicked(mouseX, mouseY, button)) {
                     return true;
                 } else if (widget instanceof IDraggable && ((IDraggable) widget).allowDrag(mouseX, mouseY, button)) {
                     draggedWidget = widget;
@@ -335,23 +337,30 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         int deltaY = mouseY - lastMouseY;
         lastMouseX = mouseX;
         lastMouseY = mouseY;
-        if (draggedOnXScrollBar && (getMaxWidth() - getSize().width > 0 || scrollYOffset > getMaxWidth() - getSize().width)) {
-            setScrollXOffset(MathHelper.clamp(scrollXOffset + deltaX * getMaxWidth() / getSize().width, 0, getMaxWidth() - getSize().width));
+        if (draggedOnXScrollBar &&
+                (getMaxWidth() - getSize().width > 0 || scrollYOffset > getMaxWidth() - getSize().width)) {
+            setScrollXOffset(MathHelper.clamp(scrollXOffset + deltaX * getMaxWidth() / getSize().width, 0,
+                    getMaxWidth() - getSize().width));
             return true;
-        } else if (draggedOnYScrollBar && (getMaxHeight() - getSize().height > 0 || scrollYOffset > getMaxHeight() - getSize().height)) {
-            setScrollYOffset(MathHelper.clamp(scrollYOffset + deltaY * getMaxHeight() / getSize().height, 0, getMaxHeight() - getSize().height));
-            return true;
-        } else if (draggedWidget != null) {
-            if (((IDraggable)draggedWidget).dragging(mouseX, mouseY, deltaX, deltaY)) {
-                draggedWidget.addSelfPosition(deltaX, deltaY);
+        } else if (draggedOnYScrollBar &&
+                (getMaxHeight() - getSize().height > 0 || scrollYOffset > getMaxHeight() - getSize().height)) {
+                    setScrollYOffset(MathHelper.clamp(scrollYOffset + deltaY * getMaxHeight() / getSize().height, 0,
+                            getMaxHeight() - getSize().height));
+                    return true;
+                } else
+            if (draggedWidget != null) {
+                if (((IDraggable) draggedWidget).dragging(mouseX, mouseY, deltaX, deltaY)) {
+                    draggedWidget.addSelfPosition(deltaX, deltaY);
+                }
+                computeMax();
+                return true;
+            } else if (draggedPanel) {
+                setScrollXOffset(MathHelper.clamp(scrollXOffset - deltaX, 0,
+                        Math.max(getMaxWidth() - yBarWidth - getSize().width, 0)));
+                setScrollYOffset(MathHelper.clamp(scrollYOffset - deltaY, 0,
+                        Math.max(getMaxHeight() - xBarHeight - getSize().height, 0)));
+                return true;
             }
-            computeMax();
-            return true;
-        } else if (draggedPanel) {
-            setScrollXOffset(MathHelper.clamp(scrollXOffset - deltaX, 0, Math.max(getMaxWidth() - yBarWidth - getSize().width, 0)));
-            setScrollYOffset(MathHelper.clamp(scrollYOffset - deltaY, 0, Math.max(getMaxHeight() - xBarHeight - getSize().height, 0)));
-            return true;
-        }
         return super.mouseDragged(mouseX, mouseY, button, timeDragged);
     }
 
@@ -362,7 +371,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         } else if (draggedOnYScrollBar) {
             draggedOnYScrollBar = false;
         } else if (draggedWidget != null) {
-            ((IDraggable)draggedWidget).endDrag(mouseX, mouseY);
+            ((IDraggable) draggedWidget).endDrag(mouseX, mouseY);
             draggedWidget = null;
         } else if (draggedPanel) {
             draggedPanel = false;

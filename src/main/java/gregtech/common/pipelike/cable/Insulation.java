@@ -4,7 +4,7 @@ import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum Insulation implements IMaterialPipeType<WireProperties> {
 
@@ -38,7 +38,7 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
         this.lossMultiplier = lossMultiplier;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;
@@ -60,13 +60,13 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
 
     @Override
     public WireProperties modifyProperties(WireProperties baseProperties) {
-
         int lossPerBlock;
         if (!baseProperties.isSuperconductor() && baseProperties.getLossPerBlock() == 0)
             lossPerBlock = (int) (0.75 * lossMultiplier);
         else lossPerBlock = baseProperties.getLossPerBlock() * lossMultiplier;
 
-        return new WireProperties(baseProperties.getVoltage(), baseProperties.getAmperage() * amperage, lossPerBlock, baseProperties.isSuperconductor());
+        return new WireProperties(baseProperties.getVoltage(), baseProperties.getAmperage() * amperage, lossPerBlock,
+                baseProperties.isSuperconductor());
     }
 
     @Override

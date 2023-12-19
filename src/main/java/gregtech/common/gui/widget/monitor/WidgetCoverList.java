@@ -13,6 +13,7 @@ import gregtech.api.util.Size;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.covers.CoverDigitalInterface;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -39,20 +40,21 @@ public class WidgetCoverList extends ScrollableListWidget {
     private final Map<WidgetGroup, CoverDigitalInterface> widgetMap;
     public Consumer<CoverDigitalInterface> onSelected;
 
-    public WidgetCoverList(int xPosition, int yPosition, int width, int slotSize, List<CoverDigitalInterface> covers, CoverDigitalInterface bindCover, Consumer<CoverDigitalInterface> onSelected) {
+    public WidgetCoverList(int xPosition, int yPosition, int width, int slotSize, List<CoverDigitalInterface> covers,
+                           CoverDigitalInterface bindCover, Consumer<CoverDigitalInterface> onSelected) {
         super(xPosition, yPosition, width, slotSize * 18);
         widgetMap = new HashMap<>();
         this.onSelected = onSelected;
         for (CoverDigitalInterface cover : covers) {
-            ItemStack itemStack = cover.coverHolder.getStackForm();
-            BlockPos pos = cover.coverHolder.getPos();
-            if (cover.coverHolder instanceof PipeCoverableImplementation) {
+            ItemStack itemStack = cover.getPickItem();
+            BlockPos pos = cover.getPos();
+            if (cover.getCoverableView() instanceof PipeCoverableImplementation) {
                 itemStack = null;
-                pos = pos.offset(cover.attachedSide);
-                TileEntity tileEntity = cover.coverHolder.getWorld().getTileEntity(pos);
-                IBlockState state = cover.coverHolder.getWorld().getBlockState(pos);
+                pos = pos.offset(cover.getAttachedSide());
+                TileEntity tileEntity = cover.getWorld().getTileEntity(pos);
+                IBlockState state = cover.getWorld().getBlockState(pos);
                 if (tileEntity != null) {
-                    itemStack = tileEntity.getBlockType().getItem(cover.coverHolder.getWorld(), pos, state);
+                    itemStack = tileEntity.getBlockType().getItem(cover.getWorld(), pos, state);
                 }
                 if (itemStack == null) continue;
             }
@@ -60,10 +62,11 @@ public class WidgetCoverList extends ScrollableListWidget {
             itemStackHandler.insertItem(0, itemStack, false);
             WidgetGroup widgetGroup = new WidgetGroup();
             widgetGroup.addWidget(new SlotWidget(itemStackHandler, 0, 0, 0, false, false));
-            widgetGroup.addWidget(new LabelWidget(20, 5, String.format("(%d, %d, %d)", pos.getX(), pos.getY(), pos.getZ()), 0XFFFFFFFF));
+            widgetGroup.addWidget(new LabelWidget(20, 5,
+                    String.format("(%d, %d, %d)", pos.getX(), pos.getY(), pos.getZ()), 0XFFFFFFFF));
             widgetMap.put(widgetGroup, cover);
-            if (widgetGroup.getSize().width + this.scrollPaneWidth > this.getSize().width)
-                this.setSize(new Size(widgetGroup.getSize().width + this.scrollPaneWidth, this.getSize().height));
+            if (widgetGroup.getSize().width + scrollPaneWidth > this.getSize().width)
+                this.setSize(new Size(widgetGroup.getSize().width + scrollPaneWidth, this.getSize().height));
             this.addWidget(widgetGroup);
             if (cover == bindCover) {
                 selected = widgetGroup;
@@ -87,22 +90,23 @@ public class WidgetCoverList extends ScrollableListWidget {
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         boolean result = super.mouseClicked(mouseX, mouseY, button);
         if (!result && mouseY >= this.getPosition().y && mouseY <= this.getPosition().y + this.getSize().height) {
-            Widget widget = this.widgets.stream().filter(it -> it.isMouseOverElement(mouseX, mouseY)).findFirst().orElse(null);
+            Widget widget = this.widgets.stream().filter(it -> it.isMouseOverElement(mouseX, mouseY)).findFirst()
+                    .orElse(null);
             if (widget instanceof WidgetGroup) {
                 List<Widget> children = ((WidgetGroup) widget).getContainedWidgets(true);
                 if (children.get(0).isMouseOverElement(mouseX, mouseY)) {
                     try {
-                        String posString = ObfuscationReflectionHelper.getPrivateValue(LabelWidget.class, (LabelWidget) children.get(1), "text");
+                        String posString = ObfuscationReflectionHelper.getPrivateValue(LabelWidget.class,
+                                (LabelWidget) children.get(1), "text");
                         String[] posSplit = PARENTHESIS_PATTERN.split(posString);
                         BlockPosHighlightRenderer.renderBlockBoxHighLight(
-                                new BlockPos(Integer.parseInt(posSplit[1]), Integer.parseInt(posSplit[3])
-                                        , Integer.parseInt(posSplit[5])), 5000);
+                                new BlockPos(Integer.parseInt(posSplit[1]), Integer.parseInt(posSplit[3]),
+                                        Integer.parseInt(posSplit[5])),
+                                5000);
                         Minecraft.getMinecraft().player.closeScreen();
                         Minecraft.getMinecraft().player.sendMessage(new TextComponentString(
                                 ((SlotWidget) children.get(0)).getHandle().getStack().getDisplayName() +
-                                        ": "
-                                        + posString
-                        ));
+                                        ": " + posString));
                         return false;
                     } catch (Throwable e) {
                         GTLog.logger.error("Could not reflect GregTech WidgetLabel text", e);
@@ -173,19 +177,22 @@ public class WidgetCoverList extends ScrollableListWidget {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        RenderUtil.useScissor(this.getPosition().x, this.getPosition().y, this.getSize().width, this.getSize().height, () -> {
-            widgets.forEach(widget -> {
-                if (widget instanceof WidgetGroup) {
-                    Widget widget1 = ((WidgetGroup) widget).getContainedWidgets(true).get(0);
-                    SlotWidget slotWidget = (SlotWidget) widget1;
-                    slotWidget.setActive(widget.getPosition().y >= this.getPosition().y - 9 && widget.getPosition().y <= this.getPosition().y + this.getSize().height - 9);
-                }
-            });
-            if (selected != null) {
-                Gui.drawRect(selected.getPosition().x, selected.getPosition().y, selected.getPosition().x + this.getSize().width - this.scrollPaneWidth, selected.getPosition().y + selected.getSize().height, 0x4BFFFFFF);
-            }
-            super.drawInBackground(mouseX, mouseY, partialTicks, context);
-        });
+        RenderUtil.useScissor(this.getPosition().x, this.getPosition().y, this.getSize().width, this.getSize().height,
+                () -> {
+                    widgets.forEach(widget -> {
+                        if (widget instanceof WidgetGroup) {
+                            Widget widget1 = ((WidgetGroup) widget).getContainedWidgets(true).get(0);
+                            SlotWidget slotWidget = (SlotWidget) widget1;
+                            slotWidget.setActive(widget.getPosition().y >= this.getPosition().y - 9 &&
+                                    widget.getPosition().y <= this.getPosition().y + this.getSize().height - 9);
+                        }
+                    });
+                    if (selected != null) {
+                        Gui.drawRect(selected.getPosition().x, selected.getPosition().y,
+                                selected.getPosition().x + this.getSize().width - this.scrollPaneWidth,
+                                selected.getPosition().y + selected.getSize().height, 0x4BFFFFFF);
+                    }
+                    super.drawInBackground(mouseX, mouseY, partialTicks, context);
+                });
     }
-
 }

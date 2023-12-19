@@ -1,14 +1,16 @@
 package gregtech.integration.baubles;
 
-import baubles.api.BaubleType;
-import baubles.api.IBauble;
-import baubles.api.cap.BaublesCapabilities;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
+import baubles.api.cap.BaublesCapabilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

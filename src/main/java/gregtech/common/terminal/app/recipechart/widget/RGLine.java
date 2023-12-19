@@ -16,6 +16,7 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RGLine extends WidgetGroup {
+
     protected final RGNode parent;
     protected final RGNode child;
     protected final ItemStack catalyst;
@@ -48,10 +50,14 @@ public class RGLine extends WidgetGroup {
         if (catalyst != null) {
             ItemStackHandler handler = new ItemStackHandler();
             handler.setStackInSlot(0, catalyst);
-            infoGroup.addWidget(new SlotWidget(handler, 0, 0, 0, false, false).setBackgroundTexture(new ColorRectTexture(0)));
+            infoGroup.addWidget(
+                    new SlotWidget(handler, 0, 0, 0, false, false).setBackgroundTexture(new ColorRectTexture(0)));
             MetaTileEntity mte = GTUtility.getMetaTileEntity(catalyst);
             if (mte instanceof SimpleMachineMetaTileEntity) {
-                infoGroup.addWidget(new LabelWidget(9, -10, I18n.format("terminal.recipe_chart.tier") + GTValues.VN[((SimpleMachineMetaTileEntity) mte).getTier()],  -1).setXCentered(true).setShadow(true));
+                infoGroup.addWidget(new LabelWidget(9, -10,
+                        I18n.format("terminal.recipe_chart.tier") +
+                                GTValues.VN[((SimpleMachineMetaTileEntity) mte).getTier()],
+                        -1).setXCentered(true).setShadow(true));
             }
         }
 
@@ -72,18 +78,19 @@ public class RGLine extends WidgetGroup {
                 .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                 .setIcon(GuiTextures.ICON_CALCULATOR)
                 .setHoverText("terminal.recipe_chart.ratio")
-                .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "terminal.recipe_chart.ratio", s->{
-                    try {
-                        return Integer.parseInt(s) > 0;
-                    } catch (Exception ignored){
-                        return false;
-                    }
-                }, s -> {
-                    if (s != null) {
-                        ratio = Integer.parseInt(s);
-                        parent.updateDemand(parent.getHeadDemand());
-                    }
-                }).setClientSide().open()));
+                .setClickListener(cd -> TerminalDialogWidget
+                        .showTextFieldDialog(container.os, "terminal.recipe_chart.ratio", s -> {
+                            try {
+                                return Integer.parseInt(s) > 0;
+                            } catch (Exception ignored) {
+                                return false;
+                            }
+                        }, s -> {
+                            if (s != null) {
+                                ratio = Integer.parseInt(s);
+                                parent.updateDemand(parent.getHeadDemand());
+                            }
+                        }).setClientSide().open()));
         toolGroup.addWidget(new SimpleTextWidget(0, -18, "", -1, () -> Integer.toString(ratio), true).setShadow(true));
         toolGroup.setVisible(false);
         this.addWidget(toolGroup);
@@ -92,7 +99,8 @@ public class RGLine extends WidgetGroup {
     }
 
     public static RGLine deserializeLineNBT(NBTTagCompound nbt, RGContainer container) {
-        RGLine line = new RGLine(container.nodes.get(nbt.getInteger("parent")), container.nodes.get(nbt.getInteger("child")), container);
+        RGLine line = new RGLine(container.nodes.get(nbt.getInteger("parent")),
+                container.nodes.get(nbt.getInteger("child")), container);
         line.ratio = nbt.getInteger("ratio");
         boolean visible = nbt.getBoolean("visible");
         line.infoGroup.setVisible(visible);
@@ -177,7 +185,8 @@ public class RGLine extends WidgetGroup {
         float y = points.get(0).y;
         float x2 = points.get(points.size() - 1).x;
         float y2 = points.get(points.size() - 1).y;
-        if (mouseX >= Math.min(x, x2) && mouseY >= Math.min(y, y2) && Math.max(x, x2) > mouseX && Math.max(y, y2) > mouseY) {
+        if (mouseX >= Math.min(x, x2) && mouseY >= Math.min(y, y2) && Math.max(x, x2) > mouseX &&
+                Math.max(y, y2) > mouseY) {
             for (Vec2f point : points) {
                 if ((mouseX - point.x) * (mouseX - point.x) + (mouseY - point.y) * (mouseY - point.y) < 4) {
                     return true;
@@ -196,13 +205,13 @@ public class RGLine extends WidgetGroup {
             drawLines(points, 0x2fffff00, 0xff00ff00, 2);
         }
         Vec2f point = points.get(points.size() - 1);
-        drawSolidRect((int)(point.x - 1.5), (int)(point.y - 1.5), 3, 3, 0XFF00FF00);
+        drawSolidRect((int) (point.x - 1.5), (int) (point.y - 1.5), 3, 3, 0XFF00FF00);
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)){
+        if (super.mouseClicked(mouseX, mouseY, button)) {
             return true;
         } else if (isMouseOver(mouseX, mouseY)) {
             if (!isSelected) {

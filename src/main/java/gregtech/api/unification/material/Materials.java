@@ -17,14 +17,14 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
  * All Material Builders should follow this general formatting:
  * <p>
  * material = new MaterialBuilder(id, name)
- * .ingot().fluid().ore()                <--- types
- * .color().iconSet()                    <--- appearance
- * .flags()                              <--- special generation
- * .element() / .components()            <--- composition
- * .toolStats()                          <---
- * .oreByProducts()                         | additional properties
- * ...                                   <---
- * .blastTemp()                          <--- blast temperature
+ * .ingot().fluid().ore() <--- types
+ * .color().iconSet() <--- appearance
+ * .flags() <--- special generation
+ * .element() / .components() <--- composition
+ * .toolStats() <---
+ * .oreByProducts() | additional properties
+ * ... <---
+ * .blastTemp() <--- blast temperature
  * .build();
  * <p>
  * Use defaults to your advantage! Some defaults:
@@ -99,7 +99,7 @@ public class Materials {
          * - Reserved for CraftTweaker: 32000-32767
          */
 
-        CHEMICAL_DYES = new Material[]{
+        CHEMICAL_DYES = new Material[] {
                 Materials.DyeWhite, Materials.DyeOrange,
                 Materials.DyeMagenta, Materials.DyeLightBlue,
                 Materials.DyeYellow, Materials.DyeLime,
@@ -127,7 +127,7 @@ public class Materials {
         EXT2_METAL.addAll(Arrays.asList(GENERATE_LONG_ROD, GENERATE_BOLT_SCREW));
     }
 
-    public static final MarkerMaterial NULL = new MarkerMaterial("null");
+    public static final MarkerMaterial NULL = MarkerMaterial.create("null");
 
     /**
      * Direct Elements
@@ -290,7 +290,6 @@ public class Materials {
     public static Material Chromite;
     public static Material Cinnabar;
     public static Material Water;
-    public static Material LiquidOxygen;
     public static Material Coal;
     public static Material Cobaltite;
     public static Material Cooperite;
@@ -310,7 +309,6 @@ public class Materials {
     public static Material Invar;
     public static Material Kanthal;
     public static Material Lazurite;
-    public static Material LiquidHelium;
     public static Material Magnalium;
     public static Material Magnesite;
     public static Material Magnetite;
@@ -341,7 +339,6 @@ public class Materials {
     public static Material AluminiumSulfite;
     public static Material Tantalite;
     public static Material Coke;
-
 
     public static Material SolderingAlloy;
     public static Material Spessartine;
@@ -469,6 +466,7 @@ public class Materials {
     public static Material EnrichedNaquadahSulfate;
     public static Material NaquadriaSulfate;
     public static Material Pyrochlore;
+    public static Material RTMAlloy;
 
     /**
      * Organic chemistry

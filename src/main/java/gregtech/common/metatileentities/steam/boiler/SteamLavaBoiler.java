@@ -11,20 +11,26 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMaps;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import gregtech.common.ConfigHolder;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 public class SteamLavaBoiler extends SteamBoiler {
@@ -33,8 +39,9 @@ public class SteamLavaBoiler extends SteamBoiler {
     private static boolean initialized;
 
     private static final IFilter<FluidStack> FUEL_FILTER = new IFilter<>() {
+
         @Override
-        public boolean test(@Nonnull FluidStack fluidStack) {
+        public boolean test(@NotNull FluidStack fluidStack) {
             for (Fluid fluid : getBoilerFuelToConsumption().keySet()) {
                 if (CommonFluidFilters.matchesFluid(fluidStack, fluid)) return true;
             }
@@ -52,7 +59,7 @@ public class SteamLavaBoiler extends SteamBoiler {
         setBoilerFuelToConsumption(Materials.Creosote.getFluid(), 250);
     }
 
-    @Nonnull
+    @NotNull
     public static Object2IntMap<Fluid> getBoilerFuelToConsumption() {
         if (!initialized) {
             initialized = true;
@@ -61,7 +68,7 @@ public class SteamLavaBoiler extends SteamBoiler {
         return Object2IntMaps.unmodifiable(BOILER_FUEL_TO_CONSUMPTION);
     }
 
-    public static void setBoilerFuelToConsumption(@Nonnull Fluid fluid, int amount) {
+    public static void setBoilerFuelToConsumption(@NotNull Fluid fluid, int amount) {
         Objects.requireNonNull(fluid, "fluid == null");
         if (amount <= 0) throw new IllegalArgumentException("amount <= 0");
         BOILER_FUEL_TO_CONSUMPTION.put(fluid, amount);
@@ -123,10 +130,14 @@ public class SteamLavaBoiler extends SteamBoiler {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void randomDisplayTick(float x, float y, float z) {
-        super.randomDisplayTick(x, y, z);
-        if (GTValues.RNG.nextFloat() < 0.3F) {
-            getWorld().spawnParticle(EnumParticleTypes.LAVA, x + GTValues.RNG.nextFloat(), y, z + GTValues.RNG.nextFloat(), 0.0F, 0.0F, 0.0F);
+    public void randomDisplayTick() {
+        if (this.isActive()) {
+            VanillaParticleEffects.RANDOM_LAVA_SMOKE.runEffect(this);
+            if (ConfigHolder.machines.machineSounds && GTValues.RNG.nextDouble() < 0.1) {
+                BlockPos pos = getPos();
+                getWorld().playSound(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+                        SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+            }
         }
     }
 }

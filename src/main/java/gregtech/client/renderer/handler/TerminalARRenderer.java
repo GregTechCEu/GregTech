@@ -5,6 +5,7 @@ import gregtech.api.terminal.app.ARApplication;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @Author: KilaBash
  * @Date: 2021/09/13
  * @Description: Renderer for AR applications.
- * Please don't render your stuff here, it's just a handler
+ *               Please don't render your stuff here, it's just a handler
  */
 @SideOnly(Side.CLIENT)
 public class TerminalARRenderer {
@@ -43,7 +44,7 @@ public class TerminalARRenderer {
             int sWidth = event.getResolution().getScaledWidth();
             int sHeight = event.getResolution().getScaledHeight();
             width = (int) (380 * 0.8 * sHeight / 256);
-            height =(int) (0.8 * sHeight);
+            height = (int) (0.8 * sHeight);
             x = (sWidth - width) / 2;
             y = (sHeight - height) / 2;
             GlStateManager.enableBlend();
@@ -54,7 +55,7 @@ public class TerminalARRenderer {
 
     public static void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (APP != null) {
-            RenderUtil.useScissor(x, y, width, height, ()-> APP.drawARScreen(event));
+            RenderUtil.useScissor(x, y, width, height, () -> APP.drawARScreen(event));
         }
     }
 
@@ -70,7 +71,7 @@ public class TerminalARRenderer {
             }
             HELD_HAND = EnumHand.MAIN_HAND;
             NBTTagCompound tag = player.getHeldItem(EnumHand.MAIN_HAND).getSubCompound("terminal");
-            if (tag == null ) {
+            if (tag == null) {
                 tag = player.getHeldItem(EnumHand.OFF_HAND).getSubCompound("terminal");
                 HELD_HAND = EnumHand.OFF_HAND;
             }
@@ -95,5 +96,4 @@ public class TerminalARRenderer {
             }
         }
     }
-
 }

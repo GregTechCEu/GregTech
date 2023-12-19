@@ -1,10 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-import com.google.common.base.Preconditions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -13,6 +8,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.TabGroup.TabLocation;
 import gregtech.api.gui.widgets.tab.ItemTabInfo;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.storage.ICraftingStorage;
@@ -27,6 +23,7 @@ import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
 import gregtech.common.inventory.itemsource.ItemSources;
 import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,18 +35,25 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity implements ICraftingStorage {
-    private final ItemStackHandler internalInventory = new ItemStackHandler(18);
+
+    private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
@@ -63,35 +67,43 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         super(metaTileEntityId);
     }
 
-    public static AbstractWidgetGroup createWorkbenchTab(CraftingRecipeLogic craftingRecipeLogic, ItemStackHandler craftingGrid, CraftingRecipeMemory recipeMemory,
-                                                         ItemStackHandler toolInventory, ItemStackHandler internalInventory) {
+    public static AbstractWidgetGroup createWorkbenchTab(CraftingRecipeLogic craftingRecipeLogic,
+                                                         ItemStackHandler craftingGrid,
+                                                         CraftingRecipeMemory recipeMemory,
+                                                         ItemStackHandler toolInventory,
+                                                         ItemStackHandler internalInventory) {
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new ImageWidget(88 - 13, 44 - 14, 26, 26, GuiTextures.SLOT));
         widgetGroup.addWidget(new CraftingSlotWidget(craftingRecipeLogic, 0, 88 - 9, 44 - 9));
 
-        //crafting grid
+        // crafting grid
         widgetGroup.addWidget(new CraftingStationInputWidgetGroup(4, 7, craftingGrid, craftingRecipeLogic));
 
         Supplier<String> textSupplier = () -> Integer.toString(craftingRecipeLogic.getItemsCraftedAmount());
         widgetGroup.addWidget(new SimpleTextWidget(88, 44 + 19, "", textSupplier));
 
         Consumer<ClickData> clearAction = (clickData) -> craftingRecipeLogic.clearCraftingGrid();
-        widgetGroup.addWidget(new ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction).setButtonTexture(GuiTextures.BUTTON_CLEAR_GRID));
+        widgetGroup.addWidget(new ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction)
+                .setButtonTexture(GuiTextures.BUTTON_CLEAR_GRID));
 
-        widgetGroup.addWidget(new ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3, TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
+        widgetGroup.addWidget(new ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3,
+                TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                widgetGroup.addWidget(new MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid, 168 - 18 * 3 / 2 - 27 + j * 18, 44 - 28 + i * 18));
+                widgetGroup.addWidget(new MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid,
+                        168 - 18 * 3 / 2 - 27 + j * 18, 44 - 28 + i * 18));
             }
         }
-        //tool inventory
+        // tool inventory
         for (int i = 0; i < 9; i++) {
-            widgetGroup.addWidget(new SlotWidget(toolInventory, i, 7 + i * 18, 75).setBackgroundTexture(GuiTextures.SLOT, GuiTextures.TOOL_SLOT_OVERLAY));
+            widgetGroup.addWidget(new SlotWidget(toolInventory, i, 7 + i * 18, 75)
+                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.TOOL_SLOT_OVERLAY));
         }
-        //internal inventory
+        // internal inventory
         for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 9; ++j) {
-                widgetGroup.addWidget(new SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i * 18).setBackgroundTexture(GuiTextures.SLOT));
+                widgetGroup.addWidget(new SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i * 18)
+                        .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
         return widgetGroup;
@@ -188,7 +200,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-
         createCraftingRecipeLogic(entityPlayer);
 
         Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
@@ -197,7 +208,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         TabGroup<AbstractWidgetGroup> tabGroup = new TabGroup<>(TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
         tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.workbench",
-                new ItemStack(Blocks.CRAFTING_TABLE)), createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
+                new ItemStack(Blocks.CRAFTING_TABLE)),
+                createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
         tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.item_list",
                 new ItemStack(Blocks.CHEST)), createItemListTab());
         builder.widget(tabGroup);
@@ -236,12 +248,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
+    public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
         return false;
     }
 
     @Override
-    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
+    public boolean canRenderMachineGrid(@NotNull ItemStack mainHandStack, @NotNull ItemStack offHandStack) {
         return false;
     }
 

@@ -45,8 +45,8 @@ gregtech.multiblock.steam.low_steam=Not enough Steam to run!
 gregtech.multiblock.steam.steam_stored=Steam: %s
 gregtech.machine.steam_hatch.name=Steam Hatch
 gregtech.machine.steam.steam_hatch.tooltip=§eAccepted Fluid: §fSteam
-gregtech.machine.steam_import_bus.name=Input Bus (Steam)
-gregtech.machine.steam_export_bus.name=Output Bus (Steam)
+gregtech.machine.steam_import_bus.name=Steam Input Bus
+gregtech.machine.steam_export_bus.name=Steam Output Bus
 gregtech.machine.steam_bus.tooltip=Does not work with non-steam multiblocks
 gregtech.machine.steam_oven.name=Steam Oven
 gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Requires at least 6 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch. Steam Hatch must be on the bottom layer, no more than one.
@@ -531,7 +531,7 @@ metaitem.tool.datamodule.name=Data Module
 metaitem.tool.datamodule.tooltip=Storage for Incredibly Complex Data/n§cCan only be read by a Data Bank
 metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
-metaitem.circuit.integrated.gui=Programmed Circuit Configuration
+metaitem.circuit.integrated.gui=Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
 item.glass.lens=Glass Lens (White)
@@ -802,6 +802,11 @@ metaitem.basic_tape.tooltip=Not strong enough for mechanical issues
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
 
+metaitem.minecart_wheels.iron.name=Iron Minecart Wheels
+metaitem.minecart_wheels.iron.tooltip=To get things rolling
+metaitem.minecart_wheels.steel.name=Steel Minecart Wheels
+metaitem.minecart_wheels.steel.tooltip=To get things rolling
+
 metaitem.quantumeye.name=Quantum Eye
 metaitem.quantumeye.tooltip=Improved Ender Eye
 metaitem.quantumstar.name=Quantum Star
@@ -827,11 +832,11 @@ metaitem.cover.activity.detector_advanced.tooltip=Gives out §fMachine Progress�
 metaitem.cover.fluid.detector.name=Fluid Detector
 metaitem.cover.fluid.detector.tooltip=Gives out §fFluid Amount§7 as Redstone as §fCover§7.
 metaitem.cover.fluid.detector.advanced.name=Advanced Fluid Detector
-metaitem.cover.fluid.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fFluid Storage Status§7 as Redstone as §fCover§7.
+metaitem.cover.fluid.detector.advanced.tooltip=Gives out §fFluid Storage Status§7 as Redstone as §fCover§7, with the option of §fRS-Latch§7 control.
 metaitem.cover.item.detector.name=Item Detector
 metaitem.cover.item.detector.tooltip=Gives out §fItem Amount§7 as Redstone as §fCover§7.
 metaitem.cover.item.detector.advanced.name=Advanced Item Detector
-metaitem.cover.item.detector.advanced.tooltip=Gives §fRS-Latch§7 controlled §fItem Storage Status§7 as Redstone as §fCover§7.
+metaitem.cover.item.detector.advanced.tooltip=Gives out §fItem Storage Status§7 as Redstone as §fCover§7, with the option of §fRS-Latch§7 control.
 metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out §fEnergy Amount§7 as Redstone as §fCover§7.
 metaitem.cover.energy.detector.advanced.name=Advanced Energy Detector
@@ -1170,7 +1175,7 @@ cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
 
 cover.ore_dictionary_filter.title=Ore Dictionary Filter
-cover.ore_dictionary_filter.info=§bAccepts complex expressions/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r for grouping/n§6*§r for wildcard (i.e. 0 or more characters)/n§6?§r for any 1 character/n§6()§r for matching empty entry (including items with no ore dictionary)/n§6$c§r at the start of expression for case-sensitive match/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
+cover.ore_dictionary_filter.info=§bAccepts complex expressions/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r for grouping/n§6*§r for wildcard (i.e. 0 or more characters)/n§6?§r for any 1 character/n§6()§r for matching empty entry (including items with no ore dictionary)/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
 cover.ore_dictionary_filter.test_slot.info=Insert a item to test if it matches the filter expression
 cover.ore_dictionary_filter.test_slot.matches=§a* %s
 cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
@@ -1181,6 +1186,10 @@ cover.ore_dictionary_filter.status.err_warn=§c%s error(s) and %s warning(s)
 cover.ore_dictionary_filter.status.warn=§7%s warning(s)
 cover.ore_dictionary_filter.status.no_issues=§aNo issues
 cover.ore_dictionary_filter.status.explain=Ore filter explanation:
+cover.ore_dictionary_filter.button.case_sensitive.disabled=Case insensitive match
+cover.ore_dictionary_filter.button.case_sensitive.enabled=Case sensitive match
+cover.ore_dictionary_filter.button.match_all.disabled=Match any one of ore dictionary entries
+cover.ore_dictionary_filter.button.match_all.enabled=Match all ore dictionary entries
 
 cover.ore_dictionary_filter.preview.next=<text>... followed by </text>
 cover.ore_dictionary_filter.preview.match=<node>'<value>%s</value>'</node>
@@ -1252,6 +1261,9 @@ cover.voiding.tooltip=§cWARNING!§7 Setting this to "Enabled" means that fluids
 cover.voiding.message.disabled=Voiding Cover Disabled
 cover.voiding.message.enabled=Voiding Cover Enabled
 
+cover.shutter.message.disabled=Shutter Cover Disabled
+cover.shutter.message.enabled=Shutter Cover Enabled
+
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
 cover.smart_item_filter.filtering_mode.centrifuge=Centrifuge
@@ -1312,11 +1324,17 @@ cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPri
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
+cover.generic.advanced_detector.latched=Latched
+cover.generic.advanced_detector.continuous=Continuous
+cover.generic.advanced_detector.latch_tooltip=Change the redstone behavior of this Cover. /n§eContinuous§7 - Default; values less than the minimum output 0; values higher than the maximum output 15; values between min and max output between 0 and 15 /n§eLatched§7 - output 15 until above max, then output 0 until below min
+cover.generic.advanced_detector.invert_label=Redstone Output:
+cover.generic.advanced_detector.latch_label=Behavior:
+cover.generic.advanced_detector.invert_tooltip=Toggle to invert the redstone logic
+
 cover.advanced_energy_detector.label=Advanced Energy Detector
 cover.advanced_energy_detector.min=Minimum:
 cover.advanced_energy_detector.max=Maximum:
 cover.advanced_energy_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone is emitted when less than the minimum EU, and stops emitting when greater than the max EU
-cover.advanced_energy_detector.invert_label=Inverted:
 cover.advanced_energy_detector.normal=Normal
 cover.advanced_energy_detector.inverted=Inverted
 cover.advanced_energy_detector.modes_tooltip=Change between using discrete EU values or percentages for comparing min/max against an attached energy storage.
@@ -1325,7 +1343,6 @@ cover.advanced_energy_detector.mode_eu=Discrete EU
 cover.advanced_energy_detector.mode_percent=Percentage
 
 cover.advanced_fluid_detector.label=Advanced Fluid Detector
-cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
 cover.advanced_fluid_detector.max=Maximum Fluid:
 cover.advanced_fluid_detector.min=Minimum Fluid:
 cover.advanced_item_detector.label=Advanced Item Detector
@@ -1775,6 +1792,7 @@ gregtech.material.antimony_trifluoride=Antimony Trifluoride
 gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
+gregtech.material.rtm_alloy=RTM Alloy
 
 
 # Organic Chemistry Materials
@@ -2444,7 +2462,7 @@ tile.wire_coil.tooltip_energy_cracking=  §aEnergy Usage: §f%s%%
 tile.wire_coil.cupronickel.name=Cupronickel Coil Block
 tile.wire_coil.kanthal.name=Kanthal Coil Block
 tile.wire_coil.nichrome.name=Nichrome Coil Block
-tile.wire_coil.tungstensteel.name=Tungstensteel Coil Block
+tile.wire_coil.rtm_alloy.name=RTM Alloy Coil Block
 tile.wire_coil.hss_g.name=HSS-G Coil Block
 tile.wire_coil.naquadah.name=Naquadah Coil Block
 tile.wire_coil.trinium.name=Trinium Coil Block
@@ -2476,6 +2494,58 @@ tile.warning_sign_1.gregification_hazard.name=Gregification Hazard Sign Block
 tile.warning_sign_1.causality_hazard.name=Non-Standard Causality Hazard Sign Block
 tile.warning_sign_1.automated_defenses_hazard.name=Automated Defenses Hazard Sign Block
 tile.warning_sign_1.high_pressure_hazard.name=High Pressure Hazard Sign Block
+
+# Decorative Metal Sheets
+tile.metal_sheet.white.name=White Metal Sheet
+tile.metal_sheet.orange.name=Orange Metal Sheet
+tile.metal_sheet.magenta.name=Magenta Metal Sheet
+tile.metal_sheet.light_blue.name=Light Blue Metal Sheet
+tile.metal_sheet.yellow.name=Yellow Metal Sheet
+tile.metal_sheet.lime.name=Lime Metal Sheet
+tile.metal_sheet.pink.name=Pink Metal Sheet
+tile.metal_sheet.gray.name=Gray Metal Sheet
+tile.metal_sheet.silver.name=Light Gray Metal Sheet
+tile.metal_sheet.cyan.name=Cyan Metal Sheet
+tile.metal_sheet.purple.name=Purple Metal Sheet
+tile.metal_sheet.blue.name=Blue Metal Sheet
+tile.metal_sheet.brown.name=Brown Metal Sheet
+tile.metal_sheet.green.name=Green Metal Sheet
+tile.metal_sheet.red.name=Red Metal Sheet
+tile.metal_sheet.black.name=Black Metal Sheet
+
+tile.large_metal_sheet.white.name=White Large Metal Sheet
+tile.large_metal_sheet.orange.name=Orange Large Metal Sheet
+tile.large_metal_sheet.magenta.name=Magenta Large Metal Sheet
+tile.large_metal_sheet.light_blue.name=Light Blue Large Metal Sheet
+tile.large_metal_sheet.yellow.name=Yellow Large Metal Sheet
+tile.large_metal_sheet.lime.name=Lime Large Metal Sheet
+tile.large_metal_sheet.pink.name=Pink Large Metal Sheet
+tile.large_metal_sheet.gray.name=Gray Large Metal Sheet
+tile.large_metal_sheet.silver.name=Light Gray Large Metal Sheet
+tile.large_metal_sheet.cyan.name=Cyan Large Metal Sheet
+tile.large_metal_sheet.purple.name=Purple Large Metal Sheet
+tile.large_metal_sheet.blue.name=Blue Large Metal Sheet
+tile.large_metal_sheet.brown.name=Brown Large Metal Sheet
+tile.large_metal_sheet.green.name=Green Large Metal Sheet
+tile.large_metal_sheet.red.name=Red Large Metal Sheet
+tile.large_metal_sheet.black.name=Black Large Metal Sheet
+
+tile.studs.white.name=White Studs
+tile.studs.orange.name=Orange Studs
+tile.studs.magenta.name=Magenta Studs
+tile.studs.light_blue.name=Light Blue Studs
+tile.studs.yellow.name=Yellow Studs
+tile.studs.lime.name=Lime Studs
+tile.studs.pink.name=Pink Studs
+tile.studs.gray.name=Gray Studs
+tile.studs.silver.name=Light Gray Studs
+tile.studs.cyan.name=Cyan Studs
+tile.studs.purple.name=Purple Studs
+tile.studs.blue.name=Blue Studs
+tile.studs.brown.name=Brown Studs
+tile.studs.green.name=Green Studs
+tile.studs.red.name=Red Studs
+tile.studs.black.name=Black Studs
 
 # Lamps(ON)
 tile.gregtech_lamp.white.name=White Lamp
@@ -2651,11 +2721,6 @@ gregtech.machine.crate.stainless_steel.name=Stainless Steel Crate
 gregtech.machine.crate.titanium.name=Titanium Crate
 gregtech.machine.crate.tungstensteel.name=Tungstensteel Crate
 gregtech.crate.tooltip.taped_movement=Can be Taped to keep inventory contents when broken
-
-# Safe
-gregtech.machine.locked_safe.name=Locked Safe
-gregtech.machine.locked_safe.malfunctioning=§cMalfunctioning!
-gregtech.machine.locked_safe.requirements=§7Replacements required:
 
 # Workbench
 gregtech.machine.workbench.name=Crafting Station
@@ -4209,6 +4274,9 @@ gregtech.machine.item_collector.ev.name=Advanced Item Collector III
 gregtech.machine.item_collector.gui.collect_range=Collect in %s blocks
 gregtech.machine.item_collector.tooltip=Collects Items around itself when given a Redstone signal
 
+gregtech.machine.alarm.name=Alarm
+gregtech.machine.alarm.tooltip=Plays a Sound when given a Redstone signal
+
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than Storage Drawers
 gregtech.machine.super_chest.lv.name=Super Chest I
@@ -4321,19 +4389,24 @@ gregtech.machine.fisher.requirement=Requires a %,dx%,d centered square of water 
 
 # World Accelerator
 gregtech.machine.world_accelerator.lv.name=Basic World Accelerator
+gregtech.machine.world_accelerator.lv.tooltip=Tick accelerates Blocks
 gregtech.machine.world_accelerator.mv.name=Advanced World Accelerator
+gregtech.machine.world_accelerator.mv.tooltip=Tick accelerates Blocks
 gregtech.machine.world_accelerator.hv.name=Advanced World Accelerator II
+gregtech.machine.world_accelerator.hv.tooltip=Tick accelerates Blocks
 gregtech.machine.world_accelerator.ev.name=Advanced World Accelerator III
+gregtech.machine.world_accelerator.ev.tooltip=Tick accelerates Blocks
 gregtech.machine.world_accelerator.iv.name=Elite World Accelerator
+gregtech.machine.world_accelerator.iv.tooltip=Time in a §mBottle§r§7 Block
 gregtech.machine.world_accelerator.luv.name=Elite World Accelerator II
+gregtech.machine.world_accelerator.luv.tooltip=Time in a §mBottle§r§7 Block
 gregtech.machine.world_accelerator.zpm.name=Elite World Accelerator III
+gregtech.machine.world_accelerator.zpm.tooltip=Time in a §mBottle§r§7 Block
 gregtech.machine.world_accelerator.uv.name=Ultimate World Accelerator
-gregtech.machine.world_accelerator.uhv.name=Epic World Accelerator
-gregtech.machine.world_accelerator.uev.name=Epic World Accelerator II
-gregtech.machine.world_accelerator.uiv.name=Epic World Accelerator III
-gregtech.machine.world_accelerator.uxv.name=Epic World Accelerator IV
-gregtech.machine.world_accelerator.opv.name=Legendary World Accelerator
-gregtech.machine.world_accelerator.description=Tick accelerates nearby blocks in one of 2 modes: §fTile Entity§7 or §fRandom Tick§7. Use Screwdriver to change mode.
+gregtech.machine.world_accelerator.uv.tooltip=Time Anomaly
+gregtech.machine.world_accelerator.description=Use §fScrewdriver§7 to change mode between §fRandom Tick§7 and §fTile Entity§7 modes.
+gregtech.machine.world_accelerator.power_usage=Uses up to §f%dA§7 in Random Tick mode, §f%dA§7 in Tile Entity mode.
+gregtech.machine.world_accelerator.acceleration=§dAccelerates up to: §f%dx
 gregtech.machine.world_accelerator.working_area=§bWorking Area:
 gregtech.machine.world_accelerator.working_area_tile=  Tile Entity Mode:§f Adjacent Blocks
 gregtech.machine.world_accelerator.working_area_random=  Random Tick Mode:§f %dx%d
@@ -4532,8 +4605,8 @@ gregtech.advancement.insane_voltage.55_qbit_cpu_wafer.name=QBit CPU Wafer
 gregtech.advancement.insane_voltage.55_qbit_cpu_wafer.desc=Produce a QBit CPU Wafer.
 gregtech.advancement.insane_voltage.56_quantum_processor.name=Quantum Processor
 gregtech.advancement.insane_voltage.56_quantum_processor.desc=Get Quantum Processors.
-gregtech.advancement.insane_voltage.57_tungstensteel_coil.name=Upgrade your Coils to Level IV
-gregtech.advancement.insane_voltage.57_tungstensteel_coil.desc=Craft a Tungstensteel Heating Coil.
+gregtech.advancement.insane_voltage.57_rtm_alloy_coil.name=Upgrade your Coils to Level IV
+gregtech.advancement.insane_voltage.57_rtm_alloy_coil.desc=Craft an RTM Alloy Heating Coil.
 gregtech.advancement.insane_voltage.58_hss_g_coil.name=Upgrade your Coils to Level V
 gregtech.advancement.insane_voltage.58_hss_g_coil.desc=Craft an HSS-G Heating Coil.
 gregtech.advancement.root_luv.name=Ludicrous Voltage
@@ -4864,7 +4937,6 @@ gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
 gregtech.bus.collapse_true=Bus will collapse Items
 gregtech.bus.collapse_false=Bus will not collapse Items
-gregtech.bus.collapse.error=Bus must be attached to multiblock first
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -5197,7 +5269,7 @@ gregtech.universal.tooltip.energy_storage_capacity=§cEnergy Capacity: §f%,d EU
 gregtech.universal.tooltip.energy_tier_range=§aAllowed Voltage Tiers: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6Item Slots: §f%,d
 gregtech.universal.tooltip.item_storage_total=§6Item Capacity: §f%,d items
-gregtech.universal.tooltip.item_stored=§dItem Stored: §f%s, %,d items
+gregtech.universal.tooltip.item_stored=§dItem Stored: §f%s, %,d + %,d items
 gregtech.universal.tooltip.item_transfer_rate=§bTransfer Rate: §f%,d items/s
 gregtech.universal.tooltip.item_transfer_rate_stacks=§bTransfer Rate: §f%,d stacks/s
 gregtech.universal.tooltip.fluid_storage_capacity=§9Fluid Capacity: §f%,d L
@@ -5229,6 +5301,11 @@ gregtech.recipe.duration=Duration: %s secs
 gregtech.recipe.amperage=Amperage: %,d
 gregtech.recipe.not_consumed=Does not get consumed in the process
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
+gregtech.recipe.chance_logic=Chance: %s%% +%s%%/tier (%s)
+gregtech.chance_logic.or=OR
+gregtech.chance_logic.and=AND
+gregtech.chance_logic.xor=XOR
+gregtech.chance_logic.none=NONE
 gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
@@ -5242,9 +5319,9 @@ gregtech.recipe.computation_per_tick=Min. Computation: %,d CWU/t
 gregtech.recipe.total_computation=Computation: %,d CWU
 gregtech.recipe.research_result=Research result item, not produced by this recipe directly
 
-gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
-gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
-gregtech.fluid.click_to_empty=§7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
+gregtech.fluid.click_to_fill=§7Left Click with a Fluid Container to §bfill §7the tank (Right Click to process 1 item per click).
+gregtech.fluid.click_combined=§7Left Click with a Fluid Container to §bfill §7or §cempty §7the tank (Right Click to process 1 item per click).
+gregtech.fluid.click_to_empty=§7Left Click with a Fluid Container to §cempty §7the tank (Right Click to process 1 item per click).
 
 gregtech.tool_action.show_tooltips=Hold SHIFT to show Tool Info
 gregtech.tool_action.screwdriver.auto_output_covers=§8Use Screwdriver to Allow Input from Output Side or access Covers
@@ -5255,6 +5332,7 @@ gregtech.tool_action.screwdriver.auto_output=§8Use Screwdriver to toggle Auto-O
 gregtech.tool_action.screwdriver.auto_output_down=§8Use Screwdriver to toggle Auto-Output from the Bottom
 gregtech.tool_action.screwdriver.toggle_mode=§8Use Screwdriver to toggle Modes
 gregtech.tool_action.wrench.set_facing=§8Use Wrench to set Facing
+gregtech.tool_action.wrench.extended_facing=§8Use Wrench to set Facing or spin the Machine
 gregtech.tool_action.wrench.connect=§8Use Wrench to set Connections
 gregtech.tool_action.wrench.connect_and_block=§8Use Wrench to set Connections, sneak to block transfer
 gregtech.tool_action.wire_cutter.connect=§8Use Wire Cutters to set Connections
@@ -5265,6 +5343,9 @@ gregtech.tool_action.crowbar=§8Use Crowbar to remove Covers
 gregtech.tool_action.tape=§8Use Tape to fix Maintenance Problems
 
 gregtech.fluid.generic=%s
+gregtech.fluid.liquid_generic=Liquid %s
+gregtech.fluid.gas_generic=%s Gas
+gregtech.fluid.gas_vapor=%s Vapor
 gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
@@ -5288,13 +5369,18 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.item_auto_collapse.tooltip.enabled=Item Auto-Collapse Enabled
+gregtech.gui.item_auto_collapse.tooltip.disabled=Item Auto-Collapse Disabled
 gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s batteries§r/n§7Charges %s tools and batteries
-gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r/n§aConfigured Value: §f%d§7/n/n§7LMB/RMB/Scroll to cycle through the list/n§7Shift-right-click to clear
+gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r\n§aConfigured Value: §f%d§7\n\n§7LMB/RMB/Scroll to cycle through the list\n§7Shift-left-click to open selector\n§7Shift-right-click to clear
 gregtech.gui.configurator_slot.no_value=None
+gregtech.gui.configurator_slot.unavailable.tooltip=Programmed Circuit slot unavailable
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
 gregtech.gui.fluid_voiding.tooltip.disabled=Excess Fluid Voiding Disabled
+gregtech.gui.item_voiding.tooltip.enabled=Excess Item Voiding Enabled
+gregtech.gui.item_voiding.tooltip.disabled=Excess Item Voiding Disabled
 gregtech.gui.multiblock_item_voiding=Voiding Mode/n§7Voiding §6Items
 gregtech.gui.multiblock_fluid_voiding=Voiding Mode/n§7Voiding §9Fluids
 gregtech.gui.multiblock_item_fluid_voiding=Voiding Mode/n§7Voiding §6Items §7and §9Fluids
@@ -5307,6 +5393,8 @@ gregtech.gui.config_slot=§fConfig Slot§r
 gregtech.gui.config_slot.set=§7Click to §bset/select§7 config slot.§r
 gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§r
 gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
+gregtech.gui.alarm.radius=Radius:
+
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
@@ -5428,7 +5516,10 @@ gregtech.multiblock.invalid_structure=Invalid structure.
 gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI.
 gregtech.multiblock.validation_failed=Invalid amount of inputs/outputs.
 gregtech.multiblock.max_energy_per_tick=Max EU/t: %s (%s)
+gregtech.multiblock.max_energy_per_tick_hover=The maximum EU/t available for running recipes or overclocking
 gregtech.multiblock.max_energy_per_tick_amps=Max EU/t: %s (%sA %s)
+gregtech.multiblock.max_recipe_tier=Max Recipe Tier: %s
+gregtech.multiblock.max_recipe_tier_hover=The maximum tier of recipes that can be run
 gregtech.multiblock.generation_eu=Outputting: §a%s EU/t
 gregtech.multiblock.universal.no_problems=No Maintenance Problems!
 gregtech.multiblock.universal.has_problems=Has Maintenance Problems!
@@ -5470,7 +5561,7 @@ gregtech.multiblock.pattern.error.batteries=§cMust have at least one non-empty 
 gregtech.multiblock.pattern.error.filters=§cAll filters must be the same§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
-gregtech.multiblock.pattern.single=§6Only this block can be used§r
+gregtech.multiblock.pattern.single=§6Only this block type can be used§r
 gregtech.multiblock.pattern.location_end=§cVery End§r
 gregtech.multiblock.pattern.replaceable_air=Replaceable by Air
 
@@ -5535,6 +5626,7 @@ gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch
 gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 
 gregtech.multiblock.fluid_rig.drilled_fluid=Fluid: %s
+gregtech.multiblock.fluid_rig.no_fluid_in_area=None in Area.
 gregtech.multiblock.fluid_rig.fluid_amount=Pumping Rate: %s
 gregtech.multiblock.fluid_rig.vein_depletion=Vein Size: %s
 gregtech.multiblock.fluid_rig.vein_depleted=Vein Depleted.
@@ -5635,6 +5727,8 @@ gregtech.creative.tank.tpc=Ticks per Cycle
 
 gregtech.creative.energy.amperage=Amperage
 gregtech.creative.energy.voltage=Voltage
+gregtech.creative.energy.sink=Sink
+gregtech.creative.energy.source=Source
 
 gregtech.creative.activity.on=Active
 gregtech.creative.activity.off=Not active

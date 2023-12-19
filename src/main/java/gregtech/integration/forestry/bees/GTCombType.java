@@ -1,6 +1,7 @@
 package gregtech.integration.forestry.bees;
 
 import gregtech.api.GTValues;
+
 import net.minecraftforge.fml.common.Loader;
 
 public enum GTCombType {
@@ -106,7 +107,7 @@ public enum GTCombType {
 
     GTCombType(String name, int primary, int secondary, boolean show) {
         this.name = name;
-        this.color = new int[]{primary, secondary};
+        this.color = new int[] { primary, secondary };
         this.showInList = show;
     }
 

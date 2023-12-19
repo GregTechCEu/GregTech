@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -11,7 +12,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
 
@@ -26,18 +27,9 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
         return false;
-    }
-
-    @Override
-    public double getWalkingSpeedBonus() {
-        return 1.6D;
-    }
-
-    @Override
-    public boolean checkApplicableBlocks(IBlockState state) {
-        return state == getState(BlockType.ASPHALT);
     }
 
     public enum BlockType implements IStringSerializable, IStateHarvestLevel {
@@ -52,7 +44,7 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
             this.harvestLevel = harvestLevel;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;

@@ -2,7 +2,9 @@ package gregtech.asm.visitors;
 
 import gregtech.api.GTValues;
 import gregtech.asm.util.ObfMapping;
+
 import net.minecraftforge.fml.common.Loader;
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -12,7 +14,8 @@ import java.util.Iterator;
 public class RenderItemVisitor implements Opcodes {
 
     public static final String TARGET_CLASS_NAME = "net/minecraft/client/renderer/RenderItem";
-    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_180453_a", "(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V").toRuntime(); // renderItemOverlayIntoGUI
+    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_180453_a",
+            "(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V").toRuntime(); // renderItemOverlayIntoGUI
 
     public static void transform(Iterator<MethodNode> methods) {
         while (methods.hasNext()) {
@@ -22,7 +25,8 @@ public class RenderItemVisitor implements Opcodes {
                 callRenderLampOverlay.add(new VarInsnNode(ALOAD, 2));
                 callRenderLampOverlay.add(new VarInsnNode(ILOAD, 3));
                 callRenderLampOverlay.add(new VarInsnNode(ILOAD, 4));
-                callRenderLampOverlay.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks", "renderLampOverlay", "(Lnet/minecraft/item/ItemStack;II)V", false));
+                callRenderLampOverlay.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks",
+                        "renderLampOverlay", "(Lnet/minecraft/item/ItemStack;II)V", false));
 
                 boolean enderCoreLoaded = Loader.instance().getIndexedModList().containsKey(GTValues.MODID_ECORE);
 
@@ -33,7 +37,8 @@ public class RenderItemVisitor implements Opcodes {
                     callRenderElectricBar.add(new VarInsnNode(ALOAD, 2));
                     callRenderElectricBar.add(new VarInsnNode(ILOAD, 3));
                     callRenderElectricBar.add(new VarInsnNode(ILOAD, 4));
-                    callRenderElectricBar.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks", "renderElectricBar", "(Lnet/minecraft/item/ItemStack;II)V", false));
+                    callRenderElectricBar.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks",
+                            "renderElectricBar", "(Lnet/minecraft/item/ItemStack;II)V", false));
                 } else {
                     callRenderElectricBar = null;
                 }

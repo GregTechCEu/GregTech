@@ -17,6 +17,7 @@ import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -39,7 +40,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +57,8 @@ public class TricorderBehavior implements IItemBehaviour {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+                                           float hitY, float hitZ, EnumHand hand) {
         if (!world.isRemote && !world.isAirBlock(pos)) {
 
             List<ITextComponent> info = getScannerInfo(player, world, pos);
@@ -88,23 +91,29 @@ public class TricorderBehavior implements IItemBehaviour {
         // coordinates of the block
 
         list.add(new TextComponentTranslation("behavior.tricorder.position",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(pos.getX())).setStyle(new Style().setColor(TextFormatting.AQUA)),
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(pos.getY())).setStyle(new Style().setColor(TextFormatting.AQUA)),
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(pos.getZ())).setStyle(new Style().setColor(TextFormatting.AQUA)),
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(world.provider.getDimension())).setStyle(new Style().setColor(TextFormatting.AQUA))
-        ));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(pos.getX()))
+                        .setStyle(new Style().setColor(TextFormatting.AQUA)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(pos.getY()))
+                        .setStyle(new Style().setColor(TextFormatting.AQUA)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(pos.getZ()))
+                        .setStyle(new Style().setColor(TextFormatting.AQUA)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(world.provider.getDimension()))
+                        .setStyle(new Style().setColor(TextFormatting.AQUA))));
 
         // hardness and blast resistance
         list.add(new TextComponentTranslation("behavior.tricorder.block_hardness",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(block.getBlockHardness(state, world, pos))).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(block.getExplosionResistance(player))).setStyle(new Style().setColor(TextFormatting.YELLOW))
-        ));
+                new TextComponentTranslation(
+                        TextFormattingUtil.formatNumbers(block.getBlockHardness(state, world, pos)))
+                                .setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(block.getExplosionResistance(player)))
+                        .setStyle(new Style().setColor(TextFormatting.YELLOW))));
 
         if (debugLevel > 2) {
             for (Map.Entry<IProperty<?>, Comparable<?>> prop : state.getProperties().entrySet()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.state",
                         new TextComponentTranslation(prop.getKey().getName()),
-                        new TextComponentTranslation(prop.getValue().toString()).setStyle(new Style().setColor(TextFormatting.AQUA))));
+                        new TextComponentTranslation(prop.getValue().toString())
+                                .setStyle(new Style().setColor(TextFormatting.AQUA))));
             }
             if (state instanceof IExtendedBlockState) {
                 IExtendedBlockState extState = (IExtendedBlockState) state;
@@ -112,7 +121,8 @@ public class TricorderBehavior implements IItemBehaviour {
                     if (prop.getValue().isPresent()) {
                         list.add(new TextComponentTranslation("behavior.tricorder.state",
                                 new TextComponentTranslation(prop.getKey().getName()),
-                                new TextComponentTranslation(prop.getValue().get().toString()).setStyle(new Style().setColor(TextFormatting.AQUA))));
+                                new TextComponentTranslation(prop.getValue().get().toString())
+                                        .setStyle(new Style().setColor(TextFormatting.AQUA))));
                     }
                 }
             }
@@ -126,9 +136,11 @@ public class TricorderBehavior implements IItemBehaviour {
 
             // name of the machine
             list.add(new TextComponentTranslation("behavior.tricorder.block_name",
-                    new TextComponentTranslation(LocalizationUtils.format(metaTileEntity.getMetaFullName())).setStyle(new Style().setColor(TextFormatting.BLUE)),
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId))).setStyle(new Style().setColor(TextFormatting.BLUE))
-            ));
+                    new TextComponentTranslation(LocalizationUtils.format(metaTileEntity.getMetaFullName()))
+                            .setStyle(new Style().setColor(TextFormatting.BLUE)),
+                    new TextComponentTranslation(TextFormattingUtil
+                            .formatNumbers(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId)))
+                                    .setStyle(new Style().setColor(TextFormatting.BLUE))));
 
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
@@ -145,10 +157,12 @@ public class TricorderBehavior implements IItemBehaviour {
 
                     allTanksEmpty = false;
                     list.add(new TextComponentTranslation("behavior.tricorder.tank", i,
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(tank.getFluid().amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(tank.getCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                            new TextComponentTranslation(tank.getFluid().getLocalizedName()).setStyle(new Style().setColor(TextFormatting.GOLD))
-                    ));
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(tank.getFluid().amount))
+                                    .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(tank.getCapacity()))
+                                    .setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                            new TextComponentTranslation(tank.getFluid().getLocalizedName())
+                                    .setStyle(new Style().setColor(TextFormatting.GOLD))));
                 }
                 tankIndex += tanks.getFluidTanks().size();
             }
@@ -162,10 +176,12 @@ public class TricorderBehavior implements IItemBehaviour {
 
                     allTanksEmpty = false;
                     list.add(new TextComponentTranslation("behavior.tricorder.tank", tankIndex + i,
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(tank.getFluid().amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(tank.getCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                            new TextComponentTranslation(tank.getFluid().getLocalizedName()).setStyle(new Style().setColor(TextFormatting.GOLD))
-                    ));
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(tank.getFluid().amount))
+                                    .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(tank.getCapacity()))
+                                    .setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                            new TextComponentTranslation(tank.getFluid().getLocalizedName())
+                                    .setStyle(new Style().setColor(TextFormatting.GOLD))));
                 }
             }
 
@@ -175,48 +191,61 @@ public class TricorderBehavior implements IItemBehaviour {
             // sound muffling
             energyCost += 500;
             if (metaTileEntity.isMuffled())
-                list.add(new TextComponentTranslation("behavior.tricorder.muffled").setStyle(new Style().setColor(TextFormatting.GREEN)));
+                list.add(new TextComponentTranslation("behavior.tricorder.muffled")
+                        .setStyle(new Style().setColor(TextFormatting.GREEN)));
 
             // workable progress info
             IWorkable workable = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
             if (workable != null) {
                 if (!workable.isWorkingEnabled()) {
-                    list.add(new TextComponentTranslation("behavior.tricorder.machine_disabled").setStyle(new Style().setColor(TextFormatting.RED)));
+                    list.add(new TextComponentTranslation("behavior.tricorder.machine_disabled")
+                            .setStyle(new Style().setColor(TextFormatting.RED)));
                 }
-                //            if (workable.wasShutdown()) { //todo
-                //                list.add(new TextComponentTranslation("behavior.tricorder.machine_power_loss").setStyle(new Style().setColor(TextFormatting.RED)));
-                //            }
+                // if (workable.wasShutdown()) { //todo
+                // list.add(new TextComponentTranslation("behavior.tricorder.machine_power_loss").setStyle(new
+                // Style().setColor(TextFormatting.RED)));
+                // }
                 energyCost += 400;
                 if (workable.getMaxProgress() > 0) {
                     list.add(new TextComponentTranslation("behavior.tricorder.machine_progress",
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getProgress())).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getMaxProgress())).setStyle(new Style().setColor(TextFormatting.YELLOW))
-                    ));
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getProgress()))
+                                    .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getMaxProgress()))
+                                    .setStyle(new Style().setColor(TextFormatting.YELLOW))));
                 }
             }
 
             // energy container
-            IEnergyContainer container = metaTileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
+            IEnergyContainer container = metaTileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                    null);
             if (container != null && container.getEnergyCapacity() > 0) {
                 list.add(new TextComponentTranslation("behavior.tricorder.divider"));
                 if (container.getInputVoltage() > 0) {
                     list.add(new TextComponentTranslation("behavior.tricorder.energy_container_in",
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getInputVoltage())).setStyle(new Style().setColor(TextFormatting.RED)),
-                            new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(container.getInputVoltage())]).setStyle(new Style().setColor(TextFormatting.RED)),
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getInputAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
-                    ));
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getInputVoltage()))
+                                    .setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(
+                                    GTValues.VN[GTUtility.getTierByVoltage(container.getInputVoltage())])
+                                            .setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getInputAmperage()))
+                                    .setStyle(new Style().setColor(TextFormatting.RED))));
                 }
                 if (container.getOutputVoltage() > 0) {
                     list.add(new TextComponentTranslation("behavior.tricorder.energy_container_out",
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.RED)),
-                            new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(container.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.RED)),
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getOutputAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
-                    ));
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getOutputVoltage()))
+                                    .setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(
+                                    GTValues.VN[GTUtility.getTierByVoltage(container.getOutputVoltage())])
+                                            .setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(
+                                    TextFormattingUtil.formatNumbers(container.getOutputAmperage()))
+                                            .setStyle(new Style().setColor(TextFormatting.RED))));
                 }
                 list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
-                ));
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getEnergyStored()))
+                                .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(container.getEnergyCapacity()))
+                                .setStyle(new Style().setColor(TextFormatting.YELLOW))));
             }
 
             // machine-specific info
@@ -238,9 +267,12 @@ public class TricorderBehavior implements IItemBehaviour {
 
             if (pipeTile.getPipeBlock().getRegistryName() != null) {
                 list.add(new TextComponentTranslation("behavior.tricorder.block_name",
-                        new TextComponentTranslation(LocalizationUtils.format(pipeTile.getPipeBlock().getTranslationKey())).setStyle(new Style().setColor(TextFormatting.BLUE)),
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(block.getMetaFromState(world.getBlockState(pos)))).setStyle(new Style().setColor(TextFormatting.BLUE))
-                ));
+                        new TextComponentTranslation(
+                                LocalizationUtils.format(pipeTile.getPipeBlock().getTranslationKey()))
+                                        .setStyle(new Style().setColor(TextFormatting.BLUE)),
+                        new TextComponentTranslation(
+                                TextFormattingUtil.formatNumbers(block.getMetaFromState(world.getBlockState(pos))))
+                                        .setStyle(new Style().setColor(TextFormatting.BLUE))));
             }
 
             // pipe-specific info
@@ -264,42 +296,49 @@ public class TricorderBehavior implements IItemBehaviour {
             list.addAll(provider.getDataInfo());
         } else {
             list.add(new TextComponentTranslation("behavior.tricorder.block_name",
-                    new TextComponentTranslation(LocalizationUtils.format(block.getLocalizedName())).setStyle(new Style().setColor(TextFormatting.BLUE)),
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(block.getMetaFromState(world.getBlockState(pos)))).setStyle(new Style().setColor(TextFormatting.BLUE))
-            ));
+                    new TextComponentTranslation(LocalizationUtils.format(block.getLocalizedName()))
+                            .setStyle(new Style().setColor(TextFormatting.BLUE)),
+                    new TextComponentTranslation(
+                            TextFormattingUtil.formatNumbers(block.getMetaFromState(world.getBlockState(pos))))
+                                    .setStyle(new Style().setColor(TextFormatting.BLUE))));
         }
-
 
         // crops (adds 1000EU)
 
         // bedrock fluids
         list.add(new TextComponentTranslation("behavior.tricorder.divider"));
-        Fluid fluid = BedrockFluidVeinHandler.getFluidInChunk(world, pos.getX() / 16, pos.getZ() / 16);//-# to only read
+        Fluid fluid = BedrockFluidVeinHandler.getFluidInChunk(world, pos.getX() / 16, pos.getZ() / 16);// -# to only
+                                                                                                       // read
         if (fluid != null) {
-            FluidStack stack = new FluidStack(fluid, BedrockFluidVeinHandler.getOperationsRemaining(world, pos.getX() / 16, pos.getZ() / 16));
+            FluidStack stack = new FluidStack(fluid,
+                    BedrockFluidVeinHandler.getOperationsRemaining(world, pos.getX() / 16, pos.getZ() / 16));
             double fluidPercent = stack.amount * 100.0 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
 
             if (player.isCreative()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount",
-                        new TextComponentTranslation(fluid.getLocalizedName(stack)).setStyle(new Style().setColor(TextFormatting.GOLD)),
-                        new TextComponentTranslation(String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, pos.getX() / 16, pos.getZ() / 16))).setStyle(new Style().setColor(TextFormatting.GOLD)),
-                        new TextComponentTranslation(String.valueOf(fluidPercent)).setStyle(new Style().setColor(TextFormatting.YELLOW))
-                ));
+                        new TextComponentTranslation(fluid.getLocalizedName(stack))
+                                .setStyle(new Style().setColor(TextFormatting.GOLD)),
+                        new TextComponentTranslation(String.valueOf(
+                                BedrockFluidVeinHandler.getFluidYield(world, pos.getX() / 16, pos.getZ() / 16)))
+                                        .setStyle(new Style().setColor(TextFormatting.GOLD)),
+                        new TextComponentTranslation(String.valueOf(fluidPercent))
+                                .setStyle(new Style().setColor(TextFormatting.YELLOW))));
             } else {
                 list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount_unknown",
-                        new TextComponentTranslation(String.valueOf(fluidPercent)).setStyle(new Style().setColor(TextFormatting.YELLOW))
-                ));
+                        new TextComponentTranslation(String.valueOf(fluidPercent))
+                                .setStyle(new Style().setColor(TextFormatting.YELLOW))));
             }
         } else {
             list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.nothing"));
         }
 
         // pollution
-//            if (GT_Pollution.hasPollution(currentChunk)) {
-//                list.add("Pollution in Chunk: " + TextFormatting.RED + GTUtility.formatNumbers(GT_Pollution.getPollution(currentChunk)) + TextFormatting.RESET + " gibbl");
-//            } else {
-//                list.add(TextFormatting.GREEN + "No Pollution in Chunk! HAYO!" + TextFormatting.RESET);
-//            }
+        // if (GT_Pollution.hasPollution(currentChunk)) {
+        // list.add("Pollution in Chunk: " + TextFormatting.RED +
+        // GTUtility.formatNumbers(GT_Pollution.getPollution(currentChunk)) + TextFormatting.RESET + " gibbl");
+        // } else {
+        // list.add(TextFormatting.GREEN + "No Pollution in Chunk! HAYO!" + TextFormatting.RESET);
+        // }
 
         // debug TODO
         if (tileEntity instanceof MetaTileEntityHolder) {
@@ -310,7 +349,7 @@ public class TricorderBehavior implements IItemBehaviour {
         return list;
     }
 
-    private boolean drainEnergy(@Nonnull ItemStack stack, long amount, boolean simulate) {
+    private boolean drainEnergy(@NotNull ItemStack stack, long amount, boolean simulate) {
         if (debugLevel > 2)
             return true;
 

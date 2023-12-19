@@ -1,17 +1,16 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.capability.IGhostSlotConfigurable;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.DynamicLabelWidget;
 import gregtech.api.items.gui.ItemUIFactory;
-import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +19,17 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler {
@@ -31,7 +41,8 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
         MetaTileEntity mte = GTUtility.getMetaTileEntity(world, pos);
         ItemStack stack = player.getHeldItem(hand);
 
@@ -47,22 +58,50 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
-            PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-            holder.openUI();
+            MetaItemGuiFactory.open(player, hand);
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
     @Override
-    public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 60)
-                .label(9, 8, "metaitem.circuit.integrated.gui")
-                .widget(new DynamicLabelWidget(82, 30, () -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(holder.getCurrentItem())), 0x4D4040))
-                .widget(new ClickButtonWidget(15, 24, 20, 20, "-5", data -> IntCircuitIngredient.adjustConfiguration(holder, -5)))
-                .widget(new ClickButtonWidget(50, 24, 20, 20, "-1", data -> IntCircuitIngredient.adjustConfiguration(holder, -1)))
-                .widget(new ClickButtonWidget(104, 24, 20, 20, "+1", data -> IntCircuitIngredient.adjustConfiguration(holder, +1)))
-                .widget(new ClickButtonWidget(141, 24, 20, 20, "+5", data -> IntCircuitIngredient.adjustConfiguration(holder, +5)))
-                .build(holder, entityPlayer);
+    public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
+        ItemDrawable circuitPreview = new ItemDrawable(guiData.getUsedItemStack());
+        for (int i = 0; i <= 32; i++) {
+            int finalI = i;
+            guiSyncManager.syncValue("config", i, new InteractionSyncHandler()
+                    .setOnMousePressed(b -> {
+                        ItemStack item = IntCircuitIngredient.getIntegratedCircuit(finalI);
+                        item.setCount(guiData.getUsedItemStack().getCount());
+                        circuitPreview.setItem(item);
+                        guiData.getPlayer().setHeldItem(guiData.getHand(), item);
+                    }));
+        }
+
+        List<List<IWidget>> options = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            options.add(new ArrayList<>());
+            for (int j = 0; j < 9; j++) {
+                int index = i * 9 + j;
+                if (index > 32) break;
+                options.get(i).add(new ButtonWidget<>()
+                        .size(18)
+                        .background(GTGuiTextures.SLOT,
+                                new ItemDrawable(IntCircuitIngredient.getIntegratedCircuit(index)).asIcon().size(16))
+                        .disableHoverBackground()
+                        .syncHandler("config", index));
+            }
+        }
+        return GTGuis.createPanel(guiData.getUsedItemStack(), 176, 120)
+                .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
+                .child(circuitPreview.asIcon().size(16).asWidget()
+                        .size(18)
+                        .top(19).alignX(0.5f)
+                        .background(GTGuiTextures.SLOT))
+                .child(new Grid()
+                        .left(7).right(7).top(41).height(4 * 18)
+                        .matrix(options)
+                        .minColWidth(18).minRowHeight(18)
+                        .minElementMargin(0, 0));
     }
 
     @Override

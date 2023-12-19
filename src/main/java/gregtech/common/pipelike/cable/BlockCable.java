@@ -1,9 +1,7 @@
 package gregtech.common.pipelike.cable;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -20,6 +18,7 @@ import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.core.advancement.AdvancementTriggers;
+
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -38,15 +37,18 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
+import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldENet> implements ITileEntityProvider {
+public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldENet>
+                        implements ITileEntityProvider {
 
     private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
 
@@ -59,7 +61,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     public void addCableMaterial(Material material, WireProperties wireProperties) {
         Preconditions.checkNotNull(material, "material was null");
         Preconditions.checkNotNull(wireProperties, "material %s wireProperties was null", material);
-        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null, "material %s is not registered", material);
+        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null,
+                "material %s is not registered", material);
         if (!pipeType.orePrefix.isIgnored(material)) {
             this.enabledMaterials.put(material, wireProperties);
         }
@@ -80,7 +83,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     public PipeRenderer getPipeRenderer() {
         return CableRenderer.INSTANCE;
@@ -97,19 +100,19 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
             items.add(getItem(material));
         }
     }
 
     @Override
-    protected boolean isPipeTool(@Nonnull ItemStack stack) {
+    protected boolean isPipeTool(@NotNull ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
     }
 
     @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public int getLightValue(@NotNull IBlockState state, IBlockAccess world, @NotNull BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityCable) {
             TileEntityCable cable = (TileEntityCable) tile;
@@ -127,7 +130,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
         if (worldIn.isRemote) {
             TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
             cable.killParticle();
@@ -136,13 +139,16 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side, IPipeTile<Insulation, WireProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side,
+                                   IPipeTile<Insulation, WireProperties> sideTile) {
         return selfTile instanceof TileEntityCable && sideTile instanceof TileEntityCable;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side, TileEntity tile) {
-        return tile != null && tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side.getOpposite()) != null;
+    public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side,
+                                         TileEntity tile) {
+        return tile != null &&
+                tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side.getOpposite()) != null;
     }
 
     @Override
@@ -155,14 +161,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
-    }
-
-    @Override
-    public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
+    public void onEntityCollision(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                  @NotNull Entity entityIn) {
         if (worldIn.isRemote) return;
         Insulation insulation = getPipeTileEntity(worldIn, pos).getPipeType();
         if (insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase) {
@@ -182,11 +182,11 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
         return CableRenderer.INSTANCE.getBlockRenderType();
     }
 

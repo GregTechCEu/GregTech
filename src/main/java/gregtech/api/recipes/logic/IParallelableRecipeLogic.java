@@ -1,15 +1,17 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.IVoidable;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface IParallelableRecipeLogic {
 
@@ -19,11 +21,11 @@ public interface IParallelableRecipeLogic {
      *
      * @param builder the recipe builder
      */
-    default void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-    }
+    default void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {}
 
     /**
-     * Method which finds a recipe which can be parallelized, works by multiplying the recipe by the parallelization factor,
+     * Method which finds a recipe which can be parallelized, works by multiplying the recipe by the parallelization
+     * factor,
      * and shrinking the recipe till its outputs can fit
      *
      * @param recipeMap     the recipe map
@@ -37,7 +39,13 @@ public interface IParallelableRecipeLogic {
      * @param voidable      the voidable performing the parallel recipe
      * @return the recipe builder with the parallelized recipe. returns null the recipe can't fit
      */
-    default RecipeBuilder<?> findMultipliedParallelRecipe(@Nonnull RecipeMap<?> recipeMap, @Nonnull Recipe currentRecipe, @Nonnull IItemHandlerModifiable inputs, @Nonnull IMultipleTankHandler fluidInputs, @Nonnull IItemHandlerModifiable outputs, @Nonnull IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, @Nonnull IVoidable voidable) {
+    default RecipeBuilder<?> findMultipliedParallelRecipe(@NotNull RecipeMap<?> recipeMap,
+                                                          @NotNull Recipe currentRecipe,
+                                                          @NotNull IItemHandlerModifiable inputs,
+                                                          @NotNull IMultipleTankHandler fluidInputs,
+                                                          @NotNull IItemHandlerModifiable outputs,
+                                                          @NotNull IMultipleTankHandler fluidOutputs, int parallelLimit,
+                                                          long maxVoltage, @NotNull IVoidable voidable) {
         return ParallelLogic.doParallelRecipes(
                 currentRecipe,
                 recipeMap,
@@ -62,7 +70,10 @@ public interface IParallelableRecipeLogic {
      * @param voidable      the voidable performing the parallel recipe
      * @return the recipe builder with the parallelized recipe. returns null the recipe can't fit
      */
-    default RecipeBuilder<?> findAppendedParallelItemRecipe(@Nonnull RecipeMap<?> recipeMap, @Nonnull IItemHandlerModifiable inputs, @Nonnull IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, @Nonnull IVoidable voidable) {
+    default RecipeBuilder<?> findAppendedParallelItemRecipe(@NotNull RecipeMap<?> recipeMap,
+                                                            @NotNull IItemHandlerModifiable inputs,
+                                                            @NotNull IItemHandlerModifiable outputs, int parallelLimit,
+                                                            long maxVoltage, @NotNull IVoidable voidable) {
         return ParallelLogic.appendItemRecipes(
                 recipeMap,
                 inputs,
@@ -73,26 +84,30 @@ public interface IParallelableRecipeLogic {
     }
 
     // Recipes passed in here should be already trimmed, if desired
-    default Recipe findParallelRecipe(@Nonnull AbstractRecipeLogic logic, @Nonnull Recipe currentRecipe, @Nonnull IItemHandlerModifiable inputs, @Nonnull IMultipleTankHandler fluidInputs, @Nonnull IItemHandlerModifiable outputs, @Nonnull IMultipleTankHandler fluidOutputs, long maxVoltage, int parallelLimit) {
-        if (parallelLimit > 1 && logic.getRecipeMap() != null) {
-            RecipeBuilder<?> parallelBuilder = null;
-            if (logic.getParallelLogicType() == ParallelLogicType.MULTIPLY) {
-                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage, logic.getMetaTileEntity());
-            } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND_ITEMS) {
-                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage, logic.getMetaTileEntity());
-            }
+    default Recipe findParallelRecipe(@NotNull Recipe currentRecipe, @NotNull IItemHandlerModifiable inputs,
+                                      @NotNull IMultipleTankHandler fluidInputs,
+                                      @NotNull IItemHandlerModifiable outputs,
+                                      @NotNull IMultipleTankHandler fluidOutputs, long maxVoltage, int parallelLimit) {
+        if (parallelLimit > 1 && getRecipeMap() != null) {
+            RecipeBuilder<?> parallelBuilder = switch (getParallelLogicType()) {
+                case MULTIPLY -> findMultipliedParallelRecipe(getRecipeMap(), currentRecipe, inputs, fluidInputs,
+                        outputs, fluidOutputs, parallelLimit, maxVoltage, getMetaTileEntity());
+                case APPEND_ITEMS -> findAppendedParallelItemRecipe(getRecipeMap(), inputs, outputs, parallelLimit,
+                        maxVoltage, getMetaTileEntity());
+            };
+
             // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {
-                logic.invalidateInputs();
+                invalidateInputs();
                 return null;
             } else {
-                //if the builder returned does not parallel, its outputs are full
+                // if the builder returned does not parallel, its outputs are full
                 if (parallelBuilder.getParallel() == 0) {
-                    logic.invalidateOutputs();
+                    invalidateOutputs();
                     return null;
                 } else {
-                    logic.setParallelRecipesPerformed(parallelBuilder.getParallel());
-                    //apply any parallel bonus
+                    setParallelRecipesPerformed(parallelBuilder.getParallel());
+                    // apply any parallel bonus
                     applyParallelBonus(parallelBuilder);
                     return parallelBuilder.build().getResult();
                 }
@@ -100,4 +115,30 @@ public interface IParallelableRecipeLogic {
         }
         return currentRecipe;
     }
+
+    @NotNull
+    MetaTileEntity getMetaTileEntity();
+
+    @Nullable
+    RecipeMap<?> getRecipeMap();
+
+    @NotNull
+    ParallelLogicType getParallelLogicType();
+
+    /**
+     * Set the amount of parallel recipes currently being performed
+     *
+     * @param amount the amount to set
+     */
+    void setParallelRecipesPerformed(int amount);
+
+    /**
+     * Invalidate the current state of input inventory contents
+     */
+    void invalidateInputs();
+
+    /**
+     * Invalidate the current state of output inventory contents
+     */
+    void invalidateOutputs();
 }

@@ -5,6 +5,7 @@ import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -12,7 +13,8 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,8 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
     private final int tier;
 
     public EnergyContainerBatteryBuffer(MetaTileEntity metaTileEntity, int tier, int inventorySize) {
-        super(metaTileEntity, GTValues.V[tier] * inventorySize * 32L, GTValues.V[tier], inventorySize * AMPS_PER_BATTERY, GTValues.V[tier], inventorySize);
+        super(metaTileEntity, GTValues.V[tier] * inventorySize * 32L, GTValues.V[tier],
+                inventorySize * AMPS_PER_BATTERY, GTValues.V[tier], inventorySize);
         this.tier = tier;
     }
 
@@ -44,7 +47,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
                 return usedAmps;
             }
 
-            //Prioritizes as many packets as available from the buffer
+            // Prioritizes as many packets as available from the buffer
             long internalAmps = Math.min(maxAmps, Math.max(0, getInternalStorage() / voltage));
 
             usedAmps = Math.min(usedAmps, maxAmps - internalAmps);
@@ -57,14 +60,17 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             for (Object item : batteries) {
                 if (item instanceof IElectricItem) {
                     IElectricItem electricItem = (IElectricItem) item;
-                    energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * AMPS_PER_BATTERY), getTier(), true, false);
+                    energy -= electricItem.charge(
+                            Math.min(distributed, GTValues.V[electricItem.getTier()] * AMPS_PER_BATTERY), getTier(),
+                            true, false);
                 } else if (item instanceof IEnergyStorage) {
                     IEnergyStorage energyStorage = (IEnergyStorage) item;
-                    energy -= FeCompat.insertEu(energyStorage, Math.min(distributed, GTValues.V[getTier()] * AMPS_PER_BATTERY));
+                    energy -= FeCompat.insertEu(energyStorage,
+                            Math.min(distributed, GTValues.V[getTier()] * AMPS_PER_BATTERY));
                 }
             }
 
-            //Remove energy used and then transfer overflow energy into the internal buffer
+            // Remove energy used and then transfer overflow energy into the internal buffer
             setEnergyStored(getInternalStorage() - internalAmps * voltage + energy);
             return usedAmps;
         }
@@ -85,11 +91,12 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         }
 
         EnumFacing outFacing = metaTileEntity.getFrontFacing();
-        TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(outFacing));
+        TileEntity tileEntity = metaTileEntity.getNeighbor(outFacing);
         if (tileEntity == null) {
             return;
         }
-        IEnergyContainer energyContainer = tileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, outFacing.getOpposite());
+        IEnergyContainer energyContainer = tileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                outFacing.getOpposite());
         if (energyContainer == null) {
             return;
         }
@@ -97,7 +104,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         long voltage = getOutputVoltage();
         List<IElectricItem> batteries = getNonEmptyBatteries();
         if (batteries.size() > 0) {
-            //Prioritize as many packets as available of energy created
+            // Prioritize as many packets as available of energy created
             long internalAmps = Math.abs(Math.min(0, getInternalStorage() / voltage));
             long genAmps = Math.max(0, batteries.size() - internalAmps);
             long outAmps = 0L;
@@ -116,7 +123,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
                 energy -= electricItem.discharge(distributed, getTier(), false, true, false);
             }
 
-            //Subtract energy created out of thin air from the buffer
+            // Subtract energy created out of thin air from the buffer
             setEnergyStored(getInternalStorage() + internalAmps * voltage - energy);
         }
     }
@@ -231,7 +238,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         return !inputsEnergy(side);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public final String getName() {
         return GregtechDataCodes.BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT;

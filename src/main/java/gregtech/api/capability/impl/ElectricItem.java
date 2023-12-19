@@ -3,6 +3,7 @@ package gregtech.api.capability.impl;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -10,8 +11,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -28,7 +30,8 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
 
     protected final List<BiConsumer<ItemStack, Long>> listeners = new ArrayList<>();
 
-    public ElectricItem(ItemStack itemStack, long maxCharge, int tier, boolean chargeable, boolean canProvideEnergyExternally) {
+    public ElectricItem(ItemStack itemStack, long maxCharge, int tier, boolean chargeable,
+                        boolean canProvideEnergyExternally) {
         this.itemStack = itemStack;
         this.maxCharge = maxCharge;
         this.tier = tier;
@@ -45,7 +48,7 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         itemStack.getTagCompound().setLong("Charge", change);
         listeners.forEach(l -> l.accept(itemStack, change));
     }
@@ -54,7 +57,7 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         itemStack.getTagCompound().setLong("MaxCharge", maxCharge);
     }
 
@@ -86,7 +89,7 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         itemStack.getTagCompound().setBoolean("Infinite", infiniteCharge);
         listeners.forEach(l -> l.accept(itemStack, getMaxCharge()));
     }
@@ -121,11 +124,13 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
     }
 
     @Override
-    public long discharge(long amount, int chargerTier, boolean ignoreTransferLimit, boolean externally, boolean simulate) {
+    public long discharge(long amount, int chargerTier, boolean ignoreTransferLimit, boolean externally,
+                          boolean simulate) {
         if (itemStack.getCount() != 1) {
             return 0L;
         }
-        if ((canProvideEnergyExternally || !externally || amount == Long.MAX_VALUE) && (chargerTier >= tier) && amount > 0L) {
+        if ((canProvideEnergyExternally || !externally || amount == Long.MAX_VALUE) && (chargerTier >= tier) &&
+                amount > 0L) {
             if (!ignoreTransferLimit) {
                 amount = Math.min(amount, getTransferLimit());
             }
@@ -145,13 +150,13 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@NotNull Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
         return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ? (T) this : null;
     }
 }

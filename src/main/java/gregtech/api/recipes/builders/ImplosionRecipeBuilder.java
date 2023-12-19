@@ -8,18 +8,17 @@ import gregtech.api.recipes.recipeproperties.ImplosionExplosiveProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ValidationResult;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nonnull;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
+import stanhebben.zenscript.annotations.ZenMethod;
 
 public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder> {
 
-    public ImplosionRecipeBuilder() {
-
-    }
+    public ImplosionRecipeBuilder() {}
 
     public ImplosionRecipeBuilder(Recipe recipe, RecipeMap<ImplosionRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
@@ -35,7 +34,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     }
 
     @Override
-    public boolean applyProperty(@Nonnull String key, Object value) {
+    public boolean applyProperty(@NotNull String key, Object value) {
         if (key.equals(ImplosionExplosiveProperty.KEY)) {
             if (value instanceof ItemStack) {
                 this.applyProperty(ImplosionExplosiveProperty.getInstance(), value);
@@ -71,13 +70,14 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
         if (this.recipePropertyStorage == null) {
             return ItemStack.EMPTY;
         }
-        return this.recipePropertyStorage.getRecipePropertyValue(ImplosionExplosiveProperty.getInstance(), ItemStack.EMPTY);
+        return this.recipePropertyStorage.getRecipePropertyValue(ImplosionExplosiveProperty.getInstance(),
+                ItemStack.EMPTY);
     }
 
     public ValidationResult<Recipe> build() {
         ItemStack explosivesType = getExplosivesType();
         if (!explosivesType.isEmpty()) {
-            this.inputs.add(GTRecipeItemInput.getOrCreate(explosivesType));
+            this.inputs.add(new GTRecipeItemInput(explosivesType));
         } else {
             this.recipePropertyStorageErrored = true;
         }

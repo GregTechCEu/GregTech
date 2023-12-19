@@ -29,6 +29,7 @@ import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -60,51 +61,87 @@ public class MetaItem1 extends StandardMetaItem {
         CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setRarity(EnumRarity.EPIC);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, M / 4))).setRarity(EnumRarity.RARE);
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, M / 4)))
+                .setRarity(EnumRarity.RARE);
         COIN_DOGE = addItem(9, "coin.doge")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Brass, M / 4))).setRarity(EnumRarity.EPIC);
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Brass, M / 4)))
+                .setRarity(EnumRarity.EPIC);
         COIN_CHOCOLATE = addItem(10, "coin.chocolate")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, M / 4)))
-                .addComponents(new FoodStats(1, 0.1F, false, true, OreDictUnifier.get(OrePrefix.foil, Materials.Gold), new RandomPotionEffect(MobEffects.SPEED, 200, 1, 10)));
+                .addComponents(new FoodStats(1, 0.1F, false, true, OreDictUnifier.get(OrePrefix.foil, Materials.Gold),
+                        new RandomPotionEffect(MobEffects.SPEED, 200, 1, 10)));
 
         // Solidifier Shapes: ID 11-30
-        SHAPE_EMPTY = addItem(11, "shape.empty").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EMPTY = addItem(11, "shape.empty")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
-        SHAPE_MOLDS[0] = SHAPE_MOLD_PLATE = addItem(12, "shape.mold.plate").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[1] = SHAPE_MOLD_GEAR = addItem(13, "shape.mold.gear").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[2] = SHAPE_MOLD_CREDIT = addItem(14, "shape.mold.credit").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[3] = SHAPE_MOLD_BOTTLE = addItem(15, "shape.mold.bottle").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[4] = SHAPE_MOLD_INGOT = addItem(16, "shape.mold.ingot").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[5] = SHAPE_MOLD_BALL = addItem(17, "shape.mold.ball").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[6] = SHAPE_MOLD_BLOCK = addItem(18, "shape.mold.block").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[7] = SHAPE_MOLD_NUGGET = addItem(19, "shape.mold.nugget").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[8] = SHAPE_MOLD_CYLINDER = addItem(20, "shape.mold.cylinder").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[9] = SHAPE_MOLD_ANVIL = addItem(21, "shape.mold.anvil").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[10] = SHAPE_MOLD_NAME = addItem(22, "shape.mold.name").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[11] = SHAPE_MOLD_GEAR_SMALL = addItem(23, "shape.mold.gear.small").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[12] = SHAPE_MOLD_ROTOR = addItem(24, "shape.mold.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[0] = SHAPE_MOLD_PLATE = addItem(12, "shape.mold.plate")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[1] = SHAPE_MOLD_GEAR = addItem(13, "shape.mold.gear")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[2] = SHAPE_MOLD_CREDIT = addItem(14, "shape.mold.credit")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[3] = SHAPE_MOLD_BOTTLE = addItem(15, "shape.mold.bottle")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[4] = SHAPE_MOLD_INGOT = addItem(16, "shape.mold.ingot")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[5] = SHAPE_MOLD_BALL = addItem(17, "shape.mold.ball")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[6] = SHAPE_MOLD_BLOCK = addItem(18, "shape.mold.block")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[7] = SHAPE_MOLD_NUGGET = addItem(19, "shape.mold.nugget")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[8] = SHAPE_MOLD_CYLINDER = addItem(20, "shape.mold.cylinder")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[9] = SHAPE_MOLD_ANVIL = addItem(21, "shape.mold.anvil")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[10] = SHAPE_MOLD_NAME = addItem(22, "shape.mold.name")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[11] = SHAPE_MOLD_GEAR_SMALL = addItem(23, "shape.mold.gear.small")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[12] = SHAPE_MOLD_ROTOR = addItem(24, "shape.mold.rotor")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
         // Extruder Shapes: ID 31-59
-        SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[1] = SHAPE_EXTRUDER_ROD = addItem(32, "shape.extruder.rod").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[2] = SHAPE_EXTRUDER_BOLT = addItem(33, "shape.extruder.bolt").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[3] = SHAPE_EXTRUDER_RING = addItem(34, "shape.extruder.ring").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[4] = SHAPE_EXTRUDER_CELL = addItem(35, "shape.extruder.cell").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[5] = SHAPE_EXTRUDER_INGOT = addItem(36, "shape.extruder.ingot").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[6] = SHAPE_EXTRUDER_WIRE = addItem(37, "shape.extruder.wire").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[7] = SHAPE_EXTRUDER_PIPE_TINY = addItem(38, "shape.extruder.pipe.tiny").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[8] = SHAPE_EXTRUDER_PIPE_SMALL = addItem(39, "shape.extruder.pipe.small").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_NORMAL = addItem(40, "shape.extruder.pipe.normal").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(41, "shape.extruder.pipe.large").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(42, "shape.extruder.pipe.huge").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(43, "shape.extruder.block").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[1] = SHAPE_EXTRUDER_ROD = addItem(32, "shape.extruder.rod")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[2] = SHAPE_EXTRUDER_BOLT = addItem(33, "shape.extruder.bolt")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[3] = SHAPE_EXTRUDER_RING = addItem(34, "shape.extruder.ring")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[4] = SHAPE_EXTRUDER_CELL = addItem(35, "shape.extruder.cell")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[5] = SHAPE_EXTRUDER_INGOT = addItem(36, "shape.extruder.ingot")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[6] = SHAPE_EXTRUDER_WIRE = addItem(37, "shape.extruder.wire")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[7] = SHAPE_EXTRUDER_PIPE_TINY = addItem(38, "shape.extruder.pipe.tiny")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[8] = SHAPE_EXTRUDER_PIPE_SMALL = addItem(39, "shape.extruder.pipe.small")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_NORMAL = addItem(40, "shape.extruder.pipe.normal")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(41, "shape.extruder.pipe.large")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(42, "shape.extruder.pipe.huge")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(43, "shape.extruder.block")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         // Extruder Shapes index 13-20 (inclusive), id 44-51 (inclusive) are unused
-        SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_GEAR = addItem(52, "shape.extruder.gear").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[22] = SHAPE_EXTRUDER_BOTTLE = addItem(53, "shape.extruder.bottle").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[23] = SHAPE_EXTRUDER_FOIL = addItem(54, "shape.extruder.foil").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[24] = SHAPE_EXTRUDER_GEAR_SMALL = addItem(55, "shape.extruder.gear_small").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[25] = SHAPE_EXTRUDER_ROD_LONG = addItem(56, "shape.extruder.rod_long").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_GEAR = addItem(52, "shape.extruder.gear")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[22] = SHAPE_EXTRUDER_BOTTLE = addItem(53, "shape.extruder.bottle")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[23] = SHAPE_EXTRUDER_FOIL = addItem(54, "shape.extruder.foil")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[24] = SHAPE_EXTRUDER_GEAR_SMALL = addItem(55, "shape.extruder.gear_small")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[25] = SHAPE_EXTRUDER_ROD_LONG = addItem(56, "shape.extruder.rod_long")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
         // Spray Cans: ID 60-77
         SPRAY_EMPTY = addItem(61, "spray.empty");
@@ -123,41 +160,54 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Fluid Cells: ID 78-88
         FLUID_CELL = addItem(78, "fluid_cell")
-                .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, false), new ItemFluidContainer())
+                .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, false),
+                        new ItemFluidContainer())
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal")
-                .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, true),
+                        new ItemFluidContainer())
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
-                .addComponents(new FilteredFluidStats(8000, Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new FilteredFluidStats(8000,
+                        Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
+                        false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
-                .addComponents(new FilteredFluidStats(32000, Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new FilteredFluidStats(32000,
+                        Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
+                        false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
-                .addComponents(new FilteredFluidStats(64000, Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true, true, false, true), new ItemFluidContainer())
+                .addComponents(new FilteredFluidStats(64000,
+                        Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
+                        true, true, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
-                .addComponents(new FilteredFluidStats(128000, Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new FilteredFluidStats(128000,
+                        Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true,
+                        false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
-                .addComponents(new FilteredFluidStats(512000, Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false, false, false, true), new ItemFluidContainer())
+                .addComponents(new FilteredFluidStats(512000,
+                        Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
+                        true, false, false, true), new ItemFluidContainer())
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))) // ingot * 8
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_GLASS_VIAL = addItem(85, "fluid_cell.glass_vial")
-                .addComponents(new FilteredFluidStats(1000, 1200, false, true, false, false, true), new ItemFluidContainer())
+                .addComponents(new FilteredFluidStats(1000, 1200, false, true, false, false, true),
+                        new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 4))) // small dust
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
@@ -184,18 +234,29 @@ public class MetaItem1 extends StandardMetaItem {
                 .setRarity(EnumRarity.UNCOMMON)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        BOTTLE_PURPLE_DRINK = addItem(93, "bottle.purple.drink").addComponents(new FoodStats(8, 0.2F, true, true, new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
+        BOTTLE_PURPLE_DRINK = addItem(93, "bottle.purple.drink").addComponents(new FoodStats(8, 0.2F, true, true,
+                new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
 
         // Voltage Coils: ID 96-110
-        VOLTAGE_COIL_ULV = addItem(96, "voltage_coil.ulv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Lead, M * 2), new MaterialStack(Materials.IronMagnetic, M / 2)));
-        VOLTAGE_COIL_LV = addItem(97, "voltage_coil.lv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 2), new MaterialStack(Materials.IronMagnetic, M / 2)));
-        VOLTAGE_COIL_MV = addItem(98, "voltage_coil.mv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
-        VOLTAGE_COIL_HV = addItem(99, "voltage_coil.hv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BlackSteel, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
-        VOLTAGE_COIL_EV = addItem(100, "voltage_coil.ev").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 2), new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
-        VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iridium, M * 2), new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
-        VOLTAGE_COIL_LuV = addItem(102, "voltage_coil.luv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmiridium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
-        VOLTAGE_COIL_ZPM = addItem(103, "voltage_coil.zpm").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Europium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
-        VOLTAGE_COIL_UV = addItem(104, "voltage_coil.uv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tritanium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
+        VOLTAGE_COIL_ULV = addItem(96, "voltage_coil.ulv").setMaterialInfo(new ItemMaterialInfo(
+                new MaterialStack(Materials.Lead, M * 2), new MaterialStack(Materials.IronMagnetic, M / 2)));
+        VOLTAGE_COIL_LV = addItem(97, "voltage_coil.lv").setMaterialInfo(new ItemMaterialInfo(
+                new MaterialStack(Materials.Steel, M * 2), new MaterialStack(Materials.IronMagnetic, M / 2)));
+        VOLTAGE_COIL_MV = addItem(98, "voltage_coil.mv").setMaterialInfo(new ItemMaterialInfo(
+                new MaterialStack(Materials.Aluminium, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
+        VOLTAGE_COIL_HV = addItem(99, "voltage_coil.hv").setMaterialInfo(new ItemMaterialInfo(
+                new MaterialStack(Materials.BlackSteel, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
+        VOLTAGE_COIL_EV = addItem(100, "voltage_coil.ev")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 2),
+                        new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
+        VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setMaterialInfo(new ItemMaterialInfo(
+                new MaterialStack(Materials.Iridium, M * 2), new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
+        VOLTAGE_COIL_LuV = addItem(102, "voltage_coil.luv").setMaterialInfo(new ItemMaterialInfo(
+                new MaterialStack(Materials.Osmiridium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
+        VOLTAGE_COIL_ZPM = addItem(103, "voltage_coil.zpm").setMaterialInfo(new ItemMaterialInfo(
+                new MaterialStack(Materials.Europium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
+        VOLTAGE_COIL_UV = addItem(104, "voltage_coil.uv").setMaterialInfo(new ItemMaterialInfo(
+                new MaterialStack(Materials.Tritanium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
 
         // ???: ID 111-125
 
@@ -477,9 +538,16 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Special Machine Components: ID 266-280
         COMPONENT_GRINDER_DIAMOND = addItem(266, "component.grinder.diamond")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 8), new MaterialStack(Materials.Diamond, M * 5)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 8),
+                        new MaterialStack(Materials.Diamond, M * 5)));
         COMPONENT_GRINDER_TUNGSTEN = addItem(267, "component.grinder.tungsten")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tungsten, M * 4), new MaterialStack(Materials.VanadiumSteel, M * 8), new MaterialStack(Materials.Diamond, M)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tungsten, M * 4),
+                        new MaterialStack(Materials.VanadiumSteel, M * 8), new MaterialStack(Materials.Diamond, M)));
+
+        IRON_MINECART_WHEELS = addItem(268, "minecart_wheels.iron")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iron, M)));
+        STEEL_MINECART_WHEELS = addItem(269, "minecart_wheels.steel")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M)));
 
         // Special Eyes/Stars: ID 281-289
         QUANTUM_EYE = addItem(281, "quantumeye");
@@ -490,7 +558,8 @@ public class MetaItem1 extends StandardMetaItem {
         FLUID_FILTER = addItem(290, "fluid_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
         ITEM_FILTER = addItem(291, "item_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2), new MaterialStack(Materials.Steel, M)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2),
+                        new MaterialStack(Materials.Steel, M)));
         ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
         SMART_FILTER = addItem(293, "smart_item_filter")
@@ -507,7 +576,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ENERGY_DETECTOR = addItem(306, "cover.energy.detector");
         COVER_ENERGY_DETECTOR_ADVANCED = addItem(318, "cover.energy.detector.advanced");
         COVER_SCREEN = addItem(307, "cover.screen");
-        COVER_CRAFTING = addItem(308, "cover.crafting");
+        // FREE ID 308
         COVER_SHUTTER = addItem(309, "cover.shutter");
         COVER_INFINITE_WATER = addItem(310, "cover.infinite_water").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.infinite_water.tooltip.1"));
@@ -534,47 +603,56 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SOLAR_PANEL_ULV = addItem(332, "cover.solar.panel.ulv").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.ULV], GTValues.VNF[GTValues.ULV]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.ULV],
+                    GTValues.VNF[GTValues.ULV]));
         }));
         COVER_SOLAR_PANEL_LV = addItem(333, "cover.solar.panel.lv").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.LV], GTValues.VNF[GTValues.LV]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.LV],
+                    GTValues.VNF[GTValues.LV]));
         }));
         COVER_SOLAR_PANEL_MV = addItem(334, "cover.solar.panel.mv").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.MV], GTValues.VNF[GTValues.MV]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.MV],
+                    GTValues.VNF[GTValues.MV]));
         }));
         COVER_SOLAR_PANEL_HV = addItem(335, "cover.solar.panel.hv").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.HV], GTValues.VNF[GTValues.HV]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.HV],
+                    GTValues.VNF[GTValues.HV]));
         }));
         COVER_SOLAR_PANEL_EV = addItem(336, "cover.solar.panel.ev").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.EV], GTValues.VNF[GTValues.EV]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.EV],
+                    GTValues.VNF[GTValues.EV]));
         }));
         COVER_SOLAR_PANEL_IV = addItem(337, "cover.solar.panel.iv").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.IV], GTValues.VNF[GTValues.IV]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.IV],
+                    GTValues.VNF[GTValues.IV]));
         }));
         COVER_SOLAR_PANEL_LUV = addItem(338, "cover.solar.panel.luv").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.LuV], GTValues.VNF[GTValues.LuV]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.LuV],
+                    GTValues.VNF[GTValues.LuV]));
         }));
         COVER_SOLAR_PANEL_ZPM = addItem(339, "cover.solar.panel.zpm").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.ZPM], GTValues.VNF[GTValues.ZPM]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.ZPM],
+                    GTValues.VNF[GTValues.ZPM]));
         }));
         COVER_SOLAR_PANEL_UV = addItem(340, "cover.solar.panel.uv").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.1"));
             lines.add(I18n.format("metaitem.cover.solar.panel.tooltip.2"));
-            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.UV], GTValues.VNF[GTValues.UV]));
+            lines.add(I18n.format("gregtech.universal.tooltip.voltage_out", GTValues.V[GTValues.UV],
+                    GTValues.VNF[GTValues.UV]));
         }));
         // MAX-tier solar panel?
 
@@ -589,11 +667,16 @@ public class MetaItem1 extends StandardMetaItem {
         IItemContainerItemProvider selfContainerItemProvider = itemStack -> itemStack;
         WOODEN_FORM_EMPTY = addItem(347, "wooden_form.empty");
         WOODEN_FORM_BRICK = addItem(348, "wooden_form.brick").addComponents(selfContainerItemProvider);
-        COMPRESSED_CLAY = addItem(349, "compressed.clay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
-        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
-        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
-        FIRECLAY_BRICK = addItem(352, "brick.fireclay").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
-        COKE_OVEN_BRICK = addItem(353, "brick.coke").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_CLAY = addItem(349, "compressed.clay")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
+        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+        FIRECLAY_BRICK = addItem(352, "brick.fireclay")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M)));
+        COKE_OVEN_BRICK = addItem(353, "brick.coke")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Clay, M)));
 
         if (!ConfigHolder.recipes.harderBrickRecipes)
             COMPRESSED_CLAY.setInvisible();
@@ -640,17 +723,23 @@ public class MetaItem1 extends StandardMetaItem {
         BIO_CHAFF = addItem(440, "bio_chaff").setBurnValue(200);
 
         // Power Units: ID 446-459
-        POWER_UNIT_LV = addItem(446, "power_unit.lv").addComponents(ElectricStats.createElectricItem(100000L, GTValues.LV)).setMaxStackSize(8);
-        POWER_UNIT_MV = addItem(447, "power_unit.mv").addComponents(ElectricStats.createElectricItem(400000L, GTValues.MV)).setMaxStackSize(8);
-        POWER_UNIT_HV = addItem(448, "power_unit.hv").addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV)).setMaxStackSize(8);
-        POWER_UNIT_EV = addItem(449, "power_unit.ev").addComponents(ElectricStats.createElectricItem(6400000L, GTValues.EV)).setMaxStackSize(8);
-        POWER_UNIT_IV = addItem(450, "power_unit.iv").addComponents(ElectricStats.createElectricItem(25600000L, GTValues.IV)).setMaxStackSize(8);
+        POWER_UNIT_LV = addItem(446, "power_unit.lv")
+                .addComponents(ElectricStats.createElectricItem(100000L, GTValues.LV)).setMaxStackSize(8);
+        POWER_UNIT_MV = addItem(447, "power_unit.mv")
+                .addComponents(ElectricStats.createElectricItem(400000L, GTValues.MV)).setMaxStackSize(8);
+        POWER_UNIT_HV = addItem(448, "power_unit.hv")
+                .addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV)).setMaxStackSize(8);
+        POWER_UNIT_EV = addItem(449, "power_unit.ev")
+                .addComponents(ElectricStats.createElectricItem(6400000L, GTValues.EV)).setMaxStackSize(8);
+        POWER_UNIT_IV = addItem(450, "power_unit.iv")
+                .addComponents(ElectricStats.createElectricItem(25600000L, GTValues.IV)).setMaxStackSize(8);
 
         // Usable Items: ID 460-490
         DYNAMITE = addItem(460, "dynamite")
                 .addComponents(new DynamiteBehaviour())
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        INTEGRATED_CIRCUIT = addItem(461, "circuit.integrated").addComponents(new IntCircuitBehaviour()).setModelAmount(33);
+        INTEGRATED_CIRCUIT = addItem(461, "circuit.integrated").addComponents(new IntCircuitBehaviour())
+                .setModelAmount(33);
         FOAM_SPRAYER = addItem(462, "foam_sprayer").addComponents(new FoamSprayerBehavior())
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
@@ -659,7 +748,8 @@ public class MetaItem1 extends StandardMetaItem {
                 .addComponents(new NanoSaberBehavior())
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        NANO_SABER.getMetaItem().addPropertyOverride(NanoSaberBehavior.OVERRIDE_KEY_LOCATION, (stack, worldIn, entityIn) -> NanoSaberBehavior.isItemActive(stack) ? 1.0f : 0.0f);
+        NANO_SABER.getMetaItem().addPropertyOverride(NanoSaberBehavior.OVERRIDE_KEY_LOCATION,
+                (stack, worldIn, entityIn) -> NanoSaberBehavior.isItemActive(stack) ? 1.0f : 0.0f);
 
         CLIPBOARD = addItem(464, "clipboard")
                 .addComponents(new ClipboardBehavior())
@@ -670,15 +760,18 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
         PROSPECTOR_LV = addItem(466, "prospector.lv")
-                .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ProspectorScannerBehavior(2, GTValues.LV))
+                .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV),
+                        new ProspectorScannerBehavior(2, GTValues.LV))
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
         PROSPECTOR_HV = addItem(467, "prospector.hv")
-                .addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ProspectorScannerBehavior(3, GTValues.HV))
+                .addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV),
+                        new ProspectorScannerBehavior(3, GTValues.HV))
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
         PROSPECTOR_LUV = addItem(468, "prospector.luv")
-                .addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV), new ProspectorScannerBehavior(5, GTValues.LuV))
+                .addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV),
+                        new ProspectorScannerBehavior(5, GTValues.LuV))
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
         TRICORDER_SCANNER = addItem(469, "tricorder_scanner")
@@ -698,15 +791,20 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        RUBBER_WOOD_BOAT = addItem(473, "rubber_wood_boat").addComponents(new GTBoatBehavior(GTBoatType.RUBBER_WOOD_BOAT)).setMaxStackSize(1).setBurnValue(400);
-        TREATED_WOOD_BOAT = addItem(474, "treated_wood_boat").addComponents(new GTBoatBehavior(GTBoatType.TREATED_WOOD_BOAT)).setMaxStackSize(1).setBurnValue(400);
-        RUBBER_WOOD_DOOR = addItem(475, "rubber_wood_door").addComponents(new DoorBehavior(MetaBlocks.RUBBER_WOOD_DOOR)).setBurnValue(200).setCreativeTabs(GregTechAPI.TAB_GREGTECH_DECORATIONS);
-        TREATED_WOOD_DOOR = addItem(476, "treated_wood_door").addComponents(new DoorBehavior(MetaBlocks.TREATED_WOOD_DOOR)).setBurnValue(200).setCreativeTabs(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+        RUBBER_WOOD_BOAT = addItem(473, "rubber_wood_boat")
+                .addComponents(new GTBoatBehavior(GTBoatType.RUBBER_WOOD_BOAT)).setMaxStackSize(1).setBurnValue(400);
+        TREATED_WOOD_BOAT = addItem(474, "treated_wood_boat")
+                .addComponents(new GTBoatBehavior(GTBoatType.TREATED_WOOD_BOAT)).setMaxStackSize(1).setBurnValue(400);
+        RUBBER_WOOD_DOOR = addItem(475, "rubber_wood_door").addComponents(new DoorBehavior(MetaBlocks.RUBBER_WOOD_DOOR))
+                .setBurnValue(200).setCreativeTabs(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+        TREATED_WOOD_DOOR = addItem(476, "treated_wood_door")
+                .addComponents(new DoorBehavior(MetaBlocks.TREATED_WOOD_DOOR)).setBurnValue(200)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_DECORATIONS);
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");
         ENGRAVED_LAPOTRON_CHIP = addItem(492, "engraved.lapotron_chip");
-        //Free ID: 493, 494, 495, 496
+        // Free ID: 493, 494, 495, 496
         NEUTRON_REFLECTOR = addItem(497, "neutron_reflector");
         GELLED_TOLUENE = addItem(498, "gelled_toluene");
         CARBON_FIBERS = addItem(499, "carbon.fibers");
@@ -725,11 +823,15 @@ public class MetaItem1 extends StandardMetaItem {
         CAPACITOR = addItem(520, "component.capacitor").setUnificationData(OrePrefix.component, Component.Capacitor);
         DIODE = addItem(521, "component.diode").setUnificationData(OrePrefix.component, Component.Diode);
         INDUCTOR = addItem(522, "component.inductor").setUnificationData(OrePrefix.component, Component.Inductor);
-        SMD_TRANSISTOR = addItem(523, "component.smd.transistor").setUnificationData(OrePrefix.component, Component.Transistor);
-        SMD_RESISTOR = addItem(524, "component.smd.resistor").setUnificationData(OrePrefix.component, Component.Resistor);
-        SMD_CAPACITOR = addItem(525, "component.smd.capacitor").setUnificationData(OrePrefix.component, Component.Capacitor);
+        SMD_TRANSISTOR = addItem(523, "component.smd.transistor").setUnificationData(OrePrefix.component,
+                Component.Transistor);
+        SMD_RESISTOR = addItem(524, "component.smd.resistor").setUnificationData(OrePrefix.component,
+                Component.Resistor);
+        SMD_CAPACITOR = addItem(525, "component.smd.capacitor").setUnificationData(OrePrefix.component,
+                Component.Capacitor);
         SMD_DIODE = addItem(526, "component.smd.diode").setUnificationData(OrePrefix.component, Component.Diode);
-        SMD_INDUCTOR = addItem(527, "component.smd.inductor").setUnificationData(OrePrefix.component, Component.Inductor);
+        SMD_INDUCTOR = addItem(527, "component.smd.inductor").setUnificationData(OrePrefix.component,
+                Component.Inductor);
         ADVANCED_SMD_TRANSISTOR = addItem(528, "component.advanced_smd.transistor");
         ADVANCED_SMD_RESISTOR = addItem(529, "component.advanced_smd.resistor");
         ADVANCED_SMD_CAPACITOR = addItem(530, "component.advanced_smd.capacitor");
@@ -783,7 +885,8 @@ public class MetaItem1 extends StandardMetaItem {
         // T2: Integrated
         INTEGRATED_CIRCUIT_LV = addItem(623, "circuit.basic_integrated").setUnificationData(OrePrefix.circuit, Tier.LV);
         INTEGRATED_CIRCUIT_MV = addItem(624, "circuit.good_integrated").setUnificationData(OrePrefix.circuit, Tier.MV);
-        INTEGRATED_CIRCUIT_HV = addItem(625, "circuit.advanced_integrated").setUnificationData(OrePrefix.circuit, Tier.HV);
+        INTEGRATED_CIRCUIT_HV = addItem(625, "circuit.advanced_integrated").setUnificationData(OrePrefix.circuit,
+                Tier.HV);
 
         // Misc Unlocks
         NAND_CHIP_ULV = addItem(626, "circuit.nand_chip").setUnificationData(OrePrefix.circuit, Tier.ULV);
@@ -797,7 +900,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         // T4: Nano
         NANO_PROCESSOR_HV = addItem(632, "circuit.nano_processor").setUnificationData(OrePrefix.circuit, Tier.HV);
-        NANO_PROCESSOR_ASSEMBLY_EV = addItem(633, "circuit.nano_assembly").setUnificationData(OrePrefix.circuit, Tier.EV);
+        NANO_PROCESSOR_ASSEMBLY_EV = addItem(633, "circuit.nano_assembly").setUnificationData(OrePrefix.circuit,
+                Tier.EV);
         NANO_COMPUTER_IV = addItem(634, "circuit.nano_computer").setUnificationData(OrePrefix.circuit, Tier.IV);
         NANO_MAINFRAME_LUV = addItem(635, "circuit.nano_mainframe").setUnificationData(OrePrefix.circuit, Tier.LuV);
 
@@ -805,7 +909,8 @@ public class MetaItem1 extends StandardMetaItem {
         QUANTUM_PROCESSOR_EV = addItem(636, "circuit.quantum_processor").setUnificationData(OrePrefix.circuit, Tier.EV);
         QUANTUM_ASSEMBLY_IV = addItem(637, "circuit.quantum_assembly").setUnificationData(OrePrefix.circuit, Tier.IV);
         QUANTUM_COMPUTER_LUV = addItem(638, "circuit.quantum_computer").setUnificationData(OrePrefix.circuit, Tier.LuV);
-        QUANTUM_MAINFRAME_ZPM = addItem(639, "circuit.quantum_mainframe").setUnificationData(OrePrefix.circuit, Tier.ZPM);
+        QUANTUM_MAINFRAME_ZPM = addItem(639, "circuit.quantum_mainframe").setUnificationData(OrePrefix.circuit,
+                Tier.ZPM);
 
         // T6: Crystal
         CRYSTAL_PROCESSOR_IV = addItem(640, "circuit.crystal_processor").setUnificationData(OrePrefix.circuit, Tier.IV);
@@ -814,10 +919,14 @@ public class MetaItem1 extends StandardMetaItem {
         CRYSTAL_MAINFRAME_UV = addItem(643, "circuit.crystal_mainframe").setUnificationData(OrePrefix.circuit, Tier.UV);
 
         // T7: Wetware
-        WETWARE_PROCESSOR_LUV = addItem(644, "circuit.wetware_processor").setUnificationData(OrePrefix.circuit, Tier.LuV);
-        WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(645, "circuit.wetware_assembly").setUnificationData(OrePrefix.circuit, Tier.ZPM);
-        WETWARE_SUPER_COMPUTER_UV = addItem(646, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit, Tier.UV);
-        WETWARE_MAINFRAME_UHV = addItem(647, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit, Tier.UHV);
+        WETWARE_PROCESSOR_LUV = addItem(644, "circuit.wetware_processor").setUnificationData(OrePrefix.circuit,
+                Tier.LuV);
+        WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(645, "circuit.wetware_assembly").setUnificationData(OrePrefix.circuit,
+                Tier.ZPM);
+        WETWARE_SUPER_COMPUTER_UV = addItem(646, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit,
+                Tier.UV);
+        WETWARE_MAINFRAME_UHV = addItem(647, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit,
+                Tier.UHV);
 
         // T8: Bioware
 
@@ -847,61 +956,140 @@ public class MetaItem1 extends StandardMetaItem {
         TURBINE_ROTOR = addItem(711, "turbine_rotor").addComponents(new TurbineRotorBehavior());
 
         // Battery Hulls: ID 716-730
-        BATTERY_HULL_LV = addItem(717, "battery.hull.lv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M))); // plate
-        BATTERY_HULL_MV = addItem(718, "battery.hull.mv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M * 3))); // plate * 3
-        BATTERY_HULL_HV = addItem(719, "battery.hull.hv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M * 9))); // plate * 9
-        BATTERY_HULL_SMALL_VANADIUM = addItem(720, "battery.hull.ev").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BlueSteel, M * 2)));
-        BATTERY_HULL_MEDIUM_VANADIUM = addItem(721, "battery.hull.iv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RoseGold, M * 6)));
-        BATTERY_HULL_LARGE_VANADIUM = addItem(722, "battery.hull.luv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RedSteel, M * 18)));
-        BATTERY_HULL_MEDIUM_NAQUADRIA = addItem(723, "battery.hull.zpm").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Europium, M * 6)));
-        BATTERY_HULL_LARGE_NAQUADRIA = addItem(724, "battery.hull.uv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Americium, M * 18)));
+        BATTERY_HULL_LV = addItem(717, "battery.hull.lv")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M))); // plate
+        BATTERY_HULL_MV = addItem(718, "battery.hull.mv")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M * 3))); // plate * 3
+        BATTERY_HULL_HV = addItem(719, "battery.hull.hv")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M * 9))); // plate * 9
+        BATTERY_HULL_SMALL_VANADIUM = addItem(720, "battery.hull.ev")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BlueSteel, M * 2)));
+        BATTERY_HULL_MEDIUM_VANADIUM = addItem(721, "battery.hull.iv")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RoseGold, M * 6)));
+        BATTERY_HULL_LARGE_VANADIUM = addItem(722, "battery.hull.luv")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RedSteel, M * 18)));
+        BATTERY_HULL_MEDIUM_NAQUADRIA = addItem(723, "battery.hull.zpm")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Europium, M * 6)));
+        BATTERY_HULL_LARGE_NAQUADRIA = addItem(724, "battery.hull.uv")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Americium, M * 18)));
 
         // Batteries: 731-775
-        BATTERY_ULV_TANTALUM = addItem(731, "battery.re.ulv.tantalum").addComponents(ElectricStats.createRechargeableBattery(1000, GTValues.ULV)).setUnificationData(OrePrefix.battery, Tier.ULV).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_ULV_TANTALUM = addItem(731, "battery.re.ulv.tantalum")
+                .addComponents(ElectricStats.createRechargeableBattery(1000, GTValues.ULV))
+                .setUnificationData(OrePrefix.battery, Tier.ULV).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        BATTERY_LV_SODIUM = addItem(732, "battery.re.lv.sodium").addComponents(ElectricStats.createRechargeableBattery(80000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_MV_SODIUM = addItem(733, "battery.re.mv.sodium").addComponents(ElectricStats.createRechargeableBattery(360000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_HV_SODIUM = addItem(734, "battery.re.hv.sodium").addComponents(ElectricStats.createRechargeableBattery(1200000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_LV_SODIUM = addItem(732, "battery.re.lv.sodium")
+                .addComponents(ElectricStats.createRechargeableBattery(80000, GTValues.LV))
+                .setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_MV_SODIUM = addItem(733, "battery.re.mv.sodium")
+                .addComponents(ElectricStats.createRechargeableBattery(360000, GTValues.MV))
+                .setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_HV_SODIUM = addItem(734, "battery.re.hv.sodium")
+                .addComponents(ElectricStats.createRechargeableBattery(1200000, GTValues.HV))
+                .setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        BATTERY_LV_LITHIUM = addItem(735, "battery.re.lv.lithium").addComponents(ElectricStats.createRechargeableBattery(120000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_MV_LITHIUM = addItem(736, "battery.re.mv.lithium").addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_HV_LITHIUM = addItem(737, "battery.re.hv.lithium").addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_LV_LITHIUM = addItem(735, "battery.re.lv.lithium")
+                .addComponents(ElectricStats.createRechargeableBattery(120000, GTValues.LV))
+                .setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_MV_LITHIUM = addItem(736, "battery.re.mv.lithium")
+                .addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV))
+                .setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_HV_LITHIUM = addItem(737, "battery.re.hv.lithium")
+                .addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV))
+                .setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        BATTERY_LV_CADMIUM = addItem(738, "battery.re.lv.cadmium").addComponents(ElectricStats.createRechargeableBattery(100000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium").addComponents(ElectricStats.createRechargeableBattery(400000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium").addComponents(ElectricStats.createRechargeableBattery(1600000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_LV_CADMIUM = addItem(738, "battery.re.lv.cadmium")
+                .addComponents(ElectricStats.createRechargeableBattery(100000, GTValues.LV))
+                .setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium")
+                .addComponents(ElectricStats.createRechargeableBattery(400000, GTValues.MV))
+                .setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium")
+                .addComponents(ElectricStats.createRechargeableBattery(1600000, GTValues.HV))
+                .setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        ENERGIUM_CRYSTAL = addItem(741, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(6_400_000L, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal").addComponents(ElectricStats.createRechargeableBattery(25_000_000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.EV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        ENERGIUM_CRYSTAL = addItem(741, "energy_crystal")
+                .addComponents(ElectricStats.createRechargeableBattery(6_400_000L, GTValues.HV))
+                .setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal")
+                .addComponents(ElectricStats.createRechargeableBattery(25_000_000L, GTValues.EV))
+                .setUnificationData(OrePrefix.battery, Tier.EV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        BATTERY_EV_VANADIUM = addItem(743, "battery.ev.vanadium").addComponents(ElectricStats.createRechargeableBattery(10_240_000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.EV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_IV_VANADIUM = addItem(744, "battery.iv.vanadium").addComponents(ElectricStats.createRechargeableBattery(40_960_000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.IV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_LUV_VANADIUM = addItem(745, "battery.luv.vanadium").addComponents(ElectricStats.createRechargeableBattery(163_840_000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.LuV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_EV_VANADIUM = addItem(743, "battery.ev.vanadium")
+                .addComponents(ElectricStats.createRechargeableBattery(10_240_000L, GTValues.EV))
+                .setUnificationData(OrePrefix.battery, Tier.EV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_IV_VANADIUM = addItem(744, "battery.iv.vanadium")
+                .addComponents(ElectricStats.createRechargeableBattery(40_960_000L, GTValues.IV))
+                .setUnificationData(OrePrefix.battery, Tier.IV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_LUV_VANADIUM = addItem(745, "battery.luv.vanadium")
+                .addComponents(ElectricStats.createRechargeableBattery(163_840_000L, GTValues.LuV))
+                .setUnificationData(OrePrefix.battery, Tier.LuV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        BATTERY_ZPM_NAQUADRIA = addItem(746, "battery.zpm.naquadria").addComponents(ElectricStats.createRechargeableBattery(655_360_000L, GTValues.ZPM)).setUnificationData(OrePrefix.battery, Tier.ZPM).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        BATTERY_UV_NAQUADRIA = addItem(747, "battery.uv.naquadria").addComponents(ElectricStats.createRechargeableBattery(2_621_440_000L, GTValues.UV)).setUnificationData(OrePrefix.battery, Tier.UV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_ZPM_NAQUADRIA = addItem(746, "battery.zpm.naquadria")
+                .addComponents(ElectricStats.createRechargeableBattery(655_360_000L, GTValues.ZPM))
+                .setUnificationData(OrePrefix.battery, Tier.ZPM).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        BATTERY_UV_NAQUADRIA = addItem(747, "battery.uv.naquadria")
+                .addComponents(ElectricStats.createRechargeableBattery(2_621_440_000L, GTValues.UV))
+                .setUnificationData(OrePrefix.battery, Tier.UV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        ENERGY_LAPOTRONIC_ORB = addItem(748, "energy.lapotronic_orb").addComponents(ElectricStats.createRechargeableBattery(250_000_000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.IV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        ENERGY_LAPOTRONIC_ORB_CLUSTER = addItem(749, "energy.lapotronic_orb_cluster").addComponents(ElectricStats.createRechargeableBattery(1_000_000_000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.LuV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        ENERGY_LAPOTRONIC_ORB = addItem(748, "energy.lapotronic_orb")
+                .addComponents(ElectricStats.createRechargeableBattery(250_000_000L, GTValues.IV))
+                .setUnificationData(OrePrefix.battery, Tier.IV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        ENERGY_LAPOTRONIC_ORB_CLUSTER = addItem(749, "energy.lapotronic_orb_cluster")
+                .addComponents(ElectricStats.createRechargeableBattery(1_000_000_000L, GTValues.LuV))
+                .setUnificationData(OrePrefix.battery, Tier.LuV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        ENERGY_MODULE = addItem(750, "energy.module").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(4_000_000_000L, GTValues.ZPM)}).setUnificationData(OrePrefix.battery, Tier.ZPM).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        ENERGY_CLUSTER = addItem(751, "energy.cluster").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(20_000_000_000L, GTValues.UV)}).setUnificationData(OrePrefix.battery, Tier.UV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        ENERGY_MODULE = addItem(750, "energy.module")
+                .addComponents(
+                        new IItemComponent[] { ElectricStats.createRechargeableBattery(4_000_000_000L, GTValues.ZPM) })
+                .setUnificationData(OrePrefix.battery, Tier.ZPM).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        ENERGY_CLUSTER = addItem(751, "energy.cluster")
+                .addComponents(
+                        new IItemComponent[] { ElectricStats.createRechargeableBattery(20_000_000_000L, GTValues.UV) })
+                .setUnificationData(OrePrefix.battery, Tier.UV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
-        ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, true)).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
-        ULTIMATE_BATTERY = addItem(753, "max.battery").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.UHV)).setUnificationData(OrePrefix.battery, Tier.UHV).setModelAmount(8).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        ZERO_POINT_MODULE = addItem(752, "zpm")
+                .addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, true)).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+        ULTIMATE_BATTERY = addItem(753, "max.battery")
+                .addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.UHV))
+                .setUnificationData(OrePrefix.battery, Tier.UHV).setModelAmount(8)
+                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 
         POWER_THRUSTER = addItem(776, "power_thruster").setRarity(EnumRarity.UNCOMMON);
         POWER_THRUSTER_ADVANCED = addItem(777, "power_thruster_advanced").setRarity(EnumRarity.RARE);
         GRAVITATION_ENGINE = addItem(778, "gravitation_engine").setRarity(EnumRarity.EPIC);
 
         // Plugins: 780-799
-        PLUGIN_ADVANCED_MONITOR = addItem(780, "plugin.advanced_monitor").addComponents(new AdvancedMonitorPluginBehavior());
+        PLUGIN_ADVANCED_MONITOR = addItem(780, "plugin.advanced_monitor")
+                .addComponents(new AdvancedMonitorPluginBehavior());
         PLUGIN_FAKE_GUI = addItem(781, "plugin.fake_gui").addComponents(new FakeGuiPluginBehavior());
         PLUGIN_ONLINE_PIC = addItem(782, "plugin.online_pic").addComponents(new OnlinePicPluginBehavior());
         PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
 
         // Records: 800-819
-        SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSoundEvents.SUS_RECORD)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
+        SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSoundEvents.SUS_RECORD))
+                .setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
 
         // Dyed Glass Lenses: 820-840
         for (int i = 0; i < MarkerMaterials.Color.VALUES.length; i++) {
@@ -919,6 +1107,7 @@ public class MetaItem1 extends StandardMetaItem {
         LOGO = addItem(1003, "logo").setInvisible();
         LOGO.getMetaItem().addPropertyOverride(new ResourceLocation("xmas"), (s, w, e) -> GTValues.XMAS.get() ? 1 : 0);
 
-        MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior()).setMaxStackSize(1);
+        MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
+                .setMaxStackSize(1);
     }
 }

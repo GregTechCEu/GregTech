@@ -1,24 +1,27 @@
 package gregtech.common.terminal.app.guide.widget;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.common.terminal.app.guideeditor.widget.configurator.ItemStackConfigurator;
 import gregtech.api.util.Size;
+import gregtech.common.terminal.app.guideeditor.widget.configurator.ItemStackConfigurator;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class SlotListWidget extends GuideWidgetGroup {
+
     public final static String NAME = "slots";
 
     // config
@@ -62,17 +65,20 @@ public class SlotListWidget extends GuideWidgetGroup {
     @Override
     public JsonObject getTemplate(boolean isFixed) {
         JsonObject template = super.getTemplate(isFixed);
-        template.add("item_list", new Gson().toJsonTree(Collections.singletonList(new ItemStackInfo("minecraft:ender_pearl", 0, 1))));
+        template.add("item_list",
+                new Gson().toJsonTree(Collections.singletonList(new ItemStackInfo("minecraft:ender_pearl", 0, 1))));
         return template;
     }
 
     @Override
-    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed,
+                                 Consumer<String> needUpdate) {
         super.loadConfigurator(group, config, isFixed, needUpdate);
         group.addWidget(new ItemStackConfigurator(group, config, "item_list").setOnUpdated(needUpdate));
     }
 
     public static class ItemStackInfo {
+
         // config
         public String id;
         public int damage;
@@ -80,9 +86,7 @@ public class SlotListWidget extends GuideWidgetGroup {
 
         private transient ItemStack itemStack;
 
-        public ItemStackInfo() {
-
-        }
+        public ItemStackInfo() {}
 
         public void update(ItemStack itemStack) {
             ResourceLocation resourceLocation = itemStack.getItem().getRegistryName();

@@ -1,11 +1,12 @@
 package gregtech.api.items.toolitem.aoe;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.items.toolitem.ToolHelper;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nullable;
+import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.Nullable;
 
 public class AoESymmetrical {
 
@@ -162,5 +163,4 @@ public class AoESymmetrical {
         this.row = row;
         this.layer = layer;
     }
-
 }

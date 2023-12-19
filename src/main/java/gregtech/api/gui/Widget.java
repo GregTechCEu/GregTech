@@ -1,10 +1,10 @@
 package gregtech.api.gui;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,9 +21,11 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -136,11 +138,9 @@ public abstract class Widget {
         onPositionUpdate();
     }
 
-    protected void onPositionUpdate() {
-    }
+    protected void onPositionUpdate() {}
 
-    protected void onSizeUpdate() {
-    }
+    protected void onSizeUpdate() {}
 
     public boolean isMouseOverElement(int mouseX, int mouseY) {
         Position position = getPosition();
@@ -155,40 +155,34 @@ public abstract class Widget {
     /**
      * Called on both sides to initialize widget data
      */
-    public void initWidget() {
-    }
+    public void initWidget() {}
 
     /**
      * Called on serverside to detect changes and synchronize them with clients
      */
-    public void detectAndSendChanges() {
-    }
+    public void detectAndSendChanges() {}
 
     /**
      * Called clientside every tick with this modular UI open
      */
-    public void updateScreen() {
-    }
+    public void updateScreen() {}
 
     /**
      * Called clientside approximately every 1/60th of a second with this modular UI open
      */
-    public void updateScreenOnFrame() {
-    }
+    public void updateScreenOnFrame() {}
 
     /**
      * Called each draw tick to draw this widget in GUI
      */
     @SideOnly(Side.CLIENT)
-    public void drawInForeground(int mouseX, int mouseY) {
-    }
+    public void drawInForeground(int mouseX, int mouseY) {}
 
     /**
      * Called each draw tick to draw this widget in GUI
      */
     @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-    }
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {}
 
     /**
      * Called when mouse wheel is moved in GUI
@@ -235,11 +229,9 @@ public abstract class Widget {
      * Read data received from server's {@link #writeUpdateInfo}
      */
     @SideOnly(Side.CLIENT)
-    public void readUpdateInfo(int id, PacketBuffer buffer) {
-    }
+    public void readUpdateInfo(int id, PacketBuffer buffer) {}
 
-    public void handleClientAction(int id, PacketBuffer buffer) {
-    }
+    public void handleClientAction(int id, PacketBuffer buffer) {}
 
     public List<INativeWidget> getNativeWidgets() {
         if (this instanceof INativeWidget) {
@@ -282,7 +274,8 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void drawStringSized(String text, double x, double y, int color, boolean dropShadow, float scale, boolean center) {
+    public static void drawStringSized(String text, double x, double y, int color, boolean dropShadow, float scale,
+                                       boolean center) {
         GlStateManager.pushMatrix();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         double scaledTextWidth = center ? fontRenderer.getStringWidth(text) * scale : 0.0;
@@ -293,7 +286,8 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void drawStringFixedCorner(String text, double x, double y, int color, boolean dropShadow, float scale) {
+    public static void drawStringFixedCorner(String text, double x, double y, int color, boolean dropShadow,
+                                             float scale) {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         double scaledWidth = fontRenderer.getStringWidth(text) * scale;
         double scaledHeight = fontRenderer.FONT_HEIGHT * scale;
@@ -342,7 +336,8 @@ public abstract class Widget {
     @SideOnly(Side.CLIENT)
     public static List<String> getItemToolTip(ItemStack itemStack) {
         Minecraft mc = Minecraft.getMinecraft();
-        ITooltipFlag flag = mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
+        ITooltipFlag flag = mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED :
+                ITooltipFlag.TooltipFlags.NORMAL;
         List<String> tooltip = itemStack.getTooltip(mc.player, flag);
         for (int i = 0; i < tooltip.size(); ++i) {
             if (i == 0) {
@@ -380,7 +375,9 @@ public abstract class Widget {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -406,7 +403,8 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void drawGradientRect(float x, float y, float width, float height, int startColor, int endColor, boolean horizontal) {
+    public static void drawGradientRect(float x, float y, float width, float height, int startColor, int endColor,
+                                        boolean horizontal) {
         float startAlpha = (float) (startColor >> 24 & 255) / 255.0F;
         float startRed = (float) (startColor >> 16 & 255) / 255.0F;
         float startGreen = (float) (startColor >> 8 & 255) / 255.0F;
@@ -418,7 +416,9 @@ public abstract class Widget {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -454,11 +454,14 @@ public abstract class Widget {
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
         setColor(color);
         bufferbuilder.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
         for (int i = 0; i < segments; i++) {
-            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments), y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments),
+                    y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
@@ -473,12 +476,16 @@ public abstract class Widget {
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
         setColor(color);
         bufferbuilder.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
         for (int i = from; i < to; i++) {
-            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments), y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
-            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * (i + 1) / segments), y + r * Math.sin(-2 * Math.PI * (i + 1) / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments),
+                    y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * (i + 1) / segments),
+                    y + r * Math.sin(-2 * Math.PI * (i + 1) / segments), 0.0D).endVertex();
             bufferbuilder.pos(x, y, 0.0D).endVertex();
         }
         tessellator.draw();
@@ -486,12 +493,15 @@ public abstract class Widget {
         GlStateManager.color(1, 1, 1, 1);
     }
 
-    public static void drawTorus(float x, float y, float outer, float inner, int color, int segments, int from, int to) {
+    public static void drawTorus(float x, float y, float outer, float inner, int color, int segments, int from,
+                                 int to) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
         setColor(color);
         bufferbuilder.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
         for (int i = from; i <= to; i++) {
@@ -510,7 +520,9 @@ public abstract class Widget {
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
         GlStateManager.glLineWidth(width);
         if (startColor == endColor) {
             setColor(startColor);
@@ -568,7 +580,7 @@ public abstract class Widget {
             c1 = new Vec2f(from.x, (from.y + to.y) / 2);
             c2 = new Vec2f(to.x, (from.y + to.y) / 2);
         }
-        Vec2f[] controlPoint = new Vec2f[]{from, c1, c2, to};
+        Vec2f[] controlPoint = new Vec2f[] { from, c1, c2, to };
         int n = controlPoint.length - 1;
         int i, r;
         List<Vec2f> bezierPoints = new ArrayList<>();
@@ -589,7 +601,8 @@ public abstract class Widget {
 
     @SideOnly(Side.CLIENT)
     protected static void playButtonClickSound() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        Minecraft.getMinecraft().getSoundHandler()
+                .playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     @SideOnly(Side.CLIENT)
@@ -611,6 +624,7 @@ public abstract class Widget {
     }
 
     public static final class ClickData {
+
         public final int button;
         public final boolean isShiftClick;
         public final boolean isCtrlClick;
@@ -647,6 +661,7 @@ public abstract class Widget {
     }
 
     public static final class WheelData {
+
         public final int wheelDelta;
         public final boolean isShiftClick;
         public final boolean isCtrlClick;
@@ -681,5 +696,4 @@ public abstract class Widget {
             return new WheelData(button, shiftClick, ctrlClick, isClient);
         }
     }
-
 }

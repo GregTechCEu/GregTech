@@ -1,8 +1,8 @@
 package gregtech.common.crafting;
 
-import com.google.gson.JsonElement;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -19,16 +19,20 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import javax.annotation.Nonnull;
+import com.google.gson.JsonElement;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class GTShapelessOreRecipe extends ShapelessOreRecipe {
 
     boolean isClearing;
-    public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class, ItemStack.class);
+    public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class,
+            ItemStack.class);
 
-    public GTShapelessOreRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+    public GTShapelessOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result,
+                                Object... recipe) {
         super(group, result);
         this.isClearing = isClearing;
         for (Object in : recipe) {
@@ -47,15 +51,16 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
         }
     }
 
-    //a copy of the CraftingHelper getIngredient method.
-    //the only difference is checking for a filled bucket and making
-    //it an GTFluidCraftingIngredient
+    // a copy of the CraftingHelper getIngredient method.
+    // the only difference is checking for a filled bucket and making
+    // it an GTFluidCraftingIngredient
     private static Ingredient getIngredient(boolean isClearing, Object obj) {
         if (obj instanceof Ingredient) return (Ingredient) obj;
         else if (obj instanceof ItemStack) {
             ItemStack ing = (ItemStack) obj;
             if (ing.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                IFluidHandlerItem handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                IFluidHandlerItem handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                        null);
                 if (handler != null) {
                     FluidStack drained = handler.drain(Integer.MAX_VALUE, false);
                     if (drained != null && drained.amount > 0) {
@@ -84,11 +89,10 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
     }
 
     @Override
-    public @Nonnull NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
-        }
-        else {
+        } else {
             return super.getRemainingItems(inv);
         }
     }

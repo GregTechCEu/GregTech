@@ -1,6 +1,7 @@
 package gregtech.api.util.oreglob;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,11 +17,11 @@ public class OreGlobTextBuilder {
     private final OreGlobTextFormatting formatting;
     private final String indent;
 
-    public OreGlobTextBuilder(@Nonnull OreGlobTextFormatting formatting) {
+    public OreGlobTextBuilder(@NotNull OreGlobTextFormatting formatting) {
         this(formatting, "  ");
     }
 
-    public OreGlobTextBuilder(@Nonnull OreGlobTextFormatting formatting, @Nonnull String indent) {
+    public OreGlobTextBuilder(@NotNull OreGlobTextFormatting formatting, @NotNull String indent) {
         this.formatting = Objects.requireNonNull(formatting, "formatting == null");
         this.indent = Objects.requireNonNull(indent, "indent == null");
     }
@@ -34,7 +35,7 @@ public class OreGlobTextBuilder {
         }
     }
 
-    @Nonnull
+    @NotNull
     public StringBuilder getStringBuilder() {
         return this.builder;
     }
@@ -44,15 +45,14 @@ public class OreGlobTextBuilder {
         this.builder.delete(0, this.builder.length());
     }
 
-    @Nonnull
+    @NotNull
     public OreGlobTextFormatting getFormatting() {
         return formatting;
     }
 
-    @Nonnull
+    @NotNull
     public List<String> getLines() {
         finishLine();
         return Collections.unmodifiableList(finishedLines);
     }
-
 }

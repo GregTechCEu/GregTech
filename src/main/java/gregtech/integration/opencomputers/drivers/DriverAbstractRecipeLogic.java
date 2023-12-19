@@ -5,19 +5,23 @@ import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.ManagedEnvironment;
-import li.cil.oc.api.prefab.DriverSidedTileEntity;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.ManagedEnvironment;
+import li.cil.oc.api.prefab.DriverSidedTileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,13 +108,13 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 }
 
                 List<Map<String, Object>> chancedItemOutput = new ArrayList<>();
-                List<Recipe.ChanceEntry> chancedOutputs = previousRecipe.getChancedOutputs();
+                List<ChancedItemOutput> chancedOutputs = previousRecipe.getChancedOutputs().getChancedEntries();
                 chancedOutputs.forEach(iR -> {
                     Map<String, Object> output = new Object2ObjectOpenHashMap<>();
                     output.put("chance", iR.getChance());
-                    output.put("boostPerTier", iR.getBoostPerTier());
-                    output.put("count", iR.getItemStack().getCount());
-                    output.put("name", iR.getItemStack().getDisplayName());
+                    output.put("boostPerTier", iR.getChanceBoost());
+                    output.put("count", iR.getIngredient().getCount());
+                    output.put("name", iR.getIngredient().getDisplayName());
                     chancedItemOutput.add(output);
                 });
                 if (!chancedItemOutput.isEmpty()) {
@@ -128,9 +132,24 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 if (!fluidOutput.isEmpty()) {
                     recipe.put("fluidOutputs", fluidOutput);
                 }
-                return new Object[]{recipe};
+
+                List<Map<String, Object>> chancedFluidOutput = new ArrayList<>();
+                List<ChancedFluidOutput> chancedFluidOutputs = previousRecipe.getChancedFluidOutputs()
+                        .getChancedEntries();
+                chancedFluidOutputs.forEach(iR -> {
+                    Map<String, Object> output = new Object2ObjectOpenHashMap<>();
+                    output.put("chance", iR.getChance());
+                    output.put("boostPerTier", iR.getChanceBoost());
+                    output.put("count", iR.getIngredient().amount);
+                    output.put("name", iR.getIngredient().getFluid().getName());
+                    chancedFluidOutput.add(output);
+                });
+                if (!chancedFluidOutput.isEmpty()) {
+                    recipe.put("chancedFluidOutput", chancedFluidOutput);
+                }
+                return new Object[] { recipe };
             }
-            return new Object[]{null};
+            return new Object[] { null };
         }
     }
 }

@@ -5,6 +5,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.util.IDirtyNotifiable;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.function.BooleanSupplier;
@@ -35,7 +36,8 @@ public class FluidFilterWrapper {
     public void blacklistUI(int y, Consumer<Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getFluidFilter() != null);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
-                this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton).setTooltipText("cover.filter.blacklist"));
+                this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
+                        .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
     }
 

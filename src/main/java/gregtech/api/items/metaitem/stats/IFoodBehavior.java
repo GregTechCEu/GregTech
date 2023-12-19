@@ -4,7 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public interface IFoodBehavior extends IItemComponent {
@@ -22,5 +23,4 @@ public interface IFoodBehavior extends IItemComponent {
     }
 
     void addInformation(ItemStack itemStack, List<String> lines);
-
 }

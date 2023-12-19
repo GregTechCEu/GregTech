@@ -2,6 +2,7 @@ package gregtech.common.blocks.wood;
 
 import gregtech.api.GregTechAPI;
 import gregtech.common.worldgen.WorldGenRubberTree;
+
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.SoundType;
@@ -13,7 +14,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Random;
 
 import static net.minecraft.block.BlockSapling.STAGE;
@@ -31,14 +33,14 @@ public class BlockRubberSapling extends BlockBush implements IGrowable {
         setSoundType(SoundType.PLANT);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, STAGE);
     }
 
     @Override
-    public void updateTick(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
+    public void updateTick(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull Random rand) {
         if (!worldIn.isRemote) {
             super.updateTick(worldIn, pos, state, rand);
             if (!worldIn.isAreaLoaded(pos, 1))
@@ -50,7 +52,7 @@ public class BlockRubberSapling extends BlockBush implements IGrowable {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
         return this.getDefaultState().withProperty(STAGE, (meta & 8) >> 3);
@@ -63,36 +65,40 @@ public class BlockRubberSapling extends BlockBush implements IGrowable {
         return i;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(@NotNull IBlockState state, @NotNull IBlockAccess source,
+                                        @NotNull BlockPos pos) {
         return SAPLING_AABB;
     }
 
     @Override
-    public boolean canGrow(@Nonnull World world, @Nonnull BlockPos blockPos, @Nonnull IBlockState iBlockState, boolean b) {
+    public boolean canGrow(@NotNull World world, @NotNull BlockPos blockPos, @NotNull IBlockState iBlockState,
+                           boolean b) {
         return true;
     }
 
     @Override
-    public boolean canUseBonemeal(@Nonnull World world, @Nonnull Random random, @Nonnull BlockPos blockPos, @Nonnull IBlockState iBlockState) {
+    public boolean canUseBonemeal(@NotNull World world, @NotNull Random random, @NotNull BlockPos blockPos,
+                                  @NotNull IBlockState iBlockState) {
         return true;
     }
 
     @Override
-    public boolean canBeReplacedByLeaves(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    public boolean canBeReplacedByLeaves(@NotNull IBlockState state, @NotNull IBlockAccess world,
+                                         @NotNull BlockPos pos) {
         return true;
     }
 
     @Override
-    public void grow(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    public void grow(@NotNull World worldIn, @NotNull Random rand, @NotNull BlockPos pos, @NotNull IBlockState state) {
         WorldGenRubberTree.TREE_GROW_INSTANCE.grow(worldIn, pos, rand);
     }
 
     @Override
-    @Nonnull
-    public EnumPlantType getPlantType(@Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    @NotNull
+    public EnumPlantType getPlantType(@NotNull IBlockAccess world, @NotNull BlockPos pos) {
         return EnumPlantType.Plains;
     }
 }

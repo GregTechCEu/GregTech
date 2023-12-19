@@ -5,9 +5,7 @@ import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.converter.ConverterTrait;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaRegistrar;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +13,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -47,7 +49,8 @@ public class ConverterDataProvider extends CapabilityDataProvider<ConverterTrait
     }
 
     @Override
-    public @NotNull List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+    public @NotNull List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor,
+                                              IWailaConfigHandler config) {
         if (!config.getConfig("gregtech.converter") || accessor.getTileEntity() == null) {
             return tooltip;
         }
@@ -63,16 +66,20 @@ public class ConverterDataProvider extends CapabilityDataProvider<ConverterTrait
             if (isFeToEu) {
                 tooltip.add(I18n.format("gregtech.top.convert_fe"));
                 if (accessor.getSide() == frontFacing) {
-                    tooltip.add(I18n.format("gregtech.top.transform_output") + " " + voltageName + TextFormatting.RESET + " (" + amperage + "A)");
+                    tooltip.add(I18n.format("gregtech.top.transform_output") + " " + voltageName +
+                            TextFormatting.RESET + " (" + amperage + "A)");
                 } else {
-                    tooltip.add(I18n.format("gregtech.top.transform_input") + " " + FeCompat.toFe(voltage * amperage, FeCompat.ratio(true)) + " FE");
+                    tooltip.add(I18n.format("gregtech.top.transform_input") + " " +
+                            FeCompat.toFe(voltage * amperage, FeCompat.ratio(true)) + " FE");
                 }
             } else {
                 tooltip.add(I18n.format("gregtech.top.convert_eu"));
                 if (accessor.getSide() == frontFacing) {
-                    tooltip.add(I18n.format("gregtech.top.transform_output") + " " + FeCompat.toFe(voltage * amperage, FeCompat.ratio(false)) + " FE");
+                    tooltip.add(I18n.format("gregtech.top.transform_output") + " " +
+                            FeCompat.toFe(voltage * amperage, FeCompat.ratio(false)) + " FE");
                 } else {
-                    tooltip.add(I18n.format("gregtech.top.transform_input") + " " + voltageName + TextFormatting.RESET + " (" + amperage + "A)");
+                    tooltip.add(I18n.format("gregtech.top.transform_input") + " " + voltageName + TextFormatting.RESET +
+                            " (" + amperage + "A)");
                 }
             }
         }

@@ -1,6 +1,5 @@
 package gregtech.common.terminal.app.guide.widget;
 
-import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
@@ -9,12 +8,15 @@ import gregtech.api.util.Size;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.BooleanConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.NumberConfigurator;
 
+import com.google.gson.JsonObject;
+
 import java.util.function.Consumer;
 
-public class CardWidget extends GuideWidget{
+public class CardWidget extends GuideWidget {
+
     public final static String NAME = "card";
 
-    //config
+    // config
     public int width;
     public int height;
     public boolean isShadow;
@@ -35,7 +37,8 @@ public class CardWidget extends GuideWidget{
     }
 
     @Override
-    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed,
+                                 Consumer<String> needUpdate) {
         group.addWidget(new BooleanConfigurator(group, config, "isShadow", true).setOnUpdated(needUpdate));
         if (!isFixed) {
             group.addWidget(new NumberConfigurator(group, config, "width").setOnUpdated(needUpdate));

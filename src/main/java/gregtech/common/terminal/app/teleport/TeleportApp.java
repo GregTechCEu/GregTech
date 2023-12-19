@@ -7,6 +7,7 @@ import gregtech.api.terminal.os.SystemCall;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.TeleportHandler;
 import gregtech.common.entities.PortalEntity;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -48,7 +49,8 @@ public class TeleportApp extends AbstractApplication {
         this.addWidget(new LabelWidget(10, 15, "X: ", 0xFFFFFF));
         this.addWidget(new LabelWidget(10, 35, "Y: ", 0xFFFFFF));
         this.addWidget(new LabelWidget(10, 55, "Z: ", 0xFFFFFF));
-        this.addWidget(new SimpleTextWidget(10, 95, "terminal.teleporter.dimension", 0xFFFFFF, () -> "").setCenter(false));
+        this.addWidget(
+                new SimpleTextWidget(10, 95, "terminal.teleporter.dimension", 0xFFFFFF, () -> "").setCenter(false));
 
         this.addWidget(new TextFieldWidget2(10, 105, 75, 16, () -> String.valueOf(dimension), value -> {
             if (!value.isEmpty()) {
@@ -71,7 +73,8 @@ public class TeleportApp extends AbstractApplication {
             }
         }).setMaxLength(9).setNumbersOnly(-30000000, 30000000));
 
-        this.addWidget(new ClickButtonWidget(15, 140, 65, 20, "terminal.teleporter.spawn_portal", data -> this.spawnPortals()));
+        this.addWidget(new ClickButtonWidget(15, 140, 65, 20, "terminal.teleporter.spawn_portal",
+                data -> this.spawnPortals()));
 
         return this;
     }
@@ -85,26 +88,28 @@ public class TeleportApp extends AbstractApplication {
     }
 
     /**
-     * Creates two portals, one 5 blocks in front of the player targeting the other portal, the other at the destination targeting the first portal
+     * Creates two portals, one 5 blocks in front of the player targeting the other portal, the other at the destination
+     * targeting the first portal
      */
     public void spawnPortals() {
         Vec3d position = new Vec3d(
                 gui.entityPlayer.getPosition().getX() + gui.entityPlayer.getLookVec().x * 5,
                 gui.entityPlayer.getPosition().getY(),
-                gui.entityPlayer.getPosition().getZ() + gui.entityPlayer.getLookVec().z * 5
-        );
+                gui.entityPlayer.getPosition().getZ() + gui.entityPlayer.getLookVec().z * 5);
 
         PortalEntity portal1 = new PortalEntity(gui.entityPlayer.getEntityWorld(), position.x, position.y, position.z);
         portal1.setRotation(gui.entityPlayer.rotationYaw, 0.F);
 
-        PortalEntity portal2 = new PortalEntity(gui.entityPlayer.getEntityWorld(), coordinateX, coordinateY, coordinateZ);
+        PortalEntity portal2 = new PortalEntity(gui.entityPlayer.getEntityWorld(), coordinateX, coordinateY,
+                coordinateZ);
         portal2.setRotation(gui.entityPlayer.rotationYaw, 0.F);
 
         portal1.setTargetCoordinates(dimension, coordinateX, coordinateY, coordinateZ);
         portal2.setTargetCoordinates(gui.entityPlayer.dimension, position.x, position.y, position.z);
 
         gui.entityPlayer.getEntityWorld().spawnEntity(portal1);
-        Chunk destination = TeleportHandler.getWorldByDimensionID(dimension).getChunkProvider().provideChunk(coordinateX >> 4, coordinateZ >> 4);
+        Chunk destination = TeleportHandler.getWorldByDimensionID(dimension).getChunkProvider()
+                .provideChunk(coordinateX >> 4, coordinateZ >> 4);
         TeleportHandler.getWorldByDimensionID(dimension).spawnEntity(portal2);
         TeleportHandler.getWorldByDimensionID(dimension).getChunkProvider().queueUnload(destination);
 

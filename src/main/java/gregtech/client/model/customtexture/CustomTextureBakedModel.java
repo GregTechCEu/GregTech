@@ -1,11 +1,9 @@
 package gregtech.client.model.customtexture;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.*;
 import gregtech.api.util.GTLog;
 import gregtech.asm.hooks.BlockHooks;
 import gregtech.asm.hooks.CTMHooks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,38 +12,47 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.*;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.vecmath.Matrix4f;
+
 @SideOnly(Side.CLIENT)
 public class CustomTextureBakedModel implements IBakedModel {
+
     private final CustomTextureModel model;
     private final IBakedModel parent;
 
-    public static final Cache<CustomTextureBakedModel.State, CustomTextureBakedModel> MODEL_CACHE = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).maximumSize(5000).build();
+    public static final Cache<CustomTextureBakedModel.State, CustomTextureBakedModel> MODEL_CACHE = CacheBuilder
+            .newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).maximumSize(5000).build();
 
-    protected final ListMultimap<BlockRenderLayer, BakedQuad> genQuads = MultimapBuilder.enumKeys(BlockRenderLayer.class).arrayListValues().build();
-    protected final Table<BlockRenderLayer, EnumFacing, List<BakedQuad>> faceQuads = Tables.newCustomTable(Maps.newEnumMap(BlockRenderLayer.class), () -> Maps.newEnumMap(EnumFacing.class));
+    protected final ListMultimap<BlockRenderLayer, BakedQuad> genQuads = MultimapBuilder
+            .enumKeys(BlockRenderLayer.class).arrayListValues().build();
+    protected final Table<BlockRenderLayer, EnumFacing, List<BakedQuad>> faceQuads = Tables
+            .newCustomTable(Maps.newEnumMap(BlockRenderLayer.class), () -> Maps.newEnumMap(EnumFacing.class));
 
     private final EnumMap<EnumFacing, ImmutableList<BakedQuad>> noLayerCache = new EnumMap<>(EnumFacing.class);
     private ImmutableList<BakedQuad> noSideNoLayerCache;
 
-    public CustomTextureBakedModel(CustomTextureModel model, IBakedModel parent){
+    public CustomTextureBakedModel(CustomTextureModel model, IBakedModel parent) {
         this.model = model;
         this.parent = parent;
     }
 
     public IBakedModel getParent(long rand) {
         if (parent instanceof WeightedBakedModel) {
-            return ((WeightedBakedModel)parent).getRandomModel(rand);
+            return ((WeightedBakedModel) parent).getRandomModel(rand);
         }
         return parent;
     }
@@ -77,7 +84,7 @@ public class CustomTextureBakedModel implements IBakedModel {
     protected CustomTextureBakedModel createModel(@Nullable IBlockState state, CustomTextureModel model, long rand) {
         IBakedModel parent = getParent(rand);
         while (parent instanceof CustomTextureBakedModel) {
-            parent = ((CustomTextureBakedModel)parent).getParent(rand);
+            parent = ((CustomTextureBakedModel) parent).getParent(rand);
         }
 
         CustomTextureBakedModel ret = new CustomTextureBakedModel(model, parent);
@@ -108,8 +115,10 @@ public class CustomTextureBakedModel implements IBakedModel {
 
                 BlockHooks.ENABLE = false;
                 for (Map.Entry<BakedQuad, CustomTexture> e : textureMap.entrySet()) {
-                    // If the layer is null, this is a wrapped vanilla texture, so passthrough the layer check to the block
-                    if (e.getValue().getLayer() == layer || (e.getValue().getLayer() == null && (state == null || state.getBlock().canRenderInLayer(state, layer)))) {
+                    // If the layer is null, this is a wrapped vanilla texture, so passthrough the layer check to the
+                    // block
+                    if (e.getValue().getLayer() == layer || (e.getValue().getLayer() == null &&
+                            (state == null || state.getBlock().canRenderInLayer(state, layer)))) {
                         quads.add(e.getValue().transformQuad(e.getKey()));
                     }
                 }
@@ -120,7 +129,7 @@ public class CustomTextureBakedModel implements IBakedModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         IBakedModel parent = getParent(rand);
 
@@ -132,11 +141,12 @@ public class CustomTextureBakedModel implements IBakedModel {
             if (side != null && layer != null) {
                 ret = baked.faceQuads.get(layer, side);
             } else if (side != null) {
-                ret = baked.noLayerCache.computeIfAbsent(side, f -> ImmutableList.copyOf(baked.faceQuads.column(f).values()
-                        .stream()
-                        .flatMap(List::stream)
-                        .distinct()
-                        .collect(Collectors.toList())));
+                ret = baked.noLayerCache.computeIfAbsent(side,
+                        f -> ImmutableList.copyOf(baked.faceQuads.column(f).values()
+                                .stream()
+                                .flatMap(List::stream)
+                                .distinct()
+                                .collect(Collectors.toList())));
             } else if (layer != null) {
                 ret = baked.genQuads.get(layer);
             } else {
@@ -172,30 +182,31 @@ public class CustomTextureBakedModel implements IBakedModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public TextureAtlasSprite getParticleTexture() {
         return parent.getParticleTexture();
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemOverrideList getOverrides() {
         return parent.getOverrides();
     }
 
     @Override
-    @Nonnull
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@Nonnull ItemCameraTransforms.TransformType cameraTransformType) {
+    @NotNull
+    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@NotNull ItemCameraTransforms.TransformType cameraTransformType) {
         return parent.handlePerspective(cameraTransformType);
     }
 
     private static class State {
+
         private final IBlockState cleanState;
         private final IBakedModel parent;
 
         public State(IBlockState cleanState, IBakedModel parent) {
             this.cleanState = cleanState;
-            this. parent = parent;
+            this.parent = parent;
         }
 
         @Override

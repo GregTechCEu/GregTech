@@ -1,11 +1,13 @@
 package gregtech.core.advancement.internal;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import gregtech.api.advancement.IAdvancementCriterion;
+
 import net.minecraft.advancements.ICriterionTrigger.Listener;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.player.EntityPlayerMP;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import java.util.List;
 import java.util.Set;

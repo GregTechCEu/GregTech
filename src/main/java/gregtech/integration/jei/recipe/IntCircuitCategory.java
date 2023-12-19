@@ -1,7 +1,5 @@
 package gregtech.integration.jei.recipe;
 
-import com.google.common.base.Suppliers;
-import com.google.common.collect.Iterators;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
@@ -9,15 +7,7 @@ import gregtech.common.items.MetaItems;
 import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.utils.render.CompositeDrawable;
 import gregtech.integration.jei.utils.render.CompositeRenderer;
-import mcp.MethodsReturnNonnullByDefault;
-import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.gui.IDrawable;
-import mezz.jei.api.gui.IGuiItemStackGroup;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.ingredients.IIngredientRenderer;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeCategory;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -27,10 +17,21 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.item.ItemStack;
+
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Iterators;
+import mcp.MethodsReturnNonnullByDefault;
+import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.gui.IDrawable;
+import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.ingredients.IIngredientRenderer;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeCategory;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -38,7 +39,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
 public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapper> {
 
     public static final String UID = GTValues.MODID + ":" + MetaItems.INTEGRATED_CIRCUIT.unlocalizedName;
@@ -51,18 +51,18 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
     private final IDrawable iconDrawable;
     private final IDrawable backgroundDrawable;
 
-    private final Supplier<IIngredientRenderer<ItemStack>> otherItemRenderer =
-            Suppliers.memoize(() -> {
-                IIngredientRenderer<ItemStack> defaultRenderer = JustEnoughItemsModule.ingredientRegistry.getIngredientRenderer(VanillaTypes.ITEM);
-                return CompositeRenderer.startBuilder(defaultRenderer)
-                        .then(IntCircuitCategory::slice)
-                        .then(defaultRenderer::render)
-                        .then(() -> GL11.glDisable(GL11.GL_STENCIL_TEST))
-                        .build();
-            });
+    private final Supplier<IIngredientRenderer<ItemStack>> otherItemRenderer = Suppliers.memoize(() -> {
+        IIngredientRenderer<ItemStack> defaultRenderer = JustEnoughItemsModule.ingredientRegistry
+                .getIngredientRenderer(VanillaTypes.ITEM);
+        return CompositeRenderer.startBuilder(defaultRenderer)
+                .then(IntCircuitCategory::slice)
+                .then(defaultRenderer::render)
+                .then(() -> GL11.glDisable(GL11.GL_STENCIL_TEST))
+                .build();
+    });
 
-    private final Supplier<IIngredientRenderer<ItemStack>> firstItemRenderer =
-            Suppliers.memoize(() -> CompositeRenderer.startBuilder(otherItemRenderer.get())
+    private final Supplier<IIngredientRenderer<ItemStack>> firstItemRenderer = Suppliers
+            .memoize(() -> CompositeRenderer.startBuilder(otherItemRenderer.get())
                     .then(GlStateManager::pushMatrix)
                     .then((minecraft, xPosition, yPosition, ingredient) -> {
                         if (xPosition * yPosition != 0)
@@ -84,11 +84,12 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         slotBase = CompositeDrawable.startBuilder(SLOT_SIZE, SLOT_SIZE)
-                .then(guiHelper.drawableBuilder(GTUtility.gregtechId("textures/gui/base/slot.png"), 0, 0, SLOT_SIZE, SLOT_SIZE)
+                .then(guiHelper
+                        .drawableBuilder(GTUtility.gregtechId("textures/gui/base/slot.png"), 0, 0, SLOT_SIZE, SLOT_SIZE)
                         .setTextureSize(SLOT_SIZE, SLOT_SIZE)
                         .build()::draw)
-                .then((minecraft, xOffset, yOffset) ->
-                        fontRenderer.drawString(counter.next().toString(), xOffset + 1, yOffset + 1, 0x555555))
+                .then((minecraft, xOffset, yOffset) -> fontRenderer.drawString(counter.next().toString(), xOffset + 1,
+                        yOffset + 1, 0x555555))
                 .build();
 
         scaledSlot = CompositeDrawable.startBuilder(SLOT_SIZE * FIRST_SLOT_SCALE, SLOT_SIZE * FIRST_SLOT_SCALE)
@@ -130,25 +131,24 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
     }
 
     private static final int shortenedRowLength = ROW_LENGTH - FIRST_SLOT_SCALE;
-    private static final int[][] positions =
-            Stream.concat(
-                    IntStream.range(0, shortenedRowLength * FIRST_SLOT_SCALE)
-                            .mapToObj(i -> new int[]{
-                                    SLOT_SIZE * FIRST_SLOT_SCALE + SLOT_SIZE * (i % shortenedRowLength),
-                                    SLOT_SIZE * (i / shortenedRowLength)
-                            }),
-                    IntStream.range(0, IntCircuitIngredient.CIRCUIT_MAX - (shortenedRowLength * FIRST_SLOT_SCALE))
-                            .mapToObj(i -> new int[]{
-                                    SLOT_SIZE * (i % ROW_LENGTH),
-                                    SLOT_SIZE * FIRST_SLOT_SCALE + SLOT_SIZE * (i / ROW_LENGTH)
-                            })
-            )
-                    .toArray(int[][]::new);
+    private static final int[][] positions = Stream.concat(
+            IntStream.range(0, shortenedRowLength * FIRST_SLOT_SCALE)
+                    .mapToObj(i -> new int[] {
+                            SLOT_SIZE * FIRST_SLOT_SCALE + SLOT_SIZE * (i % shortenedRowLength),
+                            SLOT_SIZE * (i / shortenedRowLength)
+                    }),
+            IntStream.range(0, IntCircuitIngredient.CIRCUIT_MAX - (shortenedRowLength * FIRST_SLOT_SCALE))
+                    .mapToObj(i -> new int[] {
+                            SLOT_SIZE * (i % ROW_LENGTH),
+                            SLOT_SIZE * FIRST_SLOT_SCALE + SLOT_SIZE * (i / ROW_LENGTH)
+                    }))
+            .toArray(int[][]::new);
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, IntCircuitRecipeWrapper recipeWrapper, IIngredients ingredients) {
         IGuiItemStackGroup stacks = recipeLayout.getItemStacks();
-        stacks.init(0, recipeWrapper.input, firstItemRenderer.get(), 0, 0, SLOT_SIZE * FIRST_SLOT_SCALE, SLOT_SIZE * FIRST_SLOT_SCALE, FIRST_SLOT_SCALE, FIRST_SLOT_SCALE);
+        stacks.init(0, recipeWrapper.input, firstItemRenderer.get(), 0, 0, SLOT_SIZE * FIRST_SLOT_SCALE,
+                SLOT_SIZE * FIRST_SLOT_SCALE, FIRST_SLOT_SCALE, FIRST_SLOT_SCALE);
         stacks.setBackground(0, scaledSlot);
         for (int i = 0; i < positions.length; i++) {
             stacks.init(i + 1,
@@ -159,8 +159,7 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
                     SLOT_SIZE,
                     SLOT_SIZE,
                     1,
-                    1
-            );
+                    1);
             stacks.setBackground(i + 1, slotBase);
         }
         stacks.set(ingredients);
@@ -205,5 +204,4 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
 
         GL11.glStencilFunc(GL11.GL_EQUAL, val, mask);
     }
-
 }

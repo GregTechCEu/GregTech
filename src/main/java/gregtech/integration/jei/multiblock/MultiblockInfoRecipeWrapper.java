@@ -1,10 +1,5 @@
 package gregtech.integration.jei.multiblock;
 
-import codechicken.lib.render.BlockRenderer;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Translation;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -22,15 +17,7 @@ import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.gui.IDrawable;
-import mezz.jei.api.gui.IGuiItemStackGroup;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeWrapper;
-import mezz.jei.gui.recipes.RecipeLayout;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -56,14 +43,30 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.BlockRenderer;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Translation;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.gui.IDrawable;
+import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeWrapper;
+import mezz.jei.gui.recipes.RecipeLayout;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
-import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
+import javax.vecmath.Vector3f;
 
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
@@ -75,11 +78,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private static final int RIGHT_PADDING = 5;
 
     private static class MBPattern {
+
         final WorldSceneRenderer sceneRenderer;
         final List<ItemStack> parts;
         final Map<BlockPos, TraceabilityPredicate> predicateMap;
 
-        public MBPattern(final WorldSceneRenderer sceneRenderer, final List<ItemStack> parts, Map<BlockPos, TraceabilityPredicate> predicateMap) {
+        public MBPattern(final WorldSceneRenderer sceneRenderer, final List<ItemStack> parts,
+                         Map<BlockPos, TraceabilityPredicate> predicateMap) {
             this.sceneRenderer = sceneRenderer;
             this.parts = parts;
             this.predicateMap = predicateMap;
@@ -119,7 +124,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private TraceabilityPredicate father;
 
     @SuppressWarnings("NewExpressionSideOnly")
-    public MultiblockInfoRecipeWrapper(@Nonnull MultiblockControllerBase controller) {
+    public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
         this.controller = controller;
         Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
         this.patterns = controller.getMatchingShapes().stream()
@@ -127,7 +132,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 .toArray(MBPattern[]::new);
         allItemStackInputs.addAll(drops);
         this.nextLayerButton = new GuiButton(0, 176 - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
-        this.buttonPreviousPattern = new GuiButton(0, 176 - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, "<");
+        this.buttonPreviousPattern = new GuiButton(0, 176 - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE,
+                ICON_SIZE, "<");
         this.buttonNextPattern = new GuiButton(0, 176 - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, ">");
         this.nextTierButton = new GuiButton(0, 176 - (ICON_SIZE + RIGHT_PADDING), 110, ICON_SIZE, ICON_SIZE, "^");
         this.buttons.put(nextLayerButton, this::toggleNextLayer);
@@ -153,8 +159,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     public void setRecipeLayout(RecipeLayout layout, IGuiHelper guiHelper) {
         this.recipeLayout = layout;
 
-        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, SLOT_SIZE, SLOT_SIZE).setTextureSize(SLOT_SIZE, SLOT_SIZE).build();
-        this.infoIcon = guiHelper.drawableBuilder(GuiTextures.INFO_ICON.imageLocation, 0, 0, ICON_SIZE, ICON_SIZE).setTextureSize(ICON_SIZE, ICON_SIZE).build();
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, SLOT_SIZE, SLOT_SIZE)
+                .setTextureSize(SLOT_SIZE, SLOT_SIZE).build();
+        this.infoIcon = guiHelper.drawableBuilder(GuiTextures.INFO_ICON.imageLocation, 0, 0, ICON_SIZE, ICON_SIZE)
+                .setTextureSize(ICON_SIZE, ICON_SIZE).build();
 
         IDrawable border = layout.getRecipeCategory().getBackground();
         preparePlaceForParts(border.getHeight());
@@ -201,8 +209,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int height = (int) ((TrackedDummyWorld) renderer.world).getSize().getY() - 1;
         if (++this.layerIndex > height) {
-            //if current layer index is more than max height, reset it
-            //to display all layers
+            // if current layer index is more than max height, reset it
+            // to display all layers
             this.layerIndex = -1;
         }
         setNextLayer(layerIndex);
@@ -233,7 +241,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             if (newLayer == -1) {
                 renderBlocks = world.renderedBlocks;
             } else {
-                renderBlocks = world.renderedBlocks.stream().filter(pos -> pos.getY() - minY == newLayer).collect(Collectors.toSet());
+                renderBlocks = world.renderedBlocks.stream().filter(pos -> pos.getY() - minY == newLayer)
+                        .collect(Collectors.toSet());
             }
             renderer.addRenderedBlocks(renderBlocks, null);
         }
@@ -255,7 +264,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.buttonPreviousPattern.enabled = newIndex > 0;
             setNextLayer(-1);
             updateParts();
-            getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+            getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch),
+                    Math.toRadians(rotationYaw));
             if (this.selected != null) {
                 this.selected = null;
                 for (int i = 0; i < predicates.size(); i++) {
@@ -270,7 +280,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private void preparePlaceForParts(int recipeHeight) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         for (int i = 0; i < MAX_PARTS; ++i)
-            itemStackGroup.init(i, true, SLOT_SIZE * i - (SLOT_SIZE * SLOTS_PER_ROW) * (i / SLOTS_PER_ROW) + (SLOT_SIZE / 2) - 2, recipeHeight - PARTS_HEIGHT + SLOT_SIZE * (i / SLOTS_PER_ROW));
+            itemStackGroup.init(i, true,
+                    SLOT_SIZE * i - (SLOT_SIZE * SLOTS_PER_ROW) * (i / SLOTS_PER_ROW) + (SLOT_SIZE / 2) - 2,
+                    recipeHeight - PARTS_HEIGHT + SLOT_SIZE * (i / SLOTS_PER_ROW));
     }
 
     private void updateParts() {
@@ -286,26 +298,29 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
-        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, mouseX + recipeLayout.getPosX(), mouseY + recipeLayout.getPosY());
+        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight,
+                mouseX + recipeLayout.getPosX(), mouseY + recipeLayout.getPosY());
         drawMultiblockName(recipeWidth);
 
-        //reset colors (so any elements render after this point are not dark)
+        // reset colors (so any elements render after this point are not dark)
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
 
         int iconX = recipeWidth - (ICON_SIZE + RIGHT_PADDING);
         int iconY = 49;
         this.infoIcon.draw(minecraft, iconX, iconY);
 
-        this.drawInfoIcon = iconX <= mouseX && mouseX <= iconX + ICON_SIZE && iconY <= mouseY && mouseY <= iconY + ICON_SIZE;
+        this.drawInfoIcon = iconX <= mouseX && mouseX <= iconX + ICON_SIZE && iconY <= mouseY &&
+                mouseY <= iconY + ICON_SIZE;
 
         // draw parts slots
         for (int i = 0; i < MAX_PARTS; ++i) {
-            this.slot.draw(minecraft, SLOT_SIZE * i - (SLOTS_PER_ROW * SLOT_SIZE) * (i / SLOTS_PER_ROW) + (SLOT_SIZE / 2) - 2, sceneHeight + SLOT_SIZE * (i / SLOTS_PER_ROW));
+            this.slot.draw(minecraft,
+                    SLOT_SIZE * i - (SLOTS_PER_ROW * SLOT_SIZE) * (i / SLOTS_PER_ROW) + (SLOT_SIZE / 2) - 2,
+                    sceneHeight + SLOT_SIZE * (i / SLOTS_PER_ROW));
         }
 
         // draw candidates slots
@@ -347,13 +362,17 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             renderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
 
-        if (!(leftClickHeld || rightClickHeld) && rayTraceResult != null && !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
+        if (!(leftClickHeld || rightClickHeld) && rayTraceResult != null &&
+                !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
             IBlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
-            ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
-            TraceabilityPredicate predicates = patterns[currentRendererPage].predicateMap.get(rayTraceResult.getBlockPos());
+            ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world,
+                    rayTraceResult.getBlockPos(), minecraft.player);
+            TraceabilityPredicate predicates = patterns[currentRendererPage].predicateMap
+                    .get(rayTraceResult.getBlockPos());
             if (predicates != null) {
                 BlockWorldState worldState = new BlockWorldState();
-                worldState.update(renderer.world, rayTraceResult.getBlockPos(), new PatternMatchContext(), new HashMap<>(), new HashMap<>(), predicates);
+                worldState.update(renderer.world, rayTraceResult.getBlockPos(), new PatternMatchContext(),
+                        new HashMap<>(), new HashMap<>(), predicates);
                 for (TraceabilityPredicate.SimplePredicate common : predicates.common) {
                     if (common.test(worldState)) {
                         predicateTips = common.getToolTips(predicates);
@@ -388,12 +407,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         List<String> lines = fontRenderer.listFormattedStringToWidth(localizedName, recipeWidth - 10);
         for (int i = 0; i < lines.size(); i++) {
-            fontRenderer.drawString(lines.get(i), (recipeWidth - fontRenderer.getStringWidth(lines.get(i))) / 2, fontRenderer.FONT_HEIGHT * i, ConfigHolder.client.multiblockPreviewFontColor);
+            fontRenderer.drawString(lines.get(i), (recipeWidth - fontRenderer.getStringWidth(lines.get(i))) / 2,
+                    fontRenderer.FONT_HEIGHT * i, ConfigHolder.client.multiblockPreviewFontColor);
         }
     }
 
     @Override
-    public boolean handleClick(@Nonnull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+    public boolean handleClick(@NotNull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (Entry<GuiButton, Runnable> button : buttons.entrySet()) {
             if (button.getKey().mousePressed(minecraft, mouseX, mouseY)) {
                 button.getValue().run();
@@ -436,7 +456,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         return false;
     }
 
-
     private void setItemStackGroup() {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         for (int i = 0; i < predicates.size(); i++) {
@@ -451,14 +470,17 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (drawInfoIcon) {
-            return Arrays.asList(I18n.format("gregtech.multiblock.preview.zoom"), I18n.format("gregtech.multiblock.preview.rotate"), I18n.format("gregtech.multiblock.preview.select"));
+            return Arrays.asList(I18n.format("gregtech.multiblock.preview.zoom"),
+                    I18n.format("gregtech.multiblock.preview.rotate"),
+                    I18n.format("gregtech.multiblock.preview.select"));
         } else if (tooltipBlockStack != null && !tooltipBlockStack.isEmpty() && !Mouse.isButtonDown(0)) {
             Minecraft minecraft = Minecraft.getMinecraft();
-            ITooltipFlag flag = minecraft.gameSettings.advancedItemTooltips ? TooltipFlags.ADVANCED : TooltipFlags.NORMAL;
+            ITooltipFlag flag = minecraft.gameSettings.advancedItemTooltips ? TooltipFlags.ADVANCED :
+                    TooltipFlags.NORMAL;
             List<String> tooltip = tooltipBlockStack.getTooltip(minecraft.player, flag);
             EnumRarity rarity = tooltipBlockStack.getRarity();
             for (int k = 0; k < tooltip.size(); ++k) {
@@ -477,6 +499,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private static class PartInfo {
+
         final ItemStack itemStack;
         boolean isController = false;
         boolean isTile = false;
@@ -496,7 +519,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
         }
 
-        @Nonnull
+        @NotNull
         ItemStack getItemStack() {
             ItemStack result = this.itemStack.copy();
             result.setCount(this.amount);
@@ -504,9 +527,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
     }
 
-    @Nonnull
-    private static Collection<PartInfo> gatherStructureBlocks(World world, @Nonnull Map<BlockPos, BlockInfo> blocks, Set<ItemStack> parts) {
-        Map<ItemStack, PartInfo> partsMap = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+    @NotNull
+    private static Collection<PartInfo> gatherStructureBlocks(World world, @NotNull Map<BlockPos, BlockInfo> blocks,
+                                                              Set<ItemStack> parts) {
+        Map<ItemStack, PartInfo> partsMap = new Object2ObjectOpenCustomHashMap<>(
+                ItemStackHashStrategy.comparingAllButCount());
         for (Entry<BlockPos, BlockInfo> entry : blocks.entrySet()) {
             BlockPos pos = entry.getKey();
             IBlockState state = world.getBlockState(pos);
@@ -536,7 +561,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
             if (stack.isEmpty()) {
                 // if everything else doesn't work, try the not great getPickBlock() with some dummy values
-                stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos, new GregFakePlayer(world));
+                stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos,
+                        new GregFakePlayer(world));
             }
 
             // if we got a stack, add it to the set and map
@@ -555,8 +581,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @SuppressWarnings("NewExpressionSideOnly")
-    @Nonnull
-    private MBPattern initializePattern(@Nonnull MultiblockShapeInfo shapeInfo, @Nonnull Set<ItemStack> parts) {
+    @NotNull
+    private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         MultiblockControllerBase controllerBase = null;
         BlockInfo[][][] blocks = shapeInfo.getBlocks();
@@ -565,8 +591,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             for (int y = 0; y < aisle.length; y++) {
                 BlockInfo[] column = aisle[y];
                 for (int z = 0; z < column.length; z++) {
-                    if (column[z].getTileEntity() instanceof IGregTechTileEntity && ((IGregTechTileEntity) column[z].getTileEntity()).getMetaTileEntity() instanceof MultiblockControllerBase) {
-                        controllerBase = (MultiblockControllerBase) ((IGregTechTileEntity) column[z].getTileEntity()).getMetaTileEntity();
+                    if (column[z].getTileEntity() instanceof IGregTechTileEntity &&
+                            ((IGregTechTileEntity) column[z].getTileEntity())
+                                    .getMetaTileEntity() instanceof MultiblockControllerBase) {
+                        controllerBase = (MultiblockControllerBase) ((IGregTechTileEntity) column[z].getTileEntity())
+                                .getMetaTileEntity();
                     }
                     blockMap.put(new BlockPos(x, y, z), column[z]);
                 }
@@ -586,7 +615,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         worldSceneRenderer.setOnLookingAt(ray -> {});
 
         worldSceneRenderer.setAfterWorldRender(renderer -> {
-            BlockPos look = worldSceneRenderer.getLastTraceResult() == null ? null : worldSceneRenderer.getLastTraceResult().getBlockPos();
+            BlockPos look = worldSceneRenderer.getLastTraceResult() == null ? null :
+                    worldSceneRenderer.getLastTraceResult().getBlockPos();
             if (look != null && look.equals(selected)) {
                 renderBlockOverLay(selected, 200, 75, 75);
                 return;
@@ -595,7 +625,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             renderBlockOverLay(selected, 255, 0, 0);
         });
         world.updateEntities();
-        world.setRenderFilter(pos -> worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c -> c.contains(pos)));
+        world.setRenderFilter(
+                pos -> worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c -> c.contains(pos)));
 
         Map<BlockPos, TraceabilityPredicate> predicateMap = new HashMap<>();
         if (controllerBase != null) {
@@ -603,18 +634,20 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 controllerBase.reinitializeStructurePattern();
             }
             if (controllerBase.structurePattern != null) {
-                controllerBase.structurePattern.cache.forEach((pos, blockInfo) -> predicateMap.put(BlockPos.fromLong(pos), (TraceabilityPredicate) blockInfo.getInfo()));
+                controllerBase.structurePattern.cache.forEach((pos, blockInfo) -> predicateMap
+                        .put(BlockPos.fromLong(pos), (TraceabilityPredicate) blockInfo.getInfo()));
             }
         }
 
-        List<ItemStack> sortedParts = gatherStructureBlocks(worldSceneRenderer.world, blockMap, parts).stream().sorted((one, two) -> {
-            if (one.isController) return -1;
-            if (two.isController) return +1;
-            if (one.isTile && !two.isTile) return -1;
-            if (two.isTile && !one.isTile) return +1;
-            if (one.blockId != two.blockId) return two.blockId - one.blockId;
-            return two.amount - one.amount;
-        }).map(PartInfo::getItemStack).collect(Collectors.toList());
+        List<ItemStack> sortedParts = gatherStructureBlocks(worldSceneRenderer.world, blockMap, parts).stream()
+                .sorted((one, two) -> {
+                    if (one.isController) return -1;
+                    if (two.isController) return +1;
+                    if (one.isTile && !two.isTile) return -1;
+                    if (two.isTile && !one.isTile) return +1;
+                    if (one.blockId != two.blockId) return two.blockId - one.blockId;
+                    return two.amount - one.amount;
+                }).map(PartInfo::getItemStack).collect(Collectors.toList());
 
         return new MBPattern(worldSceneRenderer, sortedParts, predicateMap);
     }

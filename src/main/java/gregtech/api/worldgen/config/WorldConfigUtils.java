@@ -1,10 +1,7 @@
 package gregtech.api.worldgen.config;
 
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -12,6 +9,11 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,9 +47,12 @@ public class WorldConfigUtils {
                 } else {
                     int indexOf = filterValue.indexOf(':');
                     int indexOfExclusive = indexOf + 1;
-                    int minDimensionId = indexOf == 0 ? -Integer.MAX_VALUE : Integer.parseInt(filterValue.substring(0, indexOf));
-                    int maxDimensionId = indexOfExclusive == filterValue.length() ? Integer.MAX_VALUE : Integer.parseInt(filterValue.substring(indexOfExclusive));
-                    allPredicates.add(provider -> provider.getDimension() >= minDimensionId && provider.getDimension() <= maxDimensionId);
+                    int minDimensionId = indexOf == 0 ? -Integer.MAX_VALUE :
+                            Integer.parseInt(filterValue.substring(0, indexOf));
+                    int maxDimensionId = indexOfExclusive == filterValue.length() ? Integer.MAX_VALUE :
+                            Integer.parseInt(filterValue.substring(indexOfExclusive));
+                    allPredicates.add(provider -> provider.getDimension() >= minDimensionId &&
+                            provider.getDimension() <= maxDimensionId);
                 }
             } else if (stringValue.startsWith("name:")) {
                 stringSupplier = provider -> provider.getDimensionType().getName();
@@ -64,7 +69,8 @@ public class WorldConfigUtils {
                 } else {
                     String finalStringValue = stringValue;
                     Function<WorldProvider, String> finalStringSupplier1 = stringSupplier;
-                    allPredicates.add(provider -> finalStringValue.equalsIgnoreCase(finalStringSupplier1.apply(provider)));
+                    allPredicates
+                            .add(provider -> finalStringValue.equalsIgnoreCase(finalStringSupplier1.apply(provider)));
                 }
             }
         }
@@ -82,7 +88,7 @@ public class WorldConfigUtils {
             case "biome_map": {
                 HashMap<Biome, Integer> backedMap = new HashMap<>();
                 for (Entry<String, JsonElement> elementEntry : object.entrySet()) {
-                    if (elementEntry.getKey().equals("type")) continue; //skip type
+                    if (elementEntry.getKey().equals("type")) continue; // skip type
                     ResourceLocation biomeName = new ResourceLocation(elementEntry.getKey());
                     Biome biome = GameRegistry.findRegistry(Biome.class).getValue(biomeName);
                     if (biome == null)
@@ -94,7 +100,7 @@ public class WorldConfigUtils {
             case "biome_dictionary": {
                 HashMap<Type, Integer> backedMap = new HashMap<>();
                 for (Entry<String, JsonElement> elementEntry : object.entrySet()) {
-                    if (elementEntry.getKey().equals("type")) continue; //skip type
+                    if (elementEntry.getKey().equals("type")) continue; // skip type
                     String tagName = elementEntry.getKey().toUpperCase();
                     Type type = GTUtility.getBiomeTypeTagByName(tagName);
                     if (type == null)
