@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>> {
+public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>> {
 
-    protected final List<NodeG<PipeType, NodeDataType>> nodeList;
+    private final List<NodeG<PipeType, NodeDataType>> nodeList;
     private final List<NetEdge> edgeList;
 
-    protected final NodeG<PipeType, NodeDataType> sourceNode;
+    private final NodeG<PipeType, NodeDataType> sourceNode;
 
-    protected final NodeG<PipeType, NodeDataType> targetNode;
+    private final NodeG<PipeType, NodeDataType> targetNode;
 
-    protected final double weight;
+    private final double weight;
 
     private NodeDataType data = null;
 

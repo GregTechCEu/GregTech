@@ -31,9 +31,6 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.monitor.WidgetScreenGrid;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.pipelike.cable.net.EnergyNet;
-import gregtech.common.pipelike.cable.net.WorldENet;
-import gregtech.common.pipelike.cable.tile.TileEntityCable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -93,24 +90,24 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     private EnergyNet getEnergyNet() {
-        if (!this.getWorld().isRemote) {
-            TileEntity te = getNeighbor(frontFacing.getOpposite());
-            if (te instanceof TileEntityCable) {
-                TileEntityPipeBase<?, ?> tileEntityCable = (TileEntityCable) te;
-                EnergyNet currentEnergyNet = this.currentEnergyNet.get();
-                if (currentEnergyNet != null && currentEnergyNet.isValid() &&
-                        currentEnergyNet.containsNode(tileEntityCable.getPipePos())) {
-                    return currentEnergyNet; // return current net if it is still valid
-                }
-                WorldENet worldENet = (WorldENet) tileEntityCable.getPipeBlock()
-                        .getWorldPipeNet(tileEntityCable.getPipeWorld());
-                currentEnergyNet = worldENet.getNetFromPos(tileEntityCable.getPipePos());
-                if (currentEnergyNet != null) {
-                    this.currentEnergyNet = new WeakReference<>(currentEnergyNet);
-                }
-                return currentEnergyNet;
-            }
-        }
+//        if (!this.getWorld().isRemote) {
+//            TileEntity te = getNeighbor(frontFacing.getOpposite());
+//            if (te instanceof TileEntityCable) {
+//                TileEntityPipeBase<?, ?> tileEntityCable = (TileEntityCable) te;
+//                EnergyNet currentEnergyNet = this.currentEnergyNet.get();
+//                if (currentEnergyNet != null && currentEnergyNet.isValid() &&
+//                        currentEnergyNet.containsNode(tileEntityCable.getPipePos())) {
+//                    return currentEnergyNet; // return current net if it is still valid
+//                }
+//                WorldEnergyNet worldEnergyNet = (WorldEnergyNet) tileEntityCable.getPipeBlock()
+//                        .getWorldPipeNet(tileEntityCable.getPipeWorld());
+//                currentEnergyNet = worldEnergyNet.getNetFromPos(tileEntityCable.getPipePos());
+//                if (currentEnergyNet != null) {
+//                    this.currentEnergyNet = new WeakReference<>(currentEnergyNet);
+//                }
+//                return currentEnergyNet;
+//            }
+//        }
         return null;
     }
 

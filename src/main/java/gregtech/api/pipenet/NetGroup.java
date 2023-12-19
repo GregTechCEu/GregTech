@@ -12,29 +12,26 @@ import java.util.stream.Collectors;
 
 public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>> {
 
+    public final WorldPipeNetG<NodeDataType, PipeType> net;
+
     private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph;
 
     private final Set<NodeG<PipeType, NodeDataType>> nodes;
 
-    private long lastUpdate;
+    private AbstractGroupData<PipeType, NodeDataType> data;
 
-    public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph) {
+    public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetG<NodeDataType, PipeType> net) {
         this.graph = graph;
         this.nodes = new ObjectOpenHashSet<>();
+        this.net = net;
     }
 
-    public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, Set<NodeG<PipeType, NodeDataType>> nodes) {
+    public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetG<NodeDataType, PipeType> net,
+                    Set<NodeG<PipeType, NodeDataType>> nodes) {
         this.graph = graph;
         this.nodes = nodes;
+        this.net = net;
         this.nodes.forEach(b -> b.setGroup(this));
-    }
-
-    protected void onNodeConnectionsUpdate() {
-        this.lastUpdate = System.currentTimeMillis();
-    }
-
-    public long getLastUpdate() {
-        return lastUpdate;
     }
 
     private void clear() {
@@ -118,7 +115,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                 // if 1 or fewer nodes are in the new group, no need to create it.
                 if (targetGroup.size() > 1) {
                     // No need to do more than create it, the involved nodes are automatically updated in constructor
-                    new NetGroup<>(this.graph, targetGroup);
+                    new NetGroup<>(this.graph, this.net, targetGroup);
                 } else {
                     targetGroup.forEach(NodeG::clearGroup);
                 }
@@ -152,7 +149,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             // if 1 or fewer nodes are in the new group, no need to create it.
             if (targetGroup.size() > 1) {
                 // No need to do more than create it, the involved nodes are automatically updated in constructor
-                new NetGroup<>(this.graph, targetGroup);
+                new NetGroup<>(this.graph, this.net, targetGroup);
             } else {
                 targetGroup.forEach(NodeG::clearGroup);
             }
@@ -170,5 +167,15 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     protected void clearPathCaches() {
         this.nodes.forEach(NodeG::clearPathCache);
+    }
+
+    public void initData(AbstractGroupData<PipeType, NodeDataType> data) {
+        if (this.data == null) {
+            this.data = data.withGroup(this);
+        }
+    }
+
+    public AbstractGroupData<PipeType, NodeDataType> getData() {
+        return data;
     }
 }

@@ -14,9 +14,8 @@ import gregtech.client.particle.GTParticleManager;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
-import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
-import gregtech.common.pipelike.cable.net.WorldENet;
+import gregtech.common.pipelike.cable.net.WorldEnergyNet;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +33,6 @@ import codechicken.lib.vec.Cuboid6;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -54,7 +52,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private EnergyNetHandler defaultHandler;
     // the EnergyNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
-    private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
     @SideOnly(Side.CLIENT)
     private GTOverheatParticle particle;
     private int heatQueue;
@@ -81,10 +78,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     private void initHandlers() {
-        EnergyNet net = getEnergyNet();
-        if (net == null) {
-            return;
-        }
+        WorldEnergyNet net = WorldEnergyNet.getWorldEnergyNet(getPipeWorld());
         for (EnumFacing facing : EnumFacing.VALUES) {
             handlers.put(facing, new EnergyNetHandler(net, this, facing));
         }
@@ -260,37 +254,9 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
                 return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(clientCapability);
             if (handlers.isEmpty())
                 initHandlers();
-            checkNetwork();
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
-    }
-
-    public void checkNetwork() {
-        if (defaultHandler != null) {
-            EnergyNet current = getEnergyNet();
-            if (defaultHandler.getNet() != current) {
-                defaultHandler.updateNetwork(current);
-                for (EnergyNetHandler handler : handlers.values()) {
-                    handler.updateNetwork(current);
-                }
-            }
-        }
-    }
-
-    private EnergyNet getEnergyNet() {
-        if (world == null || world.isRemote)
-            return null;
-        EnergyNet currentEnergyNet = this.currentEnergyNet.get();
-        if (currentEnergyNet != null && currentEnergyNet.isValid() &&
-                currentEnergyNet.containsNode(getPos()))
-            return currentEnergyNet; // return current net if it is still valid
-        WorldENet worldENet = WorldENet.getWorldENet(getWorld());
-        currentEnergyNet = worldENet.getNetFromPos(getPos());
-        if (currentEnergyNet != null) {
-            this.currentEnergyNet = new WeakReference<>(currentEnergyNet);
-        }
-        return currentEnergyNet;
     }
 
     @Override

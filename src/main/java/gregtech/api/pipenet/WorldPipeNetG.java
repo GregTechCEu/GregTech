@@ -312,7 +312,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight, @Nullable AbstractEdgePredicate<?> predicate) {
         if (pipeGraph.addEdge(source, target) != null) {
             if (NetGroup.mergeEdge(source, target)) {
-                new NetGroup<>(this.pipeGraph).addNodes(source, target);
+                new NetGroup<>(this.pipeGraph, this).addNodes(source, target);
             }
             pipeGraph.setEdgeWeight(source, target, weight);
             if (predicate != null) {
@@ -387,6 +387,13 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
             this.pipeGraph.removeVertex(node);
         }
         this.markDirty();
+    }
+
+    public NetGroup<PipeType, NodeDataType> getGroup(BlockPos pos) {
+        NodeG<PipeType, NodeDataType> node = this.getNode(pos);
+        if (node == null) return null;
+        if (node.getGroup() == null) return null;
+        return node.setGroup(new NetGroup<>(this.pipeGraph, this));
     }
 
     public boolean markNodeAsActive(BlockPos nodePos, boolean isActive) {

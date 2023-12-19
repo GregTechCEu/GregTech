@@ -152,8 +152,10 @@ public class ItemNetHandler implements IItemHandler {
         int count = stack.getCount();
         int c = count / copy.size();
         int m = c == 0 ? count % copy.size() : 0;
+        mainloop:
         while (routePathIterator.hasNext()) {
             NetPath<ItemPipeType, ItemPipeProperties> routePath = routePathIterator.next();
+            routePath.resetFacingIterator();
             while (routePath.hasNextFacing()) {
                 NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> facedNetPath = routePath.nextFacing();
                 int amount = c;
@@ -162,7 +164,7 @@ public class ItemNetHandler implements IItemHandler {
                     m--;
                 }
                 amount = Math.min(amount, stack.getCount() - inserted);
-                if (amount == 0) break;
+                if (amount == 0) break mainloop;
                 ItemStack toInsert = stack.copy();
                 toInsert.setCount(amount);
                 int r = insert(facedNetPath, toInsert, simulate).getCount();
@@ -191,6 +193,7 @@ public class ItemNetHandler implements IItemHandler {
 
         // find inventories that are not full and get the amount that was inserted in total
         for (NetPath<ItemPipeType, ItemPipeProperties> inv : copy) {
+            inv.resetFacingIterator();
             while (inv.hasNextFacing()) {
                 NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> faceInv = inv.nextFacing();
                 simStack = stack.copy();

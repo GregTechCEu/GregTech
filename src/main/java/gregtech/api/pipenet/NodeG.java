@@ -84,8 +84,9 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
         return group;
     }
 
-    void setGroup(NetGroup<PipeType, NodeDataType> group) {
+    NetGroup<PipeType, NodeDataType> setGroup(NetGroup<PipeType, NodeDataType> group) {
         this.group = group;
+        return group;
     }
 
     void clearGroup() {

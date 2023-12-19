@@ -14,7 +14,7 @@ import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
-import gregtech.common.pipelike.cable.net.WorldENet;
+import gregtech.common.pipelike.cable.net.WorldEnergyNet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -47,7 +47,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldENet>
+public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldEnergyNet>
                         implements ITileEntityProvider {
 
     private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
@@ -95,8 +95,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public WorldENet getWorldPipeNet(World world) {
-        return WorldENet.getWorldENet(world);
+    public WorldEnergyNet getWorldPipeNet(World world) {
+        return WorldEnergyNet.getWorldEnergyNet(world);
     }
 
     @Override
