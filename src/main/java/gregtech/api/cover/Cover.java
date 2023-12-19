@@ -117,8 +117,8 @@ public interface Cover {
      * specify them in {@link #writeInitialSyncData}.
      * @apiNote The CoverableView will not have your cover attached to it in this method.
      *
-     * @param coverableView the CoverableView this cover is attached to
-     * @param side          the side this cover is attached to
+     * @param coverableView the CoverableView this cover will be attached to
+     * @param side          the side this cover will be attached to
      * @param player        the player attaching the cover
      * @param itemStack     the item used to place the cover
      */
