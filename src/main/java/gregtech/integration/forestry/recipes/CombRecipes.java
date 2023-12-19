@@ -73,7 +73,7 @@ public class CombRecipes {
         addProcessGT(GTCombType.APATITE, new Material[] { Materials.Apatite, Materials.TricalciumPhosphate },
                 Voltage.LV);
         addCentrifugeToMaterial(GTCombType.ASH, new Material[] { Materials.DarkAsh, Materials.Ash },
-                new int[] { 50 * 100, 50 * 100 }, new int[] { 9, 9 }, Voltage.ULV, ItemStack.EMPTY, 50 * 100);
+                new int[] { 50 * 100, 50 * 100 }, new int[] { 1, 1 }, Voltage.ULV, ItemStack.EMPTY, 50 * 100);
         addCentrifugeToItemStack(GTCombType.BIOMASS,
                 new ItemStack[] { ForestryUtil.getDropStack(GTDropType.BIOMASS),
                         ForestryUtil.getDropStack(GTDropType.ETHANOL), ModuleCore.getItems().beeswax.getItemStack() },
@@ -111,9 +111,9 @@ public class CombRecipes {
         addProcessGT(GTCombType.STAINLESSSTEEL, new Material[] { Materials.StainlessSteel, Materials.Iron,
                 Materials.Chrome, Materials.Manganese, Materials.Nickel }, Voltage.HV);
         addCentrifugeToMaterial(GTCombType.REDALLOY, new Material[] { Materials.RedAlloy }, new int[] { 100 * 100 },
-                new int[] { 9 }, Voltage.ULV, ModuleCore.getItems().refractoryWax.getItemStack(), 50 * 100);
+                new int[] { 1 }, Voltage.ULV, ModuleCore.getItems().refractoryWax.getItemStack(), 50 * 100);
         addCentrifugeToMaterial(GTCombType.STAINLESSSTEEL, new Material[] { Materials.StainlessSteel },
-                new int[] { 50 * 100 }, new int[] { 9 }, Voltage.HV, ModuleCore.getItems().refractoryWax.getItemStack(),
+                new int[] { 50 * 100 }, new int[] { 1 }, Voltage.HV, ModuleCore.getItems().refractoryWax.getItemStack(),
                 50 * 100);
 
         // Gem
@@ -123,7 +123,7 @@ public class CombRecipes {
                 new Material[] { Materials.CertusQuartz, Materials.Quartzite, Materials.Barite }, Voltage.LV);
         addProcessGT(GTCombType.REDSTONE, new Material[] { Materials.Redstone, Materials.Cinnabar }, Voltage.LV);
         addCentrifugeToMaterial(GTCombType.RAREEARTH, new Material[] { Materials.RareEarth }, new int[] { 100 * 100 },
-                new int[] { 9 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+                new int[] { 1 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         addProcessGT(GTCombType.LAPIS,
                 new Material[] { Materials.Lapis, Materials.Sodalite, Materials.Lazurite, Materials.Calcite },
                 Voltage.LV);
@@ -144,7 +144,7 @@ public class CombRecipes {
         addCentrifugeToMaterial(GTCombType.STONE,
                 new Material[] { Materials.Stone, Materials.GraniteBlack, Materials.GraniteRed, Materials.Basalt,
                         Materials.Marble },
-                new int[] { 70 * 100, 50 * 100, 50 * 100, 50 * 100, 50 * 100 }, new int[] { 9, 9, 9, 9, 9 },
+                new int[] { 70 * 100, 50 * 100, 50 * 100, 50 * 100, 50 * 100 }, new int[] { 1, 1, 1, 1, 1 },
                 Voltage.ULV, ItemStack.EMPTY, 50 * 100);
 
         // Metals
@@ -170,20 +170,20 @@ public class CombRecipes {
 
         addCentrifugeToMaterial(GTCombType.SLAG,
                 new Material[] { Materials.Stone, Materials.GraniteBlack, Materials.GraniteRed },
-                new int[] { 50 * 100, 20 * 100, 20 * 100 }, new int[] { 9, 9, 9 }, Voltage.ULV, ItemStack.EMPTY,
+                new int[] { 50 * 100, 20 * 100, 20 * 100 }, new int[] { 1, 1, 1 }, Voltage.ULV, ItemStack.EMPTY,
                 30 * 100);
         addCentrifugeToMaterial(GTCombType.COPPER, new Material[] { Materials.Copper }, new int[] { 70 * 100 },
-                new int[] { 9 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+                new int[] { 1 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         addCentrifugeToMaterial(GTCombType.TIN, new Material[] { Materials.Tin }, new int[] { 60 * 100 },
-                new int[] { 9 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+                new int[] { 1 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         addCentrifugeToMaterial(GTCombType.LEAD, new Material[] { Materials.Lead }, new int[] { 45 * 100 },
-                new int[] { 9 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+                new int[] { 1 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         addCentrifugeToMaterial(GTCombType.IRON, new Material[] { Materials.Iron }, new int[] { 30 * 100 },
-                new int[] { 9 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+                new int[] { 1 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         addCentrifugeToMaterial(GTCombType.STEEL, new Material[] { Materials.Steel }, new int[] { 40 * 100 },
-                new int[] { 9 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+                new int[] { 1 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         addCentrifugeToMaterial(GTCombType.SILVER, new Material[] { Materials.Silver }, new int[] { 80 * 100 },
-                new int[] { 9 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+                new int[] { 1 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
 
         // Rare Metals
         addProcessGT(GTCombType.BAUXITE, new Material[] { Materials.Bauxite, Materials.Aluminium }, Voltage.LV);
@@ -211,7 +211,7 @@ public class CombRecipes {
                 new Material[] { Materials.Electrotine, Materials.Electrum, Materials.Redstone }, Voltage.MV);
         addCentrifugeToMaterial(GTCombType.SALT,
                 new Material[] { Materials.Salt, Materials.RockSalt, Materials.Saltpeter },
-                new int[] { 100 * 100, 100 * 100, 25 * 100 }, new int[] { 9 * 6, 9 * 6, 9 * 6 }, Voltage.MV, 160,
+                new int[] { 100 * 100, 100 * 100, 25 * 100 }, new int[] { 6, 6, 6 }, Voltage.MV, 160,
                 ItemStack.EMPTY, 50 * 100);
 
         // Special Iridium Recipe
@@ -411,14 +411,7 @@ public class CombRecipes {
         chance[chance.length - 1] = waxChance;
         for (int i = 0; i < material.length; i++) {
             if (chance[i] == 0) continue;
-
-            if (Math.max(1, stackSize[i]) % 9 == 0) {
-                output[i] = OreDictUnifier.get(OrePrefix.dust, material[i], Math.max(1, stackSize[i]) / 9);
-            } else if (Math.max(1, stackSize[i]) % 4 == 0) {
-                output[i] = OreDictUnifier.get(OrePrefix.dustSmall, material[i], Math.max(1, stackSize[i]) / 4);
-            } else {
-                output[i] = OreDictUnifier.get(OrePrefix.dustTiny, material[i], Math.max(1, stackSize[i]));
-            }
+            output[i] = OreDictUnifier.get(OrePrefix.dust, material[i], Math.max(1, stackSize[i]));
         }
         if (beeWax != ItemStack.EMPTY) {
             output[output.length - 1] = beeWax;
