@@ -183,10 +183,10 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
             IKey detail;
             if (mode.side == getAttachedSide()) {
                 // our own side, we can't control ourselves
-                detail = IKey.lang("cover.machine_controller.self_side");
+                detail = IKey.lang("cover.machine_controller.this_cover");
             } else if (mode.side != null) {
                 // some potential cover that either doesn't exist or isn't controllable
-                detail = IKey.lang("cover.machine_controller.not_controllable");
+                detail = IKey.lang("cover.machine_controller.cover_not_controllable");
             } else {
                 // cover holder is not controllable
                 detail = IKey.lang("cover.machine_controller.machine_not_controllable");
