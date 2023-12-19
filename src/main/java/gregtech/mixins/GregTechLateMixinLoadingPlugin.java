@@ -19,6 +19,7 @@ public class GregTechLateMixinLoadingPlugin implements ILateMixinLoader {
         configs.add("mixins.gregtech.jei.json");
         configs.add("mixins.gregtech.ctm.json");
         configs.add("mixins.gregtech.ccl.json");
+        configs.add("mixins.gregtech.littletiles.json");
 
         return configs;
     }
@@ -29,6 +30,7 @@ public class GregTechLateMixinLoadingPlugin implements ILateMixinLoader {
             case "mixins.gregtech.theoneprobe.json" -> Loader.isModLoaded(GTValues.MODID_TOP);
             case "mixins.gregtech.jei.json" -> Loader.isModLoaded(GTValues.MODID_JEI);
             case "mixin.gregtech.ctm.json" -> Loader.isModLoaded(GTValues.MODID_CTM);
+            case "mixins.gregtech.littletiles.json" -> Loader.isModLoaded(GTValues.MODID_LITTLETILES);
             default -> true;
         };
     }
