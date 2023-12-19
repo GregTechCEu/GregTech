@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextFormatting;
 
@@ -73,7 +74,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
 
     public List<ControllerMode> getAllowedModes(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         List<ControllerMode> results = new ArrayList<>();
-        for (ControllerMode controllerMode : ControllerMode.values()) {
+        for (ControllerMode controllerMode : ControllerMode.VALUES) {
             IControllable controllable = null;
             if (controllerMode.side == null) {
                 controllable = coverable.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, side);
@@ -111,7 +112,6 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        // todo these don't sync properly
         EnumSyncValue<ControllerMode> controllerModeValue = new EnumSyncValue<>(ControllerMode.class,
                 this::getControllerMode, this::setControllerMode);
         BooleanSyncValue invertedValue = new BooleanSyncValue(this::isInverted, this::setInverted);
@@ -303,7 +303,21 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.isInverted = tagCompound.getBoolean("Inverted");
-        this.controllerMode = ControllerMode.values()[tagCompound.getInteger("ControllerMode")];
+        this.controllerMode = ControllerMode.VALUES[tagCompound.getInteger("ControllerMode")];
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
+        packetBuffer.writeBoolean(isInverted);
+        packetBuffer.writeShort(controllerMode.ordinal());
+    }
+
+    @Override
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
+        this.isInverted = packetBuffer.readBoolean();
+        this.controllerMode = ControllerMode.VALUES[packetBuffer.readShort()];
     }
 
     public enum ControllerMode implements IStringSerializable {
@@ -318,6 +332,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
 
         public final String localeName;
         public final EnumFacing side;
+
+        public static final ControllerMode[] VALUES = values();
 
         ControllerMode(String localeName, EnumFacing side) {
             this.localeName = localeName;
