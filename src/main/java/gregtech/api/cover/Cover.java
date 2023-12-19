@@ -113,7 +113,9 @@ public interface Cover {
 
     /**
      * Called when the cover is first attached on the Server Side.
-     * Do NOT sync custom data to client here. It will overwrite the attach cover packet!
+     * Values set here will automatically be synced to the client, if you
+     * specify them in {@link #writeInitialSyncData}.
+     * @apiNote The CoverableView will not have your cover attached to it in this method.
      *
      * @param coverableView the CoverableView this cover is attached to
      * @param side          the side this cover is attached to
