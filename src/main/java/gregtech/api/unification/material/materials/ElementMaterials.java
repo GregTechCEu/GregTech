@@ -146,7 +146,6 @@ public class ElementMaterials {
                 .dust()
                 .color(0x32323C).iconSet(SHINY)
                 .element(Elements.Cd)
-                .flags(GENERATE_SMALL_DUST)
                 .build();
 
         Cerium = new Material.Builder(20, gregtechId("cerium"))
@@ -154,7 +153,6 @@ public class ElementMaterials {
                 .liquid(new FluidBuilder().temperature(1068))
                 .color(0x87917D).iconSet(METALLIC)
                 .element(Elements.Ce)
-                .flags(GENERATE_SMALL_DUST)
                 .build();
 
         Chlorine = new Material.Builder(21, gregtechId("chlorine"))
@@ -405,7 +403,6 @@ public class ElementMaterials {
                 .liquid(new FluidBuilder().temperature(1193))
                 .color(0x5D7575).iconSet(METALLIC)
                 .element(Elements.La)
-                .flags(GENERATE_SMALL_DUST)
                 .build();
 
         Lawrencium = new Material.Builder(54, gregtechId("lawrencium"))
@@ -496,7 +493,7 @@ public class ElementMaterials {
         Neodymium = new Material.Builder(66, gregtechId("neodymium"))
                 .ingot().fluid().ore()
                 .color(0x646464).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_SMALL_DUST)
+                .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW)
                 .element(Elements.Nd)
                 .rotorStats(7.0f, 2.0f, 512)
                 .blast(1297, GasTier.MID)
@@ -714,7 +711,7 @@ public class ElementMaterials {
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1345))
                 .color(0xFFFFCC).iconSet(METALLIC)
-                .flags(GENERATE_LONG_ROD, GENERATE_SMALL_DUST)
+                .flags(GENERATE_LONG_ROD)
                 .element(Elements.Sm)
                 .blast(b -> b
                         .temp(5400, GasTier.HIGH)
@@ -912,7 +909,6 @@ public class ElementMaterials {
                 .color(0x76524C).iconSet(METALLIC)
                 .element(Elements.Y)
                 .blast(1799)
-                .flags(GENERATE_SMALL_DUST)
                 .build();
 
         Zinc = new Material.Builder(122, gregtechId("zinc"))

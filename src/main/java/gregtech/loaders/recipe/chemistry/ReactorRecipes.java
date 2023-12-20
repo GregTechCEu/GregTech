@@ -633,8 +633,8 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.GHAST_TEAR))
                 .fluidInputs(Water.getFluid(1000))
-                .output(dustTiny, Potassium)
-                .output(dustTiny, Lithium)
+                .chancedOutput(dust, Potassium, 1111, 0)
+                .chancedOutput(dust, Lithium, 1111, 0)
                 .fluidOutputs(SaltWater.getFluid(1000))
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
