@@ -418,13 +418,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        data.setInteger("structureTier", structureTier);
-        return data;
-    }
-
-    @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         if (data.hasKey("UpwardsFacing")) {
@@ -443,6 +436,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         super.writeToNBT(data);
         data.setByte("UpwardsFacing", (byte) upwardsFacing.getIndex());
         data.setBoolean("IsFlipped", isFlipped);
+        data.setInteger("structureTier", structureTier);
         return data;
     }
 

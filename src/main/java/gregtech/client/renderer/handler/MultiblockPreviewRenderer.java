@@ -87,8 +87,8 @@ public class MultiblockPreviewRenderer {
         mbpEndTime = System.currentTimeMillis() + durTimeMillis;
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
-        if (tier != controller.getTier()) {
-            tier = controller.getTier();
+        if (tier != controller.getStructureTier()) {
+            tier = controller.getStructureTier();
             controller.reinitializeStructurePattern();
         }
         List<MultiblockShapeInfo> shapes = controller.getMatchingShapes();
