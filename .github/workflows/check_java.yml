@@ -41,5 +41,5 @@ jobs:
       - name: Setup Build
         uses: ./.github/actions/build_setup
 
-      - name: Run Spotless Formatting with Gradle
+      - name: Run Spotless Formatting Check with Gradle
         run: ./gradlew spotlessCheck --warning-mode all --build-cache
