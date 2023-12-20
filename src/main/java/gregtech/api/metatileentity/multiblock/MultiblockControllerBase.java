@@ -70,7 +70,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     private boolean structureFormed;
     private int structureTier = 0;
 
-
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
     protected boolean isFlipped;
 
@@ -402,7 +401,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * sets the tier of the multi clamped between 1 and maxTier()
      */
     public void setStructureTier(int structureTier) {
-        if(this.structureTier != structureTier) {
+        if (this.structureTier != structureTier) {
             this.structureTier = MathHelper.clamp(structureTier, 0, getMaxStructureTier());
             if (getWorld() != null && !getWorld().isRemote) {
                 reinitializeStructurePattern();
@@ -411,8 +410,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     *  Override if you are using the multiblock tiered system
-     *  max tier of 0 means tiering is disabled
+     * Override if you are using the multiblock tiered system
+     * max tier of 0 means tiering is disabled
      */
     public int getMaxStructureTier() {
         return 0;
@@ -463,7 +462,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
         this.isFlipped = buf.readBoolean();
         this.structureTier = buf.readInt();
-
     }
 
     @Override

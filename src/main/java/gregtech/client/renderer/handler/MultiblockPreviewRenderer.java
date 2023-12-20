@@ -87,13 +87,13 @@ public class MultiblockPreviewRenderer {
         mbpEndTime = System.currentTimeMillis() + durTimeMillis;
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
-        if(tier != controller.getTier()) {
+        if (tier != controller.getTier()) {
             tier = controller.getTier();
             controller.reinitializeStructurePattern();
         }
         List<MultiblockShapeInfo> shapes = controller.getMatchingShapes();
         if (!shapes.isEmpty()) {
-                renderControllerInList(controller, shapes.get(0), layer);
+            renderControllerInList(controller, shapes.get(0), layer);
         }
         GlStateManager.glEndList();
     }

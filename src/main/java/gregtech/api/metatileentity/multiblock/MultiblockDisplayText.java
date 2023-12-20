@@ -468,7 +468,8 @@ public class MultiblockDisplayText {
         }
 
         public Builder addStructureTierLine(int tier) {
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.structure_tier", tier));
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                    "gregtech.multiblock.structure_tier", tier));
             return this;
         }
 
