@@ -22,7 +22,7 @@ public class SecondDegreeMaterials {
                 .gem(0)
                 .liquid(new FluidBuilder().temperature(1200).customStill())
                 .color(0xFAFAFA).iconSet(GLASS)
-                .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_SMALL_DUST, GENERATE_TINY_DUST)
                 .components(SiliconDioxide, 1)
                 .build();
 
@@ -145,7 +145,7 @@ public class SecondDegreeMaterials {
         TricalciumPhosphate = new Material.Builder(2015, gregtechId("tricalcium_phosphate"))
                 .dust().ore(3, 1)
                 .color(0xFFFF00).iconSet(FLINT)
-                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_SMALL_DUST)
                 .components(Calcium, 3, Phosphate, 2)
                 .build();
 
@@ -381,7 +381,7 @@ public class SecondDegreeMaterials {
         Flint = new Material.Builder(2049, gregtechId("flint"))
                 .gem(1)
                 .color(0x002040).iconSet(FLINT)
-                .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_TINY_DUST)
                 .components(SiliconDioxide, 1)
                 .toolStats(ToolProperty.Builder.of(0.0F, 1.0F, 64, 1)
                         .enchantability(5).ignoreCraftingTools()
@@ -491,7 +491,7 @@ public class SecondDegreeMaterials {
         Clay = new Material.Builder(2063, gregtechId("clay"))
                 .dust(1)
                 .color(0xC8C8DC).iconSet(ROUGH)
-                .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_SMALL_DUST)
                 .components(Sodium, 2, Lithium, 1, Aluminium, 2, Silicon, 2, Water, 6)
                 .build();
 

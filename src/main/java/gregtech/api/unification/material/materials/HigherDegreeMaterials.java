@@ -158,7 +158,7 @@ public class HigherDegreeMaterials {
         Brick = new Material.Builder(2524, gregtechId("brick"))
                 .dust()
                 .color(0x9B5643).iconSet(ROUGH)
-                .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_SMALL_DUST)
                 .components(Clay, 1)
                 .build();
 

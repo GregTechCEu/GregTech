@@ -53,7 +53,7 @@ public class FirstDegreeMaterials {
         Ash = new Material.Builder(254, gregtechId("ash"))
                 .dust(1)
                 .color(0x969696)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, GENERATE_TINY_DUST)
                 .components(Carbon, 1)
                 .build();
 
@@ -81,7 +81,7 @@ public class FirstDegreeMaterials {
         Bone = new Material.Builder(258, gregtechId("bone"))
                 .dust(1)
                 .color(0xFAFAFA)
-                .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_TINY_DUST)
                 .components(Calcium, 1)
                 .build();
 
@@ -201,7 +201,7 @@ public class FirstDegreeMaterials {
         DarkAsh = new Material.Builder(275, gregtechId("dark_ash"))
                 .dust(1)
                 .color(0x323232)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, GENERATE_TINY_DUST)
                 .components(Carbon, 1)
                 .build();
 
@@ -830,7 +830,7 @@ public class FirstDegreeMaterials {
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(1511))
                 .color(0xA0A0A0)
-                .flags(STD_METAL, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(STD_METAL, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_SMALL_DUST)
                 .components(Arsenic, 1, Gallium, 1)
                 .blast(b -> b.temp(1200, GasTier.LOW).blastStats(VA[MV], 1200))
                 .build();
@@ -938,6 +938,7 @@ public class FirstDegreeMaterials {
                 .dust(1)
                 .color(0xFF084E)
                 .components(Potassium, 2, Chrome, 2, Oxygen, 7)
+                .flags(GENERATE_TINY_DUST)
                 .build();
 
         ChromiumTrioxide = new Material.Builder(368, gregtechId("chromium_trioxide"))
@@ -950,6 +951,7 @@ public class FirstDegreeMaterials {
                 .dust(1)
                 .color(0xE6E6F0)
                 .components(Antimony, 2, Oxygen, 3)
+                .flags(GENERATE_TINY_DUST)
                 .build();
 
         Zincite = new Material.Builder(370, gregtechId("zincite"))
@@ -997,7 +999,7 @@ public class FirstDegreeMaterials {
         SodiumHydroxide = new Material.Builder(377, gregtechId("sodium_hydroxide"))
                 .dust(1)
                 .color(0x003380)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, GENERATE_TINY_DUST)
                 .components(Sodium, 1, Oxygen, 1, Hydrogen, 1)
                 .build();
 
