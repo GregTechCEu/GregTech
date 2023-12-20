@@ -4,6 +4,7 @@ import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GregFakePlayer;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -24,10 +25,11 @@ public class PowderbarrelEntity extends EntityTNTPrimed {
     protected float fakeExplosionStrength = 3.5F;
     protected float range = 2;
 
-    public PowderbarrelEntity(World world, double x, double y, double z, EntityLivingBase igniter) {
-        super(world, x, y, z, igniter);
+    public PowderbarrelEntity(World world, double x, double y, double z, EntityLivingBase exploder) {
+        super(world, x, y, z, exploder);
     }
 
+    @SuppressWarnings("unused")
     public PowderbarrelEntity(World world) {
         super(world);
     }
@@ -54,7 +56,7 @@ public class PowderbarrelEntity extends EntityTNTPrimed {
         setFuse(this.getFuse() - 1);
         if (this.getFuse() <= 0) {
             this.setDead();
-            if (!this.world.isRemote && !this.inWater) {
+            if (!this.world.isRemote) {
                 this.explode();
             }
         } else {
@@ -67,16 +69,23 @@ public class PowderbarrelEntity extends EntityTNTPrimed {
     protected void explode() {
         this.world.createExplosion(this, this.posX, this.posY + (double) (this.height / 16.0F), this.posZ,
                 fakeExplosionStrength, false);
+
+        // Create the fake explosion but don't destroy any blocks in water, per MC behavior
+        if (this.inWater) return;
+
         EntityPlayer player = GregFakePlayer.get((WorldServer) world);
 
         for (BlockPos pos : BlockPos.getAllInBox(this.getPosition().add(-range, -range, -range),
                 this.getPosition().add(range, range, range))) {
             IBlockState state = world.getBlockState(pos);
+
+            if (state.getMaterial() == Material.AIR) return;
+            if (state.getMaterial() == Material.WATER || state.getMaterial() == Material.LAVA) return;
+
             float hardness = state.getBlockHardness(world, pos);
             float resistance = state.getBlock().getExplosionResistance(player);
 
-            // todo need to do more checks here, most importantly for fluid blocks
-            if (hardness >= 0.0f && resistance <= 100 && world.isBlockModifiable(player, pos)) {
+            if (hardness >= 0.0f && resistance < 100 && world.isBlockModifiable(player, pos)) {
                 List<ItemStack> drops = attemptBreakBlockAndObtainDrops(pos, state, player);
 
                 for (ItemStack stack : drops) {

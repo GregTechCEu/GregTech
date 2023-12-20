@@ -314,6 +314,7 @@ public class MetaBlocks {
         RUBBER_WOOD_DOOR.setRegistryName("rubber_wood_door").setTranslationKey("rubber_wood_door");
         TREATED_WOOD_DOOR = new BlockWoodenDoor(() -> MetaItems.TREATED_WOOD_DOOR.getStackForm());
         TREATED_WOOD_DOOR.setRegistryName("treated_wood_door").setTranslationKey("treated_wood_door");
+        POWDERBARREL = new BlockPowderbarrel();
         POWDERBARREL.setRegistryName("powderbarrel").setTranslationKey("powderbarrel");
 
         BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
