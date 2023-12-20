@@ -22,7 +22,8 @@ public class SecondDegreeMaterials {
                 .gem(0)
                 .liquid(new FluidBuilder().temperature(1200).customStill())
                 .color(0xFAFAFA).iconSet(GLASS)
-                .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_SMALL_DUST, GENERATE_TINY_DUST)
+                .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING,
+                        GENERATE_SMALL_DUST, GENERATE_TINY_DUST)
                 .components(SiliconDioxide, 1)
                 .build();
 
@@ -145,7 +146,8 @@ public class SecondDegreeMaterials {
         TricalciumPhosphate = new Material.Builder(2015, gregtechId("tricalcium_phosphate"))
                 .dust().ore(3, 1)
                 .color(0xFFFF00).iconSet(FLINT)
-                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_SMALL_DUST)
+                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING,
+                        GENERATE_SMALL_DUST)
                 .components(Calcium, 3, Phosphate, 2)
                 .build();
 
