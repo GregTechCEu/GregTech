@@ -1,5 +1,6 @@
 package gregtech.client.renderer.handler;
 
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.entities.PowderbarrelEntity;
 
 import net.minecraft.client.Minecraft;

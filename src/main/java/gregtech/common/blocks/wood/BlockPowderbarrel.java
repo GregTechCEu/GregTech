@@ -2,8 +2,11 @@ package gregtech.common.blocks.wood;
 
 import gregtech.api.items.toolitem.ToolClasses;
 
+import gregtech.common.blocks.material.GTBlockMaterials;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -21,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class BlockPowderbarrel extends Block {
 
     public BlockPowderbarrel() {
-        super(Material.WOOD);
+        super(GTBlockMaterials.POWDERBARREL);
         setHarvestLevel(ToolClasses.AXE, 1);
         setHardness(0.5f);
         setSoundType(SoundType.WOOD);

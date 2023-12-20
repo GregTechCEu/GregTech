@@ -24,12 +24,12 @@ public class PowderbarrelEntity extends EntityTNTPrimed {
     protected float fakeExplosionStrength = 3.5F;
     protected float range = 2;
 
-    public PowderbarrelEntity(World worldIn, double x, double y, double z, EntityLivingBase igniter) {
-        super(worldIn, x, y, z, igniter);
+    public PowderbarrelEntity(World world, double x, double y, double z, EntityLivingBase igniter) {
+        super(world, x, y, z, igniter);
     }
 
-    public PowderbarrelEntity(World worldIn) {
-        super(worldIn);
+    public PowderbarrelEntity(World world) {
+        super(world);
     }
 
     @Override
