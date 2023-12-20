@@ -99,12 +99,11 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
     @Override
     public void getDrops(NonNullList<ItemStack> drops, @NotNull IBlockAccess world, @NotNull BlockPos pos,
                          @NotNull IBlockState state, int fortune) {
-        int amount = 3 + GTValues.RNG.nextInt((int) (2 + fortune * 1.5));
-        int dropChance = GTValues.RNG.nextInt(3);
-        if (dropChance == 0) {
-            drops.add(getDropStack(state, amount));
+        int amount = GTValues.RNG.nextInt(Math.max(1, 9 - (fortune * 2)));
+        if (amount == 0) {
+            drops.add(getDropStack(state, 1));
         } else {
-            drops.add(OreDictUnifier.get(OrePrefix.dust, Materials.Stone, amount));
+            drops.add(OreDictUnifier.get(OrePrefix.dust, Materials.Stone, 1));
         }
     }
 
