@@ -8,20 +8,20 @@ import net.minecraft.world.World;
 
 import org.jetbrains.annotations.NotNull;
 
-public class PowderbarrelEntity extends EntityGTExplosive {
+public class ITNTEntity extends EntityGTExplosive {
 
-    public PowderbarrelEntity(World world, double x, double y, double z, EntityLivingBase exploder) {
+    public ITNTEntity(World world, double x, double y, double z, EntityLivingBase exploder) {
         super(world, x, y, z, exploder);
     }
 
     @SuppressWarnings("unused")
-    public PowderbarrelEntity(World world) {
+    public ITNTEntity(World world) {
         super(world);
     }
 
     @Override
     protected float getStrength() {
-        return 3.5F;
+        return 5.0F;
     }
 
     @Override
@@ -30,7 +30,12 @@ public class PowderbarrelEntity extends EntityGTExplosive {
     }
 
     @Override
+    protected int getRange() {
+        return 3;
+    }
+
+    @Override
     public @NotNull IBlockState getExplosiveState() {
-        return MetaBlocks.POWDERBARREL.getDefaultState();
+        return MetaBlocks.ITNT.getDefaultState();
     }
 }

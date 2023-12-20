@@ -1,17 +1,15 @@
-package gregtech.common.blocks.wood;
+package gregtech.common.blocks.explosive;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.items.toolitem.ToolClasses;
-import gregtech.common.blocks.material.GTBlockMaterials;
-import gregtech.common.entities.PowderbarrelEntity;
+import gregtech.common.entities.EntityGTExplosive;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving.SpawnPlacementType;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -33,15 +31,26 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class BlockPowderbarrel extends Block {
+public abstract class BlockGTExplosive extends Block {
 
-    public BlockPowderbarrel() {
-        super(GTBlockMaterials.POWDERBARREL);
-        setHarvestLevel(ToolClasses.AXE, 1);
-        setHardness(0.5f);
-        setSoundType(SoundType.WOOD);
+    private final boolean canRedstoneActivate;
+    private final boolean explodeOnMine;
+    private final int fuseLength;
+
+    /**
+     * @param canRedstoneActivate whether redstone signal can prime this explosive
+     * @param explodeOnMine       whether mining this block should prime it (sneak mine to drop normally)
+     * @param fuseLength          explosion countdown after priming. Vanilla TNT is 80.
+     */
+    public BlockGTExplosive(Material materialIn, boolean canRedstoneActivate, boolean explodeOnMine, int fuseLength) {
+        super(materialIn);
+        this.canRedstoneActivate = canRedstoneActivate;
+        this.explodeOnMine = explodeOnMine;
+        this.fuseLength = fuseLength;
         setCreativeTab(GregTechAPI.TAB_GREGTECH_TOOLS);
     }
+
+    protected abstract EntityGTExplosive createEntity(World world, BlockPos pos, EntityLivingBase exploder);
 
     @Override
     public float getExplosionResistance(@NotNull Entity exploder) {
@@ -61,7 +70,7 @@ public class BlockPowderbarrel extends Block {
 
     @Override
     public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
-                                    @NotNull SpawnPlacementType type) {
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -72,8 +81,8 @@ public class BlockPowderbarrel extends Block {
 
     public void explode(World world, BlockPos pos, EntityLivingBase exploder) {
         if (!world.isRemote) {
-            PowderbarrelEntity entity = new PowderbarrelEntity(world, pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f,
-                    exploder);
+            EntityGTExplosive entity = createEntity(world, pos, exploder);
+            entity.setFuse(fuseLength);
             world.spawnEntity(entity);
             world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_TNT_PRIMED,
                     SoundCategory.BLOCKS, 1.0f, 1.0f);
@@ -83,9 +92,8 @@ public class BlockPowderbarrel extends Block {
     @Override
     public void onExplosionDestroy(@NotNull World world, @NotNull BlockPos pos, @NotNull Explosion explosion) {
         if (!world.isRemote) {
-            PowderbarrelEntity entity = new PowderbarrelEntity(world, pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f,
-                    explosion.getExplosivePlacedBy());
-            entity.setFire(world.rand.nextInt(entity.getFuse() / 4) + entity.getFuse() / 8);
+            EntityGTExplosive entity = createEntity(world, pos, explosion.getExplosivePlacedBy());
+            entity.setFuse(world.rand.nextInt(fuseLength / 4) + fuseLength / 8);
             world.spawnEntity(entity);
         }
     }
@@ -111,12 +119,14 @@ public class BlockPowderbarrel extends Block {
     @Override
     public void dropBlockAsItemWithChance(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state,
                                           float chance, int fortune) {
-        EntityPlayer player = this.harvesters.get();
-        if (!player.isSneaking()) {
-            this.explode(world, pos, player);
-        } else {
-            super.dropBlockAsItemWithChance(world, pos, state, chance, fortune);
+        if (explodeOnMine) {
+            EntityPlayer player = this.harvesters.get();
+            if (!player.isSneaking()) {
+                this.explode(world, pos, player);
+                return;
+            }
         }
+        super.dropBlockAsItemWithChance(world, pos, state, chance, fortune);
     }
 
     @Override
@@ -131,10 +141,35 @@ public class BlockPowderbarrel extends Block {
     }
 
     @Override
+    public void onBlockAdded(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
+        super.onBlockAdded(world, pos, state);
+        if (canRedstoneActivate) {
+            if (world.isBlockPowered(pos)) {
+                explode(world, pos, null);
+                world.setBlockToAir(pos);
+            }
+        }
+    }
+
+    @Override
+    public void neighborChanged(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos,
+                                @NotNull Block block, @NotNull BlockPos fromPos) {
+        if (canRedstoneActivate) {
+            if (world.isBlockPowered(pos)) {
+                explode(world, pos, null);
+                world.setBlockToAir(pos);
+            }
+        }
+    }
+
+    @Override
     public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flag) {
-        tooltip.add(I18n.format("tile.powderbarrel.drops_tooltip"));
-        tooltip.add(I18n.format("tile.powderbarrel.breaking_tooltip"));
-        tooltip.add(I18n.format("tile.powderbarrel.lighting_tooltip"));
+        if (explodeOnMine) {
+            tooltip.add(I18n.format("tile.gt_explosive.breaking_tooltip"));
+        }
+        if (!canRedstoneActivate) {
+            tooltip.add(I18n.format("tile.gt_explosive.lighting_tooltip"));
+        }
     }
 }

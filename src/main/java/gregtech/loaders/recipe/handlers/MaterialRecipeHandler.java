@@ -91,8 +91,7 @@ public class MaterialRecipeHandler {
                         .inputs(GTUtility.copy(4, dustStack))
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(new ItemStack(MetaBlocks.POWDERBARREL))
-                        .explosivesAmount(8)
+                        .explosivesType(new ItemStack(MetaBlocks.POWDERBARREL, 8))
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
@@ -106,8 +105,7 @@ public class MaterialRecipeHandler {
                         .inputs(GTUtility.copy(4, dustStack))
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(MetaItems.DYNAMITE.getStackForm())
-                        .explosivesAmount(2)
+                        .explosivesType(MetaItems.DYNAMITE.getStackForm(2))
                         .buildAndRegister();
             }
 

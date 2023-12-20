@@ -24,13 +24,14 @@ import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.explosive.BlockITNT;
+import gregtech.common.blocks.explosive.BlockPowderbarrel;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.wood.BlockGregFence;
 import gregtech.common.blocks.wood.BlockGregFenceGate;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockGregWoodSlab;
-import gregtech.common.blocks.wood.BlockPowderbarrel;
 import gregtech.common.blocks.wood.BlockRubberDoor;
 import gregtech.common.blocks.wood.BlockRubberLeaves;
 import gregtech.common.blocks.wood.BlockRubberLog;
@@ -166,6 +167,7 @@ public class MetaBlocks {
     public static BlockWoodenDoor RUBBER_WOOD_DOOR;
     public static BlockWoodenDoor TREATED_WOOD_DOOR;
     public static BlockPowderbarrel POWDERBARREL;
+    public static BlockITNT ITNT;
 
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
@@ -316,6 +318,8 @@ public class MetaBlocks {
         TREATED_WOOD_DOOR.setRegistryName("treated_wood_door").setTranslationKey("treated_wood_door");
         POWDERBARREL = new BlockPowderbarrel();
         POWDERBARREL.setRegistryName("powderbarrel").setTranslationKey("powderbarrel");
+        ITNT = new BlockITNT();
+        ITNT.setRegistryName("itnt").setTranslationKey("itnt");
 
         BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
         BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
@@ -486,6 +490,7 @@ public class MetaBlocks {
                         "inventory"));
         registerItemModel(BRITTLE_CHARCOAL);
         registerItemModel(POWDERBARREL);
+        registerItemModel(ITNT);
 
         registerItemModel(METAL_SHEET);
         registerItemModel(LARGE_METAL_SHEET);

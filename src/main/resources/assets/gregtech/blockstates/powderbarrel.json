@@ -3,7 +3,7 @@
   "defaults": {
     "model": "minecraft:cube_all",
     "textures": {
-      "all": "gregtech:blocks/wood/powderbarrel"
+      "all": "gregtech:blocks/misc/powderbarrel"
     }
   },
   "variants": {

@@ -2348,11 +2348,16 @@ tile.treated_wood_fence.name=Treated Wood Fence
 tile.rubber_wood_fence_gate.name=Rubber Wood Fence Gate
 tile.treated_wood_fence_gate.name=Treated Wood Fence Gate
 
+tile.gt_explosive.breaking_tooltip=Primes explosion when mined, sneak mine to pick back up
+tile.gt_explosive.lighting_tooltip=Cannot be lit with Redstone
+
 tile.powderbarrel.name=Powderbarrel
-tile.powderbarrel.drops_tooltip=Larger than TNT, drops all destroyed Blocks as Items
-tile.powderbarrel.breaking_tooltip=Primes explosion when mined, sneak mine to pick back up
-tile.powderbarrel.lighting_tooltip=Cannot be lit with Redstone
+tile.powderbarrel.drops_tooltip=Slightly larger than TNT, drops all destroyed Blocks as Items
 entity.Powderbarrel.name=Powderbarrel
+
+tile.itnt.name=Industrial TNT
+tile.itnt.drops_tooltip=Much larger than TNT, drops all destroyed Blocks as Items
+entity.ITNT.name=Industrial TNT
 
 tile.brittle_charcoal.name=Brittle Charcoal
 tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.

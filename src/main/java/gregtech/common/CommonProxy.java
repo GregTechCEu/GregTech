@@ -154,6 +154,7 @@ public class CommonProxy {
         registry.register(TREATED_WOOD_DOOR);
         registry.register(BRITTLE_CHARCOAL);
         registry.register(POWDERBARREL);
+        registry.register(ITNT);
         registry.register(METAL_SHEET);
         registry.register(LARGE_METAL_SHEET);
         registry.register(STUDS);
@@ -275,6 +276,7 @@ public class CommonProxy {
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
         registry.register(createItemBlock(POWDERBARREL, ItemBlock::new));
+        registry.register(createItemBlock(ITNT, ItemBlock::new));
 
         for (BlockCompressed block : COMPRESSED_BLOCKS) {
             registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.block)));
