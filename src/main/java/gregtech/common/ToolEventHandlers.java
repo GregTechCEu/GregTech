@@ -221,7 +221,7 @@ public class ToolEventHandlers {
         boolean sneaking = player.isSneaking();
 
         // Grid overlays
-        if (shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
+        if (shouldRenderGridOverlays(state, tile, player, pos, stack, player.getHeldItemOffhand(), sneaking) &&
                 renderGridOverlays(player, pos, state, event.getTarget().sideHit, tile, event.getPartialTicks())) {
             event.setCanceled(true);
             return;
@@ -302,6 +302,7 @@ public class ToolEventHandlers {
 
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@NotNull IBlockState state, @Nullable TileEntity tile,
+                                                    @NotNull EntityPlayer player, BlockPos pos,
                                                     ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
         if (state.getBlock() instanceof BlockPipe<?, ?, ?>pipe) {
             if (isSneaking &&
@@ -344,7 +345,7 @@ public class ToolEventHandlers {
         }
 
         if (ToolHelper.isTool(mainHand, ToolClasses.WRENCH)) {
-            ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state.getBlock());
+            ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state, player.world, pos);
             if (behavior != null && behavior.showGrid()) return true;
         }
 
@@ -393,34 +394,18 @@ public class ToolEventHandlers {
                 drawGridOverlays(facing, box, mte::isSideUsed);
                 if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() &&
                         ToolHelper.isTool(player.getHeldItemMainhand(), ToolClasses.WRENCH)) {
-                    // set up some render state first
-                    GL11.glPushMatrix();
-                    GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
-                    GL11.glTranslated(0.5D - (d3 - (int) d3), 0.5D - (d4 - (int) d4), 0.5D - (d5 - (int) d5));
-                    Rotation.sideRotations[facing.getIndex()].glApply();
-                    GL11.glTranslated(0, -0.502, 0);
-                    GL11.glLineWidth(2.5F);
-                    if (multi.getFrontFacing() == facing) {
-                        // render in the center of the grid
-                        drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER, player.isSneaking());
-                    } else if (multi.getFrontFacing() == facing.getOpposite()) {
-                        // render in the corners of the grid
-                        for (Transformation t : ROTATION_MARKER_TRANSFORMS_CORNER) {
-                            drawRotationMarker(t, player.isSneaking());
-                        }
-                    } else {
-                        // render on the side of the grid
-                        drawRotationMarker(
-                                ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS[ROTATION_MARKER_TRANSFORMS_SIDES[facing
-                                        .getIndex() * 6 + multi.getFrontFacing().getIndex()]],
-                                player.isSneaking());
-                    }
-                    GL11.glPopMatrix();
+                    setupRotationMarker(pos, player, multi.getFrontFacing(), facing, d3, d4, d5);
                 }
             } else {
-                ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state.getBlock());
+                ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state, player.world, pos);
                 if (behavior != null && behavior.showGrid()) {
-                    drawGridOverlays(facing, box, side -> behavior.showXOnSide(state, side));
+                    drawGridOverlays(facing, box, side -> behavior.showXOnSide(state, player.world, pos, side));
+                    if (behavior.allowSpin()) {
+                        EnumFacing spinFacing = behavior.getSpinFrontFacing(state, player.world, pos);
+                        if (spinFacing != null) {
+                            setupRotationMarker(pos, player, spinFacing, facing, d3, d4, d5);
+                        }
+                    }
                 } else {
                     drawGridOverlays(box);
                 }
@@ -690,6 +675,34 @@ public class ToolEventHandlers {
             new Scale(0.25).with(new Translation(-0.375, 0, -0.375)).compile() };
     private static int rotationMarkerDisplayList;
     private static boolean rotationMarkerDisplayListCompiled = false;
+
+    @SideOnly(Side.CLIENT)
+    private static void setupRotationMarker(BlockPos pos, EntityPlayer player, EnumFacing currentFacing,
+                                            EnumFacing hitFacing, double x, double y, double z) {
+        // set up some render state first
+        GL11.glPushMatrix();
+        GL11.glTranslated(pos.getX() - (int) x, pos.getY() - (int) y, pos.getZ() - (int) z);
+        GL11.glTranslated(0.5D - (x - (int) x), 0.5D - (y - (int) y), 0.5D - (z - (int) z));
+        Rotation.sideRotations[hitFacing.getIndex()].glApply();
+        GL11.glTranslated(0, -0.502, 0);
+        GL11.glLineWidth(2.5F);
+        if (currentFacing == hitFacing) {
+            // render in the center of the grid
+            drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER, player.isSneaking());
+        } else if (currentFacing == hitFacing.getOpposite()) {
+            // render in the corners of the grid
+            for (Transformation t : ROTATION_MARKER_TRANSFORMS_CORNER) {
+                drawRotationMarker(t, player.isSneaking());
+            }
+        } else {
+            // render on the side of the grid
+            drawRotationMarker(
+                    ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS[ROTATION_MARKER_TRANSFORMS_SIDES[hitFacing
+                            .getIndex() * 6 + currentFacing.getIndex()]],
+                    player.isSneaking());
+        }
+        GL11.glPopMatrix();
+    }
 
     @SideOnly(Side.CLIENT)
     private static void drawRotationMarker(Transformation transform, boolean flip) {

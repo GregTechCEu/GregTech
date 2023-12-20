@@ -51,7 +51,7 @@ public class BlockRotatingBehavior implements IToolBehavior {
 
         if (!player.isSneaking() && world.canMineBlockBody(player, pos)) {
             // Special cases for vanilla blocks where the default rotation behavior is less than ideal
-            ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(b);
+            ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state, world, pos);
             if (behavior != null) {
                 if (behavior.customRotate(state, world, pos, RayTracer.retraceBlock(world, player, pos))) {
                     ToolHelper.onActionDone(player, world, hand);
