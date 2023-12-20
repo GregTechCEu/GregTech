@@ -1,5 +1,5 @@
-# Runs tests and formatting requirements
-name: Java Checks
+# Runs tests
+name: Java Tests
 
 on:
   push:
@@ -29,17 +29,3 @@ jobs:
 
       - name: Run Tests with Gradle
         run: ./gradlew test --warning-mode all --build-cache
-
-  formatting:
-    name: Formatting
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Build
-        uses: ./.github/actions/build_setup
-
-      - name: Run Spotless Formatting Check with Gradle
-        run: ./gradlew spotlessCheck --warning-mode all --build-cache
