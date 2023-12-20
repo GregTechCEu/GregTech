@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.cable.net;
 
+import gregtech.api.pipenet.AbstractGroupData;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;
@@ -33,6 +34,11 @@ public class WorldEnergyNet extends WorldPipeNetG<WireProperties, Insulation> {
     @Override
     protected Class<? extends IPipeTile<Insulation, WireProperties>> getBasePipeClass() {
         return TileEntityCable.class;
+    }
+
+    @Override
+    protected AbstractGroupData<Insulation, WireProperties> getBlankGroupData() {
+        return new EnergyGroupData();
     }
 
     @Override

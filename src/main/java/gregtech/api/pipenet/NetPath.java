@@ -40,7 +40,7 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         this.targetNode = node;
         this.nodeList = new ObjectArrayList<>(1);
         this.nodeList.add(node);
-        this.weight = 0;
+        this.weight = node.getData().getWeightFactor();
         this.edgeList = new ObjectArrayList<>(0);
         resetFacingIterator();
     }
@@ -70,7 +70,7 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         this.targetNode = path.getEndVertex();
         this.nodeList = path.getVertexList();
         // convert weight to the true value of the involved nodes
-        this.weight = (path.getWeight() + sourceNode.data.getWeightFactor() + targetNode.data.getWeightFactor()) / 2;
+        this.weight = (path.getWeight() + sourceNode.getData().getWeightFactor() + targetNode.getData().getWeightFactor()) / 2;
         this.edgeList = path.getEdgeList();
         resetFacingIterator();
     }
@@ -111,10 +111,10 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         return weight;
     }
 
-    public NodeDataType getData() {
+    public NodeDataType getMinData() {
         // generate min data on-demand and cache it, rather than generating for every path always
         if (this.data == null) {
-            this.data = sourceNode.data.getMinData(this.nodeList.stream().map(NodeG::getData).collect(Collectors.toSet()));
+            this.data = sourceNode.getData().getMinData(this.nodeList.stream().map(NodeG::getData).collect(Collectors.toSet()));
         }
         return data;
     }
@@ -132,7 +132,8 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         public EnumFacing facing;
 
         public FacedNetPath(NetPath<PT, NDT> path, EnumFacing facing) {
-            new FacedNetPath<>(path, facing);
+            this.path = path;
+            this.facing = facing;
         }
 
         public TileEntity getTargetTE() {
@@ -159,7 +160,7 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         }
 
         public NDT getData() {
-            return path.getData();
+            return path.getMinData();
         }
 
         public boolean checkPredicate(Object o) {

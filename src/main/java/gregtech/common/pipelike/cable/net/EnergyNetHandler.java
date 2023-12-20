@@ -5,14 +5,11 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.AbstractGroupData;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeG;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
-
-import gregtech.common.pipelike.itempipe.ItemPipeType;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -20,8 +17,6 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
-import java.util.Objects;
 
 public class EnergyNetHandler implements IEnergyContainer {
 
@@ -71,19 +66,13 @@ public class EnergyNetHandler implements IEnergyContainer {
         mainloop:
         for (NetPath<Insulation, WireProperties> routePath : net.getPaths(cable)) {
             routePath.resetFacingIterator();
-            // Did you know, the path weight in this case is just the inverse of the loss.
-            long maxLoss = (long) Math.ceil(1f / routePath.getWeight());
-            if (maxLoss >= voltage) {
+            // weight = loss
+            if (routePath.getWeight() >= voltage) {
                 // Will lose all the energy with this path, so don't use it
                 continue;
             }
             while (routePath.hasNextFacing()) {
                 NetPath.FacedNetPath<Insulation, WireProperties> path = routePath.nextFacing();
-
-                //            if (GTUtility.arePosEqual(cable.getPos(), path.getTargetNode().getNodePos()) && side == path.getTargetFacing()) {
-                //                // Do not insert into source handler
-                //                continue;
-                //            }
 
                 EnumFacing facing = path.facing.getOpposite();
 
@@ -93,10 +82,10 @@ public class EnergyNetHandler implements IEnergyContainer {
 
                 if (!dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
 
-                long pathVoltage = voltage - maxLoss;
+                long pathVoltage = voltage - (long) routePath.getWeight();
                 boolean cableBroken = false;
                 for (NodeG<Insulation, WireProperties> node : path.getNodeList()) {
-                    TileEntityCable cable = (TileEntityCable) node.heldMTE;
+                    TileEntityCable cable = (TileEntityCable) node.getHeldMTE();
                     if (cable.getMaxVoltage() < voltage) {
                         int heat = (int) (Math.log(
                                 GTUtility.getTierByVoltage(voltage) -
@@ -124,8 +113,9 @@ public class EnergyNetHandler implements IEnergyContainer {
 
                 amperesUsed += amps;
                 long voltageTraveled = voltage;
+                // TODO compress wire path operations into a single for loop
                 for (NodeG<Insulation, WireProperties> node : path.getNodeList()) {
-                    TileEntityCable cable = (TileEntityCable) node.heldMTE;
+                    TileEntityCable cable = (TileEntityCable) node.getHeldMTE();
                     voltageTraveled -= cable.getNodeData().getLossPerBlock();
                     if (voltageTraveled <= 0) break;
 

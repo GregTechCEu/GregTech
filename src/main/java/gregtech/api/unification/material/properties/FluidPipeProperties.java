@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -162,7 +163,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
             cryoProof &= data.isCryoProof();
             plasmaProof &= data.isPlasmaProof();
         }
-        return new FluidPipeProperties();
+        return new FluidPipeProperties(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof);
     }
 
     @Override

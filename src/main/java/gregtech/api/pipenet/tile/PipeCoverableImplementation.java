@@ -227,7 +227,7 @@ public class PipeCoverableImplementation implements CoverHolder {
             // cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             this.covers.remove(placementSide);
-            holder.scheduleChunkForRenderUpdate();
+            holder.scheduleRenderUpdate();
         } else if (dataId == UPDATE_COVER_DATA_PIPE) {
             // cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];

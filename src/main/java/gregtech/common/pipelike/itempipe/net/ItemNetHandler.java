@@ -312,7 +312,7 @@ public class ItemNetHandler implements IItemHandler {
         if (allowed == 0 || !routePath.checkPredicate(stack)) {
             return stack;
         }
-        Cover pipeCover = routePath.getTargetNode().heldMTE.getCoverableImplementation()
+        Cover pipeCover = routePath.getTargetNode().getHeldMTE().getCoverableImplementation()
                 .getCoverAtSide(routePath.facing);
         Cover tileCover = getCoverOnNeighbour(routePath.getTargetTE().getPos(), routePath.facing.getOpposite());
 

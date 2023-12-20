@@ -155,7 +155,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         super.receiveCustomData(discriminator, buf);
         if (discriminator == GregtechDataCodes.PIPE_OPTICAL_ACTIVE) {
             this.isActive = buf.readBoolean();
-            scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 

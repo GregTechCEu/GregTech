@@ -2,14 +2,12 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.util.function.QuadConsumer;
-import gregtech.api.util.function.TriConsumer;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import java.util.List;
 import java.util.Map;
 
 class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound> {
@@ -46,18 +44,19 @@ class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagComp
         tag.setLong("SourceLongPos", getSource().getLongPos());
         tag.setLong("TargetLongPos", getTarget().getLongPos());
         tag.setDouble("Weight", getWeight());
-        tag.setTag("Predicate", AbstractEdgePredicate.toNBT(predicate));
+        if (predicate != null) tag.setTag("Predicate", AbstractEdgePredicate.toNBT(predicate));
         tag.setBoolean("InvertedPredicate", isPredicateInverted());
-        return null;
+        return tag;
     }
 
     /**
-     * Use {@link Builder} instead, this does nothing.
+     * Use {@link NBTBuilder} instead, this does nothing.
      */
     @Override
+    @Deprecated
     public void deserializeNBT(NBTTagCompound nbt) {}
 
-    static final class Builder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+    static final class NBTBuilder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             NodeDataType extends INodeData<NodeDataType>> {
 
         private final NodeG<PipeType, NodeDataType> node1;
@@ -68,8 +67,8 @@ class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagComp
 
         private final QuadConsumer<NodeG<PipeType, NodeDataType>, NodeG<PipeType, NodeDataType>, Double, AbstractEdgePredicate<?>> edgeProducer;
 
-        Builder(Map<Long, NodeG<PipeType, NodeDataType>> longPosMap, NBTTagCompound tag,
-                QuadConsumer<NodeG<PipeType, NodeDataType>, NodeG<PipeType, NodeDataType>, Double, AbstractEdgePredicate<?>> edgeProducer) {
+        NBTBuilder(Map<Long, NodeG<PipeType, NodeDataType>> longPosMap, NBTTagCompound tag,
+                   QuadConsumer<NodeG<PipeType, NodeDataType>, NodeG<PipeType, NodeDataType>, Double, AbstractEdgePredicate<?>> edgeProducer) {
             this.node1 = longPosMap.get(tag.getLong("SourceLongPos"));
             this.node2 = longPosMap.get(tag.getLong("TargetLongPos"));
             this.weight = tag.getDouble("Weight");

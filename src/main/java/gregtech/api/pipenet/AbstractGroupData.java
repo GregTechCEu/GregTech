@@ -2,7 +2,8 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
-public abstract class AbstractGroupData<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>> {
+public abstract class AbstractGroupData<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>> {
 
     protected NetGroup<PipeType, NodeDataType> group;
 

@@ -3,14 +3,20 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
+
 import org.jgrapht.Graph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>> {
+public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>> implements INBTSerializable<NBTTagCompound> {
 
     public final WorldPipeNetG<NodeDataType, PipeType> net;
 
@@ -18,12 +24,13 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     private final Set<NodeG<PipeType, NodeDataType>> nodes;
 
-    private AbstractGroupData<PipeType, NodeDataType> data;
+    private final AbstractGroupData<PipeType, NodeDataType> data;
 
     public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetG<NodeDataType, PipeType> net) {
         this.graph = graph;
         this.nodes = new ObjectOpenHashSet<>();
         this.net = net;
+        this.data = net.getBlankGroupData();
     }
 
     public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetG<NodeDataType, PipeType> net,
@@ -32,6 +39,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.nodes = nodes;
         this.net = net;
         this.nodes.forEach(b -> b.setGroup(this));
+        this.data = net.getBlankGroupData();
     }
 
     private void clear() {
@@ -65,13 +73,15 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     public static boolean mergeEdge(NodeG<?, ?> source, NodeG<?, ?> target) {
         NetGroup<?, ?> sourceGroup = source.getGroup();
         NetGroup<?, ?> targetGroup = target.getGroup();
-        if (sourceGroup == targetGroup) return sourceGroup == null;
+        if (sourceGroup == targetGroup) {
+            if (sourceGroup == null) return true;
+            sourceGroup.clearPathCaches();
+            return false;
+        }
         if (sourceGroup != null) {
             sourceGroup.mergeNode(target);
-            sourceGroup.clearPathCaches();
         } else {
             targetGroup.mergeNode(source);
-            targetGroup.clearPathCaches();
         }
         return false;
     }
@@ -79,9 +89,11 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     protected void mergeNode(NodeG<?, ?> node) {
         NodeG<PipeType, NodeDataType> cast = (NodeG<PipeType, NodeDataType>) node;
         if (cast.getGroup() != null) {
-            this.addNodes(cast.getGroup().getNodes());
-            cast.getGroup().clear();
+            NetGroup<PipeType, NodeDataType> group = cast.getGroup();
+            this.addNodes(group.getNodes());
+            group.clear();
         } else addNode(cast);
+        this.clearPathCaches();
     }
 
     /**
@@ -93,8 +105,12 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     public boolean splitNode(NodeG<PipeType, NodeDataType> source) {
         if (graph.containsVertex(source)) {
             this.clearPathCaches();
-            List<NodeG<?, ?>> targets = graph.edgesOf(source).stream().map(NetEdge::getTarget)
-                    .collect(Collectors.toList());
+            List<NodeG<?, ?>> targets = graph.outgoingEdgesOf(source).stream().map(a -> {
+                // handling so undirected graphs don't throw an error
+                if (net.isDirected()) return a.getTarget();
+                if (a.getTarget().getNodePos() != source.getNodePos()) return a.getTarget();
+                return a.getSource();
+            }).collect(Collectors.toList());
             graph.removeVertex(source);
             while (!targets.isEmpty()) {
                 // get the lastmost target; if this throws a cast exception, something is very wrong with the graph.
@@ -136,7 +152,6 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         if (graph.removeEdge(source, target) != null) {
             this.clearPathCaches();
             Set<NodeG<PipeType, NodeDataType>> targetGroup = new ObjectOpenHashSet<>();
-            this.graph.removeEdge(source, target);
             BreadthFirstIterator<NodeG<PipeType, NodeDataType>, NetEdge> i = new BreadthFirstIterator<>(graph, target);
             NodeG<PipeType, NodeDataType> temp;
             while (i.hasNext()) {
@@ -169,13 +184,43 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.nodes.forEach(NodeG::clearPathCache);
     }
 
-    public void initData(AbstractGroupData<PipeType, NodeDataType> data) {
-        if (this.data == null) {
-            this.data = data.withGroup(this);
-        }
+    public AbstractGroupData<PipeType, NodeDataType> getData() {
+        return this.data;
     }
 
-    public AbstractGroupData<PipeType, NodeDataType> getData() {
-        return data;
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound tag = new NBTTagCompound();
+        int i = 0;
+        for (NodeG<PipeType, NodeDataType> node : this.nodes) {
+            tag.setLong(String.valueOf(i), node.getLongPos());
+            i++;
+        }
+        tag.setInteger("NodeCount", i);
+        return tag;
+    }
+
+    /**
+     * Use {@link NBTBuilder} instead, this does nothing.
+     */
+    @Override
+    @Deprecated
+    public void deserializeNBT(NBTTagCompound nbt) {}
+
+    static final class NBTBuilder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+            NodeDataType extends INodeData<NodeDataType>> {
+
+        private final Set<NodeG<PipeType, NodeDataType>> nodes;
+
+        NBTBuilder(Map<Long, NodeG<PipeType, NodeDataType>> longPosMap, NBTTagCompound tag) {
+            nodes = new ObjectOpenHashSet<>();
+            for (int i = 0; i < tag.getInteger("NodeCount"); i++) {
+                nodes.add(longPosMap.get(tag.getLong(String.valueOf(i))));
+            }
+        }
+
+        void build(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetG<NodeDataType, PipeType> net) {
+            NetGroup<PipeType, NodeDataType> g = new NetGroup<>(graph, net, nodes);
+        }
     }
 }

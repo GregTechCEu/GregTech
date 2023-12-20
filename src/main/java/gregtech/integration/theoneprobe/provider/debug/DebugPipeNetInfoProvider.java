@@ -2,8 +2,8 @@ package gregtech.integration.theoneprobe.provider.debug;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.Node;
-import gregtech.api.pipenet.PipeNet;
+import gregtech.api.pipenet.NodeG;
+import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -47,16 +47,17 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
             if (tileEntity instanceof TileEntityPipeBase) {
                 IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
                 BlockPipe<?, ?, ?> blockPipe = pipeTile.getPipeBlock();
-                PipeNet<?> pipeNet = blockPipe.getWorldPipeNet(world).getNetFromPos(data.getPos());
+                WorldPipeNetG<?, ?> pipeNet = blockPipe.getWorldPipeNet(world);
                 if (pipeNet != null) {
                     probeInfo.text("Net: " + pipeNet.hashCode());
                     probeInfo.text("Node Info: ");
                     StringBuilder builder = new StringBuilder();
-                    Node<?> node = pipeNet.getAllNodes().get(data.getPos());
+                    NodeG<?, ?> node = pipeNet.getNode(data.getPos());
                     builder.append("{")
                             .append("active: ").append(node.isActive)
                             .append(", mark: ").append(node.mark)
-                            .append(", open: ").append(node.openConnections)
+                            .append(", open: ").append(node.getActiveConnections())
+                            .append(", blocked: ").append(node.getBlockedConnections())
                             .append("}");
                     probeInfo.text(builder.toString());
                 }

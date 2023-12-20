@@ -2,6 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.api.pipenet.INodeData;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -85,12 +86,10 @@ public class ItemPipeProperties implements IMaterialProperty, INodeData<ItemPipe
     @Override
     public ItemPipeProperties getMinData(Set<ItemPipeProperties> datas) {
         float transferRate = Integer.MAX_VALUE;
-        int priority = 0;
         for (ItemPipeProperties data : datas) {
             transferRate = Math.min(transferRate, data.getTransferRate());
-            priority += data.getPriority();
         }
-        return new ItemPipeProperties(priority, transferRate);
+        return new ItemPipeProperties(-1, transferRate);
     }
 
     @Override

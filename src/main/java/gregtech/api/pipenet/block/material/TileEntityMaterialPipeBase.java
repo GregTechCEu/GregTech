@@ -98,7 +98,7 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         super.receiveCustomData(discriminator, buf);
         if (discriminator == UPDATE_PIPE_MATERIAL) {
             readPipeMaterial(buf);
-            scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 }

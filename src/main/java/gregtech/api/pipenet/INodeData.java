@@ -8,5 +8,8 @@ public interface INodeData<T extends INodeData<?>> {
         return 1;
     }
 
+    /**
+     * Note - since datas is a set, no summative operations are allowed.
+     */
     T getMinData(Set<T> datas);
 }

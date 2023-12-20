@@ -132,7 +132,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             tileEntities.set(pipeTile);
         }
         super.breakBlock(worldIn, pos, state);
-        getWorldPipeNet(worldIn).removeNode(pos);
+        if (!worldIn.isRemote) getWorldPipeNet(worldIn).removeNode(pos);
     }
 
     @Override
@@ -145,6 +145,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                            @NotNull Random rand) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
+            if (worldIn.isRemote) return;
             int activeConnections = pipeTile.getConnections();
             boolean isActiveNode = activeConnections != 0;
             onActiveModeChange(worldIn, pos, isActiveNode, true);
@@ -169,6 +170,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     }
                 }
             }
+
         }
     }
 
@@ -408,14 +410,15 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
                     pipeTile.setFaceBlocked(coverSide, !isBlocked);
                     ToolHelper.playToolSound(stack, entityPlayer);
+                    ToolHelper.damageItem(stack, entityPlayer);
                 } else {
                     boolean isOpen = pipeTile.isConnected(coverSide);
                     pipeTile.setConnection(coverSide, !isOpen, false);
                     if (isOpen != pipeTile.isConnected(coverSide)) {
                         ToolHelper.playToolSound(stack, entityPlayer);
+                        ToolHelper.damageItem(stack, entityPlayer);
                     }
                 }
-                ToolHelper.damageItem(stack, entityPlayer);
                 return EnumActionResult.SUCCESS;
             }
             entityPlayer.swingArm(hand);
