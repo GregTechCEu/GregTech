@@ -363,7 +363,7 @@ public class ConfigHolder {
         @Config.Comment({ "Whether to give the terminal to new players on login", "Default: true" })
         public boolean spawnTerminal = true;
 
-        @Config.Comment({"Additional armors which count as protection from effects.",
+        @Config.Comment({ "Additional armors which count as protection from effects.",
                 "For example, protection from effects caused by carrying filled tanks.",
                 "Defaults: GregTech NanoMuscle and QuarkTech armors."
         })
