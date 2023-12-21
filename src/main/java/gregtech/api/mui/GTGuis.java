@@ -1,77 +1,28 @@
 package gregtech.api.mui;
 
-import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
-import gregtech.api.cover.CoverHolder;
-import gregtech.api.cover.CoverWithUI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.GTUtility;
+import gregtech.api.mui.factory.CoverGuiFactory;
+import gregtech.api.mui.factory.MetaItemGuiFactory;
+import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 
-import com.cleanroommc.modularui.api.IGuiHolder;
-import com.cleanroommc.modularui.manager.GuiInfo;
+import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
-
-import java.util.EnumMap;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 public class GTGuis {
 
-    private static final EnumMap<EnumFacing, GuiInfo> COVERS = new EnumMap<>(EnumFacing.class);
-
-    public static final GuiInfo MTE = GuiInfo.builder()
-            .clientGui((context, mainPanel) -> {
-                MetaTileEntity mte = GTUtility.getMetaTileEntity(context.getWorld(), context.getBlockPos());
-                if (mte != null) {
-                    return mte.createScreen(context, mainPanel);
-                }
-                throw new UnsupportedOperationException();
-            })
-            .commonGui((context, syncHandler) -> {
-                MetaTileEntity mte = GTUtility.getMetaTileEntity(context.getWorld(), context.getBlockPos());
-                if (mte != null) {
-                    return mte.buildUI(context, syncHandler, context.getWorld().isRemote);
-                }
-                throw new UnsupportedOperationException();
-            })
-            .build();
-
-    public static final GuiInfo PLAYER_META_ITEM_MAIN_HAND = GuiInfo.builder()
-            .clientGui((context, mainPanel) -> {
-                ItemStack itemStack = context.getMainHandItem();
-                return getGuiHolder(itemStack).createScreen(context.with(EnumHand.MAIN_HAND), mainPanel);
-
-            })
-            .commonGui((context, guiSyncHandler) -> {
-                ItemStack itemStack = context.getMainHandItem();
-                return getGuiHolder(itemStack).buildUI(context.with(EnumHand.MAIN_HAND), guiSyncHandler,
-                        context.getWorld().isRemote);
-            })
-            .build();
-
-    public static final GuiInfo PLAYER_META_ITEM_OFF_HAND = GuiInfo.builder()
-            .clientGui((context, mainPanel) -> {
-                ItemStack itemStack = context.getOffHandItem();
-                return getGuiHolder(itemStack).createScreen(context.with(EnumHand.OFF_HAND), mainPanel);
-
-            })
-            .commonGui((context, guiSyncHandler) -> {
-                ItemStack itemStack = context.getOffHandItem();
-                return getGuiHolder(itemStack).buildUI(context.with(EnumHand.OFF_HAND), guiSyncHandler,
-                        context.getWorld().isRemote);
-            })
-            .build();
-
-    public static GuiInfo getMetaItemUiInfo(EnumHand hand) {
-        return hand == EnumHand.MAIN_HAND ? PLAYER_META_ITEM_MAIN_HAND : PLAYER_META_ITEM_OFF_HAND;
-    }
-
-    public static GuiInfo getCoverUiInfo(EnumFacing facing) {
-        return COVERS.get(facing);
+    @ApiStatus.Internal
+    public static void registerFactories() {
+        GuiManager.registerFactory(MetaTileEntityGuiFactory.INSTANCE);
+        GuiManager.registerFactory(MetaItemGuiFactory.INSTANCE);
+        GuiManager.registerFactory(CoverGuiFactory.INSTANCE);
     }
 
     public static ModularPanel createPanel(String name, int width, int height) {
@@ -92,44 +43,40 @@ public class GTGuis {
         return createPanel(valueItem.unlocalizedName, width, height);
     }
 
-    static {
-        for (EnumFacing facing : EnumFacing.values()) {
-            COVERS.put(facing, makeCoverUiInfo(facing));
-        }
+    public static ModularPanel createPopupPanel(String name, int width, int height) {
+        return createPopupPanel(name, width, height, false, false);
     }
 
-    private static GuiInfo makeCoverUiInfo(EnumFacing facing) {
-        return GuiInfo.builder()
-                .clientGui((context, mainPanel) -> {
-                    TileEntity te = context.getTileEntity();
-                    if (te == null) throw new IllegalStateException();
-                    CoverHolder coverHolder = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER,
-                            facing);
-                    if (coverHolder == null) throw new IllegalStateException();
-                    Cover cover = coverHolder.getCoverAtSide(facing);
-                    if (!(cover instanceof CoverWithUI)) throw new IllegalStateException();
-                    return ((CoverWithUI) cover).createScreen(context, mainPanel);
-                })
-                .commonGui((context, syncHandler) -> {
-                    TileEntity te = context.getTileEntity();
-                    if (te == null) throw new IllegalStateException();
-                    CoverHolder coverHolder = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER,
-                            facing);
-                    if (coverHolder == null) throw new IllegalStateException();
-                    Cover cover = coverHolder.getCoverAtSide(facing);
-                    if (!(cover instanceof CoverWithUI)) throw new IllegalStateException();
-                    return ((CoverWithUI) cover).buildUI(context, syncHandler, context.getWorld().isRemote);
-                })
-                .build();
+    public static ModularPanel createPopupPanel(String name, int width, int height, boolean disableBelow,
+                                                boolean closeOnOutsideClick) {
+        return new PopupPanel(name, width, height, disableBelow, closeOnOutsideClick);
     }
 
-    private static IGuiHolder getGuiHolder(ItemStack stack) {
-        if (stack.getItem() instanceof MetaItem) {
-            MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
-            if (valueItem != null && valueItem.getUIManager() != null) {
-                return valueItem.getUIManager();
-            }
+    private static class PopupPanel extends ModularPanel {
+
+        private final boolean disableBelow;
+        private final boolean closeOnOutsideClick;
+
+        public PopupPanel(@NotNull String name, int width, int height, boolean disableBelow,
+                          boolean closeOnOutsideClick) {
+            super(name);
+            flex().startDefaultMode();
+            flex().size(width, height).align(Alignment.Center);
+            flex().endDefaultMode();
+            background(GTGuiTextures.BACKGROUND_POPUP);
+            child(ButtonWidget.panelCloseButton().top(5).right(5));
+            this.disableBelow = disableBelow;
+            this.closeOnOutsideClick = closeOnOutsideClick;
         }
-        throw new IllegalStateException();
+
+        @Override
+        public boolean disablePanelsBelow() {
+            return disableBelow;
+        }
+
+        @Override
+        public boolean closeOnOutOfBoundsClick() {
+            return closeOnOutsideClick;
+        }
     }
 }

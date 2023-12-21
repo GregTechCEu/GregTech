@@ -258,7 +258,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             if (world.isRemote)
                 return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(clientCapability);
-            if (handlers.size() == 0)
+            if (handlers.isEmpty())
                 initHandlers();
             checkNetwork();
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(handlers.getOrDefault(facing, defaultHandler));
@@ -291,6 +291,12 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
             this.currentEnergyNet = new WeakReference<>(currentEnergyNet);
         }
         return currentEnergyNet;
+    }
+
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        this.handlers.clear();
     }
 
     @Override
