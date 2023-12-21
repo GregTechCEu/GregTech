@@ -54,7 +54,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     private static final int MAX_DISTANCE_RADIUS = 16;
 
-    private IEnergyContainer energyContainer;
+    private QuantumControllerEnergyContainer energyContainer;
     /** Somewhat lazily initialized, make sure to call {@code getStorage()} before trying to access anything in this */
     private Map<BlockPos, WeakReference<IQuantumStorage<?>>> storageInstances = new HashMap<>();
 
@@ -244,16 +244,12 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage != null) storage.setDisconnected();
         }
         handler.rebuildCache();
+        energyContainer.setMaxCapacity(energyConsumption * 16L);
         markDirty();
     }
 
     private void reinitializeEnergyContainer() {
-        long stored = energyContainer == null ? 0L : energyContainer.getEnergyStored();
-
-        energyContainer = EnergyContainerHandler.receiverContainer(this, this.energyConsumption * 16L,
-                Integer.MAX_VALUE, Integer.MAX_VALUE);
-
-        if (stored > 0) energyContainer.addEnergy(stored);
+        energyContainer = new QuantumControllerEnergyContainer(this);
     }
 
     @Override
@@ -417,6 +413,36 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         @Override
         public int getSlotLimit(int slot) {
             return getItemHandlers().getSlotLimit(slot);
+        }
+    }
+
+    private static class QuantumControllerEnergyContainer extends EnergyContainerHandler {
+
+        private long maxCapacity = 0;
+        public QuantumControllerEnergyContainer(MetaTileEntity tileEntity) {
+            super(tileEntity, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
+        }
+
+        @Override
+        public long getEnergyCapacity() {
+            return this.maxCapacity;
+        }
+
+        protected void setMaxCapacity(long capacity) {
+            this.maxCapacity = capacity;
+        }
+
+        @Override
+        public @NotNull NBTTagCompound serializeNBT() {
+            var tag = super.serializeNBT();
+            tag.setLong("MaxCapacity", this.maxCapacity);
+            return tag;
+        }
+
+        @Override
+        public void deserializeNBT(@NotNull NBTTagCompound compound) {
+            this.maxCapacity = compound.getLong("MaxCapacity");
+            super.deserializeNBT(compound);
         }
     }
 }
