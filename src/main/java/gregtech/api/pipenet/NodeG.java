@@ -70,7 +70,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     /**
      * Creates a dummy node for client-side information handling.
-     * Should never be required to reference its net or position.
+     * Should never be required to reference its net, data, or position.
      */
     @SideOnly(Side.CLIENT)
     public NodeG(IPipeTile<PipeType, NodeDataType> heldMTE) {
@@ -256,6 +256,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         tag.setLong("Pos", this.nodePos.toLong());
         tag.setInteger("Mark", this.mark);
         tag.setInteger("OpenConnections", this.activeConnections);
+        tag.setInteger("BlockedConnections", this.blockedConnections);
         tag.setBoolean("IsActive", this.isActive);
         return tag;
     }
@@ -264,6 +265,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     public void deserializeNBT(NBTTagCompound nbt) {
         this.mark = nbt.getInteger("Mark");
         this.activeConnections = nbt.getInteger("OpenConnections");
+        this.blockedConnections = nbt.getInteger("BlockedConnections");
         this.isActive = nbt.getBoolean("IsActive");
     }
 

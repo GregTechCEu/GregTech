@@ -44,6 +44,8 @@ public class WorldEnergyNet extends WorldPipeNetG<WireProperties, Insulation> {
         tagCompound.setInteger("voltage", nodeData.getVoltage());
         tagCompound.setInteger("amperage", nodeData.getAmperage());
         tagCompound.setInteger("loss", nodeData.getLossPerBlock());
+        tagCompound.setInteger("critical", nodeData.getSuperconductorCriticalTemperature());
+        tagCompound.setBoolean("supercond", nodeData.isSuperconductor());
     }
 
     @Override
@@ -51,6 +53,8 @@ public class WorldEnergyNet extends WorldPipeNetG<WireProperties, Insulation> {
         int voltage = tagCompound.getInteger("voltage");
         int amperage = tagCompound.getInteger("amperage");
         int lossPerBlock = tagCompound.getInteger("loss");
-        return new WireProperties(voltage, amperage, lossPerBlock);
+        int critical = tagCompound.getInteger("critical");
+        boolean supercond = tagCompound.getBoolean("supercond");
+        return new WireProperties(voltage, amperage, lossPerBlock, supercond, critical);
     }
 }
