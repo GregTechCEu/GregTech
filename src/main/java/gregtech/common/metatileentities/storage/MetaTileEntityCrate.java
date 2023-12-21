@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -13,6 +14,7 @@ import gregtech.common.items.MetaItems;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,13 +42,13 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
-import static gregtech.api.capability.GregtechDataCodes.TAG_KEY_PAINTING_COLOR;
 
 public class MetaTileEntityCrate extends MetaTileEntity {
 
@@ -273,5 +275,22 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public void onItemHeldUpdate(@NotNull ItemStack stack, @NotNull World world, @NotNull Entity entity, int slot,
+                                 boolean isSelected) {
+        if (world.isRemote) return;
+
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null) return;
+
+        if (entity instanceof EntityPlayer player) {
+            if (player.isCreative()) return;
+
+            if (tag.getBoolean(TAPED_NBT)) {
+                GregTechAPI.heldItemEffectManager.tryApplyEffects(player);
+            }
+        }
     }
 }

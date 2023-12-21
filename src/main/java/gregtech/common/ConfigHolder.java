@@ -362,6 +362,22 @@ public class ConfigHolder {
 
         @Config.Comment({ "Whether to give the terminal to new players on login", "Default: true" })
         public boolean spawnTerminal = true;
+
+        @Config.Comment({"Additional armors which count as protection from effects.",
+                "For example, protection from effects caused by carrying filled tanks.",
+                "Defaults: GregTech NanoMuscle and QuarkTech armors."
+        })
+        public String[] protectiveArmor = {
+                "gregtech:gt_armor:20",
+                "gregtech:gt_armor:21",
+                "gregtech:gt_armor:22",
+                "gregtech:gt_armor:30",
+                "gregtech:gt_armor:40",
+                "gregtech:gt_armor:41",
+                "gregtech:gt_armor:42",
+                "gregtech:gt_armor:43",
+                "gregtech:gt_armor:50"
+        };
     }
 
     public static class ClientOptions {

@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
@@ -17,6 +18,7 @@ import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,6 +46,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -299,5 +302,22 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     protected boolean shouldSerializeInventories() {
         return false;
+    }
+
+    @Override
+    public void onItemHeldUpdate(@NotNull ItemStack stack, @NotNull World world, @NotNull Entity entity, int slot,
+                                 boolean isSelected) {
+        if (world.isRemote) return;
+
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null) return;
+
+        if (entity instanceof EntityPlayer player) {
+            if (player.isCreative()) return;
+
+            if (tag.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
+                GregTechAPI.heldItemEffectManager.tryApplyEffects(player);
+            }
+        }
     }
 }

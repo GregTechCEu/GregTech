@@ -7,8 +7,16 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.impl.*;
-import gregtech.api.cover.*;
+import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
+import gregtech.api.cover.CoverRayTracer;
+import gregtech.api.cover.CoverSaveHandler;
+import gregtech.api.cover.CoverUtil;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -32,6 +40,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -40,7 +49,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -84,7 +99,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -1525,6 +1544,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public boolean canVoidRecipeFluidOutputs() {
         return false;
     }
+
+    /**
+     * @param stack      the ItemStack being updated
+     * @param world      the world containing the ItemStack. Called on client and server
+     * @param entity     the entity holding the stack in its inventory
+     * @param slot       the index of the slot containing the stack
+     * @param isSelected if the ItemStack is currently selected in the hotbar
+     * @see net.minecraft.item.Item#onUpdate(ItemStack, World, Entity, int, boolean)
+     */
+    public void onItemHeldUpdate(@NotNull ItemStack stack, @NotNull World world, @NotNull Entity entity, int slot,
+                                 boolean isSelected) {}
 
     @NotNull
     @Method(modid = GTValues.MODID_APPENG)
