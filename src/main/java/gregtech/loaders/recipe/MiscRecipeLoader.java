@@ -273,16 +273,17 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
-                .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(plate, Aluminium)
-                .input(circuit, MarkerMaterials.Tier.MV)
-                .input(screw, StainlessSteel, 4)
+                .inputs(COVER_DIGITAL_INTERFACE.getStackForm())
+                .inputs(WIRELESS.getStackForm())
                 .fluidInputs(Polyethylene.getFluid(L))
-                .outputs(COVER_DIGITAL_INTERFACE.getStackForm())
+                .outputs(COVER_DIGITAL_INTERFACE_WIRELESS.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
-                .inputs(COVER_DIGITAL_INTERFACE.getStackForm())
+                .inputs(MetaItems.COVER_SCREEN.getStackForm())
+                .input(plate, Aluminium)
+                .input(circuit, MarkerMaterials.Tier.MV)
+                .input(screw, StainlessSteel, 2)
                 .inputs(WIRELESS.getStackForm())
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(COVER_DIGITAL_INTERFACE_WIRELESS.getStackForm())
@@ -322,9 +323,9 @@ public class MiscRecipeLoader {
 
         // terminal
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
-                .input(circuit, MarkerMaterials.Tier.MV, 4)
-                .input(EMITTER_MV, 2)
-                .input(SENSOR_MV, 2)
+                .input(circuit, MarkerMaterials.Tier.LV, 4)
+                .input(EMITTER_MV)
+                .input(SENSOR_MV)
                 .input(plate, StainlessSteel)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(WIRELESS.getStackForm())

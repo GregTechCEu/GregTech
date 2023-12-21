@@ -72,9 +72,6 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     // run-time data
     public int width;
     private long lastUpdate;
-    // private WeakReference<EnergyNet> currentEnergyNet;
-    private List<BlockPos> activeNodes;
-    private Set<FacingPos> netCovers;
     private Set<FacingPos> remoteCovers;
     @SideOnly(Side.CLIENT)
     public List<BlockPos> parts;
@@ -88,46 +85,6 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         super(metaTileEntityId);
     }
 
-    // private EnergyNet getEnergyNet() {
-    // if (!this.getWorld().isRemote) {
-    // TileEntity te = getNeighbor(frontFacing.getOpposite());
-    // if (te instanceof TileEntityCable) {
-    // TileEntityPipeBase<?, ?> tileEntityCable = (TileEntityCable) te;
-    // EnergyNet currentEnergyNet = this.currentEnergyNet.get();
-    // if (currentEnergyNet != null && currentEnergyNet.isValid() &&
-    // currentEnergyNet.containsNode(tileEntityCable.getPipePos())) {
-    // return currentEnergyNet; // return current net if it is still valid
-    // }
-    // WorldEnergyNet worldEnergyNet = (WorldEnergyNet) tileEntityCable.getPipeBlock()
-    // .getWorldPipeNet(tileEntityCable.getPipeWorld());
-    // currentEnergyNet = worldEnergyNet.getNetFromPos(tileEntityCable.getPipePos());
-    // if (currentEnergyNet != null) {
-    // this.currentEnergyNet = new WeakReference<>(currentEnergyNet);
-    // }
-    // return currentEnergyNet;
-    // }
-    // }
-    // return null;
-    // }
-
-    private void updateNodes() {
-        // EnergyNet energyNet = getEnergyNet();
-        // if (energyNet == null) {
-        // activeNodes.clear();
-        // return;
-        // }
-        // if (energyNet.getLastUpdate() == lastUpdate) {
-        // return;
-        // }
-        // lastUpdate = energyNet.getLastUpdate();
-        // activeNodes.clear();
-        // energyNet.getAllNodes().forEach((pos, node) -> {
-        // if (node.isActive) {
-        // activeNodes.add(pos);
-        // }
-        // });
-    }
-
     public void addRemoteCover(FacingPos cover) {
         if (remoteCovers != null) {
             if (remoteCovers.add(cover)) {
@@ -138,29 +95,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     private boolean checkCovers() {
         boolean dirty = false;
-        updateNodes();
-        Set<FacingPos> checkCovers = new HashSet<>();
         World world = this.getWorld();
-        for (BlockPos pos : activeNodes) {
-            TileEntity tileEntityCable = world.getTileEntity(pos);
-            if (!(tileEntityCable instanceof TileEntityPipeBase)) {
-                continue;
-            }
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                if (((IPipeTile<?, ?>) tileEntityCable).isConnected(facing)) {
-                    TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
-                    if (tileEntity instanceof IGregTechTileEntity) {
-                        MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-                        if (metaTileEntity != null) {
-                            Cover cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
-                            if (cover instanceof CoverDigitalInterface digitalInterface && digitalInterface.isProxy()) {
-                                checkCovers.add(new FacingPos(metaTileEntity.getPos(), cover.getAttachedSide()));
-                            }
-                        }
-                    }
-                }
-            }
-        }
         Iterator<FacingPos> iterator = remoteCovers.iterator();
         while (iterator.hasNext()) {
             FacingPos blockPosFace = iterator.next();
@@ -177,23 +112,10 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             iterator.remove();
             dirty = true;
         }
-        if (checkCovers.size() != netCovers.size() || !netCovers.containsAll(checkCovers)) {
-            netCovers = checkCovers;
-            dirty = true;
-        }
         return dirty;
     }
 
     private void writeCovers(PacketBuffer buf) {
-        if (netCovers == null) {
-            buf.writeInt(0);
-        } else {
-            buf.writeInt(netCovers.size());
-            for (FacingPos cover : netCovers) {
-                buf.writeBlockPos(cover.getPos());
-                buf.writeByte(cover.getFacing().getIndex());
-            }
-        }
         if (remoteCovers == null) {
             buf.writeInt(0);
         } else {
@@ -206,13 +128,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     private void readCovers(PacketBuffer buf) {
-        netCovers = new HashSet<>();
         remoteCovers = new HashSet<>();
         int size = buf.readInt();
-        for (int i = 0; i < size; i++) {
-            netCovers.add(new FacingPos(buf.readBlockPos(), EnumFacing.byIndex(buf.readByte())));
-        }
-        size = buf.readInt();
         for (int i = 0; i < size; i++) {
             remoteCovers.add(new FacingPos(buf.readBlockPos(), EnumFacing.byIndex(buf.readByte())));
         }
@@ -381,14 +298,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     public Set<FacingPos> getAllCovers() {
-        Set<FacingPos> allCovers = new HashSet<>();
-        if (netCovers != null) {
-            allCovers.addAll(netCovers);
-        }
-        if (remoteCovers != null) {
-            allCovers.addAll(remoteCovers);
-        }
-        return allCovers;
+        return remoteCovers;
     }
 
     @Override
@@ -422,9 +332,6 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         lastUpdate = 0;
-        // currentEnergyNet = new WeakReference<>(null);
-        activeNodes = new ArrayList<>();
-        netCovers = new HashSet<>();
         remoteCovers = new HashSet<>();
         inputEnergy = new EnergyContainerList(this.getAbilities(MultiblockAbility.INPUT_ENERGY));
         width = 0;

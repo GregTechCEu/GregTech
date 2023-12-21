@@ -437,7 +437,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.getNode().setActiveConnections(connections);
         }
         this.getNode().setBlockedConnections(compound.getInteger("BlockedConnections"));
-        this.nbtLoad = false;
 
         if (compound.hasKey("InsulationColor")) {
             this.paintingColor = compound.getInteger("InsulationColor");
@@ -452,6 +451,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             // one of the covers set the pipe to ticking, and we need to send over the rest of the covers
             this.coverableImplementation.transferDataTo(this.tickingPipe.coverableImplementation);
         }
+        this.nbtLoad = false;
 
         if (!compound.hasKey("PipeNetVersion") && !compound.hasKey("PipeMaterial")) doOldNetSetup();
     }
