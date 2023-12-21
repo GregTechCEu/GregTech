@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.capability.IEnergyContainer;
@@ -8,6 +9,7 @@ import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
@@ -77,7 +79,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     @Override
     public void update() {
-        if (isPowered()) {
+        if (getOffsetTimer() % 10 == 0 && isPowered()) {
             energyContainer.removeEnergy(energyConsumption);
         }
         super.update();
@@ -207,7 +209,10 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             oldPositions.remove(pos);
 
             energyConsumption += switch (storage.getType()) {
-                case ITEM, FLUID -> 8L;
+                case ITEM, FLUID -> {
+                    int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 0;
+                    yield GTValues.V[tier / 2] / 2;
+                }
                 case PROXY -> 2L;
                 case EXTENDER -> 1L;
                 default -> 0L;
