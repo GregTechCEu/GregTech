@@ -2,7 +2,6 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.api.pipenet.INodeData;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 

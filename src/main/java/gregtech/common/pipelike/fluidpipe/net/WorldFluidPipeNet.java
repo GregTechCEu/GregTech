@@ -1,12 +1,9 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
-
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
-
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 
 import net.minecraft.nbt.NBTTagCompound;

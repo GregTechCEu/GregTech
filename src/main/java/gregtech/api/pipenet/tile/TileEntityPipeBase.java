@@ -156,7 +156,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (neighbor == null) return null;
         if (neighbor == this || (neighbor.isInvalid())) {
             neighbor = getNeighbor(facing);
-            if (neighbor instanceof IPipeTile<?,?>) neighbor = null;
+            if (neighbor instanceof IPipeTile<?, ?>) neighbor = null;
             this.nonPipeNeighbors[i] = neighbor;
             this.nonPipeNeighborsInvalidated = false;
         }

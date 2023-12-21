@@ -3,17 +3,15 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -21,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>>
+public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>>
                   implements INBTSerializable<NBTTagCompound> {
 
     public static final int DEFAULT_MARK = 0;

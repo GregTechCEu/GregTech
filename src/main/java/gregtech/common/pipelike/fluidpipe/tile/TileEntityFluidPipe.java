@@ -1,12 +1,9 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
-import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
-
-import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

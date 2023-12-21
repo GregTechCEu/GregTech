@@ -14,9 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -85,7 +82,8 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     NodeG<PipeType, NodeDataType> getNode();
 
-    @Nullable TileEntity getNonPipeNeighbour(EnumFacing facing);
+    @Nullable
+    TileEntity getNonPipeNeighbour(EnumFacing facing);
 
     PipeCoverableImplementation getCoverableImplementation();
 

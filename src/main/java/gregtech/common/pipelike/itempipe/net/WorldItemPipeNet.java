@@ -5,13 +5,11 @@ import gregtech.api.pipenet.AbstractEdgePredicate;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
-
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverItemFilter;
 import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
-
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.nbt.NBTTagCompound;

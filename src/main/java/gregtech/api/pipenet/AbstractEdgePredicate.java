@@ -1,18 +1,18 @@
 package gregtech.api.pipenet;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.Predicate;
 
-public abstract class AbstractEdgePredicate<T extends AbstractEdgePredicate<T>> implements Predicate<Object>, INBTSerializable<NBTTagCompound> {
+public abstract class AbstractEdgePredicate<T extends AbstractEdgePredicate<T>>
+                                           implements Predicate<Object>, INBTSerializable<NBTTagCompound> {
 
     protected static final Map<String, AbstractEdgePredicate<?>> PREDICATES = new Object2ObjectOpenHashMap<>();
 

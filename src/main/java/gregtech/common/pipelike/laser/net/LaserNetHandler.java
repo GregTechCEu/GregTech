@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.laser.net;
 
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.pipenet.NetGroup;
@@ -12,7 +11,6 @@ import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

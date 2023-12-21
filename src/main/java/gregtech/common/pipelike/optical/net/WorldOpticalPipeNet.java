@@ -1,12 +1,9 @@
 package gregtech.common.pipelike.optical.net;
 
-import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
-
 import gregtech.common.pipelike.optical.OpticalPipeType;
-
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.nbt.NBTTagCompound;

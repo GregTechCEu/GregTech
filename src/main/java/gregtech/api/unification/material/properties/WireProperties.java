@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.pipenet.INodeData;
 import gregtech.api.unification.material.Material;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 

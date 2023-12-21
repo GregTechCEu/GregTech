@@ -1,12 +1,9 @@
 package gregtech.common.pipelike.laser.net;
 
-import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
-
 import gregtech.common.pipelike.laser.LaserPipeType;
-
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
 import net.minecraft.nbt.NBTTagCompound;

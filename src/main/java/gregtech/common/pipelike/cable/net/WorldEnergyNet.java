@@ -4,9 +4,7 @@ import gregtech.api.pipenet.AbstractGroupData;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;
-
 import gregtech.common.pipelike.cable.Insulation;
-
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 
 import net.minecraft.nbt.NBTTagCompound;

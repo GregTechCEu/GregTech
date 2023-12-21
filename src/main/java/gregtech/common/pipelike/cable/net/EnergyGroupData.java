@@ -1,9 +1,7 @@
 package gregtech.common.pipelike.cable.net;
 
 import gregtech.api.pipenet.AbstractGroupData;
-
 import gregtech.api.unification.material.properties.WireProperties;
-
 import gregtech.common.pipelike.cable.Insulation;
 
 import net.minecraft.world.World;

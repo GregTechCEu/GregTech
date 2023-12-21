@@ -1,7 +1,5 @@
 package gregtech.api.pipenet.longdist;
 
-import gregtech.api.pipenet.WorldPipeNet;
-
 import gregtech.api.pipenet.WorldPipeNetG;
 
 import net.minecraft.nbt.NBTBase;

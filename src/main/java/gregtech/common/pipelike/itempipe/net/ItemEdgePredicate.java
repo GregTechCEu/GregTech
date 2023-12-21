@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.pipenet.AbstractEdgePredicate;
-
 import gregtech.api.pipenet.IShutteredEdgePredicate;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.FilterTypeRegistry;
@@ -60,14 +59,16 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
         tag.setBoolean("SourceBlacklist", this.sourceFilter.isBlacklistFilter());
         if (this.sourceFilter.getItemFilter() != null) {
             filterComponent = new NBTTagCompound();
-            tag.setInteger("SourceFilterType", FilterTypeRegistry.getIdForItemFilter(this.sourceFilter.getItemFilter()));
+            tag.setInteger("SourceFilterType",
+                    FilterTypeRegistry.getIdForItemFilter(this.sourceFilter.getItemFilter()));
             this.sourceFilter.getItemFilter().writeToNBT(filterComponent);
             tag.setTag("SourceFilter", filterComponent);
         }
         tag.setBoolean("TargetBlacklist", this.targetFilter.isBlacklistFilter());
         if (this.targetFilter.getItemFilter() != null) {
             filterComponent = new NBTTagCompound();
-            tag.setInteger("TargetFilterType", FilterTypeRegistry.getIdForItemFilter(this.targetFilter.getItemFilter()));
+            tag.setInteger("TargetFilterType",
+                    FilterTypeRegistry.getIdForItemFilter(this.targetFilter.getItemFilter()));
             this.targetFilter.getItemFilter().writeToNBT(filterComponent);
             tag.setTag("TargetFilter", filterComponent);
         }
@@ -79,16 +80,17 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
         shutteredSource = nbt.getBoolean("ShutteredSource");
         shutteredTarget = nbt.getBoolean("ShutteredTarget");
         if (nbt.hasKey("SourceFilter")) {
-            this.sourceFilter.setItemFilter(FilterTypeRegistry.createItemFilterById(nbt.getInteger("SourceFilterType")));
+            this.sourceFilter
+                    .setItemFilter(FilterTypeRegistry.createItemFilterById(nbt.getInteger("SourceFilterType")));
             this.sourceFilter.getItemFilter().readFromNBT(nbt.getCompoundTag("SourceFilter"));
             this.sourceFilter.setBlacklistFilter(nbt.getBoolean("SourceBlacklist"), true);
         }
         if (nbt.hasKey("TargetFilter")) {
-            this.targetFilter.setItemFilter(FilterTypeRegistry.createItemFilterById(nbt.getInteger("TargetFilterType")));
+            this.targetFilter
+                    .setItemFilter(FilterTypeRegistry.createItemFilterById(nbt.getInteger("TargetFilterType")));
             this.targetFilter.getItemFilter().readFromNBT(nbt.getCompoundTag("TargetFilter"));
             this.targetFilter.setBlacklistFilter(nbt.getBoolean("TargetBlacklist"), true);
         }
-
     }
 
     @Override

@@ -60,7 +60,6 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -73,7 +72,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     // run-time data
     public int width;
     private long lastUpdate;
-//    private WeakReference<EnergyNet> currentEnergyNet;
+    // private WeakReference<EnergyNet> currentEnergyNet;
     private List<BlockPos> activeNodes;
     private Set<FacingPos> netCovers;
     private Set<FacingPos> remoteCovers;
@@ -89,44 +88,44 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         super(metaTileEntityId);
     }
 
-//    private EnergyNet getEnergyNet() {
-//        if (!this.getWorld().isRemote) {
-//            TileEntity te = getNeighbor(frontFacing.getOpposite());
-//            if (te instanceof TileEntityCable) {
-//                TileEntityPipeBase<?, ?> tileEntityCable = (TileEntityCable) te;
-//                EnergyNet currentEnergyNet = this.currentEnergyNet.get();
-//                if (currentEnergyNet != null && currentEnergyNet.isValid() &&
-//                        currentEnergyNet.containsNode(tileEntityCable.getPipePos())) {
-//                    return currentEnergyNet; // return current net if it is still valid
-//                }
-//                WorldEnergyNet worldEnergyNet = (WorldEnergyNet) tileEntityCable.getPipeBlock()
-//                        .getWorldPipeNet(tileEntityCable.getPipeWorld());
-//                currentEnergyNet = worldEnergyNet.getNetFromPos(tileEntityCable.getPipePos());
-//                if (currentEnergyNet != null) {
-//                    this.currentEnergyNet = new WeakReference<>(currentEnergyNet);
-//                }
-//                return currentEnergyNet;
-//            }
-//        }
-//        return null;
-//    }
+    // private EnergyNet getEnergyNet() {
+    // if (!this.getWorld().isRemote) {
+    // TileEntity te = getNeighbor(frontFacing.getOpposite());
+    // if (te instanceof TileEntityCable) {
+    // TileEntityPipeBase<?, ?> tileEntityCable = (TileEntityCable) te;
+    // EnergyNet currentEnergyNet = this.currentEnergyNet.get();
+    // if (currentEnergyNet != null && currentEnergyNet.isValid() &&
+    // currentEnergyNet.containsNode(tileEntityCable.getPipePos())) {
+    // return currentEnergyNet; // return current net if it is still valid
+    // }
+    // WorldEnergyNet worldEnergyNet = (WorldEnergyNet) tileEntityCable.getPipeBlock()
+    // .getWorldPipeNet(tileEntityCable.getPipeWorld());
+    // currentEnergyNet = worldEnergyNet.getNetFromPos(tileEntityCable.getPipePos());
+    // if (currentEnergyNet != null) {
+    // this.currentEnergyNet = new WeakReference<>(currentEnergyNet);
+    // }
+    // return currentEnergyNet;
+    // }
+    // }
+    // return null;
+    // }
 
     private void updateNodes() {
-//        EnergyNet energyNet = getEnergyNet();
-//        if (energyNet == null) {
-//            activeNodes.clear();
-//            return;
-//        }
-//        if (energyNet.getLastUpdate() == lastUpdate) {
-//            return;
-//        }
-//        lastUpdate = energyNet.getLastUpdate();
-//        activeNodes.clear();
-//        energyNet.getAllNodes().forEach((pos, node) -> {
-//            if (node.isActive) {
-//                activeNodes.add(pos);
-//            }
-//        });
+        // EnergyNet energyNet = getEnergyNet();
+        // if (energyNet == null) {
+        // activeNodes.clear();
+        // return;
+        // }
+        // if (energyNet.getLastUpdate() == lastUpdate) {
+        // return;
+        // }
+        // lastUpdate = energyNet.getLastUpdate();
+        // activeNodes.clear();
+        // energyNet.getAllNodes().forEach((pos, node) -> {
+        // if (node.isActive) {
+        // activeNodes.add(pos);
+        // }
+        // });
     }
 
     public void addRemoteCover(FacingPos cover) {
@@ -423,7 +422,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         lastUpdate = 0;
-//        currentEnergyNet = new WeakReference<>(null);
+        // currentEnergyNet = new WeakReference<>(null);
         activeNodes = new ArrayList<>();
         netCovers = new HashSet<>();
         remoteCovers = new HashSet<>();

@@ -146,7 +146,8 @@ public class ItemNetHandler implements IItemHandler {
      * @param simulate simulate
      * @return remainder
      */
-    private ItemStack insertToHandlers(List<NetPath<ItemPipeType, ItemPipeProperties>> copy, ItemStack stack, boolean simulate) {
+    private ItemStack insertToHandlers(List<NetPath<ItemPipeType, ItemPipeProperties>> copy, ItemStack stack,
+                                       boolean simulate) {
         Iterator<NetPath<ItemPipeType, ItemPipeProperties>> routePathIterator = copy.listIterator();
         int inserted = 0;
         int count = stack.getCount();
@@ -157,8 +158,8 @@ public class ItemNetHandler implements IItemHandler {
             NetPath<ItemPipeType, ItemPipeProperties> routePath = routePathIterator.next();
             Iterator<EnumFacing> iterator = routePath.getFacingIterator();
             while (iterator.hasNext()) {
-                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> facedNetPath =
-                        routePath.withFacing(iterator.next());
+                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> facedNetPath = routePath
+                        .withFacing(iterator.next());
                 int amount = c;
                 if (m > 0) {
                     amount++;
@@ -186,7 +187,8 @@ public class ItemNetHandler implements IItemHandler {
         return remainder;
     }
 
-    private ItemStack insertToHandlersEnhanced(List<NetPath<ItemPipeType, ItemPipeProperties>> copy, ItemStack stack, int dest, boolean simulate) {
+    private ItemStack insertToHandlersEnhanced(List<NetPath<ItemPipeType, ItemPipeProperties>> copy, ItemStack stack,
+                                               int dest, boolean simulate) {
         List<EnhancedRoundRobinData> transferred = new ArrayList<>();
         IntList steps = new IntArrayList();
         int min = Integer.MAX_VALUE;
@@ -303,11 +305,13 @@ public class ItemNetHandler implements IItemHandler {
         return remainder;
     }
 
-    public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, ItemStack stack, boolean simulate) {
+    public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, ItemStack stack,
+                            boolean simulate) {
         return insert(routePath, stack, simulate, false);
     }
 
-    public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, ItemStack stack, boolean simulate, boolean ignoreLimit) {
+    public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, ItemStack stack,
+                            boolean simulate, boolean ignoreLimit) {
         int allowed = ignoreLimit ? stack.getCount() :
                 checkTransferable(routePath.getData().getTransferRate(), stack.getCount(), simulate);
         if (allowed == 0 || !routePath.checkPredicate(stack)) {
@@ -328,8 +332,8 @@ public class ItemNetHandler implements IItemHandler {
             }
             testHandler.setStackInSlot(0, ItemStack.EMPTY);
         }
-        IItemHandler neighbourHandler =
-                routePath.getTargetTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, routePath.facing);
+        IItemHandler neighbourHandler = routePath.getTargetTE()
+                .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, routePath.facing);
         if (pipeCover instanceof CoverRoboticArm &&
                 ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
             return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed,
@@ -463,7 +467,8 @@ public class ItemNetHandler implements IItemHandler {
         return 64;
     }
 
-    private void transferTo(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, boolean simulate, int amount) {
+    private void transferTo(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, boolean simulate,
+                            int amount) {
         if (simulate)
             simulatedTransfersGlobalRoundRobin.merge(routePath.toFacingPos(), amount, Integer::sum);
         else
@@ -501,7 +506,8 @@ public class ItemNetHandler implements IItemHandler {
         private int transferred;
         private int toTransfer = 0;
 
-        private EnhancedRoundRobinData(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, int maxInsertable, int transferred) {
+        private EnhancedRoundRobinData(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath,
+                                       int maxInsertable, int transferred) {
             this.maxInsertable = maxInsertable;
             this.transferred = transferred;
             this.routePath = routePath;

@@ -4,10 +4,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-
 import gregtech.common.covers.CoverShutter;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,6 +18,7 @@ import net.minecraftforge.common.util.Constants;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
@@ -60,6 +58,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
      * Override to change whether this net needs directed graph handling.
      * Used to respect filter directions in the item net and fluid net, for example.
      * If the graph is not directed, pipes should not support blocked connections.
+     * 
      * @return True if the graph should be directed.
      */
     protected boolean isDirected() {
@@ -69,6 +68,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     /**
      * Override to change whether this net allows only one source and one destination per group.
      * Allows for optimizations in path lookup and cache invalidation.
+     * 
      * @return True if the graph should be single-pathed.
      */
     protected boolean isSinglePath() {
@@ -130,8 +130,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
             return verifyList(cache, node);
         }
 
-        List<NetPath<PipeType, NodeDataType>> list =
-                isSinglePath() ? this.singlePathList(node) : this.shortestPaths.getPathsList(node);
+        List<NetPath<PipeType, NodeDataType>> list = isSinglePath() ? this.singlePathList(node) :
+                this.shortestPaths.getPathsList(node);
         return verifyList(node.setPathCache(list), node);
     }
 
@@ -139,9 +139,9 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
      * Verification removes paths ending in unloaded TEs,
      * paths that don't connect to anything,
      * and all paths if the source TE is unloaded.
-      */
+     */
     protected List<NetPath<PipeType, NodeDataType>> verifyList(List<NetPath<PipeType, NodeDataType>> list,
-                                                                                 NodeG<PipeType, NodeDataType> source) {
+                                                               NodeG<PipeType, NodeDataType> source) {
         if (!verifyNode(source)) return new ObjectArrayList<>();
         return list.stream().filter(a -> verifyNode(a.getTargetNode())).collect(Collectors.toList());
     }
@@ -153,7 +153,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     @Nullable
     protected TileEntityPipeBase<PipeType, NodeDataType> castTE(TileEntity te) {
-        if (te instanceof TileEntityPipeBase<?, ?> pipe) {
+        if (te instanceof TileEntityPipeBase<?, ?>pipe) {
             if (!getBasePipeClass().isAssignableFrom(pipe.getClass())) {
                 return null;
             }
@@ -166,6 +166,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     /**
      * Make sure to override this if your NetGroups use data.
+     * 
      * @return The correct data variant
      */
     protected AbstractGroupData<PipeType, NodeDataType> getBlankGroupData() {
@@ -176,7 +177,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         NodeG<PipeType, NodeDataType> node = this.pipeMap.get(mte.getPipePos());
         if (node != null) return node;
         if (!canAttachNode(mte.getNodeData())) return null;
-        node = new NodeG<>(mte.getNodeData(), mte,this);
+        node = new NodeG<>(mte.getNodeData(), mte, this);
         this.addNode(node);
         return node;
     }
@@ -184,7 +185,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     protected final boolean canNodesConnect(NodeG<PipeType, NodeDataType> source, EnumFacing nodeFacing,
                                             NodeG<PipeType, NodeDataType> target) {
         return areNodeBlockedConnectionsCompatible(source, nodeFacing, target) &&
-                areMarksCompatible(source.mark, target.mark) && areNodesCustomContactable(source.getData(), target.getData());
+                areMarksCompatible(source.mark, target.mark) &&
+                areNodesCustomContactable(source.getData(), target.getData());
     }
 
     private static boolean areMarksCompatible(int mark1, int mark2) {
@@ -295,17 +297,20 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         if (this.isDirected()) this.addEdge(target, source, null);
     }
 
-    public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, @Nullable AbstractEdgePredicate<?> predicate) {
+    public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
+                        @Nullable AbstractEdgePredicate<?> predicate) {
         addEdge(source, target, source.getData().getWeightFactor() + target.getData().getWeightFactor(), predicate);
         this.validAlgorithmInstance = false;
     }
 
-    public void addUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight) {
+    public void addUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
+                                  double weight) {
         this.addEdge(source, target, weight, null);
         if (this.isDirected()) this.addEdge(target, source, weight, null);
     }
 
-    public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight, @Nullable AbstractEdgePredicate<?> predicate) {
+    public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight,
+                        @Nullable AbstractEdgePredicate<?> predicate) {
         if (pipeGraph.addEdge(source, target) != null) {
             if (NetGroup.mergeEdge(source, target)) {
                 new NetGroup<>(this.pipeGraph, this).addNodes(source, target);
@@ -334,15 +339,18 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
             this.predicateEdge(source, target, faceToNeighbour);
     }
 
-    public void predicateUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, EnumFacing faceToNeighbour) {
+    public void predicateUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
+                                        EnumFacing faceToNeighbour) {
         this.predicateEdge(source, target, faceToNeighbour);
         if (this.isDirected()) this.predicateEdge(target, source, faceToNeighbour.getOpposite());
     }
 
-    public void predicateEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, EnumFacing faceToNeighbour) {
+    public void predicateEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
+                              EnumFacing faceToNeighbour) {
         if (!this.pipeGraph.containsEdge(source, target)) return;
         Cover thisCover = source.getHeldMTESafe().getCoverableImplementation().getCoverAtSide(faceToNeighbour);
-        Cover neighbourCover = target.getHeldMTESafe().getCoverableImplementation().getCoverAtSide(faceToNeighbour.getOpposite());
+        Cover neighbourCover = target.getHeldMTESafe().getCoverableImplementation()
+                .getCoverAtSide(faceToNeighbour.getOpposite());
         AbstractEdgePredicate<?> predicate = getPredicate(thisCover, neighbourCover);
         predicate.setPosInfo(source.getNodePos(), target.getNodePos());
         NetEdge edge = this.pipeGraph.getEdge(source, target);
@@ -353,7 +361,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         return shutterify(new BasicEdgePredicate(), thisCover, neighbourCover);
     }
 
-    protected final AbstractEdgePredicate<?> shutterify(AbstractEdgePredicate<?> predicate, @Nullable Cover thisCover, @Nullable Cover neighbourCover) {
+    protected final AbstractEdgePredicate<?> shutterify(AbstractEdgePredicate<?> predicate, @Nullable Cover thisCover,
+                                                        @Nullable Cover neighbourCover) {
         if (predicate instanceof IShutteredEdgePredicate shutteredEdgePredicate) {
             if (thisCover instanceof CoverShutter shutter) {
                 shutteredEdgePredicate.setShutteredSource(shutter.isWorkingEnabled());
@@ -480,7 +489,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     protected abstract NodeDataType readNodeData(NBTTagCompound tagCompound);
 
     // CHManyToManyShortestPaths is a very good algorithm because our graph will be extremely sparse.
-    protected static final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>>
+    protected static final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>,
+            NDT extends INodeData<NDT>>
                                                        extends CHManyToManyShortestPaths<NodeG<PT, NDT>, NetEdge> {
 
         public ShortestPathsAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> graph) {
@@ -512,6 +522,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     /**
      * Special path lookup for single-path graphs.
      * Allows us to skip calculating the ShortestPathsAlgorithm every time the graph updates.
+     * 
      * @param source Source node for the path.
      * @return A list containing one or fewer paths.
      */

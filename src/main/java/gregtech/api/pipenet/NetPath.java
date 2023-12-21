@@ -1,14 +1,12 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
-
 import gregtech.api.util.FacingPos;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.GraphPath;
 
 import java.util.Iterator;
@@ -16,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>> {
+public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>> {
 
     private final List<NodeG<PipeType, NodeDataType>> nodeList;
     private final List<NetEdge> edgeList;
@@ -31,6 +30,7 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     /**
      * Generates a loop NetPath for a node
+     * 
      * @param node the node to
      */
     public NetPath(NodeG<PipeType, NodeDataType> node) {
@@ -45,8 +45,9 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     /**
      * Generates a NetPath from an ordered list of nodes, edges, and a weight.
      * Used exclusively for single path generation.
-     * @param nodes List of nodes.
-     * @param edges List of edges.
+     * 
+     * @param nodes  List of nodes.
+     * @param edges  List of edges.
      * @param weight Sum weight of the path.
      */
     public NetPath(List<NodeG<PipeType, NodeDataType>> nodes, List<NetEdge> edges, double weight) {
@@ -59,6 +60,7 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     /**
      * Generates a NetPath from a GraphPath
+     * 
      * @param path the GraphPath
      */
     public NetPath(GraphPath<NodeG<PipeType, NodeDataType>, NetEdge> path) {
@@ -66,7 +68,8 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         this.targetNode = path.getEndVertex();
         this.nodeList = path.getVertexList();
         // convert weight to the true value of the involved nodes
-        this.weight = (path.getWeight() + sourceNode.getData().getWeightFactor() + targetNode.getData().getWeightFactor()) / 2;
+        this.weight = (path.getWeight() + sourceNode.getData().getWeightFactor() +
+                targetNode.getData().getWeightFactor()) / 2;
         this.edgeList = path.getEdgeList();
     }
 
@@ -105,7 +108,8 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     public NodeDataType getMinData() {
         // generate min data on-demand and cache it, rather than generating for every path always
         if (this.data == null) {
-            this.data = sourceNode.getData().getMinData(this.nodeList.stream().map(NodeG::getData).collect(Collectors.toSet()));
+            this.data = sourceNode.getData()
+                    .getMinData(this.nodeList.stream().map(NodeG::getData).collect(Collectors.toSet()));
         }
         return data;
     }
@@ -130,6 +134,7 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         public TileEntity getTargetTE() {
             return path.getTargetTEs().get(facing);
         }
+
         public List<NodeG<PT, NDT>> getNodeList() {
             return path.getNodeList();
         }

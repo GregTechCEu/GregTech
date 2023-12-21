@@ -8,16 +8,12 @@ import gregtech.api.pipenet.NetGroup;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeG;
 import gregtech.api.recipes.Recipe;
-import gregtech.common.pipelike.laser.LaserPipeProperties;
-import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
 import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +29,8 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
 
     private final WorldOpticalPipeNet net;
 
-    public OpticalNetHandler(WorldOpticalPipeNet net, @NotNull TileEntityOpticalPipe pipe, @Nullable EnumFacing facing) {
+    public OpticalNetHandler(WorldOpticalPipeNet net, @NotNull TileEntityOpticalPipe pipe,
+                             @Nullable EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
@@ -96,7 +93,8 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
         if (connecteds.size() != 1) return false;
         EnumFacing facing = connecteds.keySet().iterator().next();
 
-        IDataAccessHatch access = connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, facing.getOpposite());
+        IDataAccessHatch access = connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS,
+                facing.getOpposite());
         if (!(access instanceof IOpticalDataAccessHatch hatch) || seen.contains(hatch)) return false;
 
         if (hatch.isTransmitter()) {
@@ -133,7 +131,8 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
         if (connecteds.size() != 1) return null;
         EnumFacing facing = connecteds.keySet().iterator().next();
 
-        IOpticalComputationProvider hatch = connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER, facing.getOpposite());;
+        IOpticalComputationProvider hatch = connecteds.get(facing)
+                .getCapability(GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER, facing.getOpposite());;
         if (hatch == null || seen.contains(hatch)) return null;
         return hatch;
     }
