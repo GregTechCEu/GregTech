@@ -1,11 +1,13 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IDualHandler;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
+import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
@@ -13,7 +15,6 @@ import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,24 +41,33 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 public class MetaTileEntityQuantumStorageController extends MetaTileEntity implements IQuantumController {
 
     private static final int MAX_DISTANCE_RADIUS = 16;
 
-    // somewhat lazily initialized, make sure to call checkStoragePos() before trying to access anything in this
+    private IEnergyContainer energyContainer;
+    /** Somewhat lazily initialized, make sure to call {@code getStorage()} before trying to access anything in this */
     private Map<BlockPos, WeakReference<IQuantumStorage<?>>> storageInstances = new HashMap<>();
 
-    // the "definitive" set of positions of storage instances
+    /** The "definitive" set of positions of storage instances */
     private Set<BlockPos> storagePositions = new HashSet<>();
-
+    private long energyConsumption = 0;
     private final QuantumControllerHandler handler = new QuantumControllerHandler();
 
     private boolean isDead = false;
 
     public MetaTileEntityQuantumStorageController(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+        reinitializeEnergyContainer();
     }
 
     @Override
@@ -66,8 +76,21 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
+    public void update() {
+        if (isPowered()) {
+            energyContainer.removeEnergy(energyConsumption);
+        }
+        super.update();
+    }
+
+    public boolean isPowered() {
+        return energyContainer.getEnergyStored() >= energyConsumption;
+    }
+
+    @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         for (EnumFacing facing : EnumFacing.VALUES) {
+            //todo add inactive texture for unpowered state
             if (facing == getFrontFacing()) {
                 Textures.QUANTUM_CONTROLLER_FRONT.renderSided(facing, renderState, translation, pipeline);
                 Textures.QUANTUM_CHEST_OVERLAY.renderSided(facing, renderState, translation, pipeline);
@@ -87,11 +110,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         return false;
     }
 
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
+    @SuppressWarnings("SameParameterValue")
     private IQuantumStorage<?> getStorage(BlockPos pos, boolean rebuild) {
         if (getWorld().isRemote) return null;
         if (storageInstances.containsKey(pos)) {
@@ -154,6 +173,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         storageInstances = new HashMap<>();
         storagePositions = new HashSet<>();
+        energyConsumption = 0;
 
         Queue<BlockPos> searchQueue = new LinkedList<>();
         Set<BlockPos> checked = new HashSet<>();
@@ -166,6 +186,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         // while there are blocks to search
         while (!searchQueue.isEmpty()) {
             BlockPos pos = searchQueue.remove();
+
+            if (checked.contains(pos)) continue;
             checked.add(pos);
 
             if (!isInRange(pos) || !getWorld().isBlockLoaded(pos, false)) continue;
@@ -184,14 +206,20 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             oldInstances.remove(pos);
             oldPositions.remove(pos);
 
+            energyConsumption += switch (storage.getType()) {
+                case ITEM, FLUID -> 8L;
+                case PROXY -> 2L;
+                case EXTENDER -> 1L;
+                default -> 0L;
+            };
+
             // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos offsetPos = pos.offset(facing);
-                if (!checked.contains(offsetPos) && !getPos().equals(offsetPos)) {
+                if (checked.contains(offsetPos) || getPos().equals(offsetPos)) continue;
 
-                    // add a new pos to search
-                    searchQueue.add(offsetPos);
-                }
+                // add a new pos to search
+                searchQueue.add(offsetPos);
             }
         }
 
@@ -216,6 +244,16 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage != null) storage.setDisconnected();
         }
         handler.rebuildCache();
+        markDirty();
+    }
+
+    private void reinitializeEnergyContainer() {
+        long stored = energyContainer == null ? 0L : energyContainer.getEnergyStored();
+
+        energyContainer = EnergyContainerHandler.receiverContainer(this, this.energyConsumption * 16L,
+                Integer.MAX_VALUE, Integer.MAX_VALUE);
+
+        if (stored > 0) energyContainer.addEnergy(stored);
     }
 
     @Override
@@ -226,6 +264,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             list.appendTag(new NBTTagLong(pos.toLong()));
         }
         tagCompound.setTag("StorageInstances", list);
+        tagCompound.setLong("EnergyConsumption", energyConsumption);
         return tagCompound;
     }
 
@@ -236,16 +275,23 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         for (int i = 0; i < list.tagCount(); i++) {
             storagePositions.add(BlockPos.fromLong(((NBTTagLong) list.get(i)).getLong()));
         }
+        energyConsumption = data.getLong("EnergyConsumption");
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && handler.hasItemHandlers()) {
-            return (T) handler;
-        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && handler.hasFluidTanks()) {
-            return (T) handler;
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
+        if (isPowered()) {
+            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && handler.hasItemHandlers()) {
+                return (T) handler;
+            } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && handler.hasFluidTanks()) {
+                return (T) handler;
+            }
         }
+
+        // do not allow the controller to accept energy from other blocks
+        if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER && side != null) return null;
+
         return super.getCapability(capability, side);
     }
 
@@ -258,6 +304,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     @Override
     public IDualHandler getHandler() {
         return this.handler;
+    }
+
+    @Override
+    public IEnergyContainer getEnergyContainer() {
+        return this.energyContainer;
     }
 
     private class QuantumControllerHandler implements IDualHandler {
@@ -302,7 +353,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         // IFluidHandler
 
-        private FluidTankList getFluidTanks() {
+        protected FluidTankList getFluidTanks() {
             if (fluidTanks == null) {
                 rebuildCache();
             }
@@ -333,7 +384,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         // IItemHandler
 
-        private ItemHandlerList getItemHandlers() {
+        protected ItemHandlerList getItemHandlers() {
             if (itemHandlers == null) {
                 rebuildCache();
             }
@@ -342,7 +393,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         @Override
         public int getSlots() {
-            return itemHandlers.getSlots();
+            return getItemHandlers().getSlots();
         }
 
         @NotNull
