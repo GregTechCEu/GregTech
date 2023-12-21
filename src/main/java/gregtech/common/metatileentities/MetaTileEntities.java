@@ -124,6 +124,7 @@ import gregtech.common.metatileentities.storage.MetaTileEntityCreativeEnergy;
 import gregtech.common.metatileentities.storage.MetaTileEntityCreativeTank;
 import gregtech.common.metatileentities.storage.MetaTileEntityDrum;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumEnergyAcceptor;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumExtender;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumProxy;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumStorageController;
@@ -226,6 +227,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV + 1]; // LV-UV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
     public static MetaTileEntityQuantumStorageController QUANTUM_STORAGE_CONTROLLER;
+    public static MetaTileEntityQuantumEnergyAcceptor QUANTUM_ENERGY_ACCEPTOR;
     public static MetaTileEntityQuantumProxy QUANTUM_STORAGE_PROXY;
     public static MetaTileEntityQuantumExtender QUANTUM_STORAGE_EXTENDER;
     public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[11];
@@ -990,6 +992,8 @@ public class MetaTileEntities {
                 new MetaTileEntityQuantumProxy(gregtechId("quantum_storage_proxy")));
         QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1755,
                 new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
+        QUANTUM_ENERGY_ACCEPTOR = registerMetaTileEntity(1756,
+                new MetaTileEntityQuantumEnergyAcceptor(gregtechId("quantum_energy_acceptor")));
 
         QUANTUM_CHEST[10] = new MetaTileEntityQuantumChest(
                 gregtechId("super_chest." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000L);
