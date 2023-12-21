@@ -90,7 +90,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         for (EnumFacing facing : EnumFacing.VALUES) {
-            //todo add inactive texture for unpowered state
+            // todo add inactive texture for unpowered state
             if (facing == getFrontFacing()) {
                 Textures.QUANTUM_CONTROLLER_FRONT.renderSided(facing, renderState, translation, pipeline);
                 Textures.QUANTUM_CHEST_OVERLAY.renderSided(facing, renderState, translation, pipeline);
