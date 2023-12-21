@@ -424,6 +424,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     private static class QuantumControllerEnergyContainer extends EnergyContainerHandler {
 
         private long maxCapacity = 0;
+
         public QuantumControllerEnergyContainer(MetaTileEntity tileEntity) {
             super(tileEntity, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
         }
