@@ -34,7 +34,7 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
     }
 
     @Override
-    protected boolean isDirected() {
+    public boolean isDirected() {
         return true;
     }
 

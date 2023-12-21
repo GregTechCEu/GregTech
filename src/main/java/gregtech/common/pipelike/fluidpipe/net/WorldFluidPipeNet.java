@@ -29,7 +29,7 @@ public class WorldFluidPipeNet extends WorldPipeNetG<FluidPipeProperties, FluidP
     }
 
     @Override
-    protected boolean isDirected() {
+    public boolean isDirected() {
         return true;
     }
 

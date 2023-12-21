@@ -61,7 +61,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
      * 
      * @return True if the graph should be directed.
      */
-    protected boolean isDirected() {
+    public boolean isDirected() {
         return false;
     }
 
@@ -288,6 +288,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         this.markDirty();
     }
 
+    @Nullable
     public NodeG<PipeType, NodeDataType> getNode(BlockPos pos) {
         return this.pipeMap.get(pos);
     }
@@ -426,6 +427,9 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
+        if (!nbt.hasKey("NetEdges")) {
+            return;
+        }
         NBTTagList allPipeNodes = nbt.getTagList("PipeNodes", Constants.NBT.TAG_COMPOUND);
         Map<Long, NodeG<PipeType, NodeDataType>> longPosMap = new Long2ObjectOpenHashMap<>();
         for (int i = 0; i < allPipeNodes.tagCount(); i++) {

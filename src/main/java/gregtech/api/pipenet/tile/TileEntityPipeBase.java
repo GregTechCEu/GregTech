@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NodeG;
+import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
@@ -394,6 +395,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             // noinspection ConstantConditions
             compound.setString("PipeBlock", pipeBlock.getRegistryName().toString());
         }
+        compound.setInteger("PipeNetVersion", 2);
         compound.setInteger("PipeType", pipeType.ordinal());
         compound.setInteger("Connections", getNode().getActiveConnections());
         compound.setInteger("BlockedConnections", getNode().getBlockedConnections());
@@ -420,8 +422,37 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         this.pipeType = getPipeTypeClass().getEnumConstants()[compound.getInteger("PipeType")];
 
-        this.getNode().setActiveConnections(compound.getInteger("Connections"));
+        if (compound.hasKey("Connections")) {
+            this.getNode().setActiveConnections(compound.getInteger("Connections"));
+        } else if (compound.hasKey("BlockedConnectionsMap")) {
+            int connections = 0;
+            NBTTagCompound blockedConnectionsTag = compound.getCompoundTag("BlockedConnectionsMap");
+            for (String attachmentTypeKey : blockedConnectionsTag.getKeySet()) {
+                int blockedConnections = blockedConnectionsTag.getInteger(attachmentTypeKey);
+                connections |= blockedConnections;
+            }
+            this.getNode().setActiveConnections(connections);
+        }
         this.getNode().setBlockedConnections(compound.getInteger("BlockedConnections"));
+
+        if (!compound.hasKey("PipeNetVersion")) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                WorldPipeNetG<NodeDataType, PipeType> net = this.getPipeBlock().getWorldPipeNet(this.getPipeWorld());
+                NodeG<PipeType, NodeDataType> nodeOffset = net.getNode(this.getPipePos().offset(facing));
+                if (nodeOffset == null) continue;
+                if (net.isDirected()) {
+                    // offset node might've been read before us, so we have to cover for it.
+                    if (nodeOffset.isConnected(facing.getOpposite())) {
+                        net.addEdge(nodeOffset, this.getNode(), null);
+                        net.predicateEdge(nodeOffset, this.getNode(), facing.getOpposite());
+                    }
+                }
+                if (this.isConnected(facing)) {
+                    net.addEdge(this.getNode(), nodeOffset, null);
+                    net.predicateEdge(this.getNode(), nodeOffset, facing);
+                }
+            }
+        }
 
         if (compound.hasKey("InsulationColor")) {
             this.paintingColor = compound.getInteger("InsulationColor");
