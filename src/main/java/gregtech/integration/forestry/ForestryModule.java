@@ -363,6 +363,8 @@ public class ForestryModule extends IntegrationSubmodule {
             registerAlvearyMutator(method, Materials.Uranium235, 4.0f);
             registerAlvearyMutator(method, Materials.Plutonium241, 6.0f);
             registerAlvearyMutator(method, Materials.Plutonium239, 8.0f);
+            registerAlvearyMutator(method, Materials.NaquadahEnriched, 10.0f);
+            registerAlvearyMutator(method, Materials.Naquadria, 15.0f);
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
             IntegrationModule.logger.error("Could not register GT Alveary mutators!");
         }
@@ -371,10 +373,6 @@ public class ForestryModule extends IntegrationSubmodule {
     private static void registerAlvearyMutator(Method method, Material material, float chance) {
         try {
             ItemStack stack = OreDictUnifier.get(OrePrefix.dust, material);
-            if (stack != ItemStack.EMPTY) {
-                method.invoke(null, stack, chance);
-            }
-            stack = OreDictUnifier.get(OrePrefix.ingot, material);
             if (stack != ItemStack.EMPTY) {
                 method.invoke(null, stack, chance);
             }
