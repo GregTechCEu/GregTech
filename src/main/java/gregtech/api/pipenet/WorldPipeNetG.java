@@ -547,8 +547,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
             sumWeight += node.getData().getWeightFactor();
         }
         if (!valid) return paths;
-        if (paths.size() == 0) paths.add(new NetPath<>(source));
-        else paths.add(new NetPath<>(nodes, edges, sumWeight));
+        paths.add(new NetPath<>(nodes, edges, sumWeight));
         return paths;
     }
 }
