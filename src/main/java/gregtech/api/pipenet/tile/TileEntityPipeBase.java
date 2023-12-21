@@ -535,6 +535,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void markAsDirty() {
         markDirty();
+        // this most notably gets called when the covers of a pipe get updated, aka the edge predicates need syncing.
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            if (!isConnected(facing)) continue;
+            this.getPipeBlock().getWorldPipeNet(this.getPipeWorld()).predicateEdge(this.getPipePos(), facing);
+        }
     }
 
     @Override

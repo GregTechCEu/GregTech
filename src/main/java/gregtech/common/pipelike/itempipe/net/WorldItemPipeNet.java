@@ -2,23 +2,20 @@ package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.AbstractEdgePredicate;
-import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 
+import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverItemFilter;
-import gregtech.common.covers.CoverShutter;
 import gregtech.common.covers.ItemFilterMode;
+import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
-import java.util.function.Predicate;
 
 public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipeType> {
 
@@ -50,7 +47,7 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
 
     @Override
     protected AbstractEdgePredicate<?> getPredicate(Cover thisCover, Cover neighbourCover) {
-        ItemPredicate predicate = new ItemPredicate();
+        ItemEdgePredicate predicate = new ItemEdgePredicate();
         if (thisCover instanceof CoverItemFilter filter &&
                 filter.getFilterMode() != ItemFilterMode.FILTER_INSERT) {
             predicate.setSourceFilter(filter.getItemFilter());
@@ -59,6 +56,21 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
                 filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
             predicate.setTargetFilter(filter.getItemFilter());
         }
+        if (thisCover instanceof CoverConveyor conveyor) {
+            if (conveyor.getManualImportExportMode() == ManualImportExportMode.DISABLED) {
+                predicate.setShutteredSource(true);
+            } else if (conveyor.getManualImportExportMode() == ManualImportExportMode.FILTERED) {
+                predicate.setSourceFilter(conveyor.getItemFilterContainer().getFilterWrapper());
+            }
+        }
+        if (neighbourCover instanceof CoverConveyor conveyor) {
+            if (conveyor.getManualImportExportMode() == ManualImportExportMode.DISABLED) {
+                predicate.setShutteredTarget(true);
+            } else if (conveyor.getManualImportExportMode() == ManualImportExportMode.FILTERED) {
+                predicate.setTargetFilter(conveyor.getItemFilterContainer().getFilterWrapper());
+            }
+        }
+        // TODO should robot arms apply rate limits to edge predicates?
         return shutterify(predicate, thisCover, neighbourCover);
     }
 

@@ -29,8 +29,6 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     private NodeDataType data = null;
 
-    private Iterator<EnumFacing> facingIterator;
-
     /**
      * Generates a loop NetPath for a node
      * @param node the node to
@@ -42,7 +40,6 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         this.nodeList.add(node);
         this.weight = node.getData().getWeightFactor();
         this.edgeList = new ObjectArrayList<>(0);
-        resetFacingIterator();
     }
 
     /**
@@ -58,7 +55,6 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         this.nodeList = nodes;
         this.weight = weight;
         this.edgeList = edges;
-        resetFacingIterator();
     }
 
     /**
@@ -72,7 +68,6 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         // convert weight to the true value of the involved nodes
         this.weight = (path.getWeight() + sourceNode.getData().getWeightFactor() + targetNode.getData().getWeightFactor()) / 2;
         this.edgeList = path.getEdgeList();
-        resetFacingIterator();
     }
 
     public List<NodeG<PipeType, NodeDataType>> getNodeList() {
@@ -87,20 +82,16 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         return targetNode;
     }
 
+    public Iterator<EnumFacing> getFacingIterator() {
+        return this.getTargetTEs().keySet().iterator();
+    }
+
+    public FacedNetPath<PipeType, NodeDataType> firstFacing() {
+        return this.withFacing(this.getFacingIterator().next());
+    }
+
     public FacedNetPath<PipeType, NodeDataType> withFacing(EnumFacing facing) {
         return new FacedNetPath<>(this, facing);
-    }
-
-    public void resetFacingIterator() {
-        this.facingIterator = this.getTargetTEs().keySet().iterator();
-    }
-
-    public FacedNetPath<PipeType, NodeDataType> nextFacing() {
-        return new FacedNetPath<>(this, this.facingIterator.next());
-    }
-
-    public boolean hasNextFacing() {
-        return this.facingIterator.hasNext();
     }
 
     public Map<EnumFacing, TileEntity> getTargetTEs() {

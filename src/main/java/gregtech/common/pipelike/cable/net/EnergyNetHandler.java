@@ -18,6 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import java.util.Iterator;
+
 public class EnergyNetHandler implements IEnergyContainer {
 
     private final WorldEnergyNet net;
@@ -65,14 +67,14 @@ public class EnergyNetHandler implements IEnergyContainer {
         long amperesUsed = 0L;
         mainloop:
         for (NetPath<Insulation, WireProperties> routePath : net.getPaths(cable)) {
-            routePath.resetFacingIterator();
+            Iterator<EnumFacing> iterator = routePath.getFacingIterator();
             // weight = loss
             if (routePath.getWeight() >= voltage) {
                 // Will lose all the energy with this path, so don't use it
                 continue;
             }
-            while (routePath.hasNextFacing()) {
-                NetPath.FacedNetPath<Insulation, WireProperties> path = routePath.nextFacing();
+            while (iterator.hasNext()) {
+                NetPath.FacedNetPath<Insulation, WireProperties> path = routePath.withFacing(iterator.next());
 
                 EnumFacing facing = path.facing.getOpposite();
 

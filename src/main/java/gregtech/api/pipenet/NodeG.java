@@ -35,7 +35,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     private int activeConnections;
     /**
      * Specifies bitmask of blocked connections.
-     * Blocked connections allow flow in, but not flow out.
+     * Blocked connections allow flow out, but not flow in.
      * Only allowed on directed graphs.
      */
     private int blockedConnections;
@@ -108,7 +108,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
 
     public boolean hasConnecteds() {
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if (!isOutputAble(facing)) continue;
+            if (!isConnected(facing)) continue;
             if (getHeldMTE().getNonPipeNeighbour(facing) != null) return true;
         }
         return false;
@@ -117,7 +117,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
     public Map<EnumFacing, TileEntity> getConnecteds() {
         Map<EnumFacing, TileEntity> map = new Object2ObjectOpenHashMap<>(6);
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if (!isOutputAble(facing)) continue;
+            if (!isConnected(facing)) continue;
             if (getHeldMTE().getNonPipeNeighbour(facing) != null)
                 map.put(facing, getHeldMTE().getNonPipeNeighbour(facing));
         }
@@ -174,10 +174,6 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, No
 
     public int getBlockedConnections() {
         return blockedConnections;
-    }
-
-    boolean isOutputAble(EnumFacing facing) {
-        return (activeConnections & ~(blockedConnections) & 1 << facing.getIndex()) != 0;
     }
 
     public BlockPos getNodePos() {

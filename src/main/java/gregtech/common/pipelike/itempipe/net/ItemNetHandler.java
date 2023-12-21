@@ -110,7 +110,7 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
         for (NetPath<ItemPipeType, ItemPipeProperties> inv : net.getPaths(pipe)) {
-            stack = insert(inv.nextFacing(), stack, simulate);
+            stack = insert(inv.firstFacing(), stack, simulate);
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
         }
@@ -122,7 +122,7 @@ public class ItemNetHandler implements IItemHandler {
         if (routePaths.isEmpty())
             return stack;
         if (routePaths.size() == 1 && routePaths.get(0).getTargetTEs().size() == 1) {
-            return insert(routePaths.get(0).nextFacing(), stack, simulate);
+            return insert(routePaths.get(0).firstFacing(), stack, simulate);
         }
         List<NetPath<ItemPipeType, ItemPipeProperties>> routePathsCopy = new ArrayList<>(routePaths);
 
@@ -155,9 +155,10 @@ public class ItemNetHandler implements IItemHandler {
         mainloop:
         while (routePathIterator.hasNext()) {
             NetPath<ItemPipeType, ItemPipeProperties> routePath = routePathIterator.next();
-            routePath.resetFacingIterator();
-            while (routePath.hasNextFacing()) {
-                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> facedNetPath = routePath.nextFacing();
+            Iterator<EnumFacing> iterator = routePath.getFacingIterator();
+            while (iterator.hasNext()) {
+                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> facedNetPath =
+                        routePath.withFacing(iterator.next());
                 int amount = c;
                 if (m > 0) {
                     amount++;
@@ -193,9 +194,9 @@ public class ItemNetHandler implements IItemHandler {
 
         // find inventories that are not full and get the amount that was inserted in total
         for (NetPath<ItemPipeType, ItemPipeProperties> inv : copy) {
-            inv.resetFacingIterator();
-            while (inv.hasNextFacing()) {
-                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> faceInv = inv.nextFacing();
+            Iterator<EnumFacing> iterator = inv.getFacingIterator();
+            while (iterator.hasNext()) {
+                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> faceInv = inv.withFacing(iterator.next());
                 simStack = stack.copy();
                 int ins = stack.getCount() - insert(faceInv, simStack, true, true).getCount();
                 if (ins <= 0)
@@ -314,7 +315,7 @@ public class ItemNetHandler implements IItemHandler {
         }
         Cover pipeCover = routePath.getTargetNode().getHeldMTE().getCoverableImplementation()
                 .getCoverAtSide(routePath.facing);
-        Cover tileCover = getCoverOnNeighbour(routePath.getTargetTE().getPos(), routePath.facing.getOpposite());
+        Cover tileCover = getCoverOnNeighbour(routePath.getTargetNode().getNodePos(), routePath.facing.getOpposite());
 
         if (pipeCover != null) {
             testHandler.setStackInSlot(0, stack.copy());
@@ -327,21 +328,20 @@ public class ItemNetHandler implements IItemHandler {
             }
             testHandler.setStackInSlot(0, ItemStack.EMPTY);
         }
-        if (routePath.getTargetTE() instanceof IItemHandler neighbourHandler) {
-            if (pipeCover instanceof CoverRoboticArm &&
-                    ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
-                return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed,
-                        ignoreLimit);
-            }
-            if (tileCover instanceof CoverRoboticArm &&
-                    ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT) {
-                return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) tileCover, stack, simulate, allowed,
-                        ignoreLimit);
-            }
-
-            return insert(neighbourHandler, stack, simulate, allowed, ignoreLimit);
+        IItemHandler neighbourHandler =
+                routePath.getTargetTE().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, routePath.facing);
+        if (pipeCover instanceof CoverRoboticArm &&
+                ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
+            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed,
+                    ignoreLimit);
         }
-        return stack;
+        if (tileCover instanceof CoverRoboticArm &&
+                ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT) {
+            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) tileCover, stack, simulate, allowed,
+                    ignoreLimit);
+        }
+
+        return insert(neighbourHandler, stack, simulate, allowed, ignoreLimit);
     }
 
     private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed,

@@ -217,13 +217,13 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
         if (connect) {
             if (!node.isBlocked(side)) {
-                addEdge(node, nodeOffset, null);
-                this.predicateEdge(node, nodeOffset, side);
+                addEdge(nodeOffset, node, null);
+                this.predicateEdge(nodeOffset, node, side.getOpposite());
                 if (!this.isDirected()) return;
             }
             if (!nodeOffset.isBlocked(side.getOpposite())) {
-                addEdge(nodeOffset, node, null);
-                this.predicateEdge(nodeOffset, node, side.getOpposite());
+                addEdge(node, nodeOffset, null);
+                this.predicateEdge(node, nodeOffset, side);
             }
         } else {
             removeUndirectedEdge(node, nodeOffset);
@@ -241,10 +241,10 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         if (nodeOffset == null) return;
 
         if (!blocked) {
-            addEdge(node, nodeOffset, null);
-            this.predicateEdge(node, nodeOffset, side);
+            addEdge(nodeOffset, node, null);
+            this.predicateEdge(nodeOffset, node, side);
         } else {
-            removeEdge(node, nodeOffset);
+            removeEdge(nodeOffset, node);
         }
     }
 
@@ -350,16 +350,16 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     }
 
     protected AbstractEdgePredicate<?> getPredicate(Cover thisCover, Cover neighbourCover) {
-        return shutterify(new BasicPredicate(), thisCover, neighbourCover);
+        return shutterify(new BasicEdgePredicate(), thisCover, neighbourCover);
     }
 
     protected final AbstractEdgePredicate<?> shutterify(AbstractEdgePredicate<?> predicate, @Nullable Cover thisCover, @Nullable Cover neighbourCover) {
-        if (predicate instanceof BasicPredicate basicPredicate) {
+        if (predicate instanceof IShutteredEdgePredicate shutteredEdgePredicate) {
             if (thisCover instanceof CoverShutter shutter) {
-                basicPredicate.setShutteredSource(shutter.isWorkingEnabled());
+                shutteredEdgePredicate.setShutteredSource(shutter.isWorkingEnabled());
             }
             if (neighbourCover instanceof CoverShutter shutter) {
-                basicPredicate.setShutteredTarget(shutter.isWorkingEnabled());
+                shutteredEdgePredicate.setShutteredTarget(shutter.isWorkingEnabled());
             }
         }
         return predicate;
@@ -443,7 +443,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         NBTTagList allPipeNodes = new NBTTagList();
         Set<NetGroup<PipeType, NodeDataType>> groups = new ObjectOpenHashSet<>();
         for (NodeG<PipeType, NodeDataType> node : pipeGraph.vertexSet()) {
-            groups.add(node.getGroup());
+            if (node.getGroup() != null) groups.add(node.getGroup());
             NBTTagCompound nodeTag = node.serializeNBT();
             NBTTagCompound dataTag = new NBTTagCompound();
             writeNodeData(node.getData(), dataTag);
