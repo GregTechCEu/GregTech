@@ -55,6 +55,7 @@ public final class ToolItems {
     public static IGTTool BUZZSAW;
     public static IGTTool SCREWDRIVER_LV;
     public static IGTTool PLUNGER;
+    public static IGTTool SCISSORS;
 
     private ToolItems() {/**/}
 
@@ -319,6 +320,10 @@ public final class ToolItems {
                 .oreDict(ToolOreDict.toolPlunger)
                 .toolClasses(ToolClasses.PLUNGER)
                 .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 255, 1, 4F, 0F)));
+        SCISSORS = register(ItemGTTool.Builder.of(GTValues.MODID, "scissors")
+                .toolStats(b -> b.behaviors(EntityShearBehavior.INSTANCE))
+                .oreDict(ToolOreDict.toolScissors)
+                .toolClasses(ToolClasses.SHEARS, ToolClasses.SCISSORS));
     }
 
     public static IGTTool register(@NotNull ToolBuilder<?> builder) {

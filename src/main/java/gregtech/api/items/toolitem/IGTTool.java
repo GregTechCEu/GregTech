@@ -55,6 +55,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -389,7 +390,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // Item.class methods
     default float definition$getDestroySpeed(ItemStack stack, IBlockState state) {
-        // special case check (mostly for the sword)
+        // special case check (mostly for the sword and shears)
         float specialValue = getDestroySpeed(state, getToolClasses(stack));
         if (specialValue != -1) return specialValue;
 
@@ -404,6 +405,17 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         getToolStats().getBehaviors().forEach(behavior -> behavior.hitEntity(stack, target, attacker));
         damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
         return true;
+    }
+
+    default boolean definition$itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase entity,
+                                                        EnumHand hand) {
+        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+            if (behavior.onEntityInteract(stack, player, entity, hand)) {
+                damageItem(stack, player, getToolStats().getToolDamagePerAttack(stack));
+                return true;
+            }
+        }
+        return false;
     }
 
     default boolean definition$onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
@@ -465,6 +477,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
         }
         return true;
+    }
+
+    // called by HarvestDropsEvent
+    default void onHarvestDrops(ItemStack stack, EntityPlayer player, List<ItemStack> drops,
+                                BlockEvent.HarvestDropsEvent event) {
+        getToolStats().getBehaviors().forEach(behavior ->
+                behavior.convertBlockDrops(stack, player, drops, event));
     }
 
     default boolean definition$getIsRepairable(ItemStack toRepair, ItemStack repair) {

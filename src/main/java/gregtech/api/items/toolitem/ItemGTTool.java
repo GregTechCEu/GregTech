@@ -146,6 +146,12 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
+    public boolean itemInteractionForEntity(@NotNull ItemStack stack, @NotNull EntityPlayer player,
+                                            @NotNull EntityLivingBase target, @NotNull EnumHand hand) {
+        return definition$itemInteractionForEntity(stack, player, target, hand);
+    }
+
+    @Override
     public boolean onBlockStartBreak(@NotNull ItemStack itemstack, @NotNull BlockPos pos,
                                      @NotNull EntityPlayer player) {
         return definition$onBlockStartBreak(itemstack, pos, player);

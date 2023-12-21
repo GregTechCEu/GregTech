@@ -13,6 +13,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,6 +34,18 @@ public interface IToolBehavior {
      */
     default void hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
                            @NotNull EntityLivingBase attacker) {}
+
+    /**
+     * @param stack  The current ItemStack
+     * @param player The player using the item
+     * @param entity The entity interacted with (right-clicked)
+     * @param hand   The hand with the item
+     * @return true if the interaction was handled, false otherwise
+     */
+    default boolean onEntityInteract(@NotNull ItemStack stack, @NotNull EntityPlayer player,
+                                  @NotNull EntityLivingBase entity, @NotNull EnumHand hand) {
+        return false;
+    }
 
     /**
      * Called before a block is broken.
@@ -56,6 +69,18 @@ public interface IToolBehavior {
      */
     default void onBlockDestroyed(@NotNull ItemStack stack, @NotNull World world, @NotNull IBlockState state,
                                   @NotNull BlockPos pos, @NotNull EntityLivingBase entityLiving) {}
+
+    /**
+     * Called by {@link net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent} to modify the drops.
+     * Drop relocation will be handled automatically.
+     *
+     * @param stack  the tool
+     * @param player the player breaking the block
+     * @param drops  the drops of the block. Can be modified
+     * @param event  harvest drops event, which holds information about drop chance, fortune, silk touch, etc.
+     */
+    default void convertBlockDrops(@NotNull ItemStack stack, @NotNull EntityPlayer player,
+                                   @NotNull List<ItemStack> drops, @NotNull BlockEvent.HarvestDropsEvent event) {}
 
     /**
      * Called when an entity tries to play the 'swing' animation.

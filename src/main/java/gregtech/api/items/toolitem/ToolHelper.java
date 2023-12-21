@@ -106,7 +106,6 @@ public final class ToolHelper {
     public static final String AOE_LAYER_KEY = "AoELayer";
 
     // Others
-    public static final String HARVEST_ICE_KEY = "HarvestIce";
     public static final String TORCH_PLACING_KEY = "TorchPlacing";
     public static final String TORCH_PLACING_CACHE_SLOT_KEY = "TorchPlacing$Slot";
     public static final String TREE_FELLING_KEY = "TreeFelling";
@@ -552,7 +551,21 @@ public final class ToolHelper {
             }
         }
         if (toolClasses.contains(ToolClasses.CROWBAR)) {
-            return block instanceof BlockRailBase || material == net.minecraft.block.material.Material.CIRCUITS;
+            if (block instanceof BlockRailBase || material == net.minecraft.block.material.Material.CIRCUITS) {
+                return true;
+            }
+        }
+        if (toolClasses.contains(ToolClasses.SHEARS)) {
+            if (block instanceof IShearable || block == Blocks.WEB || block == Blocks.REDSTONE_WIRE ||
+                    block == Blocks.TRIPWIRE) {
+                return true;
+            }
+        }
+        if (toolClasses.contains(ToolClasses.SCISSORS)) {
+            return material == net.minecraft.block.material.Material.CLOTH ||
+                    material == net.minecraft.block.material.Material.CARPET ||
+                    material == net.minecraft.block.material.Material.WEB ||
+                    material == net.minecraft.block.material.Material.VINE;
         }
         return false;
     }
@@ -576,6 +589,14 @@ public final class ToolHelper {
                         material == net.minecraft.block.material.Material.GOURD) {
                     return 1.5F;
                 }
+            }
+        }
+        if (toolClasses.contains(ToolClasses.SHEARS)) {
+            Block block = state.getBlock();
+            if (block != Blocks.WEB && state.getMaterial() != net.minecraft.block.material.Material.LEAVES) {
+                return block == Blocks.WOOL ? 5.0F : -1;
+            } else {
+                return 15.0F;
             }
         }
         return -1;
