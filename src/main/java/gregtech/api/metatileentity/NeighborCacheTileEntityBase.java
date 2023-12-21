@@ -7,6 +7,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,21 +29,31 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
         }
     }
 
+    @MustBeInvokedByOverriders
     @Override
     public void setWorld(@NotNull World worldIn) {
         super.setWorld(worldIn);
         invalidateNeighbors();
     }
 
+    @MustBeInvokedByOverriders
     @Override
     public void setPos(@NotNull BlockPos posIn) {
         super.setPos(posIn);
         invalidateNeighbors();
     }
 
+    @MustBeInvokedByOverriders
     @Override
     public void invalidate() {
         super.invalidate();
+        invalidateNeighbors();
+    }
+
+    @MustBeInvokedByOverriders
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
         invalidateNeighbors();
     }
 

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.Map;
 
 public final class FluidStorage {
@@ -69,12 +70,14 @@ public final class FluidStorage {
             enqueueRegistration(FluidStorageKeys.LIQUID, new FluidBuilder());
         }
 
-        for (var entry : toRegister.entrySet()) {
-            Fluid fluid = entry.getValue().build(material.getModid(), material, entry.getKey());
-            if (!storeNoOverwrites(entry.getKey(), fluid)) {
-                GTLog.logger.error("{} already has an associated fluid for material {}", material);
-            }
-        }
+        toRegister.entrySet().stream()
+                .sorted(Comparator.comparingInt(e -> -e.getKey().getRegistrationPriority()))
+                .forEach(entry -> {
+                    Fluid fluid = entry.getValue().build(material.getModid(), material, entry.getKey());
+                    if (!storeNoOverwrites(entry.getKey(), fluid)) {
+                        GTLog.logger.error("{} already has an associated fluid for material {}", material);
+                    }
+                });
         toRegister = null;
         registered = true;
     }

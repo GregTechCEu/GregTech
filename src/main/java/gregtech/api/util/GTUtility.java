@@ -7,6 +7,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.fluids.GTFluid;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -57,15 +58,22 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.AbstractList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -912,5 +920,22 @@ public class GTUtility {
             return materialFluid.toTextComponentTranslation();
         }
         return new TextComponentTranslation(fluid.getUnlocalizedName());
+    }
+
+    public static @NotNull Pair<DoubleSupplier, DoubleSupplier> createPairedSupplier(int ticksPerCycle, int width,
+                                                                                     double splitPoint) {
+        AtomicDouble tracker = new AtomicDouble(0.0);
+        DoubleSupplier supplier1 = new ProgressWidget.TimedProgressSupplier(ticksPerCycle, width, false) {
+
+            @Override
+            public double getAsDouble() {
+                double val = super.getAsDouble();
+                tracker.set(val);
+                return val >= splitPoint ? 1.0 : (1.0 / splitPoint) * val;
+            }
+        };
+        DoubleSupplier supplier2 = () -> tracker.get() >= splitPoint ?
+                (1.0 / (1 - splitPoint)) * (tracker.get() - splitPoint) : 0;
+        return Pair.of(supplier1, supplier2);
     }
 }

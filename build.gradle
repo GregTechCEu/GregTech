@@ -1,4 +1,4 @@
-//version: 1701739812
+//version: 1702244235
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -79,6 +79,7 @@ propertyDefaultIfUnset("curseForgeRelations", "")
 propertyDefaultIfUnsetWithEnvVar("releaseType", "release", "RELEASE_TYPE")
 propertyDefaultIfUnset("generateDefaultChangelog", false)
 propertyDefaultIfUnset("customMavenPublishUrl", "")
+propertyDefaultIfUnset("mavenArtifactGroup", getDefaultArtifactGroup())
 propertyDefaultIfUnset("enableModernJavaSyntax", false)
 propertyDefaultIfUnset("enableSpotless", false)
 propertyDefaultIfUnset("enableJUnit", false)
@@ -984,8 +985,8 @@ if (customMavenPublishUrl) {
                 }
 
                 // providers is not available here, use System for getting env vars
-                groupId = System.getenv('ARTIFACT_GROUP_ID') ?: project.group
-                artifactId = System.getenv('ARTIFACT_ID') ?: project.name
+                groupId = System.getenv('ARTIFACT_GROUP_ID') ?: project.mavenArtifactGroup
+                artifactId = System.getenv('ARTIFACT_ID') ?: project.modArchivesBaseName
                 version = System.getenv('RELEASE_VERSION') ?: publishedVersion
             }
         }
@@ -1129,6 +1130,11 @@ tasks.register('faq') {
 
 
 // Helpers
+
+def getDefaultArtifactGroup() {
+    def lastIndex = project.modGroup.lastIndexOf('.')
+    return lastIndex < 0 ? project.modGroup : project.modGroup.substring(0, lastIndex)
+}
 
 def getFile(String relativePath) {
     return new File(projectDir, relativePath)

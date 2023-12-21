@@ -33,7 +33,7 @@ public final class FluidStorageKeys {
     public static final FluidStorageKey PLASMA = new FluidStorageKey(gregtechId("plasma"),
             MaterialIconType.plasma,
             s -> "plasma." + s, m -> "gregtech.fluid.plasma",
-            FluidState.PLASMA);
+            FluidState.PLASMA, -1);
 
     private FluidStorageKeys() {}
 }

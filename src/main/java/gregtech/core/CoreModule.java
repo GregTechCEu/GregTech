@@ -13,6 +13,9 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -25,6 +28,7 @@ import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
+import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -40,6 +44,7 @@ import gregtech.common.command.CommandShaders;
 import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
+import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -111,6 +116,8 @@ public class CoreModule implements IGregTechModule {
         // must be set here because of GroovyScript compat
         // trying to read this before the pre-init stage
         GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
+
+        OreGlob.setCompiler((expr, ignoreCase) -> new OreGlobParser(expr, ignoreCase).compile());
     }
 
     @NotNull
@@ -127,6 +134,11 @@ public class CoreModule implements IGregTechModule {
 
         GregTechAPI.soundManager = SoundManager.getInstance();
         GTSoundEvents.register();
+
+        /* MUI Initialization */
+        GTGuis.registerFactories();
+        GTGuiTextures.init();
+        GTGuiTheme.registerThemes();
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();

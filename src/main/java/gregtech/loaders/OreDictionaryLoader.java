@@ -25,12 +25,14 @@ public class OreDictionaryLoader {
 
     public static final String OREDICT_FUEL_COKE = "fuelCoke";
     public static final String OREDICT_BLOCK_FUEL_COKE = "blockFuelCoke";
+    public static final String OREDICT_BLOCK_COAL_COKE = "blockCoalCoke";
 
     public static void init() {
         GTLog.logger.info("Registering OreDict entries.");
 
         OreDictionary.registerOre(OREDICT_FUEL_COKE, OreDictUnifier.get(OrePrefix.gem, Materials.Coke));
         OreDictionary.registerOre(OREDICT_BLOCK_FUEL_COKE, OreDictUnifier.get(OrePrefix.block, Materials.Coke));
+        OreDictionary.registerOre(OREDICT_BLOCK_COAL_COKE, OreDictUnifier.get(OrePrefix.block, Materials.Coke));
         OreDictionary.registerOre("crystalCertusQuartz", OreDictUnifier.get(OrePrefix.gem, Materials.CertusQuartz));
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.CLAY), OrePrefix.block, Materials.Clay);

@@ -467,6 +467,7 @@ public class OrePrefix {
 
         block.modifyMaterialAmount(Materials.Glowstone, 4);
         block.modifyMaterialAmount(Materials.NetherQuartz, 4);
+        block.modifyMaterialAmount(Materials.CertusQuartz, 4);
         block.modifyMaterialAmount(Materials.Brick, 4);
         block.modifyMaterialAmount(Materials.Clay, 4);
         block.modifyMaterialAmount(Materials.Glass, 1);

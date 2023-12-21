@@ -28,9 +28,20 @@ import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
-import gregtech.integration.jei.basic.*;
+import gregtech.integration.jei.basic.GTFluidVeinCategory;
+import gregtech.integration.jei.basic.GTFluidVeinInfo;
+import gregtech.integration.jei.basic.GTOreCategory;
+import gregtech.integration.jei.basic.GTOreInfo;
+import gregtech.integration.jei.basic.MaterialTree;
+import gregtech.integration.jei.basic.MaterialTreeCategory;
+import gregtech.integration.jei.basic.OreByProduct;
+import gregtech.integration.jei.basic.OreByProductCategory;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
-import gregtech.integration.jei.recipe.*;
+import gregtech.integration.jei.recipe.FacadeRegistryPlugin;
+import gregtech.integration.jei.recipe.GTRecipeWrapper;
+import gregtech.integration.jei.recipe.IntCircuitCategory;
+import gregtech.integration.jei.recipe.IntCircuitRecipeWrapper;
+import gregtech.integration.jei.recipe.RecipeMapCategory;
 import gregtech.integration.jei.utils.MachineSubtypeHandler;
 import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
 import gregtech.integration.jei.utils.ModularUIGuiHandler;
@@ -46,7 +57,13 @@ import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import mezz.jei.Internal;
-import mezz.jei.api.*;
+import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.IJeiHelpers;
+import mezz.jei.api.IJeiRuntime;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.IModRegistry;
+import mezz.jei.api.ISubtypeRegistry;
+import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
@@ -105,7 +122,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if (!recipeMap.isHidden) {
+            if (recipeMap.getRecipeMapUI().isJEIVisible()) {
                 for (GTRecipeCategory category : recipeMap.getRecipesByCategory().keySet()) {
                     registry.addRecipeCategories(
                             new RecipeMapCategory(recipeMap, category, registry.getJeiHelpers().getGuiHelper()));
@@ -146,7 +163,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                 VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if (!recipeMap.isHidden) {
+            if (recipeMap.getRecipeMapUI().isJEIVisible()) {
                 for (Map.Entry<GTRecipeCategory, List<Recipe>> entry : recipeMap.getRecipesByCategory().entrySet()) {
                     Stream<Recipe> recipeStream = entry.getValue().stream()
                             .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
