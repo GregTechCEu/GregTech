@@ -494,18 +494,14 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         if (discriminator == UPDATE_INSULATION_COLOR) {
             this.paintingColor = buf.readInt();
-            scheduleRenderUpdate();
         } else if (discriminator == UPDATE_CONNECTIONS) {
             this.getNode().setActiveConnections(buf.readVarInt());
-            scheduleRenderUpdate();
         } else if (discriminator == SYNC_COVER_IMPLEMENTATION) {
             this.coverableImplementation.readCustomData(buf.readVarInt(), buf);
         } else if (discriminator == UPDATE_PIPE_TYPE) {
             readPipeProperties(buf);
-            scheduleRenderUpdate();
         } else if (discriminator == UPDATE_BLOCKED_CONNECTIONS) {
             this.getNode().setBlockedConnections(buf.readVarInt());
-            scheduleRenderUpdate();
         } else if (discriminator == UPDATE_FRAME_MATERIAL) {
             int registryId = buf.readVarInt();
             int frameMaterialId = buf.readVarInt();
@@ -514,8 +510,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             } else {
                 this.frameMaterial = null;
             }
-            scheduleRenderUpdate();
-        }
+        } else return;
+        scheduleRenderUpdate();
     }
 
     @Override
@@ -536,6 +532,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void markAsDirty() {
         markDirty();
         // this most notably gets called when the covers of a pipe get updated, aka the edge predicates need syncing.
+        if (getWorld().isRemote) return;
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (!isConnected(facing)) continue;
             this.getPipeBlock().getWorldPipeNet(this.getPipeWorld()).predicateEdge(this.getPipePos(), facing);

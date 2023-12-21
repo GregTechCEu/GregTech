@@ -120,7 +120,7 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
         this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
-        this.filterWrapper.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
+        this.filterWrapper.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"), true);
         if (filterWrapper.getFluidFilter() != null) {
             this.filterWrapper.getFluidFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
         }

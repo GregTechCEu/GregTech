@@ -31,7 +31,7 @@ public class ItemFilterWrapper {
     public void blacklistUI(int y, Consumer<Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getItemFilter() != null);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
-                this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
+                this::isBlacklistFilter, a -> this.setBlacklistFilter(a, false)).setPredicate(showBlacklistButton)
                         .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
     }
@@ -67,8 +67,9 @@ public class ItemFilterWrapper {
         dirtyNotifiable.markAsDirty();
     }
 
-    public void setBlacklistFilter(boolean blacklistFilter) {
+    public void setBlacklistFilter(boolean blacklistFilter, boolean nbtLoad) {
         isBlacklistFilter = blacklistFilter;
+        if (nbtLoad) return;
         onFilterInstanceChange();
         dirtyNotifiable.markAsDirty();
     }
