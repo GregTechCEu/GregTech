@@ -173,7 +173,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
 
     /**
      * @return origin position of the miner. Block boundary will be centered around this position, and mining pipes will
-     * be rendered under this position.
+     *         be rendered under this position.
      */
     @NotNull
     protected BlockPos getOrigin() {
@@ -420,7 +420,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
 
         this.miningArea = createMiningArea();
         // Shouldn't be a problem but whatever
-        //noinspection ConstantValue
+        // noinspection ConstantValue
         if (this.miningArea != null) {
             this.miningArea.read(data);
         }

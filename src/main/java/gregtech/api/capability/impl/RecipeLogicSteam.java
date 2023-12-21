@@ -8,6 +8,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -114,7 +115,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     public void tryDoVenting() {
         if (GTUtility.tryVenting(metaTileEntity.getWorld(), metaTileEntity.getPos(), getVentingSide(),
                 this.isHighPressure ? 12 : 6, true,
-                ConfigHolder.machines.machineSounds && !this.metaTileEntity.isMuffled()) ) {
+                ConfigHolder.machines.machineSounds && !this.metaTileEntity.isMuffled())) {
             setNeedsVenting(false);
         } else {
             setVentingStuck(true);

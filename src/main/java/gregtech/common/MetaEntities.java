@@ -26,7 +26,8 @@ public class MetaEntities {
                 GregTechAPI.instance, 64, 5, true);
         EntityRegistry.registerModEntity(GTUtility.gregtechId("gtboat"), GTBoatEntity.class, "GTBoat", 3,
                 GregTechAPI.instance, 64, 2, true);
-        EntityRegistry.registerModEntity(GTUtility.gregtechId("mining_pipe"), MiningPipeEntity.class, "MiningPipe", 4, GregTechAPI.instance, 0, 2, false);
+        EntityRegistry.registerModEntity(GTUtility.gregtechId("mining_pipe"), MiningPipeEntity.class, "MiningPipe", 4,
+                GregTechAPI.instance, 0, 2, false);
     }
 
     @SideOnly(Side.CLIENT)

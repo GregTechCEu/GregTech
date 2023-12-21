@@ -22,7 +22,8 @@ public interface MiningArea {
     /**
      * Get current block position for processing. If this method returns {@code true}, {@code mpos} argument should be
      * modified to the block position. Return value of {@code false} indicates there aren't any block left to process.
-     * <br/> Calling this method does not affect the state. Use {@link #nextBlock()} for advancing to next block.
+     * <br/>
+     * Calling this method does not affect the state. Use {@link #nextBlock()} for advancing to next block.
      *
      * @param mpos Mutable block position
      * @return {@code true} if {@code mpos} is set to current block position for processing, {@code false} otherwise
@@ -37,7 +38,7 @@ public interface MiningArea {
     void nextBlock();
 
     /**
-     * Reset the cursor to starting point (i.e.  re-start iteration from start)
+     * Reset the cursor to starting point (i.e. re-start iteration from start)
      */
     void reset();
 

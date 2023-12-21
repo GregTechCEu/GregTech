@@ -33,7 +33,8 @@ public class SimpleMiningArea implements MiningArea {
     /**
      * Index for current block position. This implementation of {@link MiningArea} operates by first mapping each block
      * in given area to non-negative long indices, then processing it by incrementing internal counter starting from 0.
-     * <br/> The area iterates through X plane first, then Z plane, before moving down one Y block.
+     * <br/>
+     * The area iterates through X plane first, then Z plane, before moving down one Y block.
      */
     private long currentBlock;
 

@@ -27,7 +27,8 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     // bool config for repeating the operation after finished
     private boolean repeat;
 
-    // flag for disabling ore replacement (if true, ores will be replaced with air instead of whatever block that was specified in the config)
+    // flag for disabling ore replacement (if true, ores will be replaced with air instead of whatever block that was
+    // specified in the config)
     private boolean replaceOreWithAir;
 
     public MultiblockMinerLogic(@NotNull MetaTileEntityLargeMiner largeMiner, int workFrequency,

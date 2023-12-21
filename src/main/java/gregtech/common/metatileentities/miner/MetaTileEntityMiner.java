@@ -61,7 +61,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityMiner extends TieredMetaTileEntity
-        implements Miner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity {
+                                 implements Miner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity {
 
     private final ItemStackHandler chargerInventory;
 
@@ -145,12 +145,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity
                         this.minerLogic::isPreviewEnabled, this.minerLogic::setPreviewEnabled))
                 .widget(new ClickButtonWidget(161, yStart + 18 + 2, 9, 9,
                         "", cd -> this.minerLogic.setCurrentDiameter(
-                        this.minerLogic.getCurrentDiameter() + (cd.isShiftClick ? 5 : 1)))
-                        .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS))
+                                this.minerLogic.getCurrentDiameter() + (cd.isShiftClick ? 5 : 1)))
+                                        .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS))
                 .widget(new ClickButtonWidget(161, yStart + 18 + 2 + 9, 9, 9,
                         "", cd -> this.minerLogic.setCurrentDiameter(
-                        this.minerLogic.getCurrentDiameter() - (cd.isShiftClick ? 5 : 1)))
-                        .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS))
+                                this.minerLogic.getCurrentDiameter() - (cd.isShiftClick ? 5 : 1)))
+                                        .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS))
                 .widget(new AdvancedTextWidget(159, yStart + 18 + 2 + (18 - 11) / 2, list -> {
                     int currentDiameter = this.minerLogic.getCurrentDiameter();
                     list.add(new TextComponentString(currentDiameter + "x" + currentDiameter));
@@ -174,17 +174,17 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity
 
         builder.widget(
                 new ProgressWidget(this.minerLogic::getWorkProgress, xStart - 4 - 20, sideWidgetY, 20, 20,
-                        GuiTextures.PROGRESS_BAR_MACERATE, ProgressWidget.MoveType.HORIZONTAL)
-        ).widget(
-                new ImageWidget(xStart - 4 - 20, sideWidgetY + 20, 18, 18,
-                        GuiTextures.INDICATOR_NO_ENERGY)
-                        .setIgnoreColor(true)
-                        .setPredicate(minerLogic::hasNotEnoughEnergy)
-        ).widget(
-                new ImageWidget(152, 63 + yOffset, 17, 17,
-                        GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
-                        .setIgnoreColor(true)
-        ).bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, yOffset);
+                        GuiTextures.PROGRESS_BAR_MACERATE, ProgressWidget.MoveType.HORIZONTAL))
+                .widget(
+                        new ImageWidget(xStart - 4 - 20, sideWidgetY + 20, 18, 18,
+                                GuiTextures.INDICATOR_NO_ENERGY)
+                                        .setIgnoreColor(true)
+                                        .setPredicate(minerLogic::hasNotEnoughEnergy))
+                .widget(
+                        new ImageWidget(152, 63 + yOffset, 17, 17,
+                                GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
+                                        .setIgnoreColor(true))
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, yOffset);
 
         return builder.build(getHolder(), entityPlayer);
     }
@@ -193,9 +193,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", energyPerTick)
-                + TextFormatting.GRAY + ", " +
-                I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getWorkFrequency() / 20));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.uses_per_tick", energyPerTick) + TextFormatting.GRAY + ", " +
+                        I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getWorkFrequency() / 20));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(),
                 GTValues.VNF[getTier()]));
         tooltip.add(

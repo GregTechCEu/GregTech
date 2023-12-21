@@ -153,7 +153,7 @@ public class WidgetProspectingMap extends Widget {
                                             MaterialStack materialStack = OreDictUnifier.getMaterial(item, meta);
                                             if (materialStack != null) {
                                                 String oreDict = "ore" +
-                                                            oreDictString.replaceFirst(prefix.name(), "");
+                                                        oreDictString.replaceFirst(prefix.name(), "");
                                                 packet.addBlock(x, y, z, oreDict);
                                                 added = true;
                                                 break;

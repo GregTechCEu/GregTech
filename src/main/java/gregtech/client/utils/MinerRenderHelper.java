@@ -116,8 +116,8 @@ public class MinerRenderHelper {
         boolean isBoxClippingThroughCamera = isBoxClippingThroughCamera(minX, maxX, minY, maxY, minZ, maxZ);
 
         // texture UVs
-        double texOffset =
-                (System.nanoTime() % TEXTURE_WRAP_INTERVAL_NANOSECONDS) / (double) (TEXTURE_WRAP_INTERVAL_NANOSECONDS);
+        double texOffset = (System.nanoTime() % TEXTURE_WRAP_INTERVAL_NANOSECONDS) /
+                (double) (TEXTURE_WRAP_INTERVAL_NANOSECONDS);
 
         double dx = (box.maxX - box.minX);
         double dy = (box.maxY - Math.max(0, box.minY));
@@ -144,7 +144,7 @@ public class MinerRenderHelper {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
 
-        for (boolean looped = false; ; looped = true) {
+        for (boolean looped = false;; looped = true) {
             int alpha = looped ? 70 : 200;
 
             if (looped) {
@@ -358,22 +358,6 @@ public class MinerRenderHelper {
         System.arraycopy(mat, r2 * 4, mat, r1 * 4, 4);
         System.arraycopy(mat, 12, mat, r2 * 4, 4);
     }
-
-    /* for debug
-    private static String matrixToString() {
-        StringBuilder stb = new StringBuilder();
-        for (int r = 0; r < 3; r++) {
-            if (r != 0) stb.append('\n');
-            for (int c = 0; c < 4; c++) {
-                if (c != 0) stb.append('\t');
-                float v = getMatrixValue(c, r);
-                if (v >= 0) stb.append(" ");
-                stb.append(String.format("%.4f", v));
-            }
-        }
-        return stb.toString();
-    }
-    */
 
     private static final class SATTestResult {
 

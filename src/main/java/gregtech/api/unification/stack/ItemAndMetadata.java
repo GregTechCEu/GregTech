@@ -44,7 +44,8 @@ public final class ItemAndMetadata {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || o instanceof ItemAndMetadata that && itemDamage == that.itemDamage && item.equals(that.item);
+        return this == o ||
+                o instanceof ItemAndMetadata that && itemDamage == that.itemDamage && item.equals(that.item);
     }
 
     @Override

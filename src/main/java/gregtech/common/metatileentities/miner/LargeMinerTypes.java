@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum LargeMinerTypes implements LargeMinerType {
+
     STEEL,
     TITANIUM,
     TUNGSTEN_STEEL;
@@ -27,8 +28,8 @@ public enum LargeMinerTypes implements LargeMinerType {
         return MultiblockControllerBase.states(switch (this) {
             case STEEL -> MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
             case TITANIUM -> MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TITANIUM_STABLE);
-            case TUNGSTEN_STEEL ->
-                    MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST);
+            case TUNGSTEN_STEEL -> MetaBlocks.METAL_CASING
+                    .getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST);
         });
     }
 

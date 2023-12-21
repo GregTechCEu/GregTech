@@ -20,7 +20,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.core.advancement.AdvancementTriggers;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -811,7 +811,8 @@ public class GTUtility {
                         ventingSide.getZOffset() / 2.0, 0.1);
             }
             if (playSound) {
-                world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f,
+                        1.0f);
             }
             return true;
         }

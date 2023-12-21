@@ -252,11 +252,16 @@ public class Textures {
             "machines/mass_fabricator");
     public static final OrientedOverlayRenderer REPLICATOR_OVERLAY = new OrientedOverlayRenderer("machines/replicator");
     public static final OrientedOverlayRenderer SCANNER_OVERLAY = new OrientedOverlayRenderer("machines/scanner");
-    public static final OrientedOverlayRenderer COMBUSTION_GENERATOR_OVERLAY = new OrientedOverlayRenderer("generators/combustion");
-    public static final OrientedOverlayRenderer GAS_TURBINE_OVERLAY = new OrientedOverlayRenderer("generators/gas_turbine");
-    public static final OrientedOverlayRenderer STEAM_TURBINE_OVERLAY = new OrientedOverlayRenderer("generators/steam_turbine");
-    public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator");
-    public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator_te");
+    public static final OrientedOverlayRenderer COMBUSTION_GENERATOR_OVERLAY = new OrientedOverlayRenderer(
+            "generators/combustion");
+    public static final OrientedOverlayRenderer GAS_TURBINE_OVERLAY = new OrientedOverlayRenderer(
+            "generators/gas_turbine");
+    public static final OrientedOverlayRenderer STEAM_TURBINE_OVERLAY = new OrientedOverlayRenderer(
+            "generators/steam_turbine");
+    public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer(
+            "machines/world_accelerator");
+    public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer(
+            "machines/world_accelerator_te");
     public static final OrientedOverlayRenderer MINER_OVERLAY = new OrientedOverlayRenderer("machines/miner");
 
     // Simple Overlay Renderers
@@ -414,31 +419,56 @@ public class Textures {
             "overlay/machine/overlay_maintenance_cleaning");
     public static final SimpleOverlayRenderer MUFFLER_OVERLAY = new SimpleOverlayRenderer(
             "overlay/machine/overlay_muffler");
-    public static final SimpleOverlayRenderer BLANK_SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_blank_screen");
-    public static final SimpleOverlayRenderer DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch");
-    public static final SimpleOverlayRenderer CREATIVE_DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch_creative");
-    public static final SimpleOverlayRenderer OPTICAL_DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch_optical");
-    public static final SimpleOverlayRenderer LASER_SOURCE = new SimpleOverlayRenderer("overlay/machine/overlay_laser_source");
-    public static final SimpleOverlayRenderer LASER_TARGET = new SimpleOverlayRenderer("overlay/machine/overlay_laser_target");
-    public static final SimpleOverlayRenderer OBJECT_HOLDER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_object_holder");
-    public static final SimpleOverlayRenderer OBJECT_HOLDER_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_object_holder_active");
-    public static final SimpleOverlayRenderer HPCA_ACTIVE_COOLER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/active_cooler");
-    public static final SimpleOverlayRenderer HPCA_ACTIVE_COOLER_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/active_cooler_active");
-    public static final SimpleOverlayRenderer HPCA_BRIDGE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/bridge");
-    public static final SimpleOverlayRenderer HPCA_BRIDGE_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/bridge_active");
-    public static final SimpleOverlayRenderer HPCA_COMPUTATION_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/computation");
-    public static final SimpleOverlayRenderer HPCA_COMPUTATION_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/computation_active");
-    public static final SimpleOverlayRenderer HPCA_ADVANCED_COMPUTATION_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/computation_advanced");
-    public static final SimpleOverlayRenderer HPCA_ADVANCED_COMPUTATION_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/computation_advanced_active");
-    public static final SimpleOverlayRenderer HPCA_DAMAGED_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/damaged");
-    public static final SimpleOverlayRenderer HPCA_DAMAGED_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/damaged_active");
-    public static final SimpleOverlayRenderer HPCA_ADVANCED_DAMAGED_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/damaged_advanced");
-    public static final SimpleOverlayRenderer HPCA_ADVANCED_DAMAGED_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/damaged_advanced_active");
-    public static final SimpleOverlayRenderer HPCA_EMPTY_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/empty");
-    public static final SimpleOverlayRenderer HPCA_HEAT_SINK_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/heat_sink");
-    public static final SimpleOverlayRenderer ALARM_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_alarm");
-    public static final SimpleOverlayRenderer ALARM_OVERLAY_ACTIVE = new SimpleOverlayRenderer("overlay/machine/overlay_alarm_active");
-    public static final SimpleOverlayRenderer TAPED_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_ducttape");
+    public static final SimpleOverlayRenderer BLANK_SCREEN = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_blank_screen");
+    public static final SimpleOverlayRenderer DATA_ACCESS_HATCH = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_data_hatch");
+    public static final SimpleOverlayRenderer CREATIVE_DATA_ACCESS_HATCH = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_data_hatch_creative");
+    public static final SimpleOverlayRenderer OPTICAL_DATA_ACCESS_HATCH = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_data_hatch_optical");
+    public static final SimpleOverlayRenderer LASER_SOURCE = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_laser_source");
+    public static final SimpleOverlayRenderer LASER_TARGET = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_laser_target");
+    public static final SimpleOverlayRenderer OBJECT_HOLDER_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_object_holder");
+    public static final SimpleOverlayRenderer OBJECT_HOLDER_ACTIVE_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_object_holder_active");
+    public static final SimpleOverlayRenderer HPCA_ACTIVE_COOLER_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/active_cooler");
+    public static final SimpleOverlayRenderer HPCA_ACTIVE_COOLER_ACTIVE_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/active_cooler_active");
+    public static final SimpleOverlayRenderer HPCA_BRIDGE_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/bridge");
+    public static final SimpleOverlayRenderer HPCA_BRIDGE_ACTIVE_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/bridge_active");
+    public static final SimpleOverlayRenderer HPCA_COMPUTATION_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/computation");
+    public static final SimpleOverlayRenderer HPCA_COMPUTATION_ACTIVE_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/computation_active");
+    public static final SimpleOverlayRenderer HPCA_ADVANCED_COMPUTATION_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/computation_advanced");
+    public static final SimpleOverlayRenderer HPCA_ADVANCED_COMPUTATION_ACTIVE_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/computation_advanced_active");
+    public static final SimpleOverlayRenderer HPCA_DAMAGED_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/damaged");
+    public static final SimpleOverlayRenderer HPCA_DAMAGED_ACTIVE_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/damaged_active");
+    public static final SimpleOverlayRenderer HPCA_ADVANCED_DAMAGED_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/damaged_advanced");
+    public static final SimpleOverlayRenderer HPCA_ADVANCED_DAMAGED_ACTIVE_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/damaged_advanced_active");
+    public static final SimpleOverlayRenderer HPCA_EMPTY_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/empty");
+    public static final SimpleOverlayRenderer HPCA_HEAT_SINK_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/hpca/heat_sink");
+    public static final SimpleOverlayRenderer ALARM_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_alarm");
+    public static final SimpleOverlayRenderer ALARM_OVERLAY_ACTIVE = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_alarm_active");
+    public static final SimpleOverlayRenderer TAPED_OVERLAY = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_ducttape");
 
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID = new SimpleOverlayRenderer(
             "cover/cover_interface_fluid");
@@ -468,7 +498,7 @@ public class Textures {
             "overlay/appeng/me_input_hatch");
     public static final SimpleOverlayRenderer ME_OUTPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_output_bus");
     public static final SimpleOverlayRenderer ME_INPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_input_bus");
-public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
+    public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
     public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");
     public static final ResourceLocation AROMANTIC_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");
     public static final ResourceLocation BI_CAPE_TEXTURE = gregtechId("textures/capes/bicape.png");
