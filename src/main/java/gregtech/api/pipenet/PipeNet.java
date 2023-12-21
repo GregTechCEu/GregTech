@@ -14,6 +14,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
 public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCompound> {
 
     protected final WorldPipeNet<NodeDataType, PipeNet<NodeDataType>> worldData;

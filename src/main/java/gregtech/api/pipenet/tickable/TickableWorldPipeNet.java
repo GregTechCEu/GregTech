@@ -9,10 +9,13 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
 public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType> & ITickable>
                                           extends WorldPipeNet<NodeDataType, T> {
 

@@ -8,11 +8,16 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
 @EventBusSubscriber(modid = GTValues.MODID)
 public class TickableWorldPipeNetEventHandler {
 

@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -25,6 +26,8 @@ import java.util.*;
  * <b>Do not walk a walker more than once</b>
  * <p>
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
 public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
 
     protected PipeNetWalker<T> root;

@@ -188,7 +188,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     }
 
     private static boolean areMarksCompatible(int mark1, int mark2) {
-        return mark1 == mark2 || mark1 == Node.DEFAULT_MARK || mark2 == Node.DEFAULT_MARK;
+        return mark1 == mark2 || mark1 == NodeG.DEFAULT_MARK || mark2 == NodeG.DEFAULT_MARK;
     }
 
     private boolean areNodeBlockedConnectionsCompatible(NodeG<PipeType, NodeDataType> source, EnumFacing nodeFacing,

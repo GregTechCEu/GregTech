@@ -2,10 +2,14 @@ package gregtech.api.pipenet;
 
 import net.minecraft.util.EnumFacing;
 
+import org.jetbrains.annotations.ApiStatus;
+
 /**
  * Represents a single node in network of pipes
  * It can have blocked connections and be active or not
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
 public final class Node<NodeDataType> {
 
     public static final int DEFAULT_MARK = 0;

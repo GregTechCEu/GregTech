@@ -24,6 +24,8 @@ import java.util.Objects;
 public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType extends INodeData<NodeDataType>>
                   implements INBTSerializable<NBTTagCompound> {
 
+    public static final int DEFAULT_MARK = 0;
+
     private final WorldPipeNetG<NodeDataType, PipeType> net;
 
     private NodeDataType data;

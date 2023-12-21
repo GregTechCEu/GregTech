@@ -9,6 +9,8 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 
 import net.minecraft.item.ItemStack;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public abstract class BlockSimplePipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NodeDataType extends INodeData<NodeDataType>,
         WorldPipeNetType extends WorldPipeNetG<NodeDataType, PipeType>>
