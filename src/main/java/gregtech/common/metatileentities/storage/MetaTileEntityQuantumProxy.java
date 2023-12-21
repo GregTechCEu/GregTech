@@ -74,10 +74,13 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
         return Type.PROXY;
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public IDualHandler getTypeValue() {
-        if (getController() == null) return null;
-        return getController().getHandler();
+        if (!isConnected()) return null;
+        var controller = getController();
+        if (!controller.isPowered()) return null;
+        return controller.getHandler();
     }
 
     @Override

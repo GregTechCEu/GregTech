@@ -27,6 +27,7 @@ public interface IQuantumStorage<T> {
         ITEM,
         FLUID,
         EXTENDER,
-        PROXY
+        PROXY,
+        ENERGY
     }
 }

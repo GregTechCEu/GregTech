@@ -1,8 +1,9 @@
 package gregtech.api.capability;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-public interface IQuantumController {
+public interface IQuantumController extends ICapabilityProvider {
 
     /**
      * Constructs the network upon placement
@@ -18,4 +19,8 @@ public interface IQuantumController {
     BlockPos getPos();
 
     IDualHandler getHandler();
+
+    IEnergyContainer getEnergyContainer();
+
+    boolean isPowered();
 }
