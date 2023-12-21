@@ -411,7 +411,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public void readFromNBT(@NotNull NBTTagCompound compound) {
-        this.nbtLoad = true;
         if (this.tickingPipe != null) {
             this.tickingPipe.readFromNBT(compound);
             return;
@@ -425,6 +424,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         this.pipeType = getPipeTypeClass().getEnumConstants()[compound.getInteger("PipeType")];
 
+        this.nbtLoad = true;
         if (compound.hasKey("Connections")) {
             this.getNode().setActiveConnections(compound.getInteger("Connections"));
         } else if (compound.hasKey("BlockedConnectionsMap")) {
@@ -437,25 +437,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.getNode().setActiveConnections(connections);
         }
         this.getNode().setBlockedConnections(compound.getInteger("BlockedConnections"));
-
-        if (!compound.hasKey("PipeNetVersion")) {
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                WorldPipeNetG<NodeDataType, PipeType> net = this.getPipeBlock().getWorldPipeNet(this.getPipeWorld());
-                NodeG<PipeType, NodeDataType> nodeOffset = net.getNode(this.getPipePos().offset(facing));
-                if (nodeOffset == null) continue;
-                if (net.isDirected()) {
-                    // offset node might've been read before us, so we have to cover for it.
-                    if (nodeOffset.isConnected(facing.getOpposite())) {
-                        net.addEdge(nodeOffset, this.getNode(), null);
-                        net.predicateEdge(nodeOffset, this.getNode(), facing.getOpposite());
-                    }
-                }
-                if (this.isConnected(facing)) {
-                    net.addEdge(this.getNode(), nodeOffset, null);
-                    net.predicateEdge(this.getNode(), nodeOffset, facing);
-                }
-            }
-        }
+        this.nbtLoad = false;
 
         if (compound.hasKey("InsulationColor")) {
             this.paintingColor = compound.getInteger("InsulationColor");
@@ -470,7 +452,27 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             // one of the covers set the pipe to ticking, and we need to send over the rest of the covers
             this.coverableImplementation.transferDataTo(this.tickingPipe.coverableImplementation);
         }
-        this.nbtLoad = false;
+
+        if (!compound.hasKey("PipeNetVersion") && !compound.hasKey("PipeMaterial")) doOldNetSetup();
+    }
+
+    protected void doOldNetSetup() {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            WorldPipeNetG<NodeDataType, PipeType> net = this.getPipeBlock().getWorldPipeNet(this.getPipeWorld());
+            NodeG<PipeType, NodeDataType> nodeOffset = net.getNode(this.getPipePos().offset(facing));
+            if (nodeOffset == null) continue;
+            if (net.isDirected()) {
+                // offset node might've been read before us, so we have to cover for it.
+                if (nodeOffset.isConnected(facing.getOpposite())) {
+                    net.addEdge(nodeOffset, this.getNode(), null);
+                    net.predicateEdge(nodeOffset, this.getNode(), facing.getOpposite());
+                }
+            }
+            if (this.isConnected(facing)) {
+                net.addEdge(this.getNode(), nodeOffset, null);
+                net.predicateEdge(this.getNode(), nodeOffset, facing);
+            }
+        }
     }
 
     @Override

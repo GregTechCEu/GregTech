@@ -72,6 +72,7 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
             this.pipeMaterial = registry.getFallbackMaterial();
         }
         this.getNode().setData(getPipeBlock().createProperties(this));
+        if (!compound.hasKey("PipeNetVersion")) doOldNetSetup();
     }
 
     private void writePipeMaterial(@NotNull PacketBuffer buf) {
