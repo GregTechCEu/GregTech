@@ -50,7 +50,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         this.texture = texture;
         this.itemFilter = new ItemFilterWrapper(this);
         this.itemFilter.setItemFilter(itemFilter);
-        this.itemFilter.setMaxStackSize(1);
+        this.itemFilter.setMaxStackSize(1, false);
     }
 
     public void setFilterMode(ItemFilterMode filterMode) {

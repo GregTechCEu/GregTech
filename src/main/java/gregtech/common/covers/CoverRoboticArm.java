@@ -208,8 +208,8 @@ public class CoverRoboticArm extends CoverConveyor {
         stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20,
                 () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(
-                                MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
+                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val),
+                                1, transferMode.maxStackSize), false);
                 })
                         .setNumbersOnly(1, transferMode.maxStackSize)
                         .setMaxLength(4)

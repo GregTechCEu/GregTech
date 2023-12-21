@@ -141,8 +141,8 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         stackSizeGroup.addWidget(new TextFieldWidget2(113, 41, 31, 20,
                 () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(
-                                MathHelper.clamp(Integer.parseInt(val), 1, voidingMode.maxStackSize));
+                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val),
+                                1, voidingMode.maxStackSize), false);
                 })
                         .setCentered(true)
                         .setNumbersOnly(1, Integer.MAX_VALUE)

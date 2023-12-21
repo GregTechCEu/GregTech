@@ -61,8 +61,9 @@ public class ItemFilterWrapper {
         dirtyNotifiable.markAsDirty();
     }
 
-    public void setMaxStackSize(int maxStackSize) {
+    public void setMaxStackSize(int maxStackSize, boolean nbtLoad) {
         this.maxStackSize = maxStackSize;
+        if (nbtLoad) return;
         onFilterInstanceChange();
         dirtyNotifiable.markAsDirty();
     }

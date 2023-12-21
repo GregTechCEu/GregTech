@@ -59,7 +59,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     private void onFilterInstanceChange() {
-        this.filterWrapper.setMaxStackSize(getTransferStackSize());
+        this.filterWrapper.setMaxStackSize(getTransferStackSize(), false);
     }
 
     public int getMaxStackSize() {
@@ -73,13 +73,13 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return transferStackSize;
     }
 
-    public void setTransferStackSize(int transferStackSize) {
+    public void setTransferStackSize(int transferStackSize, boolean nbtLoad) {
         this.transferStackSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
-        this.filterWrapper.setMaxStackSize(getTransferStackSize());
+        this.filterWrapper.setMaxStackSize(getTransferStackSize(), nbtLoad);
     }
 
     public void adjustTransferStackSize(int amount) {
-        setTransferStackSize(transferStackSize + amount);
+        setTransferStackSize(transferStackSize + amount, false);
     }
 
     public void initUI(int y, Consumer<Widget> widgetGroup) {
@@ -110,7 +110,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public void setMaxStackSize(int maxStackSizeLimit) {
         this.maxStackSizeLimit = maxStackSizeLimit;
-        setTransferStackSize(transferStackSize);
+        setTransferStackSize(transferStackSize, false);
     }
 
     public boolean showGlobalTransferLimitSlider() {
@@ -157,7 +157,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
         this.filterWrapper.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"), true);
         setMaxStackSize(tagCompound.getInteger("MaxStackSize"));
-        setTransferStackSize(tagCompound.getInteger("TransferStackSize"));
+        setTransferStackSize(tagCompound.getInteger("TransferStackSize"), true);
         if (filterWrapper.getItemFilter() != null) {
             this.filterWrapper.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
         }
