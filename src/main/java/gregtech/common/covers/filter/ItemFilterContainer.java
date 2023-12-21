@@ -59,7 +59,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     private void onFilterInstanceChange() {
-        this.filterWrapper.setMaxStackSize(getTransferStackSize(), false);
+        this.filterWrapper.setMaxStackSize(getTransferStackSize());
     }
 
     public int getMaxStackSize() {
@@ -73,13 +73,13 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return transferStackSize;
     }
 
-    public void setTransferStackSize(int transferStackSize, boolean nbtLoad) {
+    public void setTransferStackSize(int transferStackSize) {
         this.transferStackSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
-        this.filterWrapper.setMaxStackSize(getTransferStackSize(), nbtLoad);
+        this.filterWrapper.setMaxStackSize(getTransferStackSize());
     }
 
     public void adjustTransferStackSize(int amount) {
-        setTransferStackSize(transferStackSize + amount, false);
+        setTransferStackSize(transferStackSize + amount);
     }
 
     public void initUI(int y, Consumer<Widget> widgetGroup) {
@@ -98,7 +98,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         if (newItemFilter == null) {
             if (currentItemFilter != null) {
                 filterWrapper.setItemFilter(null);
-                filterWrapper.setBlacklistFilter(false, false);
+                filterWrapper.setBlacklistFilter(false);
                 if (notify) filterWrapper.onFilterInstanceChange();
             }
         } else if (currentItemFilter == null ||
@@ -110,7 +110,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public void setMaxStackSize(int maxStackSizeLimit) {
         this.maxStackSizeLimit = maxStackSizeLimit;
-        setTransferStackSize(transferStackSize, false);
+        setTransferStackSize(transferStackSize);
     }
 
     public boolean showGlobalTransferLimitSlider() {
@@ -155,9 +155,9 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
         this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
-        this.filterWrapper.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"), true);
+        this.filterWrapper.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         setMaxStackSize(tagCompound.getInteger("MaxStackSize"));
-        setTransferStackSize(tagCompound.getInteger("TransferStackSize"), true);
+        setTransferStackSize(tagCompound.getInteger("TransferStackSize"));
         if (filterWrapper.getItemFilter() != null) {
             this.filterWrapper.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
         }

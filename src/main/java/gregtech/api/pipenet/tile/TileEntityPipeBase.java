@@ -60,6 +60,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     // set when this pipe is replaced with a ticking variant to redirect sync packets
     private TileEntityPipeBase<PipeType, NodeDataType> tickingPipe;
 
+    private boolean nbtLoad = false;
+
     public TileEntityPipeBase() {
         super(false);
         invalidateNeighbors();
@@ -409,6 +411,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public void readFromNBT(@NotNull NBTTagCompound compound) {
+        this.nbtLoad = true;
         if (this.tickingPipe != null) {
             this.tickingPipe.readFromNBT(compound);
             return;
@@ -467,6 +470,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             // one of the covers set the pipe to ticking, and we need to send over the rest of the covers
             this.coverableImplementation.transferDataTo(this.tickingPipe.coverableImplementation);
         }
+        this.nbtLoad = false;
     }
 
     @Override
@@ -563,7 +567,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void markAsDirty() {
         markDirty();
         // this most notably gets called when the covers of a pipe get updated, aka the edge predicates need syncing.
-        if (getWorld().isRemote) return;
+        if (getWorld().isRemote || this.nbtLoad) return;
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (!isConnected(facing)) continue;
             this.getPipeBlock().getWorldPipeNet(this.getPipeWorld()).predicateEdge(this.getPipePos(), facing);

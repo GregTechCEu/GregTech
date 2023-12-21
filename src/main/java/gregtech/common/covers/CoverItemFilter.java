@@ -50,7 +50,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         this.texture = texture;
         this.itemFilter = new ItemFilterWrapper(this);
         this.itemFilter.setItemFilter(itemFilter);
-        this.itemFilter.setMaxStackSize(1, false);
+        this.itemFilter.setMaxStackSize(1);
     }
 
     public void setFilterMode(ItemFilterMode filterMode) {
@@ -124,7 +124,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = ItemFilterMode.values()[tagCompound.getInteger("FilterMode")];
-        this.itemFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"), true);
+        this.itemFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         this.itemFilter.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
     }
 

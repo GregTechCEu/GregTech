@@ -83,13 +83,13 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
             this.sourceFilter
                     .setItemFilter(FilterTypeRegistry.createItemFilterById(nbt.getInteger("SourceFilterType")));
             this.sourceFilter.getItemFilter().readFromNBT(nbt.getCompoundTag("SourceFilter"));
-            this.sourceFilter.setBlacklistFilter(nbt.getBoolean("SourceBlacklist"), true);
+            this.sourceFilter.setBlacklistFilter(nbt.getBoolean("SourceBlacklist"));
         }
         if (nbt.hasKey("TargetFilter")) {
             this.targetFilter
                     .setItemFilter(FilterTypeRegistry.createItemFilterById(nbt.getInteger("TargetFilterType")));
             this.targetFilter.getItemFilter().readFromNBT(nbt.getCompoundTag("TargetFilter"));
-            this.targetFilter.setBlacklistFilter(nbt.getBoolean("TargetBlacklist"), true);
+            this.targetFilter.setBlacklistFilter(nbt.getBoolean("TargetBlacklist"));
         }
     }
 
