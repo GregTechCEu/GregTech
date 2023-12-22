@@ -193,6 +193,12 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         rebuildNetwork();
     }
 
+    @Override
+    public void onLoad() {
+        calculateEnergyUsage();
+        super.onLoad();
+    }
+
     // Used when this controller is initially placed. Try to find all possible
     // storage instances that are connected and within our distance radius
     // todo rework this to use neighbor cache somehow
@@ -237,16 +243,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             oldInstances.remove(pos);
             oldPositions.remove(pos);
 
-            energyConsumption += switch (storage.getType()) {
-                case ITEM, FLUID -> {
-                    int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 1;
-                    yield GTValues.V[tier] / 2;
-                }
-                case PROXY -> 2L;
-                case EXTENDER -> 1L;
-                default -> 0L;
-            };
-
             // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos offsetPos = pos.offset(facing);
@@ -278,9 +274,27 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage != null) storage.setDisconnected();
         }
         handler.rebuildCache();
+        calculateEnergyUsage();
         energyContainer.setMaxCapacity(energyConsumption * 16L);
-        writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
         markDirty();
+    }
+
+    private void calculateEnergyUsage() {
+        for (var pos : storagePositions) {
+            var storage = getStorage(pos, false);
+            if (storage == null) continue;
+
+            energyConsumption += switch (storage.getType()) {
+                case ITEM, FLUID -> {
+                    int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 1;
+                    yield tier > 4 ? 256L : 16L;
+                }
+                case PROXY -> 8L;
+                case EXTENDER -> 2L;
+                default -> 0L;
+            };
+        }
+        writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
 
     private void reinitializeEnergyContainer() {
@@ -309,7 +323,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             list.appendTag(new NBTTagLong(pos.toLong()));
         }
         tagCompound.setTag("StorageInstances", list);
-        tagCompound.setLong("EnergyConsumption", energyConsumption);
         return tagCompound;
     }
 
@@ -320,7 +333,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         for (int i = 0; i < list.tagCount(); i++) {
             storagePositions.add(BlockPos.fromLong(((NBTTagLong) list.get(i)).getLong()));
         }
-        energyConsumption = data.getLong("EnergyConsumption");
     }
 
     @SuppressWarnings("unchecked")
