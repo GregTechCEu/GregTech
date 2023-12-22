@@ -1,7 +1,7 @@
 package gregtech.api.items.materialitem;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
@@ -58,7 +58,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         super();
         this.registry = registry;
         this.prefix = orePrefix;
-        this.setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
+        this.setCreativeTab(GTCreativeTabs.TAB_GREGTECH_MATERIALS);
     }
 
     @Override

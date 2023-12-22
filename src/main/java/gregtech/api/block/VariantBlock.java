@@ -1,6 +1,6 @@
 package gregtech.api.block;
 
-import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.util.LocalizationUtils;
 
 import net.minecraft.block.Block;
@@ -43,7 +43,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
                         state);
             }
         }
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
         setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, VALUES[0]));
     }
 

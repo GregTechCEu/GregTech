@@ -1,6 +1,6 @@
 package gregtech.common.blocks.wood;
 
-import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.CoreModule;
 
@@ -31,7 +31,7 @@ public class BlockRubberLeaves extends BlockLeaves {
                 .withProperty(CHECK_DECAY, true)
                 .withProperty(DECAYABLE, true));
         setTranslationKey("rubber_leaves");
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
         Blocks.FIRE.setFireInfo(this, 30, 60);
     }
 

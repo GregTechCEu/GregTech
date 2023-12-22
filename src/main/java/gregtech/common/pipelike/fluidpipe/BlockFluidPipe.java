@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.fluidpipe;
 
-import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -48,7 +48,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     public BlockFluidPipe(FluidPipeType pipeType, MaterialRegistry registry) {
         super(pipeType, registry);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WRENCH, 1);
     }
 

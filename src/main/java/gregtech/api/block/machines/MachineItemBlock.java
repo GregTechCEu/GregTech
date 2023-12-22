@@ -2,6 +2,7 @@ package gregtech.api.block.machines;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -61,8 +62,8 @@ public class MachineItemBlock extends ItemBlock {
      */
     public static void addCreativeTab(CreativeTabs creativeTab) {
         Preconditions.checkNotNull(creativeTab, "creativeTab");
-        if (creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES) {
-            throw new IllegalArgumentException("Adding " + GregTechAPI.TAB_GREGTECH_MACHINES.tabLabel +
+        if (creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES) {
+            throw new IllegalArgumentException("Adding " + GTCreativeTabs.TAB_GREGTECH_MACHINES.tabLabel +
                     " as additional creative tab is redundant.");
         } else if (creativeTab == CreativeTabs.SEARCH) {
             throw new IllegalArgumentException(

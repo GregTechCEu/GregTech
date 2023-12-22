@@ -1,6 +1,6 @@
 package gregtech.common.blocks;
 
-import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
@@ -46,7 +46,7 @@ public abstract class BlockCompressed extends BlockMaterialBase {
         setTranslationKey("compressed");
         setHardness(5.0f);
         setResistance(10.0f);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_MATERIALS);
     }
 
     @Override

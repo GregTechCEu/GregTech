@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.optical;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -37,7 +37,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     public BlockOpticalPipe(@NotNull OpticalPipeType pipeType) {
         this.pipeType = pipeType;
         this.properties = OpticalPipeProperties.INSTANCE;
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
 

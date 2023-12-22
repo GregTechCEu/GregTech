@@ -1,6 +1,6 @@
 package gregtech.common.blocks.wood;
 
-import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.items.MetaItems;
 
@@ -27,7 +27,7 @@ public class BlockRubberLog extends BlockLog {
                 .withProperty(LOG_AXIS, BlockLog.EnumAxis.Y)
                 .withProperty(NATURAL, false));
         setTranslationKey("rubber_log");
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
         setHarvestLevel(ToolClasses.AXE, 0);
     }
 

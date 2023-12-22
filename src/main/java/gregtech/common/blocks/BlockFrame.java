@@ -1,6 +1,6 @@
 package gregtech.common.blocks;
 
-import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -68,7 +68,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
         setTranslationKey("frame");
         setHardness(3.0f);
         setResistance(6.0f);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_MATERIALS);
     }
 
     @Override

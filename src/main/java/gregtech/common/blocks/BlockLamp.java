@@ -1,7 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -66,7 +66,7 @@ public class BlockLamp extends Block {
                 .withProperty(LIGHT, true)
                 .withProperty(INVERTED, false)
                 .withProperty(POWERED, false));
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_DECORATIONS);
     }
 
     public boolean isLightEnabled(ItemStack stack) {

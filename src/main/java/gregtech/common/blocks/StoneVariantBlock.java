@@ -1,7 +1,7 @@
 package gregtech.common.blocks;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantBlock;
+import gregtech.api.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -40,7 +40,7 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         setSoundType(SoundType.STONE);
         setHarvestLevel(ToolClasses.PICKAXE, 0);
         setDefaultState(getState(StoneType.BLACK_GRANITE));
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_DECORATIONS);
     }
 
     @NotNull
