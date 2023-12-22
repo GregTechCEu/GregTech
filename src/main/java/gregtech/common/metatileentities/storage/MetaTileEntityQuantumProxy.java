@@ -34,16 +34,16 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (isConnected()) {
+        if (isConnected() && getController().isPowered()) {
             Textures.QUANTUM_PROXY_ACTIVE.render(renderState, translation, pipeline);
         } else {
-            Textures.QUANTUM_PROXY.render(renderState, translation, pipeline);
+            Textures.QUANTUM_PROXY_INACTIVE.render(renderState, translation, pipeline);
         }
     }
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.QUANTUM_PROXY.getParticleSprite(), getPaintingColorForRendering());
+        return Pair.of(Textures.QUANTUM_PROXY_INACTIVE.getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override

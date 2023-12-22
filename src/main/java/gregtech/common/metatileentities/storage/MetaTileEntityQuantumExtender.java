@@ -30,7 +30,7 @@ public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (isConnected()) {
+        if (isConnected() && getController().isPowered()) {
             Textures.QUANTUM_EXTENDER_ACTIVE.render(renderState, translation, pipeline);
         } else {
             Textures.QUANTUM_EXTENDER.render(renderState, translation, pipeline);
