@@ -239,8 +239,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             energyConsumption += switch (storage.getType()) {
                 case ITEM, FLUID -> {
-                    int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 0;
-                    yield GTValues.V[tier / 2] / 2;
+                    int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 1;
+                    yield GTValues.V[tier] / 2;
                 }
                 case PROXY -> 2L;
                 case EXTENDER -> 1L;
