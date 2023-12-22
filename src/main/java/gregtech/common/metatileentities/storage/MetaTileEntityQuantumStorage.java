@@ -175,8 +175,10 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         } else if (dataId == REMOVE_CONTROLLER) {
             this.controllerPos = null;
             this.controller.clear();
-            this.connectedIcon.setImage(GuiTextures.GREGTECH_LOGO_DARK);
-            this.connectedIcon.setTooltip(null);
+            if (this.connectedIcon != null) {
+                this.connectedIcon.setImage(GuiTextures.GREGTECH_LOGO_DARK);
+                this.connectedIcon.setTooltip(null);
+            }
         }
     }
 
