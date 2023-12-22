@@ -1,10 +1,13 @@
 package gregtech.common.metatileentities.storage;
 
+import codechicken.lib.render.pipeline.ColourMultiplier;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -19,6 +22,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDualHandler> {
@@ -34,10 +38,12 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        var newPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         if (isConnected() && getController().isPowered()) {
-            Textures.QUANTUM_PROXY_ACTIVE.render(renderState, translation, pipeline);
+            Textures.QUANTUM_PROXY_ACTIVE.render(renderState, translation, newPipeline);
         } else {
-            Textures.QUANTUM_PROXY_INACTIVE.render(renderState, translation, pipeline);
+            Textures.QUANTUM_PROXY_INACTIVE.render(renderState, translation, newPipeline);
         }
     }
 

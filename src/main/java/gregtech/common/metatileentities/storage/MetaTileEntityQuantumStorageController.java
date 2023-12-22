@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
+import codechicken.lib.render.pipeline.ColourMultiplier;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechDataCodes;
@@ -40,6 +42,7 @@ import net.minecraftforge.items.IItemHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -118,11 +121,14 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 Textures.QUANTUM_CONTROLLER_ACTIVE :
                 Textures.QUANTUM_CONTROLLER_INACTIVE;
 
-        front.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        var newPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+
+        front.renderSided(getFrontFacing(), renderState, translation, newPipeline);
 
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (facing == getFrontFacing()) continue;
-            sides.renderSided(facing, renderState, translation, pipeline);
+            sides.renderSided(facing, renderState, translation, newPipeline);
         }
     }
 
