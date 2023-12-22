@@ -69,18 +69,21 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
         TextureAtlasSprite hullTexture = Textures.VOLTAGE_CASINGS[tier]
                 .getSpriteOnSide(RenderSide.bySide(EnumFacing.NORTH));
-        boxFacingMap.keySet().forEach(facing -> {
-            for (EnumFacing box : EnumFacing.VALUES) {
-                if ((facing != frontFacing || box != frontFacing) &&
-                        (facing != EnumFacing.DOWN || box.getAxis().isVertical())) { // Don't render the front facing
-                                                                                     // box from the front, nor allow
-                                                                                     // Z-fighting to occur on the
-                                                                                     // bottom
-                    Textures.renderFace(renderState, translation, pipeline, facing, boxFacingMap.get(box), hullTexture,
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            for (EnumFacing boxFace : EnumFacing.VALUES) {
+                // do not render the box when "facing" is "frontFacing", otherwise
+                // render when the box face matches facing, or
+                // render when the box face is opposite of facing, or
+                // render when the box face is the front face
+                if (facing != frontFacing &&
+                        (boxFace == facing || boxFace == facing.getOpposite() || boxFace == frontFacing)) {
+
+                    Textures.renderFace(renderState, translation, pipeline, boxFace, boxFacingMap.get(facing),
+                            hullTexture,
                             BlockRenderLayer.CUTOUT_MIPPED);
                 }
             }
-        });
+        }
     }
 
     public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine,
