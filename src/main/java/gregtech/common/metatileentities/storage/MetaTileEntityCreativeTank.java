@@ -105,6 +105,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value,
                 "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
+        builder.widget(createConnectedGui(6));
+
         return builder.build(getHolder(), entityPlayer);
     }
 

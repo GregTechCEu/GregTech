@@ -2,6 +2,8 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
@@ -32,6 +34,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     /** synced, server and client */
     private BlockPos controllerPos;
+
+    private ImageWidget connectedIcon;
 
     public MetaTileEntityQuantumStorage(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -161,9 +165,17 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         if (dataId == UPDATE_CONTROLLER_POS) {
             this.controllerPos = buf.readBlockPos();
             this.controller.clear();
+
+            if (this.connectedIcon != null) {
+                this.connectedIcon.setImage(GuiTextures.GREGTECH_LOGO);
+                String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
+                this.connectedIcon.setTooltip("Connected to Quantum Controller at/n" + pos);
+            }
         } else if (dataId == REMOVE_CONTROLLER) {
             this.controllerPos = null;
             this.controller.clear();
+            this.connectedIcon.setImage(GuiTextures.GREGTECH_LOGO_DARK);
+            this.connectedIcon.setTooltip(null);
         }
     }
 
@@ -183,6 +195,18 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         if (data.getBoolean("HasController")) {
             this.controllerPos = BlockPos.fromLong(data.getLong("ControllerPos"));
         }
+    }
+
+    protected ImageWidget createConnectedGui(int y) {
+        // todo do something for rendering a highlight at the controller
+        connectedIcon = new ImageWidget(151, y, 18, 18, isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
+
+        if (isConnected()) {
+            String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
+            connectedIcon.setTooltip("Connected to Quantum Controller at/n" + pos);
+        }
+
+        return connectedIcon;
     }
 
     @Override
