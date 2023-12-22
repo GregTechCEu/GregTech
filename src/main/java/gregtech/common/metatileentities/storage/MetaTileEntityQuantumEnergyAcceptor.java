@@ -1,10 +1,13 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
+
+import gregtech.client.utils.PipelineUtil;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -23,7 +26,8 @@ public class MetaTileEntityQuantumEnergyAcceptor extends MetaTileEntityQuantumSt
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.QUANTUM_CASING.render(renderState, translation, pipeline);
-        Textures.ENERGY_IN_HI.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        Textures.ENERGY_IN_HI.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline,
+                GTValues.VC[GTValues.MV]));
     }
 
     @Override
