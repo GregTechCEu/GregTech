@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.pipeline.ColourMultiplier;
-
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.gui.ModularUI;
@@ -16,6 +14,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
