@@ -156,6 +156,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         super.receiveInitialSyncData(buf);
         if (buf.readBoolean()) {
             controllerPos = buf.readBlockPos();
+            scheduleRenderUpdate();
         }
     }
 
@@ -172,6 +173,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                         controllerPos.getY());
                 this.connectedIcon.setTooltip("Connected to Quantum Controller at/n" + pos);
             }
+            scheduleRenderUpdate();
         } else if (dataId == REMOVE_CONTROLLER) {
             this.controllerPos = null;
             this.controller.clear();
@@ -179,6 +181,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 this.connectedIcon.setImage(GuiTextures.GREGTECH_LOGO_DARK);
                 this.connectedIcon.setTooltip(null);
             }
+            scheduleRenderUpdate();
         }
     }
 
