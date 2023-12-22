@@ -118,10 +118,10 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         var front = isPowered() ?
-                Textures.QUANTUM_CONTROLLER_FRONT_ACTIVE:
+                Textures.QUANTUM_CONTROLLER_FRONT_ACTIVE :
                 Textures.QUANTUM_CONTROLLER_FRONT_INACTIVE;
         var sides = isPowered() ?
-                Textures.QUANTUM_CONTROLLER_ACTIVE:
+                Textures.QUANTUM_CONTROLLER_ACTIVE :
                 Textures.QUANTUM_CONTROLLER_INACTIVE;
 
         front.renderSided(getFrontFacing(), renderState, translation, pipeline);
