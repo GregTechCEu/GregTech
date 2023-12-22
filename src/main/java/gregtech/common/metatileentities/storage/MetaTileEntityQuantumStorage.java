@@ -168,7 +168,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
             if (this.connectedIcon != null) {
                 this.connectedIcon.setImage(GuiTextures.GREGTECH_LOGO);
-                String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
+                String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(),
+                        controllerPos.getY());
                 this.connectedIcon.setTooltip("Connected to Quantum Controller at/n" + pos);
             }
         } else if (dataId == REMOVE_CONTROLLER) {
@@ -199,10 +200,12 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     protected ImageWidget createConnectedGui(int y) {
         // todo do something for rendering a highlight at the controller
-        connectedIcon = new ImageWidget(151, y, 18, 18, isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
+        connectedIcon = new ImageWidget(151, y, 18, 18,
+                isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
 
         if (isConnected()) {
-            String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
+            String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(),
+                    controllerPos.getY());
             connectedIcon.setTooltip("Connected to Quantum Controller at/n" + pos);
         }
 

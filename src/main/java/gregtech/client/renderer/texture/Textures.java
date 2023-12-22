@@ -107,7 +107,8 @@ public class Textures {
             "casings/quantum/controller_active");
     public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_INACTIVE = new SimpleOverlayRenderer(
             "casings/quantum/controller_inactive");
-    public static final SimpleOverlayRenderer QUANTUM_PROXY_INACTIVE = new SimpleOverlayRenderer("casings/quantum/proxy_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_PROXY_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/proxy_inactive");
     public static final SimpleOverlayRenderer QUANTUM_PROXY_ACTIVE = new SimpleOverlayRenderer(
             "casings/quantum/proxy_active");
     public static final SimpleOverlayRenderer QUANTUM_EXTENDER = new SimpleOverlayRenderer("casings/quantum/extender");
