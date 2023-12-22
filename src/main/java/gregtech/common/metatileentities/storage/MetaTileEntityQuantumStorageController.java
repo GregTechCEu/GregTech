@@ -216,7 +216,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         storageInstances = new HashMap<>();
         storagePositions = new HashSet<>();
-        energyConsumption = 0;
 
         Queue<BlockPos> searchQueue = new LinkedList<>();
         Set<BlockPos> checked = new HashSet<>();
@@ -286,6 +285,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     private void calculateEnergyUsage() {
+        energyConsumption = 0;
         for (var pos : storagePositions) {
             var storage = getStorage(pos, false);
             if (storage == null) continue;
@@ -293,7 +293,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             energyConsumption += switch (storage.getType()) {
                 case ITEM, FLUID -> {
                     int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 1;
-                    yield tier > 4 ? 256L : 16L;
+                    yield tier > 5 ?
+                            GTValues.V[GTValues.HV] / 2 :
+                            GTValues.V[GTValues.LV] / 2;
                 }
                 case PROXY -> 8L;
                 case EXTENDER -> 2L;
