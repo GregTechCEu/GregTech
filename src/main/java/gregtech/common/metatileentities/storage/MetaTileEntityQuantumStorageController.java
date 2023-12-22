@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IQuantumController;
@@ -22,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -66,6 +68,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     private final QuantumControllerHandler handler = new QuantumControllerHandler();
 
     private boolean isDead = false;
+    private boolean isPowered = false;
 
     public MetaTileEntityQuantumStorageController(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -79,26 +82,53 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     @Override
     public void update() {
-        if (getOffsetTimer() % 10 == 0 && isPowered()) {
-            energyContainer.removeEnergy(energyConsumption);
-        }
         super.update();
+        if (getWorld().isRemote) return;
+
+        if (getOffsetTimer() % 10 == 0) {
+            if (!isPowered && energyContainer.getEnergyStored() >= energyConsumption) {
+                isPowered = true;
+                writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(true));
+            }
+
+            if (isPowered) {
+                energyContainer.removeEnergy(energyConsumption);
+                isPowered = energyContainer.getEnergyStored() >= energyConsumption;
+            } else {
+                writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(false));
+            }
+        }
     }
 
     public boolean isPowered() {
-        return energyContainer.getEnergyStored() >= energyConsumption;
+        return isPowered && energyConsumption > 0;
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.UPDATE_ENERGY) {
+            this.isPowered = buf.readBoolean();
+            scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.UPDATE_ENERGY_PER) {
+            this.energyConsumption = buf.readLong();
+        }
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        var front = isPowered() ?
+                Textures.QUANTUM_CONTROLLER_FRONT_ACTIVE:
+                Textures.QUANTUM_CONTROLLER_FRONT_INACTIVE;
+        var sides = isPowered() ?
+                Textures.QUANTUM_CONTROLLER_ACTIVE:
+                Textures.QUANTUM_CONTROLLER_INACTIVE;
+
+        front.renderSided(getFrontFacing(), renderState, translation, pipeline);
+
         for (EnumFacing facing : EnumFacing.VALUES) {
-            // todo add inactive texture for unpowered state
-            if (facing == getFrontFacing()) {
-                Textures.QUANTUM_CONTROLLER_FRONT.renderSided(facing, renderState, translation, pipeline);
-                Textures.QUANTUM_CHEST_OVERLAY.renderSided(facing, renderState, translation, pipeline);
-            } else {
-                Textures.QUANTUM_CONTROLLER_ACTIVE.renderSided(facing, renderState, translation, pipeline);
-            }
+            if (facing == getFrontFacing()) continue;
+            sides.renderSided(facing, renderState, translation, pipeline);
         }
     }
 
@@ -250,11 +280,26 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         }
         handler.rebuildCache();
         energyContainer.setMaxCapacity(energyConsumption * 16L);
+        writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
         markDirty();
     }
 
     private void reinitializeEnergyContainer() {
         energyContainer = new QuantumControllerEnergyContainer(this);
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(this.isPowered);
+        buf.writeLong(this.energyConsumption);
+    }
+
+    @Override
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.isPowered = buf.readBoolean();
+        this.energyConsumption = buf.readLong();
     }
 
     @Override
