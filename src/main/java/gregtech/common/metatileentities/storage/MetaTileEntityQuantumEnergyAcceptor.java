@@ -33,6 +33,11 @@ public class MetaTileEntityQuantumEnergyAcceptor extends MetaTileEntityQuantumSt
     }
 
     @Override
+    public boolean isValidFrontFacing(EnumFacing facing) {
+        return true;
+    }
+
+    @Override
     public Type getType() {
         return Type.ENERGY;
     }

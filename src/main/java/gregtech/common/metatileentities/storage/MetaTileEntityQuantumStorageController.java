@@ -142,6 +142,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         return false;
     }
 
+    @Override
+    public boolean isValidFrontFacing(EnumFacing facing) {
+        return true;
+    }
+
     @SuppressWarnings("SameParameterValue")
     private IQuantumStorage<?> getStorage(BlockPos pos, boolean rebuild) {
         if (getWorld().isRemote) return null;
