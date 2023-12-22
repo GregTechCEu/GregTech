@@ -1,5 +1,9 @@
 package gregtech.common.metatileentities.storage;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.gui.GuiTextures;
@@ -17,6 +21,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +46,11 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     public MetaTileEntityQuantumStorage(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void renderIndicatorOverly(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        // todo create indicator overlay
     }
 
     @Override
