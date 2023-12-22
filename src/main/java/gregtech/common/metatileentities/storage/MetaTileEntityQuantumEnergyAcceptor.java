@@ -1,10 +1,13 @@
 package gregtech.common.metatileentities.storage;
 
+import codechicken.lib.render.pipeline.ColourMultiplier;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 
 import gregtech.client.utils.PipelineUtil;
@@ -16,6 +19,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class MetaTileEntityQuantumEnergyAcceptor extends MetaTileEntityQuantumStorage<IEnergyContainer> {
 
@@ -25,8 +29,10 @@ public class MetaTileEntityQuantumEnergyAcceptor extends MetaTileEntityQuantumSt
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.QUANTUM_CASING.render(renderState, translation, pipeline);
-        Textures.ENERGY_IN_HI.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline,
+        var newPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        Textures.QUANTUM_CASING.render(renderState, translation, newPipeline);
+        Textures.ENERGY_IN_HI.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(newPipeline,
                 GTValues.VC[GTValues.MV]));
     }
 
