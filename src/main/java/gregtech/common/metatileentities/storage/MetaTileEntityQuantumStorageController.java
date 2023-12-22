@@ -86,17 +86,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         if (getWorld().isRemote) return;
 
         if (getOffsetTimer() % 10 == 0) {
-            if (!isPowered && energyContainer.getEnergyStored() >= energyConsumption) {
-                isPowered = true;
-                writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(true));
-            }
-
             if (isPowered) {
                 energyContainer.removeEnergy(energyConsumption);
-                isPowered = energyContainer.getEnergyStored() >= energyConsumption;
-            } else {
-                writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(false));
             }
+            isPowered = energyContainer.getEnergyStored() >= energyConsumption && energyConsumption > 0;
+            writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(isPowered));
         }
     }
 
