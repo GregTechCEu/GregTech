@@ -1,14 +1,5 @@
 {
-  "ctm": {
-    "ctm_version": 1,
-    "type": "CTM",
-    "layer": "BLOOM",
-    "gregtech": true,
-    "textures": [
-      "gregtech:blocks/casings/quantum/extender_active_emissive"
-    ]
-  },
-	"animation":{
+    "animation":{
       "frametime":4
    }
 }

@@ -97,11 +97,15 @@ public class Textures {
             "casings/pipe/machine_casing_grate");
     public static final SimpleOverlayRenderer HIGH_POWER_CASING = new SimpleOverlayRenderer(
             "casings/computer/high_power_casing");
-    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_FRONT = new SimpleOverlayRenderer(
-            "casings/quantum/controller_front");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_FRONT_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_front_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_FRONT_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_front_active");
     public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_ACTIVE = new SimpleOverlayRenderer(
             "casings/quantum/controller_active");
-    public static final SimpleOverlayRenderer QUANTUM_PROXY = new SimpleOverlayRenderer("casings/quantum/proxy");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_PROXY_INACTIVE = new SimpleOverlayRenderer("casings/quantum/proxy_inactive");
     public static final SimpleOverlayRenderer QUANTUM_PROXY_ACTIVE = new SimpleOverlayRenderer(
             "casings/quantum/proxy_active");
     public static final SimpleOverlayRenderer QUANTUM_EXTENDER = new SimpleOverlayRenderer("casings/quantum/extender");
