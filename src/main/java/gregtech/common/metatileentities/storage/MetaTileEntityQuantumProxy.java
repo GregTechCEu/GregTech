@@ -56,6 +56,11 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
         return false;
     }
 
+    @Override
+    public boolean hasFrontFacing() {
+        return false;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
