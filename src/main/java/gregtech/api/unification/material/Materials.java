@@ -683,6 +683,8 @@ public class Materials {
     public static Material UUMatter;
     public static Material PCBCoolant;
 
+    public static Material Corium;
+
     /**
      * Second Degree Compounds
      */

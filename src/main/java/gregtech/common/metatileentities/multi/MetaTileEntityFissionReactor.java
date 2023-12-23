@@ -21,6 +21,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
@@ -45,6 +46,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+
+import net.minecraftforge.fml.relauncher.Side;
+
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -132,17 +137,41 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             this.updateReactorState();
 
             if (this.fissionReactor.checkForMeltdown()) {
-                // TODO Meltdown consequences
+                this.performMeltdownEffects();
             }
 
             if (this.fissionReactor.checkForExplosion()) {
-                // TODO Explosion consequences
+                this.performPrimaryExplosion();
                 if (this.fissionReactor.checkForSecondaryExplosion()) {
-                    // TODO Secondary explosion consequences
+                    this.performSecondaryExplosion();
                 }
             }
-
         }
+    }
+
+    protected void performMeltdownEffects() {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
+        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
+        for (int i = 0; i <= this.heightBottom; i++) {
+            this.getWorld().setBlockState(pos.add(0, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos.add(1, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos.add(-1, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos.add(0, -i, 1), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos.add(0, -i, -1), Materials.Corium.getFluid().getBlock().getDefaultState());
+        }
+        this.getWorld().setBlockState(pos.add(0, 1, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+    }
+
+    protected void performPrimaryExplosion() {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
+        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
+        this.getWorld().createExplosion(null, pos.getX(), pos.getY() + heightTop, pos.getZ(), 4.f, true);
+    }
+
+    protected void performSecondaryExplosion() {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
+        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
+        this.getWorld().newExplosion(null, pos.getX(), pos.getY() + heightTop + 3, pos.getZ(), 10.f, true, true);
     }
 
     public boolean updateStructureDimensions() {
@@ -283,6 +312,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return Textures.FISSION_REACTOR_TEXTURE;
     }
 
+    @SideOnly(Side.CLIENT)
     @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
