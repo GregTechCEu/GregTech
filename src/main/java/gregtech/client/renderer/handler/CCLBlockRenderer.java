@@ -61,7 +61,8 @@ public class CCLBlockRenderer implements ICCBlockRenderer, IItemRenderer {
     @Override
     public void renderItem(ItemStack rawStack, ItemCameraTransforms.TransformType transformType) {
         ItemStack stack = ItemRenderCompat.getRepresentedStack(rawStack);
-        if (stack.getItem() instanceof ItemBlock itemBlock && itemBlock.getBlock() instanceof ICCLBlockRenderer renderer) {
+        if (stack.getItem() instanceof ItemBlock itemBlock &&
+                itemBlock.getBlock() instanceof ICCLBlockRenderer renderer) {
             renderer.renderItem(stack, transformType);
         }
     }

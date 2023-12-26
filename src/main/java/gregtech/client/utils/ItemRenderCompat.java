@@ -64,7 +64,8 @@ public final class ItemRenderCompat {
          * @param stack the stack to retrieve from
          * @return the represented stack
          */
-        @NotNull ItemStack getActualStack(@NotNull ItemStack stack);
+        @NotNull
+        ItemStack getActualStack(@NotNull ItemStack stack);
     }
 
     /**
