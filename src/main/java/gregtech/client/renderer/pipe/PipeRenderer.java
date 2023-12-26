@@ -151,7 +151,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     @Override
     public void renderItem(ItemStack rawItemStack, TransformType transformType) {
         ItemStack stack = ItemRenderCompat.getRepresentedStack(rawItemStack);
-        if (!(stack.getItem() instanceof ItemBlockPipe<?, ?>itemBlockPipe)) {
+        if (!(stack.getItem() instanceof ItemBlockPipe)) {
             return;
         }
         CCRenderState renderState = CCRenderState.instance();

@@ -71,7 +71,7 @@ public final class ItemRenderCompat {
     /**
      * Extracts the output stack from AE2 Patterns
      */
-    private static class AE2StackExtractor implements RepresentativeStackExtractor {
+    private static final class AE2StackExtractor implements RepresentativeStackExtractor {
 
         public static @Nullable ItemRenderCompat.AE2StackExtractor create() {
             if (!Loader.isModLoaded(GTValues.MODID_APPENG)) return null;
