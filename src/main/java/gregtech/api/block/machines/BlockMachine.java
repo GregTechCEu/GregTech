@@ -40,7 +40,11 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -63,7 +67,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
@@ -423,7 +432,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                              @NotNull IBlockState state, @Nullable TileEntity te, @NotNull ItemStack stack) {
         tileEntities.set(te == null ? tileEntities.get() : ((IGregTechTileEntity) te).getMetaTileEntity());
         super.harvestBlock(worldIn, player, pos, state, te, stack);
-        tileEntities.set(null);
+        tileEntities.remove();
     }
 
     @Nullable

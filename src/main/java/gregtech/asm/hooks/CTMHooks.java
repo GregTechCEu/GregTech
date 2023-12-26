@@ -43,7 +43,7 @@ public class CTMHooks {
                 ForgeHooksClient.setRenderLayer(BloomEffectUtil.getBloomLayer());
                 result.addAll(bakedModel.getQuads(state, side, rand));
                 ForgeHooksClient.setRenderLayer(layer);
-                CTMHooks.ENABLE.set(null);
+                CTMHooks.ENABLE.remove();
                 return result;
             }
         }
