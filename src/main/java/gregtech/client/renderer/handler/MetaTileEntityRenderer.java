@@ -4,9 +4,9 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.ItemRenderCompat;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -72,7 +72,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
 
     @Override
     public void renderItem(ItemStack rawStack, TransformType transformType) {
-        ItemStack stack = ModCompatibility.getRealItemStack(rawStack);
+        ItemStack stack = ItemRenderCompat.getRepresentedStack(rawStack);
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         if (metaTileEntity == null) {
             return;
