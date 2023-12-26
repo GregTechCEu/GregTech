@@ -69,21 +69,32 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
         TextureAtlasSprite hullTexture = Textures.VOLTAGE_CASINGS[tier]
                 .getSpriteOnSide(RenderSide.bySide(EnumFacing.NORTH));
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            for (EnumFacing boxFace : EnumFacing.VALUES) {
-                // do not render the box when "facing" is "frontFacing", otherwise
-                // render when the box face matches facing, or
-                // render when the box face is opposite of facing, or
-                // render when the box face is the front face
-                if (facing != frontFacing &&
-                        (boxFace == facing || boxFace == facing.getOpposite() || boxFace == frontFacing)) {
 
-                    Textures.renderFace(renderState, translation, pipeline, boxFace, boxFacingMap.get(facing),
-                            hullTexture,
-                            BlockRenderLayer.CUTOUT_MIPPED);
-                }
-            }
+        for (var facing : boxFacingMap.keySet()) {
+            // do not render the box at the front face when "facing" is "frontFacing"
+            if (facing == frontFacing) continue;
+
+            // render when the box face matches facing
+            Textures.renderFace(renderState, translation, pipeline, facing, boxFacingMap.get(facing),
+                    hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+
+            // render when the box face is opposite of facing
+            Textures.renderFace(renderState, translation, pipeline, facing.getOpposite(), boxFacingMap.get(facing),
+                    hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
         }
+
+        // render the sides of the box that face the front face
+        if (frontFacing.getAxis() == EnumFacing.Axis.Y) return;
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, boxFacingMap.get(EnumFacing.DOWN),
+                hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, boxFacingMap.get(EnumFacing.UP),
+                hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+
+        EnumFacing facing = frontFacing.rotateYCCW();
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, boxFacingMap.get(facing),
+                hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, boxFacingMap.get(facing.getOpposite()),
+                hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
     }
 
     public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine,
