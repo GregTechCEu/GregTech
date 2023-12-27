@@ -260,12 +260,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
-        this.handlers.clear();
-    }
-
-    @Override
     public int getDefaultPaintingColor() {
         return 0x404040;
     }

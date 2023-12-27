@@ -27,7 +27,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -586,19 +585,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                                  @NotNull IBlockState newSate) {
         // always return true to ensure that the chunk marks the old MTE as invalid
         return true;
-    }
-
-    @MustBeInvokedByOverriders
-    @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
-        if (!world.isRemote) {
-            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
-            PipeNet<?> net = worldPipeNet.getNetFromPos(pos);
-            if (net != null) {
-                net.onChunkUnload();
-            }
-        }
     }
 
     public void doExplosion(float explosionPower) {

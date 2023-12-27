@@ -119,10 +119,4 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         updateTransferredState();
         return this.transferredItems;
     }
-
-    @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
-        this.handlers.clear();
-    }
 }
