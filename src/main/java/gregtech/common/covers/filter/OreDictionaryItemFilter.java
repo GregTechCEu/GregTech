@@ -1,7 +1,8 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.widget.Widget;
+
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
@@ -81,7 +82,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public void initUI(Consumer<Widget> widgetGroup) {
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
         ItemOreFilterTestSlot[] testSlot = new ItemOreFilterTestSlot[5];
         for (int i = 0; i < testSlot.length; i++) {
             ItemOreFilterTestSlot slot = new ItemOreFilterTestSlot(20 + 22 * i, 0);
@@ -113,10 +114,10 @@ public class OreDictionaryItemFilter extends ItemFilter {
         widgetGroup.accept(compilationStatus);
         widgetGroup.accept(new DrawableWidget(10, 22, 156, 16)
                 .setBackgroundDrawer((mouseX, mouseY, partialTicks, context, widget) -> {
-                    Widget.drawGradientRect(widget.getPosition().x, widget.getPosition().y,
+                    gregtech.api.gui.Widget.drawGradientRect(widget.getPosition().x, widget.getPosition().y,
                             widget.getSize().width, widget.getSize().height,
                             0xFF808080, 0xFF808080, false);
-                    Widget.drawGradientRect(widget.getPosition().x + 1, widget.getPosition().y + 1,
+                    gregtech.api.gui.Widget.drawGradientRect(widget.getPosition().x + 1, widget.getPosition().y + 1,
                             widget.getSize().width - 2, widget.getSize().height - 2,
                             0xFF000000, 0xFF000000, false);
                 }));
@@ -171,6 +172,11 @@ public class OreDictionaryItemFilter extends ItemFilter {
                     }
                 }).setTooltipHoverString(
                         i -> "cover.ore_dictionary_filter.button.match_all." + (i == 0 ? "disabled" : "enabled")));
+    }
+
+    @Override
+    public Widget<?> initUI() {
+        return null;
     }
 
     @Override

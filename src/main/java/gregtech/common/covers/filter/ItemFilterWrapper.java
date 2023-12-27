@@ -1,12 +1,17 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.widget.Widget;
+
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
+
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -24,16 +29,26 @@ public class ItemFilterWrapper {
         this.dirtyNotifiable = dirtyNotifiable;
     }
 
-    public void initUI(int y, Consumer<Widget> widgetGroup) {
+    public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
     }
 
-    public void blacklistUI(int y, Consumer<Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
+    public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getItemFilter() != null);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
                         .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
+    }
+
+    public Widget<?> initUI() {
+        return getItemFilter().initUI();
+    }
+
+    public Widget<CycleButtonWidget> blacklistUI() {
+        return new CycleButtonWidget().setEnabledIf(row1 -> getItemFilter() != null)
+                .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
+                .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist")));
     }
 
     public void setItemFilter(ItemFilter itemFilter) {

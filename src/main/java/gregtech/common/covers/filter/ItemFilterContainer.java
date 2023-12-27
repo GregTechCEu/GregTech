@@ -1,7 +1,6 @@
 package gregtech.common.covers.filter;
 
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.util.IDirtyNotifiable;
@@ -12,6 +11,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -82,13 +87,34 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         setTransferStackSize(transferStackSize + amount);
     }
 
-    public void initUI(int y, Consumer<Widget> widgetGroup) {
+    /** Deprecated, uses old builtin MUI*/
+    public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.conveyor.item_filter.title"));
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
         this.filterWrapper.initUI(y + 38, widgetGroup);
         this.filterWrapper.blacklistUI(y + 38, widgetGroup, () -> true);
+    }
+
+    /** Uses Cleanroom MUI*/
+    public ParentWidget<?> initUI(GuiSyncManager syncManager) {
+        syncManager.registerSlotGroup("filter_slot", 1, 100);
+        ParentWidget<?> parentWidget = new Column().padding(4)
+                .child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
+                .child(new ItemSlot().slot(
+                        SyncHandlers.itemSlot(filterInventory, 0)
+                                .slotGroup("filter_slot"))
+                );
+
+        if (this.filterWrapper.getItemFilter() != null) {
+            parentWidget
+                    .child(this.filterWrapper.initUI())
+                    .child(this.filterWrapper.blacklistUI());
+        }
+
+        return parentWidget;
+
     }
 
     protected void onFilterSlotChange(boolean notify) {

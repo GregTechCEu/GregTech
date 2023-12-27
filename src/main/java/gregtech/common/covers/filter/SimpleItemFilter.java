@@ -1,16 +1,24 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.widget.Widget;
+
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.util.LargeStackSizeItemStackHandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+
+import java.util.List;
 import java.util.function.Consumer;
 
 public class SimpleItemFilter extends ItemFilter {
@@ -87,7 +95,7 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public void initUI(Consumer<Widget> widgetGroup) {
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
         for (int i = 0; i < 9; i++) {
             widgetGroup.accept(new PhantomSlotWidget(itemFilterSlots, i, 10 + 18 * (i % 3), 18 * (i / 3))
                     .setBackgroundTexture(GuiTextures.SLOT));
@@ -96,6 +104,14 @@ public class SimpleItemFilter extends ItemFilter {
                 () -> ignoreDamage, this::setIgnoreDamage).setTooltipText("cover.item_filter.ignore_damage"));
         widgetGroup.accept(new ToggleButtonWidget(99, 0, 20, 20, GuiTextures.BUTTON_FILTER_NBT,
                 () -> ignoreNBT, this::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
+    }
+
+    @Override
+    public Widget<Grid> initUI() {
+        List<ItemSlot> matrix = NonNullList.withSize(itemFilterSlots.getSlots(), new ItemSlot());
+        return new Grid().matrix(Grid.mapToMatrix(3, matrix,
+                (index, value) -> value.slot(SyncHandlers.phantomItemSlot(itemFilterSlots, index))
+        ));
     }
 
     @Override

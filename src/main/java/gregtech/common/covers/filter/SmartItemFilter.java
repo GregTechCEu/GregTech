@@ -1,6 +1,7 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.Widget;
+import com.cleanroommc.modularui.widget.Widget;
+
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -66,10 +67,15 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public void initUI(Consumer<Widget> widgetGroup) {
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
                 SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
                         .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
+    }
+
+    @Override
+    public Widget<?> initUI() {
+        return null;
     }
 
     @Override
