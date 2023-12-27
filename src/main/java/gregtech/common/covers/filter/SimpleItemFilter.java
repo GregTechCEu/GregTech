@@ -72,15 +72,14 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public Integer matchItemStack(ItemStack itemStack) {
+    public MatchResult<Integer> matchItemStack(ItemStack itemStack) {
         int itemFilterMatchIndex = itemFilterMatch(getItemFilterSlots(), isIgnoreDamage(), isIgnoreNBT(), itemStack);
-        return itemFilterMatchIndex == -1 ? null : itemFilterMatchIndex;
+        return ItemFilter.createResult(itemFilterMatchIndex == -1 ? Match.FAIL : Match.SUCCEED, itemFilterMatchIndex);
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
-        Integer matchSlotIndex = (Integer) matchSlot;
-        ItemStack stackInFilterSlot = itemFilterSlots.getStackInSlot(matchSlotIndex);
+    public int getSlotTransferLimit(int matchSlot, int globalTransferLimit) {
+        ItemStack stackInFilterSlot = itemFilterSlots.getStackInSlot(matchSlot);
         return Math.min(stackInFilterSlot.getCount(), globalTransferLimit);
     }
 
@@ -110,7 +109,8 @@ public class SimpleItemFilter extends ItemFilter {
     public Widget<Grid> initUI() {
         List<ItemSlot> matrix = NonNullList.withSize(itemFilterSlots.getSlots(), new ItemSlot());
         return new Grid().matrix(Grid.mapToMatrix(3, matrix,
-                (index, value) -> value.slot(SyncHandlers.phantomItemSlot(itemFilterSlots, index))
+                (index, value) -> value.slot(SyncHandlers.phantomItemSlot(itemFilterSlots, index)
+                        .slotGroup("filter_slots")).size(16, 16)
         ));
     }
 

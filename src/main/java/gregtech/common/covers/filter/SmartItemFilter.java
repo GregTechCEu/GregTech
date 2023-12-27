@@ -34,18 +34,12 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
-        ItemAndMetadataAndStackSize itemAndMetadata = (ItemAndMetadataAndStackSize) matchSlot;
-        return itemAndMetadata.transferStackSize;
-    }
+    public int getStackTransferLimit(ItemStack stack, int globalTransferLimit) {
+        ItemAndMetadata itemAndMetadata = new ItemAndMetadata(stack);
+        int cachedTransferRateValue = filteringMode.transferStackSizesCache.getOrDefault(itemAndMetadata, -1);
 
-    @Override
-    public Object matchItemStack(ItemStack itemStack) {
-        ItemAndMetadata itemAndMetadata = new ItemAndMetadata(itemStack);
-        Integer cachedTransferRateValue = filteringMode.transferStackSizesCache.get(itemAndMetadata);
-
-        if (cachedTransferRateValue == null) {
-            ItemStack infinitelyBigStack = itemStack.copy();
+        if (cachedTransferRateValue == -1) {
+            ItemStack infinitelyBigStack = stack.copy();
             infinitelyBigStack.setCount(Integer.MAX_VALUE);
 
             Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE,
@@ -60,10 +54,36 @@ public class SmartItemFilter extends ItemFilter {
             }
         }
 
-        if (cachedTransferRateValue == 0) {
-            return null;
-        }
-        return new ItemAndMetadataAndStackSize(itemAndMetadata, cachedTransferRateValue);
+        return cachedTransferRateValue;
+    }
+
+    @Override
+    public MatchResult<Integer> matchItemStack(ItemStack itemStack) {
+//        ItemAndMetadata itemAndMetadata = new ItemAndMetadata(itemStack);
+//        Integer cachedTransferRateValue = filteringMode.transferStackSizesCache.getInt(itemAndMetadata);
+//
+//        if (cachedTransferRateValue == null) {
+//            ItemStack infinitelyBigStack = itemStack.copy();
+//            infinitelyBigStack.setCount(Integer.MAX_VALUE);
+//
+//            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE,
+//                    Collections.singletonList(infinitelyBigStack), Collections.emptyList());
+//            if (recipe == null) {
+//                filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
+//                cachedTransferRateValue = 0;
+//            } else {
+//                GTRecipeInput inputIngredient = recipe.getInputs().iterator().next();
+//                filteringMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getAmount());
+//                cachedTransferRateValue = inputIngredient.getAmount();
+//            }
+//        }
+//
+//        if (cachedTransferRateValue == 0) {
+//            return Match.FAIL;
+//        }
+        int data = getStackTransferLimit(itemStack, Integer.MAX_VALUE);
+        var match = data > 0 ? Match.SUCCEED : Match.FAIL;
+        return ItemFilter.createResult(match, data);
     }
 
     @Override
@@ -128,7 +148,7 @@ public class SmartItemFilter extends ItemFilter {
         CENTRIFUGE("cover.smart_item_filter.filtering_mode.centrifuge", RecipeMaps.CENTRIFUGE_RECIPES),
         SIFTER("cover.smart_item_filter.filtering_mode.sifter", RecipeMaps.SIFTER_RECIPES);
 
-        private final Map<ItemAndMetadata, Integer> transferStackSizesCache = new Object2IntOpenHashMap<>();
+        private final Object2IntOpenHashMap<ItemAndMetadata> transferStackSizesCache = new Object2IntOpenHashMap<>();
         public final String localeName;
         public final RecipeMap<?> recipeMap;
 

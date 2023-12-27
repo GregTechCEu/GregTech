@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 
 public abstract class ItemFilter {
 
+    public static MatchResult<Integer> EMPTY_MATCH = new MatchResult<>(Match.SUCCEED, -1);
     private IDirtyNotifiable dirtyNotifiable;
     private int maxStackSize = Integer.MAX_VALUE;
 
@@ -27,9 +28,15 @@ public abstract class ItemFilter {
 
     public abstract boolean showGlobalTransferLimitSlider();
 
-    public abstract int getSlotTransferLimit(Object matchSlot, int globalTransferLimit);
+    public int getSlotTransferLimit(int matchSlot, int globalTransferLimit) {
+        return 0;
+    }
 
-    public abstract Object matchItemStack(ItemStack itemStack);
+    public int getStackTransferLimit(ItemStack stack, int globalTransferLimit) {
+        return 0;
+    }
+
+    public abstract MatchResult<Integer> matchItemStack(ItemStack itemStack);
 
     public abstract int getTotalOccupiedHeight();
 
@@ -52,5 +59,41 @@ public abstract class ItemFilter {
         if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();
         }
+    }
+
+    public static <R> MatchResult<R> createResult(Match match, R data) {
+        return new MatchResult<>(match, data);
+    }
+
+    public static MatchResult<Integer> createResult(Match match, int data) {
+        return new MatchResult<>(match, data);
+    }
+
+    public static class MatchResult<T> {
+        Match match;
+        T data;
+        private MatchResult(Match match, T data) {
+            this.match = match;
+            this.data = data;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public boolean matched() {
+            return match == Match.SUCCEED;
+        }
+
+        public void flipMatch() {
+            this.match = matched() ?
+                    ItemFilter.Match.FAIL :
+                    ItemFilter.Match.SUCCEED;
+        }
+    }
+
+    public enum Match {
+        FAIL,
+        SUCCEED
     }
 }

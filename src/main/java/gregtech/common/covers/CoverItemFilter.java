@@ -13,6 +13,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.ItemFilter;
+import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.covers.filter.ItemFilterWrapper;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,7 +39,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
-    protected final ItemFilterWrapper itemFilter;
+    protected final ItemFilterContainer itemFilter;
     protected ItemFilterMode filterMode = ItemFilterMode.FILTER_INSERT;
     protected ItemHandlerFiltered itemHandler;
 
@@ -48,7 +49,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         super(definition, coverableView, attachedSide);
         this.titleLocale = titleLocale;
         this.texture = texture;
-        this.itemFilter = new ItemFilterWrapper(this);
+        this.itemFilter = new ItemFilterContainer(this);
         this.itemFilter.setItemFilter(itemFilter);
         this.itemFilter.setMaxStackSize(1);
     }
@@ -62,8 +63,8 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
-    public ItemFilterWrapper getItemFilter() {
-        return this.itemFilter;
+    public ItemFilter getItemFilter() {
+        return this.itemFilter.getItemFilter();
     }
 
     @Override

@@ -1,32 +1,19 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.widget.Widget;
-
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
-import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
-
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.BoolValue;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class ItemFilterWrapper {
+    private ItemFilterContainer container;
 
-    private static final Object MATCH_RESULT_TRUE = new Object();
-    private final IDirtyNotifiable dirtyNotifiable;
-    private boolean isBlacklistFilter = false;
-    private int maxStackSize = 1;
-    private ItemFilter currentItemFilter;
-    private Runnable onFilterInstanceChange;
-
-    public ItemFilterWrapper(IDirtyNotifiable dirtyNotifiable) {
-        this.dirtyNotifiable = dirtyNotifiable;
+    public ItemFilterWrapper(ItemFilterContainer container) {
+        this.container = container;
     }
 
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
@@ -41,107 +28,55 @@ public class ItemFilterWrapper {
         widgetGroup.accept(blacklistButton);
     }
 
-    public Widget<?> initUI() {
-        return getItemFilter().initUI();
-    }
-
-    public Widget<CycleButtonWidget> blacklistUI() {
-        return new CycleButtonWidget().setEnabledIf(row1 -> getItemFilter() != null)
-                .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
-                .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist")));
-    }
-
     public void setItemFilter(ItemFilter itemFilter) {
-        this.currentItemFilter = itemFilter;
-        if (currentItemFilter != null) {
-            currentItemFilter.setDirtyNotifiable(dirtyNotifiable);
-        }
-        if (onFilterInstanceChange != null) {
-            this.onFilterInstanceChange.run();
-        }
+        container.setItemFilter(itemFilter);
     }
 
     public ItemFilter getItemFilter() {
-        return currentItemFilter;
+        return container.getItemFilter();
     }
 
     public void setOnFilterInstanceChange(Runnable onFilterInstanceChange) {
-        this.onFilterInstanceChange = onFilterInstanceChange;
+        this.container.setOnFilterInstanceChange(onFilterInstanceChange);
     }
 
     public void onFilterInstanceChange() {
-        if (currentItemFilter != null) {
-            currentItemFilter.setMaxStackSize(getInternalMaxStackSize());
-        }
-        dirtyNotifiable.markAsDirty();
+        this.container.onFilterInstanceChange();
     }
 
     public void setMaxStackSize(int maxStackSize) {
-        this.maxStackSize = maxStackSize;
-        onFilterInstanceChange();
-        dirtyNotifiable.markAsDirty();
+        container.setMaxStackSize(maxStackSize);
     }
 
     public void setBlacklistFilter(boolean blacklistFilter) {
-        isBlacklistFilter = blacklistFilter;
-        onFilterInstanceChange();
-        dirtyNotifiable.markAsDirty();
+        container.setBlacklistFilter(blacklistFilter);
     }
 
     public boolean isBlacklistFilter() {
-        return isBlacklistFilter;
+        return container.isBlacklistFilter();
     }
 
     public int getMaxStackSize() {
-        return maxStackSize;
-    }
-
-    private int getInternalMaxStackSize() {
-        if (isBlacklistFilter()) {
-            return 1;
-        } else {
-            return getMaxStackSize();
-        }
+        return container.getMaxStackSize();
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return isBlacklistFilter() || currentItemFilter == null || currentItemFilter.showGlobalTransferLimitSlider();
+        return container.showGlobalTransferLimitSlider();
     }
 
-    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
-        if (isBlacklistFilter() || currentItemFilter == null) {
-            return globalTransferLimit;
-        }
-        return currentItemFilter.getSlotTransferLimit(matchSlot, globalTransferLimit);
+    public int getSlotTransferLimit(int matchSlot, int globalTransferLimit) {
+        return container.getSlotTransferLimit(matchSlot);
     }
 
-    public Object matchItemStack(ItemStack itemStack) {
-        Object originalResult;
-        if (currentItemFilter == null) {
-            originalResult = MATCH_RESULT_TRUE;
-        } else {
-            originalResult = currentItemFilter.matchItemStack(itemStack);
-        }
-        if (isBlacklistFilter()) {
-            originalResult = originalResult == null ? MATCH_RESULT_TRUE : null;
-        }
-        return originalResult;
+    public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack) {
+        return container.matchItemStack(itemStack);
     }
 
-    public Object matchItemStack(ItemStack itemStack, boolean whitelist) {
-        Object originalResult;
-        if (currentItemFilter == null) {
-            originalResult = MATCH_RESULT_TRUE;
-        } else {
-            originalResult = currentItemFilter.matchItemStack(itemStack);
-        }
-        if (!whitelist) {
-            originalResult = originalResult == null ? MATCH_RESULT_TRUE : null;
-        }
-        return originalResult;
+    public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack, boolean whitelist) {
+        return container.matchItemStack(itemStack, whitelist);
     }
 
     public boolean testItemStack(ItemStack itemStack) {
-        return matchItemStack(itemStack) != null;
+        return container.testItemStack(itemStack);
     }
 }

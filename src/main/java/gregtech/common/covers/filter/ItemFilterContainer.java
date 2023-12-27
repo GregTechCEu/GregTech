@@ -1,8 +1,14 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
@@ -19,18 +25,24 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     private final ItemStackHandler filterInventory;
     private final ItemFilterWrapper filterWrapper;
+    private final IDirtyNotifiable dirtyNotifiable;
+    private boolean isBlacklistFilter = false;
+    private int maxStackSize = 1;
+    private ItemFilter currentItemFilter;
+    private Runnable onFilterInstanceChange;
     private int maxStackSizeLimit = 1;
     private int transferStackSize;
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
-        this.filterWrapper = new ItemFilterWrapper(dirtyNotifiable);
-        this.filterWrapper.setOnFilterInstanceChange(this::onFilterInstanceChange);
+        this.filterWrapper = new ItemFilterWrapper(this); // for compat
+        this.dirtyNotifiable = dirtyNotifiable;
         this.filterInventory = new ItemStackHandler(1) {
 
             @Override
@@ -63,10 +75,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return filterWrapper;
     }
 
-    private void onFilterInstanceChange() {
-        this.filterWrapper.setMaxStackSize(getTransferStackSize());
-    }
-
     public int getMaxStackSize() {
         return maxStackSizeLimit;
     }
@@ -80,11 +88,23 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public void setTransferStackSize(int transferStackSize) {
         this.transferStackSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
-        this.filterWrapper.setMaxStackSize(getTransferStackSize());
+        this.maxStackSize = getTransferStackSize();
+        onFilterInstanceChange();
+        dirtyNotifiable.markAsDirty();
     }
 
     public void adjustTransferStackSize(int amount) {
         setTransferStackSize(transferStackSize + amount);
+    }
+
+    public void setBlacklistFilter(boolean blacklistFilter) {
+        isBlacklistFilter = blacklistFilter;
+        onFilterInstanceChange();
+        dirtyNotifiable.markAsDirty();
+    }
+
+    public boolean isBlacklistFilter() {
+        return isBlacklistFilter;
     }
 
     /** Deprecated, uses old builtin MUI*/
@@ -93,45 +113,64 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
-        this.filterWrapper.initUI(y + 38, widgetGroup);
-        this.filterWrapper.blacklistUI(y + 38, widgetGroup, () -> true);
+        this.initFilterUI(y + 38, widgetGroup);
+        this.blacklistUI(y + 38, widgetGroup, () -> true);
+    }
+
+    public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
+        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
+    }
+
+    public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
+        ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getItemFilter() != null);
+        blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
+                this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
+                .setTooltipText("cover.filter.blacklist"));
+        widgetGroup.accept(blacklistButton);
     }
 
     /** Uses Cleanroom MUI*/
     public ParentWidget<?> initUI(GuiSyncManager syncManager) {
         syncManager.registerSlotGroup("filter_slot", 1, 100);
-        ParentWidget<?> parentWidget = new Column().padding(4)
+
+        return new Column().padding(4).left(5).coverChildrenWidth()
                 .child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
                 .child(new ItemSlot().slot(
                         SyncHandlers.itemSlot(filterInventory, 0)
-                                .slotGroup("filter_slot"))
-                );
-
-        if (this.filterWrapper.getItemFilter() != null) {
-            parentWidget
-                    .child(this.filterWrapper.initUI())
-                    .child(this.filterWrapper.blacklistUI());
-        }
-
-        return parentWidget;
-
+                                .slotGroup("filter_slot")))
+                .childIf(this::hasItemFilter, () -> getItemFilter().initUI().setEnabledIf(w -> hasItemFilter()))
+                .childIf(this::hasItemFilter, () -> new CycleButtonWidget().setEnabledIf(w -> hasItemFilter())
+                        .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
+                        .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist"))));
     }
 
     protected void onFilterSlotChange(boolean notify) {
         ItemStack filterStack = filterInventory.getStackInSlot(0);
         ItemFilter newItemFilter = FilterTypeRegistry.getItemFilterForStack(filterStack);
-        ItemFilter currentItemFilter = filterWrapper.getItemFilter();
+        ItemFilter currentItemFilter = getItemFilter();
         if (newItemFilter == null) {
-            if (currentItemFilter != null) {
-                filterWrapper.setItemFilter(null);
-                filterWrapper.setBlacklistFilter(false);
-                if (notify) filterWrapper.onFilterInstanceChange();
+            if (hasItemFilter()) {
+                setItemFilter(null);
+                setBlacklistFilter(false);
+                if (notify) onFilterInstanceChange();
             }
         } else if (currentItemFilter == null ||
                 newItemFilter.getClass() != currentItemFilter.getClass()) {
-                    filterWrapper.setItemFilter(newItemFilter);
-                    if (notify) filterWrapper.onFilterInstanceChange();
+                    setItemFilter(newItemFilter);
+                    if (notify) onFilterInstanceChange();
                 }
+    }
+
+    public void setOnFilterInstanceChange(Runnable onFilterInstanceChange) {
+        this.onFilterInstanceChange = onFilterInstanceChange;
+    }
+
+    public void onFilterInstanceChange() {
+        this.maxStackSize = isBlacklistFilter ? 1 : getMaxStackSize();
+        if (currentItemFilter != null) {
+            currentItemFilter.setMaxStackSize(getMaxStackSize());
+        }
+        dirtyNotifiable.markAsDirty();
     }
 
     public void setMaxStackSize(int maxStackSizeLimit) {
@@ -140,19 +179,38 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return getMaxStackSize() > 1 && filterWrapper.showGlobalTransferLimitSlider();
+        return getMaxStackSize() > 1 && (isBlacklistFilter() || !hasItemFilter()|| currentItemFilter.showGlobalTransferLimitSlider());
     }
 
-    public int getSlotTransferLimit(Object slotIndex) {
-        return filterWrapper.getSlotTransferLimit(slotIndex, getTransferStackSize());
+    public int getSlotTransferLimit(int slotIndex) {
+        if (isBlacklistFilter() || currentItemFilter == null) {
+            return getTransferStackSize();
+        }
+        return currentItemFilter.getSlotTransferLimit(slotIndex, getTransferStackSize());
     }
 
-    public Object matchItemStack(ItemStack itemStack) {
-        return filterWrapper.matchItemStack(itemStack);
+    public int getStackTransferLimit(ItemStack stack) {
+        if (isBlacklistFilter() || currentItemFilter == null) {
+            return getTransferStackSize();
+        }
+        return currentItemFilter.getStackTransferLimit(stack, getTransferStackSize());
     }
 
-    public Object matchItemStack(ItemStack itemStack, boolean whitelist) {
-        return filterWrapper.matchItemStack(itemStack, whitelist);
+    public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack) {
+        return matchItemStack(itemStack, !isBlacklistFilter());
+    }
+
+    public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack, boolean whitelist) {
+        ItemFilter.MatchResult<Integer> originalResult;
+        if (currentItemFilter == null) {
+            originalResult = ItemFilter.EMPTY_MATCH;
+        } else {
+            originalResult = currentItemFilter.matchItemStack(itemStack);
+        }
+        if (!whitelist) {
+            originalResult.flipMatch();
+        }
+        return originalResult;
     }
 
     public boolean testItemStack(ItemStack itemStack) {
@@ -160,7 +218,26 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public boolean testItemStack(ItemStack itemStack, boolean whitelist) {
-        return matchItemStack(itemStack, whitelist) != null;
+        return matchItemStack(itemStack, whitelist).matched();
+    }
+
+
+    public void setItemFilter(ItemFilter itemFilter) {
+        this.currentItemFilter = itemFilter;
+        if (currentItemFilter != null) {
+            currentItemFilter.setDirtyNotifiable(dirtyNotifiable);
+        }
+        if (onFilterInstanceChange != null) {
+            this.onFilterInstanceChange.run();
+        }
+    }
+
+    public ItemFilter getItemFilter() {
+        return currentItemFilter;
+    }
+
+    public boolean hasItemFilter() {
+        return currentItemFilter != null;
     }
 
     @Override

@@ -366,8 +366,9 @@ public class ItemNetHandler implements IItemHandler {
                                         int allowed, boolean ignoreLimit) {
         int rate;
         boolean isStackSpecific = false;
-        Object index = arm.getItemFilterContainer().matchItemStack(stack);
-        if (index instanceof Integer) {
+        var matchResult = arm.getItemFilterContainer().matchItemStack(stack);
+        int index = matchResult.getData();
+        if (index > 0) {
             rate = arm.getItemFilterContainer().getSlotTransferLimit(index);
             isStackSpecific = true;
         } else

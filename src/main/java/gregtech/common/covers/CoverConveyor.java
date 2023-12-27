@@ -24,6 +24,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.common.covers.filter.ItemFilter;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
@@ -293,8 +294,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object matchSlotIndex = itemFilterContainer.matchItemStack(itemStack);
-            if (matchSlotIndex == null || !itemInfos.containsKey(matchSlotIndex)) {
+            var matchResult = itemFilterContainer.matchItemStack(itemStack);
+            var matchSlotIndex = matchResult.getData();
+            if (!matchResult.matched() || !itemInfos.containsKey(matchSlotIndex)) {
                 continue;
             }
 
@@ -316,7 +318,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     itemInfo.totalCount -= extractedStack.getCount();
 
                     if (itemInfo.totalCount == 0) {
-                        itemInfos.remove(matchSlotIndex);
+                        itemInfos.remove(matchResult);
                         if (itemInfos.isEmpty()) {
                             break;
                         }
@@ -362,13 +364,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     protected static class TypeItemInfo {
 
         public final ItemStack itemStack;
-        public final Object filterSlot;
+        public final int filterSlot;
         public final IntList slots;
         public int totalCount;
 
         public TypeItemInfo(ItemStack itemStack, Object filterSlot, IntList slots, int totalCount) {
             this.itemStack = itemStack;
-            this.filterSlot = filterSlot;
+            this.filterSlot = (int) filterSlot;
             this.slots = slots;
             this.totalCount = totalCount;
         }
@@ -376,11 +378,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     protected static class GroupItemInfo {
 
-        public final Object filterSlot;
+        public final int filterSlot;
         public final Set<ItemStack> itemStackTypes;
         public int totalCount;
 
-        public GroupItemInfo(Object filterSlot, Set<ItemStack> itemStackTypes, int totalCount) {
+        public GroupItemInfo(int filterSlot, Set<ItemStack> itemStackTypes, int totalCount) {
             this.filterSlot = filterSlot;
             this.itemStackTypes = itemStackTypes;
             this.totalCount = totalCount;
@@ -396,12 +398,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
-            if (transferSlotIndex == null) {
+            var matchResult = itemFilterContainer.matchItemStack(itemStack);
+            if (!matchResult.matched()) {
                 continue;
             }
+            var data = matchResult.getData();
             if (!result.containsKey(itemStack)) {
-                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), transferSlotIndex, new IntArrayList(), 0);
+                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), data, new IntArrayList(), 0);
                 itemInfo.totalCount += itemStack.getCount();
                 itemInfo.slots.add(srcIndex);
                 result.put(itemStack.copy(), itemInfo);
@@ -422,10 +425,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
-            if (transferSlotIndex == null) {
+            var matchResult = itemFilterContainer.matchItemStack(itemStack);
+            if (!matchResult.matched()) {
                 continue;
             }
+            int transferSlotIndex = matchResult.getData();
             if (!result.containsKey(transferSlotIndex)) {
                 GroupItemInfo itemInfo = new GroupItemInfo(transferSlotIndex,
                         new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount()), 0);

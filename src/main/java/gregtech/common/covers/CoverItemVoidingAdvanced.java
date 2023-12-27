@@ -56,12 +56,12 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         for (TypeItemInfo typeItemInfo : itemTypeCount.values()) {
 
             int itemToVoidAmount = 0;
-            if (getItemFilterContainer().getFilterWrapper().getItemFilter() == null) {
+            if (getItemFilterContainer().getItemFilter() == null) {
                 itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getTransferStackSize();
             } else {
                 if (itemFilterContainer.testItemStack(typeItemInfo.itemStack)) {
-                    Object matchedSlot = itemFilterContainer.matchItemStack(typeItemInfo.itemStack);
-                    itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getSlotTransferLimit(matchedSlot);
+                    var matchResult = itemFilterContainer.matchItemStack(typeItemInfo.itemStack);
+                    itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getSlotTransferLimit(matchResult.getData());
                 }
             }
 
@@ -123,7 +123,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(
-                () -> itemFilterContainer.getFilterWrapper().getItemFilter() == null &&
+                () -> itemFilterContainer.getItemFilter() == null &&
                         voidingMode == VoidingMode.VOID_OVERFLOW);
         stackSizeGroup.addWidget(new ImageWidget(111, 34, 35, 20, GuiTextures.DISPLAY));
 
@@ -151,9 +151,9 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
         widgetGroup.accept(stackSizeGroup);
 
-        this.itemFilterContainer.getFilterWrapper().initUI(y + 38, widgetGroup);
+        this.itemFilterContainer.initUI(y + 38, widgetGroup);
 
-        this.itemFilterContainer.getFilterWrapper().blacklistUI(y + 38, widgetGroup,
+        this.itemFilterContainer.blacklistUI(y + 38, widgetGroup,
                 () -> voidingMode != VoidingMode.VOID_OVERFLOW);
     }
 
