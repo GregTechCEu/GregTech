@@ -11,7 +11,15 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.IncrementButtonWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
@@ -26,7 +34,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,6 +52,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -475,6 +496,53 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     protected String getUITitle() {
         return "cover.conveyor.title";
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        EnumSyncValue<ManualImportExportMode> manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
+                this::getManualImportExportMode, this::setManualImportExportMode);
+
+        EnumSyncValue<ConveyorMode> conveyorMode = new EnumSyncValue<>(ConveyorMode.class,
+                this::getConveyorMode, this::setConveyorMode);
+
+        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::adjustTransferRate);
+
+        guiSyncManager.syncValue("manual_io", manualIOmode);
+        guiSyncManager.syncValue("conveyor_mode", conveyorMode);
+        guiSyncManager.syncValue("transfer_rate", throughput);
+
+        return GTGuis.createPanel(this, 176, 112 + 176)
+                .padding(4)
+                .child(createTitleRow())
+                .child(new Row().widthRel(1.0f)
+                        .top(16).padding(4)
+                        .coverChildrenHeight()
+                        .child(new ButtonWidget<>()
+                                .width(16)
+                                .onMousePressed(mouseButton -> {
+                                    throughput.setValue(getTransferRate() + 1, true, true);
+                                    return true;
+                        }))
+                        .child(new TextFieldWidget()
+                                .setMaxLength(4)
+                                .setNumbers(1, maxItemTransferRate)
+                                .background(GTGuiTextures.DISPLAY))
+                        .child(new ButtonWidget<>()
+                                .width(16)
+                                .onMousePressed(mouseButton -> {
+                                    throughput.setValue(getTransferRate() - 1, true, true);
+                                    return true;
+                        })))
+                .child(getItemFilterContainer()
+                        .initUI(guiSyncManager)
+                        .top(36))
+                .bindPlayerInventory();
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
