@@ -200,6 +200,7 @@ public class Materials {
     public static Material Neodymium;
     public static Material Neon;
     public static Material Neptunium;
+    public static Material Neptunium239;
     public static Material Nickel;
     public static Material Nihonium;
     public static Material Niobium;
@@ -249,6 +250,7 @@ public class Materials {
     public static Material Tungsten;
     public static Material Uranium238;
     public static Material Uranium235;
+    public static Material Uranium239;
     public static Material Vanadium;
     public static Material Xenon;
     public static Material Ytterbium;
@@ -682,8 +684,9 @@ public class Materials {
     public static Material Lapotron;
     public static Material UUMatter;
     public static Material PCBCoolant;
-
     public static Material Corium;
+    public static Material EnrichedUraniumDioxide;
+    public static Material DepletedUraniumDioxide;
 
     /**
      * Second Degree Compounds
@@ -741,6 +744,8 @@ public class Materials {
     public static Material SaltWater;
     public static Material Clay;
     public static Material Redstone;
+    public static Material LEU235;
+    public static Material HEU235;
 
     /**
      * Third Degree Materials
