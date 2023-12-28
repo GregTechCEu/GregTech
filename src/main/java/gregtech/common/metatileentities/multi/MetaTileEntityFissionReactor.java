@@ -47,6 +47,7 @@ import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -122,6 +123,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 this.fissionReactor.heatRemoved += coolantImport.getCoolant().getProperty(PropertyKey.COOLANT)
                         .getCoolingFactor() * this.flowRate;
                 coolantImport.getFluidTank().drain(this.flowRate, true);
+            }
+            for (ICoolantHandler coolantExport : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
+                coolantExport.getFluidTank().fill(coolantExport.getCoolant().getFluid(this.flowRate), true);
             }
 
             // Fuel handling
@@ -385,6 +389,30 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         textList.add(toggleText);
     }
 
+    protected void lockAll() {
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+            handler.setLock(true);
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
+            handler.setLock(true);
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+            handler.setLock(true);
+        }
+    }
+
+    protected void unlockAll() {
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+            handler.setLock(false);
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
+            handler.setLock(false);
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+            handler.setLock(false);
+        }
+    }
+
     @Override
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
@@ -393,23 +421,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             if (this.locked) {
                 lockAndPrepareReactor();
             } else {
-                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-                    handler.setLock(false);
-                }
-                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                    handler.setLock(false);
-                }
+                this.unlockAll();
             }
         }
     }
 
     private void lockAndPrepareReactor() {
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-            handler.setLock(true);
-        }
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-            handler.setLock(true);
-        }
+        this.lockAll();
         fissionReactor = new FissionReactor(this.diameter - 2);
         int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) :
                 Math.round((this.diameter - 1) / 2.f);

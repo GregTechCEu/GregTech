@@ -1,7 +1,9 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
+import gregtech.api.capability.impl.LockableFluidTank;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -14,6 +16,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
@@ -32,16 +36,19 @@ import codechicken.lib.vec.Matrix4;
 
 import java.util.List;
 
-public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNotifiablePart implements
-                                              IMultiblockAbilityPart<IFluidTank>, IControllable, IFissionReactorHatch {
+import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
+
+public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNotifiablePart
+                                              implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler,
+                                              IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
-    private final FluidTank fluidTank;
+    private LockableFluidTank fluidTank;
+    private Material coolant;
 
     public MetaTileEntityCoolantExportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, true);
-        this.fluidTank = new NotifiableFluidTank(16000, this, true);
         this.frontFacing = EnumFacing.DOWN;
     }
 
@@ -106,18 +113,48 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
+    public void setLock(boolean isLocked) {
+        fluidTank.setLock(isLocked);
+        writeCustomData(LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
+    }
+
+    @Override
+    public boolean isLocked() {
+        return fluidTank.isLocked();
+    }
+
+    @Override
+    public Material getCoolant() {
+        return this.coolant;
+    }
+
+    @Override
+    public void setCoolant(Material material) {
+        if (!material.hasProperty(PropertyKey.COOLANT)) {
+            throw new IllegalStateException(
+                    "Can't use material " + material.getName() + " as a coolant without a coolant property");
+        }
+        this.coolant = material;
+    }
+
+    @Override
+    public LockableFluidTank getFluidTank() {
+        return this.fluidTank;
+    }
+
+    @Override
     public void setValid(boolean valid) {
         this.valid = valid;
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
+    public MultiblockAbility<ICoolantHandler> getAbility() {
         return MultiblockAbility.EXPORT_COOLANT;
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.add(fluidTank);
+    public void registerAbilities(List<ICoolantHandler> abilityList) {
+        abilityList.add(this);
     }
 
     @Override
