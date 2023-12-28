@@ -78,7 +78,6 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     }
 
     private int getParallel(Recipe recipe, double totalHolderEfficiencyCoefficient, int turbineMaxVoltage) {
-        // TODO: this.excessVoltage is going to have been calculated on the _last_ fluid cycle. I'm not sure that's going to behave right.
         return MathHelper.ceil((turbineMaxVoltage - this.excessVoltage) /
                 (Math.abs(recipe.getEUt()) * totalHolderEfficiencyCoefficient));
     }

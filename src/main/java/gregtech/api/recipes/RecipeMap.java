@@ -523,9 +523,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
-     * @param voltage        Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs         the Item Inputs
-     * @param fluidInputs    the Fluid Inputs
+     * @param voltage     Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs      the Item Inputs
+     * @param fluidInputs the Fluid Inputs
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
@@ -536,10 +536,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
-     * @param voltage        Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs         the Item Inputs
-     * @param fluidInputs    the Fluid Inputs
-     * @param exactVoltage   should require exact voltage matching on recipe. used by craftweaker
+     * @param voltage      Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs       the Item Inputs
+     * @param fluidInputs  the Fluid Inputs
+     * @param exactVoltage should require exact voltage matching on recipe. used by craftweaker
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
