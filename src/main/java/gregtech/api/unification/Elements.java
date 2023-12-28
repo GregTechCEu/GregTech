@@ -112,7 +112,9 @@ public class Elements {
     public static final Element U = add(92, 146, -1, null, "Uranium", "U", false);
     public static final Element U238 = add(92, 146, -1, null, "Uranium-238", "U-238", false);
     public static final Element U235 = add(92, 143, -1, null, "Uranium-235", "U-235", true);
+    public static final Element U239 = add(92, 147, -1, null, "Uranium-239", "U-239", true);
     public static final Element Np = add(93, 144, -1, null, "Neptunium", "Np", false);
+    public static final Element Np239 = add(93, 146, -1, null, "Neptunium-239", "Np-239", true);
     public static final Element Pu = add(94, 152, -1, null, "Plutonium", "Pu", false);
     public static final Element Pu239 = add(94, 145, -1, null, "Plutonium-239", "Pu-239", false);
     public static final Element Pu241 = add(94, 149, -1, null, "Plutonium-241", "Pu-241", true);
