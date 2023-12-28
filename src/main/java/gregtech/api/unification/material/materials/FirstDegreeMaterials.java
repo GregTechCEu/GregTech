@@ -1553,5 +1553,21 @@ public class FirstDegreeMaterials {
                         .blastStats(VA[EV], 1400)
                         .vacuumStats(VA[HV], 250))
                 .build();
+
+        EnrichedUraniumDioxide = new Material.Builder(452, gregtechId("enriched_uranium_dioxide"))
+                .dust(3)
+                .color(0x232323).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium235, 1, Oxygen, 2)
+                .build()
+                .setFormula("UO2", true);
+
+        DepletedUraniumDioxide = new Material.Builder(453, gregtechId("depleted_uranium_dioxide"))
+                .dust(3)
+                .color(0x232323).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium238, 1, Oxygen, 2)
+                .build()
+                .setFormula("UO2", true);
     }
 }

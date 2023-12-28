@@ -157,23 +157,49 @@ public class MetaPrefixItem extends StandardMetaItem {
         super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
         if (metaItems.containsKey((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase entity) {
             if (entityIn.ticksExisted % 20 == 0) {
-                if (prefix.heatDamageFunction == null) return;
 
-                Material material = getMaterial(itemStack);
-                if (material == null || !material.hasProperty(PropertyKey.BLAST)) return;
-
-                float heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
-                ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-                if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
-                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem())
-                            .getItem(armor);
-                    if (metaValueItem != null) heatDamage *= metaValueItem.getArmorLogic().getHeatResistance();
+                //Handle heat damage
+                if (prefix.heatDamageFunction != null) {
+                    Material material = getMaterial(itemStack);
+                    if (material != null) {
+                        float heatDamage = 0.f;
+                        if (material.hasProperty(PropertyKey.BLAST)) {
+                            heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
+                        } else if (material.hasProperty(PropertyKey.FISSION_FUEL)) {
+                            heatDamage = prefix.heatDamageFunction.apply(0);
+                        }
+                        ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+                        if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
+                            ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem())
+                                    .getItem(armor);
+                            if (metaValueItem != null) heatDamage *= metaValueItem.getArmorLogic().getHeatResistance();
+                        }
+                        if (heatDamage > 0.0) {
+                            entity.attackEntityFrom(DamageSources.getHeatDamage().setDamageBypassesArmor(), heatDamage);
+                        } else if (heatDamage < 0.0) {
+                            entity.attackEntityFrom(DamageSources.getFrostDamage().setDamageBypassesArmor(),
+                                    -heatDamage);
+                        }
+                    }
                 }
 
-                if (heatDamage > 0.0) {
-                    entity.attackEntityFrom(DamageSources.getHeatDamage().setDamageBypassesArmor(), heatDamage);
-                } else if (heatDamage < 0.0) {
-                    entity.attackEntityFrom(DamageSources.getFrostDamage().setDamageBypassesArmor(), -heatDamage);
+                //Handle radiation damage
+                if (prefix.radiationDamageFunction != null) {
+                    Material material = getMaterial(itemStack);
+                    if (material != null) {
+                        float radiationDamage = prefix.radiationDamageFunction.apply(material.getNeutrons());
+                        ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+                        if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
+                            ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem())
+                                    .getItem(armor);
+                            if (metaValueItem != null) {
+                                radiationDamage *= metaValueItem.getArmorLogic().getRadiationResistance();
+                            }
+                        }
+                        if (radiationDamage > 0.0) {
+                            entity.attackEntityFrom(DamageSources.getRadioactiveDamage().setDamageBypassesArmor(), radiationDamage);
+                        }
+                    }
                 }
             }
         }
