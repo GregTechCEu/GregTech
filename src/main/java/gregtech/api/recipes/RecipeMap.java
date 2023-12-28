@@ -507,34 +507,60 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @Nullable
     public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
+        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), null);
+    }
+
+    @Nullable
+    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, Predicate<Recipe> extraPredicate) {
+        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), extraPredicate);
+    }
+
+    @Nullable
+    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, Predicate<Recipe> extraPredicate) {
+        return findRecipe(voltage, inputs, fluidInputs, false, extraPredicate);
     }
 
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
-     * @param voltage     Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs      the Item Inputs
-     * @param fluidInputs the Fluid Inputs
+     * @param voltage        Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs         the Item Inputs
+     * @param fluidInputs    the Fluid Inputs
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        return findRecipe(voltage, inputs, fluidInputs, false);
+        return findRecipe(voltage, inputs, fluidInputs, false, null);
     }
 
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
-     * @param voltage      Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs       the Item Inputs
-     * @param fluidInputs  the Fluid Inputs
-     * @param exactVoltage should require exact voltage matching on recipe. used by craftweaker
+     * @param voltage        Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs         the Item Inputs
+     * @param fluidInputs    the Fluid Inputs
+     * @param exactVoltage   should require exact voltage matching on recipe. used by craftweaker
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
     public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs,
                              boolean exactVoltage) {
+        return findRecipe(voltage, inputs, fluidInputs, exactVoltage, null);
+    }
+
+    /**
+     * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
+     *
+     * @param voltage        Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs         the Item Inputs
+     * @param fluidInputs    the Fluid Inputs
+     * @param exactVoltage   should require exact voltage matching on recipe. used by craftweaker
+     * @param extraPredicate optional extra filter predicate
+     * @return the Recipe it has found or null for no matching Recipe
+     */
+    @Nullable
+    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs,
+                             boolean exactVoltage, Predicate<Recipe> extraPredicate) {
         final List<ItemStack> items = inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
         final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0)
                 .collect(Collectors.toList());
@@ -548,7 +574,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 // there is not enough voltage to consider the recipe valid
                 return false;
             }
-            return recipe.matches(false, inputs, fluidInputs);
+            return recipe.matches(false, inputs, fluidInputs) && (extraPredicate == null || extraPredicate.test(recipe));
         });
     }
 
