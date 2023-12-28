@@ -79,13 +79,18 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     private int getParallel(Recipe recipe, double totalHolderEfficiencyCoefficient, int turbineMaxVoltage) {
         // TODO: this.excessVoltage is going to have been calculated on the _last_ fluid cycle. I'm not sure that's going to behave right.
-        // get the amount of parallel required to match the desired output voltage
         return MathHelper.ceil((turbineMaxVoltage - this.excessVoltage) /
                 (Math.abs(recipe.getEUt()) * totalHolderEfficiencyCoefficient));
     }
 
-    private boolean canDoRecipe(Recipe recipe, double totalHolderEfficiencyCoefficient, int turbineMaxVoltage) {
+    private boolean canDoRecipeConsideringParallel(Recipe recipe) {
+        IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
+        if (rotorHolder == null || !rotorHolder.hasRotor())
+            return false;
+        double totalHolderEfficiencyCoefficient = rotorHolder.getTotalEfficiency() / 100.0;
+        int turbineMaxVoltage = (int) getMaxVoltage();
         int parallel = getParallel(recipe, totalHolderEfficiencyCoefficient, turbineMaxVoltage);
+
         FluidStack recipeFluidStack = recipe.getFluidInputs().get(0).getInputFluidStack();
 
         // Intentionally not using this.getInputFluidStack because that is locked to the previous recipe
@@ -97,25 +102,13 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     @Override
     protected boolean checkPreviousRecipe() {
-        IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
-        if (rotorHolder == null || !rotorHolder.hasRotor())
-            return false;
-        double totalHolderEfficiencyCoefficient = rotorHolder.getTotalEfficiency() / 100.0;
-        int turbineMaxVoltage = (int) getMaxVoltage();
-
-        return super.checkPreviousRecipe() && canDoRecipe(this.previousRecipe, totalHolderEfficiencyCoefficient, turbineMaxVoltage);
+        return super.checkPreviousRecipe() && canDoRecipeConsideringParallel(this.previousRecipe);
     }
 
     @Override
     protected @Nullable Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs,
                                           IMultipleTankHandler fluidInputs) {
-        IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
-        if (rotorHolder == null || !rotorHolder.hasRotor())
-            return null;
-        double totalHolderEfficiencyCoefficient = rotorHolder.getTotalEfficiency() / 100.0;
-        int turbineMaxVoltage = (int) getMaxVoltage();
-
-        return super.findRecipe(maxVoltage, inputs, fluidInputs, recipe -> canDoRecipe(recipe, totalHolderEfficiencyCoefficient, turbineMaxVoltage));
+        return super.findRecipe(maxVoltage, inputs, fluidInputs, this::canDoRecipeConsideringParallel);
     }
 
     @Override
