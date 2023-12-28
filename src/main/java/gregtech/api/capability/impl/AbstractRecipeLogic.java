@@ -505,10 +505,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Find a recipe using inputs
-     *
-     * @param maxVoltage   the maximum voltage the recipe can have
-     * @param inputs       the item inputs used to search for the recipe
-     * @param fluidInputs  the fluid inputs used to search for the recipe
+     * 
+     * @param maxVoltage  the maximum voltage the recipe can have
+     * @param inputs      the item inputs used to search for the recipe
+     * @param fluidInputs the fluid inputs used to search for the recipe
      * @return the recipe if found, otherwise null
      */
     @Nullable
