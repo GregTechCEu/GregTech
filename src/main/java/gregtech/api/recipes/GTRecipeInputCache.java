@@ -5,7 +5,12 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
+
+import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,48 +19,64 @@ import java.util.List;
 /**
  * Cache of GTRecipeInput instances for deduplication.
  * <p>
- * Each GTRecipeInput is cached by an internal hashtable, and any duplicative
- * instances will be replaced by identical object previously created.
+ * Each GTRecipeInput is cached by an internal hashtable, and any duplicative instances will be replaced by identical
+ * object previously created.
  * <p>
- * Caching and duplication is only available during recipe registration; once
- * recipe registration is over, the cache will be discarded and no further entries
- * will be put into cache.
+ * Caching and duplication is only available during recipe registration; once recipe registration is over, the cache
+ * will be discarded and no further entries will be put into cache.
  */
-public class GTRecipeInputCache {
+public final class GTRecipeInputCache {
 
-    private static final int EXPECTED_CACHE_SIZE = 16384;
+    /**
+     * The minimum size for the cache
+     */
+    public static final int MINIMUM_CACHE_SIZE = 8192;
+
     private static ObjectOpenHashSet<GTRecipeInput> INSTANCES;
+
+    private GTRecipeInputCache() {}
 
     public static boolean isCacheEnabled() {
         return INSTANCES != null;
     }
 
+    @ApiStatus.Internal
     public static void enableCache() {
         if (!isCacheEnabled()) {
-            INSTANCES = new ObjectOpenHashSet<>(EXPECTED_CACHE_SIZE, 1);
-            if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment())
-                GTLog.logger.info("GTRecipeInput cache enabled");
+            int size = calculateOptimalExpectedSize();
+            INSTANCES = new ObjectOpenHashSet<>(size);
+
+            if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
+                GTLog.logger.info("GTRecipeInput cache enabled with expected size {}", size);
+            }
         }
     }
 
+    @ApiStatus.Internal
     public static void disableCache() {
         if (isCacheEnabled()) {
-            if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment())
-                GTLog.logger.info("GTRecipeInput cache disabled; releasing {} unique instances", INSTANCES.size());
+            int size = INSTANCES.size();
+            if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
+                GTLog.logger.info("GTRecipeInput cache disabled; releasing {} unique instances", size);
+            }
             INSTANCES = null;
+
+            if (ConfigHolder.persistentData.expectedIngredientInstances != size && size > MINIMUM_CACHE_SIZE) {
+                ConfigHolder.persistentData.expectedIngredientInstances = size;
+                ConfigManager.sync(GTValues.MODID, Config.Type.INSTANCE);
+            }
         }
     }
 
     /**
-     * Tries to deduplicate the instance with previously cached instances.
-     * If there is no identical GTRecipeInput present in cache, the
-     * {@code recipeInput} will be put into cache, marked as cached, and returned subsequently.
+     * Tries to deduplicate the instance with previously cached instances. If there is no identical GTRecipeInput
+     * present in cache, the {@code recipeInput} will be put into cache, marked as cached, and returned subsequently.
      * <p>
      * This operation returns {@code recipeInput} without doing anything if cache is disabled.
      *
      * @param recipeInput ingredient instance to be deduplicated
-     * @return Either previously cached instance, or {@code recipeInput} marked cached;
-     *         or unmodified {@code recipeInput} instance if the cache is disabled
+     * @return Either previously cached instance, or {@code recipeInput} marked cached; or unmodified
+     *         {@code recipeInput} instance if the cache is disabled
      */
     public static GTRecipeInput deduplicate(GTRecipeInput recipeInput) {
         if (!isCacheEnabled() || recipeInput.isCached()) {
@@ -69,9 +90,9 @@ public class GTRecipeInputCache {
     }
 
     /**
-     * Tries to deduplicate each instance in the list with previously cached instances.
-     * If there is no identical GTRecipeInput present in cache, the
-     * {@code recipeInput} will be put into cache, marked as cached, and returned subsequently.
+     * Tries to deduplicate each instance in the list with previously cached instances. If there is no identical
+     * GTRecipeInput present in cache, the {@code recipeInput} will be put into cache, marked as cached, and returned
+     * subsequently.
      * <p>
      * This operation returns {@code inputs} without doing anything if cache is disabled.
      *
@@ -90,5 +111,50 @@ public class GTRecipeInputCache {
             list.add(deduplicate(input));
         }
         return list;
+    }
+
+    /**
+     * Calculates the optimal expected size for the input cache:
+     * <ol>
+     * <li>Pick a Load Factor to test: i.e. {@code 0.75f} (default).</li>
+     * <li>Pick a Size to test: i.e. {@code 8192}.</li>
+     * <li>Internal array's size: next highest power of 2 for {@code size / loadFactor},
+     * {@code nextHighestPowerOf2(8192 / 0.75) = 16384}.</li>
+     * <li>The maximum amount of stored values before a rehash is required {@code arraySize * loadFactor},
+     * {@code 16384 * 0.75 = 12288}.</li>
+     * <li>Compare with the known amount of values stored: {@code 12288 >= 11774}.</li>
+     * <li>If larger or equal, the initial capacity and load factor will not induce a rehash/resize.</li>
+     * </ol>
+     *
+     * @return the optimal expected input cache size
+     */
+    private static int calculateOptimalExpectedSize() {
+        for (int i = 13; i < 31; i++) {
+            int sizeToTest = 1 << i;
+            int arraySize = nextHighestPowerOf2((int) (sizeToTest / Hash.DEFAULT_LOAD_FACTOR));
+            int maxStoredBeforeRehash = (int) (arraySize * Hash.DEFAULT_LOAD_FACTOR);
+
+            if (maxStoredBeforeRehash >= ConfigHolder.persistentData.expectedIngredientInstances) {
+                return sizeToTest;
+            }
+        }
+        return MINIMUM_CACHE_SIZE;
+    }
+
+    /**
+     * <a href="https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2">Algorithm source.</a>
+     *
+     * @param x the number to use
+     * @return the next highest power of 2 relative to the number
+     */
+    private static int nextHighestPowerOf2(int x) {
+        x--;
+        x |= x >> 1;
+        x |= x >> 2;
+        x |= x >> 4;
+        x |= x >> 8;
+        x |= x >> 16;
+        x++;
+        return x;
     }
 }

@@ -2,6 +2,7 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.recipes.GTRecipeInputCache;
 
 import net.minecraftforge.common.config.Config;
 
@@ -42,6 +43,10 @@ public class ConfigHolder {
     @Config.Name("Worldgen Options")
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
+
+    @Config.Comment( {"Persistent Data for GT", "Do not modify the contents of this section." })
+    @Config.Name("Persistent Data")
+    public static PersistentData persistentData = new PersistentData();
 
     public static class MachineOptions {
 
@@ -700,5 +705,16 @@ public class ConfigHolder {
         @Config.RangeInt(min = 1, max = 512)
         @Config.Comment({ "The EU/t consumption of the NanoSaber.", "Default: 64" })
         public int energyConsumption = 64;
+    }
+
+    public static class PersistentData {
+
+        @Config.Comment({ "The expected amount of unique GT recipe ingredients.",
+                "This setting improves memory allocation and garbage collection during game-load.",
+                "Do NOT modify this setting. This value is automatically adjusted by GT.",
+                "Manual changes are not preserved and WILL be overwritten." })
+        @Config.RangeInt(min = GTRecipeInputCache.MINIMUM_CACHE_SIZE, max = 1 << 30)
+        @Config.RequiresMcRestart
+        public int expectedIngredientInstances = GTRecipeInputCache.MINIMUM_CACHE_SIZE;
     }
 }
