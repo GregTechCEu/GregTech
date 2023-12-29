@@ -23,6 +23,7 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractRecipeLogic> {
@@ -64,6 +65,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
             NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.AbstractRecipeLogic");
             if (tag.getBoolean("Working")) {
                 int EUt = tag.getInteger("RecipeEUt");
+                NumberFormat format = NumberFormat.getNumberInstance();
                 int absEUt = Math.abs(EUt);
                 boolean consumer = EUt > 0;
                 String endText = null;
@@ -72,7 +74,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                     MetaTileEntity mte = gtte.getMetaTileEntity();
                     if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
                             mte instanceof RecipeMapSteamMultiblockController) {
-                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " +
+                        endText = ": " + format.format(absEUt) + TextFormatting.RESET + " L/t " +
                                 I18n.format(Materials.Steam.getUnlocalizedName());
                     }
                     AbstractRecipeLogic arl = mte.getRecipeLogic();
@@ -81,7 +83,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                     }
                 }
                 if (endText == null) {
-                    endText = ": " + absEUt + TextFormatting.RESET + " EU/t (" +
+                    endText = ": " + format.format(absEUt) + TextFormatting.RESET + " EU/t (" +
                             GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.RESET + ")";
                 }
 
