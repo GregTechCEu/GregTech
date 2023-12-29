@@ -9,9 +9,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
-
 import gregtech.api.recipes.RecipeMap;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
@@ -122,7 +120,8 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
         final List<ItemStack> items = GTUtility.itemHandlerToList(inputs).stream().filter(s -> !s.isEmpty()).collect(
                 Collectors.toList());
-        final List<FluidStack> fluids = GTUtility.fluidHandlerToList(fluidInputs).stream().filter(f -> f != null && f.amount != 0)
+        final List<FluidStack> fluids = GTUtility.fluidHandlerToList(fluidInputs).stream()
+                .filter(f -> f != null && f.amount != 0)
                 .collect(Collectors.toList());
 
         return map.find(items, fluids, recipe -> {
