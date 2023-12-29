@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 
 import net.minecraft.client.resources.I18n;
@@ -65,7 +66,6 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
             NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.AbstractRecipeLogic");
             if (tag.getBoolean("Working")) {
                 int EUt = tag.getInteger("RecipeEUt");
-                NumberFormat format = NumberFormat.getNumberInstance();
                 int absEUt = Math.abs(EUt);
                 boolean consumer = EUt > 0;
                 String endText = null;
@@ -74,7 +74,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                     MetaTileEntity mte = gtte.getMetaTileEntity();
                     if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
                             mte instanceof RecipeMapSteamMultiblockController) {
-                        endText = ": " + format.format(absEUt) + TextFormatting.RESET + " L/t " +
+                        endText = ": " + TextFormattingUtil.formatNumbers(absEUt) + TextFormatting.RESET + " L/t " +
                                 I18n.format(Materials.Steam.getUnlocalizedName());
                     }
                     AbstractRecipeLogic arl = mte.getRecipeLogic();
@@ -83,7 +83,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                     }
                 }
                 if (endText == null) {
-                    endText = ": " + format.format(absEUt) + TextFormatting.RESET + " EU/t (" +
+                    endText = ": " + TextFormattingUtil.formatNumbers(absEUt) + TextFormatting.RESET + " EU/t (" +
                             GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.RESET + ")";
                 }
 

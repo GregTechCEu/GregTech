@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +49,6 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             }
             int EUt = capability.getInfoProviderEUt();
             int absEUt = Math.abs(EUt);
-            NumberFormat format = NumberFormat.getNumberInstance();
             String text = null;
 
             if (tileEntity instanceof IGregTechTileEntity) {
@@ -56,14 +56,14 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                 MetaTileEntity mte = gtTileEntity.getMetaTileEntity();
                 if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
                         mte instanceof RecipeMapSteamMultiblockController) {
-                    text = TextFormatting.AQUA.toString() + format.format(absEUt) + TextStyleClass.INFO + " L/t {*" +
+                    text = TextFormatting.AQUA.toString() + TextFormattingUtil.formatNumbers(absEUt) + TextStyleClass.INFO + " L/t {*" +
                             Materials.Steam.getUnlocalizedName() + "*}";
                 }
             }
             if (text == null) {
                 // Default behavior, if this TE is not a steam machine (or somehow not instanceof
                 // IGregTechTileEntity...)
-                text = TextFormatting.RED.toString() + format.format(absEUt) + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN +
+                text = TextFormatting.RED.toString() + TextFormattingUtil.formatNumbers(absEUt) + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN +
                         " (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.GREEN + ")";
             }
 
