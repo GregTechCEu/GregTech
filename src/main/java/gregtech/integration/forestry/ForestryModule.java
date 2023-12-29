@@ -7,12 +7,14 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTTool;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.machines.RecipeMapScanner;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.ToolItems;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
@@ -25,6 +27,7 @@ import gregtech.modules.GregTechModules;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -41,6 +44,8 @@ import forestry.api.core.ForestryAPI;
 import forestry.core.items.IColoredItem;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
@@ -158,6 +163,10 @@ public class ForestryModule extends IntegrationSubmodule {
                 GTAlleleBeeSpecies.setupAlleles();
                 GTBeeDefinition.initBees();
             }
+        }
+
+        if (Loader.isModLoaded(GTValues.MODID_EB)) {
+            registerAlvearyMutators();
         }
 
         if (event.getSide() == Side.CLIENT) {
@@ -343,5 +352,32 @@ public class ForestryModule extends IntegrationSubmodule {
         }
         material.setProperty(PropertyKey.ORE, property);
         material.addFlags(MaterialFlags.DISABLE_ORE_BLOCK);
+    }
+
+    private static void registerAlvearyMutators() {
+        try {
+            Class<?> mutationHandler = Class.forName("binnie.extrabees.utils.AlvearyMutationHandler");
+            Method method = mutationHandler.getDeclaredMethod("addMutationItem", ItemStack.class, float.class);
+
+            registerAlvearyMutator(method, Materials.Uranium238, 2.0f);
+            registerAlvearyMutator(method, Materials.Uranium235, 4.0f);
+            registerAlvearyMutator(method, Materials.Plutonium241, 6.0f);
+            registerAlvearyMutator(method, Materials.Plutonium239, 8.0f);
+            registerAlvearyMutator(method, Materials.NaquadahEnriched, 10.0f);
+            registerAlvearyMutator(method, Materials.Naquadria, 15.0f);
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+            IntegrationModule.logger.error("Could not register GT Alveary mutators!");
+        }
+    }
+
+    private static void registerAlvearyMutator(Method method, Material material, float chance) {
+        try {
+            ItemStack stack = OreDictUnifier.get(OrePrefix.dust, material);
+            if (stack != ItemStack.EMPTY) {
+                method.invoke(null, stack, chance);
+            }
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            IntegrationModule.logger.error("Could not register GT Alveary mutators!");
+        }
     }
 }
