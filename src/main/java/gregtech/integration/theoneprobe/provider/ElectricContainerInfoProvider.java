@@ -3,7 +3,6 @@ package gregtech.integration.theoneprobe.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,8 +12,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import org.jetbrains.annotations.NotNull;
-
-import java.text.NumberFormat;
 
 public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnergyContainer> {
 

@@ -60,9 +60,11 @@ public class DiodeDataProvider extends ElectricContainerDataProvider {
             final EnumFacing frontFacing = EnumFacing.byIndex(tag.getInteger("FrontFacing"));
 
             if (accessor.getSide() == frontFacing) { // output side
-                tooltip.add(I18n.format("gregtech.top.transform_output") + " " + TextFormattingUtil.formatNumbers(outputAmperage) + " A");
+                tooltip.add(I18n.format("gregtech.top.transform_output") + " " +
+                        TextFormattingUtil.formatNumbers(outputAmperage) + " A");
             } else {
-                tooltip.add(I18n.format("gregtech.top.transform_input") + " " + TextFormattingUtil.formatNumbers(inputAmperage) + " A");
+                tooltip.add(I18n.format("gregtech.top.transform_input") + " " +
+                        TextFormattingUtil.formatNumbers(inputAmperage) + " A");
             }
         }
         return tooltip;

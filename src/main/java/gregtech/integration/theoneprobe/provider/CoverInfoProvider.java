@@ -204,7 +204,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void transferModeText(@NotNull IProbeInfo probeInfo, @NotNull TransferMode mode,
                                          @NotNull String rateUnit, int rate, boolean hasFilter) {
         String text = TextStyleClass.OK + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
-        if (!hasFilter && mode != TransferMode.TRANSFER_ANY) text += TextStyleClass.LABEL + " " + TextFormattingUtil.formatNumbers(rate) + rateUnit;
+        if (!hasFilter && mode != TransferMode.TRANSFER_ANY)
+            text += TextStyleClass.LABEL + " " + TextFormattingUtil.formatNumbers(rate) + rateUnit;
         probeInfo.text(text);
     }
 

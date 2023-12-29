@@ -71,13 +71,15 @@ public class ConverterDataProvider extends CapabilityDataProvider<ConverterTrait
                             TextFormatting.RESET + " (" + TextFormattingUtil.formatNumbers(amperage) + "A)");
                 } else {
                     tooltip.add(I18n.format("gregtech.top.transform_input") + " " +
-                            TextFormattingUtil.formatNumbers(FeCompat.toFe(voltage * amperage, FeCompat.ratio(true))) + " FE");
+                            TextFormattingUtil.formatNumbers(FeCompat.toFe(voltage * amperage, FeCompat.ratio(true))) +
+                            " FE");
                 }
             } else {
                 tooltip.add(I18n.format("gregtech.top.convert_eu"));
                 if (accessor.getSide() == frontFacing) {
                     tooltip.add(I18n.format("gregtech.top.transform_output") + " " +
-                            TextFormattingUtil.formatNumbers(FeCompat.toFe(voltage * amperage, FeCompat.ratio(false))) + " FE");
+                            TextFormattingUtil.formatNumbers(FeCompat.toFe(voltage * amperage, FeCompat.ratio(false))) +
+                            " FE");
                 } else {
                     tooltip.add(I18n.format("gregtech.top.transform_input") + " " + voltageName + TextFormatting.RESET +
                             " (" + TextFormattingUtil.formatNumbers(amperage) + "A)");

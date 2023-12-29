@@ -3,10 +3,7 @@ package gregtech.integration.theoneprobe.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
-
 import gregtech.api.util.TextFormattingUtil;
-
-import mcjty.theoneprobe.api.NumberFormat;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -14,6 +11,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.NumberFormat;
 import org.jetbrains.annotations.NotNull;
 
 public class LaserContainerInfoProvider extends CapabilityInfoProvider<ILaserContainer> {

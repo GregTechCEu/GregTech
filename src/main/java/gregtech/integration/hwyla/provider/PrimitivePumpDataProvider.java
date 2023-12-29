@@ -3,7 +3,6 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IPrimitivePump;
-
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.client.resources.I18n;

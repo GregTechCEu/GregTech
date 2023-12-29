@@ -66,7 +66,8 @@ public class SteamBoilerDataProvider implements IWailaDataProvider {
 
                 // Creating steam
                 if (steamRate > 0 && hasWater) {
-                    tooltip.add(I18n.format("gregtech.top.energy_production") + ": " + TextFormattingUtil.formatNumbers(steamRate / 10) + " L/t " +
+                    tooltip.add(I18n.format("gregtech.top.energy_production") + ": " +
+                            TextFormattingUtil.formatNumbers(steamRate / 10) + " L/t " +
                             I18n.format(Materials.Steam.getUnlocalizedName()));
                 }
 

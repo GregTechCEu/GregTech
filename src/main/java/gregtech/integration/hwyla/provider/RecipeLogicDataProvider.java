@@ -24,7 +24,6 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.NumberFormat;
 import java.util.List;
 
 public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractRecipeLogic> {
