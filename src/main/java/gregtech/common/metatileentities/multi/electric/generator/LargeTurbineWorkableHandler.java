@@ -52,10 +52,9 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     public FluidStack getInputFluidStack() {
         // Previous Recipe is always null on first world load, so try to acquire a new recipe
         if (previousRecipe == null) {
-            Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
-
-            // If there is no runnable recipe, attempt to show a candidate recipe fluid stack
-            recipe = recipe != null ? recipe : super.findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+            // previousRecipe is set whenever a valid recipe is found
+            // if it's not set, find *any* recipe we have at least the base (non-parallel) inputs for
+            Recipe recipe = super.findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
 
             return recipe == null ? null : getInputTank().drain(
                     new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
