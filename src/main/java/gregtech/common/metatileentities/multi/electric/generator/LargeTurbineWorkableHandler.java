@@ -54,6 +54,9 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         if (previousRecipe == null) {
             Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
 
+            // If there is no runnable recipe, attempt to show a candidate recipe fluid stack
+            recipe = recipe != null ? recipe : super.findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+
             return recipe == null ? null : getInputTank().drain(
                     new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
                     false);
