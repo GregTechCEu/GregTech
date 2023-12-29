@@ -4,6 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 
+import gregtech.api.util.TextFormattingUtil;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
@@ -11,6 +13,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import org.jetbrains.annotations.NotNull;
+
+import java.text.NumberFormat;
 
 public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnergyContainer> {
 
@@ -36,9 +40,9 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
         long maxStorage = capability.getEnergyCapacity();
         if (maxStorage == 0) return; // do not add empty max storage progress bar
         probeInfo.progress(capability.getEnergyStored(), maxStorage, probeInfo.defaultProgressStyle()
-                .suffix(" / " + maxStorage + " EU")
+                .suffix(" / " + TextFormattingUtil.formatNumbers(maxStorage) + " EU")
                 .filledColor(0xFFEEE600)
                 .alternateFilledColor(0xFFEEE600)
-                .borderColor(0xFF555555));
+                .borderColor(0xFF555555).numberFormat(mcjty.theoneprobe.api.NumberFormat.COMMAS));
     }
 }

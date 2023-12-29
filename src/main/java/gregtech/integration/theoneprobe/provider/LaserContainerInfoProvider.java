@@ -4,6 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 
+import gregtech.api.util.TextFormattingUtil;
+
+import mcjty.theoneprobe.api.NumberFormat;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
@@ -31,10 +35,10 @@ public class LaserContainerInfoProvider extends CapabilityInfoProvider<ILaserCon
         long maxStorage = capability.getEnergyCapacity();
         if (maxStorage == 0) return; // do not add empty max storage progress bar
         probeInfo.progress(capability.getEnergyStored(), maxStorage, probeInfo.defaultProgressStyle()
-                .suffix(" / " + maxStorage + " EU")
+                .suffix(" / " + TextFormattingUtil.formatNumbers(maxStorage) + " EU")
                 .filledColor(0xFFEEE600)
                 .alternateFilledColor(0xFFEEE600)
-                .borderColor(0xFF555555));
+                .borderColor(0xFF555555).numberFormat(NumberFormat.COMMAS));
     }
 
     @Override

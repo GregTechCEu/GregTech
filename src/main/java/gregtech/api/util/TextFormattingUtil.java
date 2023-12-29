@@ -16,7 +16,7 @@ public class TextFormattingUtil {
     private static final char[] metricSuffixChars = {
             'k', 'M', 'G', 'T', 'P', 'E'
     };
-    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+    protected static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     public static String formatLongToCompactString(long value, int precision) {
         if (value == 0 || Math.abs(value) < Math.pow(10, precision)) {
