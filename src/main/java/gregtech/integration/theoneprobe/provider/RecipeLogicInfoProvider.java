@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,14 +54,16 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                 MetaTileEntity mte = gtTileEntity.getMetaTileEntity();
                 if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
                         mte instanceof RecipeMapSteamMultiblockController) {
-                    text = TextFormatting.AQUA.toString() + absEUt + TextStyleClass.INFO + " L/t {*" +
+                    text = TextFormatting.AQUA.toString() + TextFormattingUtil.formatNumbers(absEUt) +
+                            TextStyleClass.INFO + " L/t {*" +
                             Materials.Steam.getUnlocalizedName() + "*}";
                 }
             }
             if (text == null) {
                 // Default behavior, if this TE is not a steam machine (or somehow not instanceof
                 // IGregTechTileEntity...)
-                text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN +
+                text = TextFormatting.RED.toString() + TextFormattingUtil.formatNumbers(absEUt) + TextStyleClass.INFO +
+                        " EU/t" + TextFormatting.GREEN +
                         " (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.GREEN + ")";
             }
 
