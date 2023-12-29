@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
@@ -513,26 +512,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     @Nullable
     protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-        return this.findRecipe(maxVoltage, inputs, fluidInputs, null);
-    }
-
-    /**
-     * Find a recipe using inputs
-     * 
-     * @param maxVoltage     the maximum voltage the recipe can have
-     * @param inputs         the item inputs used to search for the recipe
-     * @param fluidInputs    the fluid inputs used to search for the recipe
-     * @param extraPredicate an optional extra predicate to apply when searching
-     * @return the recipe if found, otherwise null
-     */
-    @Nullable
-    protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, Predicate<Recipe> extraPredicate) {
         RecipeMap<?> map = getRecipeMap();
         if (map == null || !isRecipeMapValid(map)) {
             return null;
         }
 
-        return map.findRecipe(maxVoltage, inputs, fluidInputs, extraPredicate);
+        return map.findRecipe(maxVoltage, inputs, fluidInputs);
     }
 
     /**

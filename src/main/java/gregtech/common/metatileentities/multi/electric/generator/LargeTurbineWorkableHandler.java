@@ -10,6 +10,11 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 
+import gregtech.api.recipes.RecipeMap;
+
+import gregtech.api.util.GTUtility;
+
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -19,6 +24,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
@@ -82,7 +88,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
                 (Math.abs(recipe.getEUt()) * totalHolderEfficiencyCoefficient));
     }
 
-    private boolean canDoRecipeConsideringParallel(Recipe recipe) {
+    private boolean canDoRecipeWithParallel(Recipe recipe) {
         IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
         if (rotorHolder == null || !rotorHolder.hasRotor())
             return false;
@@ -101,13 +107,26 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     @Override
     protected boolean checkPreviousRecipe() {
-        return super.checkPreviousRecipe() && canDoRecipeConsideringParallel(this.previousRecipe);
+        return super.checkPreviousRecipe() && canDoRecipeWithParallel(this.previousRecipe);
     }
 
     @Override
     protected @Nullable Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs,
                                           IMultipleTankHandler fluidInputs) {
-        return super.findRecipe(maxVoltage, inputs, fluidInputs, this::canDoRecipeConsideringParallel);
+        RecipeMap<?> map = getRecipeMap();
+        if (map == null || !isRecipeMapValid(map)) {
+            return null;
+        }
+
+        final List<ItemStack> items = GTUtility.itemHandlerToList(inputs).stream().filter(s -> !s.isEmpty()).collect(
+                Collectors.toList());
+        final List<FluidStack> fluids = GTUtility.fluidHandlerToList(fluidInputs).stream().filter(f -> f != null && f.amount != 0)
+                .collect(Collectors.toList());
+
+        return map.find(items, fluids, recipe -> {
+            if (recipe.getEUt() > maxVoltage) return false;
+            return recipe.matches(false, inputs, fluidInputs) && this.canDoRecipeWithParallel(recipe);
+        });
     }
 
     @Override
