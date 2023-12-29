@@ -1,4 +1,4 @@
-//version: 1702244235
+//version: 1702805890
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -72,6 +72,7 @@ propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
 propertyDefaultIfUnset("separateRunDirectories", false)
+propertyDefaultIfUnset("versionDisplayFormat", '$MOD_NAME \u2212 $VERSION')
 propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
 propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
@@ -889,7 +890,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
             def changelogFile = getChangelog()
             def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
 
-            mainFile.displayName = "${modName}: ${modVersion}"
+            mainFile.displayName = versionDisplayFormat.replace('$MOD_NAME', modName).replace('$VERSION', modVersion)
             mainFile.releaseType = getReleaseType()
             mainFile.changelog = changelogRaw
             mainFile.changelogType = 'markdown'
@@ -929,6 +930,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
     modrinth {
         token = modrinthApiKey.getOrElse('debug_token')
         projectId = modrinthProjectId
+        versionName = versionDisplayFormat.replace('$MOD_NAME', modName).replace('$VERSION', modVersion)
         changelog = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
         versionType = getReleaseType()
         versionNumber = modVersion
