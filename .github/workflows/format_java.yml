@@ -10,7 +10,7 @@ on:
     paths: ['src/main/java/**', 'src/test/**']
 
 concurrency:
-  group: checks-${{ github.head_ref || github.ref }}
+  group: formatting-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
