@@ -131,7 +131,7 @@ public class FissionReactor {
         return this.power / this.coolingFactor;
     }
 
-    protected void prepareThermalProperties() {
+    public void prepareThermalProperties() {
         int idRod = 0, idControl = 0, idChannel = 0;
 
         for (int i = 0; i < reactorLayout.length; i++) {
