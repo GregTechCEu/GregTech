@@ -1,9 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.widgets.slot.SlotGroup;
-
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -15,19 +11,18 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
-import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class SimpleItemFilter extends ItemFilter {
@@ -123,25 +118,16 @@ public class SimpleItemFilter extends ItemFilter {
     public @NotNull ParentWidget<?> initUI(GuiSyncManager manager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
         manager.registerSlotGroup(filterInventory);
-        List<List<ItemSlot>> widgets = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            widgets.add(new ArrayList<>());
-            for (int j = 0; j < 3; j++) {
-                int index = (i * 3) + j;
-
-                var slot = new ItemSlot().slot(SyncHandlers.phantomItemSlot(this.itemFilterSlots, index)
-                        .slotGroup(filterInventory));
-                widgets.get(i).add(slot);
-                manager.syncValue(filterInventory.getName(), index, slot.getSyncHandler());
-            }
-        }
 
         return new Row().coverChildren()
                 .align(Alignment.TopCenter).top(6)
-                .child(new Grid()
-                        .minElementMargin(0, 0)
-                        .minColWidth(18).minRowHeight(18)
-                        .matrix(widgets))
+                .child(SlotGroupWidget.builder()
+                        .matrix("XXX", "XXX", "XXX")
+                        .key('X', index -> new ItemSlot()
+                                .slot(SyncHandlers.phantomItemSlot(this.itemFilterSlots, index)
+                                .slotGroup(filterInventory)))
+                        .synced(filterInventory.getName())
+                        .build())
                 .child(new CycleButtonWidget()
                         .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
                         .textureGetter(state -> state == 0 ? GTGuiTextures.BUTTON_CROSS : GTGuiTextures.BUTTON)

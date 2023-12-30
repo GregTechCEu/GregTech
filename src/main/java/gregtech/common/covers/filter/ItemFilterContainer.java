@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
@@ -145,12 +147,16 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         var screen = GregTechGuiScreen.getCurrent();
         if (screen == null) return false;
 
-        var panel = new ModularPanel("filter_window")
-                .align(Alignment.Center)
-                .child(getItemFilter().initUI(screen.getSyncManager()));
-        if (!screen.isPanelOpen("filter_window")){
-            screen.openPanel(panel);
-        }
+        var panel = new PanelSyncHandler(screen.getMainPanel()) {
+            @Override
+            public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+                return new ModularPanel("filter_window")
+                        .align(Alignment.Center)
+                        .child(getItemFilter().initUI(screen.getSyncManager()));
+            }
+        };
+        screen.getSyncManager().syncValue("filter_window", panel);
+        panel.openPanel();
         return true;
     }
 
