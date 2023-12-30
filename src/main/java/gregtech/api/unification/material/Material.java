@@ -1076,6 +1076,12 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder coolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor, double coolingFactor, double boilingPoint, double absorption, double pressure) {
+            properties.ensureSet(PropertyKey.FLUID);
+            properties.setProperty(PropertyKey.COOLANT, new CoolantProperty(hotCoolant, hotHPCoolant, moderatorFactor, coolingFactor, boilingPoint, absorption, pressure));
+            return this;
+        }
+
         // TODO Clean this up post 2.5 release
         @Deprecated
         public Builder addDefaultEnchant(Enchantment enchant, int level) {

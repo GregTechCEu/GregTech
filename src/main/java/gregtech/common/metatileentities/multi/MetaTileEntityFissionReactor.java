@@ -468,6 +468,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 }
             }
         }
+        fissionReactor.prepareThermalProperties();
         fissionReactor.computeGeometry();
     }
 

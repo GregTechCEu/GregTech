@@ -6,11 +6,21 @@ public class CoolantProperty implements IMaterialProperty {
 
     private Material hotCoolant;
     private Material hotHPCoolant;
-    private double moderatorFactor = 0.D;
-    private double coolingFactor = 0.D;
+    private double moderatorFactor;
+    private double coolingFactor;
     private double boilingPoint;
     private double absorption;
     private double pressure;
+
+    public CoolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor, double coolingFactor, double boilingPoint, double absorption, double pressure) {
+        this.hotCoolant = hotCoolant;
+        this.hotHPCoolant = hotHPCoolant;
+        this.moderatorFactor = moderatorFactor;
+        this.coolingFactor = coolingFactor;
+        this.boilingPoint = boilingPoint;
+        this.absorption = absorption;
+        this.pressure = pressure;
+    }
 
     @Override
     public void verifyProperty(MaterialProperties properties) {
