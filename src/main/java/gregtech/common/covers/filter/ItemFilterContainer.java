@@ -1,9 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.value.BoolValue;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
-
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
@@ -18,9 +14,13 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +33,9 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     private final ItemStackHandler filterInventory;
     private final ItemFilterWrapper filterWrapper;
     private final IDirtyNotifiable dirtyNotifiable;
-    private boolean isBlacklistFilter = false;
     private int maxStackSize = 1;
     private ItemFilter currentItemFilter;
     private Runnable onFilterInstanceChange;
-    private int maxStackSizeLimit = 1;
     private int transferStackSize;
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
@@ -76,7 +74,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public int getMaxStackSize() {
-        return maxStackSizeLimit;
+        return maxStackSize;
     }
 
     public int getTransferStackSize() {
@@ -98,13 +96,12 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public void setBlacklistFilter(boolean blacklistFilter) {
-        isBlacklistFilter = blacklistFilter;
+        if (hasItemFilter()) getItemFilter().setBlacklistFilter(blacklistFilter);
         onFilterInstanceChange();
-        dirtyNotifiable.markAsDirty();
     }
 
     public boolean isBlacklistFilter() {
-        return isBlacklistFilter;
+        return hasItemFilter() && getItemFilter().isBlacklistFilter();
     }
 
     /** Deprecated, uses old builtin MUI*/
@@ -132,16 +129,26 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     /** Uses Cleanroom MUI*/
     public ParentWidget<?> initUI(GuiSyncManager syncManager) {
         syncManager.registerSlotGroup("filter_slot", 1, 100);
+        var column = new Column().padding(4).left(5).top(32);
+        column.child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
+                                .slotGroup("filter_slot")
+                                .filter(is -> FilterTypeRegistry.getItemFilterForStack(is) != null))
+                        .size(16, 16))
+                .childIf(this::hasItemFilter, new ButtonWidget<>().setEnabledIf(w -> hasItemFilter())
+                        .onMousePressed(mouseButton -> createFilterPanel(syncManager, column.getScreen())));
+        return column;
+    }
 
-        return new Column().padding(4).left(5).coverChildrenWidth()
-                .child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
-                .child(new ItemSlot().slot(
-                        SyncHandlers.itemSlot(filterInventory, 0)
-                                .slotGroup("filter_slot")))
-                .childIf(this::hasItemFilter, () -> getItemFilter().initUI().setEnabledIf(w -> hasItemFilter()))
-                .childIf(this::hasItemFilter, () -> new CycleButtonWidget().setEnabledIf(w -> hasItemFilter())
-                        .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
-                        .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist"))));
+    private boolean createFilterPanel(GuiSyncManager syncManager, ModularScreen screen) {
+        var panel = new ModularPanel("filter_window")
+                .align(Alignment.Center)
+                .child(getItemFilter().initUI(syncManager));
+        if (!screen.isPanelOpen("filter_window")){
+            screen.openPanel(panel);
+        }
+        return true;
     }
 
     protected void onFilterSlotChange(boolean notify) {
@@ -166,7 +173,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public void onFilterInstanceChange() {
-        this.maxStackSize = isBlacklistFilter ? 1 : getMaxStackSize();
+        this.maxStackSize = isBlacklistFilter() ? 1 : getMaxStackSize();
         if (currentItemFilter != null) {
             currentItemFilter.setMaxStackSize(getMaxStackSize());
         }
@@ -174,7 +181,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public void setMaxStackSize(int maxStackSizeLimit) {
-        this.maxStackSizeLimit = maxStackSizeLimit;
+        this.maxStackSize = maxStackSizeLimit;
         setTransferStackSize(transferStackSize);
     }
 
@@ -245,7 +252,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setTag("FilterInventory", filterInventory.serializeNBT());
         tagCompound.setBoolean("IsBlacklist", filterWrapper.isBlacklistFilter());
-        tagCompound.setInteger("MaxStackSize", maxStackSizeLimit);
+        tagCompound.setInteger("MaxStackSize", maxStackSize);
         tagCompound.setInteger("TransferStackSize", transferStackSize);
         if (filterWrapper.getItemFilter() != null) {
             NBTTagCompound filterInventory = new NBTTagCompound();

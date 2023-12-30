@@ -1,11 +1,14 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -14,6 +17,7 @@ public abstract class ItemFilter {
     public static MatchResult<Integer> EMPTY_MATCH = new MatchResult<>(Match.SUCCEED, -1);
     private IDirtyNotifiable dirtyNotifiable;
     private int maxStackSize = Integer.MAX_VALUE;
+    protected boolean isBlacklistFilter = false;
 
     public final int getMaxStackSize() {
         return maxStackSize;
@@ -45,7 +49,7 @@ public abstract class ItemFilter {
     public abstract void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup);
 
     /** Uses Cleanroom MUI */
-    public abstract Widget<?> initUI();
+    public abstract @NotNull Widget<?> initUI(GuiSyncManager manager);
 
     public abstract void writeToNBT(NBTTagCompound tagCompound);
 
@@ -59,6 +63,14 @@ public abstract class ItemFilter {
         if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();
         }
+    }
+    public final void setBlacklistFilter(boolean blacklistFilter) {
+        isBlacklistFilter = blacklistFilter;
+        markDirty();
+    }
+
+    public final boolean isBlacklistFilter() {
+        return isBlacklistFilter;
     }
 
     public static <R> MatchResult<R> createResult(Match match, R data) {

@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.widget.Widget;
-
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -13,11 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class SmartItemFilter extends ItemFilter {
@@ -94,8 +93,8 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public Widget<?> initUI() {
-        return null;
+    public @NotNull Widget<?> initUI(GuiSyncManager manager) {
+        return new Widget<>();
     }
 
     @Override

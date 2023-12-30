@@ -1,5 +1,6 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 
 import gregtech.api.gui.GuiTextures;
@@ -175,8 +176,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public Widget<?> initUI() {
-        return null;
+    public @NotNull Widget<?> initUI(GuiSyncManager syncManager) {
+        return new Widget<>();
     }
 
     @Override

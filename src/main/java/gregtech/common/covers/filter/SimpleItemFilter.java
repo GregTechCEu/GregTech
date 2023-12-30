@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.widget.Widget;
-
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -9,15 +7,23 @@ import gregtech.api.util.LargeStackSizeItemStackHandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -106,12 +112,26 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public Widget<Grid> initUI() {
-        List<ItemSlot> matrix = NonNullList.withSize(itemFilterSlots.getSlots(), new ItemSlot());
-        return new Grid().matrix(Grid.mapToMatrix(3, matrix,
-                (index, value) -> value.slot(SyncHandlers.phantomItemSlot(itemFilterSlots, index)
-                        .slotGroup("filter_slots")).size(16, 16)
-        ));
+    public @NotNull ParentWidget<?> initUI(GuiSyncManager manager) {
+        List<List<IWidget>> widgets = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            widgets.add(new ArrayList<>());
+            for (int j = 0; j < 3; j++) {
+                widgets.get(i).add(new ItemSlot().slot(SyncHandlers.phantomItemSlot(getItemFilterSlots(), i)
+                                .slotGroup("filter_inv")
+                        ));
+            }
+        }
+
+        return new Row().coverChildren()
+                .align(Alignment.TopCenter)
+                .child(new Grid()
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .matrix(widgets))
+                .child(new CycleButtonWidget()
+                        .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
+                        .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist"))));
     }
 
     @Override
