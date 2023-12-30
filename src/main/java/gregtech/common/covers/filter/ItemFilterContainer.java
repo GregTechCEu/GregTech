@@ -5,6 +5,7 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -127,8 +127,8 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     /** Uses Cleanroom MUI*/
-    public ParentWidget<?> initUI(GuiSyncManager syncManager) {
-        syncManager.registerSlotGroup("filter_slot", 1, 100);
+    public ParentWidget<?> initUI(GuiSyncManager manager) {
+        manager.registerSlotGroup("filter_slot", 1, 100);
         var column = new Column().padding(4).left(5).top(32);
         column.child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
                 .child(new ItemSlot()
@@ -136,15 +136,18 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                                 .slotGroup("filter_slot")
                                 .filter(is -> FilterTypeRegistry.getItemFilterForStack(is) != null))
                         .size(16, 16))
-                .childIf(this::hasItemFilter, new ButtonWidget<>().setEnabledIf(w -> hasItemFilter())
-                        .onMousePressed(mouseButton -> createFilterPanel(syncManager, column.getScreen())));
+                .child(new ButtonWidget<>().setEnabledIf(w -> hasItemFilter())
+                        .onMousePressed(mouseButton -> createFilterPanel()));
         return column;
     }
 
-    private boolean createFilterPanel(GuiSyncManager syncManager, ModularScreen screen) {
+    private boolean createFilterPanel() {
+        var screen = GregTechGuiScreen.getCurrent();
+        if (screen == null) return false;
+
         var panel = new ModularPanel("filter_window")
                 .align(Alignment.Center)
-                .child(getItemFilter().initUI(syncManager));
+                .child(getItemFilter().initUI(screen.getSyncManager()));
         if (!screen.isPanelOpen("filter_window")){
             screen.openPanel(panel);
         }

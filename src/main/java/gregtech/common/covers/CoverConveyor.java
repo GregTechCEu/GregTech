@@ -521,32 +521,35 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
         guiSyncManager.syncValue("transfer_rate", throughput);
 
-        return GTGuis.createPanel(this, 176, 112 + 176)
-                .padding(4)
+        var panel = GTGuis.createPanel(this, 176, 112 + 176);
+
+        panel.padding(4)
                 .child(createTitleRow())
-                .child(new Row().widthRel(1.0f)
+                .child(new Row()
                         .top(16).padding(4)
                         .coverChildrenHeight()
                         .child(new ButtonWidget<>()
                                 .width(16)
                                 .onMousePressed(mouseButton -> {
-                                    throughput.setValue(getTransferRate() + 1, true, true);
+                                    throughput.setValue(throughput.getValue() + 1, true, true);
                                     return true;
                         }))
                         .child(new TextFieldWidget()
                                 .setMaxLength(4)
+                                .widthRel(1.0f)
                                 .setNumbers(1, maxItemTransferRate)
                                 .background(GTGuiTextures.DISPLAY))
                         .child(new ButtonWidget<>()
                                 .width(16)
                                 .onMousePressed(mouseButton -> {
-                                    throughput.setValue(getTransferRate() - 1, true, true);
+                                    throughput.setValue(throughput.getValue() - 1, true, true);
                                     return true;
                         })))
                 .child(getItemFilterContainer()
                         .initUI(guiSyncManager)
                         .top(36))
                 .bindPlayerInventory();
+        return panel;
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {

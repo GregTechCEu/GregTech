@@ -176,7 +176,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public @NotNull Widget<?> initUI(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> initUI(GuiSyncManager manager) {
         return new Widget<>();
     }
 
