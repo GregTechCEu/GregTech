@@ -1,24 +1,21 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.widgets.slot.SlotGroup;
-
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
-import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -26,8 +23,10 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -48,7 +47,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
             @Override
             public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return FilterTypeRegistry.getItemFilterForStack(stack) != null;
+                return isFilter(stack);
             }
 
             @Override
@@ -72,6 +71,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return filterInventory;
     }
 
+    @Deprecated
     public ItemFilterWrapper getFilterWrapper() {
         return filterWrapper;
     }
@@ -108,6 +108,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     /** Deprecated, uses old builtin MUI*/
+    @Deprecated
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.conveyor.item_filter.title"));
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
@@ -251,6 +252,18 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return FilterTypeRegistry.getItemFilterForStack(stack) != null;
     }
 
+    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        packetBuffer.writeItemStack(getFilterInventory().getStackInSlot(0));
+    }
+
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        try {
+            var stack = packetBuffer.readItemStack();
+            this.filterInventory.setStackInSlot(0, stack);
+            this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(stack);
+        } catch (IOException ignore) {}
+    }
+
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tagCompound = new NBTTagCompound();
@@ -268,6 +281,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
         this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
+        this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(getFilterInventory().getStackInSlot(0));
         setMaxStackSize(tagCompound.getInteger("MaxStackSize"));
         setTransferStackSize(tagCompound.getInteger("TransferStackSize"));
         if (getItemFilter() != null) {

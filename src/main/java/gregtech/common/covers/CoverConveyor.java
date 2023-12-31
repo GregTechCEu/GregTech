@@ -526,7 +526,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         panel.padding(4)
                 .child(createTitleRow())
                 .child(new Row()
-                        .top(16).padding(4)
+                        .top(16)
                         .coverChildrenHeight()
                         .child(new ButtonWidget<>()
                                 .width(18)
@@ -623,6 +623,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeEnumValue(conveyorMode);
         packetBuffer.writeEnumValue(distributionMode);
+        getItemFilterContainer().writeInitialSyncData(packetBuffer);
     }
 
     @Override
@@ -630,6 +631,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         super.readInitialSyncData(packetBuffer);
         this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
         this.distributionMode = packetBuffer.readEnumValue(DistributionMode.class);
+        getItemFilterContainer().readInitialSyncData(packetBuffer);
     }
 
     @Override
