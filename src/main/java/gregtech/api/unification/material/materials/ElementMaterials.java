@@ -1025,9 +1025,52 @@ public class ElementMaterials {
                 .element(Elements.U239)
                 .build();
 
-        Neptunium239 = new Material.Builder(133, gregtechId("neptunium_239"))
+        Neptunium235 = new Material.Builder(133, gregtechId("neptunium_235"))
+                .color(0x284D7B).iconSet(METALLIC)
+                .element(Elements.Np235)
+                .build();
+
+        Neptunium236 = new Material.Builder(134, gregtechId("neptunium_236"))
+                .color(0x284D7B).iconSet(METALLIC)
+                .element(Elements.Np236)
+                .build();
+
+        Neptunium237 = new Material.Builder(135, gregtechId("neptunium_237"))
+                .color(0x284D7B).iconSet(METALLIC)
+                .element(Elements.Np237)
+                .build();
+
+        Neptunium239 = new Material.Builder(136, gregtechId("neptunium_239"))
                 .color(0x284D7B).iconSet(METALLIC)
                 .element(Elements.Np239)
+                .build();
+
+        Plutonium238 = new Material.Builder(137, gregtechId("plutonium_238"))
+                .ingot(3)
+                .liquid(new FluidBuilder().temperature(913))
+                .color(0xF03232).iconSet(METALLIC)
+                .element(Elements.Pu238)
+                .build();
+
+        Plutonium240 = new Material.Builder(138, gregtechId("plutonium_240"))
+                .ingot(3)
+                .liquid(new FluidBuilder().temperature(913))
+                .color(0xF03232).iconSet(METALLIC)
+                .element(Elements.Pu240)
+                .build();
+
+        Plutonium242 = new Material.Builder(139, gregtechId("plutonium_242"))
+                .ingot(3)
+                .liquid(new FluidBuilder().temperature(913))
+                .color(0xF03232).iconSet(METALLIC)
+                .element(Elements.Pu242)
+                .build();
+
+        Plutonium244 = new Material.Builder(140, gregtechId("plutonium_244"))
+                .ingot(3)
+                .liquid(new FluidBuilder().temperature(913))
+                .color(0xF03232).iconSet(METALLIC)
+                .element(Elements.Pu244)
                 .build();
     }
 }
