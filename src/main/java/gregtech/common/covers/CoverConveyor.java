@@ -368,9 +368,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         public final IntList slots;
         public int totalCount;
 
-        public TypeItemInfo(ItemStack itemStack, Object filterSlot, IntList slots, int totalCount) {
+        public TypeItemInfo(ItemStack itemStack, int filterSlot, IntList slots, int totalCount) {
             this.itemStack = itemStack;
-            this.filterSlot = (int) filterSlot;
+            this.filterSlot = filterSlot;
             this.slots = slots;
             this.totalCount = totalCount;
         }
