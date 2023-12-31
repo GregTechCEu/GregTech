@@ -1,11 +1,10 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.screen.ModularPanel;
-
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.slot.PhantomItemSlot;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,10 +12,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -84,7 +83,9 @@ public class SimpleItemFilter extends ItemFilter {
     @Override
     public MatchResult<Integer> matchItemStack(ItemStack itemStack) {
         int itemFilterMatchIndex = itemFilterMatch(getItemFilterSlots(), isIgnoreDamage(), isIgnoreNBT(), itemStack);
-        return ItemFilter.createResult(itemFilterMatchIndex == -1 ? Match.FAIL : Match.SUCCEED, itemFilterMatchIndex);
+        var result = ItemFilter.createResult(itemFilterMatchIndex == -1 ? Match.FAIL : Match.SUCCEED, itemFilterMatchIndex);
+        if (isBlacklistFilter()) result.flipMatch();
+        return result;
     }
 
     @Override
@@ -100,7 +101,7 @@ public class SimpleItemFilter extends ItemFilter {
 
     @Override
     public int getTotalOccupiedHeight() {
-        return 36;
+        return 36; // todo remove this, idk what it's used for
     }
 
     @Override
@@ -118,25 +119,27 @@ public class SimpleItemFilter extends ItemFilter {
     @Override
     public @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
+        var blacklist = new BooleanSyncValue(this::isBlacklistFilter, this::setBlacklistFilter);
         syncManager.registerSlotGroup(filterInventory);
-        return ModularPanel.defaultPanel("simple_item_filter", 18 * 4, 18 * 3)
-                .align(Alignment.Center)
+        syncManager.syncValue("filter_blacklist", blacklist);
+        return ModularPanel.defaultPanel("simple_item_filter")
                 .child(new Row().coverChildren()
                         .align(Alignment.TopCenter).top(6)
                         .child(SlotGroupWidget.builder()
                                 .matrix("XXX", "XXX", "XXX")
                                 .key('X', index -> new ItemSlot()
-                                        .slot(SyncHandlers.phantomItemSlot(this.itemFilterSlots, index)
-                                        .slotGroup(filterInventory)))
+                                        .slot(new PhantomItemSlot(itemFilterSlots, index, () -> Integer.MAX_VALUE)
+                                                .slotGroup(filterInventory)))
                                 .build())
                         .child(new CycleButtonWidget()
-                                .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
+                                .value(blacklist)
                                 .textureGetter(state -> state == 0 ? GTGuiTextures.BUTTON_CROSS : GTGuiTextures.BUTTON)
                                 .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist")))));
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
         tagCompound.setTag("ItemFilter", itemFilterSlots.serializeNBT());
         tagCompound.setBoolean("IgnoreDamage", ignoreDamage);
         tagCompound.setBoolean("IgnoreNBT", ignoreNBT);
@@ -144,6 +147,7 @@ public class SimpleItemFilter extends ItemFilter {
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
         this.itemFilterSlots.deserializeNBT(tagCompound.getCompoundTag("ItemFilter"));
         this.ignoreDamage = tagCompound.getBoolean("IgnoreDamage");
         this.ignoreNBT = tagCompound.getBoolean("IgnoreNBT");

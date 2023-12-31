@@ -50,9 +50,13 @@ public abstract class ItemFilter {
     /** Uses Cleanroom MUI */
     public abstract @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager);
 
-    public abstract void writeToNBT(NBTTagCompound tagCompound);
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        tagCompound.setBoolean("IsBlacklist", this.isBlacklistFilter);
+    }
 
-    public abstract void readFromNBT(NBTTagCompound tagCompound);
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        this.isBlacklistFilter = tagCompound.getBoolean("IsBlacklist");
+    }
 
     final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
