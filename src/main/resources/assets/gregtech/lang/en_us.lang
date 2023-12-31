@@ -1825,7 +1825,15 @@ gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
 gregtech.material.rtm_alloy=RTM Alloy
-
+gregtech.material.enriched_uranium_dioxide=Enriched Uranium Dioxide
+gregtech.material.depleted_uranium_dioxide=Depleted Uranium Dioxide
+gregtech.material.plutonium_239_dioxide=Plutonium 239 Dioxide
+gregtech.material.neptunium_235=Neptunium 235
+gregtech.material.neptunium_236=Neptunium 236
+gregtech.material.neptunium_237=Neptunium 237
+gregtech.material.plutonium_240=Plutonium 240
+gregtech.material.plutonium_242=Plutonium 242
+gregtech.material.plutonium_244=Plutonium 244
 
 # Organic Chemistry Materials
 gregtech.material.silicone_rubber=Silicone Rubber
@@ -2096,6 +2104,8 @@ gregtech.material.clay=Clay
 gregtech.material.redstone=Redstone
 gregtech.material.leu_235=LEU-235
 gregtech.material.heu_235=HEU-235
+gregtech.material.low_grade_mox=Low Grade MOX
+gregtech.material.high_grade_mox=High Grade MOX
 
 # Third Degree Materials
 gregtech.material.electrotine=Electrotine
