@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.widgets.layout.Column;
+
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -120,24 +122,47 @@ public class SimpleItemFilter extends ItemFilter {
     public @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
         var blacklist = new BooleanSyncValue(this::isBlacklistFilter, this::setBlacklistFilter);
+        var ignoreMeta = new BooleanSyncValue(this::isIgnoreDamage, this::setIgnoreDamage);
+        var ignoreNBT = new BooleanSyncValue(this::isIgnoreNBT, this::setIgnoreNBT);
+
         syncManager.registerSlotGroup(filterInventory);
         syncManager.syncValue("filter_blacklist", blacklist);
+        syncManager.syncValue("ignore_meta", ignoreMeta);
+        syncManager.syncValue("ignore_nbt", ignoreNBT);
+
         return GTGuis.createPopupPanel("simple_item_filter", 18 * 4 + 9, 18 * 4 + 9)
                 .child(new Row().left(4).bottom(4)
-                        .coverChildrenHeight()
+                        .coverChildren()
                         .child(SlotGroupWidget.builder()
                                 .matrix("XXX",
                                         "XXX",
                                         "XXX")
                                 .key('X', index -> new ItemSlot()
                                         .slot(new PhantomItemSlot(itemFilterSlots, index, () -> Integer.MAX_VALUE)
-                                                .slotGroup(filterInventory)))
+                                                .slotGroup(filterInventory)
+                                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                                    if (onlyAmountChanged && !init) {
+                                                        markDirty();
+                                                    }
+                                                })))
                                 .build())
-                        .child(new CycleButtonWidget()
-                                .value(blacklist)
-                                .textureGetter(state -> state == 0 ? GTGuiTextures.BUTTON_CROSS : GTGuiTextures.BUTTON)
-                                .addTooltip(0, IKey.lang("cover.filter.blacklist.enabled"))
-                                .addTooltip(1, IKey.lang("cover.filter.blacklist.disabled"))));
+                        .child(new Column().width(18).coverChildren()
+                                // todo add overlays for blacklist, meta, and nbt
+                                .child(new CycleButtonWidget()
+                                        .value(blacklist)
+                                        .textureGetter(state -> state == 1 ? GTGuiTextures.MC_BUTTON : GTGuiTextures.MC_BUTTON_DISABLED)
+                                        .addTooltip(0, IKey.lang("cover.filter.blacklist.enabled"))
+                                        .addTooltip(1, IKey.lang("cover.filter.blacklist.disabled")))
+                                .child(new CycleButtonWidget()
+                                        .value(ignoreMeta)
+                                        .textureGetter(state -> state == 1 ? GTGuiTextures.MC_BUTTON : GTGuiTextures.MC_BUTTON_DISABLED)
+                                        .addTooltip(0, IKey.lang("cover.item_filter.ignore_damage.enabled"))
+                                        .addTooltip(1, IKey.lang("cover.item_filter.ignore_damage.disabled")))
+                                .child(new CycleButtonWidget()
+                                        .value(ignoreNBT)
+                                        .textureGetter(state -> state == 1 ? GTGuiTextures.MC_BUTTON : GTGuiTextures.MC_BUTTON_DISABLED)
+                                        .addTooltip(0, IKey.lang("cover.item_filter.ignore_nbt.enabled"))
+                                        .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.disabled")))));
     }
 
     @Override
