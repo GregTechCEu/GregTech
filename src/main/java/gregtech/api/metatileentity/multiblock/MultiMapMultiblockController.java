@@ -18,6 +18,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -206,5 +207,10 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
             return GregtechTileCapabilities.CAPABILITY_MULTIPLE_RECIPEMAPS.cast(this);
         }
         return capabilityResult;
+    }
+
+    @Override
+    public SoundEvent getSound() {
+        return getCurrentRecipeMap().getSound();
     }
 }
