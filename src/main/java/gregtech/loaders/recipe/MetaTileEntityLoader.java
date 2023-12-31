@@ -134,7 +134,7 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "casing_cobalt_iridium_forging",
                 MetaBlocks.METAL_CASING.getItemVariant(COBALT_IRIDIUM_FORGING, ConfigHolder.recipes.casingsPerCraft),
                 "PhP", "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.CobaltIridium), 'F',
-                new UnificationEntry(OrePrefix.frameGt, Materials.HSSG));
+                new UnificationEntry(OrePrefix.frameGt, Materials.Aluminium));
 
         ModHandler.addShapedRecipe(true, "casing_steel_turbine_casing",
                 MetaBlocks.TURBINE_CASING.getItemVariant(STEEL_TURBINE_CASING, ConfigHolder.recipes.casingsPerCraft),
