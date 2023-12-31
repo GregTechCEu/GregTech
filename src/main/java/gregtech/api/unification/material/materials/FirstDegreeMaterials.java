@@ -1558,7 +1558,7 @@ public class FirstDegreeMaterials {
 
         EnrichedUraniumDioxide = new Material.Builder(452, gregtechId("enriched_uranium_dioxide"))
                 .dust(3)
-                .color(0x232323).iconSet(METALLIC)
+                .color(0x232323).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Oxygen, 2)
                 .build()
@@ -1566,7 +1566,7 @@ public class FirstDegreeMaterials {
 
         DepletedUraniumDioxide = new Material.Builder(453, gregtechId("depleted_uranium_dioxide"))
                 .dust(3)
-                .color(0x232323).iconSet(METALLIC)
+                .color(0x232323).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium, 1, Oxygen, 2)
                 .build()
@@ -1580,5 +1580,13 @@ public class FirstDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
+
+        Plutonium239Dioxide = new Material.Builder(455, gregtechId("plutonium_239_dioxide"))
+                .dust(3)
+                .color(0xF03232).iconSet(DULL)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium235, 1, Oxygen, 2)
+                .build()
+                .setFormula("PuO2", true);
     }
 }
