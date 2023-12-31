@@ -215,28 +215,17 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack) {
-        return matchItemStack(itemStack, !isBlacklistFilter());
-    }
-
-    public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack, boolean whitelist) {
         ItemFilter.MatchResult<Integer> originalResult;
         if (currentItemFilter == null) {
             originalResult = ItemFilter.EMPTY_MATCH;
         } else {
             originalResult = currentItemFilter.matchItemStack(itemStack);
         }
-        if (!whitelist) {
-            originalResult.flipMatch();
-        }
         return originalResult;
     }
 
     public boolean testItemStack(ItemStack itemStack) {
-        return matchItemStack(itemStack) != null;
-    }
-
-    public boolean testItemStack(ItemStack itemStack, boolean whitelist) {
-        return matchItemStack(itemStack, whitelist).matched();
+        return matchItemStack(itemStack).matched();
     }
 
 
@@ -266,12 +255,11 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setTag("FilterInventory", filterInventory.serializeNBT());
-        tagCompound.setBoolean("IsBlacklist", filterWrapper.isBlacklistFilter());
         tagCompound.setInteger("MaxStackSize", maxStackSize);
         tagCompound.setInteger("TransferStackSize", transferStackSize);
-        if (filterWrapper.getItemFilter() != null) {
+        if (getItemFilter() != null) {
             NBTTagCompound filterInventory = new NBTTagCompound();
-            filterWrapper.getItemFilter().writeToNBT(filterInventory);
+            getItemFilter().writeToNBT(filterInventory);
             tagCompound.setTag("Filter", filterInventory);
         }
         return tagCompound;
@@ -280,11 +268,10 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
         this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
-        this.filterWrapper.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         setMaxStackSize(tagCompound.getInteger("MaxStackSize"));
         setTransferStackSize(tagCompound.getInteger("TransferStackSize"));
-        if (filterWrapper.getItemFilter() != null) {
-            this.filterWrapper.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
+        if (getItemFilter() != null) {
+            this.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
         }
     }
 }

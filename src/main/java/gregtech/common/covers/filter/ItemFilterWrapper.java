@@ -72,10 +72,6 @@ public class ItemFilterWrapper {
         return container.matchItemStack(itemStack);
     }
 
-    public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack, boolean whitelist) {
-        return container.matchItemStack(itemStack, whitelist);
-    }
-
     public boolean testItemStack(ItemStack itemStack) {
         return container.testItemStack(itemStack);
     }
