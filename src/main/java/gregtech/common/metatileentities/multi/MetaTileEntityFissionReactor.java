@@ -125,7 +125,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 coolantImport.getFluidTank().drain(this.flowRate, true);
             }
             for (ICoolantHandler coolantExport : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
-                coolantExport.getFluidTank().fill(coolantExport.getCoolant().getFluid(this.flowRate), true);
+                coolantExport.getFluidTank().fill(coolantExport.getCoolant().getProperty(PropertyKey.COOLANT).getHotHPCoolant().getFluid(this.flowRate), true);
             }
 
             // Fuel handling
