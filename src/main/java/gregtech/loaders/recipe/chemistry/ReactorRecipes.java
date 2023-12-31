@@ -596,7 +596,7 @@ public class ReactorRecipes {
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .input(ingot, Plutonium239, 8)
-                .input(dust, Uranium238)
+                .input(dust, Uranium)
                 .fluidInputs(Air.getFluid(10000))
                 .output(dust, Plutonium239, 8)
                 .fluidOutputs(Radon.getFluid(1000))
