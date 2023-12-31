@@ -128,7 +128,6 @@ public class SimpleItemFilter extends ItemFilter {
                                 .key('X', index -> new ItemSlot()
                                         .slot(SyncHandlers.phantomItemSlot(this.itemFilterSlots, index)
                                         .slotGroup(filterInventory)))
-                                .synced(filterInventory.getName())
                                 .build())
                         .child(new CycleButtonWidget()
                                 .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
