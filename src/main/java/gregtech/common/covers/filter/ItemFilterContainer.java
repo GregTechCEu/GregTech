@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
-
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
@@ -20,6 +18,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -139,23 +138,23 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                                 .filter(is -> FilterTypeRegistry.getItemFilterForStack(is) != null))
                         .size(16, 16))
                 .child(new ButtonWidget<>().setEnabledIf(w -> hasItemFilter())
-                        .onMousePressed(mouseButton -> createFilterPanel()));
+                        .onMousePressed(this::createFilterPanel));
         return column;
     }
 
-    private boolean createFilterPanel() {
+    private boolean createFilterPanel(int mouseButton) {
         var screen = GregTechGuiScreen.getCurrent();
         if (screen == null) return false;
 
         var panel = new PanelSyncHandler(screen.getMainPanel()) {
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                return new ModularPanel("filter_window")
+                return ModularPanel.defaultPanel("filter_window", 18 * 4, 18 * 3)
                         .align(Alignment.Center)
                         .child(getItemFilter().initUI(screen.getSyncManager()));
             }
         };
-        screen.getSyncManager().syncValue("filter_window", panel);
+        screen.getSyncManager().syncValue("filter_window2",1, panel);
         panel.openPanel();
         return true;
     }
