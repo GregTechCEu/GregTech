@@ -44,7 +44,7 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
-    @Config.Comment( {"Persistent Data for GT", "Do not modify the contents of this section." })
+    @Config.Comment({ "Persistent Data for GT", "Do not modify the contents of this section." })
     @Config.Name("Persistent Data")
     public static PersistentData persistentData = new PersistentData();
 
