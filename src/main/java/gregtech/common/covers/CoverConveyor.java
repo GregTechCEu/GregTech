@@ -529,25 +529,23 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         .top(16).padding(4)
                         .coverChildrenHeight()
                         .child(new ButtonWidget<>()
-                                .width(16)
+                                .width(18)
                                 .onMousePressed(mouseButton -> {
                                     throughput.setValue(throughput.getValue() + 1, true, true);
                                     return true;
                         }))
                         .child(new TextFieldWidget()
                                 .setMaxLength(4)
-                                .widthRel(1.0f)
+                                .widthRel(0.9f)
                                 .setNumbers(1, maxItemTransferRate)
                                 .background(GTGuiTextures.DISPLAY))
                         .child(new ButtonWidget<>()
-                                .width(16)
+                                .width(18)
                                 .onMousePressed(mouseButton -> {
                                     throughput.setValue(throughput.getValue() - 1, true, true);
                                     return true;
                         })))
-                .child(getItemFilterContainer()
-                        .initUI(guiSyncManager)
-                        .top(36))
+                .child(getItemFilterContainer().initUI(panel, guiSyncManager))
                 .bindPlayerInventory();
         return panel;
     }

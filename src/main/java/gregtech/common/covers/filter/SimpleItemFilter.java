@@ -127,7 +127,7 @@ public class SimpleItemFilter extends ItemFilter {
                                 .matrix("XXX", "XXX", "XXX")
                                 .key('X', index -> new ItemSlot()
                                         .slot(SyncHandlers.phantomItemSlot(this.itemFilterSlots, index)
-                                                .slotGroup(filterInventory)))
+                                        .slotGroup(filterInventory)))
                                 .synced(filterInventory.getName())
                                 .build())
                         .child(new CycleButtonWidget()

@@ -130,34 +130,36 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     /** Uses Cleanroom MUI*/
-    public ParentWidget<?> initUI(GuiSyncManager manager) {
-        var slotGroup = new SlotGroup("filter_slot", 1);
+    public ParentWidget<Column> initUI(ModularPanel main, GuiSyncManager manager) {
+        var slotGroup = new SlotGroup("filter_slot", 1, true);
         manager.registerSlotGroup(slotGroup);
-        return new Column().padding(4).left(5).top(32)
-                .child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
-                .child(new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
-                                .slotGroup(slotGroup)
-                                .filter(is -> FilterTypeRegistry.getItemFilterForStack(is) != null))
-                        .size(ItemSlot.SIZE))
-                .child(new ButtonWidget<>()
-                        .setEnabledIf(w -> hasItemFilter())
-                        .onMousePressed(this::createFilterPanel));
-    }
-
-    private boolean createFilterPanel(int mouseButton) {
-        var screen = GregTechGuiScreen.getCurrent();
-        if (screen == null) return false;
-
-        var panel = new PanelSyncHandler(screen.getMainPanel()) {
+        var panel = new PanelSyncHandler(main) {
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 return getItemFilter().createUI(mainPanel, syncManager);
             }
         };
-        screen.getSyncManager().syncValue("filter_window2",1, panel);
-        panel.openPanel();
-        return true;
+        manager.syncValue("filter_panel", panel);
+
+        return new Column().padding(4).left(5).top(32)
+                .child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
+                                .slotGroup(slotGroup)
+                                .filter(this::isFilter))
+                        .size(ItemSlot.SIZE))
+                .child(new ButtonWidget<>()
+                        .setEnabledIf(w -> hasItemFilter())
+                        .onMousePressed(i -> {
+                            if (!panel.isPanelOpen()) {
+                                panel.openPanel();
+                                return true;
+                            } else if (panel.isValid()) {
+                                panel.closePanel();
+                                return true;
+                            }
+                            return false;
+                        }));
     }
 
     protected void onFilterSlotChange(boolean notify) {
@@ -254,6 +256,10 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public boolean hasItemFilter() {
         return currentItemFilter != null;
+    }
+
+    public boolean isFilter(ItemStack stack) {
+        return FilterTypeRegistry.getItemFilterForStack(stack) != null;
     }
 
     @Override
