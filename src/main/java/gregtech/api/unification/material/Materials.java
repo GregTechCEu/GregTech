@@ -248,8 +248,9 @@ public class Materials {
     public static Material Titanium;
     public static Material Tritium;
     public static Material Tungsten;
-    public static Material Uranium238;
+    public static Material Uranium;
     public static Material Uranium235;
+    public static Material Uranium238;
     public static Material Uranium239;
     public static Material Vanadium;
     public static Material Xenon;

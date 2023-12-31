@@ -30,7 +30,7 @@ public class NuclearRecipes {
 
         ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
                 .fluidInputs(DepletedUraniumHexafluoride.getFluid(1000))
-                .output(dust, Uranium238)
+                .output(dust, Uranium)
                 .fluidOutputs(Fluorine.getFluid(6000))
                 .buildAndRegister();
     }

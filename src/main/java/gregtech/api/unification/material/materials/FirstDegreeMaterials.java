@@ -676,7 +676,7 @@ public class FirstDegreeMaterials {
                 .dust(3).ore(true)
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium238, 1, Oxygen, 2)
+                .components(Uranium, 1, Oxygen, 2)
                 .build()
                 .setFormula("UO2", true);
 
@@ -1215,7 +1215,7 @@ public class FirstDegreeMaterials {
                 .gas()
                 .color(0x42D126)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium238, 1, Fluorine, 6)
+                .components(Uranium, 1, Fluorine, 6)
                 .build()
                 .setFormula("UF6", true);
 
@@ -1231,7 +1231,7 @@ public class FirstDegreeMaterials {
                 .gas()
                 .color(0x74BA66)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium238, 1, Fluorine, 6)
+                .components(Uranium, 1, Fluorine, 6)
                 .build()
                 .setFormula("UF6", true);
 
@@ -1349,7 +1349,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(1882))
                 .color(0x008700).iconSet(SHINY)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Uranium238, 1, Platinum, 3)
+                .components(Uranium, 1, Platinum, 3)
                 .cableProperties(GTValues.V[GTValues.EV], 6, 0, true, 30)
                 .blast(b -> b
                         .temp(4400, GasTier.MID)
@@ -1389,7 +1389,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(3410))
                 .color(0x0A0A0A)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
-                .components(Uranium238, 1, Rhodium, 1, Naquadah, 2)
+                .components(Uranium, 1, Rhodium, 1, Naquadah, 2)
                 .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true, 5)
                 .blast(b -> b
                         .temp(9000, GasTier.HIGH)
@@ -1568,7 +1568,7 @@ public class FirstDegreeMaterials {
                 .dust(3)
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium238, 1, Oxygen, 2)
+                .components(Uranium, 1, Oxygen, 2)
                 .build()
                 .setFormula("UO2", true);
 
