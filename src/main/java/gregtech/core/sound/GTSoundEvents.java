@@ -29,6 +29,7 @@ public class GTSoundEvents {
     public static SoundEvent COOLING;
     public static SoundEvent MINER;
     public static SoundEvent COMPUTATION;
+    public static SoundEvent FORGING;
 
     // Tool Sounds
     public static SoundEvent DRILL_TOOL;
@@ -81,6 +82,7 @@ public class GTSoundEvents {
         MINER = soundManager.registerSound("tick.miner");
         SCIENCE = soundManager.registerSound("tick.science");
         COMPUTATION = soundManager.registerSound("tick.computation");
+        FORGING = soundManager.registerSound("tick.forging");
 
         WRENCH_TOOL = soundManager.registerSound("use.wrench");
         SOFT_MALLET_TOOL = soundManager.registerSound("use.soft_hammer");

@@ -6000,6 +6000,7 @@ gregtech.subtitle.tick.turbine=Turbine spinning
 gregtech.subtitle.tick.combustion=Fuel combusting
 gregtech.subtitle.tick.miner=Miner drilling
 gregtech.subtitle.tick.computation=Computers processing
+gregtech.subtitle.tick.forging=Forge clanging
 gregtech.subtitle.use.wrench=Wrench turns
 gregtech.subtitle.use.soft_hammer=Block smacked
 gregtech.subtitle.use.drill=Blocks drilled
