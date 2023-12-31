@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
+
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
@@ -129,17 +131,18 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     /** Uses Cleanroom MUI*/
     public ParentWidget<?> initUI(GuiSyncManager manager) {
-        manager.registerSlotGroup("filter_slot", 1, 100);
-        var column = new Column().padding(4).left(5).top(32);
-        column.child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
+        var slotGroup = new SlotGroup("filter_slot", 1);
+        manager.registerSlotGroup(slotGroup);
+        return new Column().padding(4).left(5).top(32)
+                .child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(filterInventory, 0)
-                                .slotGroup("filter_slot")
+                                .slotGroup(slotGroup)
                                 .filter(is -> FilterTypeRegistry.getItemFilterForStack(is) != null))
-                        .size(16, 16))
-                .child(new ButtonWidget<>().setEnabledIf(w -> hasItemFilter())
+                        .size(ItemSlot.SIZE))
+                .child(new ButtonWidget<>()
+                        .setEnabledIf(w -> hasItemFilter())
                         .onMousePressed(this::createFilterPanel));
-        return column;
     }
 
     private boolean createFilterPanel(int mouseButton) {
@@ -149,9 +152,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         var panel = new PanelSyncHandler(screen.getMainPanel()) {
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                return ModularPanel.defaultPanel("filter_window", 18 * 4, 18 * 3)
-                        .align(Alignment.Center)
-                        .child(getItemFilter().initUI(screen.getSyncManager()));
+                return getItemFilter().createUI(mainPanel, syncManager);
             }
         };
         screen.getSyncManager().syncValue("filter_window2",1, panel);

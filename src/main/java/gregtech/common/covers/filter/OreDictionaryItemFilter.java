@@ -1,5 +1,6 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 
@@ -176,8 +177,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public @NotNull Widget<?> initUI(GuiSyncManager manager) {
-        return new Widget<>();
+    public @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+        return ModularPanel.defaultPanel("ore_dict_filter");
     }
 
     @Override

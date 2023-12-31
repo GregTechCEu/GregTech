@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.screen.ModularPanel;
+
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -15,7 +17,6 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -115,23 +116,24 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public @NotNull ParentWidget<?> initUI(GuiSyncManager manager) {
+    public @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
-        manager.registerSlotGroup(filterInventory);
-
-        return new Row().coverChildren()
-                .align(Alignment.TopCenter).top(6)
-                .child(SlotGroupWidget.builder()
-                        .matrix("XXX", "XXX", "XXX")
-                        .key('X', index -> new ItemSlot()
-                                .slot(SyncHandlers.phantomItemSlot(this.itemFilterSlots, index)
-                                .slotGroup(filterInventory)))
-                        .synced(filterInventory.getName())
-                        .build())
-                .child(new CycleButtonWidget()
-                        .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
-                        .textureGetter(state -> state == 0 ? GTGuiTextures.BUTTON_CROSS : GTGuiTextures.BUTTON)
-                        .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist"))));
+        syncManager.registerSlotGroup(filterInventory);
+        return ModularPanel.defaultPanel("simple_item_filter", 18 * 4, 18 * 3)
+                .align(Alignment.Center)
+                .child(new Row().coverChildren()
+                        .align(Alignment.TopCenter).top(6)
+                        .child(SlotGroupWidget.builder()
+                                .matrix("XXX", "XXX", "XXX")
+                                .key('X', index -> new ItemSlot()
+                                        .slot(SyncHandlers.phantomItemSlot(this.itemFilterSlots, index)
+                                                .slotGroup(filterInventory)))
+                                .synced(filterInventory.getName())
+                                .build())
+                        .child(new CycleButtonWidget()
+                                .value(new BoolValue.Dynamic(this::isBlacklistFilter, this::setBlacklistFilter))
+                                .textureGetter(state -> state == 0 ? GTGuiTextures.BUTTON_CROSS : GTGuiTextures.BUTTON)
+                                .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist")))));
     }
 
     @Override

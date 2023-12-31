@@ -1,13 +1,12 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.widget.Widget;
-
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -49,7 +48,7 @@ public abstract class ItemFilter {
     public abstract void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup);
 
     /** Uses Cleanroom MUI */
-    public abstract @NotNull Widget<?> initUI(GuiSyncManager manager);
+    public abstract @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager);
 
     public abstract void writeToNBT(NBTTagCompound tagCompound);
 
