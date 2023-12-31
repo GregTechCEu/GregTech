@@ -1,10 +1,13 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
@@ -142,25 +145,28 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         };
         manager.syncValue("filter_panel", panel);
 
-        return new Column().padding(4).left(5).top(32)
-                .child(IKey.lang("cover.conveyor.item_filter.title").asWidget())
-                .child(new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
-                                .slotGroup(slotGroup)
-                                .filter(this::isFilter))
-                        .size(ItemSlot.SIZE))
-                .child(new ButtonWidget<>()
-                        .setEnabledIf(w -> hasItemFilter())
-                        .onMousePressed(i -> {
-                            if (!panel.isPanelOpen()) {
-                                panel.openPanel();
-                                return true;
-                            } else if (panel.isValid()) {
-                                panel.closePanel();
-                                return true;
-                            }
-                            return false;
-                        }));
+        return new Column().coverChildrenHeight()
+                .marginBottom(2).widthRel(1f)
+                .child(IKey.lang("cover.conveyor.item_filter.title").asWidget().left(0))
+                .child(new Row().height(18)
+                        .child(new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(filterInventory, 0)
+                                        .slotGroup(slotGroup)
+                                        .filter(this::isFilter))
+                                .size(ItemSlot.SIZE)
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
+                        .child(new ButtonWidget<>()
+                                .setEnabledIf(w -> hasItemFilter())
+                                .onMousePressed(i -> {
+                                    if (!panel.isPanelOpen()) {
+                                        panel.openPanel();
+                                        return true;
+                                    } else if (panel.isValid()) {
+                                        panel.closePanel();
+                                        return true;
+                                    }
+                                    return false;
+                                })));
     }
 
     protected void onFilterSlotChange(boolean notify) {

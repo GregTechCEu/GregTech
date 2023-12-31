@@ -4,6 +4,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.slot.PhantomItemSlot;
 
 import net.minecraft.item.ItemStack;
@@ -13,7 +14,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
@@ -122,11 +122,13 @@ public class SimpleItemFilter extends ItemFilter {
         var blacklist = new BooleanSyncValue(this::isBlacklistFilter, this::setBlacklistFilter);
         syncManager.registerSlotGroup(filterInventory);
         syncManager.syncValue("filter_blacklist", blacklist);
-        return ModularPanel.defaultPanel("simple_item_filter")
-                .child(new Row().coverChildren()
-                        .align(Alignment.TopCenter).top(6)
+        return GTGuis.createPopupPanel("simple_item_filter", 18 * 4 + 9, 18 * 4 + 9)
+                .child(new Row().left(4).bottom(4)
+                        .coverChildrenHeight()
                         .child(SlotGroupWidget.builder()
-                                .matrix("XXX", "XXX", "XXX")
+                                .matrix("XXX",
+                                        "XXX",
+                                        "XXX")
                                 .key('X', index -> new ItemSlot()
                                         .slot(new PhantomItemSlot(itemFilterSlots, index, () -> Integer.MAX_VALUE)
                                                 .slotGroup(filterInventory)))
@@ -134,7 +136,8 @@ public class SimpleItemFilter extends ItemFilter {
                         .child(new CycleButtonWidget()
                                 .value(blacklist)
                                 .textureGetter(state -> state == 0 ? GTGuiTextures.BUTTON_CROSS : GTGuiTextures.BUTTON)
-                                .tooltip(tooltip -> tooltip.addLine(IKey.lang("cover.filter.blacklist")))));
+                                .addTooltip(0, IKey.lang("cover.filter.blacklist.enabled"))
+                                .addTooltip(1, IKey.lang("cover.filter.blacklist.disabled"))));
     }
 
     @Override

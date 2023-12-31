@@ -1,5 +1,11 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.widget.Widget;
+
+import com.cleanroommc.modularui.widgets.ToggleButton;
+
+import com.cleanroommc.modularui.widgets.layout.Column;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -11,7 +17,6 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.IncrementButtonWidget;
@@ -24,7 +29,6 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.common.covers.filter.ItemFilter;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
@@ -523,31 +527,46 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
         var panel = GTGuis.createPanel(this, 176, 112 + 176);
 
-        panel.padding(4)
-                .child(createTitleRow())
-                .child(new Row()
-                        .top(16)
-                        .coverChildrenHeight()
-                        .child(new ButtonWidget<>()
-                                .width(18)
-                                .onMousePressed(mouseButton -> {
-                                    throughput.setValue(throughput.getValue() + 1, true, true);
-                                    return true;
-                        }))
-                        .child(new TextFieldWidget()
-                                .setMaxLength(4)
-                                .widthRel(0.9f)
-                                .setNumbers(1, maxItemTransferRate)
-                                .background(GTGuiTextures.DISPLAY))
-                        .child(new ButtonWidget<>()
-                                .width(18)
-                                .onMousePressed(mouseButton -> {
-                                    throughput.setValue(throughput.getValue() - 1, true, true);
-                                    return true;
-                        })))
-                .child(getItemFilterContainer().initUI(panel, guiSyncManager))
+        panel.child(createTitleRow())
+                .child(new Column().top(24).margin(4, 0)
+                    .widthRel(1f).coverChildrenHeight()
+                    .child(new Row().coverChildrenHeight()
+                            .marginBottom(2).widthRel(1f)
+                            .child(new ButtonWidget<>()
+                                    .left(0)
+                                    .width(16)
+                                    .onMousePressed(mouseButton -> {
+                                        throughput.setValue(throughput.getValue() + 1, true, true);
+                                        return true;
+                            }))
+                            .child(new TextFieldWidget()
+                                    .setMaxLength(4)
+                                    .left(16).right(16)
+                                    .setNumbers(1, maxItemTransferRate)
+                                    .background(GTGuiTextures.DISPLAY))
+                            .child(new ButtonWidget<>()
+                                    .right(0)
+                                    .width(16)
+                                    .onMousePressed(mouseButton -> {
+                                        throughput.setValue(throughput.getValue() - 1, true, true);
+                                        return true;
+                            })))
+                    .child(getItemFilterContainer()
+                            .initUI(panel, guiSyncManager))
+                    .child(new Row().coverChildrenHeight()
+                            .marginBottom(2).widthRel(1f)
+                            .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
+                            .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
+                            .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))))
                 .bindPlayerInventory();
         return panel;
+    }
+
+    private Widget<?> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
+        return new ToggleButton().size(18)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON);
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
@@ -575,9 +594,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 .setMaxLength(4)
                 .setPostFix("cover.conveyor.transfer_rate"));
 
-        primaryGroup.addWidget(new CycleButtonWidget(10, 45, 75, 20,
+        primaryGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(10, 45, 75, 20,
                 ConveyorMode.class, this::getConveyorMode, this::setConveyorMode));
-        primaryGroup.addWidget(new CycleButtonWidget(7, 166, 116, 20,
+        primaryGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(7, 166, 116, 20,
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                         .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
