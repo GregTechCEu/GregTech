@@ -865,12 +865,12 @@ public class ElementMaterials {
                         .vacuumStats(VA[HV], 300))
                 .build();
 
-        Uranium238 = new Material.Builder(116, gregtechId("uranium"))
+        Uranium = new Material.Builder(116, gregtechId("uranium"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(1405))
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(EXT_METAL)
-                .element(Elements.U238)
+                .element(Elements.U)
                 .fissionFuelProperties(400, 40, 0.1, 0.1, 0.1, 0.1)
                 .build();
 
@@ -1009,7 +1009,15 @@ public class ElementMaterials {
                         .vacuumStats(VA[IV], 300))
                 .build();
 
-        Uranium239 = new Material.Builder(131, gregtechId("uranium_239"))
+        Uranium238 = new Material.Builder(131, gregtechId("uranium_238"))
+                .ingot(3)
+                .liquid(new FluidBuilder().temperature(1405))
+                .color(0x46FA46).iconSet(SHINY)
+                .flags(EXT_METAL)
+                .element(Elements.U238)
+                .build();
+
+        Uranium239 = new Material.Builder(132, gregtechId("uranium_239"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(1405))
                 .color(0x46FA46).iconSet(SHINY)
@@ -1017,7 +1025,7 @@ public class ElementMaterials {
                 .element(Elements.U239)
                 .build();
 
-        Neptunium239 = new Material.Builder(132, gregtechId("neptunium_239"))
+        Neptunium239 = new Material.Builder(133, gregtechId("neptunium_239"))
                 .color(0x284D7B).iconSet(METALLIC)
                 .element(Elements.Np239)
                 .build();
