@@ -1128,6 +1128,15 @@ public class MetaTileEntityLoader {
                     new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin));
         }
 
+        ModHandler.addShapedRecipe(true, "linear_forging_furnace",
+                MetaTileEntities.LINEAR_FORGING_FURNACE.getStackForm(),
+                "AHA", "CFC", "AVA",
+                'A', MetaItems.ROBOT_ARM_IV.getStackForm(),
+                'C', new UnificationEntry(OrePrefix.circuit, Tier.LuV),
+                'H', MetaTileEntities.FORGE_HAMMER[GTValues.IV].getStackForm(),
+                'F', MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(),
+                'V', MetaTileEntities.VACUUM_FREEZER.getStackForm());
+
         ModHandler.addShapedRecipe(true, "cleanroom", MetaTileEntities.CLEANROOM.getStackForm(), "FFF", "RHR", "MCM",
                 'F', MetaItems.ITEM_FILTER.getStackForm(), 'R',
                 new UnificationEntry(OrePrefix.rotor, Materials.StainlessSteel), 'H', HULL.getIngredient(GTValues.HV),
