@@ -176,18 +176,23 @@ public class ForgingFurnaceRecipeHandler {
 
         // build the gas recipe if it exists
         if (property.getGasTier() != null) {
-            FluidStack gas = CraftingComponent.EBF_GASES.get(property.getGasTier());
             builder.copy().circuitMeta(circuitMeta)
+                    .notConsumable(OrePrefix.dustTiny, Materials.Graphite)
+                    .duration(duration + coolerDuration)
+                    .buildAndRegister();
+
+            FluidStack gas = CraftingComponent.EBF_GASES.get(property.getGasTier());
+            builder.circuitMeta(circuitMeta)
                     .notConsumable(OrePrefix.dustSmall, Materials.Graphite)
                     .fluidInputs(new FluidStack(gas, gas.amount * inputAmount))
                     .duration((int) (duration * 0.67) + coolerDuration)
                     .buildAndRegister();
+        } else {
+            // build the non-gas recipe
+            builder.circuitMeta(circuitMeta)
+                    .notConsumable(OrePrefix.dustTiny, Materials.Graphite)
+                    .duration(duration + coolerDuration)
+                    .buildAndRegister();
         }
-
-        // build the non-gas recipe
-        builder.circuitMeta(circuitMeta)
-                .notConsumable(OrePrefix.dustTiny, Materials.Graphite)
-                .duration(duration + coolerDuration)
-                .buildAndRegister();
     }
 }
