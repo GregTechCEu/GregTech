@@ -192,7 +192,8 @@ public final class RecipeMaps {
      *         .duration(600).EUt(6000).buildAndRegister();
      * </pre>
      *
-     * The Assembly Line Recipe Builder has no special properties/build actions yet, but will in the future
+     * The Assembly Line Recipe Builder creates additional Research Recipes for its outputs in the Scanner or Research
+     * Station when specified.
      */
     @ZenProperty
     public static final RecipeMap<AssemblyLineRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>(
