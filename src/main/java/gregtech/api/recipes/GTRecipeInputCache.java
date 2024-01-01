@@ -1,16 +1,18 @@
 package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
+import gregtech.api.persistence.PersistentData;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,24 +29,27 @@ import java.util.List;
  */
 public final class GTRecipeInputCache {
 
-    /**
-     * The minimum size for the cache
-     */
-    public static final int MINIMUM_CACHE_SIZE = 8192;
+    private static final int MINIMUM_CACHE_SIZE = 1 << 13;
+    private static final int MAXIMUM_CACHE_SIZE = 1 << 30;
 
-    private static ObjectOpenHashSet<GTRecipeInput> INSTANCES;
+    private static ObjectOpenHashSet<GTRecipeInput> instances;
+
+    private static final String DATA_NAME = "expectedIngredientInstances";
+    private static final String DATA_COMMENT = """
+            The expected amount of unique GT recipe ingredients.
+            This setting improves memory allocation and garbage collection during game-load.""";
 
     private GTRecipeInputCache() {}
 
     public static boolean isCacheEnabled() {
-        return INSTANCES != null;
+        return instances != null;
     }
 
     @ApiStatus.Internal
     public static void enableCache() {
         if (!isCacheEnabled()) {
             int size = calculateOptimalExpectedSize();
-            INSTANCES = new ObjectOpenHashSet<>(size);
+            instances = new ObjectOpenHashSet<>(size);
 
             if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
                 GTLog.logger.info("GTRecipeInput cache enabled with expected size {}", size);
@@ -55,17 +60,29 @@ public final class GTRecipeInputCache {
     @ApiStatus.Internal
     public static void disableCache() {
         if (isCacheEnabled()) {
-            int size = INSTANCES.size();
+            int size = instances.size();
             if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
                 GTLog.logger.info("GTRecipeInput cache disabled; releasing {} unique instances", size);
             }
-            INSTANCES = null;
+            instances = null;
 
-            if (ConfigHolder.persistentData.expectedIngredientInstances != size && size > MINIMUM_CACHE_SIZE) {
-                ConfigHolder.persistentData.expectedIngredientInstances = size;
-                ConfigManager.sync(GTValues.MODID, Config.Type.INSTANCE);
+            if (size >= MINIMUM_CACHE_SIZE && size < MAXIMUM_CACHE_SIZE) {
+                Configuration config = PersistentData.instance().getConfig();
+                Property expected = getExpectedInstanceAmount(config);
+
+                if (expected.getInt() != size) {
+                    expected.set(size);
+                    if (expected.hasChanged()) {
+                        config.save();
+                    }
+                }
             }
         }
+    }
+
+    private static @NotNull Property getExpectedInstanceAmount(@NotNull Configuration configuration) {
+        return configuration.get(PersistentData.CATEGORY_NAME, DATA_NAME, MINIMUM_CACHE_SIZE,
+                DATA_COMMENT, MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE);
     }
 
     /**
@@ -82,7 +99,7 @@ public final class GTRecipeInputCache {
         if (!isCacheEnabled() || recipeInput.isCached()) {
             return recipeInput;
         }
-        GTRecipeInput cached = INSTANCES.addOrGet(recipeInput);
+        GTRecipeInput cached = instances.addOrGet(recipeInput);
         if (cached == recipeInput) { // If recipeInput is cached just now...
             cached.setCached();
         }
@@ -129,12 +146,14 @@ public final class GTRecipeInputCache {
      * @return the optimal expected input cache size
      */
     private static int calculateOptimalExpectedSize() {
+        int min = getExpectedInstanceAmount(PersistentData.instance().getConfig())
+                .getInt(MINIMUM_CACHE_SIZE);
         for (int i = 13; i < 31; i++) {
             int sizeToTest = 1 << i;
             int arraySize = nextHighestPowerOf2((int) (sizeToTest / Hash.DEFAULT_LOAD_FACTOR));
             int maxStoredBeforeRehash = (int) (arraySize * Hash.DEFAULT_LOAD_FACTOR);
 
-            if (maxStoredBeforeRehash >= ConfigHolder.persistentData.expectedIngredientInstances) {
+            if (maxStoredBeforeRehash >= min) {
                 return sizeToTest;
             }
         }
