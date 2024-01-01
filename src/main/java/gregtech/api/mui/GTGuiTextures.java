@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * while MUI port is still ongoing. When MUI port is done, this annotation will be removed.
  */
 // TODO ^
+@SuppressWarnings("unused")
 @ApiStatus.Experimental
 public class GTGuiTextures {
 
@@ -152,6 +153,13 @@ public class GTGuiTextures {
             .name(IDs.STANDARD_FLUID_SLOT)
             .canApplyTheme()
             .build();
+
+    public static final UITexture[] BUTTON_BLACKLIST = slice("textures/gui/widget/button_blacklist.png",
+            16, 32, 16, 16, true);
+    public static final UITexture[] BUTTON_IGNORE_DAMAGE = slice("textures/gui/widget/button_filter_damage.png",
+        16, 32, 16, 16,true);
+    public static final UITexture[] BUTTON_IGNORE_NBT = slice("textures/gui/widget/button_filter_nbt.png",
+            16, 32, 16, 16,true);
 
     // todo bronze/steel/primitive fluid slots?
 
@@ -451,6 +459,28 @@ public class GTGuiTextures {
 
     private static UITexture fullImage(String path, boolean canApplyTheme) {
         return UITexture.fullImage(GTValues.MODID, path, canApplyTheme);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static UITexture[] slice(String path, int imageWidth, int imageHeight, int sliceWidth, int sliceHeight, boolean canApplyTheme) {
+        if (imageWidth % sliceWidth != 0 || imageHeight % sliceHeight != 0)
+            throw new IllegalArgumentException("Slice height and slice width must divide the image evenly!");
+
+        int countX = imageWidth / sliceWidth;
+        int countY = imageHeight / sliceHeight;
+        UITexture[] slices = new UITexture[countX * countY];
+
+        for (int indexX = 0; indexX < countX; indexX++) {
+            for (int indexY = 0; indexY < countY; indexY++) {
+                slices[(indexX * countX) + indexY] = UITexture.builder()
+                        .location(GTValues.MODID, path)
+                        .canApplyTheme(canApplyTheme)
+                        .imageSize(imageWidth, imageHeight)
+                        .uv(indexX * sliceWidth, indexY * sliceHeight, sliceWidth, sliceHeight)
+                        .build();
+            }
+        }
+        return slices;
     }
 
     private static UITexture progressBar(String path) {
