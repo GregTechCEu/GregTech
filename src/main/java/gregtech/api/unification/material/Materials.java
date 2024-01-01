@@ -200,6 +200,10 @@ public class Materials {
     public static Material Neodymium;
     public static Material Neon;
     public static Material Neptunium;
+    public static Material Neptunium235;
+    public static Material Neptunium236;
+    public static Material Neptunium237;
+    public static Material Neptunium239;
     public static Material Nickel;
     public static Material Nihonium;
     public static Material Niobium;
@@ -212,8 +216,12 @@ public class Materials {
     public static Material Phosphorus;
     public static Material Polonium;
     public static Material Platinum;
+    public static Material Plutonium238;
     public static Material Plutonium239;
+    public static Material Plutonium240;
     public static Material Plutonium241;
+    public static Material Plutonium242;
+    public static Material Plutonium244;
     public static Material Potassium;
     public static Material Praseodymium;
     public static Material Promethium;
@@ -247,8 +255,10 @@ public class Materials {
     public static Material Titanium;
     public static Material Tritium;
     public static Material Tungsten;
-    public static Material Uranium238;
+    public static Material Uranium;
     public static Material Uranium235;
+    public static Material Uranium238;
+    public static Material Uranium239;
     public static Material Vanadium;
     public static Material Xenon;
     public static Material Ytterbium;
@@ -479,6 +489,10 @@ public class Materials {
     public static Material Zircaloy;
     public static Material Inconel;
     public static Material RTMAlloy;
+    public static Material EnrichedUraniumDioxide;
+    public static Material DepletedUraniumDioxide;
+    public static Material HighPressureSteam;
+    public static Material Plutonium239Dioxide;
 
     /**
      * Organic chemistry
@@ -694,6 +708,7 @@ public class Materials {
     public static Material Lapotron;
     public static Material UUMatter;
     public static Material PCBCoolant;
+    public static Material Corium;
 
     /**
      * Second Degree Compounds
@@ -752,6 +767,10 @@ public class Materials {
     public static Material Clay;
     public static Material Redstone;
     public static Material ThoriumFLiBe;
+    public static Material LEU235;
+    public static Material HEU235;
+    public static Material LowGradeMOX;
+    public static Material HighGradeMOX;
 
     /**
      * Third Degree Materials

@@ -21,6 +21,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
@@ -44,6 +45,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.relauncher.Side;
+
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -117,6 +123,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                         .getCoolingFactor() * this.flowRate;
                 coolantImport.getFluidTank().drain(this.flowRate, true);
             }
+            for (ICoolantHandler coolantExport : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
+                coolantExport.getFluidTank().fill(coolantExport.getCoolant().getProperty(PropertyKey.COOLANT).getHotHPCoolant().getFluid(this.flowRate), true);
+            }
 
             // Fuel handling
             if (this.fissionReactor.fuelDepletion == 1.) {
@@ -131,17 +140,41 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             this.updateReactorState();
 
             if (this.fissionReactor.checkForMeltdown()) {
-                // TODO Meltdown consequences
+                this.performMeltdownEffects();
             }
 
             if (this.fissionReactor.checkForExplosion()) {
-                // TODO Explosion consequences
+                this.performPrimaryExplosion();
                 if (this.fissionReactor.checkForSecondaryExplosion()) {
-                    // TODO Secondary explosion consequences
+                    this.performSecondaryExplosion();
                 }
             }
-
         }
+    }
+
+    protected void performMeltdownEffects() {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
+        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
+        for (int i = 0; i <= this.heightBottom; i++) {
+            this.getWorld().setBlockState(pos.add(0, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos.add(1, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos.add(-1, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos.add(0, -i, 1), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos.add(0, -i, -1), Materials.Corium.getFluid().getBlock().getDefaultState());
+        }
+        this.getWorld().setBlockState(pos.add(0, 1, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+    }
+
+    protected void performPrimaryExplosion() {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
+        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
+        this.getWorld().createExplosion(null, pos.getX(), pos.getY() + heightTop, pos.getZ(), 4.f, true);
+    }
+
+    protected void performSecondaryExplosion() {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
+        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
+        this.getWorld().newExplosion(null, pos.getX(), pos.getY() + heightTop + 3, pos.getZ(), 10.f, true, true);
     }
 
     public boolean updateStructureDimensions() {
@@ -282,6 +315,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return Textures.FISSION_REACTOR_TEXTURE;
     }
 
+    @SideOnly(Side.CLIENT)
     @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
@@ -354,6 +388,30 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         textList.add(toggleText);
     }
 
+    protected void lockAll() {
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+            handler.setLock(true);
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
+            handler.setLock(true);
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+            handler.setLock(true);
+        }
+    }
+
+    protected void unlockAll() {
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+            handler.setLock(false);
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
+            handler.setLock(false);
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+            handler.setLock(false);
+        }
+    }
+
     @Override
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
@@ -362,23 +420,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             if (this.locked) {
                 lockAndPrepareReactor();
             } else {
-                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-                    handler.setLock(false);
-                }
-                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                    handler.setLock(false);
-                }
+                this.unlockAll();
             }
         }
     }
 
     private void lockAndPrepareReactor() {
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-            handler.setLock(true);
-        }
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-            handler.setLock(true);
-        }
+        this.lockAll();
         fissionReactor = new FissionReactor(this.diameter - 2);
         int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) :
                 Math.round((this.diameter - 1) / 2.f);
@@ -419,6 +467,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 }
             }
         }
+        fissionReactor.prepareThermalProperties();
         fissionReactor.computeGeometry();
     }
 

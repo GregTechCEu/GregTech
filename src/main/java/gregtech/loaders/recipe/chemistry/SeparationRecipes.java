@@ -175,14 +175,14 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(320)
-                .input(dust, Uranium238)
+                .input(dust, Uranium)
                 .chancedOutput(dustTiny, Plutonium239, 200, 80)
                 .chancedOutput(dustTiny, Uranium235, 2000, 350)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(320)
                 .input(dust, Plutonium239)
-                .chancedOutput(dustTiny, Uranium238, 3000, 450)
+                .chancedOutput(dustTiny, Uranium, 3000, 450)
                 .chancedOutput(dust, Plutonium241, 2000, 300)
                 .buildAndRegister();
 
