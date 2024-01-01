@@ -144,6 +144,9 @@ public class GregtechDataCodes {
     // Detector Covers
     public static final int UPDATE_INVERTED = assignId();
 
+    // Fission Hatches
+    public static final int LOCK_UPDATE = 17;
+
     // HPCA / Research Station
     public static final int DAMAGE_STATE = assignId();
     public static final int LOCK_OBJECT_HOLDER = assignId();

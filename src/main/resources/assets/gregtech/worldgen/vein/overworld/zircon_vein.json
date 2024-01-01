@@ -1,0 +1,34 @@
+{
+  "weight": 20,
+  "density": 0.4,
+  "max_height": 60,
+  "min_height": 40,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "zircon"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      10,
+      10
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:zircon"
+      },
+      {
+        "secondary": "ore:zircon"
+      },
+      {
+        "between": "ore:calcite"
+      },
+      {
+        "sporadic": "ore:pyrochlore"
+      }
+    ]
+  }
+}

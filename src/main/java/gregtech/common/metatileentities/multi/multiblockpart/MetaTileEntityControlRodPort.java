@@ -10,7 +10,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +30,6 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
         super(metaTileEntityId, 4, false);
         this.frontFacing = EnumFacing.UP;
     }
-
     @Override
     public boolean isWorkingEnabled() {
         return workingEnabled;

@@ -2,7 +2,6 @@ package gregtech.common.blocks;
 
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -30,7 +29,6 @@ public class BlockGasCentrifugeCasing extends VariantBlock<BlockGasCentrifugeCas
 
         private String name;
         private int harvestLevel;
-
         GasCentrifugeCasingType(String name, int harvestLevel) {
             this.name = name;
             this.harvestLevel = harvestLevel;

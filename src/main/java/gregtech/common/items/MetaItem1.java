@@ -1099,6 +1099,16 @@ public class MetaItem1 extends StandardMetaItem {
             }
         }
 
+        // Nuclear metaitems: 841-900
+        FUEL_PELLET_LEU235 = addItem(841, "fuel_pellet.leu");
+        FUEL_ROD_LEU235 = addItem(842, "fuel_rod.leu");
+        FUEL_PELLET_NATURAL_URANIUM = addItem(841, "fuel_pellet.natural_uranium");
+        FUEL_ROD_NATURAL_URANIUM = addItem(842, "fuel_rod.natural_uranium");
+        FUEL_ROD_SPENT_URANIUM = addItem(843, "fuel_rod.spent.uranium");
+        FUEL_ROD_DECAYED_URANIUM = addItem(844, "fuel_rod.decayed.uranium");
+        FUEL_ROD_OPEN_URANIUM = addItem(845, "fuel_rod.open.uranium");
+        FUEL_ROD_CASING = addItem(846, "fuel_rod.casing");
+
         // Misc 1000+
         NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);
         FERTILIZER = addItem(1001, "fertilizer").addComponents(new FertilizerBehavior());

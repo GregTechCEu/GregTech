@@ -1,7 +1,6 @@
 package gregtech.api.unification.material.properties;
 
 public class FissionFuelProperty implements IMaterialProperty {
-
     private int maxTemperature;
     private int duration;
     private double slowNeutronCaptureCrossSection;

@@ -293,6 +293,15 @@ public class MetaTileEntities {
     public static MetaTileEntityFluidDrill ADVANCED_FLUID_DRILLING_RIG;
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
+    public static MetaTileEntityFissionReactor FISSION_REACTOR;
+    public static MetaTileEntityHeatExchanger HEAT_EXCHANGER;
+    public static MetaTileEntityFuelRodImportHatch FUEL_ROD_INPUT;
+    public static MetaTileEntityFuelRodExportHatch FUEL_ROD_OUTPUT;
+    public static MetaTileEntityCoolantImportHatch COOLANT_INPUT;
+    public static MetaTileEntityCoolantExportHatch COOLANT_OUTPUT;
+    public static MetaTileEntityControlRodPort CONTROL_ROD;
+    public static MetaTileEntitySpentFuelPool SPENT_FUEL_POOL;
+    public static MetaTileEntityGasCentrifuge GAS_CENTRIFUGE;
     public static MetaTileEntityDataBank DATA_BANK;
     public static MetaTileEntityResearchStation RESEARCH_STATION;
     public static MetaTileEntityHPCA HIGH_PERFORMANCE_COMPUTING_ARRAY;
@@ -748,6 +757,11 @@ public class MetaTileEntities {
         HEAT_EXCHANGER = registerMetaTileEntity(1045, new MetaTileEntityHeatExchanger(gregtechId("heat_exchanger")));
         GAS_CENTRIFUGE = registerMetaTileEntity(1046, new MetaTileEntityGasCentrifuge(gregtechId("gas_centrifuge")));
 
+        FISSION_REACTOR = registerMetaTileEntity(1043, new MetaTileEntityFissionReactor(gregtechId("fission_reactor")));
+        SPENT_FUEL_POOL = registerMetaTileEntity(1044, new MetaTileEntitySpentFuelPool(gregtechId("spent_fuel_pool")));
+        HEAT_EXCHANGER = registerMetaTileEntity(1045, new MetaTileEntityHeatExchanger(gregtechId("heat_exchanger")));
+        GAS_CENTRIFUGE = registerMetaTileEntity(1046, new MetaTileEntityGasCentrifuge(gregtechId("gas_centrifuge")));
+
         // MISC MTE's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
@@ -1154,6 +1168,12 @@ public class MetaTileEntities {
             NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1795 + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
         }
+
+        FUEL_ROD_INPUT = registerMetaTileEntity(1751, new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
+        FUEL_ROD_OUTPUT = registerMetaTileEntity(1752, new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
+        COOLANT_INPUT = registerMetaTileEntity(1753, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
+        COOLANT_OUTPUT = registerMetaTileEntity(1754, new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));
+        CONTROL_ROD = registerMetaTileEntity(1755, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
 
         /*
          * FOR ADDON DEVELOPERS:

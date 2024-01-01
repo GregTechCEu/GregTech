@@ -595,7 +595,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(2011))
                 .color(0xC8C8DC).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD,
-                        GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
+                        GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE, GENERATE_ROUND)
                 .components(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1)
                 .toolStats(ToolProperty.Builder.of(7.0F, 5.0F, 1024, 3)
                         .enchantability(14).build())
@@ -1219,11 +1219,11 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("UF6", true);
 
-        EnrichedUraniumHexafluoride = new Material.Builder(413, gregtechId("enriched_uranium_hexafluoride"))
-                .gas()
+        //3.6% U-236
+        LowEnrichedUraniumHexafluoride = new Material.Builder(413, gregtechId("low_enriched_uranium_hexafluoride"))
+                .fluid(FluidTypes.GAS)
                 .color(0x4BF52A)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium235, 1, Fluorine, 6)
                 .build()
                 .setFormula("UF6", true);
 
@@ -1556,23 +1556,92 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV], 250))
                 .build();
 
-        EnrichedUraniumDioxide = new Material.Builder(452, gregtechId("enriched_uranium_dioxide"))
-                .dust(3)
-                .color(0x232323).iconSet(DULL)
+        LithiumFluoride = new Material.Builder(451, gregtechId("lithium_fluoride"))
+                .dust()
+                .colorAverage()
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium235, 1, Oxygen, 2)
+                .components(Lithium, 1, Fluorine, 1)
+                .build();
+
+        BerylliumFluoride = new Material.Builder(452, gregtechId("beryllium_fluoride"))
+                .dust()
+                .colorAverage()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Beryllium, 1, Fluorine, 2)
+                .build();
+
+        ThoriumTetrafluoride = new Material.Builder(453, gregtechId("thorium_tetrafluoride"))
+                .dust()
+                .colorAverage()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Thorium, 1, Fluorine, 4)
+                .build();
+
+        LowEnrichedUraniumDioxide = new Material.Builder(454, gregtechId("low_enriched_uranium_dioxide"))
+                .dust()
+                .color(0x4A6611).iconSet(DULL)
+                .flags(DISABLE_DECOMPOSITION)
                 .build()
                 .setFormula("UO2", true);
 
-        DepletedUraniumDioxide = new Material.Builder(453, gregtechId("depleted_uranium_dioxide"))
-                .dust(3)
-                .color(0x232323).iconSet(DULL)
+        DepletedUraniumDioxide = new Material.Builder(455, gregtechId("depleted_uranium_dioxide"))
+                .dust()
+                .color(0x2E400A).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium, 1, Oxygen, 2)
+                .components(Uranium238, 1, Oxygen, 2)
                 .build()
                 .setFormula("UO2", true);
 
-        HighPressureSteam = new Material.Builder(454, gregtechId("high_pressure_steam"))
+        Zircon = new Material.Builder(456, gregtechId("zircon"))
+                .gem().ore()
+                .color(0xF05C51).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
+                .build();
+
+        HafniumDioxide = new Material.Builder(457, gregtechId("hafnium_dioxide"))
+                .dust()
+                .components(Hafnium, 1, Oxygen, 2)
+                .colorAverage()
+                .build();
+
+        ZirconiumDioxide = new Material.Builder(458, gregtechId("zirconium_dioxide"))
+                .dust()
+                .components(Zirconium, 1, Oxygen, 2)
+                .colorAverage()
+                .build();
+
+        HafniumTetrachloride = new Material.Builder(459, gregtechId("hafnium_tetrachloride"))
+                .dust()
+                .components(Hafnium, 1, Chlorine, 4)
+                .color(0xCAE3CC)
+                .build();
+
+        ZirconiumTetrachloride = new Material.Builder(460, gregtechId("zirconium_tetrachloride"))
+                .dust()
+                .components(Zirconium, 1, Chlorine, 4)
+                .color(0x32AD72)
+                .build();
+
+        Zircaloy = new Material.Builder(461, gregtechId("zircaloy"))
+                .ingot().fluid()
+                .color(0xB5ADCC).iconSet(DULL)
+                .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Tin, 1, Chrome, 1)
+                .blastTemp(2150, GasTier.MID, GTValues.VA[EV], 200)
+                .build()
+                .setFormula("Zr(98.4)Sn(1.5)Cr(0.1)", false);
+
+        Inconel = new Material.Builder(462, gregtechId("inconel"))
+                .ingot().fluid()
+                .color(0x7F8F75).iconSet(SHINY)
+                .flags(GENERATE_SPRING, DISABLE_DECOMPOSITION)
+                .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
+                .blastTemp(1610, GasTier.MID, GTValues.VA[EV], 200)
+                .build()
+                .setFormula("Ni50Cr20Fe20Ni5Mo3", true);
+                
+        HighPressureSteam = new Material.Builder(463, gregtechId("high_pressure_steam"))
                 .gas(new FluidBuilder()
                         .temperature(500)
                         .customStill())
@@ -1581,7 +1650,7 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        Plutonium239Dioxide = new Material.Builder(455, gregtechId("plutonium_239_dioxide"))
+        Plutonium239Dioxide = new Material.Builder(464, gregtechId("plutonium_239_dioxide"))
                 .dust(3)
                 .color(0xF03232).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)

@@ -438,7 +438,7 @@ public class Materials {
     public static Material NitricOxide;
     public static Material Iron3Chloride;
     public static Material UraniumHexafluoride;
-    public static Material EnrichedUraniumHexafluoride;
+    public static Material LowEnrichedUraniumHexafluoride;
     public static Material DepletedUraniumHexafluoride;
     public static Material NitrousOxide;
     public static Material EnderPearl;
@@ -476,6 +476,18 @@ public class Materials {
     public static Material EnrichedNaquadahSulfate;
     public static Material NaquadriaSulfate;
     public static Material Pyrochlore;
+    public static Material LithiumFluoride;
+    public static Material BerylliumFluoride;
+    public static Material ThoriumTetrafluoride;
+    public static Material LowEnrichedUraniumDioxide;
+    public static Material DepletedUraniumDioxide;
+    public static Material Zircon;
+    public static Material ZirconiumDioxide;
+    public static Material HafniumDioxide;
+    public static Material ZirconiumTetrachloride;
+    public static Material HafniumTetrachloride;
+    public static Material Zircaloy;
+    public static Material Inconel;
     public static Material RTMAlloy;
     public static Material EnrichedUraniumDioxide;
     public static Material DepletedUraniumDioxide;
@@ -754,6 +766,7 @@ public class Materials {
     public static Material SaltWater;
     public static Material Clay;
     public static Material Redstone;
+    public static Material ThoriumFLiBe;
     public static Material LEU235;
     public static Material HEU235;
     public static Material LowGradeMOX;

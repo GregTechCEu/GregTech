@@ -1284,7 +1284,7 @@ public class RecipeMaps {
                     .setSound(GTSoundEvents.COOLING);
 
     public static final RecipeMap<SimpleRecipeBuilder> SPENT_FUEL_POOL_RECIPES = new RecipeMap<>("spent_fuel_pool", 1,
-            1, 1, 1, new SimpleRecipeBuilder(), false)
+            1, 1, 1, new NoRecipeBuilder(), false)
                     .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
 
     public static final RecipeMap<SimpleRecipeBuilder> GAS_CENTRIFUGE_RECIPES = new RecipeMap<>("gas_centrifuge", 0, 0,

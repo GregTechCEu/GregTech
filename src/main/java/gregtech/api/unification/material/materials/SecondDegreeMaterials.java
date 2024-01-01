@@ -83,7 +83,7 @@ public class SecondDegreeMaterials {
                 .components(DarkAsh, 1, Sulfur, 1)
                 .build();
 
-        // Free ID 2009
+        // FREE ID: 2009
 
         Apatite = new Material.Builder(2010, gregtechId("apatite"))
                 .gem(1).ore(2, 2)

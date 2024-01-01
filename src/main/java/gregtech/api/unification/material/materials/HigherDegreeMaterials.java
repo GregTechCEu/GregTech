@@ -184,5 +184,13 @@ public class HigherDegreeMaterials {
                 .components(Electrotine, 4, Silver, 1)
                 .cableProperties(GTValues.V[GTValues.HV], 2, 1)
                 .build();
+
+        ThoriumFLiBe = new Material.Builder(2528, gregtechId("thorium_flibe"))
+                .fluid()
+                .colorAverage()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(LithiumFluoride, 2, BerylliumFluoride, 1, ThoriumTetrafluoride, 1)
+                .fluidTemp(973)
+                .build();
     }
 }
