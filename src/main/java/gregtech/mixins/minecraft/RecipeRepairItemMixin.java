@@ -12,11 +12,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -72,24 +72,23 @@ public class RecipeRepairItemMixin {
         }
     }
 
-    // TODO, see if we can change this from an overwrite
+    // Can't use @Share, since ItemStack is not on the LocalRef group
 
-    /**
-     * @author GregTech CEu
-     * @reason Properly account for GT Tools in Crafting Recipes
-     */
-    @Overwrite
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        NonNullList<ItemStack> list = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
-        for (int i = 0; i < list.size(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
-            if (stack.getItem() instanceof IGTTool) {
-                // bypass GT tools not disappearing in crafting recipes
-                ForgeEventFactory.onPlayerDestroyItem(ForgeHooks.getCraftingPlayer(), stack, null);
-            } else {
-                list.set(i, ForgeHooks.getContainerItem(stack));
-            }
-        }
-        return list;
+    @Inject(method = "getRemainingItems",
+            at = @At(value = "INVOKE",
+                     target = "Lnet/minecraft/inventory/InventoryCrafting;getStackInSlot(I)Lnet/minecraft/item/ItemStack;",
+                     shift = At.Shift.AFTER))
+    public void gregtechCEu$getRemainingItemsInject(InventoryCrafting inv,
+                                                    CallbackInfoReturnable<NonNullList<ItemStack>> cir,
+                                                    @Local ItemStack itemStack) {
+        ForgeEventFactory.onPlayerDestroyItem(ForgeHooks.getCraftingPlayer(), itemStack, null);
+    }
+
+    @WrapWithCondition(method = "getRemainingItems",
+                       at = @At(value = "INVOKE",
+                                target = "Lnet/minecraft/util/NonNullList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
+    public boolean gregtechCEU$getRemainingItemsWrap(NonNullList<Object> instance, int index, Object newValue,
+                                                     @Local ItemStack itemstack) {
+        return itemstack.getItem() instanceof IGTTool;
     }
 }
