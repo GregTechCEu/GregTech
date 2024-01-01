@@ -19,6 +19,7 @@ public class GTGuiTextures {
     public static class IDs {
 
         public static final String STANDARD_BACKGROUND = "gregtech_standard_bg";
+        public static final String COVER_BACKGROUND = "gregtech_cover_bg";
         public static final String BRONZE_BACKGROUND = "gregtech_bronze_bg";
         public static final String STEEL_BACKGROUND = "gregtech_steel_bg";
         public static final String PRIMITIVE_BACKGROUND = "gregtech_primitive_bg";
@@ -34,9 +35,9 @@ public class GTGuiTextures {
     }
 
     // ICONS
-    /** @apiNote You may want {@link GTGuiTextures#getLogo()} instead. */
+    /** @apiNote You may want {@link GTGuiTextures#getLogo} instead. */
     public static final UITexture GREGTECH_LOGO = fullImage("textures/gui/icon/gregtech_logo.png");
-    /** @apiNote You may want {@link GTGuiTextures#getLogo()} instead. */
+    /** @apiNote You may want {@link GTGuiTextures#getLogo} instead. */
     public static final UITexture GREGTECH_LOGO_XMAS = fullImage("textures/gui/icon/gregtech_logo_xmas.png");
     public static final UITexture GREGTECH_LOGO_DARK = fullImage("textures/gui/icon/gregtech_logo_dark.png");
     // todo blinking GT logos
@@ -61,6 +62,7 @@ public class GTGuiTextures {
             .location(GTValues.MODID, "textures/gui/base/background_popup.png")
             .imageSize(195, 136)
             .adaptable(4)
+            .name(IDs.COVER_BACKGROUND)
             .canApplyTheme()
             .build();
 
@@ -268,6 +270,19 @@ public class GTGuiTextures {
             .canApplyTheme()
             .build();
 
+    public static final UITexture MC_BUTTON = new UITexture.Builder()
+            .location("modularui", "gui/widgets/mc_button.png") // todo
+            .imageSize(16, 32)
+            .uv(0.0f, 0.0f, 1.0f, 0.5f)
+            .adaptable(1)
+            .build();
+
+    public static final UITexture MC_BUTTON_DISABLED = new UITexture.Builder()
+            .location("modularui", "gui/widgets/mc_button_disabled.png") // todo
+            .imageSize(16, 16)
+            .adaptable(1)
+            .build();
+
     // BUTTON OVERLAYS
 
     public static final UITexture BUTTON_ITEM_OUTPUT = fullImage("textures/gui/widget/button_item_output_overlay.png");
@@ -276,6 +291,10 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_AUTO_COLLAPSE = fullImage(
             "textures/gui/widget/button_auto_collapse_overlay.png");
     public static final UITexture BUTTON_X = fullImage("textures/gui/widget/button_x_overlay.png", true);
+
+    public static final UITexture BUTTON_CROSS = fullImage("textures/gui/widget/button_cross.png");
+    public static final UITexture BUTTON_REDSTONE_ON = fullImage("textures/gui/widget/button_redstone_on.png");
+    public static final UITexture BUTTON_REDSTONE_OFF = fullImage("textures/gui/widget/button_redstone_off.png");
 
     // PROGRESS BARS
     public static final UITexture PROGRESS_BAR_ARC_FURNACE = progressBar(

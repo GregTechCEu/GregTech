@@ -834,7 +834,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
     }
 
-    public final ItemStack getStackForm() {
+    @Override
+    public final @NotNull ItemStack getStackForm() {
         return getStackForm(1);
     }
 
