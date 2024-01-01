@@ -63,6 +63,11 @@ public class MaterialFlags {
     public static final MaterialFlag DISABLE_DECOMPOSITION = new MaterialFlag.Builder("disable_decomposition").build();
 
     /**
+     * Disables automatic Forging Furnace recipe generation for a material.
+     */
+    public static final MaterialFlag DISABLE_FORGING = new MaterialFlag.Builder("disable_forging").build();
+
+    /**
      * Add to material if it is some kind of explosive
      */
     public static final MaterialFlag EXPLOSIVE = new MaterialFlag.Builder("explosive").build();

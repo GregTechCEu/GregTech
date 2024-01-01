@@ -72,6 +72,8 @@ public class ForgingFurnaceRecipeHandler {
     }
 
     private static void processForging(Material material) {
+        if (material.hasFlag(MaterialFlags.DISABLE_FORGING)) return;
+
         BlastProperty property = material.getProperty(PropertyKey.BLAST);
         RecipeBuilder<BlastRecipeBuilder> builder = createBuilder(property, material);
 
