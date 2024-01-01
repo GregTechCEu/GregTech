@@ -571,7 +571,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 .value(boolValueOf(value, mode))
                 // todo make overlay textures for these buttons (disabled, unfiltered, filtered)
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON);
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .overlay(GTGuiTextures.BUTTON_MANUAL_IO[mode.ordinal()].asIcon().size(16));
     }
 
     private Widget<ToggleButton> createConveyorModeButton(EnumSyncValue<ConveyorMode> value, ConveyorMode mode) {
