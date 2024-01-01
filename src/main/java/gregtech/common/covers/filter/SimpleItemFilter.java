@@ -122,12 +122,12 @@ public class SimpleItemFilter extends ItemFilter {
     public @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
         var blacklist = new BooleanSyncValue(this::isBlacklistFilter, this::setBlacklistFilter);
-        var ignoreMeta = new BooleanSyncValue(this::isIgnoreDamage, this::setIgnoreDamage);
+        var ignoreDamage = new BooleanSyncValue(this::isIgnoreDamage, this::setIgnoreDamage);
         var ignoreNBT = new BooleanSyncValue(this::isIgnoreNBT, this::setIgnoreNBT);
 
         syncManager.registerSlotGroup(filterInventory);
         syncManager.syncValue("filter_blacklist", blacklist);
-        syncManager.syncValue("ignore_meta", ignoreMeta);
+        syncManager.syncValue("ignore_damage", ignoreDamage);
         syncManager.syncValue("ignore_nbt", ignoreNBT);
 
         return GTGuis.createPopupPanel("simple_item_filter", 18 * 4 + 9, 18 * 4 + 9)
@@ -147,22 +147,21 @@ public class SimpleItemFilter extends ItemFilter {
                                                 })))
                                 .build())
                         .child(new Column().width(18).coverChildren()
-                                // todo add overlays for blacklist, meta, and nbt
                                 .child(new CycleButtonWidget()
                                         .value(blacklist)
-                                        .textureGetter(state -> state == 1 ? GTGuiTextures.MC_BUTTON : GTGuiTextures.MC_BUTTON_DISABLED)
-                                        .addTooltip(0, IKey.lang("cover.filter.blacklist.enabled"))
-                                        .addTooltip(1, IKey.lang("cover.filter.blacklist.disabled")))
+                                        .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
+                                        .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
+                                        .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")))
                                 .child(new CycleButtonWidget()
-                                        .value(ignoreMeta)
-                                        .textureGetter(state -> state == 1 ? GTGuiTextures.MC_BUTTON : GTGuiTextures.MC_BUTTON_DISABLED)
-                                        .addTooltip(0, IKey.lang("cover.item_filter.ignore_damage.enabled"))
-                                        .addTooltip(1, IKey.lang("cover.item_filter.ignore_damage.disabled")))
+                                        .value(ignoreDamage)
+                                        .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_DAMAGE[state])
+                                        .addTooltip(0, IKey.lang("cover.item_filter.ignore_damage.disabled"))
+                                        .addTooltip(1, IKey.lang("cover.item_filter.ignore_damage.enabled")))
                                 .child(new CycleButtonWidget()
                                         .value(ignoreNBT)
-                                        .textureGetter(state -> state == 1 ? GTGuiTextures.MC_BUTTON : GTGuiTextures.MC_BUTTON_DISABLED)
-                                        .addTooltip(0, IKey.lang("cover.item_filter.ignore_nbt.enabled"))
-                                        .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.disabled")))));
+                                        .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_NBT[state])
+                                        .addTooltip(0, IKey.lang("cover.item_filter.ignore_nbt.disabled"))
+                                        .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.enabled")))));
     }
 
     @Override
