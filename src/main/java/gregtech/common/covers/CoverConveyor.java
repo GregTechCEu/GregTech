@@ -529,42 +529,55 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
         panel.child(createTitleRow())
                 .child(new Column().top(24).margin(4, 0)
-                    .widthRel(1f).coverChildrenHeight()
-                    .child(new Row().coverChildrenHeight()
-                            .marginBottom(2).widthRel(1f)
-                            .child(new ButtonWidget<>()
-                                    .left(0)
-                                    .width(16)
-                                    .onMousePressed(mouseButton -> {
-                                        throughput.setValue(throughput.getValue() + 1, true, true);
-                                        return true;
-                            }))
-                            .child(new TextFieldWidget()
-                                    .setMaxLength(4)
-                                    .left(16).right(16)
-                                    .setNumbers(1, maxItemTransferRate)
-                                    .background(GTGuiTextures.DISPLAY))
-                            .child(new ButtonWidget<>()
-                                    .right(0)
-                                    .width(16)
-                                    .onMousePressed(mouseButton -> {
-                                        throughput.setValue(throughput.getValue() - 1, true, true);
-                                        return true;
-                            })))
-                    .child(getItemFilterContainer()
-                            .initUI(panel, guiSyncManager))
-                    .child(new Row().coverChildrenHeight()
-                            .marginBottom(2).widthRel(1f)
-                            .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
-                            .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
-                            .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))))
+                        .widthRel(1f).coverChildrenHeight()
+                        .child(new Row().coverChildrenHeight()
+                                .marginBottom(2).widthRel(1f)
+                                .child(new ButtonWidget<>()
+                                        .left(0)
+                                        .width(16)
+                                        .onMousePressed(mouseButton -> {
+                                            throughput.setValue(throughput.getValue() + 1, true, true);
+                                            return true;
+                                }))
+                                .child(new TextFieldWidget()
+                                        .setMaxLength(4)
+                                        .left(16).right(16)
+                                        .setNumbers(1, maxItemTransferRate)
+                                        .background(GTGuiTextures.DISPLAY))
+                                .child(new ButtonWidget<>()
+                                        .right(0)
+                                        .width(16)
+                                        .onMousePressed(mouseButton -> {
+                                            throughput.setValue(throughput.getValue() - 1, true, true);
+                                            return true;
+                                })))
+                        .child(getItemFilterContainer()
+                                .initUI(panel, guiSyncManager))
+                        .child(new Row().coverChildrenHeight()
+                                .marginBottom(2).widthRel(1f)
+                                .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
+                                .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
+                                .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED)))
+                        .child(new Row().coverChildrenHeight()
+                                .marginBottom(2).widthRel(1f)
+                                .child(createConveyorModeButton(conveyorMode, ConveyorMode.IMPORT))
+                                .child(createConveyorModeButton(conveyorMode, ConveyorMode.EXPORT))))
                 .bindPlayerInventory();
         return panel;
     }
 
-    private Widget<?> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
+    private Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
         return new ToggleButton().size(18)
                 .value(boolValueOf(value, mode))
+                // todo make overlay textures for these buttons (disabled, unfiltered, filtered)
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON);
+    }
+
+    private Widget<ToggleButton> createConveyorModeButton(EnumSyncValue<ConveyorMode> value, ConveyorMode mode) {
+        return new ToggleButton().size(18)
+                .value(boolValueOf(value, mode))
+                // todo make overlay textures for these buttons (import, export)
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON);
     }
