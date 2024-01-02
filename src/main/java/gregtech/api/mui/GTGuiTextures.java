@@ -162,7 +162,7 @@ public class GTGuiTextures {
             16, 32, 16, 16,true);
 
     public static final UITexture[] BUTTON_MANUAL_IO = slice("textures/gui/widget/button_manual_io.png",
-            16, 48, 16, 16, true);
+            18, 18 * 3, 18, 18, true);
 
     // todo bronze/steel/primitive fluid slots?
 
