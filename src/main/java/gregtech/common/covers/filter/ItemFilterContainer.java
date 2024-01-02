@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.layout.Row;
 
 import gregtech.api.gui.GuiTextures;
@@ -134,7 +136,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     /** Uses Cleanroom MUI*/
-    public ParentWidget<Column> initUI(ModularPanel main, GuiSyncManager manager) {
+    public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
         var slotGroup = new SlotGroup("filter_slot", 1, true);
         manager.registerSlotGroup(slotGroup);
         var panel = new PanelSyncHandler(main) {
@@ -145,28 +147,33 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         };
         manager.syncValue("filter_panel", panel);
 
-        return new Column().coverChildrenHeight()
+        return new Row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
-                .child(IKey.lang("cover.conveyor.item_filter.title").asWidget().left(0))
-                .child(new Row().height(18)
-                        .child(new ItemSlot()
-                                .slot(SyncHandlers.itemSlot(filterInventory, 0)
-                                        .slotGroup(slotGroup)
-                                        .filter(this::isFilter))
-                                .size(ItemSlot.SIZE)
-                                .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
-                        .child(new ButtonWidget<>()
-                                .setEnabledIf(w -> hasItemFilter())
-                                .onMousePressed(i -> {
-                                    if (!panel.isPanelOpen()) {
-                                        panel.openPanel();
-                                        return true;
-                                    } else if (panel.isValid()) {
-                                        panel.closePanel();
-                                        return true;
-                                    }
-                                    return false;
-                                })));
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
+                                .slotGroup(slotGroup)
+                                .filter(this::isFilter)
+                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                }))
+                        .size(18)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
+                .child(new ButtonWidget<>()
+                        .setEnabledIf(w -> hasItemFilter())
+                        .onMousePressed(i -> {
+                            if (!panel.isPanelOpen()) {
+                                panel.openPanel();
+                                return true;
+                            } else if (panel.isValid()) {
+                                panel.closePanel();
+                                return true;
+                            }
+                            return false;
+                        }))
+                .child(IKey.dynamic(() -> hasItemFilter() ?
+                                getFilterInventory().getStackInSlot(0).getDisplayName() :
+                                IKey.lang("cover.conveyor.item_filter.title").get())
+                        .alignment(Alignment.CenterRight).asWidget()
+                        .left(36).right(0).height(18));
     }
 
     protected void onFilterSlotChange(boolean notify) {
