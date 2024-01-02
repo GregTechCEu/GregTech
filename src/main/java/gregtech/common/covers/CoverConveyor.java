@@ -571,16 +571,16 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
                                 .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
                                 .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))
-                                .child(IKey.lang("Manual IO Mode")
+                                .child(IKey.lang("Manual IO Mode").scale(1.1f)
                                         .asWidget().right(0)
-                                        .height(18).topRel(0.5f)))
+                                        .height(18)))
                         .child(new Row().coverChildrenHeight()
                                 .marginBottom(2).widthRel(1f)
                                 .child(createConveyorModeButton(conveyorMode, ConveyorMode.IMPORT))
                                 .child(createConveyorModeButton(conveyorMode, ConveyorMode.EXPORT))
-                                .child(IKey.lang("Conveyor Mode")
+                                .child(IKey.lang("Conveyor Mode").scale(1.1f)
                                         .asWidget().right(0)
-                                        .height(18).topRel(0.5f))))
+                                        .height(18))))
                 .bindPlayerInventory();
         return panel;
     }
