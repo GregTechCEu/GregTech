@@ -1,11 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.widget.Widget;
-
-import com.cleanroommc.modularui.widgets.ToggleButton;
-
-import com.cleanroommc.modularui.widgets.layout.Column;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -57,12 +51,17 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -102,7 +101,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     public void setTransferRate(int transferRate) {
-        this.transferRate = transferRate;
+        this.transferRate = MathHelper.clamp(transferRate, 1, maxItemTransferRate);
         CoverableView coverable = getCoverableView();
         coverable.markDirty();
 
@@ -519,11 +518,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         EnumSyncValue<ConveyorMode> conveyorMode = new EnumSyncValue<>(ConveyorMode.class,
                 this::getConveyorMode, this::setConveyorMode);
 
-        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::adjustTransferRate);
+        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
 
         guiSyncManager.syncValue("manual_io", manualIOmode);
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
-        guiSyncManager.syncValue("transfer_rate", throughput);
 
         var panel = GTGuis.createPanel(this, 176, 112 + 176);
 
@@ -533,22 +531,37 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         .child(new Row().coverChildrenHeight()
                                 .marginBottom(2).widthRel(1f)
                                 .child(new ButtonWidget<>()
-                                        .left(0)
-                                        .width(16)
+                                        .left(0).width(18)
                                         .onMousePressed(mouseButton -> {
-                                            throughput.setValue(throughput.getValue() + 1, true, true);
+                                            MouseData data = MouseData.create(mouseButton);
+                                            throughput.updateCacheFromSource(false);
+                                            int adjust = 1;
+                                            if (data.shift) adjust *= 8;
+                                            if (data.ctrl) adjust *= 64;
+                                            if (data.alt) adjust *= 512;
+                                            throughput.setValue(throughput.getValue() - adjust, true, true);
                                             return true;
                                 }))
                                 .child(new TextFieldWidget()
-                                        .setMaxLength(4)
-                                        .left(16).right(16)
+                                        .left(18).right(18)
                                         .setNumbers(1, maxItemTransferRate)
-                                        .background(GTGuiTextures.DISPLAY))
+                                        .value(throughput)
+                                        .background(GTGuiTextures.DISPLAY)
+                                        .onUpdateListener(w -> {
+                                            if (throughput.updateCacheFromSource(false)) {
+                                                w.setText(throughput.getStringValue());
+                                            }
+                                        }))
                                 .child(new ButtonWidget<>()
-                                        .right(0)
-                                        .width(16)
+                                        .right(0).width(18)
                                         .onMousePressed(mouseButton -> {
-                                            throughput.setValue(throughput.getValue() - 1, true, true);
+                                            MouseData data = MouseData.create(mouseButton);
+                                            throughput.updateCacheFromSource(false);
+                                            int adjust = 1;
+                                            if (data.shift) adjust *= 8;
+                                            if (data.ctrl) adjust *= 64;
+                                            if (data.alt) adjust *= 512;
+                                            throughput.setValue(throughput.getValue() + adjust, true, true);
                                             return true;
                                 })))
                         .child(getItemFilterContainer()
@@ -557,11 +570,17 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .marginBottom(2).widthRel(1f)
                                 .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
                                 .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
-                                .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED)))
+                                .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))
+                                .child(IKey.lang("Manual IO Mode")
+                                        .asWidget().right(0)
+                                        .height(18).topRel(0.5f)))
                         .child(new Row().coverChildrenHeight()
                                 .marginBottom(2).widthRel(1f)
                                 .child(createConveyorModeButton(conveyorMode, ConveyorMode.IMPORT))
-                                .child(createConveyorModeButton(conveyorMode, ConveyorMode.EXPORT))))
+                                .child(createConveyorModeButton(conveyorMode, ConveyorMode.EXPORT))
+                                .child(IKey.lang("Conveyor Mode")
+                                        .asWidget().right(0)
+                                        .height(18).topRel(0.5f))))
                 .bindPlayerInventory();
         return panel;
     }
@@ -569,10 +588,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     private Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
         return new ToggleButton().size(18)
                 .value(boolValueOf(value, mode))
-                // todo make overlay textures for these buttons (disabled, unfiltered, filtered)
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(GTGuiTextures.BUTTON_MANUAL_IO[mode.ordinal()].asIcon().size(16));
+                .overlay(GTGuiTextures.BUTTON_MANUAL_IO[mode.ordinal()])
+                .tooltip(tooltip -> tooltip.addLine(switch (mode) {
+                    case DISABLED -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
+                    case UNFILTERED -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
+                    case FILTERED -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
+                }));
     }
 
     private Widget<ToggleButton> createConveyorModeButton(EnumSyncValue<ConveyorMode> value, ConveyorMode mode) {
@@ -580,7 +603,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 .value(boolValueOf(value, mode))
                 // todo make overlay textures for these buttons (import, export)
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON);
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+//                .overlay()
+                .tooltip(tooltip -> tooltip.addLine(switch (mode) {
+                    case EXPORT -> IKey.lang("cover.conveyor.mode.export");
+                    case IMPORT -> IKey.lang("cover.conveyor.mode.import");
+                        }));
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
@@ -652,8 +680,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
+        packetBuffer.writeInt(transferRate);
         packetBuffer.writeEnumValue(conveyorMode);
         packetBuffer.writeEnumValue(distributionMode);
         getItemFilterContainer().writeInitialSyncData(packetBuffer);
@@ -662,6 +691,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
+        this.transferRate = packetBuffer.readInt();
         this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
         this.distributionMode = packetBuffer.readEnumValue(DistributionMode.class);
         getItemFilterContainer().readInitialSyncData(packetBuffer);
