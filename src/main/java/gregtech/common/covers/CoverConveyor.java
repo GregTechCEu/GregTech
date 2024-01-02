@@ -29,6 +29,7 @@ import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -52,8 +53,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
@@ -526,24 +529,23 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         var panel = GTGuis.createPanel(this, 176, 112 + 176);
 
         panel.child(createTitleRow())
-                .child(new Column().top(24).margin(4, 0)
+                .child(new Column().top(24).margin(7, 0)
                         .widthRel(1f).coverChildrenHeight()
                         .child(new Row().coverChildrenHeight()
                                 .marginBottom(2).widthRel(1f)
                                 .child(new ButtonWidget<>()
                                         .left(0).width(18)
+//                                        .overlay() todo make number increment overlay
                                         .onMousePressed(mouseButton -> {
-                                            MouseData data = MouseData.create(mouseButton);
                                             throughput.updateCacheFromSource(false);
-                                            int adjust = 1;
-                                            if (data.shift) adjust *= 8;
-                                            if (data.ctrl) adjust *= 64;
-                                            if (data.alt) adjust *= 512;
-                                            throughput.setValue(throughput.getValue() - adjust, true, true);
+                                            int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                            throughput.setValue(val, true, true);
+                                            Interactable.playButtonClickSound();
                                             return true;
                                 }))
                                 .child(new TextFieldWidget()
                                         .left(18).right(18)
+                                        .setTextColor(EnumDyeColor.WHITE.getColorValue())
                                         .setNumbers(1, maxItemTransferRate)
                                         .value(throughput)
                                         .background(GTGuiTextures.DISPLAY)
@@ -554,16 +556,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                         }))
                                 .child(new ButtonWidget<>()
                                         .right(0).width(18)
+//                                        .overlay() todo make number increment overlay
                                         .onMousePressed(mouseButton -> {
-                                            MouseData data = MouseData.create(mouseButton);
                                             throughput.updateCacheFromSource(false);
-                                            int adjust = 1;
-                                            if (data.shift) adjust *= 8;
-                                            if (data.ctrl) adjust *= 64;
-                                            if (data.alt) adjust *= 512;
-                                            throughput.setValue(throughput.getValue() + adjust, true, true);
+                                            int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                            throughput.setValue(val, true, true);
+                                            Interactable.playButtonClickSound();
                                             return true;
-                                })))
+                                }))))
                         .child(getItemFilterContainer()
                                 .initUI(panel, guiSyncManager))
                         .child(new Row().coverChildrenHeight()
@@ -571,16 +571,18 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
                                 .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
                                 .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))
-                                .child(IKey.lang("Manual IO Mode").scale(1.1f)
-                                        .asWidget().right(0)
+                                .child(IKey.lang("Manual IO Mode")
+                                        .asWidget()
+                                        .align(Alignment.CenterRight)
                                         .height(18)))
                         .child(new Row().coverChildrenHeight()
                                 .marginBottom(2).widthRel(1f)
                                 .child(createConveyorModeButton(conveyorMode, ConveyorMode.IMPORT))
                                 .child(createConveyorModeButton(conveyorMode, ConveyorMode.EXPORT))
-                                .child(IKey.lang("Conveyor Mode").scale(1.1f)
-                                        .asWidget().right(0)
-                                        .height(18))))
+                                .child(IKey.lang("Conveyor Mode")
+                                        .asWidget()
+                                        .align(Alignment.CenterRight)
+                                        .height(18)))
                 .bindPlayerInventory();
         return panel;
     }
@@ -609,6 +611,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     case EXPORT -> IKey.lang("cover.conveyor.mode.export");
                     case IMPORT -> IKey.lang("cover.conveyor.mode.import");
                         }));
+    }
+
+    protected int getIncrementValue(MouseData data) {
+        int adjust = 1;
+        if (data.shift) adjust *= 8;
+        if (data.ctrl) adjust *= 64;
+        if (data.alt) adjust *= 512;
+        return adjust;
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
