@@ -1,6 +1,8 @@
 package gregtech.client.renderer.texture.custom;
 
 import gregtech.api.gui.resources.TextTexture;
+import gregtech.api.metatileentity.ITieredMetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
@@ -62,8 +64,10 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
                 .registerSprite(new ResourceLocation("gregtech:blocks/overlay/machine/overlay_screen_glass"));
     }
 
-    public void renderMachine(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                              EnumFacing frontFacing, int tier) {
+    public <T extends MetaTileEntity & ITieredMetaTileEntity> void renderMachine(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                                                                       T mte) {
+        EnumFacing frontFacing = mte.getFrontFacing();
+        int tier = mte.getTier();
         Textures.renderFace(renderState, translation, pipeline, frontFacing, glassBox, glassTexture,
                 BlockRenderLayer.CUTOUT_MIPPED);
 
