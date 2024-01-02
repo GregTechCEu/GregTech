@@ -122,7 +122,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         GlStateManager.popMatrix();
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
-        renderAmountText(x, y, z, count, frontFacing);
+//        renderAmountText(x, y, z, count, frontFacing);
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
     }
 
@@ -165,7 +165,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
 
-        renderAmountText(x, y, z, amount, frontFacing);
+//        renderAmountText(x, y, z, amount, frontFacing);
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
     }
