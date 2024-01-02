@@ -1,58 +1,54 @@
-# Publishes the project to GitHub Releases, CurseForge, and Modrinth
+# Publishes built jars to distribution platforms
 name: Publish Project
 
-on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+' # any SemVer tag, e.g. v1.2.3
+on: workflow_dispatch
 
 env:
   # link to the changelog with a format code for the version
-  CHANGELOG_LOCATION: "Changelog is available [here](https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }})"
+  CHANGELOG_LOCATION: "Changelog is available [here](https://github.com/${{github.repository}}/releases/tag/${{github.ref_name}})"
   # type of release
-  RELEASE_TYPE: 'beta'
-
-concurrency:
-  group: publish-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
+  RELEASE_TYPE: "beta"
 
 jobs:
-  publish:
-    name: Publish
+  Publish:
     runs-on: ubuntu-latest
 
-    permissions:
+    permissions: 
       contents: write # needed to create GitHub releases
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+      
+      - name: Check for Duplicate Tags
+        run: |
+          if git rev-parse -q --verify "refs/tags/${{ github.ref }}" >/dev/null; then
+            echo "Tag already exists. A version bump is required."
+            exit 1
+          fi
 
-      - name: Setup Build
-        uses: ./.github/actions/build_setup
-
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      
       - name: Build Project
-        run: ./gradlew build --warning-mode all --build-cache
-
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: 'build --build-cache --daemon' # use the daemon here so the rest of the process is faster
+          generate-job-summary: false
+          gradle-home-cache-includes: |
+            caches
+            jdks
+            notifications
+            wrapper
+      
       - name: Publish to GitHub
         uses: softprops/action-gh-release@v1
         with:
           files: "build/libs/*.jar"
           generate_release_notes: true
           fail_on_unmatched_files: true
-
-      - name: Publish to Curseforge
-        env:
-          CURSEFORGE_API_KEY: "${{ secrets.CURSEFORGE_API_KEY }}"
-          CURSEFORGE_PROJECT_ID: "${{ secrets.CURSEFORGE_PROJECT_ID }}"
-          CHANGELOG_LOCATION: "${{ env.CHANGELOG_LOCATION }}"
-          RELEASE_TYPE: "${{ env.RELEASE_TYPE }}"
-        run: ./gradlew curseforge --warning-mode all --build-cache
-
-      - name: Publish to Modrinth
-        env:
-          MODRINTH_API_KEY: "${{ secrets.MODRINTH_API_KEY }}"
-          MODRINTH_PROJECT_ID: "${{ secrets.MODRINTH_PROJECT_ID }}"
-          CHANGELOG_LOCATION: "${{ env.CHANGELOG_LOCATION }}"
-          RELEASE_TYPE: "${{ env.RELEASE_TYPE }}"
-        run: ./gradlew modrinth --warning-mode all --build-cache
+          tag_name: tags
+          name: names
