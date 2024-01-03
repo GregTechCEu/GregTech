@@ -122,7 +122,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
     /** Deprecated, uses old builtin MUI*/
     @Deprecated
-    protected void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
+    public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
     }
     /** Deprecated, uses old builtin MUI*/

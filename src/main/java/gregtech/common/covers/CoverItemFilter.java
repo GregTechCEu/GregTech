@@ -97,7 +97,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         filterGroup.addWidget(new CycleButtonWidget(10, 20, 110, 20,
                 GTUtility.mapToString(ItemFilterMode.values(), it -> it.localeName),
                 () -> filterMode.ordinal(), (newMode) -> setFilterMode(ItemFilterMode.values()[newMode])));
-        this.itemFilter.initUI(45, filterGroup::addWidget);
+        this.itemFilter.initFilterUI(45, filterGroup::addWidget);
         this.itemFilter.blacklistUI(45, filterGroup::addWidget, () -> true);
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
                 .widget(filterGroup)
