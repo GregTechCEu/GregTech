@@ -1,5 +1,12 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
@@ -182,6 +189,23 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     protected String getUITitle() {
         return "cover.robotic_arm.title";
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
+        guiSyncManager.syncValue("transfer_mode", transferMode);
+
+        return super.buildUI(guiData, guiSyncManager)
+                .child(new Row());
+    }
+
+    @Override
+    protected int getMaxStackSize() {
+        return switch (this.transferMode) {
+            case TRANSFER_EXACT, KEEP_EXACT -> getTransferRate();
+            case TRANSFER_ANY -> 1;
+        };
     }
 
     @Override
