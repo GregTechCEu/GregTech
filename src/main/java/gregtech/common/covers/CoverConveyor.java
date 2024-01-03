@@ -535,14 +535,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .marginBottom(2).widthRel(1f)
                                 .child(new ButtonWidget<>()
                                         .left(0).width(18)
-//                                        .overlay() todo make number increment overlay
                                         .onMousePressed(mouseButton -> {
                                             throughput.updateCacheFromSource(false);
                                             int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
                                             throughput.setValue(val, true, true);
                                             Interactable.playButtonClickSound();
                                             return true;
-                                }))
+                                })
+                                        .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
                                 .child(new TextFieldWidget()
                                         .left(18).right(18)
                                         .setTextColor(EnumDyeColor.WHITE.getColorValue())
@@ -556,14 +556,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                         }))
                                 .child(new ButtonWidget<>()
                                         .right(0).width(18)
-//                                        .overlay() todo make number increment overlay
                                         .onMousePressed(mouseButton -> {
                                             throughput.updateCacheFromSource(false);
                                             int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
                                             throughput.setValue(val, true, true);
                                             Interactable.playButtonClickSound();
                                             return true;
-                                }))))
+                                })
+                                        .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))))
                         .child(getItemFilterContainer()
                                 .initUI(panel, guiSyncManager))
                         .child(new Row().coverChildrenHeight()
@@ -582,7 +582,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .child(IKey.lang("Conveyor Mode")
                                         .asWidget()
                                         .align(Alignment.CenterRight)
-                                        .height(18)))
+                                        .height(18))))
                 .bindPlayerInventory();
         return panel;
     }
@@ -592,33 +592,49 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(GTGuiTextures.BUTTON_MANUAL_IO[mode.ordinal()])
-                .tooltip(tooltip -> tooltip.addLine(switch (mode) {
+                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()])
+                .addTooltipLine(switch (mode) {
                     case DISABLED -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
                     case UNFILTERED -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
                     case FILTERED -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
-                }));
+                });
     }
 
     private Widget<ToggleButton> createConveyorModeButton(EnumSyncValue<ConveyorMode> value, ConveyorMode mode) {
         return new ToggleButton().size(18)
                 .value(boolValueOf(value, mode))
-                // todo make overlay textures for these buttons (import, export)
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
-//                .overlay()
-                .tooltip(tooltip -> tooltip.addLine(switch (mode) {
+                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
+                .addTooltipLine(switch (mode) {
                     case EXPORT -> IKey.lang("cover.conveyor.mode.export");
                     case IMPORT -> IKey.lang("cover.conveyor.mode.import");
-                        }));
+                });
     }
 
     protected int getIncrementValue(MouseData data) {
         int adjust = 1;
-        if (data.shift) adjust *= 8;
-        if (data.ctrl) adjust *= 64;
-        if (data.alt) adjust *= 512;
+        if (data.shift) adjust *= 4;
+        if (data.ctrl) adjust *= 16;
+        if (data.alt) adjust *= 64;
         return adjust;
+    }
+
+    protected IKey createAdjustOverlay(boolean increment) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(getIncrementValue(MouseData.create(-1)));
+        builder.insert(0, increment ? '+' : '-');
+
+        float scale = 1f;
+        if (builder.length() == 3) {
+            scale = 0.8f;
+        } else if (builder.length() == 4) {
+            scale = 0.6f;
+        } else if (builder.length() > 4) {
+            scale = 0.5f;
+        }
+        return IKey.str(builder.toString())
+                .scale(scale);
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
