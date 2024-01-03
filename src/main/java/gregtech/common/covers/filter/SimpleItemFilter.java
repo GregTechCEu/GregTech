@@ -9,6 +9,8 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.slot.PhantomItemSlot;
 
+import gregtech.api.util.TextFormattingUtil;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
@@ -45,13 +47,17 @@ public class SimpleItemFilter extends ItemFilter {
 
             @Override
             public void setStackInSlot(int slot, ItemStack stack) {
+                if (!stack.isEmpty()) {
+                    stack.setCount(Math.min(stack.getCount(), getMaxStackSize()));
+                }
                 super.setStackInSlot(slot, stack);
             }
         };
     }
 
     @Override
-    protected void onMaxStackSizeChange() {
+    public void onMaxStackSizeChange() {
+        this.cache = getMaxStackSizer().get();
         for (int i = 0; i < itemFilterSlots.getSlots(); i++) {
             ItemStack itemStack = itemFilterSlots.getStackInSlot(i);
             if (!itemStack.isEmpty()) {
@@ -138,7 +144,14 @@ public class SimpleItemFilter extends ItemFilter {
                                         "XXX",
                                         "XXX")
                                 .key('X', index -> new ItemSlot()
-                                        .slot(new PhantomItemSlot(itemFilterSlots, index, this::getMaxStackSize)
+                                        .tooltip(tooltip -> {
+                                            var stack = this.itemFilterSlots.getStackInSlot(index);
+                                            if (stack.isEmpty()) return;
+
+                                            tooltip.addLine(IKey.dynamic(() ->
+                                                    TextFormattingUtil.formatNumbers(stack.getCount())));
+                                                })
+                                        .slot(new PhantomItemSlot(itemFilterSlots, index, getMaxStackSizer())
                                                 .slotGroup(filterInventory)
                                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                                     if (onlyAmountChanged && !init) {
