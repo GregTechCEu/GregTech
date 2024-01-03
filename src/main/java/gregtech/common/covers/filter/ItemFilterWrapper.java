@@ -13,7 +13,7 @@ public class ItemFilterWrapper {
     }
 
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        container.initFilterUI(y, widgetGroup);
+        container.initUI(y, widgetGroup);
     }
 
     public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {

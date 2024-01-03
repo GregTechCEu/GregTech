@@ -10,20 +10,25 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class ItemFilter {
 
     public static MatchResult<Integer> EMPTY_MATCH = new MatchResult<>(Match.SUCCEED, -1);
     private IDirtyNotifiable dirtyNotifiable;
-    private int maxStackSize = Integer.MAX_VALUE;
+    private Supplier<Integer> maxStackSizer = () -> Integer.MAX_VALUE;
     protected boolean isBlacklistFilter = false;
 
     public final int getMaxStackSize() {
-        return maxStackSize;
+        return maxStackSizer.get();
     }
 
     public final void setMaxStackSize(int maxStackSize) {
-        this.maxStackSize = maxStackSize;
+        setMaxStackSizer(() -> maxStackSize);
+    }
+
+    public final void setMaxStackSizer(Supplier<Integer> maxStackSizer) {
+        this.maxStackSizer = maxStackSizer;
         onMaxStackSizeChange();
     }
 

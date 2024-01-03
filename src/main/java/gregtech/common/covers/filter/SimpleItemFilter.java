@@ -138,7 +138,7 @@ public class SimpleItemFilter extends ItemFilter {
                                         "XXX",
                                         "XXX")
                                 .key('X', index -> new ItemSlot()
-                                        .slot(new PhantomItemSlot(itemFilterSlots, index, () -> Integer.MAX_VALUE)
+                                        .slot(new PhantomItemSlot(itemFilterSlots, index, this::getMaxStackSize)
                                                 .slotGroup(filterInventory)
                                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                                     if (onlyAmountChanged && !init) {
