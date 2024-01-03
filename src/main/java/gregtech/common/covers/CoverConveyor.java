@@ -528,7 +528,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
         var panel = GTGuis.createPanel(this, 176, 112 + 176);
 
-        panel.child(createTitleRow())
+        if (getItemFilterContainer().hasItemFilter()) {
+            getItemFilterContainer().setFilterStackSizer(this::getMaxStackSize);
+        }
+
+        return panel.child(createTitleRow())
                 .child(new Column().top(24).margin(7, 0)
                         .widthRel(1f).coverChildrenHeight()
                         .child(new Row().coverChildrenHeight()
@@ -584,7 +588,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                         .align(Alignment.CenterRight)
                                         .height(18))))
                 .bindPlayerInventory();
-        return panel;
     }
 
     private Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
@@ -635,6 +638,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         }
         return IKey.str(builder.toString())
                 .scale(scale);
+    }
+
+    protected int getMaxStackSize() {
+        return 1;
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
