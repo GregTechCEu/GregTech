@@ -630,8 +630,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     protected IKey createAdjustOverlay(boolean increment) {
         final StringBuilder builder = new StringBuilder();
+        builder.append(increment ? '+' : '-');
         builder.append(getIncrementValue(MouseData.create(-1)));
-        builder.insert(0, increment ? '+' : '-');
 
         float scale = 1f;
         if (builder.length() == 3) {
