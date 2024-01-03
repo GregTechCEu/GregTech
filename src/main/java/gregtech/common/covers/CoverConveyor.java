@@ -61,6 +61,7 @@ import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
@@ -515,6 +516,18 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        var panel = GTGuis.createPanel(this, 176, 112 + 176);
+
+        if (getItemFilterContainer().hasItemFilter()) {
+            getItemFilterContainer().setFilterStackSizer(this::getMaxStackSize);
+        }
+
+        return panel.child(createTitleRow())
+                .child(createUI(panel, guiSyncManager))
+                .bindPlayerInventory();
+    }
+
+    protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
         EnumSyncValue<ManualImportExportMode> manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
 
@@ -526,68 +539,60 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         guiSyncManager.syncValue("manual_io", manualIOmode);
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
 
-        var panel = GTGuis.createPanel(this, 176, 112 + 176);
-
-        if (getItemFilterContainer().hasItemFilter()) {
-            getItemFilterContainer().setFilterStackSizer(this::getMaxStackSize);
-        }
-
-        return panel.child(createTitleRow())
-                .child(new Column().top(24).margin(7, 0)
-                        .widthRel(1f).coverChildrenHeight()
-                        .child(new Row().coverChildrenHeight()
-                                .marginBottom(2).widthRel(1f)
-                                .child(new ButtonWidget<>()
-                                        .left(0).width(18)
-                                        .onMousePressed(mouseButton -> {
-                                            throughput.updateCacheFromSource(false);
-                                            int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                            throughput.setValue(val, true, true);
-                                            Interactable.playButtonClickSound();
-                                            return true;
+        return new Column().top(24).margin(7, 0)
+                .widthRel(1f).coverChildrenHeight()
+                .child(new Row().coverChildrenHeight()
+                        .marginBottom(2).widthRel(1f)
+                        .child(new ButtonWidget<>()
+                                .left(0).width(18)
+                                .onMousePressed(mouseButton -> {
+                                    throughput.updateCacheFromSource(false);
+                                    int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                    throughput.setValue(val, true, true);
+                                    Interactable.playButtonClickSound();
+                                    return true;
                                 })
-                                        .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
-                                .child(new TextFieldWidget()
-                                        .left(18).right(18)
-                                        .setTextColor(EnumDyeColor.WHITE.getColorValue())
-                                        .setNumbers(1, maxItemTransferRate)
-                                        .value(throughput)
-                                        .background(GTGuiTextures.DISPLAY)
-                                        .onUpdateListener(w -> {
-                                            if (throughput.updateCacheFromSource(false)) {
-                                                w.setText(throughput.getStringValue());
-                                            }
-                                        }))
-                                .child(new ButtonWidget<>()
-                                        .right(0).width(18)
-                                        .onMousePressed(mouseButton -> {
-                                            throughput.updateCacheFromSource(false);
-                                            int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                            throughput.setValue(val, true, true);
-                                            Interactable.playButtonClickSound();
-                                            return true;
+                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                        .child(new TextFieldWidget()
+                                .left(18).right(18)
+                                .setTextColor(EnumDyeColor.WHITE.getColorValue())
+                                .setNumbers(1, maxItemTransferRate)
+                                .value(throughput)
+                                .background(GTGuiTextures.DISPLAY)
+                                .onUpdateListener(w -> {
+                                    if (throughput.updateCacheFromSource(false)) {
+                                        w.setText(throughput.getStringValue());
+                                    }
+                                }))
+                        .child(new ButtonWidget<>()
+                                .right(0).width(18)
+                                .onMousePressed(mouseButton -> {
+                                    throughput.updateCacheFromSource(false);
+                                    int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                    throughput.setValue(val, true, true);
+                                    Interactable.playButtonClickSound();
+                                    return true;
                                 })
-                                        .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))))
-                        .child(getItemFilterContainer()
-                                .initUI(panel, guiSyncManager))
-                        .child(new Row().coverChildrenHeight()
-                                .marginBottom(2).widthRel(1f)
-                                .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
-                                .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
-                                .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))
-                                .child(IKey.lang("Manual IO Mode")
-                                        .asWidget()
-                                        .align(Alignment.CenterRight)
-                                        .height(18)))
-                        .child(new Row().coverChildrenHeight()
-                                .marginBottom(2).widthRel(1f)
-                                .child(createConveyorModeButton(conveyorMode, ConveyorMode.IMPORT))
-                                .child(createConveyorModeButton(conveyorMode, ConveyorMode.EXPORT))
-                                .child(IKey.lang("Conveyor Mode")
-                                        .asWidget()
-                                        .align(Alignment.CenterRight)
-                                        .height(18))))
-                .bindPlayerInventory();
+                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))))
+                .child(getItemFilterContainer()
+                        .initUI(mainPanel, guiSyncManager))
+                .child(new Row().coverChildrenHeight()
+                        .marginBottom(2).widthRel(1f)
+                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
+                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
+                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))
+                        .child(IKey.lang("Manual IO Mode")
+                                .asWidget()
+                                .align(Alignment.CenterRight)
+                                .height(18)))
+                .child(new Row().coverChildrenHeight()
+                        .marginBottom(2).widthRel(1f)
+                        .child(createConveyorModeButton(conveyorMode, ConveyorMode.IMPORT))
+                        .child(createConveyorModeButton(conveyorMode, ConveyorMode.EXPORT))
+                        .child(IKey.lang("Conveyor Mode")
+                                .asWidget()
+                                .align(Alignment.CenterRight)
+                                .height(18)));
     }
 
     private Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {

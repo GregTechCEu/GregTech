@@ -1,18 +1,17 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.factory.SidedPosGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.widgets.layout.Row;
-
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.IncrementButtonWidget;
+import gregtech.api.gui.widgets.ServerWidgetGroup;
+import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
@@ -29,6 +28,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -192,12 +201,31 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
         EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
         guiSyncManager.syncValue("transfer_mode", transferMode);
 
-        return super.buildUI(guiData, guiSyncManager)
-                .child(new Row());
+        return super.createUI(mainPanel, guiSyncManager)
+                .child(new Row().marginBottom(2).coverChildrenHeight().widthRel(1f)
+                        .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_ANY))
+                        .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_EXACT))
+                        .child(createTransferModeButton(transferMode, TransferMode.KEEP_EXACT))
+                        .child(IKey.lang("Transfer Mode").asWidget()
+                                .align(Alignment.CenterRight)
+                                .height(18)));
+    }
+
+    private Widget<ToggleButton> createTransferModeButton(EnumSyncValue<TransferMode> value, TransferMode mode) {
+        return new ToggleButton().size(18)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+//                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
+                .addTooltipLine(switch (mode) {
+                    case TRANSFER_ANY -> IKey.lang("cover.robotic_arm.transfer_mode.transfer_any");
+                    case TRANSFER_EXACT -> IKey.lang("cover.robotic_arm.transfer_mode.transfer_exact");
+                    case KEEP_EXACT -> IKey.lang("cover.robotic_arm.transfer_mode.keep_exact");
+                });
     }
 
     @Override
