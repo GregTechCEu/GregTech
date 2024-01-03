@@ -1,5 +1,8 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
@@ -19,6 +22,7 @@ import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
@@ -181,7 +185,9 @@ public class CoverRoboticArm extends CoverConveyor {
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.getCoverableView().markDirty();
-        this.itemFilterContainer.setMaxStackSize(transferMode.maxStackSize);
+        if (getItemFilterContainer().hasItemFilter()) {
+            getItemFilterContainer().getItemFilter().onMaxStackSizeChange();
+        }
     }
 
     public TransferMode getTransferMode() {
@@ -205,6 +211,10 @@ public class CoverRoboticArm extends CoverConveyor {
         EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
         guiSyncManager.syncValue("transfer_mode", transferMode);
 
+        var filterTransferSize = new IntSyncValue(
+                () -> getItemFilterContainer().getTransferStackSize(),
+                i -> getItemFilterContainer().setTransferStackSize(i));
+
         return super.createUI(mainPanel, guiSyncManager)
                 .child(new Row().marginBottom(2).coverChildrenHeight().widthRel(1f)
                         .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_ANY))
@@ -212,7 +222,11 @@ public class CoverRoboticArm extends CoverConveyor {
                         .child(createTransferModeButton(transferMode, TransferMode.KEEP_EXACT))
                         .child(IKey.lang("Transfer Mode").asWidget()
                                 .align(Alignment.CenterRight)
-                                .height(18)));
+                                .height(18)))
+                .child(new Row().right(0).coverChildrenHeight()
+                        .child(new TextFieldWidget().widthRel(0.5f).right(0)
+                                .setEnabledIf(w -> shouldDisplayAmountSlider())
+                                .value(filterTransferSize)));
     }
 
     private Widget<ToggleButton> createTransferModeButton(EnumSyncValue<TransferMode> value, TransferMode mode) {
@@ -230,10 +244,7 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected int getMaxStackSize() {
-        return switch (this.transferMode) {
-            case TRANSFER_EXACT, KEEP_EXACT -> getTransferRate();
-            case TRANSFER_ANY -> 1;
-        };
+        return getTransferMode().maxStackSize;
     }
 
     @Override
@@ -270,6 +281,18 @@ public class CoverRoboticArm extends CoverConveyor {
         primaryGroup.addWidget(stackSizeGroup);
 
         return super.buildUI(builder.widget(primaryGroup), player);
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
+        packetBuffer.writeInt(this.transferMode.ordinal());
+    }
+
+    @Override
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
+        this.transferMode = TransferMode.values()[packetBuffer.readInt()];
     }
 
     @Override
