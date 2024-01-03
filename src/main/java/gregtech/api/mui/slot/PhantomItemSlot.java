@@ -7,16 +7,15 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.function.Supplier;
 
 public class PhantomItemSlot extends ModularSlot {
-    protected Supplier<Integer> maxStackSize;
-    public static final Supplier<Integer> DEFAULT_SIZE = () -> 64;
-    public PhantomItemSlot(IItemHandler itemHandler, int index, Supplier<Integer> maxStackSize) {
+    protected Supplier<Integer> maxStackSizer;
+    public PhantomItemSlot(IItemHandler itemHandler, int index, Supplier<Integer> maxStackSizer) {
         super(itemHandler, index);
-        this.maxStackSize = maxStackSize == null ? DEFAULT_SIZE : maxStackSize;
+        this.maxStackSizer = maxStackSizer;
     }
 
     @Override
     public int getSlotStackLimit() {
-        return maxStackSize.get();
+        return maxStackSizer.get();
     }
 
     @Override
