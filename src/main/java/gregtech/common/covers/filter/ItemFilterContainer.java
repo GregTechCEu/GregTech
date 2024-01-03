@@ -93,7 +93,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public void setTransferStackSize(int transferStackSize) {
         this.transferStackSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
-        this.stackSizer = () -> this.transferStackSize;
         onFilterInstanceChange();
         dirtyNotifiable.markAsDirty();
     }
@@ -209,7 +208,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public void setFilterStackSizer(Supplier<Integer> stackSizer) {
-        this.currentItemFilter.setMaxStackSizer(stackSizer);
+        this.stackSizer = stackSizer;
     }
     public boolean showGlobalTransferLimitSlider() {
         return getMaxStackSize() > 1 && (isBlacklistFilter() || !hasItemFilter()|| currentItemFilter.showGlobalTransferLimitSlider());

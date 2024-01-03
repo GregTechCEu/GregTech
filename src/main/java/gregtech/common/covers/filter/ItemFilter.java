@@ -17,10 +17,11 @@ public abstract class ItemFilter {
     public static MatchResult<Integer> EMPTY_MATCH = new MatchResult<>(Match.SUCCEED, -1);
     private IDirtyNotifiable dirtyNotifiable;
     private Supplier<Integer> maxStackSizer = () -> Integer.MAX_VALUE;
+    protected int cache;
     protected boolean isBlacklistFilter = false;
 
     public final int getMaxStackSize() {
-        return maxStackSizer.get();
+        return this.cache;
     }
 
     public final void setMaxStackSize(int maxStackSize) {
@@ -29,10 +30,14 @@ public abstract class ItemFilter {
 
     public final void setMaxStackSizer(Supplier<Integer> maxStackSizer) {
         this.maxStackSizer = maxStackSizer;
-        onMaxStackSizeChange();
+        this.cache = this.maxStackSizer.get();
     }
 
-    protected void onMaxStackSizeChange() {}
+    public Supplier<Integer> getMaxStackSizer() {
+        return this.maxStackSizer;
+    }
+
+    public void onMaxStackSizeChange() {}
 
     public abstract boolean showGlobalTransferLimitSlider();
 
@@ -74,6 +79,7 @@ public abstract class ItemFilter {
     }
     public final void setBlacklistFilter(boolean blacklistFilter) {
         isBlacklistFilter = blacklistFilter;
+        onMaxStackSizeChange();
         markDirty();
     }
 
