@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class FissionReactor {
 
     /**
-     * The gas constant in J * K^-1 * mol^-1 if you want to use a different set of units prepare thy life to become the
-     * worst of nightmares
+     * The gas constant in J * K^-1 * mol^-1 if you want to use a different
+     * set of units prepare thy life to become the worst of nightmares
      */
     public static final double R = 8.31446261815324;
     /**
