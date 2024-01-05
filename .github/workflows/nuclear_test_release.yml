@@ -45,5 +45,5 @@ jobs:
           fail_on_unmatched_files: true
           prerelease: true
           tag_name: "nuclear-testing"
-          name: 'Nuclear Testing ' + ${{ steps.vars.outputs.sha_short }}
+          name: "Nuclear Testing ${{ steps.vars.outputs.sha_short }}"
           body: "Testing Pre-release for GTCEu Nuclear Update"
