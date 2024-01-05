@@ -13,19 +13,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
-import com.cleanroommc.modularui.widgets.slot.SlotGroup;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -50,11 +51,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.filterInventory = new ItemStackHandler(1) {
 
             @Override
-            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-                return isFilter(stack);
-            }
-
-            @Override
             public int getSlotLimit(int slot) {
                 return 1;
             }
@@ -62,11 +58,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
             @Override
             protected void onLoad() {
                 onFilterSlotChange(false);
-            }
-
-            @Override
-            protected void onContentsChanged(int slot) {
-                onFilterSlotChange(true);
             }
         };
     }
@@ -136,8 +127,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     /** Uses Cleanroom MUI*/
     public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
-        var slotGroup = new SlotGroup("filter_slot", 1, true);
-        manager.registerSlotGroup(slotGroup);
         var panel = new PanelSyncHandler(main) {
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
@@ -150,22 +139,29 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return new Row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
-                                .slotGroup(slotGroup)
-                                .filter(this::isFilter))
+                        .slot(new FilterSlot(filterInventory, 0)
+                                .filter(this::isFilter)
+                                .singletonSlotGroup(101))
+                        .onUpdateListener(w -> {
+                            if (!hasItemFilter() && panel.isPanelOpen()) {
+                                panel.closePanel();
+                            }
+                        }, true)
                         .size(18)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
                 .child(new ButtonWidget<>()
                         .setEnabledIf(w -> hasItemFilter())
                         .onMousePressed(i -> {
+                            boolean success = false;
                             if (!panel.isPanelOpen()) {
                                 panel.openPanel();
-                                return true;
+                                success = true;
                             } else if (panel.isValid()) {
                                 panel.closePanel();
-                                return true;
+                                success = true;
                             }
-                            return false;
+                            Interactable.playButtonClickSound();
+                            return success;
                         }))
                 .child(IKey.dynamic(() -> hasItemFilter() ?
                                 getFilterInventory().getStackInSlot(0).getDisplayName() :
@@ -270,11 +266,12 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        var stack = ItemStack.EMPTY;
         try {
-            var stack = packetBuffer.readItemStack();
-            this.filterInventory.setStackInSlot(0, stack);
-            this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(stack);
+            stack = packetBuffer.readItemStack();
         } catch (IOException ignore) {}
+        this.filterInventory.setStackInSlot(0, stack);
+        this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(stack);
     }
 
     @Override
@@ -299,6 +296,18 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.transferStackSize = tagCompound.getInteger("TransferStackSize");
         if (getItemFilter() != null) {
             this.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
+        }
+    }
+
+    protected class FilterSlot extends ModularSlot {
+
+        public FilterSlot(IItemHandler itemHandler, int index) {
+            super(itemHandler, index);
+        }
+
+        @Override
+        public void onSlotChanged() {
+            onFilterSlotChange(true);
         }
     }
 }
