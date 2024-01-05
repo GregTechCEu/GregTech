@@ -29,7 +29,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class that represent machine recipe.
@@ -673,8 +679,9 @@ public class Recipe {
                         .anyMatch(s -> !s.isEmpty())) {
                     return true;
                 }
+            } else if (Arrays.stream(ingredient.getInputStacks()).anyMatch(s -> !s.isEmpty())) {
+                return true;
             }
-            return Arrays.stream(ingredient.getInputStacks()).anyMatch(s -> !s.isEmpty());
         }
         for (GTRecipeInput fluidInput : fluidInputs) {
             FluidStack fluidIngredient = fluidInput.getInputFluidStack();
