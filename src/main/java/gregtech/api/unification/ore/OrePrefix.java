@@ -326,9 +326,12 @@ public class OrePrefix {
     public static final OrePrefix component = new OrePrefix("component", -1, null, null, ENABLE_UNIFICATION, null);
 
     // Nuclear stuff
-    public static final OrePrefix fuelRod = new OrePrefix("fuelRod", -1, null, MaterialIconType.fuelRod, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
-    public static final OrePrefix fuelRodDepleted = new OrePrefix("fuelRodDepleted", -1, null, MaterialIconType.fuelRodDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
-    public static final OrePrefix fuelRodHotDepleted = new OrePrefix("fuelRodHotDepleted", -1, null, MaterialIconType.fuelRodHotDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
+    public static final OrePrefix fuelRod = new OrePrefix("fuelRod", -1, null, MaterialIconType.fuelRod, 0,
+            material -> material.hasProperty(PropertyKey.FISSION_FUEL));
+    public static final OrePrefix fuelRodDepleted = new OrePrefix("fuelRodDepleted", -1, null,
+            MaterialIconType.fuelRodDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
+    public static final OrePrefix fuelRodHotDepleted = new OrePrefix("fuelRodHotDepleted", -1, null,
+            MaterialIconType.fuelRodHotDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
 
     public static class Flags {
 
@@ -491,8 +494,8 @@ public class OrePrefix {
         stick.modifyMaterialAmount(Materials.Blaze, 4);
         stick.modifyMaterialAmount(Materials.Bone, 5);
 
-        fuelRodDepleted.radiationDamageFunction = (neutrons) -> neutrons/2.f;
-        fuelRodHotDepleted.radiationDamageFunction = (neutrons) -> neutrons/1.5f;
+        fuelRodDepleted.radiationDamageFunction = (neutrons) -> neutrons / 2.f;
+        fuelRodHotDepleted.radiationDamageFunction = (neutrons) -> neutrons / 1.5f;
         fuelRodHotDepleted.heatDamageFunction = (x) -> 2.0f;
     }
 

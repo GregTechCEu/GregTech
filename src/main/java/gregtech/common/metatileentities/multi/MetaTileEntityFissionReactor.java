@@ -46,10 +46,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
-
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
@@ -125,7 +122,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 coolantImport.getFluidTank().drain(this.flowRate, true);
             }
             for (ICoolantHandler coolantExport : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
-                coolantExport.getFluidTank().fill(coolantExport.getCoolant().getProperty(PropertyKey.COOLANT).getHotHPCoolant().getFluid(this.flowRate), true);
+                coolantExport.getFluidTank().fill(coolantExport.getCoolant().getProperty(PropertyKey.COOLANT)
+                        .getHotHPCoolant().getFluid(this.flowRate), true);
             }
 
             // Fuel handling
