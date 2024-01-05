@@ -158,7 +158,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         if (metaItems.containsKey((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase entity) {
             if (entityIn.ticksExisted % 20 == 0) {
 
-                //Handle heat damage
+                // Handle heat damage
                 if (prefix.heatDamageFunction != null) {
                     Material material = getMaterial(itemStack);
                     if (material != null) {
@@ -183,7 +183,7 @@ public class MetaPrefixItem extends StandardMetaItem {
                     }
                 }
 
-                //Handle radiation damage
+                // Handle radiation damage
                 if (prefix.radiationDamageFunction != null) {
                     Material material = getMaterial(itemStack);
                     if (material != null) {
@@ -197,7 +197,8 @@ public class MetaPrefixItem extends StandardMetaItem {
                             }
                         }
                         if (radiationDamage > 0.0) {
-                            entity.attackEntityFrom(DamageSources.getRadioactiveDamage().setDamageBypassesArmor(), radiationDamage);
+                            entity.attackEntityFrom(DamageSources.getRadioactiveDamage().setDamageBypassesArmor(),
+                                    radiationDamage);
                         }
                     }
                 }

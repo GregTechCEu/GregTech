@@ -1076,9 +1076,11 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder coolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor, double coolingFactor, double boilingPoint, double absorption, double pressure) {
+        public Builder coolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor,
+                                       double coolingFactor, double boilingPoint, double absorption, double pressure) {
             properties.ensureSet(PropertyKey.FLUID);
-            properties.setProperty(PropertyKey.COOLANT, new CoolantProperty(hotCoolant, hotHPCoolant, moderatorFactor, coolingFactor, boilingPoint, absorption, pressure));
+            properties.setProperty(PropertyKey.COOLANT, new CoolantProperty(hotCoolant, hotHPCoolant, moderatorFactor,
+                    coolingFactor, boilingPoint, absorption, pressure));
             return this;
         }
 
