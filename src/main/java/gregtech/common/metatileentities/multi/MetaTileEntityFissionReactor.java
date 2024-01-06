@@ -54,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 
@@ -347,7 +346,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     @Override
     public void invalidateStructure() {
-        if(lockingState == LockingState.LOCKED) {
+        if (lockingState == LockingState.LOCKED) {
             this.unlockAll();
         }
         super.invalidateStructure();
@@ -369,9 +368,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.heightTop = data.getInteger("heightTop");
         this.heightBottom = data.getInteger("heightBottom");
         this.height = this.heightTop + this.heightBottom + 1;
-        if(data.getBoolean("locked")) {
+        if (data.getBoolean("locked")) {
             this.lockingState = LockingState.SHOULD_LOCK;
-        };
+        } ;
     }
 
     @Override
@@ -384,7 +383,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             this.lockAndPrepareReactor();
         }
         buf.writeBoolean(this.lockingState == LockingState.LOCKED);
-
     }
 
     @Override
@@ -393,7 +391,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.diameter = buf.readInt();
         this.heightTop = buf.readInt();
         this.heightBottom = buf.readInt();
-        if(buf.readBoolean()) {
+        if (buf.readBoolean()) {
             this.lockingState = LockingState.LOCKED;
         }
     }
@@ -402,9 +400,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         ITextComponent toggleText = null;
-        if(!this.isStructureFormed()) toggleText = new TextComponentTranslation("gregtech.multiblock.fission_reactor.structure_incomplete");
+        if (!this.isStructureFormed())
+            toggleText = new TextComponentTranslation("gregtech.multiblock.fission_reactor.structure_incomplete");
         else {
-            switch(this.lockingState) {
+            switch (this.lockingState) {
                 case LOCKED:
                     toggleText = new TextComponentTranslation("gregtech.multiblock.fission_reactor.turn_off");
                     toggleText.appendSibling(withButton(new TextComponentString(" [Toggle Off]"), "turn_off"));
@@ -462,12 +461,14 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private void lockAndPrepareReactor() {
         this.lockAll();
         fissionReactor = new FissionReactor(this.diameter - 2);
-        int radius = (int) this.diameter/2;     // This is the floor of the radius, the actual radius is 0.5 blocks larger
+        int radius = (int) this.diameter / 2;     // This is the floor of the radius, the actual radius is 0.5 blocks
+                                                  // larger
         BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite(), radius);
         radius--;
         for (int i = -radius; i <= radius; i++) {
             for (int j = -radius; j <= radius; j++) {
-                if (Math.pow(i, 2) + Math.pow(j, 2) > Math.pow(radius, 2) + radius)         // (radius + .5)^2 = radius^2 + radius + .25
+                if (Math.pow(i, 2) + Math.pow(j, 2) > Math.pow(radius, 2) + radius)         // (radius + .5)^2 =
+                                                                                            // radius^2 + radius + .25
                     continue;
                 BlockPos currentPos = reactorOrigin.offset(this.frontFacing.rotateYCCW(), i)
                         .offset(this.frontFacing.getOpposite(), j).offset(EnumFacing.UP, height - 2);
@@ -485,7 +486,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                 component = new CoolantChannel(0, 0, mat);
                                 coolantIn.setCoolant(mat);
                                 BlockPos exportHatchPos = currentPos.offset(EnumFacing.DOWN, height - 1);
-                                if (getWorld().getTileEntity(exportHatchPos) instanceof IGregTechTileEntity coolantOutCandidate) {
+                                if (getWorld().getTileEntity(
+                                        exportHatchPos) instanceof IGregTechTileEntity coolantOutCandidate) {
                                     MetaTileEntity coolantOutMTE = coolantOutCandidate.getMetaTileEntity();
                                     if (coolantOutMTE instanceof MetaTileEntityCoolantExportHatch coolantOut) {
                                         coolantOut.setCoolant(mat);
@@ -510,7 +512,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     }
 
                     if (component != null) {
-                        if(component.isValid()) {
+                        if (component.isValid()) {
                             fissionReactor.addComponent(component, i + radius, j + radius);
                         } else {                            // Invalid component located
                             this.unlockAll();
@@ -518,8 +520,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                             this.lockingState = LockingState.INVALID_COMPONENT;
                             return;
                         }
-                    }
-                    else if (foundPort) {               // This implies that a port was found, but it didn't generate a component because of mismatched inputs
+                    } else if (foundPort) {               // This implies that a port was found, but it didn't generate
+                                                          // a component because of mismatched inputs
                         this.unlockAll();
                         fissionReactor = null;
                         this.lockingState = LockingState.MISSING_INPUTS;
@@ -552,5 +554,4 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         // The reactor can't lock because components are flagged as invalid
         INVALID_COMPONENT
     }
-
 }
