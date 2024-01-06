@@ -132,12 +132,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
             // Fuel handling
             if (this.fissionReactor.fuelDepletion == 1.) {
-                boolean gotFuel = true;
+                boolean hasEmpty = false;
                 for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                    gotFuel = fuelImport.getStackHandler().extractItem(0, 1, false).isEmpty();
-                    if (!gotFuel) break;
+                    if (fuelImport.getStackHandler().extractItem(0, 1, true).isEmpty()) hasEmpty = true;
                 }
-                if (gotFuel) this.fissionReactor.fuelDepletion = 0.;
+                if (!hasEmpty) {
+                    for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+                        fuelImport.getStackHandler().extractItem(0, 1, false);
+                    }
+                    this.fissionReactor.fuelDepletion = 0.;
+                }
             }
 
             this.updateReactorState();
