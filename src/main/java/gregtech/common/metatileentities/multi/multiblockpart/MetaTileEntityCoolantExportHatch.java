@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.LockableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -164,6 +165,12 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         return new ItemStackHandler(1);
+    }
+
+    @Override
+    protected FluidTankList createExportFluidHandler() {
+        this.fluidTank = new LockableFluidTank(16000, this, true);
+        return new FluidTankList(false, fluidTank);
     }
 
     @Override
