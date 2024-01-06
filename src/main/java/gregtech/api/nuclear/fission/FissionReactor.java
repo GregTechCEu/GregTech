@@ -136,7 +136,11 @@ public class FissionReactor {
 
         for (int i = 0; i < reactorLayout.length; i++) {
             for (int j = 0; j < reactorLayout[i].length; j++) {
-                if (reactorLayout[i][j].isValid()) {
+                /*
+                 * Check for null because the layout
+                 * is in generally not a square
+                 */
+                if (reactorLayout[i][j] != null && reactorLayout[i][j].isValid()) {
                     reactorLayout[i][j].setPos(i, j);
                     numberOfComponents++;
                     maxTemperature = Double.min(maxTemperature, reactorLayout[i][j].getMaxTemperature());
