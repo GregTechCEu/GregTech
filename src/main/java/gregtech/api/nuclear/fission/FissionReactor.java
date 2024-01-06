@@ -377,6 +377,7 @@ public class FissionReactor {
     public void updateTemperature() {
         this.temperature = responseFunctionTemperature(this.maxTemperature, this.temperature, this.power,
                 this.heatRemoved, this.coolantBaseTemperature);
+        this.heatRemoved = 0;
     }
 
     public void updatePressure() {
