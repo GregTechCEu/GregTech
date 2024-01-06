@@ -74,7 +74,7 @@ public class FissionReactor {
     public double coolantBoilingPointStandardPressure;
     public double coolantHeatOfVaporization;
     public double coolantBaseTemperature;
-    public double fuelDepletion;
+    public double fuelDepletion = 1;
     public double prevFuelDepletion;
     public double heatRemoved;
     public double neutronPoisonAmount;
