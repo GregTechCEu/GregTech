@@ -5,7 +5,6 @@ import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKeys;
-import gregtech.api.nuclear.fission.FissionReactor;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -1286,7 +1285,6 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().alternativeName("fluidDistWater"))
                 .color(0x4A94FF)
                 .flags(DISABLE_DECOMPOSITION)
-                .coolantProperty(Steam, HighPressureSteam, 1., 1., 373, 10., FissionReactor.standardPressure)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
