@@ -74,7 +74,7 @@ public class FissionReactor {
     public double coolantBoilingPointStandardPressure;
     public double coolantHeatOfVaporization;
     public double coolantBaseTemperature;
-    public double fuelDepletion;
+    public double fuelDepletion = 1;
     public double prevFuelDepletion;
     public double heatRemoved;
     public double neutronPoisonAmount;
@@ -136,7 +136,11 @@ public class FissionReactor {
 
         for (int i = 0; i < reactorLayout.length; i++) {
             for (int j = 0; j < reactorLayout[i].length; j++) {
-                if (reactorLayout[i][j].isValid()) {
+                /*
+                 * Check for null because the layout
+                 * is in generally not a square
+                 */
+                if (reactorLayout[i][j] != null && reactorLayout[i][j].isValid()) {
                     reactorLayout[i][j].setPos(i, j);
                     numberOfComponents++;
                     maxTemperature = Double.min(maxTemperature, reactorLayout[i][j].getMaxTemperature());
@@ -373,6 +377,7 @@ public class FissionReactor {
     public void updateTemperature() {
         this.temperature = responseFunctionTemperature(this.maxTemperature, this.temperature, this.power,
                 this.heatRemoved, this.coolantBaseTemperature);
+        this.heatRemoved = 0;
     }
 
     public void updatePressure() {

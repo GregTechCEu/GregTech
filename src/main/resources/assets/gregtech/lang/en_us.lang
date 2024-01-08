@@ -5765,6 +5765,9 @@ gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
 gregtech.multiblock.fission_reactor.turn_on=Turn on the reactor? (Locks all hatches)
 gregtech.multiblock.fission_reactor.turn_off=Turn off the reactor?
+gregtech.multiblock.fission_reactor.structure_incomplete=Cannot toggle the reactor. The structure is incomplete.
+gregtech.multiblock.fission_reactor.invalid_components=Reactor startup failed. Some of the inputs ports are invalid. Please check that channels are aligned with their respective ports.
+gregtech.multiblock.fission_reactor.missing_inputs=Reactor startup failed. Some of the inputs ports are empty or have inappropriate contents. Please check the ports.
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
