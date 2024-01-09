@@ -8,23 +8,20 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import team.chisel.ctm.client.model.AbstractCTMBakedModel;
 
 import java.util.List;
 
-//TODO, I don't think this works. Might need to wrap the return for the list of quads
 @Mixin(AbstractCTMBakedModel.class)
 public class AbstractCTMBakedModelMixin {
 
-    @Inject(method = "getQuads", at = @At(value = "TAIL"), remap = false)
-    public void getQuadsWithOptifine(IBlockState state, EnumFacing side, long rand,
-                                     CallbackInfoReturnable<List<BakedQuad>> cir, @Local BlockRenderLayer layer,
-                                     @Local Object ret) {
-        CTMHooks.getQuadsWithOptiFine((List<BakedQuad>) ret, layer, (IBakedModel) this, state, side, rand);
+    @ModifyReturnValue(method = "getQuads", at = @At("RETURN"))
+    private List<BakedQuad> getQuadsWithOptifine(List<BakedQuad> original, @Local BlockRenderLayer layer,
+                                                 @Local IBlockState state, @Local EnumFacing side, @Local long rand) {
+        return CTMHooks.getQuadsWithOptiFine(original, layer, (IBakedModel) this, state, side, rand);
     }
 }
