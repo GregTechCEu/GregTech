@@ -336,7 +336,7 @@ public class Recipe {
         for (GTRecipeInput recipeIngredient : this.inputs) {
             if (!recipeIngredient.isOreDict()) {
                 for (ItemStack is : recipeIngredient.getInputStacks()) {
-                    hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
+                    hash = 31 * hash + ItemStackHashStrategy.comparingAllPersistent().hashCode(is);
                 }
             } else {
                 hash = 31 * hash + recipeIngredient.getOreDict();
