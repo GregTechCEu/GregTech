@@ -218,7 +218,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             CoverHolder coverHolder = pipeTile.getCoverableImplementation();
             coverHolder.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()),
                     renderLayer);
-            Textures.RENDER_STATE.set(null);
+            Textures.RENDER_STATE.remove();
         }
         return true;
     }
