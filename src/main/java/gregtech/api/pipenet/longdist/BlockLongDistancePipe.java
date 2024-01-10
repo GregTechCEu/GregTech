@@ -1,6 +1,6 @@
 package gregtech.api.pipenet.longdist;
 
-import gregtech.api.creativetab.GTCreativeTabs;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 
 import net.minecraft.block.Block;

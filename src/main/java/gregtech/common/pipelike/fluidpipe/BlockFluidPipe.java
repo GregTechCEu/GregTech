@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.fluidpipe;
 
-import gregtech.api.creativetab.GTCreativeTabs;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;

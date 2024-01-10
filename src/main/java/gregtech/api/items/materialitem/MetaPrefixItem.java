@@ -1,7 +1,7 @@
 package gregtech.api.items.materialitem;
 
 import gregtech.api.GTValues;
-import gregtech.api.creativetab.GTCreativeTabs;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;

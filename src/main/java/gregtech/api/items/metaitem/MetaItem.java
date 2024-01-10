@@ -7,7 +7,7 @@ import gregtech.api.capability.IFilteredFluidContainer;
 import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.creativetab.GTCreativeTabs;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.gui.ItemUIFactory;

@@ -2,7 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
-import gregtech.api.creativetab.GTCreativeTabs;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;

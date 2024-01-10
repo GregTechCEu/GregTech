@@ -1,6 +1,6 @@
 package gregtech.api.items.toolitem;
 
-import gregtech.api.creativetab.GTCreativeTabs;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.util.LocalizationUtils;
 
 import net.minecraft.block.state.IBlockState;

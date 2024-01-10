@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.cable;
 
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.creativetab.GTCreativeTabs;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;

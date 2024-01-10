@@ -1,6 +1,7 @@
-package gregtech.api.creativetab;
+package gregtech.common.creativetab;
 
 import gregtech.api.GTValues;
+import gregtech.api.creativetab.BaseCreativeTab;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
