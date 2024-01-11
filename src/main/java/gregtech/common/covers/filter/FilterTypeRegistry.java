@@ -42,6 +42,17 @@ public class FilterTypeRegistry {
         itemFilterById.put(id, itemFilterClass);
     }
 
+    public static int getIdForFilter(Object filter) {
+        int id = -1;
+        if (filter instanceof ItemFilter) {
+            id = itemFilterById.inverse().get(filter.getClass());
+        } else if (filter instanceof FluidFilter) {
+            id = fluidFilterById.inverse().get(filter.getClass());
+        }
+        return id;
+    }
+
+    @Deprecated
     public static int getIdForItemFilter(ItemFilter itemFilter) {
         Integer filterId = itemFilterById.inverse().get(itemFilter.getClass());
         if (filterId == null) {
@@ -50,6 +61,7 @@ public class FilterTypeRegistry {
         return filterId;
     }
 
+    @Deprecated
     public static int getIdForFluidFilter(FluidFilter fluidFilter) {
         Integer filterId = fluidFilterById.inverse().get(fluidFilter.getClass());
         if (filterId == null) {
@@ -58,6 +70,7 @@ public class FilterTypeRegistry {
         return filterId;
     }
 
+    @Deprecated
     public static ItemFilter createItemFilterById(int filterId) {
         Class<? extends ItemFilter> filterClass = itemFilterById.get(filterId);
         if (filterClass == null) {
@@ -66,6 +79,7 @@ public class FilterTypeRegistry {
         return createNewFilterInstance(filterClass);
     }
 
+    @Deprecated
     public static FluidFilter createFluidFilterById(int filterId) {
         Class<? extends FluidFilter> filterClass = fluidFilterById.get(filterId);
         if (filterClass == null) {
@@ -75,29 +89,49 @@ public class FilterTypeRegistry {
     }
 
     public static ItemFilter getItemFilterForStack(ItemStack itemStack) {
-        Integer filterId = itemFilterIdByStack.get(new ItemAndMetadata(itemStack));
-        if (filterId == null) {
+        int filterId = getFilterIdForStack(itemStack);
+        if (filterId == -1) {
             return null;
         }
         Class<? extends ItemFilter> filterClass = itemFilterById.get(filterId);
-        return createNewFilterInstance(filterClass);
+        return createNewFilterInstance(filterClass, itemStack);
     }
 
     public static FluidFilter getFluidFilterForStack(ItemStack itemStack) {
-        Integer filterId = fluidFilterIdByStack.get(new ItemAndMetadata(itemStack));
-        if (filterId == null) {
+        int filterId = getFilterIdForStack(itemStack);
+        if (filterId == -1) {
             return null;
         }
         Class<? extends FluidFilter> filterClass = fluidFilterById.get(filterId);
-        return createNewFilterInstance(filterClass);
+        return createNewFilterInstance(filterClass, itemStack);
     }
 
-    private static <T> T createNewFilterInstance(Class<T> filterClass) {
+    public static int getFilterIdForStack(ItemStack stack) {
+        int id = -1;
+        if (isItemFilter(stack)) id = itemFilterIdByStack.getOrDefault(new ItemAndMetadata(stack), -1);
+        else if (isFluidFilter(stack)) id = fluidFilterIdByStack.getOrDefault(new ItemAndMetadata(stack), -1);
+        return id;
+    }
+
+    private static <T> T createNewFilterInstance(Class<T> filterClass, ItemStack stack) {
         try {
-            return filterClass.newInstance();
+            return filterClass.getDeclaredConstructor(stack.getClass()).newInstance(stack);
         } catch (ReflectiveOperationException exception) {
             GTLog.logger.error("Failed to create filter instance for class {}", filterClass, exception);
             return null;
         }
+    }
+
+    @Deprecated
+    private static <T> T createNewFilterInstance(Class<T> filterClass) {
+        return createNewFilterInstance(filterClass, ItemStack.EMPTY);
+    }
+
+    public static boolean isItemFilter(ItemStack stack) {
+        return itemFilterIdByStack.containsKey(new ItemAndMetadata(stack));
+    }
+
+    public static boolean isFluidFilter(ItemStack stack) {
+        return fluidFilterIdByStack.containsKey(new ItemAndMetadata(stack));
     }
 }
