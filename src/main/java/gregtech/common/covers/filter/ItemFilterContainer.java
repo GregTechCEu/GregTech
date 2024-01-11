@@ -172,18 +172,20 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     protected void onFilterSlotChange(boolean notify) {
         ItemStack filterStack = filterInventory.getStackInSlot(0);
-        ItemFilter newItemFilter = FilterTypeRegistry.getItemFilterForStack(filterStack);
-        ItemFilter currentItemFilter = getItemFilter();
-        if (newItemFilter == null) {
+        int newId = FilterTypeRegistry.getFilterIdForStack(filterStack);
+        int currentId = FilterTypeRegistry.getIdForFilter(getItemFilter());
+
+        if (!FilterTypeRegistry.isItemFilter(filterStack)) {
             if (hasItemFilter()) {
                 setItemFilter(null);
                 setBlacklistFilter(false);
-                if (notify) onFilterInstanceChange();
+                if (notify)
+                    onFilterInstanceChange();
             }
-        } else if (currentItemFilter == null ||
-                newItemFilter.getClass() != currentItemFilter.getClass()) {
-                    setItemFilter(newItemFilter);
-                    if (notify) onFilterInstanceChange();
+        } else if (currentId == -1 || newId != currentId) {
+                    setItemFilter(FilterTypeRegistry.getItemFilterForStack(filterStack));
+                    if (notify)
+                        onFilterInstanceChange();
         }
     }
 
