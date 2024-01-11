@@ -1,6 +1,5 @@
 package gregtech.common.blocks;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
@@ -13,6 +12,7 @@ import gregtech.api.worldgen.config.OreConfigUtils;
 import gregtech.client.model.OreBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.properties.PropertyStoneType;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -54,7 +54,7 @@ public class BlockOre extends Block implements IBlockOre {
         this.material = Objects.requireNonNull(material, "Material in BlockOre can not be null!");
         STONE_TYPE = PropertyStoneType.create("stone_type", allowedValues);
         initBlockState();
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_ORES);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_ORES);
     }
 
     @NotNull
@@ -173,7 +173,7 @@ public class BlockOre extends Block implements IBlockOre {
 
     @Override
     public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
-        if (tab == CreativeTabs.SEARCH || tab == GregTechAPI.TAB_GREGTECH_ORES) {
+        if (tab == CreativeTabs.SEARCH || tab == GTCreativeTabs.TAB_GREGTECH_ORES) {
             blockState.getValidStates().stream()
                     .filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem)
                     .forEach(blockState -> list.add(GTUtility.toItem(blockState)));

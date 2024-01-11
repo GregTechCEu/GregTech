@@ -1,7 +1,6 @@
 package gregtech.api.items.materialitem;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
@@ -15,6 +14,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
@@ -58,7 +58,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         super();
         this.registry = registry;
         this.prefix = orePrefix;
-        this.setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
+        this.setCreativeTab(GTCreativeTabs.TAB_GREGTECH_MATERIALS);
     }
 
     @Override

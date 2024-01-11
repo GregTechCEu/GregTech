@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
 
@@ -92,7 +93,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     public BlockMachine() {
         super(Material.IRON);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_MACHINES);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_MACHINES);
         setSoundType(SoundType.METAL);
         setHardness(6.0f);
         setResistance(6.0f);
