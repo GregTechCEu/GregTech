@@ -30,6 +30,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -628,6 +629,19 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
             // increase the stored heat
             heat += heatDiff;
             return true;
+        }
+
+        @Override
+        protected void modifyOverclockPre(int @NotNull [] values, @NotNull IRecipePropertyStorage storage) {
+            super.modifyOverclockPre(values, storage);
+
+            // Limit the number of OCs to the difference in fusion reactor MK.
+            // I.e., a MK2 reactor can overclock a MK1 recipe once, and a
+            // MK3 reactor can overclock a MK2 recipe once, or a MK1 recipe twice.
+            long euToStart = storage.getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L);
+            int fusionTier = FusionEUToStartProperty.getFusionTier(euToStart);
+            if (fusionTier != 0) fusionTier -= MetaTileEntityFusionReactor.this.tier;
+            values[2] = Math.min(fusionTier, values[2]);
         }
 
         @NotNull

@@ -1,6 +1,6 @@
 package gregtech.common.blocks.wood;
 
-import gregtech.api.GregTechAPI;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.worldgen.WorldGenRubberTree;
 
 import net.minecraft.block.BlockBush;
@@ -28,7 +28,7 @@ public class BlockRubberSapling extends BlockBush implements IGrowable {
         this.setDefaultState(this.blockState.getBaseState()
                 .withProperty(STAGE, 0));
         setTranslationKey("rubber_sapling");
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
         setHardness(0.0F);
         setSoundType(SoundType.PLANT);
     }

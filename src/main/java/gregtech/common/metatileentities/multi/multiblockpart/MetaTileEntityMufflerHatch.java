@@ -11,9 +11,11 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 
@@ -22,7 +24,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -33,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -68,7 +70,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
         if (getWorld().isRemote && getController() instanceof MultiblockWithDisplayBase controller &&
                 controller.isActive()) {
-            pollutionParticles();
+            VanillaParticleEffects.mufflerEffect(this, controller.getMufflerParticle());
         }
     }
 
@@ -111,32 +113,15 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnow(blockState);
     }
 
+    /** @deprecated No longer needed. Multiblock controller sets the particle type. */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @SideOnly(Side.CLIENT)
     public void pollutionParticles() {
-        BlockPos pos = this.getPos();
-        EnumFacing facing = this.getFrontFacing();
-        float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.25F;
-        float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
-        float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.25F;
-
-        float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
-        float xSpd;
-        float zSpd;
-
-        if (facing.getYOffset() == -1) {
-            float temp = GTValues.RNG.nextFloat() * 2 * (float) Math.PI;
-            xSpd = (float) Math.sin(temp) * 0.1F;
-            zSpd = (float) Math.cos(temp) * 0.1F;
-        } else {
-            xSpd = facing.getXOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
-            zSpd = facing.getZOffset() * (0.1F + 0.2F * GTValues.RNG.nextFloat());
+        MultiblockControllerBase controller = getController();
+        if (controller instanceof MultiblockWithDisplayBase displayBase) {
+            VanillaParticleEffects.mufflerEffect(this, displayBase.getMufflerParticle());
         }
-        if (getController() instanceof MultiblockWithDisplayBase)
-            ((MultiblockWithDisplayBase) getController()).runMufflerEffect(
-                    xPos + GTValues.RNG.nextFloat() * 0.5F,
-                    yPos + GTValues.RNG.nextFloat() * 0.5F,
-                    zPos + GTValues.RNG.nextFloat() * 0.5F,
-                    xSpd, ySpd, zSpd);
     }
 
     @Override

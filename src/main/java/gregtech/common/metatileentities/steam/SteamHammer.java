@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,6 +54,8 @@ public class SteamHammer extends SteamMetaTileEntity {
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick() {
-        // steam hammers do not make particles
+        if (isActive()) {
+            VanillaParticleEffects.RANDOM_SPARKS.runEffect(this);
+        }
     }
 }

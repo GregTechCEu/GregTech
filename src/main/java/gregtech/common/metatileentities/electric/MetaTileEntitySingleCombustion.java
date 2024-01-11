@@ -4,10 +4,13 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -44,6 +47,14 @@ public class MetaTileEntitySingleCombustion extends SimpleGeneratorMetaTileEntit
             // Don't render the top overlay if the facing is up, as the textures
             // would collide, otherwise render normally.
             super.renderOverlays(renderState, translation, pipeline);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick() {
+        if (isActive()) {
+            VanillaParticleEffects.COMBUSTION_SMOKE.runEffect(this);
         }
     }
 }

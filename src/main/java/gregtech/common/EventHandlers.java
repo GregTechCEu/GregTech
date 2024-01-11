@@ -1,6 +1,7 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.block.IWalkingSpeedBonus;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -8,6 +9,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.BlockUtility;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
@@ -18,8 +20,12 @@ import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,7 +37,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -148,8 +156,7 @@ public class EventHandlers {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onEntityLivingFallEvent(LivingFallEvent event) {
-        if (event.getEntity() instanceof EntityPlayerMP) {
-            EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+        if (event.getEntity() instanceof EntityPlayerMP player) {
             ItemStack armor = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             ItemStack jet = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
@@ -206,9 +213,94 @@ public class EventHandlers {
         }
     }
 
+    @SuppressWarnings({ "ConstantValue", "deprecation" })
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        EntityPlayer player = event.player;
+        if (event.phase == TickEvent.Phase.START && !player.world.isRemote) {
+            IAttributeInstance movementSpeed = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+            if (movementSpeed == null) return;
+            AttributeModifier modifier = movementSpeed.getModifier(BlockUtility.WALKING_SPEED_UUID);
+
+            double speedBonus;
+            if (!player.onGround || player.isInWater() || player.isSneaking()) {
+                speedBonus = 0;
+            } else {
+                IBlockState state = player.world.getBlockState(new BlockPos(
+                        player.posX, player.getEntityBoundingBox().minY - 1, player.posZ));
+                speedBonus = BlockUtility.WALKING_SPEED_BONUS.getDouble(state);
+                // { remove this bit while removing IWalkingSpeedBonus
+                if (speedBonus == 0 &&
+                        state.getBlock() instanceof IWalkingSpeedBonus walkingSpeedBonus &&
+                        walkingSpeedBonus.getWalkingSpeedBonus() != 1 &&
+                        walkingSpeedBonus.bonusSpeedCondition(player) &&
+                        walkingSpeedBonus.checkApplicableBlocks(state)) {
+                    speedBonus = walkingSpeedBonus.getWalkingSpeedBonus() - 1;
+                }
+                // }
+            }
+            if (modifier != null) {
+                if (speedBonus == modifier.getAmount()) return;
+                else movementSpeed.removeModifier(BlockUtility.WALKING_SPEED_UUID);
+            } else {
+                if (speedBonus == 0) return;
+            }
+            if (speedBonus != 0) {
+                movementSpeed.applyModifier(new AttributeModifier(BlockUtility.WALKING_SPEED_UUID,
+                        "Walking Speed Bonus", speedBonus, 2));
+            }
+        }
+    }
+
+    @SuppressWarnings({ "lossy-conversions", "ConstantValue" })
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public static void onFOVUpdate(FOVUpdateEvent event) { // this event SUCKS
+        EntityPlayer player = event.getEntity();
+        IAttributeInstance movementSpeed = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+        if (movementSpeed == null || movementSpeed.getModifier(BlockUtility.WALKING_SPEED_UUID) == null) return;
+
+        float originalFov = player.capabilities.isFlying ? 1.1f : 1.0f;
+        originalFov *= (movementSpeed.getAttributeValue() / player.capabilities.getWalkSpeed() + 1) / 2;
+
+        if (player.capabilities.getWalkSpeed() == 0 || Float.isNaN(originalFov) || Float.isInfinite(originalFov)) {
+            return;
+        }
+
+        float newFov = player.capabilities.isFlying ? 1.1f : 1.0f;
+        newFov *= (computeValueWithoutWalkingSpeed(movementSpeed) / player.capabilities.getWalkSpeed() + 1) / 2;
+
+        event.setNewfov(newFov / originalFov * event.getNewfov());
+    }
+
+    /**
+     * Computes walking speed without boost from {@link BlockUtility#WALKING_SPEED_BONUS}. Skipping parent check stuff
+     * because movement speed attribute does not have any parent modifier.
+     */
+    private static double computeValueWithoutWalkingSpeed(IAttributeInstance attrib) {
+        double base = attrib.getBaseValue();
+
+        for (AttributeModifier m : attrib.getModifiersByOperation(0)) {
+            base += m.getAmount();
+        }
+
+        double applied = base;
+
+        for (AttributeModifier m : attrib.getModifiersByOperation(1)) {
+            applied += base * m.getAmount();
+        }
+
+        for (AttributeModifier m : attrib.getModifiersByOperation(2)) {
+            if (m.getID() == BlockUtility.WALKING_SPEED_UUID) continue;
+            applied *= 1 + m.getAmount();
+        }
+
+        return attrib.getAttribute().clampValue(applied);
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void onPlayerTickClient(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START && !event.player.isSpectator() &&
                 !(event.player instanceof EntityOtherPlayerMP) && !(event.player instanceof FakePlayer)) {
             ItemStack feetEquip = event.player.getItemStackFromSlot(EntityEquipmentSlot.FEET);

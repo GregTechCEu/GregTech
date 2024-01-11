@@ -204,7 +204,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void transferModeText(@NotNull IProbeInfo probeInfo, @NotNull TransferMode mode,
                                          @NotNull String rateUnit, int rate, boolean hasFilter) {
         String text = TextStyleClass.OK + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
-        if (!hasFilter && mode != TransferMode.TRANSFER_ANY) text += TextStyleClass.LABEL + " " + rate + rateUnit;
+        if (!hasFilter && mode != TransferMode.TRANSFER_ANY)
+            text += TextStyleClass.LABEL + " " + TextFormattingUtil.formatNumbers(rate) + rateUnit;
         probeInfo.text(text);
     }
 
@@ -220,7 +221,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void voidingText(@NotNull IProbeInfo probeInfo, @NotNull VoidingMode mode, @NotNull String unit,
                                     int amount, boolean hasFilter) {
         String text = TextFormatting.RED + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
-        if (mode != VoidingMode.VOID_ANY && !hasFilter) text += " " + amount + unit;
+        if (mode != VoidingMode.VOID_ANY && !hasFilter) text += " " + TextFormattingUtil.formatNumbers(amount) + unit;
         probeInfo.text(text);
     }
 

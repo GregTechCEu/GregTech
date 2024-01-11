@@ -7,14 +7,25 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.impl.*;
-import gregtech.api.cover.*;
+import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
+import gregtech.api.cover.CoverRayTracer;
+import gregtech.api.cover.CoverSaveHandler;
+import gregtech.api.cover.CoverUtil;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GregTechGuiScreen;
+import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
@@ -22,6 +33,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
@@ -37,7 +49,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -66,6 +84,11 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -76,13 +99,17 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable {
+public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable, IGuiHolder<PosGuiData> {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
 
@@ -320,7 +347,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        return creativeTab == CreativeTabs.SEARCH || creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES;
+        return creativeTab == CreativeTabs.SEARCH || creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES;
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -412,10 +439,34 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @param entityPlayer player opening inventory
      * @return freshly created UI instance
      */
-    protected abstract ModularUI createUI(EntityPlayer entityPlayer);
+    @Deprecated
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return null;
+    }
 
+    @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
+    }
+
+    @ApiStatus.Experimental
+    public boolean usesMui2() {
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public final ModularScreen createScreen(PosGuiData posGuiData, ModularPanel mainPanel) {
+        return new GregTechGuiScreen(mainPanel, getUITheme());
+    }
+
+    public GTGuiTheme getUITheme() {
+        return GTGuiTheme.STANDARD;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
+        return null;
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
@@ -435,7 +486,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         ItemStack heldStack = playerIn.getHeldItem(hand);
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                if (usesMui2()) {
+                    MetaTileEntityGuiFactory.open(playerIn, this);
+                } else {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                }
             }
             return true;
         } else {
@@ -798,7 +853,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
     }
 
-    public final ItemStack getStackForm() {
+    @Override
+    public final @NotNull ItemStack getStackForm() {
         return getStackForm(1);
     }
 

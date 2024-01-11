@@ -24,7 +24,13 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -89,20 +95,27 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, BlockPos pos,
-                                           EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
 
         if (canOpen && player.isSneaking()) {
             compound.setBoolean(LIGHTER_OPEN, !compound.getBoolean(LIGHTER_OPEN));
             stack.setTagCompound(compound);
-            return EnumActionResult.PASS;
         }
+        return ActionResult.newResult(EnumActionResult.PASS, stack);
+    }
+
+    @Override
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, BlockPos pos,
+                                           EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+        NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
 
         if (!player.canPlayerEdit(pos, side, player.getHeldItem(hand))) return EnumActionResult.FAIL;
         // If this item does not have opening mechanics, or if it does and is currently open
-        if ((!canOpen || compound.getBoolean(LIGHTER_OPEN)) && consumeFuel(player, stack)) {
+        // If the item has opening mechanics, and the player is sneaking, close the item instead
+        if ((!canOpen || (compound.getBoolean(LIGHTER_OPEN)) && !player.isSneaking()) && consumeFuel(player, stack)) {
             player.getEntityWorld().playSound(null, player.getPosition(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
                     SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
             IBlockState blockState = world.getBlockState(pos);

@@ -155,6 +155,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         private final String researchId;
         private final ItemStack researchStack;
         private final ItemStack dataStack;
+        private final boolean ignoreNBT;
         private final int duration;
         private final int EUt;
         private final int CWUt;
@@ -166,12 +167,35 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
          * @param duration      the duration of the recipe
          * @param EUt           the EUt of the recipe
          * @param CWUt          how much computation per tick this recipe needs if in Research Station
+         *                      <p>
+         *                      By default, will ignore NBT on researchStack input. If NBT matching is desired, see
+         *                      {@link #ResearchRecipeEntry(String, ItemStack, ItemStack, boolean, int, int, int)}
          */
         public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
                                    @NotNull ItemStack dataStack, int duration, int EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
+            this.duration = duration;
+            this.EUt = EUt;
+            this.CWUt = CWUt;
+            this.ignoreNBT = true;
+        }
+
+        /**
+         * @param researchId    the id of the research to store
+         * @param researchStack the stack to scan for research
+         * @param dataStack     the stack to contain the data
+         * @param duration      the duration of the recipe
+         * @param EUt           the EUt of the recipe
+         * @param CWUt          how much computation per tick this recipe needs if in Research Station
+         */
+        public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
+                                   @NotNull ItemStack dataStack, boolean ignoreNBT, int duration, int EUt, int CWUt) {
+            this.researchId = researchId;
+            this.researchStack = researchStack;
+            this.dataStack = dataStack;
+            this.ignoreNBT = ignoreNBT;
             this.duration = duration;
             this.EUt = EUt;
             this.CWUt = CWUt;
@@ -190,6 +214,10 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         @NotNull
         public ItemStack getDataStack() {
             return dataStack;
+        }
+
+        public boolean getIgnoreNBT() {
+            return ignoreNBT;
         }
 
         public int getDuration() {

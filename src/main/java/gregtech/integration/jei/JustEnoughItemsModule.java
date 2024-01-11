@@ -28,9 +28,20 @@ import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
-import gregtech.integration.jei.basic.*;
+import gregtech.integration.jei.basic.GTFluidVeinCategory;
+import gregtech.integration.jei.basic.GTFluidVeinInfo;
+import gregtech.integration.jei.basic.GTOreCategory;
+import gregtech.integration.jei.basic.GTOreInfo;
+import gregtech.integration.jei.basic.MaterialTree;
+import gregtech.integration.jei.basic.MaterialTreeCategory;
+import gregtech.integration.jei.basic.OreByProduct;
+import gregtech.integration.jei.basic.OreByProductCategory;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
-import gregtech.integration.jei.recipe.*;
+import gregtech.integration.jei.recipe.FacadeRegistryPlugin;
+import gregtech.integration.jei.recipe.GTRecipeWrapper;
+import gregtech.integration.jei.recipe.IntCircuitCategory;
+import gregtech.integration.jei.recipe.IntCircuitRecipeWrapper;
+import gregtech.integration.jei.recipe.RecipeMapCategory;
 import gregtech.integration.jei.utils.MachineSubtypeHandler;
 import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
 import gregtech.integration.jei.utils.ModularUIGuiHandler;
@@ -46,7 +57,13 @@ import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import mezz.jei.Internal;
-import mezz.jei.api.*;
+import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.IJeiHelpers;
+import mezz.jei.api.IJeiRuntime;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.IModRegistry;
+import mezz.jei.api.ISubtypeRegistry;
+import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
@@ -57,10 +74,10 @@ import mezz.jei.input.InputHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -105,7 +122,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if (!recipeMap.isHidden) {
+            if (recipeMap.getRecipeMapUI().isJEIVisible()) {
                 for (GTRecipeCategory category : recipeMap.getRecipesByCategory().keySet()) {
                     registry.addRecipeCategories(
                             new RecipeMapCategory(recipeMap, category, registry.getJeiHelpers().getGuiHelper()));
@@ -146,7 +163,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                 VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if (!recipeMap.isHidden) {
+            if (recipeMap.getRecipeMapUI().isJEIVisible()) {
                 for (Map.Entry<GTRecipeCategory, List<Recipe>> entry : recipeMap.getRecipesByCategory().entrySet()) {
                     Stream<Recipe> recipeStream = entry.getValue().stream()
                             .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
@@ -197,7 +214,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TITANIUM_BOILER.getStackForm(), semiFluidMapId);
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER.getStackForm(), semiFluidMapId);
 
-        List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
+        List<OreByProduct> oreByproductList = new ArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 oreByproductList.add(new OreByProduct(material));
@@ -205,7 +222,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
-        MetaTileEntity[][] machineLists = new MetaTileEntity[][] {
+        MetaTileEntity[][] machineLists = {
                 MetaTileEntities.MACERATOR,
                 MetaTileEntities.ORE_WASHER,
                 MetaTileEntities.CENTRIFUGE,
@@ -220,7 +237,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
 
         // Material Tree
-        List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
+        List<MaterialTree> materialTreeList = new ArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.DUST)) {
                 materialTreeList.add(new MaterialTree(material));
@@ -230,7 +247,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
-        List<GTOreInfo> oreInfoList = new CopyOnWriteArrayList<>();
+        List<GTOreInfo> oreInfoList = new ArrayList<>();
         for (OreDepositDefinition vein : oreVeins) {
             oreInfoList.add(new GTOreInfo(vein));
         }
@@ -244,7 +261,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // Fluid Veins
         List<BedrockFluidDepositDefinition> fluidVeins = WorldGenRegistry.getBedrockVeinDeposits();
-        List<GTFluidVeinInfo> fluidVeinInfos = new CopyOnWriteArrayList<>();
+        List<GTFluidVeinInfo> fluidVeinInfos = new ArrayList<>();
         for (BedrockFluidDepositDefinition fluidVein : fluidVeins) {
             fluidVeinInfos.add(new GTFluidVeinInfo(fluidVein));
         }
@@ -290,7 +307,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
             showsRecipeFocuses.add(new MultiblockInfoRecipeFocusShower());
 
-        } catch (Exception e) {
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {
             getLogger().error("Could not reflect JEI Internal inputHandler", e);
         }
     }

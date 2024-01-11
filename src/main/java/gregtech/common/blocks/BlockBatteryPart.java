@@ -41,7 +41,7 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
     }
 
     @Override
-    public void addInformation(@NotNull ItemStack stack, @Nullable World world, List<String> tooltip,
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag advanced) {
         super.addInformation(stack, world, tooltip, advanced);
 

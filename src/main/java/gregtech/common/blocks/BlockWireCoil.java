@@ -49,7 +49,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, List<String> lines,
+    public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines,
                                @NotNull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
 

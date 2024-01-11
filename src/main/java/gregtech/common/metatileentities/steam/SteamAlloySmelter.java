@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,10 +61,10 @@ public class SteamAlloySmelter extends SteamMetaTileEntity {
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected void randomDisplayTick(float x, float y, float z, EnumParticleTypes flame, EnumParticleTypes smoke) {
-        super.randomDisplayTick(x, y, z, flame, smoke);
-        if (GTValues.RNG.nextBoolean()) {
-            getWorld().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, x, y + 0.5F, z, 0, 0, 0);
+    public void randomDisplayTick() {
+        super.randomDisplayTick();
+        if (isActive() && GTValues.RNG.nextBoolean()) {
+            VanillaParticleEffects.defaultFrontEffect(this, 0.5F, EnumParticleTypes.SMOKE_NORMAL);
         }
     }
 }

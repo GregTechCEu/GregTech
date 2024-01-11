@@ -9,7 +9,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
@@ -40,6 +44,11 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
     @Override
     public void onPipeConnectionsUpdate() {
+        NET_DATA.clear();
+    }
+
+    @Override
+    public void onChunkUnload() {
         NET_DATA.clear();
     }
 

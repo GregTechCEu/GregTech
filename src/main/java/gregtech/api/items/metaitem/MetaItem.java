@@ -1,7 +1,6 @@
 package gregtech.api.items.metaitem;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IFilteredFluidContainer;
@@ -33,6 +32,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -129,7 +129,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     protected final short metaItemOffset;
 
-    private CreativeTabs[] defaultCreativeTabs = new CreativeTabs[] { GregTechAPI.TAB_GREGTECH };
+    private CreativeTabs[] defaultCreativeTabs = new CreativeTabs[] { GTCreativeTabs.TAB_GREGTECH };
     private final Set<CreativeTabs> additionalCreativeTabs = new ObjectArraySet<>();
 
     private String translationKey = "metaitem";

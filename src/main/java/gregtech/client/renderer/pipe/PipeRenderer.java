@@ -100,7 +100,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     static {
         FACE_BORDER_MAP.put(EnumFacing.DOWN,
-                borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.WEST));
+                borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST));
         FACE_BORDER_MAP.put(EnumFacing.UP,
                 borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST));
         FACE_BORDER_MAP.put(EnumFacing.NORTH,
@@ -218,7 +218,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             CoverHolder coverHolder = pipeTile.getCoverableImplementation();
             coverHolder.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()),
                     renderLayer);
-            Textures.RENDER_STATE.set(null);
+            Textures.RENDER_STATE.remove();
         }
         return true;
     }

@@ -427,7 +427,12 @@ public class FluidBuilder {
                         yield ROOM_TEMPERATURE;
                     }
                     case GAS -> ROOM_TEMPERATURE;
-                    case PLASMA -> BASE_PLASMA_TEMPERATURE;
+                    case PLASMA -> {
+                        if (material.hasFluid() && material.getFluid() != null) {
+                            yield BASE_PLASMA_TEMPERATURE + material.getFluid().getTemperature();
+                        }
+                        yield BASE_PLASMA_TEMPERATURE;
+                    }
                 };
             } else {
                 temperature = property.getBlastTemperature() + switch (state) {
