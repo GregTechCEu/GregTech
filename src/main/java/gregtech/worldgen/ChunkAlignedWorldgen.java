@@ -1,17 +1,23 @@
 package gregtech.worldgen;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import gregtech.api.util.XSTR;
 import gregtech.api.util.math.ChunkPosDimension;
 import gregtech.worldgen.generator.ChunkAlignedSettings;
 import gregtech.worldgen.generator.ChunkAlignedWorldGenerator;
 import gregtech.worldgen.generator.EmptyVein;
+
 import net.minecraft.world.World;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static gregtech.worldgen.WorldgenModule.DEBUG;
@@ -21,7 +27,6 @@ public class ChunkAlignedWorldgen implements Runnable {
 
     private static final int ORIGIN_CHUNK_SEARCH_RADIUS = 2;
 
-    private static final Queue<ChunkPosDimension> chunksToProcess = new ArrayDeque<>();
     private static final Cache<ChunkPosDimension, ChunkAlignedWorldGenerator> cache = CacheBuilder.newBuilder()
             .expireAfterWrite(1, TimeUnit.MINUTES)
             .concurrencyLevel(1)
@@ -30,6 +35,8 @@ public class ChunkAlignedWorldgen implements Runnable {
             .build();
 
     private static final Collection<WorldgenCallback<ChunkAlignedSettings<?>>> callbacks = new ArrayList<>();
+
+    private final Queue<ChunkPosDimension> chunksToProcess = new ArrayDeque<>();
 
     private final int chunkX;
     private final int chunkZ;
