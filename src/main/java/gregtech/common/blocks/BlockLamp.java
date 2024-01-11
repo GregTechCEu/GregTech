@@ -1,13 +1,13 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.client.model.lamp.LampBakedModel;
 import gregtech.client.model.lamp.LampModelType;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;

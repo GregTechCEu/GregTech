@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.cable;
 
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -14,6 +13,7 @@ import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;

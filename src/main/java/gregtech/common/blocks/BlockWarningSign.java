@@ -1,8 +1,8 @@
 package gregtech.common.blocks;
 
 import gregtech.api.block.VariantBlock;
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;

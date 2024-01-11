@@ -17,7 +17,6 @@ import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.cover.CoverSaveHandler;
 import gregtech.api.cover.CoverUtil;
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -34,6 +33,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;

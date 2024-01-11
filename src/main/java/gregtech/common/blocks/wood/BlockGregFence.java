@@ -1,7 +1,7 @@
 package gregtech.common.blocks.wood;
 
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.SoundType;

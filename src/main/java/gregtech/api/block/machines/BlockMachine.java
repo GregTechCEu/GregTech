@@ -7,7 +7,6 @@ import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -17,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
 

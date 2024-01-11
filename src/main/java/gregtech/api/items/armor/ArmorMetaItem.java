@@ -1,9 +1,9 @@
 package gregtech.api.items.armor;
 
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
 import gregtech.api.items.metaitem.stats.IItemComponent;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;

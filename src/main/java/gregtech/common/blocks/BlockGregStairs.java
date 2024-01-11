@@ -1,7 +1,7 @@
 package gregtech.common.blocks;
 
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;

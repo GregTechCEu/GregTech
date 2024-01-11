@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.laser;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -9,6 +8,7 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 

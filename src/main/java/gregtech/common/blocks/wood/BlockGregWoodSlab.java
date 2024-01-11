@@ -1,8 +1,8 @@
 package gregtech.common.blocks.wood;
 
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.SoundType;

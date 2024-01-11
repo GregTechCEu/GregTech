@@ -1,7 +1,7 @@
 package gregtech.api.items.toolitem;
 
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;

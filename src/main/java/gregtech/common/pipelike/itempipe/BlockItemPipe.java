@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.itempipe;
 
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -10,6 +9,7 @@ import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;

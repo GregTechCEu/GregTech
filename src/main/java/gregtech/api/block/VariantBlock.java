@@ -1,7 +1,7 @@
 package gregtech.api.block;
 
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

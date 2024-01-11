@@ -1,7 +1,7 @@
 package gregtech.common.blocks.wood;
 
-import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.core.CoreModule;
 
 import net.minecraft.block.BlockLeaves;
