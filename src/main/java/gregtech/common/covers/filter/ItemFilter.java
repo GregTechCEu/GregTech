@@ -88,6 +88,9 @@ public abstract class ItemFilter {
     /** Uses Cleanroom MUI */
     public abstract @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager);
 
+    /** Uses Cleanroom MUI */
+    public abstract @NotNull ModularPanel createPanel(GuiSyncManager syncManager);
+
     /** Uses Cleanroom MUI - Creates the widgets standalone so that they can be put into their own panel */
 
     public abstract @NotNull ParentWidget<?> createWidgets(GuiSyncManager syncManager);

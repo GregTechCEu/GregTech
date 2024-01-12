@@ -180,6 +180,11 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
+    public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+        return GTGuis.createPanel("ore_dict_filter", 100, 100);
+    }
+
+    @Override
     @NotNull
     public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
         return new Row();

@@ -149,10 +149,8 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        return GTGuis.createPanel(this, 100, 100)
-                // todo add filter mode
-                .coverChildrenWidth()
-                .child(getItemFilter().createWidgets(guiSyncManager));
+        // todo add filter mode
+        return getItemFilter().createPanel(guiSyncManager);
     }
 
 

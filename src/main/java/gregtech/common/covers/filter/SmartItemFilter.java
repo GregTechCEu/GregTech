@@ -82,6 +82,11 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
+    public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+        return GTGuis.createPanel("smart_item_filter", 100, 100);
+    }
+
+    @Override
     @NotNull
     public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
         return new Row();
