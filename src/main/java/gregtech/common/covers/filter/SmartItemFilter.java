@@ -1,13 +1,7 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.widget.ParentWidget;
-
-import com.cleanroommc.modularui.widgets.layout.Row;
-
 import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -19,6 +13,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,7 +81,8 @@ public class SmartItemFilter extends ItemFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPopupPanel("smart_item_filter", 100, 100);
+        return GTGuis.createPopupPanel("smart_item_filter", 100, 100)
+                .child(createWidgets(syncManager));
     }
 
     @Override
@@ -89,7 +93,25 @@ public class SmartItemFilter extends ItemFilter {
     @Override
     @NotNull
     public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
-        return new Row();
+        var filterMode = new EnumSyncValue<>(SmartFilteringMode.class, filterReader::getFilteringMode, filterReader::setFilteringMode);
+        syncManager.syncValue("filter_mode", filterMode);
+
+        return new Column().coverChildren()
+                .child(createFilterModeButton(filterMode, SmartFilteringMode.ELECTROLYZER))
+                .child(createFilterModeButton(filterMode, SmartFilteringMode.CENTRIFUGE))
+                .child(createFilterModeButton(filterMode, SmartFilteringMode.SIFTER));
+    }
+
+    private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<SmartFilteringMode> value, SmartFilteringMode mode) {
+        return new ToggleButton().height(18).width(18 * 4)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .overlay(IKey.lang(mode.localeName));
+    }
+
+    protected  <T extends Enum<T>> BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
+        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
     }
 
     @Override
