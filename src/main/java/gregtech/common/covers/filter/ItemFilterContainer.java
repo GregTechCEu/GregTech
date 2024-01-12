@@ -141,7 +141,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return new Row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
-                        .slot(SyncHandlers.phantomItemSlot(filterInventory, 0)
+                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
                                 .filter(FilterTypeRegistry::isItemFilter)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                     if (newItem.isEmpty() || FilterTypeRegistry.isItemFilter(newItem)) {
