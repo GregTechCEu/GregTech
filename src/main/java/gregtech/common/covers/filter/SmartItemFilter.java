@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.utils.Alignment;
+
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -82,12 +84,13 @@ public class SmartItemFilter extends ItemFilter {
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
         return GTGuis.createPopupPanel("smart_item_filter", 100, 100)
-                .child(createWidgets(syncManager));
+                .child(IKey.str("Settings").asWidget().margin(4).align(Alignment.TopLeft))
+                .child(createWidgets(syncManager).bottom(4).left(4));
     }
 
     @Override
     public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPanel("smart_item_filter", 100, 100);
+        return GTGuis.createPanel("smart_item_filter", 100, 100).padding(7);
     }
 
     @Override
@@ -106,6 +109,7 @@ public class SmartItemFilter extends ItemFilter {
         return new ToggleButton().height(18).width(18 * 4)
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .hoverBackground()
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
                 .overlay(IKey.lang(mode.localeName));
     }

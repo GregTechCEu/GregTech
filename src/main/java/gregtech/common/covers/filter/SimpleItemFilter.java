@@ -77,15 +77,15 @@ public class SimpleItemFilter extends ItemFilter {
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
         return GTGuis.createPopupPanel("simple_item_filter", 81, 81)
-                .padding(4)
-                .child(createWidgets(syncManager).align(Alignment.BottomLeft));
+                .child(IKey.str("Settings").asWidget().margin(4).align(Alignment.TopLeft))
+                .child(createWidgets(syncManager).bottom(4).left(4));
     }
 
     @Override
     public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
         return GTGuis.createPanel("simple_item_filter", 176, 166)
-                .padding(7).child(new ParentWidget<>().bottom(0)
-                        .child(SlotGroupWidget.playerInventory(0)));
+                .padding(7)
+                .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
     }
 
     @Override
