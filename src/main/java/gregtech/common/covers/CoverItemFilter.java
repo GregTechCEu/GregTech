@@ -158,7 +158,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
         return getItemFilter().createPanel(guiSyncManager)
                 .child(new Column().left(4).top(4).coverChildren()
-                        .child(new Row().coverChildren().marginBottom(4)
+                        .child(new Row().coverChildren().marginBottom(4).left(0)
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH)))

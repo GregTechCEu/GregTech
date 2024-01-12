@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -88,19 +89,19 @@ public class FilterTypeRegistry {
         return createNewFilterInstance(filterClass);
     }
 
-    public static ItemFilter getItemFilterForStack(ItemStack itemStack) {
+    public static @NotNull ItemFilter getItemFilterForStack(ItemStack itemStack) {
         int filterId = getFilterIdForStack(itemStack);
         if (filterId == -1) {
-            return null;
+            throw new IllegalArgumentException(String.format("Failed to create filter instance for stack %s", itemStack));
         }
         Class<? extends ItemFilter> filterClass = itemFilterById.get(filterId);
         return createNewFilterInstance(filterClass, itemStack);
     }
 
-    public static FluidFilter getFluidFilterForStack(ItemStack itemStack) {
+    public static @NotNull FluidFilter getFluidFilterForStack(ItemStack itemStack) {
         int filterId = getFilterIdForStack(itemStack);
         if (filterId == -1) {
-            return null;
+            throw new IllegalArgumentException(String.format("Failed to create filter instance for stack %s", itemStack));
         }
         Class<? extends FluidFilter> filterClass = fluidFilterById.get(filterId);
         return createNewFilterInstance(filterClass, itemStack);
@@ -113,12 +114,12 @@ public class FilterTypeRegistry {
         return id;
     }
 
-    private static <T> T createNewFilterInstance(Class<T> filterClass, ItemStack stack) {
+    private static <T> @NotNull T createNewFilterInstance(Class<T> filterClass, ItemStack stack) {
         try {
             return filterClass.getDeclaredConstructor(stack.getClass()).newInstance(stack);
         } catch (ReflectiveOperationException exception) {
-            GTLog.logger.error("Failed to create filter instance for class {}", filterClass, exception);
-            return null;
+//            GTLog.logger.error("Failed to create filter instance for class {}", filterClass, exception);
+            throw new IllegalArgumentException(String.format("Failed to create filter instance for class %s", filterClass), exception);
         }
     }
 
