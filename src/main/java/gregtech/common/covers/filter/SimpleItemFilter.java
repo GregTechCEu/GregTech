@@ -1,5 +1,6 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 
@@ -76,14 +77,15 @@ public class SimpleItemFilter extends ItemFilter {
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
         return GTGuis.createPopupPanel("simple_item_filter", 81, 81)
-                .child(createWidgets(syncManager).left(4).bottom(4));
+                .padding(4)
+                .child(createWidgets(syncManager).align(Alignment.BottomLeft));
     }
 
     @Override
     public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
         return GTGuis.createPanel("simple_item_filter", 176, 166)
-                .padding(4)
-                .child(SlotGroupWidget.playerInventory(0).bottom(4));
+                .padding(7).child(new ParentWidget<>().bottom(0)
+                        .child(SlotGroupWidget.playerInventory(0)));
     }
 
     @Override
