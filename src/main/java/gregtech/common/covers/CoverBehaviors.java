@@ -67,9 +67,9 @@ public final class CoverBehaviors {
 
         registerBehavior(gregtechId("ore_dictionary_filter"), MetaItems.ORE_DICTIONARY_FILTER,
                 (def, tile, side) -> new CoverItemFilter(def, tile, side, "cover.ore_dictionary_filter.title",
-                        Textures.ORE_DICTIONARY_FILTER_OVERLAY, new OreDictionaryItemFilter()));
+                        Textures.ORE_DICTIONARY_FILTER_OVERLAY));
         registerBehavior(gregtechId("item_filter"), MetaItems.ITEM_FILTER, (def, tile, side) -> new CoverItemFilter(def,
-                tile, side, "cover.item_filter.title", Textures.ITEM_FILTER_FILTER_OVERLAY, new SimpleItemFilter()));
+                tile, side, "cover.item_filter.title", Textures.ITEM_FILTER_FILTER_OVERLAY));
         registerBehavior(gregtechId("fluid_filter"), MetaItems.FLUID_FILTER,
                 (def, tile, side) -> new CoverFluidFilter(def, tile, side, "cover.fluid_filter.title",
                         Textures.FLUID_FILTER_OVERLAY, new SimpleFluidFilter()));
@@ -100,7 +100,7 @@ public final class CoverBehaviors {
                 CoverMachineController::new);
         registerBehavior(gregtechId("smart_filter"), MetaItems.SMART_FILTER,
                 (def, tile, side) -> new CoverItemFilter(def, tile, side, "cover.smart_item_filter.title",
-                        Textures.SMART_FILTER_FILTER_OVERLAY, new SmartItemFilter()));
+                        Textures.SMART_FILTER_FILTER_OVERLAY));
         registerBehavior(gregtechId("facade"), MetaItems.COVER_FACADE, CoverFacade::new);
 
         registerBehavior(gregtechId("screen"), MetaItems.COVER_SCREEN, CoverScreen::new);

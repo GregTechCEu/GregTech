@@ -12,14 +12,15 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.covers.filter.ItemFilter;
 import gregtech.common.covers.filter.ItemFilterContainer;
-import gregtech.common.covers.filter.ItemFilterWrapper;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -34,6 +35,9 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
@@ -44,14 +48,42 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     protected ItemHandlerFiltered itemHandler;
 
     public CoverItemFilter(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
-                           @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture,
-                           ItemFilter itemFilter) {
+                           @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture) {
         super(definition, coverableView, attachedSide);
         this.titleLocale = titleLocale;
         this.texture = texture;
         this.itemFilter = new ItemFilterContainer(this);
-        this.itemFilter.setItemFilter(itemFilter);
+    }
+
+    @Override
+    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
+                             @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
+        super.onAttachment(coverableView, side, player, itemStack);
+        this.itemFilter.setItemFilter(FilterTypeRegistry.getItemFilterForStack(itemStack.copy()));
         this.itemFilter.setMaxStackSize(1);
+    }
+
+    @Override
+    public @NotNull ItemStack getPickItem() {
+        return this.getItemFilter() == null ? super.getPickItem() : this.getItemFilter().getContainerStack();
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        packetBuffer.writeBoolean(itemFilter.hasItemFilter());
+        if (itemFilter.hasItemFilter()) {
+            packetBuffer.writeItemStack(getItemFilter().getContainerStack());
+        }
+    }
+
+    @Override
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        if (!packetBuffer.readBoolean()) return;
+        try {
+            this.itemFilter.setItemFilter(FilterTypeRegistry.getItemFilterForStack(packetBuffer.readItemStack()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setFilterMode(ItemFilterMode filterMode) {
@@ -115,18 +147,15 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", filterMode.ordinal());
-        tagCompound.setBoolean("IsBlacklist", this.itemFilter.isBlacklistFilter());
-        NBTTagCompound filterComponent = new NBTTagCompound();
-        this.itemFilter.getItemFilter().writeToNBT(filterComponent);
-        tagCompound.setTag("Filter", filterComponent);
+        tagCompound.setTag("Filter", getItemFilter().getContainerStack().serializeNBT());
     }
 
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = ItemFilterMode.values()[tagCompound.getInteger("FilterMode")];
-        this.itemFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-        this.itemFilter.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
+        var stack = new ItemStack(tagCompound.getCompoundTag("Filter"));
+        this.itemFilter.setItemFilter(FilterTypeRegistry.getItemFilterForStack(stack));
     }
 
     @Override
