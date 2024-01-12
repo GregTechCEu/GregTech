@@ -131,7 +131,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 getItemFilter().setMaxStackSizer(stackSizer);
-                return getItemFilter().createUI(mainPanel, syncManager);
+                return getItemFilter().createUI(syncManager);
             }
         };
         manager.syncValue("filter_panel", panel);
@@ -140,7 +140,12 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
                         .slot(new FilterSlot(filterInventory, 0)
-                                .filter(this::isFilter)
+                                .filter(FilterTypeRegistry::isItemFilter)
+                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                    if (newItem.isEmpty() || FilterTypeRegistry.isItemFilter(newItem)) {
+                                        onFilterSlotChange(true);
+                                    }
+                                })
                                 .singletonSlotGroup(101))
                         .onUpdateListener(w -> {
                             if (!hasItemFilter() && panel.isPanelOpen()) {
@@ -259,10 +264,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return currentItemFilter != null;
     }
 
-    public boolean isFilter(ItemStack stack) {
-        return FilterTypeRegistry.getItemFilterForStack(stack) != null;
-    }
-
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         packetBuffer.writeItemStack(getFilterInventory().getStackInSlot(0));
     }
@@ -282,11 +283,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         tagCompound.setTag("FilterInventory", filterInventory.serializeNBT());
         tagCompound.setInteger("MaxStackSize", maxStackSize);
         tagCompound.setInteger("TransferStackSize", transferStackSize);
-        if (getItemFilter() != null) {
-            NBTTagCompound filterInventory = new NBTTagCompound();
-            getItemFilter().writeToNBT(filterInventory);
-            tagCompound.setTag("Filter", filterInventory);
-        }
         return tagCompound;
     }
 
@@ -296,9 +292,6 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(getFilterInventory().getStackInSlot(0));
         this.maxStackSize = tagCompound.getInteger("MaxStackSize");
         this.transferStackSize = tagCompound.getInteger("TransferStackSize");
-        if (getItemFilter() != null) {
-            this.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
-        }
     }
 
     protected class FilterSlot extends ModularSlot {
@@ -307,9 +300,5 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
             super(itemHandler, index);
         }
 
-        @Override
-        public void onSlotChanged() {
-            onFilterSlotChange(true);
-        }
     }
 }
