@@ -277,7 +277,7 @@ public class GTGuiTextures {
     public static final UITexture BUTTON = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/widget/button.png")
             .imageSize(18, 18)
-            .adaptable(1)
+            .adaptable(2)
             .name(IDs.STANDARD_BUTTON)
             .canApplyTheme()
             .build();
@@ -286,13 +286,13 @@ public class GTGuiTextures {
             .location("modularui", "gui/widgets/mc_button.png") // todo
             .imageSize(16, 32)
             .uv(0.0f, 0.0f, 1.0f, 0.5f)
-            .adaptable(1)
+            .adaptable(2)
             .build();
 
     public static final UITexture MC_BUTTON_DISABLED = new UITexture.Builder()
             .location("modularui", "gui/widgets/mc_button_disabled.png") // todo
             .imageSize(16, 16)
-            .adaptable(1)
+            .adaptable(2)
             .build();
 
     // BUTTON OVERLAYS
