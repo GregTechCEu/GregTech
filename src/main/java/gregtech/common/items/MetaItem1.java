@@ -47,6 +47,9 @@ import gregtech.common.items.behaviors.TerminalBehaviour;
 import gregtech.common.items.behaviors.TooltipBehavior;
 import gregtech.common.items.behaviors.TricorderBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
+import gregtech.common.items.behaviors.filter.OreDictFilterUIManager;
+import gregtech.common.items.behaviors.filter.SimpleFilterUIManager;
+import gregtech.common.items.behaviors.filter.SmartFilterUIManager;
 import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
@@ -582,11 +585,14 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
         ITEM_FILTER = addItem(291, "item_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2),
-                        new MaterialStack(Materials.Steel, M)));
+                        new MaterialStack(Materials.Steel, M)))
+                .addComponents(new SimpleFilterUIManager());
         ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)))
+                .addComponents(new OreDictFilterUIManager());
         SMART_FILTER = addItem(293, "smart_item_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 3 / 2)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 3 / 2)))
+                .addComponents(new SmartFilterUIManager());
 
         // Functional Covers: ID 301-330
         COVER_MACHINE_CONTROLLER = addItem(301, "cover.controller");
