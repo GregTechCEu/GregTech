@@ -76,15 +76,14 @@ public class SimpleItemFilter extends ItemFilter {
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
         return GTGuis.createPopupPanel("simple_item_filter", 81, 81)
-                .child(createWidgets(syncManager));
+                .child(createWidgets(syncManager).left(4).bottom(4));
     }
 
     @Override
     public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
         return GTGuis.createPanel("simple_item_filter", 176, 166)
-                .padding(7)
-                .child(createWidgets(syncManager))
-                .bindPlayerInventory(0);
+                .padding(4)
+                .child(SlotGroupWidget.playerInventory(0).bottom(4));
     }
 
     @Override
@@ -97,8 +96,7 @@ public class SimpleItemFilter extends ItemFilter {
 
         syncManager.registerSlotGroup(filterInventory);
 
-        return new Row().left(4).bottom(4)
-                .coverChildren()
+        return new Row().coverChildren()
                 .child(SlotGroupWidget.builder()
                         .matrix("XXX",
                                 "XXX",
@@ -109,9 +107,8 @@ public class SimpleItemFilter extends ItemFilter {
                                     int count = this.filterReader.getItemsNbt()
                                             .getCompoundTagAt(index)
                                             .getInteger(COUNT);
-                                    if (count <= 0) return;
-
-                                    tooltip.addLine(IKey.str(TextFormattingUtil.formatNumbers(count)));
+                                    if (count > 64)
+                                        tooltip.addLine(IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                 })
                                 .slot(new PhantomItemSlot(this.filterReader, index, getMaxStackSizer())
                                         .slotGroup(filterInventory)

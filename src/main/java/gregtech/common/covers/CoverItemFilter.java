@@ -1,5 +1,7 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.widgets.layout.Column;
+
 import gregtech.api.capability.impl.ItemHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
@@ -155,10 +157,12 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         guiSyncManager.syncValue("filtering_mode", filteringMode);
 
         return getItemFilter().createPanel(guiSyncManager)
-                .child(new Row().coverChildren().left(4).top(4)
-                        .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
-                        .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
-                        .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH)));
+                .child(new Column().left(4).top(4).coverChildren()
+                        .child(new Row().coverChildren().marginBottom(4)
+                                .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
+                                .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
+                                .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH)))
+                        .child(getItemFilter().createWidgets(guiSyncManager)));
     }
 
     private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<ItemFilterMode> value, ItemFilterMode mode) {
