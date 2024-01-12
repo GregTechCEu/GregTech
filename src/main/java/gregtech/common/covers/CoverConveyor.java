@@ -522,7 +522,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             getItemFilterContainer().setFilterStackSizer(this::getMaxStackSize);
         }
 
-        return panel.child(createTitleRow())
+        return panel.child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(createUI(panel, guiSyncManager))
                 .bindPlayerInventory();
     }

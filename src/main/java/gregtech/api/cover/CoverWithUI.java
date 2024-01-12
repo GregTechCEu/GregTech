@@ -92,13 +92,12 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
     /**
      * Create the Title bar widget for a Cover.
      */
-    default Row createTitleRow() {
-        ItemStack item = getDefinition().getDropItemStack();
+    static Row createTitleRow(ItemStack stack) {
         return new Row()
                 .pos(4, 4)
                 .height(16).coverChildrenWidth()
-                .child(new ItemDrawable(getDefinition().getDropItemStack()).asWidget().size(16).marginRight(4))
-                .child(IKey.str(item.getDisplayName()).color(UI_TITLE_COLOR).asWidget().heightRel(1.0f));
+                .child(new ItemDrawable(stack).asWidget().size(16).marginRight(4))
+                .child(IKey.str(stack.getDisplayName()).color(UI_TITLE_COLOR).asWidget().heightRel(1.0f));
     }
 
     /**
