@@ -21,39 +21,35 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 public class SmartItemFilter extends ItemFilter {
-
-    private SmartFilteringMode filteringMode = SmartFilteringMode.ELECTROLYZER;
+    private SmartFilterReader filterReader;
 
     public SmartItemFilter(ItemStack stack) {
-//        super(stack);
+        this.filterReader = new SmartFilterReader(stack);
+        setFilterReader(this.filterReader);
     }
 
     public SmartFilteringMode getFilteringMode() {
-        return filteringMode;
-    }
-
-    public void setFilteringMode(SmartFilteringMode filteringMode) {
-        this.filteringMode = filteringMode;
-        markDirty();
+        return this.filterReader.getFilteringMode();
     }
 
     @Override
     public int getStackTransferLimit(ItemStack stack, int globalTransferLimit) {
         ItemAndMetadata itemAndMetadata = new ItemAndMetadata(stack);
-        int cachedTransferRateValue = filteringMode.transferStackSizesCache.getOrDefault(itemAndMetadata, -1);
+        var filterMode = this.filterReader.getFilteringMode();
+        int cachedTransferRateValue = filterMode.transferStackSizesCache.getOrDefault(itemAndMetadata, -1);
 
         if (cachedTransferRateValue == -1) {
             ItemStack infinitelyBigStack = stack.copy();
             infinitelyBigStack.setCount(Integer.MAX_VALUE);
 
-            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE,
+            Recipe recipe = filterMode.recipeMap.findRecipe(Long.MAX_VALUE,
                     Collections.singletonList(infinitelyBigStack), Collections.emptyList());
             if (recipe == null) {
-                filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
+                filterMode.transferStackSizesCache.put(itemAndMetadata, 0);
                 cachedTransferRateValue = 0;
             } else {
                 GTRecipeInput inputIngredient = recipe.getInputs().iterator().next();
-                filteringMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getAmount());
+                filterMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getAmount());
                 cachedTransferRateValue = inputIngredient.getAmount();
             }
         }
@@ -63,28 +59,6 @@ public class SmartItemFilter extends ItemFilter {
 
     @Override
     public MatchResult<Integer> matchItemStack(ItemStack itemStack) {
-//        ItemAndMetadata itemAndMetadata = new ItemAndMetadata(itemStack);
-//        Integer cachedTransferRateValue = filteringMode.transferStackSizesCache.getInt(itemAndMetadata);
-//
-//        if (cachedTransferRateValue == null) {
-//            ItemStack infinitelyBigStack = itemStack.copy();
-//            infinitelyBigStack.setCount(Integer.MAX_VALUE);
-//
-//            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE,
-//                    Collections.singletonList(infinitelyBigStack), Collections.emptyList());
-//            if (recipe == null) {
-//                filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
-//                cachedTransferRateValue = 0;
-//            } else {
-//                GTRecipeInput inputIngredient = recipe.getInputs().iterator().next();
-//                filteringMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getAmount());
-//                cachedTransferRateValue = inputIngredient.getAmount();
-//            }
-//        }
-//
-//        if (cachedTransferRateValue == 0) {
-//            return Match.FAIL;
-//        }
         int data = getStackTransferLimit(itemStack, Integer.MAX_VALUE);
         var match = data > 0 ? Match.SUCCEED : Match.FAIL;
         return ItemFilter.createResult(match, data);
@@ -93,7 +67,7 @@ public class SmartItemFilter extends ItemFilter {
     @Override
     public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
-                SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
+                SmartFilteringMode.class, filterReader::getFilteringMode, filterReader::setFilteringMode)
                         .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
     }
 
@@ -109,12 +83,12 @@ public class SmartItemFilter extends ItemFilter {
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setInteger("FilterMode", filteringMode.ordinal());
+//        tagCompound.setInteger("FilterMode", filteringMode.ordinal());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-        this.filteringMode = SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")];
+//        this.filteringMode = SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")];
     }
 
     private static class ItemAndMetadataAndStackSize {
@@ -160,6 +134,23 @@ public class SmartItemFilter extends ItemFilter {
         @Override
         public String getName() {
             return localeName;
+        }
+    }
+
+    protected class SmartFilterReader extends BaseFilterReader {
+
+        private static final String FILTER_MODE = "FilterMode";
+        public SmartFilterReader(ItemStack container) {
+            super(container, 0);
+        }
+
+        public SmartFilteringMode getFilteringMode() {
+            return SmartFilteringMode.values()[getStackTag().getInteger(FILTER_MODE)];
+        }
+
+        public void setFilteringMode(SmartFilteringMode filteringMode) {
+            getStackTag().setInteger(FILTER_MODE, filteringMode.ordinal());
+            markDirty();
         }
     }
 }
