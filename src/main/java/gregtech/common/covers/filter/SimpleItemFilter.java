@@ -81,8 +81,10 @@ public class SimpleItemFilter extends ItemFilter {
 
     @Override
     public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPanel("simple_item_filter", 81, 81)
-                .child(createWidgets(syncManager));
+        return GTGuis.createPanel("simple_item_filter", 176, 166)
+                .padding(7)
+                .child(createWidgets(syncManager))
+                .bindPlayerInventory(0);
     }
 
     @Override

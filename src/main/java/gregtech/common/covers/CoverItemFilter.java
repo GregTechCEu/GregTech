@@ -1,9 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.factory.SidedPosGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
 import gregtech.api.capability.impl.ItemHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
@@ -11,10 +7,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.FilterTypeRegistry;
@@ -39,6 +32,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,9 +130,9 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new LabelWidget(10, 5, titleLocale));
-        filterGroup.addWidget(new CycleButtonWidget(10, 20, 110, 20,
+        gregtech.api.gui.widgets.WidgetGroup filterGroup = new gregtech.api.gui.widgets.WidgetGroup();
+        filterGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(10, 5, titleLocale));
+        filterGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(10, 20, 110, 20,
                 GTUtility.mapToString(ItemFilterMode.values(), it -> it.localeName),
                 () -> filterMode.ordinal(), (newMode) -> setFilterMode(ItemFilterMode.values()[newMode])));
         this.itemFilter.initFilterUI(45, filterGroup::addWidget);
@@ -149,10 +150,29 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        // todo add filter mode
-        return getItemFilter().createPanel(guiSyncManager);
+        var filteringMode = new EnumSyncValue<>(ItemFilterMode.class, this::getFilterMode, this::setFilterMode);
+
+        guiSyncManager.syncValue("filtering_mode", filteringMode);
+
+        return getItemFilter().createPanel(guiSyncManager)
+                .child(new Row().coverChildren().left(4).top(4)
+                        .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
+                        .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
+                        .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH)));
     }
 
+    private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<ItemFilterMode> value, ItemFilterMode mode) {
+        return new ToggleButton().size(18)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+//                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()]) todo new overlays
+                .addTooltipLine(switch (mode) {
+                    case FILTER_INSERT -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
+                    case FILTER_EXTRACT -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
+                    case FILTER_BOTH -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
+                });
+    }
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
