@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 
-import com.cleanroommc.modularui.widget.Widget;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +23,10 @@ import java.util.function.Consumer;
 public class SmartItemFilter extends ItemFilter {
 
     private SmartFilteringMode filteringMode = SmartFilteringMode.ELECTROLYZER;
+
+    public SmartItemFilter(ItemStack stack) {
+//        super(stack);
+    }
 
     public SmartFilteringMode getFilteringMode() {
         return filteringMode;
@@ -95,13 +98,8 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createUI(GuiSyncManager syncManager) {
         return ModularPanel.defaultPanel("smart_item_filter");
-    }
-
-    @Override
-    public int getTotalOccupiedHeight() {
-        return 20;
     }
 
     @Override

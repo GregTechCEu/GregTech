@@ -5,6 +5,7 @@ import gregtech.api.util.Position;
 
 import net.minecraft.network.PacketBuffer;
 
+import java.io.IOException;
 import java.util.function.Supplier;
 
 public class WidgetGroupItemFilter extends AbstractWidgetGroup {
@@ -31,8 +32,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
             writeUpdateInfo(2, buffer -> {
                 if (itemFilter != null) {
                     buffer.writeBoolean(true);
-                    int filterId = FilterTypeRegistry.getIdForItemFilter(itemFilter);
-                    buffer.writeVarInt(filterId);
+                    buffer.writeItemStack(itemFilter.getContainerStack());
                 } else {
                     buffer.writeBoolean(false);
                 }
@@ -51,10 +51,14 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
         if (id == 2) {
             clearAllWidgets();
             if (buffer.readBoolean()) {
-                int filterId = buffer.readVarInt();
-                this.itemFilter = FilterTypeRegistry.createItemFilterById(filterId);
-                this.itemFilter.initUI(this::addWidget);
-                this.itemFilter.setMaxStackSize(maxStackSize);
+//                int filterId = buffer.readVarInt();
+                try {
+                    this.itemFilter = FilterTypeRegistry.getItemFilterForStack(buffer.readItemStack());
+                    this.itemFilter.initUI(this::addWidget);
+                    this.itemFilter.setMaxStackSize(maxStackSize);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else if (id == 3) {
             this.maxStackSize = buffer.readVarInt();

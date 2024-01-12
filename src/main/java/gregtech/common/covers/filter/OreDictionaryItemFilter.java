@@ -2,7 +2,6 @@ package gregtech.common.covers.filter;
 
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.widget.Widget;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
@@ -52,6 +51,10 @@ public class OreDictionaryItemFilter extends ItemFilter {
      * all entries to match
      */
     private boolean matchAll;
+
+    public OreDictionaryItemFilter(ItemStack stack) {
+//        super(stack);
+    }
 
     @NotNull
     public String getExpression() {
@@ -177,7 +180,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createUI(GuiSyncManager syncManager) {
         return ModularPanel.defaultPanel("ore_dict_filter");
     }
 
@@ -240,11 +243,6 @@ public class OreDictionaryItemFilter extends ItemFilter {
     @Override
     public boolean showGlobalTransferLimitSlider() {
         return true;
-    }
-
-    @Override
-    public int getTotalOccupiedHeight() {
-        return 37;
     }
 
     @Override
