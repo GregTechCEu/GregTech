@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
@@ -200,7 +201,7 @@ public class PartsRecipeHandler {
             }
         }
 
-        if (material.hasFluid()) {
+        if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
             boolean isSmall = gearPrefix == OrePrefix.gearSmall;
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(isSmall ? MetaItems.SHAPE_MOLD_GEAR_SMALL : MetaItems.SHAPE_MOLD_GEAR)
@@ -285,7 +286,7 @@ public class PartsRecipeHandler {
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, DustProperty property) {
-        if (material.hasFluid()) {
+        if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_PLATE)
                     .fluidInputs(material.getFluid(L))
@@ -399,7 +400,7 @@ public class PartsRecipeHandler {
                 'S', new UnificationEntry(screw, material),
                 'R', new UnificationEntry(ring, material));
 
-        if (material.hasFluid()) {
+        if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_ROTOR)
                     .fluidInputs(material.getFluid(L * 4))

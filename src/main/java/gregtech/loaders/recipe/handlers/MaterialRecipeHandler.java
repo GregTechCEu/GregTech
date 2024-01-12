@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
@@ -286,7 +287,7 @@ public class MaterialRecipeHandler {
             }
         }
 
-        if (material.hasFluid()) {
+        if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
                     .fluidInputs(material.getFluid(L))
@@ -424,7 +425,7 @@ public class MaterialRecipeHandler {
                     .output(ingot, material)
                     .buildAndRegister();
 
-            if (material.hasFluid()) {
+            if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
                 RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                         .notConsumable(MetaItems.SHAPE_MOLD_NUGGET)
                         .fluidInputs(material.getFluid(L))
@@ -465,7 +466,7 @@ public class MaterialRecipeHandler {
     public static void processBlock(OrePrefix blockPrefix, Material material, DustProperty property) {
         ItemStack blockStack = OreDictUnifier.get(blockPrefix, material);
         long materialAmount = blockPrefix.getMaterialAmount(material);
-        if (material.hasFluid()) {
+        if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
                     .fluidInputs(material.getFluid((int) (materialAmount * L / M)))
