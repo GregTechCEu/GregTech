@@ -7,6 +7,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 
+import gregtech.api.cover.CoverWithUI;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 
@@ -41,7 +42,8 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     public abstract ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager);
 
     protected final ModularPanel createBasePanel(ItemStack stack) {
-        return GTGuis.createPanel(stack, getWidth(), getHeight());
+        return GTGuis.createPanel(stack, getWidth(), getHeight())
+                .child(CoverWithUI.createTitleRow(stack));
     }
 
     protected int getWidth() {

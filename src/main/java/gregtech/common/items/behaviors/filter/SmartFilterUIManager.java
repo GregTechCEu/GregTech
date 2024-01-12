@@ -1,21 +1,19 @@
 package gregtech.common.items.behaviors.filter;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
+import gregtech.common.covers.filter.FilterTypeRegistry;
+
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import gregtech.common.covers.filter.FilterTypeRegistry;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 
 public class SmartFilterUIManager extends BaseFilterUIManager {
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
         var filter = FilterTypeRegistry.getItemFilterForStack(guiData.getUsedItemStack());
-        return createBasePanel(filter.getContainerStack())
-                .child(IKey.str("Settings").asWidget()
-                        .margin(4).height(14).align(Alignment.TopLeft))
-                .child(filter.createWidgets(guiSyncManager).left(7).top(18));
+        return createBasePanel(filter.getContainerStack()).height(166)
+                .child(filter.createWidgets(guiSyncManager).left(7).top(22))
+                .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
     }
 }
