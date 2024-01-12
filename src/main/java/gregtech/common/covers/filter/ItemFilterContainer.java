@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
@@ -139,7 +141,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return new Row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
-                        .slot(new FilterSlot(filterInventory, 0)
+                        .slot(SyncHandlers.phantomItemSlot(filterInventory, 0)
                                 .filter(FilterTypeRegistry::isItemFilter)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                     if (newItem.isEmpty() || FilterTypeRegistry.isItemFilter(newItem)) {
@@ -292,13 +294,5 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(getFilterInventory().getStackInSlot(0));
         this.maxStackSize = tagCompound.getInteger("MaxStackSize");
         this.transferStackSize = tagCompound.getInteger("TransferStackSize");
-    }
-
-    protected class FilterSlot extends ModularSlot {
-
-        public FilterSlot(IItemHandler itemHandler, int index) {
-            super(itemHandler, index);
-        }
-
     }
 }
