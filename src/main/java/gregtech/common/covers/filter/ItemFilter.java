@@ -152,7 +152,7 @@ public abstract class ItemFilter {
     protected static class BaseFilterReader extends ItemStackItemHandler {
 
         protected final ItemStack container;
-        private Supplier<Integer> maxStackSizer = () -> Integer.MAX_VALUE;
+        private Supplier<Integer> maxStackSizer = () -> 1;
         private int cache;
         public BaseFilterReader(ItemStack container, int slots) {
             super(container, slots);
