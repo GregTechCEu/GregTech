@@ -15,7 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -28,7 +27,6 @@ import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
-import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -133,7 +131,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 getItemFilter().setMaxStackSizer(stackSizer);
-                return getItemFilter().createUI(syncManager);
+                return getItemFilter().createPopupPanel(syncManager);
             }
         };
         manager.syncValue("filter_panel", panel);

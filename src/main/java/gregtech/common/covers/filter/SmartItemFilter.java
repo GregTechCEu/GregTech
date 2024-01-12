@@ -3,7 +3,12 @@ package gregtech.common.covers.filter;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 
+import com.cleanroommc.modularui.widget.ParentWidget;
+
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
@@ -72,8 +77,14 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createUI(GuiSyncManager syncManager) {
-        return ModularPanel.defaultPanel("smart_item_filter");
+    public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+        return GTGuis.createPopupPanel("smart_item_filter", 100, 100);
+    }
+
+    @Override
+    @NotNull
+    public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
+        return new Row();
     }
 
     @Override

@@ -3,11 +3,16 @@ package gregtech.common.covers.filter;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 
+import com.cleanroommc.modularui.widget.ParentWidget;
+
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.ItemVariantMap;
 import gregtech.api.unification.stack.MultiItemVariantMap;
@@ -170,8 +175,14 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createUI(GuiSyncManager syncManager) {
-        return ModularPanel.defaultPanel("ore_dict_filter");
+    public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+        return GTGuis.createPopupPanel("ore_dict_filter", 100, 100);
+    }
+
+    @Override
+    @NotNull
+    public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
+        return new Row();
     }
 
     @Override

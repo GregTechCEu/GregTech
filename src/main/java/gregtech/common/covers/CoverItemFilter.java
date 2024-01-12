@@ -1,5 +1,9 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
 import gregtech.api.capability.impl.ItemHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
@@ -10,6 +14,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.FilterTypeRegistry;
@@ -136,6 +141,20 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
                 .build(this, player);
     }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        return GTGuis.createPanel(this, 100, 100)
+                // todo add filter mode
+                .coverChildrenWidth()
+                .child(getItemFilter().createWidgets(guiSyncManager));
+    }
+
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,

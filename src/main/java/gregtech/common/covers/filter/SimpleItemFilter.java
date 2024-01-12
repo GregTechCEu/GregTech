@@ -1,5 +1,6 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 
 import gregtech.api.gui.GuiTextures;
@@ -73,58 +74,60 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createUI(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+        return GTGuis.createPopupPanel("simple_item_filter", 81, 81);
+    }
+
+    @Override
+    @NotNull
+    public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
         var blacklist = new BooleanSyncValue(this.filterReader::isBlacklistFilter, this.filterReader::setBlacklistFilter);
         var ignoreDamage = new BooleanSyncValue(this.filterReader::isIgnoreDamage, this.filterReader::setIgnoreDamage);
         var ignoreNBT = new BooleanSyncValue(this.filterReader::isIgnoreNBT, this.filterReader::setIgnoreNBT);
 
         syncManager.registerSlotGroup(filterInventory);
-        syncManager.syncValue("filter_blacklist", blacklist);
-        syncManager.syncValue("ignore_damage", ignoreDamage);
-        syncManager.syncValue("ignore_nbt", ignoreNBT);
 
-        return GTGuis.createPopupPanel("simple_item_filter", 18 * 4 + 9, 18 * 4 + 9)
-                .child(new Row().left(4).bottom(4)
-                        .coverChildren()
-                        .child(SlotGroupWidget.builder()
-                                .matrix("XXX",
-                                        "XXX",
-                                        "XXX")
-                                .key('X', index -> new ItemSlot()
-                                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                                        .tooltipBuilder(tooltip -> {
-                                            int count = this.filterReader.getItemsNbt()
-                                                .getCompoundTagAt(index)
-                                                .getInteger(COUNT);
-                                            if (count <= 0) return;
+        return new Row().left(4).bottom(4)
+                .coverChildren()
+                .child(SlotGroupWidget.builder()
+                        .matrix("XXX",
+                                "XXX",
+                                "XXX")
+                        .key('X', index -> new ItemSlot()
+                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                                .tooltipBuilder(tooltip -> {
+                                    int count = this.filterReader.getItemsNbt()
+                                            .getCompoundTagAt(index)
+                                            .getInteger(COUNT);
+                                    if (count <= 0) return;
 
-                                            tooltip.addLine(IKey.str(TextFormattingUtil.formatNumbers(count)));
-                                        })
-                                        .slot(new PhantomItemSlot(this.filterReader, index, getMaxStackSizer())
-                                                .slotGroup(filterInventory)
-                                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                                    if (onlyAmountChanged && !init) {
-                                                        markDirty();
-                                                    }
-                                                })))
-                                .build())
-                        .child(new Column().width(18).coverChildren()
-                                .child(new CycleButtonWidget()
-                                        .value(blacklist)
-                                        .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
-                                        .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
-                                        .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")))
-                                .child(new CycleButtonWidget()
-                                        .value(ignoreDamage)
-                                        .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_DAMAGE[state])
-                                        .addTooltip(0, IKey.lang("cover.item_filter.ignore_damage.disabled"))
-                                        .addTooltip(1, IKey.lang("cover.item_filter.ignore_damage.enabled")))
-                                .child(new CycleButtonWidget()
-                                        .value(ignoreNBT)
-                                        .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_NBT[state])
-                                        .addTooltip(0, IKey.lang("cover.item_filter.ignore_nbt.disabled"))
-                                        .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.enabled")))));
+                                    tooltip.addLine(IKey.str(TextFormattingUtil.formatNumbers(count)));
+                                })
+                                .slot(new PhantomItemSlot(this.filterReader, index, getMaxStackSizer())
+                                        .slotGroup(filterInventory)
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                            if (onlyAmountChanged && !init) {
+                                                markDirty();
+                                            }
+                                        })))
+                        .build())
+                .child(new Column().width(18).coverChildren()
+                        .child(new CycleButtonWidget()
+                                .value(blacklist)
+                                .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
+                                .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
+                                .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")))
+                        .child(new CycleButtonWidget()
+                                .value(ignoreDamage)
+                                .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_DAMAGE[state])
+                                .addTooltip(0, IKey.lang("cover.item_filter.ignore_damage.disabled"))
+                                .addTooltip(1, IKey.lang("cover.item_filter.ignore_damage.enabled")))
+                        .child(new CycleButtonWidget()
+                                .value(ignoreNBT)
+                                .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_NBT[state])
+                                .addTooltip(0, IKey.lang("cover.item_filter.ignore_nbt.disabled"))
+                                .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.enabled"))));
     }
 
     @Override

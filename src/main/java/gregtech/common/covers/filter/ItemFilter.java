@@ -2,6 +2,8 @@ package gregtech.common.covers.filter;
 
 import com.cleanroommc.modularui.utils.ItemStackItemHandler;
 
+import com.cleanroommc.modularui.widget.ParentWidget;
+
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
@@ -84,7 +86,11 @@ public abstract class ItemFilter {
     public abstract void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup);
 
     /** Uses Cleanroom MUI */
-    public abstract @NotNull ModularPanel createUI(GuiSyncManager syncManager);
+    public abstract @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager);
+
+    /** Uses Cleanroom MUI - Creates the widgets standalone so that they can be put into their own panel */
+
+    public abstract @NotNull ParentWidget<?> createWidgets(GuiSyncManager syncManager);
 
     public void writeToNBT(NBTTagCompound tagCompound) {
 //        tagCompound.setBoolean("IsBlacklist", this.isBlacklistFilter);
