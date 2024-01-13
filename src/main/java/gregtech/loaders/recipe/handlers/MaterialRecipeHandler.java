@@ -290,7 +290,7 @@ public class MaterialRecipeHandler {
         if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
-                    .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), L))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L))
                     .outputs(OreDictUnifier.get(ingotPrefix, material))
                     .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
@@ -428,7 +428,7 @@ public class MaterialRecipeHandler {
             if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
                 RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                         .notConsumable(MetaItems.SHAPE_MOLD_NUGGET)
-                        .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), L))
+                        .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L))
                         .outputs(OreDictUnifier.get(orePrefix, material, 9))
                         .duration((int) material.getMass())
                         .EUt(VA[ULV])
@@ -469,7 +469,7 @@ public class MaterialRecipeHandler {
         if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
-                    .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), ((int) (materialAmount * L / M))))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, ((int) (materialAmount * L / M))))
                     .outputs(blockStack)
                     .duration((int) material.getMass()).EUt(VA[ULV])
                     .buildAndRegister();

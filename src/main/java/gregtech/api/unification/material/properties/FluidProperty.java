@@ -9,6 +9,8 @@ import gregtech.api.unification.material.Material;
 
 import net.minecraftforge.fluids.Fluid;
 
+import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +48,10 @@ public class FluidProperty implements IMaterialProperty {
             return material.getFluid(FluidStorageKeys.LIQUID);
         }
         return solidifyingFluid;
+    }
+
+    public FluidStack solidifiesFrom(Material material, int amount) {
+        return new FluidStack(solidifiesFrom(material), amount);
     }
 
     public void setSolidifyingFluid(@Nullable Fluid solidifyingFluid) {

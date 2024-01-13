@@ -206,7 +206,7 @@ public class PartsRecipeHandler {
             boolean isSmall = gearPrefix == OrePrefix.gearSmall;
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(isSmall ? MetaItems.SHAPE_MOLD_GEAR_SMALL : MetaItems.SHAPE_MOLD_GEAR)
-                    .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), L * (isSmall ? 1 : 4)))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L * (isSmall ? 1 : 4)))
                     .outputs(stack)
                     .duration(isSmall ? 20 : 100)
                     .EUt(VA[ULV])
@@ -290,7 +290,7 @@ public class PartsRecipeHandler {
         if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_PLATE)
-                    .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), L))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L))
                     .outputs(OreDictUnifier.get(platePrefix, material))
                     .duration(40)
                     .EUt(VA[ULV])
@@ -404,7 +404,7 @@ public class PartsRecipeHandler {
         if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_ROTOR)
-                    .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), L * 4))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L * 4))
                     .outputs(GTUtility.copy(stack))
                     .duration(120)
                     .EUt(20)
