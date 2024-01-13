@@ -3,6 +3,12 @@ package gregtech.api.unification.material.properties;
 import gregtech.api.fluids.store.FluidStorage;
 import gregtech.api.fluids.store.FluidStorageKey;
 
+import gregtech.api.fluids.store.FluidStorageKeys;
+
+import gregtech.api.unification.material.Material;
+
+import net.minecraftforge.fluids.Fluid;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +16,7 @@ public class FluidProperty implements IMaterialProperty {
 
     private final FluidStorage storage = new FluidStorage();
     private @Nullable FluidStorageKey primaryKey = null;
+    private @Nullable Fluid solidifyingFluid = null;
 
     public FluidProperty() {}
 
@@ -33,4 +40,15 @@ public class FluidProperty implements IMaterialProperty {
 
     @Override
     public void verifyProperty(MaterialProperties properties) {}
+
+    public Fluid solidifiesFrom(Material material) {
+        if (this.solidifyingFluid == null) {
+            return material.getFluid(FluidStorageKeys.LIQUID);
+        }
+        return solidifyingFluid;
+    }
+
+    public void setSolidifyingFluid(@Nullable Fluid solidifyingFluid) {
+        this.solidifyingFluid = solidifyingFluid;
+    }
 }

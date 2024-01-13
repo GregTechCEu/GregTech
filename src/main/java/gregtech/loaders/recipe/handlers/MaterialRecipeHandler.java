@@ -287,10 +287,10 @@ public class MaterialRecipeHandler {
             }
         }
 
-        if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
-                    .fluidInputs(material.getFluid(L))
+                    .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), L))
                     .outputs(OreDictUnifier.get(ingotPrefix, material))
                     .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
@@ -425,10 +425,10 @@ public class MaterialRecipeHandler {
                     .output(ingot, material)
                     .buildAndRegister();
 
-            if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
+            if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
                 RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                         .notConsumable(MetaItems.SHAPE_MOLD_NUGGET)
-                        .fluidInputs(material.getFluid(L))
+                        .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), L))
                         .outputs(OreDictUnifier.get(orePrefix, material, 9))
                         .duration((int) material.getMass())
                         .EUt(VA[ULV])
@@ -466,10 +466,10 @@ public class MaterialRecipeHandler {
     public static void processBlock(OrePrefix blockPrefix, Material material, DustProperty property) {
         ItemStack blockStack = OreDictUnifier.get(blockPrefix, material);
         long materialAmount = blockPrefix.getMaterialAmount(material);
-        if (material.hasFluid() && material.getFluid(FluidStorageKeys.LIQUID) != null) {
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
-                    .fluidInputs(material.getFluid((int) (materialAmount * L / M)))
+                    .fluidInputs(new FluidStack(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material), ((int) (materialAmount * L / M))))
                     .outputs(blockStack)
                     .duration((int) material.getMass()).EUt(VA[ULV])
                     .buildAndRegister();
