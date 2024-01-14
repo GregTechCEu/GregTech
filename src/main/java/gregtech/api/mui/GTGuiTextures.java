@@ -160,6 +160,21 @@ public class GTGuiTextures {
         16, 32, 16, 16,true);
     public static final UITexture[] BUTTON_IGNORE_NBT = slice("textures/gui/widget/button_filter_nbt.png",
             16, 32, 16, 16,true);
+
+    public static final UITexture[] BUTTON_CASE_SENSITIVE = slice("textures/gui/widget/ore_filter/button_case_sensitive.png",
+            16, 32, 16, 16, true);
+
+    public static final UITexture[] BUTTON_MATCH_ALL = slice("textures/gui/widget/ore_filter/button_match_all.png",
+            16, 32, 16, 16, true);
+
+    public static final UITexture OREDICT_ERROR = fullImage("textures/gui/widget/ore_filter/error.png");
+    public static final UITexture OREDICT_INFO = fullImage("textures/gui/widget/ore_filter/info.png");
+    public static final UITexture OREDICT_MATCH = fullImage("textures/gui/widget/ore_filter/match.png");
+    public static final UITexture OREDICT_NO_MATCH = fullImage("textures/gui/widget/ore_filter/no_match.png");
+    public static final UITexture OREDICT_SUCCESS = fullImage("textures/gui/widget/ore_filter/success.png");
+    public static final UITexture OREDICT_WAITING = fullImage("textures/gui/widget/ore_filter/waiting.png");
+    public static final UITexture OREDICT_WARN = fullImage("textures/gui/widget/ore_filter/warn.png");
+
     public static final UITexture[] MANUAL_IO_OVERLAY = slice("textures/gui/overlay/manual_io_overlay.png",
             18, 18 * 3, 18, 18, true);
     public static final UITexture[] CONVEYOR_MODE_OVERLAY = slice("textures/gui/overlay/conveyor_mode_overlay.png",

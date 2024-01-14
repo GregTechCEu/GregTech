@@ -197,7 +197,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                         .height(18).widthRel(1f))
                 .child(new Row().coverChildrenHeight()
                         .widthRel(1f)
-                        .child(GTGuiTextures.ATOMIC_OVERLAY_1.asWidget().marginRight(4)
+                        .child(GTGuiTextures.OREDICT_INFO.asWidget().marginRight(4)
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                                 .tooltipBuilder(tooltip -> tooltip.addLine(glob.toString())))
                         .child(SlotGroupWidget.builder()
