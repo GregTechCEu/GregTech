@@ -161,13 +161,13 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         return getItemFilter().createPanel(guiSyncManager)
                 .size(176, 188).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()).left(7))
-                .child(new Column().coverChildren().align(Alignment.TopLeft).top(22)
+                .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new Row().coverChildren().marginBottom(4).left(0)
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH)))
                         .child(getItemFilter().createWidgets(guiSyncManager)))
-                .child(SlotGroupWidget.playerInventory().left(7));
+                .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
     }
 
     private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<ItemFilterMode> value, ItemFilterMode mode) {

@@ -192,7 +192,6 @@ public class OreDictionaryItemFilter extends ItemFilter {
         List<OreFilterTestSlot> oreSlots = new ArrayList<>();
 
         return new Column().widthRel(1f).coverChildrenHeight()
-                .top(22).margin(7)
                 .child(new HighlightedTextField()
                         .setHighlightRule(this::highlightRule)
                         .onUnfocus(() -> {
@@ -223,20 +222,21 @@ public class OreDictionaryItemFilter extends ItemFilter {
                                     return slot;
                                 })
                                 .build().marginRight(4))
-                        .child(new CycleButtonWidget()
+                        .child(new ToggleButton()
                                 .size(18).value(caseSensitive)
-                                // todo fix the textures for hovering
-                                .textureGetter(i -> GTGuiTextures.BUTTON_CASE_SENSITIVE[i])
+                                .background(GTGuiTextures.BUTTON_CASE_SENSITIVE[1])
+                                .hoverBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[1])
+                                .selectedBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
+                                .selectedHoverBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
                                 .marginRight(4)
-                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.case_sensitive",
-                                        caseSensitive.getBoolValue())))
-                        .child(new CycleButtonWidget()
+                                .tooltip(tooltip -> tooltip.setAutoUpdate(true)))
+                        .child(new ToggleButton()
                                 .size(18).value(matchAll)
-                                .textureGetter(i -> GTGuiTextures.BUTTON_MATCH_ALL[i])
-                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.match_all",
-                                        matchAll.getBoolValue()))));
+                                .background(GTGuiTextures.BUTTON_MATCH_ALL[1])
+                                .hoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[1])
+                                .selectedHoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
+                                .selectedBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
+                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))));
     }
 
     protected void getStatusIcon(Widget<?> widget) {
