@@ -165,9 +165,11 @@ public enum RelativeDirection {
     }
 
     /**
-     * Offset a BlockPos relatively in any direction by any amount. Pass negative values to offset down, right or backwards.
+     * Offset a BlockPos relatively in any direction by any amount. Pass negative values to offset down, right or
+     * backwards.
      */
-    public static BlockPos offsetPos(BlockPos pos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped, int upOffset, int leftOffset, int forwardOffset) {
+    public static BlockPos offsetPos(BlockPos pos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped,
+                                     int upOffset, int leftOffset, int forwardOffset) {
         if (upOffset == 0 && leftOffset == 0 && forwardOffset == 0) {
             return pos;
         }
