@@ -200,12 +200,12 @@ public class PartsRecipeHandler {
             }
         }
 
-        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
             boolean isSmall = gearPrefix == OrePrefix.gearSmall;
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(isSmall ? MetaItems.SHAPE_MOLD_GEAR_SMALL : MetaItems.SHAPE_MOLD_GEAR)
                     .fluidInputs(
-                            material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L * (isSmall ? 1 : 4)))
+                            material.getProperty(PropertyKey.FLUID).solidifiesFrom(L * (isSmall ? 1 : 4)))
                     .outputs(stack)
                     .duration(isSmall ? 20 : 100)
                     .EUt(VA[ULV])
@@ -286,10 +286,10 @@ public class PartsRecipeHandler {
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, DustProperty property) {
-        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_PLATE)
-                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                     .outputs(OreDictUnifier.get(platePrefix, material))
                     .duration(40)
                     .EUt(VA[ULV])
@@ -400,10 +400,10 @@ public class PartsRecipeHandler {
                 'S', new UnificationEntry(screw, material),
                 'R', new UnificationEntry(ring, material));
 
-        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_ROTOR)
-                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L * 4))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L * 4))
                     .outputs(GTUtility.copy(stack))
                     .duration(120)
                     .EUt(20)

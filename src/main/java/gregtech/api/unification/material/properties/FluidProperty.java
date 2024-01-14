@@ -40,17 +40,29 @@ public class FluidProperty implements IMaterialProperty {
     @Override
     public void verifyProperty(MaterialProperties properties) {}
 
-    public Fluid solidifiesFrom(Material material) {
+    /**
+     * @return the Fluid which solidifies into the material.
+     */
+
+    public Fluid solidifiesFrom() {
         if (this.solidifyingFluid == null) {
-            return material.getFluid(FluidStorageKeys.LIQUID);
+            return getStorage().get(FluidStorageKeys.LIQUID);
         }
         return solidifyingFluid;
     }
 
-    public FluidStack solidifiesFrom(Material material, int amount) {
-        return new FluidStack(solidifiesFrom(material), amount);
+    /**
+     * @param amount the size of the returned FluidStack.
+     * @return a FluidStack of the Fluid which solidifies into the material.
+     */
+    public FluidStack solidifiesFrom(int amount) {
+        return new FluidStack(solidifiesFrom(), amount);
     }
 
+    /**
+     * Sets the fluid that solidifies into the material.
+     * @param solidifyingFluid The Fluid which solidifies into the material. If left null, it will be left as the default value: the material's liquid.
+     */
     public void setSolidifyingFluid(@Nullable Fluid solidifyingFluid) {
         this.solidifyingFluid = solidifyingFluid;
     }
