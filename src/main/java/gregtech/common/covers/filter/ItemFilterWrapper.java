@@ -60,10 +60,6 @@ public class ItemFilterWrapper {
         return container.getSlotTransferLimit(matchSlot);
     }
 
-    public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack) {
-        return container.matchItemStack(itemStack);
-    }
-
     public boolean testItemStack(ItemStack itemStack) {
         return container.testItemStack(itemStack);
     }

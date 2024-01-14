@@ -24,6 +24,7 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class CoverItemVoidingAdvanced extends CoverItemVoiding {
@@ -56,13 +57,16 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         for (TypeItemInfo typeItemInfo : itemTypeCount.values()) {
 
             int itemToVoidAmount = 0;
-            if (getItemFilterContainer().getItemFilter() == null) {
+            if (!getItemFilterContainer().hasItemFilter()) {
                 itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getTransferStackSize();
             } else {
-                if (itemFilterContainer.testItemStack(typeItemInfo.itemStack)) {
-                    var matchResult = itemFilterContainer.matchItemStack(typeItemInfo.itemStack);
-                    itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getSlotTransferLimit(matchResult.getData());
-                }
+                AtomicInteger atomicInt = new AtomicInteger(itemToVoidAmount);
+                itemFilterContainer.onMatch(typeItemInfo.itemStack, (matched, match, matchedSlot) -> {
+                    if (matched) {
+                        atomicInt.set(typeItemInfo.totalCount - itemFilterContainer.getSlotTransferLimit(matchedSlot));
+                    }
+                });
+                itemToVoidAmount = atomicInt.get();
             }
 
             if (itemToVoidAmount <= 0) {

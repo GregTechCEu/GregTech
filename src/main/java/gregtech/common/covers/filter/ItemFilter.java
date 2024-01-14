@@ -21,14 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class ItemFilter {
+public abstract class ItemFilter implements Filter<ItemStack> {
 
-    public static MatchResult<Integer> EMPTY_MATCH = new MatchResult<>(Match.SUCCEED, -1);
     private IDirtyNotifiable dirtyNotifiable;
     private BaseFilterReader filterReader;
-    public static final String KEY_ITEMS = "Items";
-    public static final String COUNT = "Count";
-    public static final String BLACKLIST = "is_blacklist";
+
+    private OnMatch<ItemStack> onMatch = null;
 
     protected void setFilterReader(BaseFilterReader reader) {
         this.filterReader = reader;
@@ -79,8 +77,6 @@ public abstract class ItemFilter {
         return 0;
     }
 
-    public abstract MatchResult<Integer> matchItemStack(ItemStack itemStack);
-
     /** Deprecated, uses old builtin MUI */
     @Deprecated
     public abstract void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup);
@@ -103,7 +99,15 @@ public abstract class ItemFilter {
 //        this.isBlacklistFilter = tagCompound.getBoolean("IsBlacklist");
     }
 
-    final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
+    public abstract void match(ItemStack itemStack);
+
+    protected final void onMatch(boolean matched, ItemStack stack, int matchSlot) {
+        if (this.onMatch != null) this.onMatch.onMatch(matched, stack, matchSlot);
+    }
+
+    public abstract boolean test(ItemStack toTest);
+
+    public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
     }
 
@@ -113,40 +117,9 @@ public abstract class ItemFilter {
         }
     }
 
-    public static <R> MatchResult<R> createResult(Match match, R data) {
-        return new MatchResult<>(match, data);
-    }
-
-    public static MatchResult<Integer> createResult(Match match, int data) {
-        return new MatchResult<>(match, data);
-    }
-
-    public static class MatchResult<T> {
-        Match match;
-        T data;
-        private MatchResult(Match match, T data) {
-            this.match = match;
-            this.data = data;
-        }
-
-        public T getData() {
-            return data;
-        }
-
-        public boolean matched() {
-            return match == Match.SUCCEED;
-        }
-
-        public void flipMatch() {
-            this.match = matched() ?
-                    ItemFilter.Match.FAIL :
-                    ItemFilter.Match.SUCCEED;
-        }
-    }
-
-    public enum Match {
-        FAIL,
-        SUCCEED
+    @Override
+    public void setOnMatched(OnMatch<ItemStack> onMatch) {
+        this.onMatch = onMatch;
     }
 
     protected static class BaseFilterReader extends ItemStackItemHandler {
@@ -154,6 +127,9 @@ public abstract class ItemFilter {
         protected final ItemStack container;
         private Supplier<Integer> maxStackSizer = () -> 1;
         private int cache;
+        protected static final String KEY_ITEMS = "Items";
+        protected static final String COUNT = "Count";
+        protected static final String BLACKLIST = "is_blacklist";
         public BaseFilterReader(ItemStack container, int slots) {
             super(container, slots);
             this.container = container;

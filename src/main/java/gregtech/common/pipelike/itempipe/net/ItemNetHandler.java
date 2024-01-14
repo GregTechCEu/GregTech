@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ItemNetHandler implements IItemHandler {
 
@@ -364,16 +366,19 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate,
                                         int allowed, boolean ignoreLimit) {
-        int rate;
-        boolean isStackSpecific = false;
-        var matchResult = arm.getItemFilterContainer().matchItemStack(stack);
-        int index = matchResult.getData();
-        if (index > 0) {
-            rate = arm.getItemFilterContainer().getSlotTransferLimit(index);
-            isStackSpecific = true;
-        } else
-            rate = arm.getItemFilterContainer().getTransferStackSize();
-        int count;
+        AtomicInteger atomicInt = new AtomicInteger();
+        AtomicBoolean atomicBool = new AtomicBoolean(false);
+        arm.getItemFilterContainer().onMatch(stack, (matched, match, matchedSlot) -> {
+            if (matched && matchedSlot > 0) {
+                atomicInt.set(arm.getItemFilterContainer().getSlotTransferLimit(matchedSlot));
+                atomicBool.set(true);
+            } else {
+                atomicInt.set(arm.getItemFilterContainer().getTransferStackSize());
+            }
+        });
+        int count, rate = atomicInt.get();
+        boolean isStackSpecific = atomicBool.get();
+
         switch (arm.getTransferMode()) {
             case TRANSFER_ANY:
                 return insert(handler, stack, simulate, allowed, ignoreLimit);

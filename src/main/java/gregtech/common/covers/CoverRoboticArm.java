@@ -143,7 +143,7 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             Object filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
-            int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit((Integer) sourceInfo.filterSlot);
+            int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
 
             // only run multiplier for smart item
             if (itemFilterContainer.getItemFilter() instanceof SmartItemFilter) {

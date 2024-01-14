@@ -78,6 +78,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable {
 
@@ -301,9 +303,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (itemStack.isEmpty()) {
                 continue;
             }
-            var matchResult = itemFilterContainer.matchItemStack(itemStack);
-            var matchSlotIndex = matchResult.getData();
-            if (!matchResult.matched() || !itemInfos.containsKey(matchSlotIndex)) {
+
+            AtomicBoolean matchResult = new AtomicBoolean(true);
+            AtomicInteger matchSlotIndex = new AtomicInteger(-1);
+            itemFilterContainer.onMatch(itemStack, (matched, match, matchedSlot) -> {
+                matchResult.set(matched);
+                matchSlotIndex.set(matchedSlot);
+            });
+            if (!matchResult.get() || !itemInfos.containsKey(matchSlotIndex.get())) {
                 continue;
             }
 
@@ -347,9 +354,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
-                continue;
-            }
+
+            AtomicBoolean didMatch = new AtomicBoolean(true);
+            itemFilterContainer.onMatch(sourceStack, (matched, match, matchedSlot) -> {
+                didMatch.set(matched);
+            });
+            if (!didMatch.get()) continue;
+
             ItemStack remainder = GTTransferUtils.insertItem(targetInventory, sourceStack, true);
             int amountToInsert = sourceStack.getCount() - remainder.getCount();
 
@@ -405,21 +416,21 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (itemStack.isEmpty()) {
                 continue;
             }
-            var matchResult = itemFilterContainer.matchItemStack(itemStack);
-            if (!matchResult.matched()) {
-                continue;
-            }
-            var data = matchResult.getData();
-            if (!result.containsKey(itemStack)) {
-                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), data, new IntArrayList(), 0);
-                itemInfo.totalCount += itemStack.getCount();
-                itemInfo.slots.add(srcIndex);
-                result.put(itemStack.copy(), itemInfo);
-            } else {
-                TypeItemInfo itemInfo = result.get(itemStack);
-                itemInfo.totalCount += itemStack.getCount();
-                itemInfo.slots.add(srcIndex);
-            }
+
+            int finalSrcIndex = srcIndex;
+            itemFilterContainer.onMatch(itemStack, (matched, match, matchedSlot) -> {
+                if (!matched) return;
+                if (!result.containsKey(itemStack)) {
+                    TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), matchedSlot, new IntArrayList(), 0);
+                    itemInfo.totalCount += itemStack.getCount();
+                    itemInfo.slots.add(finalSrcIndex);
+                    result.put(itemStack.copy(), itemInfo);
+                } else {
+                    TypeItemInfo itemInfo = result.get(itemStack);
+                    itemInfo.totalCount += itemStack.getCount();
+                    itemInfo.slots.add(finalSrcIndex);
+                }
+            });
         }
         return result;
     }
@@ -432,22 +443,22 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (itemStack.isEmpty()) {
                 continue;
             }
-            var matchResult = itemFilterContainer.matchItemStack(itemStack);
-            if (!matchResult.matched()) {
-                continue;
-            }
-            int transferSlotIndex = matchResult.getData();
-            if (!result.containsKey(transferSlotIndex)) {
-                GroupItemInfo itemInfo = new GroupItemInfo(transferSlotIndex,
-                        new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount()), 0);
-                itemInfo.itemStackTypes.add(itemStack.copy());
-                itemInfo.totalCount += itemStack.getCount();
-                result.put(transferSlotIndex, itemInfo);
-            } else {
-                GroupItemInfo itemInfo = result.get(transferSlotIndex);
-                itemInfo.itemStackTypes.add(itemStack.copy());
-                itemInfo.totalCount += itemStack.getCount();
-            }
+
+            itemFilterContainer.onMatch(itemStack, (matched, match, matchedSlot) -> {
+                if (!matched) return;
+                if (!result.containsKey(matchedSlot)) {
+                    GroupItemInfo itemInfo = new GroupItemInfo(matchedSlot,
+                            new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount()), 0);
+                    itemInfo.itemStackTypes.add(itemStack.copy());
+                    itemInfo.totalCount += itemStack.getCount();
+                    result.put(matchedSlot, itemInfo);
+                } else {
+                    GroupItemInfo itemInfo = result.get(matchedSlot);
+                    itemInfo.itemStackTypes.add(itemStack.copy());
+                    itemInfo.totalCount += itemStack.getCount();
+                }
+            });
+
         }
         return result;
     }

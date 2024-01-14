@@ -231,18 +231,13 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return currentItemFilter.getStackTransferLimit(stack, getTransferStackSize());
     }
 
-    public ItemFilter.MatchResult<Integer> matchItemStack(ItemStack itemStack) {
-        ItemFilter.MatchResult<Integer> originalResult;
-        if (currentItemFilter == null) {
-            originalResult = ItemFilter.EMPTY_MATCH;
-        } else {
-            originalResult = currentItemFilter.matchItemStack(itemStack);
-        }
-        return originalResult;
+    public void onMatch(ItemStack stack, Filter.OnMatch<ItemStack> onMatch) {
+        this.currentItemFilter.setOnMatched(onMatch);
+        this.currentItemFilter.match(stack);
     }
 
     public boolean testItemStack(ItemStack itemStack) {
-        return matchItemStack(itemStack).matched();
+        return currentItemFilter == null || currentItemFilter.test(itemStack);
     }
 
 

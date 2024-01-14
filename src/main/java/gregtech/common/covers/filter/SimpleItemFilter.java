@@ -35,20 +35,21 @@ public class SimpleItemFilter extends ItemFilter {
     private static final int MAX_MATCH_SLOTS = 9;
     private final SimpleFilterReader filterReader;
 
-    public static final String IGNORE_NBT = "ignore_nbt";
-    public static final String IGNORE_DAMAGE = "ignore_damage";
-
     public SimpleItemFilter(ItemStack stack) {
         this.filterReader = new SimpleFilterReader(stack, MAX_MATCH_SLOTS);
         setFilterReader(this.filterReader);
     }
 
     @Override
-    public MatchResult<Integer> matchItemStack(ItemStack itemStack) {
-        int itemFilterMatchIndex = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(), itemStack);
-        var result = ItemFilter.createResult(itemFilterMatchIndex == -1 ? Match.FAIL : Match.SUCCEED, itemFilterMatchIndex);
-        if (filterReader.isBlacklistFilter()) result.flipMatch();
-        return result;
+    public void match(ItemStack itemStack) {
+        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(), itemStack);
+        this.onMatch(matchedSlot != -1, itemStack.copy(), matchedSlot);
+    }
+
+    @Override
+    public boolean test(ItemStack toTest) {
+        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(), toTest);
+        return matchedSlot != -1;
     }
 
     @Override
@@ -106,7 +107,7 @@ public class SimpleItemFilter extends ItemFilter {
                                 .tooltipBuilder(tooltip -> {
                                     int count = this.filterReader.getItemsNbt()
                                             .getCompoundTagAt(index)
-                                            .getInteger(COUNT);
+                                            .getInteger(SimpleFilterReader.COUNT);
                                     if (count > 64)
                                         tooltip.addLine(IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                 })
@@ -152,7 +153,7 @@ public class SimpleItemFilter extends ItemFilter {
 //        this.ignoreNBT = tagCompound.getBoolean("IgnoreNBT");
     }
 
-    public static int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage, boolean ignoreNBTData,
+    public int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage, boolean ignoreNBTData,
                                       ItemStack itemStack) {
         for (int i = 0; i < filterSlots.getSlots(); i++) {
             ItemStack filterStack = filterSlots.getStackInSlot(i);
@@ -163,7 +164,7 @@ public class SimpleItemFilter extends ItemFilter {
         return -1;
     }
 
-    private static boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData, ItemStack filterStack,
+    private boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData, ItemStack filterStack,
                                          ItemStack itemStack) {
         if (ignoreDamage) {
             if (!filterStack.isItemEqualIgnoreDurability(itemStack)) {
@@ -176,6 +177,9 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     protected class SimpleFilterReader extends BaseFilterReader {
+
+        public static final String IGNORE_NBT = "ignore_nbt";
+        public static final String IGNORE_DAMAGE = "ignore_damage";
         public SimpleFilterReader(ItemStack container, int slots) {
             super(container, slots);
             setIgnoreDamage(true);

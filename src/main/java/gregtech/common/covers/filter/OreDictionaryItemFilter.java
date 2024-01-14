@@ -327,11 +327,17 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public MatchResult<Integer> matchItemStack(ItemStack itemStack) {
+    public void match(ItemStack itemStack) {
         // "wtf is this system?? i can put any non null object here and it i will work??? $arch"
         // not anymore :thanosdaddy: -ghzdude
-        var match = matchesItemStack(itemStack) ? Match.SUCCEED : Match.FAIL;
-        return ItemFilter.createResult(match, -1);
+        var match = matchesItemStack(itemStack);
+        this.onMatch(match, match ? itemStack.copy() : ItemStack.EMPTY, -1);
+//        return ItemFilter.createResult(match, -1);
+    }
+
+    @Override
+    public boolean test(ItemStack toTest) {
+        return matchesItemStack(toTest);
     }
 
     public boolean matchesItemStack(@NotNull ItemStack itemStack) {
