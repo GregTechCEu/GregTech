@@ -12,11 +12,12 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.covers.filter.FluidFilter;
+import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.covers.filter.FluidFilterWrapper;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
@@ -39,24 +40,30 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
-    protected final FluidFilterWrapper fluidFilter;
+    protected FluidFilterWrapper fluidFilter;
     protected FluidFilterMode filterMode;
     protected FluidHandlerFiltered fluidHandler;
 
     public CoverFluidFilter(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
-                            @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture,
-                            FluidFilter fluidFilter) {
+                            @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture) {
         super(definition, coverableView, attachedSide);
         this.filterMode = FluidFilterMode.FILTER_FILL;
         this.titleLocale = titleLocale;
         this.texture = texture;
-        this.fluidFilter = new FluidFilterWrapper(this);
-        this.fluidFilter.setFluidFilter(fluidFilter);
     }
 
     public void setFilterMode(FluidFilterMode filterMode) {
         this.filterMode = filterMode;
         this.getCoverableView().markDirty();
+    }
+
+    @Override
+    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
+                             @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
+        super.onAttachment(coverableView, side, player, itemStack);
+
+        this.fluidFilter = new FluidFilterWrapper(this);
+        this.fluidFilter.setFluidFilter(FilterTypeRegistry.getFluidFilterForStack(itemStack));
     }
 
     public FluidFilterMode getFilterMode() {
