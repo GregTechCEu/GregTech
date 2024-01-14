@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+@Deprecated
 public class ItemFilterWrapper {
     private final ItemFilterContainer container;
 

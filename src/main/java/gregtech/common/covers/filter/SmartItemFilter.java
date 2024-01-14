@@ -129,13 +129,9 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-//        tagCompound.setInteger("FilterMode", filteringMode.ordinal());
-    }
-
-    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-//        this.filteringMode = SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")];
+        super.readFromNBT(tagCompound);
+        this.filterReader.setFilteringMode(SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")]);
     }
 
     private static class ItemAndMetadataAndStackSize {

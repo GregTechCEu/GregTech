@@ -395,6 +395,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
+        super.readFromNBT(tag);
         this.filterReader.setExpression(tag.getString("OreDictionaryFilter"));
         this.filterReader.setCaseSensitive(tag.getBoolean("caseSensitive"));
         this.filterReader.setMatchAll(tag.getBoolean("matchAll"));

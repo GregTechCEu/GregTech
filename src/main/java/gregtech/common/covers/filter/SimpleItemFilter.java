@@ -26,6 +26,9 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
+
+import net.minecraftforge.items.ItemStackHandler;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -138,19 +141,21 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-//        super.writeToNBT(tagCompound);
-//        tagCompound.setTag("ItemFilter", itemFilterSlots.serializeNBT());
-//        tagCompound.setBoolean("IgnoreDamage", ignoreDamage);
-//        tagCompound.setBoolean("IgnoreNBT", ignoreNBT);
-    }
-
-    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-//        super.readFromNBT(tagCompound);
-//        this.itemFilterSlots.deserializeNBT(tagCompound.getCompoundTag("ItemFilter"));
-//        this.ignoreDamage = tagCompound.getBoolean("IgnoreDamage");
-//        this.ignoreNBT = tagCompound.getBoolean("IgnoreNBT");
+        super.readFromNBT(tagCompound);
+
+        if (tagCompound.hasKey("ItemFilter")) {
+            var temp = new ItemStackHandler();
+            temp.deserializeNBT(tagCompound.getCompoundTag("ItemFilter"));
+            for (int i = 0; i < temp.getSlots(); i++) {
+                var stack = temp.getStackInSlot(i);
+                if (stack.isEmpty()) continue;
+                this.filterReader.setStackInSlot(i, stack);
+            }
+        }
+
+        this.filterReader.setIgnoreDamage(tagCompound.getBoolean("IgnoreDamage"));
+        this.filterReader.setIgnoreNBT(tagCompound.getBoolean("IgnoreNBT"));
     }
 
     public int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage, boolean ignoreNBTData,

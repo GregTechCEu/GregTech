@@ -287,8 +287,10 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     public void deserializeNBT(NBTTagCompound tagCompound) {
         this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
         var stack = getFilterInventory().getStackInSlot(0);
-        if (FilterTypeRegistry.isItemFilter(stack))
+        if (FilterTypeRegistry.isItemFilter(stack)) {
             this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(stack);
+            this.currentItemFilter.readFromNBT(tagCompound); // try to read old data
+        }
 
         this.maxStackSize = tagCompound.getInteger("MaxStackSize");
         this.transferStackSize = tagCompound.getInteger("TransferStackSize");

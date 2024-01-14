@@ -91,12 +91,10 @@ public abstract class ItemFilter implements Filter<ItemStack> {
 
     public abstract @NotNull ParentWidget<?> createWidgets(GuiSyncManager syncManager);
 
-    public void writeToNBT(NBTTagCompound tagCompound) {
-//        tagCompound.setBoolean("IsBlacklist", this.isBlacklistFilter);
-    }
-
+    @Deprecated
     public void readFromNBT(NBTTagCompound tagCompound) {
-//        this.isBlacklistFilter = tagCompound.getBoolean("IsBlacklist");
+        setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
+        markDirty();
     }
 
     public abstract void match(ItemStack itemStack);
