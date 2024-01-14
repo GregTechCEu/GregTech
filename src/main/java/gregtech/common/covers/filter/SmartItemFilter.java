@@ -31,10 +31,10 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 public class SmartItemFilter extends ItemFilter {
-    private SmartFilterReader filterReader;
+    private SmartItemFilterReader filterReader;
 
     public SmartItemFilter(ItemStack stack) {
-        this.filterReader = new SmartFilterReader(stack);
+        this.filterReader = new SmartItemFilterReader(stack);
         setFilterReader(this.filterReader);
     }
 
@@ -180,10 +180,10 @@ public class SmartItemFilter extends ItemFilter {
         }
     }
 
-    protected class SmartFilterReader extends BaseFilterReader {
+    protected class SmartItemFilterReader extends BaseItemFilterReader {
 
         private static final String FILTER_MODE = "FilterMode";
-        public SmartFilterReader(ItemStack container) {
+        public SmartItemFilterReader(ItemStack container) {
             super(container, 0);
         }
 

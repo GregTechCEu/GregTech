@@ -36,10 +36,10 @@ import java.util.function.Consumer;
 public class SimpleItemFilter extends ItemFilter {
 
     private static final int MAX_MATCH_SLOTS = 9;
-    private final SimpleFilterReader filterReader;
+    private final SimpleItemFilterReader filterReader;
 
     public SimpleItemFilter(ItemStack stack) {
-        this.filterReader = new SimpleFilterReader(stack, MAX_MATCH_SLOTS);
+        this.filterReader = new SimpleItemFilterReader(stack, MAX_MATCH_SLOTS);
         setFilterReader(this.filterReader);
     }
 
@@ -110,7 +110,7 @@ public class SimpleItemFilter extends ItemFilter {
                                 .tooltipBuilder(tooltip -> {
                                     int count = this.filterReader.getItemsNbt()
                                             .getCompoundTagAt(index)
-                                            .getInteger(SimpleFilterReader.COUNT);
+                                            .getInteger(SimpleItemFilterReader.COUNT);
                                     if (count > 64)
                                         tooltip.addLine(IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                 })
@@ -181,11 +181,11 @@ public class SimpleItemFilter extends ItemFilter {
         return ignoreNBTData || ItemStack.areItemStackTagsEqual(filterStack, itemStack);
     }
 
-    protected class SimpleFilterReader extends BaseFilterReader {
+    protected class SimpleItemFilterReader extends BaseItemFilterReader {
 
         public static final String IGNORE_NBT = "ignore_nbt";
         public static final String IGNORE_DAMAGE = "ignore_damage";
-        public SimpleFilterReader(ItemStack container, int slots) {
+        public SimpleItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
             setIgnoreDamage(true);
             setIgnoreNBT(true);

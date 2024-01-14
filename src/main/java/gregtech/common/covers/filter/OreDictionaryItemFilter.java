@@ -49,10 +49,10 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     private OreGlob glob = ImpossibleOreGlob.getInstance();
     private OreGlobCompileResult result;
-    private final OreDictionaryFilterReader filterReader;
+    private final OreDictionaryItemFilterReader filterReader;
 
     public OreDictionaryItemFilter(ItemStack stack) {
-        this.filterReader = new OreDictionaryFilterReader(stack, 0);
+        this.filterReader = new OreDictionaryItemFilterReader(stack, 0);
         setFilterReader(this.filterReader);
         recompile();
     }
@@ -402,13 +402,13 @@ public class OreDictionaryItemFilter extends ItemFilter {
         recompile();
     }
 
-    protected class OreDictionaryFilterReader extends BaseFilterReader {
+    protected class OreDictionaryItemFilterReader extends BaseItemFilterReader {
 
         private static final String EXPRESSION = "expression";
         private static final String CASE_SENSITIVE = "case_sensitive";
         private static final String MATCH_ALL = "match_all";
 
-        public OreDictionaryFilterReader(ItemStack container, int slots) {
+        public OreDictionaryItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
             setCaseSensitive(true);
             setMatchAll(true);
