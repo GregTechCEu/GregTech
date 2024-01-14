@@ -77,7 +77,7 @@ public class FluidFilterWrapper {
     public boolean testFluidStack(FluidStack fluidStack, boolean whitelist) {
         boolean result = true;
         if (currentFluidFilter != null) {
-            result = currentFluidFilter.testFluid(fluidStack);
+            result = currentFluidFilter.test(fluidStack);
         }
         if (!whitelist) {
             result = !result;
@@ -88,7 +88,7 @@ public class FluidFilterWrapper {
     public boolean testFluidStack(FluidStack fluidStack) {
         boolean result = true;
         if (currentFluidFilter != null) {
-            result = currentFluidFilter.testFluid(fluidStack);
+            result = currentFluidFilter.test(fluidStack);
         }
         if (isBlacklistFilter) {
             result = !result;

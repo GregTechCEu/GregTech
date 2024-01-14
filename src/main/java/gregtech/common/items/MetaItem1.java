@@ -49,6 +49,7 @@ import gregtech.common.items.behaviors.TricorderBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.items.behaviors.filter.OreDictFilterUIManager;
 import gregtech.common.items.behaviors.filter.SimpleFilterUIManager;
+import gregtech.common.items.behaviors.filter.SimpleFluidFilterUIManager;
 import gregtech.common.items.behaviors.filter.SmartFilterUIManager;
 import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
@@ -582,7 +583,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Filters: ID 290-300
         FLUID_FILTER = addItem(290, "fluid_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)))
+                .addComponents(new SimpleFluidFilterUIManager());
         ITEM_FILTER = addItem(291, "item_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2),
                         new MaterialStack(Materials.Steel, M)))

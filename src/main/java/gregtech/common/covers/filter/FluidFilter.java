@@ -3,25 +3,40 @@ package gregtech.common.covers.filter;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.IDirtyNotifiable;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.function.Consumer;
 
-public abstract class FluidFilter {
+public abstract class FluidFilter implements Filter<FluidStack> {
 
     private IDirtyNotifiable dirtyNotifiable;
     boolean showTip;
 
-    public abstract boolean testFluid(FluidStack fluidStack);
+    private OnMatch<FluidStack> onMatch = null;
+
+    public abstract void match(FluidStack toMatch);
+
+    public abstract boolean test(FluidStack fluidStack);
+
+    @Override
+    public final void setOnMatched(OnMatch<FluidStack> onMatch) {
+        this.onMatch = onMatch;
+    }
+
+    protected final void onMatch(boolean matched, FluidStack stack, int index) {
+        if (this.onMatch != null) this.onMatch.onMatch(matched, stack, index);
+    }
 
     public abstract int getFluidTransferLimit(FluidStack fluidStack);
 
-    public abstract int getMaxOccupiedHeight();
-
+    @Deprecated
     public abstract void initUI(Consumer<Widget> widgetGroup);
 
     public abstract void writeToNBT(NBTTagCompound tagCompound);
+
+    public abstract ItemStack getContainerStack();
 
     public abstract void readFromNBT(NBTTagCompound tagCompound);
 
