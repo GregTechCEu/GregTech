@@ -1,5 +1,7 @@
 package gregtech.common.gui.widget.orefilter;
 
+import com.cleanroommc.modularui.drawable.UITexture;
+
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.function.BooleanConsumer;
 import gregtech.api.util.oreglob.OreGlob;
@@ -21,9 +23,6 @@ import java.util.stream.Collectors;
  * @author brachy84
  */
 public class OreFilterTestSlot extends ItemSlot {
-
-//    private final IWidget match;
-//    private final IWidget noMatch;
 
     private final ItemOreFilterTestSlot slot;
     private Supplier<OreGlob> globSupplier = ImpossibleOreGlob::getInstance;
