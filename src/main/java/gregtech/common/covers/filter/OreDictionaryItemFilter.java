@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
@@ -176,8 +178,6 @@ public class OreDictionaryItemFilter extends ItemFilter {
     @Override
     @NotNull
     public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
-        // todo ore glob status
-
         var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
         var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive, this.filterReader::setCaseSensitive);
         var matchAll = new BooleanSyncValue(this.filterReader::shouldMatchAll, this.filterReader::setMatchAll);
@@ -197,6 +197,9 @@ public class OreDictionaryItemFilter extends ItemFilter {
                         .height(18).widthRel(1f))
                 .child(new Row().coverChildrenHeight()
                         .widthRel(1f)
+                        .child(GTGuiTextures.ATOMIC_OVERLAY_1.asWidget().marginRight(4)
+                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                                .tooltipBuilder(tooltip -> tooltip.addLine(glob.toString())))
                         .child(SlotGroupWidget.builder()
                                 .row("XXXXX")
                                 .key('X', i -> {
@@ -207,14 +210,21 @@ public class OreDictionaryItemFilter extends ItemFilter {
                                 })
                                 .build().marginRight(4))
                         .child(new ToggleButton()
-                                .value(caseSensitive)
+                                .size(18).value(caseSensitive)
+                                // todo fix the textures for hovering
                                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                                 .selectedBackground(GTGuiTextures.MC_BUTTON)
-                                .marginRight(4))
+                                .marginRight(4)
+                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.case_sensitive",
+                                        caseSensitive.getBoolValue())))
                         .child(new ToggleButton()
-                                .value(matchAll)
+                                .size(18).value(matchAll)
                                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                                .selectedBackground(GTGuiTextures.MC_BUTTON)));
+                                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.match_all",
+                                        matchAll.getBoolValue()))));
     }
 
     protected String highlightRule(StringBuilder h) {
