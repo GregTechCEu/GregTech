@@ -17,7 +17,7 @@ public class RenderChunkMixin {
 
     @WrapOperation(method = "rebuildChunk",
                    at = @At(value = "INVOKE",
-                                    target = "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;getRenderer(Lnet/minecraft/tileentity/TileEntity;)Lnet/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer;"))
+                            target = "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;getRenderer(Lnet/minecraft/tileentity/TileEntity;)Lnet/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer;"))
     public <T extends TileEntity> TileEntitySpecialRenderer<T> adjustMTERenderer(TileEntityRendererDispatcher original,
                                                                                  TileEntity tileentity,
                                                                                  Operation<TileEntitySpecialRenderer<T>> originalRenderer) {
