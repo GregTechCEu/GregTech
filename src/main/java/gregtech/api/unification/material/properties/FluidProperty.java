@@ -3,7 +3,6 @@ package gregtech.api.unification.material.properties;
 import gregtech.api.fluids.store.FluidStorage;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
-import gregtech.api.unification.material.Material;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -61,7 +60,9 @@ public class FluidProperty implements IMaterialProperty {
 
     /**
      * Sets the fluid that solidifies into the material.
-     * @param solidifyingFluid The Fluid which solidifies into the material. If left null, it will be left as the default value: the material's liquid.
+     * 
+     * @param solidifyingFluid The Fluid which solidifies into the material. If left null, it will be left as the
+     *                         default value: the material's liquid.
      */
     public void setSolidifyingFluid(@Nullable Fluid solidifyingFluid) {
         this.solidifyingFluid = solidifyingFluid;
