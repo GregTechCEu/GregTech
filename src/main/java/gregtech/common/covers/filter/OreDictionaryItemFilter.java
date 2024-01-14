@@ -1,14 +1,6 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-
-import com.cleanroommc.modularui.drawable.UITexture;
-
-import com.cleanroommc.modularui.screen.Tooltip;
-import com.cleanroommc.modularui.widget.Widget;
-
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
-
+import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
@@ -27,11 +19,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -174,7 +170,10 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPopupPanel("ore_dict_filter", 100, 100);
+        return GTGuis.createPopupPanel("ore_dict_filter", 188, 76)
+                .padding(7)
+                .child(CoverWithUI.createTitleRow(getContainerStack()))
+                .child(createWidgets(syncManager).top(22));
     }
 
     @Override
