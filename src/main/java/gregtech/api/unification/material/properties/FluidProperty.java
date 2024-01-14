@@ -2,13 +2,10 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.api.fluids.store.FluidStorage;
 import gregtech.api.fluids.store.FluidStorageKey;
-
 import gregtech.api.fluids.store.FluidStorageKeys;
-
 import gregtech.api.unification.material.Material;
 
 import net.minecraftforge.fluids.Fluid;
-
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;

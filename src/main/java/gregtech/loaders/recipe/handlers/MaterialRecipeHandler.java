@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.handlers;
 
-import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
@@ -469,7 +468,8 @@ public class MaterialRecipeHandler {
         if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom(material) != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
-                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, ((int) (materialAmount * L / M))))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material,
+                            ((int) (materialAmount * L / M))))
                     .outputs(blockStack)
                     .duration((int) material.getMass()).EUt(VA[ULV])
                     .buildAndRegister();

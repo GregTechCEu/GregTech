@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.handlers;
 
-import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
@@ -22,7 +21,6 @@ import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.BENDER_RECIPES;
@@ -206,7 +204,8 @@ public class PartsRecipeHandler {
             boolean isSmall = gearPrefix == OrePrefix.gearSmall;
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(isSmall ? MetaItems.SHAPE_MOLD_GEAR_SMALL : MetaItems.SHAPE_MOLD_GEAR)
-                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L * (isSmall ? 1 : 4)))
+                    .fluidInputs(
+                            material.getProperty(PropertyKey.FLUID).solidifiesFrom(material, L * (isSmall ? 1 : 4)))
                     .outputs(stack)
                     .duration(isSmall ? 20 : 100)
                     .EUt(VA[ULV])
