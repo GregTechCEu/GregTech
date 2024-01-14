@@ -1,44 +1,40 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.widget.ParentWidget;
-
-import com.cleanroommc.modularui.widgets.layout.Row;
-
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.DrawableWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.ItemVariantMap;
 import gregtech.api.unification.stack.MultiItemVariantMap;
 import gregtech.api.unification.stack.SingleItemVariantMap;
-import gregtech.api.util.function.BooleanConsumer;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import gregtech.common.gui.widget.HighlightedTextField;
-import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
-import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
+import gregtech.common.gui.widget.orefilter.OreFilterTestSlot;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class OreDictionaryItemFilter extends ItemFilter {
 
@@ -47,11 +43,12 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     private OreGlob glob = ImpossibleOreGlob.getInstance();
     private boolean error;
-    private OreDictionaryFilterReader filterReader;
+    private final OreDictionaryFilterReader filterReader;
 
     public OreDictionaryItemFilter(ItemStack stack) {
-        this.filterReader = new OreDictionaryFilterReader(stack, 5);
+        this.filterReader = new OreDictionaryFilterReader(stack, 0);
         setFilterReader(this.filterReader);
+        recompile();
     }
 
     @NotNull
@@ -64,18 +61,16 @@ public class OreDictionaryItemFilter extends ItemFilter {
         return this.glob;
     }
 
-    protected void recompile(@Nullable Consumer<@Nullable OreGlobCompileResult> callback) {
+    protected void recompile() {
         clearCache();
         String expr = this.filterReader.getExpression();
         if (!expr.isEmpty()) {
             OreGlobCompileResult result = OreGlob.compile(expr, !this.filterReader.isCaseSensitive());
             this.glob = result.getInstance();
             this.error = result.hasError();
-            if (callback != null) callback.accept(result);
         } else {
             this.glob = ImpossibleOreGlob.getInstance();
             this.error = true;
-            if (callback != null) callback.accept(null);
         }
     }
 
@@ -86,92 +81,86 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @Override
     public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        ItemOreFilterTestSlot[] testSlot = new ItemOreFilterTestSlot[5];
-        for (int i = 0; i < testSlot.length; i++) {
-            ItemOreFilterTestSlot slot = new ItemOreFilterTestSlot(20 + 22 * i, 0);
-            slot.setGlob(getGlob());
-            slot.setMatchAll(this.filterReader.shouldMatchAll());
-            widgetGroup.accept(slot);
-            testSlot[i] = slot;
-        }
-        OreGlobCompileStatusWidget compilationStatus = new OreGlobCompileStatusWidget(10, 10);
-
-        Consumer<@Nullable OreGlobCompileResult> compileCallback = result -> {
-            compilationStatus.setCompileResult(result);
-            for (ItemOreFilterTestSlot slot : testSlot) {
-                slot.setGlob(getGlob());
-            }
-        };
-
-        HighlightedTextField textField = new HighlightedTextField(14, 26, 152, 14,
-                filterReader::getExpression,
-                s -> {
-                    this.filterReader.setExpression(s);
-                    recompile(compileCallback);
-                });
-        compilationStatus.setTextField(textField);
-
-        widgetGroup.accept(new ImageWidget(10, 0, 7, 7, GuiTextures.ORE_FILTER_INFO)
-                .setTooltip("cover.ore_dictionary_filter.info"));
-        widgetGroup.accept(compilationStatus);
-        widgetGroup.accept(new DrawableWidget(10, 22, 156, 16)
-                .setBackgroundDrawer((mouseX, mouseY, partialTicks, context, widget) -> {
-                    gregtech.api.gui.Widget.drawGradientRect(widget.getPosition().x, widget.getPosition().y,
-                            widget.getSize().width, widget.getSize().height,
-                            0xFF808080, 0xFF808080, false);
-                    gregtech.api.gui.Widget.drawGradientRect(widget.getPosition().x + 1, widget.getPosition().y + 1,
-                            widget.getSize().width - 2, widget.getSize().height - 2,
-                            0xFF000000, 0xFF000000, false);
-                }));
-        widgetGroup.accept(textField
-                .setHighlightRule(h -> {
-                    String t = h.getOriginalText();
-                    for (int i = 0; i < t.length(); i++) {
-                        switch (t.charAt(i)) {
-                            case '|', '&', '^', '(', ')' -> h.format(i, TextFormatting.GOLD);
-                            case '*', '?' -> h.format(i, TextFormatting.GREEN);
-                            case '!' -> h.format(i, TextFormatting.RED);
-                            case '\\' -> h.format(i++, TextFormatting.YELLOW);
-                            case '$' -> { // TODO: remove this switch case in 2.9
-                                h.format(i, TextFormatting.DARK_GREEN);
-                                for (; i < t.length(); i++) {
-                                    switch (t.charAt(i)) {
-                                        case ' ', '\t', '\n', '\r' -> {}
-                                        case '\\' -> {
-                                            i++;
-                                            continue;
-                                        }
-                                        default -> {
-                                            continue;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                            default -> {
-                                continue;
-                            }
-                        }
-                        h.format(i + 1, TextFormatting.RESET);
-                    }
-                }).setMaxLength(64));
-        widgetGroup.accept(new ForcedInitialSyncImageCycleButtonWidget(130, 38, 18, 18,
-                GuiTextures.ORE_FILTER_BUTTON_CASE_SENSITIVE, filterReader::isCaseSensitive,
-                caseSensitive -> {
-                    this.filterReader.setCaseSensitive(caseSensitive);
-                    recompile(compileCallback);
-                }).setTooltipHoverString(
-                        i -> "cover.ore_dictionary_filter.button.case_sensitive." + (i == 0 ? "disabled" : "enabled")));
-        widgetGroup.accept(new ForcedInitialSyncImageCycleButtonWidget(148, 38, 18, 18,
-                GuiTextures.ORE_FILTER_BUTTON_MATCH_ALL, filterReader::shouldMatchAll,
-                matchAll -> {
-                    this.filterReader.setMatchAll(matchAll);
-                    clearCache();
-                    for (ItemOreFilterTestSlot slot : testSlot) {
-                        slot.setMatchAll(matchAll);
-                    }
-                }).setTooltipHoverString(
-                        i -> "cover.ore_dictionary_filter.button.match_all." + (i == 0 ? "disabled" : "enabled")));
+//        ItemOreFilterTestSlot[] testSlot = new ItemOreFilterTestSlot[5];
+//        for (int i = 0; i < testSlot.length; i++) {
+//            ItemOreFilterTestSlot slot = new ItemOreFilterTestSlot(20 + 22 * i, 0);
+//            slot.setGlob(getGlob());
+//            slot.setMatchAll(this.filterReader.shouldMatchAll());
+//            widgetGroup.accept(slot);
+//            testSlot[i] = slot;
+//        }
+//        OreGlobCompileStatusWidget compilationStatus = new OreGlobCompileStatusWidget(10, 10);
+//
+//
+//        HighlightedTextField textField = new HighlightedTextField(14, 26, 152, 14,
+//                filterReader::getExpression,
+//                s -> {
+//                    this.filterReader.setExpression(s);
+//                    recompile(compileCallback);
+//                });
+//        compilationStatus.setTextField(textField);
+//
+//        widgetGroup.accept(new ImageWidget(10, 0, 7, 7, gregtech.api.gui.GuiTextures.ORE_FILTER_INFO)
+//                .setTooltip("cover.ore_dictionary_filter.info"));
+//        widgetGroup.accept(compilationStatus);
+//        widgetGroup.accept(new DrawableWidget(10, 22, 156, 16)
+//                .setBackgroundDrawer((mouseX, mouseY, partialTicks, context, widget) -> {
+//                    gregtech.api.gui.Widget.drawGradientRect(widget.getPosition().x, widget.getPosition().y,
+//                            widget.getSize().width, widget.getSize().height,
+//                            0xFF808080, 0xFF808080, false);
+//                    gregtech.api.gui.Widget.drawGradientRect(widget.getPosition().x + 1, widget.getPosition().y + 1,
+//                            widget.getSize().width - 2, widget.getSize().height - 2,
+//                            0xFF000000, 0xFF000000, false);
+//                }));
+//        widgetGroup.accept(textField
+//                .setHighlightRule(h -> {
+//                    String t = h.getOriginalText();
+//                    for (int i = 0; i < t.length(); i++) {
+//                        switch (t.charAt(i)) {
+//                            case '|', '&', '^', '(', ')' -> h.format(i, TextFormatting.GOLD);
+//                            case '*', '?' -> h.format(i, TextFormatting.GREEN);
+//                            case '!' -> h.format(i, TextFormatting.RED);
+//                            case '\\' -> h.format(i++, TextFormatting.YELLOW);
+//                            case '$' -> { // TODO: remove this switch case in 2.9
+//                                h.format(i, TextFormatting.DARK_GREEN);
+//                                for (; i < t.length(); i++) {
+//                                    switch (t.charAt(i)) {
+//                                        case ' ', '\t', '\n', '\r' -> {}
+//                                        case '\\' -> {
+//                                            i++;
+//                                            continue;
+//                                        }
+//                                        default -> {
+//                                            continue;
+//                                        }
+//                                    }
+//                                    break;
+//                                }
+//                            }
+//                            default -> {
+//                                continue;
+//                            }
+//                        }
+//                        h.format(i + 1, TextFormatting.RESET);
+//                    }
+//                }).setMaxLength(64));
+//        widgetGroup.accept(new ForcedInitialSyncImageCycleButtonWidget(130, 38, 18, 18,
+//                gregtech.api.gui.GuiTextures.ORE_FILTER_BUTTON_CASE_SENSITIVE, filterReader::isCaseSensitive,
+//                caseSensitive -> {
+//                    this.filterReader.setCaseSensitive(caseSensitive);
+//                    recompile(compileCallback);
+//                }).setTooltipHoverString(
+//                        i -> "cover.ore_dictionary_filter.button.case_sensitive." + (i == 0 ? "disabled" : "enabled")));
+//        widgetGroup.accept(new ForcedInitialSyncImageCycleButtonWidget(148, 38, 18, 18,
+//                gregtech.api.gui.GuiTextures.ORE_FILTER_BUTTON_MATCH_ALL, filterReader::shouldMatchAll,
+//                matchAll -> {
+//                    this.filterReader.setMatchAll(matchAll);
+//                    clearCache();
+//                    for (ItemOreFilterTestSlot slot : testSlot) {
+//                        slot.setMatchAll(matchAll);
+//                    }
+//                }).setTooltipHoverString(
+//                        i -> "cover.ore_dictionary_filter.button.match_all." + (i == 0 ? "disabled" : "enabled")));
     }
 
     @Override
@@ -187,7 +176,89 @@ public class OreDictionaryItemFilter extends ItemFilter {
     @Override
     @NotNull
     public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
-        return new Row();
+        // todo ore glob status
+
+        var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
+        var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive, this.filterReader::setCaseSensitive);
+        var matchAll = new BooleanSyncValue(this.filterReader::shouldMatchAll, this.filterReader::setMatchAll);
+
+        List<OreFilterTestSlot> oreSlots = new ArrayList<>();
+
+        return new Column().widthRel(1f).coverChildrenHeight()
+                .top(22).margin(7)
+                .child(new HighlightedTextField()
+                        .setHighlightRule(this::highlightRule)
+                        .onUnfocus(() -> {
+                            for (var slot : oreSlots) {
+                                slot.updatePreview();
+                            }
+                        })
+                        .value(expression).marginBottom(4)
+                        .height(18).widthRel(1f))
+                .child(new Row().coverChildrenHeight()
+                        .widthRel(1f)
+                        .child(SlotGroupWidget.builder()
+                                .row("XXXXX")
+                                .key('X', i -> {
+                                    var slot = new OreFilterTestSlot()
+                                            .setGlobSupplier(this::getGlob);
+                                    oreSlots.add(slot);
+                                    return slot;
+                                })
+                                .build().marginRight(4))
+                        .child(new ToggleButton()
+                                .value(caseSensitive)
+                                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                                .marginRight(4))
+                        .child(new ToggleButton()
+                                .value(matchAll)
+                                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                                .selectedBackground(GTGuiTextures.MC_BUTTON)));
+    }
+
+    protected String highlightRule(StringBuilder h) {
+        for (int i = 0; i < h.length(); i++) {
+            switch (h.charAt(i)) {
+                case '|', '&', '^', '(', ')' -> {
+                    h.insert(i, TextFormatting.GOLD);
+                    i += 2;
+                }
+                case '*', '?' -> {
+                    h.insert(i, TextFormatting.GREEN);
+                    i += 2;
+                }
+                case '!' -> {
+                    h.insert(i, TextFormatting.RED);
+                    i += 2;
+                }
+                case '\\' -> {
+                    h.insert(i++, TextFormatting.YELLOW);
+                    i += 2;
+                }
+                case '$' -> { // TODO: remove this switch case in 2.9
+                    h.insert(i, TextFormatting.DARK_GREEN);
+                    for (; i < h.length(); i++) {
+                        switch (h.charAt(i)) {
+                            case ' ', '\t', '\n', '\r' -> {}
+                            case '\\' -> {
+                                i++;
+                                continue;
+                            }
+                            default -> {
+                                continue;
+                            }
+                        }
+                        break;
+                    }
+                }
+                default -> {
+                    continue;
+                }
+            }
+            h.insert(i + 1, TextFormatting.RESET);
+        }
+        return h.toString();
     }
 
     @Override
@@ -263,34 +334,34 @@ public class OreDictionaryItemFilter extends ItemFilter {
 //        this.expression = tag.getString("OreDictionaryFilter");
 //        this.caseSensitive = tag.getBoolean("caseSensitive");
 //        this.matchAll = tag.getBoolean("matchAll");
-        recompile(null);
+        recompile();
     }
 
-    public static class ForcedInitialSyncImageCycleButtonWidget extends ImageCycleButtonWidget {
-
-        private final BooleanConsumer updater;
-
-        public ForcedInitialSyncImageCycleButtonWidget(int xPosition, int yPosition, int width, int height,
-                                                       TextureArea buttonTexture, BooleanSupplier supplier,
-                                                       BooleanConsumer updater) {
-            super(xPosition, yPosition, width, height, buttonTexture, supplier, updater);
-            this.currentOption = 0;
-            this.updater = updater;
-        }
-
-        @Override
-        public void readUpdateInfo(int id, PacketBuffer buffer) {
-            if (id == 1) {
-                int currentOptionCache = this.currentOption;
-                super.readUpdateInfo(id, buffer);
-                if (this.currentOption != currentOptionCache) {
-                    this.updater.apply(currentOption >= 1); // call updater to apply necessary state changes
-                }
-            } else {
-                super.readUpdateInfo(id, buffer);
-            }
-        }
-    }
+//    public static class ForcedInitialSyncImageCycleButtonWidget extends ImageCycleButtonWidget {
+//
+//        private final BooleanConsumer updater;
+//
+//        public ForcedInitialSyncImageCycleButtonWidget(int xPosition, int yPosition, int width, int height,
+//                                                       TextureArea buttonTexture, BooleanSupplier supplier,
+//                                                       BooleanConsumer updater) {
+//            super(xPosition, yPosition, width, height, buttonTexture, supplier, updater);
+//            this.currentOption = 0;
+//            this.updater = updater;
+//        }
+//
+//        @Override
+//        public void readUpdateInfo(int id, PacketBuffer buffer) {
+//            if (id == 1) {
+//                int currentOptionCache = this.currentOption;
+//                super.readUpdateInfo(id, buffer);
+//                if (this.currentOption != currentOptionCache) {
+//                    this.updater.apply(currentOption >= 1); // call updater to apply necessary state changes
+//                }
+//            } else {
+//                super.readUpdateInfo(id, buffer);
+//            }
+//        }
+//    }
 
     protected class OreDictionaryFilterReader extends BaseFilterReader {
 
@@ -305,9 +376,15 @@ public class OreDictionaryItemFilter extends ItemFilter {
             setMatchAll(true);
         }
 
+        @Override
+        public Supplier<Integer> getMaxStackSizer() {
+            return () -> 1;
+        }
+
         public void setExpression(String expression) {
-//            if (this.getExpression().equals(expression)) return;
+            if (this.getExpression().equals(expression)) return;
             getStackTag().setString(EXPRESSION, expression);
+            recompile();
             markDirty();
         }
 
@@ -339,4 +416,5 @@ public class OreDictionaryItemFilter extends ItemFilter {
             return getStackTag().getBoolean(MATCH_ALL);
         }
     }
+
 }

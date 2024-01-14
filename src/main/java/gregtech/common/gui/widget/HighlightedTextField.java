@@ -1,26 +1,27 @@
 package gregtech.common.gui.widget;
 
-import gregtech.api.gui.widgets.TextFieldWidget2;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldHandler;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldRenderer;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.util.text.TextFormatting;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import org.jetbrains.annotations.Nullable;
+public class HighlightedTextField extends TextFieldWidget {
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+    private StringSyncValue stringSyncValue;
 
-public class HighlightedTextField extends TextFieldWidget2 {
+    private final TextHighlighter highlighter;
+    private Runnable onUnfocus;
 
-    @Nullable
-    private Consumer<TextHighlighter> highlightRule;
-    @Nullable
-    private TextHighlighter formatResult;
-
-    public HighlightedTextField(int x, int y, int width, int height, Supplier<String> supplier,
-                                Consumer<String> setter) {
-        super(x, y, width, height, supplier, setter);
+    public HighlightedTextField() {
+        this.highlighter = new TextHighlighter(this.handler);
+        this.renderer = this.highlighter;
+        this.handler.setRenderer(this.renderer);
     }
 
     /**
@@ -29,99 +30,61 @@ public class HighlightedTextField extends TextFieldWidget2 {
      * @param highlightRule Consumer for text highlighter
      * @return This
      */
-    public HighlightedTextField setHighlightRule(Consumer<TextHighlighter> highlightRule) {
-        this.highlightRule = highlightRule;
+    public HighlightedTextField setHighlightRule(Function<StringBuilder, String> highlightRule) {
+        this.highlighter.setHighlightRule(highlightRule);
+        return getThis();
+    }
+
+    public HighlightedTextField value(StringSyncValue stringValue) {
+        this.stringSyncValue = stringValue;
+        super.value(stringValue);
+        return getThis();
+    }
+
+    @Override
+    public HighlightedTextField getThis() {
         return this;
     }
 
     @Override
-    public void setText(String text) {
-        super.setText(text);
-        this.formatResult = null;
+    public void onRemoveFocus(GuiContext context) {
+        super.onRemoveFocus(context);
+        this.stringSyncValue.setStringValue(highlighter.getOriginalText(), true, true);
+        onUnfocus.run();
     }
 
-    @Override
-    protected String getRenderText() {
-        if (this.formatResult == null) {
-            if (this.highlightRule == null) {
-                return getText();
-            }
-            TextHighlighter highlighter = new TextHighlighter(getText());
-            this.highlightRule.accept(highlighter);
-            this.formatResult = highlighter;
-            return highlighter.getFormattedText();
+    public HighlightedTextField onUnfocus(Runnable onUnfocus) {
+        this.onUnfocus = onUnfocus;
+        return getThis();
+    }
+
+    public static final class TextHighlighter extends TextFieldRenderer {
+
+        private Function<StringBuilder, String> highlightRule = StringBuilder::toString;
+        List<String> formattedLines = new ArrayList<>();
+
+        public TextHighlighter(TextFieldHandler handler) {
+            super(handler);
         }
-        return this.formatResult.getFormattedText();
-    }
 
-    @Override
-    protected int toOriginalTextIndex(int renderTextIndex) {
-        return formatResult != null ? formatResult.toOriginalTextIndex(renderTextIndex) : renderTextIndex;
-    }
-
-    @Override
-    protected int toRenderTextIndex(int originalTextIndex) {
-        return formatResult != null ? formatResult.toFormattedTextIndex(originalTextIndex) : originalTextIndex;
-    }
-
-    public static final class TextHighlighter {
-
-        private final String originalText;
-        private final StringBuilder formattedTextBuilder;
-
-        private final IntList formatOriginalIndices = new IntArrayList();
-
-        @Nullable
-        private String formattedTextCache;
-
-        public TextHighlighter(String originalText) {
-            this.originalText = originalText;
-            this.formattedTextBuilder = new StringBuilder(originalText);
+        public void setHighlightRule(Function<StringBuilder, String> highlightRule) {
+            this.highlightRule = highlightRule;
         }
 
         public String getOriginalText() {
-            return this.originalText;
+            return this.handler.getText().get(0);
         }
 
-        public String getFormattedText() {
-            if (this.formattedTextCache == null) {
-                return this.formattedTextCache = this.formattedTextBuilder.toString();
-            }
-            return this.formattedTextCache;
+        @Override
+        protected float draw(String text, float x, float y) {
+            return super.draw(runHighlighter(text), x, y);
         }
 
-        public int toFormattedTextIndex(int originalTextIndex) {
-            int i = 0;
-            for (; i < formatOriginalIndices.size(); i++) {
-                if (formatOriginalIndices.getInt(i) > originalTextIndex) {
-                    break;
-                }
+        public @NotNull String runHighlighter(String text) {
+            if (this.highlightRule == null) {
+                return text;
             }
-            return originalTextIndex + i * 2;
-        }
-
-        public int toOriginalTextIndex(int formattedTextIndex) {
-            int i = 0;
-            for (; i < formatOriginalIndices.size(); i++) {
-                if (formatOriginalIndices.getInt(i) + i * 2 >= formattedTextIndex) {
-                    break;
-                }
-            }
-            return formattedTextIndex - i * 2;
-        }
-
-        public void format(int index, TextFormatting format) {
-            if (index < 0) index = 0;
-            else if (index > originalText.length()) return;
-            formattedTextBuilder.insert(toFormattedTextIndex(index), format.toString());
-            formattedTextCache = null;
-            for (int i = 0; i < formatOriginalIndices.size(); i++) {
-                if (formatOriginalIndices.getInt(i) > index) {
-                    formatOriginalIndices.add(i, index);
-                    return;
-                }
-            }
-            formatOriginalIndices.add(index);
+            return this.highlightRule.apply(new StringBuilder(text));
         }
     }
 }
