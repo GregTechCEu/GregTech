@@ -34,8 +34,6 @@ public abstract class FluidFilter implements Filter<FluidStack> {
     @Deprecated
     public abstract void initUI(Consumer<Widget> widgetGroup);
 
-    public abstract void writeToNBT(NBTTagCompound tagCompound);
-
     public abstract ItemStack getContainerStack();
 
     public abstract void readFromNBT(NBTTagCompound tagCompound);
