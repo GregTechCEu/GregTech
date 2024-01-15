@@ -606,58 +606,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .height(18)));
     }
 
-    private Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
-        return new ToggleButton().size(18)
-                .marginRight(2)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()])
-                .addTooltipLine(switch (mode) {
-                    case DISABLED -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
-                    case UNFILTERED -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
-                    case FILTERED -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
-                });
-    }
-
-    private Widget<ToggleButton> createConveyorModeButton(EnumSyncValue<ConveyorMode> value, ConveyorMode mode) {
-        return new ToggleButton().size(18)
-                .marginRight(2)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
-                .addTooltipLine(switch (mode) {
-                    case EXPORT -> IKey.lang("cover.conveyor.mode.export");
-                    case IMPORT -> IKey.lang("cover.conveyor.mode.import");
-                });
-    }
-
-    protected int getIncrementValue(MouseData data) {
-        int adjust = 1;
-        if (data.shift) adjust *= 4;
-        if (data.ctrl) adjust *= 16;
-        if (data.alt) adjust *= 64;
-        return adjust;
-    }
-
-    protected IKey createAdjustOverlay(boolean increment) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(increment ? '+' : '-');
-        builder.append(getIncrementValue(MouseData.create(-1)));
-
-        float scale = 1f;
-        if (builder.length() == 3) {
-            scale = 0.8f;
-        } else if (builder.length() == 4) {
-            scale = 0.6f;
-        } else if (builder.length() > 4) {
-            scale = 0.5f;
-        }
-        return IKey.str(builder.toString())
-                .scale(scale);
-    }
-
     protected int getMaxStackSize() {
         return 1;
     }

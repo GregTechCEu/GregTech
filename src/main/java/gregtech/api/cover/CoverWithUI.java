@@ -1,10 +1,21 @@
 package gregtech.api.cover;
 
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.CoverGuiFactory;
+
+import gregtech.common.covers.CoverConveyor;
+import gregtech.common.covers.FluidFilterMode;
+import gregtech.common.covers.ItemFilterMode;
+import gregtech.common.covers.ManualImportExportMode;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -105,6 +116,97 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
      */
     default ParentWidget<?> createSettingsRow() {
         return new ParentWidget<>().height(16).widthRel(1.0f).marginBottom(2);
+    }
+
+    default Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
+        return new ToggleButton().size(18)
+                .marginRight(2)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()])
+                .addTooltipLine(switch (mode) {
+                    case DISABLED -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
+                    case UNFILTERED -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
+                    case FILTERED -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
+                });
+    }
+
+
+    default Widget<ToggleButton> createConveyorModeButton(EnumSyncValue<CoverConveyor.ConveyorMode> value, CoverConveyor.ConveyorMode mode) {
+        return new ToggleButton().size(18)
+                .marginRight(2)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
+                .addTooltipLine(switch (mode) {
+                    case EXPORT -> IKey.lang("cover.conveyor.mode.export");
+                    case IMPORT -> IKey.lang("cover.conveyor.mode.import");
+                });
+    }
+
+    default Row createItemFilterModeRow(EnumSyncValue<ItemFilterMode> filteringMode) {
+        return new Row().coverChildrenHeight()
+                .widthRel(1f).left(0)
+                .child(createItemFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
+                .child(createItemFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
+                .child(createItemFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH))
+                .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight));
+    }
+
+    default Widget<ToggleButton> createItemFilterModeButton(EnumSyncValue<ItemFilterMode> value, ItemFilterMode mode) {
+        return new ToggleButton().size(18)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .marginRight(2)
+//                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()]) todo new overlays
+                .addTooltipLine(IKey.lang(mode.localeName));
+    }
+
+    default Row createFluidFilterModeRow(EnumSyncValue<FluidFilterMode> filteringMode) {
+        return new Row().coverChildrenHeight()
+                .widthRel(1f).left(0)
+                .child(createFluidFilterModeButton(filteringMode, FluidFilterMode.FILTER_FILL))
+                .child(createFluidFilterModeButton(filteringMode, FluidFilterMode.FILTER_DRAIN))
+                .child(createFluidFilterModeButton(filteringMode, FluidFilterMode.FILTER_BOTH))
+                .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight));
+    }
+
+    default Widget<ToggleButton> createFluidFilterModeButton(EnumSyncValue<FluidFilterMode> value, FluidFilterMode mode) {
+        return new ToggleButton().size(18)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .marginRight(2)
+//                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()]) todo new overlays
+                .addTooltipLine(IKey.lang(mode.localeName));
+    }
+
+    default int getIncrementValue(MouseData data) {
+        int adjust = 1;
+        if (data.shift) adjust *= 4;
+        if (data.ctrl) adjust *= 16;
+        if (data.alt) adjust *= 64;
+        return adjust;
+    }
+
+    default IKey createAdjustOverlay(boolean increment) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(increment ? '+' : '-');
+        builder.append(getIncrementValue(MouseData.create(-1)));
+
+        float scale = 1f;
+        if (builder.length() == 3) {
+            scale = 0.8f;
+        } else if (builder.length() == 4) {
+            scale = 0.6f;
+        } else if (builder.length() > 4) {
+            scale = 0.5f;
+        }
+        return IKey.str(builder.toString())
+                .scale(scale);
     }
 
     /**

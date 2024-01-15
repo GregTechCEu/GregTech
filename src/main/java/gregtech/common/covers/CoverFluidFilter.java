@@ -1,5 +1,12 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.drawable.Rectangle;
+
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+
+import com.cleanroommc.modularui.widgets.layout.Column;
+
 import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
@@ -147,9 +154,16 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        return getFluidFilter().createPanel(guiSyncManager).padding(7)
+        var filteringMode = new EnumSyncValue<>(FluidFilterMode.class, this::getFilterMode, this::setFilterMode);
+
+        return getFluidFilter().createPanel(guiSyncManager)
+                .size(176, 194).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(getFluidFilter().createWidgets(guiSyncManager).top(22))
+                .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
+                        .child(createFluidFilterModeRow(filteringMode))
+                        .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
+                                .height(1).widthRel(0.95f).margin(0, 4))
+                        .child(getFluidFilter().createWidgets(guiSyncManager)))
                 .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
     }
 

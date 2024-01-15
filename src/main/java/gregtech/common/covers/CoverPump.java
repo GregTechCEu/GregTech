@@ -321,67 +321,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                 .height(18)));
     }
 
-    private Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
-        return new ToggleButton().size(18)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()])
-                .addTooltipLine(switch (mode) {
-                    case DISABLED -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
-                    case UNFILTERED -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
-                    case FILTERED -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
-                });
-    }
-
-    protected int getIncrementValue(MouseData data) {
-        int adjust = 1;
-        if (data.shift) adjust *= 4;
-        if (data.ctrl) adjust *= 16;
-        if (data.alt) adjust *= 64;
-        return adjust;
-    }
-
-    protected IKey createAdjustOverlay(boolean increment) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(increment ? '+' : '-');
-        builder.append(getIncrementValue(MouseData.create(-1)));
-
-        float scale = 1f;
-        if (builder.length() == 3) {
-            scale = 0.8f;
-        } else if (builder.length() == 4) {
-            scale = 0.6f;
-        } else if (builder.length() > 4) {
-            scale = 0.5f;
-        }
-        return IKey.str(builder.toString())
-                .scale(scale);
-    }
-
-    public static Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
-        int min = 1;
-        return val -> {
-            if (val.isEmpty()) {
-                return String.valueOf(min);
-            }
-            int max = maxSupplier.getAsInt();
-            int num;
-            try {
-                num = Integer.parseInt(val);
-            } catch (NumberFormatException ignored) {
-                return String.valueOf(max);
-            }
-            if (num < min) {
-                return String.valueOf(min);
-            }
-            if (num > max) {
-                return String.valueOf(max);
-            }
-            return val;
-        };
-    }
-
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
                                                         @NotNull CuboidRayTraceResult hitResult) {

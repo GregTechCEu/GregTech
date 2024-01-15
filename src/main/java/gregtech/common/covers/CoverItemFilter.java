@@ -162,30 +162,11 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                 .size(176, 194).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()).left(4))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
-                        .child(new Row().coverChildrenHeight()
-                                .widthRel(1f).left(0)
-                                .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
-                                .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
-                                .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH))
-                                .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight)))
+                        .child(createItemFilterModeRow(filteringMode))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
                         .child(getItemFilter().createWidgets(guiSyncManager).left(0)))
                 .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
-    }
-
-    private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<ItemFilterMode> value, ItemFilterMode mode) {
-        return new ToggleButton().size(18)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .marginRight(2)
-//                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()]) todo new overlays
-                .addTooltipLine(switch (mode) {
-                    case FILTER_INSERT -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
-                    case FILTER_EXTRACT -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
-                    case FILTER_BOTH -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
-                });
     }
 
     @Override
