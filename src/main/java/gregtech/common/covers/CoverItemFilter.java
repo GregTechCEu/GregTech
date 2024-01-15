@@ -1,9 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-
 import gregtech.api.capability.impl.ItemHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
@@ -37,12 +33,16 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -159,15 +159,17 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         guiSyncManager.syncValue("filtering_mode", filteringMode);
 
         return getItemFilter().createPanel(guiSyncManager)
-                .size(176, 188).padding(7)
+                .size(176, 194).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()).left(4))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new Row().coverChildrenHeight()
-                                .widthRel(1f).marginBottom(4).left(0)
+                                .widthRel(1f).left(0)
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH))
                                 .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight)))
+                        .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
+                                .height(1).widthRel(0.95f).margin(0, 4))
                         .child(getItemFilter().createWidgets(guiSyncManager).left(0)))
                 .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
     }
@@ -177,6 +179,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .marginRight(2)
 //                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()]) todo new overlays
                 .addTooltipLine(switch (mode) {
                     case FILTER_INSERT -> IKey.lang("cover.universal.manual_import_export.mode.disabled");

@@ -608,6 +608,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     private Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
         return new ToggleButton().size(18)
+                .marginRight(2)
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
@@ -621,6 +622,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     private Widget<ToggleButton> createConveyorModeButton(EnumSyncValue<ConveyorMode> value, ConveyorMode mode) {
         return new ToggleButton().size(18)
+                .marginRight(2)
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
