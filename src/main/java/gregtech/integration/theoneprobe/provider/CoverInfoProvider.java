@@ -158,7 +158,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      */
     private static void fluidFilterInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverFluidFilter fluidFilter) {
         filterModeText(probeInfo, fluidFilter.getFilterMode());
-        fluidFilterText(probeInfo, fluidFilter.getFluidFilterContainer().getFluidFilter());
+        fluidFilterText(probeInfo, fluidFilter.getFluidFilter());
     }
 
     /**

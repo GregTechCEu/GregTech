@@ -42,6 +42,7 @@ public class SimpleFluidFilter extends FluidFilter {
 
     public SimpleFluidFilter(ItemStack stack) {
         this.filterReader = new SimpleFluidFilterReader(stack, MAX_FLUID_SLOTS);
+        setFilterReader(this.filterReader);
     }
 
     @Override
@@ -55,14 +56,6 @@ public class SimpleFluidFilter extends FluidFilter {
         for (int i = 0; i < filterReader.getSlots(); i++) {
             filterReader.getFluidTank(i).setCapacity(maxSize);
         }
-    }
-
-    public boolean isBlacklist() {
-        return this.filterReader.isBlacklistFilter();
-    }
-
-    public void setBlacklistFilter(boolean blacklist) {
-        this.filterReader.setBlacklistFilter(blacklist);
     }
 
     @Override
@@ -79,11 +72,11 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPanel(getContainerStack(), 100, 100);
+        return GTGuis.createPanel(getContainerStack(), 176, 168);
     }
 
     @Override
-    public @NotNull ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
         FluidSlotSyncHandler[] syncHandlers = new FluidSlotSyncHandler[MAX_FLUID_SLOTS];
         for (int i = 0; i < syncHandlers.length; i++) {
             var tank = this.filterReader.getFluidTank(i);
@@ -91,14 +84,15 @@ public class SimpleFluidFilter extends FluidFilter {
             syncHandlers[i].setValue(tank.getFluid(), false, false);
         }
 
-        return new Column().coverChildrenHeight().widthRel(1f)
-                .child(SlotGroupWidget.builder()
-                        .matrix("FFF",
-                                "FFF",
-                                "FFF")
-                        .key('F', i -> new FluidSlot()
-                                .syncHandler(syncHandlers[i]))
-                        .build());
+        return new Row().coverChildrenHeight().widthRel(1f)
+                    .child(SlotGroupWidget.builder()
+                            .matrix("FFF",
+                                    "FFF",
+                                    "FFF")
+                            .key('F', i -> new FluidSlot()
+                                    .syncHandler(syncHandlers[i]))
+                            .build())
+                .child(super.createWidgets(syncManager));
     }
 
     @Override
@@ -165,33 +159,9 @@ public class SimpleFluidFilter extends FluidFilter {
         }
         return limit;
     }
-    protected static class SimpleFluidFilterReader extends BaseFilterReader {
-
-        protected static final String KEY_FLUIDS = "FluidTank";
+    protected class SimpleFluidFilterReader extends BaseFluidFilterReader {
         public SimpleFluidFilterReader(ItemStack container, int slots) {
             super(container, slots);
-        }
-
-        @Override
-        public void onMaxStackSizeChange() {
-
-        }
-
-        @Override
-        public NBTTagList getItemsNbt() {
-            NBTTagCompound nbt = getStackTag();
-            if (!nbt.hasKey(KEY_FLUIDS)) {
-                NBTTagList list = new NBTTagList();
-                for (int i = 0; i < getSlots(); i++) {
-                    list.appendTag(new NBTTagCompound());
-                }
-                nbt.setTag(KEY_FLUIDS, list);
-            }
-            return nbt.getTagList(KEY_FLUIDS, Constants.NBT.TAG_COMPOUND);
-        }
-
-        public FluidStack getFluidStack(int i) {
-            return getFluidTank(i).getFluid();
         }
 
         public WritableFluidTank getFluidTank(int i) {
@@ -299,7 +269,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
     }
 
-    public class FixedFluidSlotSH extends FluidSlotSyncHandler {
+    public static class FixedFluidSlotSH extends FluidSlotSyncHandler {
         @Nullable
         private FluidStack lastStoredPhantomFluid;
 
