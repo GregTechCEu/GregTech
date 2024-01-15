@@ -43,20 +43,12 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     public abstract ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager);
 
     protected final ModularPanel createBasePanel(ItemStack stack) {
-        return GTGuis.createPanel(stack, getWidth(), getHeight())
+        return GTGuis.createPanel(stack, 176, 188)
                 .child(CoverWithUI.createTitleRow(stack));
     }
 
     @Override
     public GTGuiTheme getUITheme() {
         return GTGuiTheme.COVER;
-    }
-
-    protected int getWidth() {
-        return 176;
-    }
-
-    protected int getHeight() {
-        return 188;
     }
 }
