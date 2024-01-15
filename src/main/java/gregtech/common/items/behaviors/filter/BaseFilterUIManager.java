@@ -33,9 +33,7 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
         if (!world.isRemote && !Interactable.hasShiftDown()) {
             MetaItemGuiFactory.open(player, hand);
         }
-
-        // todo this method is client only, probably not a good idea to use this
-        if (Interactable.hasShiftDown() && heldItem.hasTagCompound()) {
+        if (player.isSneaking() && heldItem.hasTagCompound()) {
             heldItem.setTagCompound(null);
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
