@@ -128,25 +128,22 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     }
 
     protected static class BaseItemFilterReader extends BaseFilterReader {
-        private Supplier<Integer> maxStackSizer = () -> 1;
-        private int cache;
         protected static final String COUNT = "Count";
         public BaseItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
-            setBlacklistFilter(false);
         }
 
         public void onMaxStackSizeChange() {
             this.cache = getMaxStackSizer().get();
         }
 
-        public final int getMaxStackSize() {
-            return this.isBlacklistFilter() ? 1 : this.cache;
-        }
-
         public final void setMaxStackSizer(Supplier<Integer> maxStackSizer) {
             this.maxStackSizer = maxStackSizer;
             this.cache = this.maxStackSizer.get();
+        }
+
+        public final int getMaxStackSize() {
+            return this.isBlacklistFilter() ? 1 : this.cache;
         }
 
         public Supplier<Integer> getMaxStackSizer() {

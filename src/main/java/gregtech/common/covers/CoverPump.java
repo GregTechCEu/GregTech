@@ -1,8 +1,23 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
@@ -21,6 +36,7 @@ import gregtech.api.gui.widgets.IncrementButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
@@ -30,6 +46,7 @@ import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -242,8 +259,107 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        return GTGuis.createPanel(this, 100, 100)
-                .child(CoverWithUI.createTitleRow(getPickItem()));
+        var panel = GTGuis.createPanel(this, 176,192);
+
+        //todo set fluid filter stuffs here
+
+        return panel.child(CoverWithUI.createTitleRow(getPickItem()))
+                .child(createUI(panel, guiSyncManager))
+                .bindPlayerInventory();
+    }
+
+    protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+        EnumSyncValue<ManualImportExportMode> manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
+                this::getManualImportExportMode, this::setManualImportExportMode);
+
+        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
+
+        syncManager.syncValue("manual_io", manualIOmode);
+
+        return new Column().top(24).margin(7, 0)
+                .widthRel(1f).coverChildrenHeight()
+                .child(new Row().coverChildrenHeight()
+                        .marginBottom(2).widthRel(1f)
+                        .child(new ButtonWidget<>()
+                                .left(0).width(18)
+                                .onMousePressed(mouseButton -> {
+                                    throughput.updateCacheFromSource(false);
+                                    int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                    throughput.setValue(val, true, true);
+                                    Interactable.playButtonClickSound();
+                                    return true;
+                                })
+                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                        .child(new TextFieldWidget()
+                                .left(18).right(18)
+                                .setTextColor(EnumDyeColor.WHITE.getColorValue())
+                                .setNumbers(1, maxFluidTransferRate)
+                                .value(throughput)
+                                .background(GTGuiTextures.DISPLAY)
+                                .onUpdateListener(w -> {
+                                    if (throughput.updateCacheFromSource(false)) {
+                                        w.setText(throughput.getStringValue());
+                                    }
+                                }))
+                        .child(new ButtonWidget<>()
+                                .right(0).width(18)
+                                .onMousePressed(mouseButton -> {
+                                    throughput.updateCacheFromSource(false);
+                                    int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                    throughput.setValue(val, true, true);
+                                    Interactable.playButtonClickSound();
+                                    return true;
+                                })
+                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))))
+                .child(getFluidFilterContainer()
+                        .initUI(mainPanel, syncManager))
+                .child(new Row().coverChildrenHeight()
+                        .marginBottom(2).widthRel(1f)
+                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
+                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
+                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))
+                        .child(IKey.lang("Manual IO Mode")
+                                .asWidget()
+                                .align(Alignment.CenterRight)
+                                .height(18)));
+    }
+
+    private Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
+        return new ToggleButton().size(18)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()])
+                .addTooltipLine(switch (mode) {
+                    case DISABLED -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
+                    case UNFILTERED -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
+                    case FILTERED -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
+                });
+    }
+
+    protected int getIncrementValue(MouseData data) {
+        int adjust = 1;
+        if (data.shift) adjust *= 4;
+        if (data.ctrl) adjust *= 16;
+        if (data.alt) adjust *= 64;
+        return adjust;
+    }
+
+    protected IKey createAdjustOverlay(boolean increment) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(increment ? '+' : '-');
+        builder.append(getIncrementValue(MouseData.create(-1)));
+
+        float scale = 1f;
+        if (builder.length() == 3) {
+            scale = 0.8f;
+        } else if (builder.length() == 4) {
+            scale = 0.6f;
+        } else if (builder.length() > 4) {
+            scale = 0.5f;
+        }
+        return IKey.str(builder.toString())
+                .scale(scale);
     }
 
     public static Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
@@ -291,12 +407,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeEnumValue(pumpMode);
+        getFluidFilterContainer().writeInitialSyncData(packetBuffer);
     }
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.pumpMode = packetBuffer.readEnumValue(PumpMode.class);
+        getFluidFilterContainer().readInitialSyncData(packetBuffer);
     }
 
     @Override

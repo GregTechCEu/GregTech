@@ -4,6 +4,7 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 
+import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -80,9 +81,9 @@ public class SimpleItemFilter extends ItemFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPopupPanel("simple_item_filter", 81, 81)
-                .child(IKey.str("Settings").asWidget().margin(4).align(Alignment.TopLeft))
-                .child(createWidgets(syncManager).bottom(4).left(4));
+        return GTGuis.createPopupPanel("simple_item_filter", 98, 81)
+                .child(CoverWithUI.createTitleRow(getContainerStack()))
+                .child(createWidgets(syncManager).top(22).left(4));
     }
 
     @Override
@@ -119,7 +120,7 @@ public class SimpleItemFilter extends ItemFilter {
                                                 markDirty();
                                             }
                                         })))
-                        .build())
+                        .build().marginRight(4))
                 .child(new Column().width(18).coverChildren()
                         .child(super.createWidgets(syncManager))
                         .child(new CycleButtonWidget()
@@ -181,8 +182,6 @@ public class SimpleItemFilter extends ItemFilter {
         public static final String IGNORE_DAMAGE = "ignore_damage";
         public SimpleItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
-            setIgnoreDamage(true);
-            setIgnoreNBT(true);
         }
 
         protected void setIgnoreDamage(boolean ignoreDamage) {
@@ -196,10 +195,16 @@ public class SimpleItemFilter extends ItemFilter {
         }
 
         public boolean isIgnoreDamage() {
+            if (!getStackTag().hasKey(IGNORE_DAMAGE))
+                setIgnoreDamage(true);
+
             return getStackTag().getBoolean(IGNORE_DAMAGE);
         }
 
         public boolean isIgnoreNBT() {
+            if (!getStackTag().hasKey(IGNORE_NBT))
+                setIgnoreNBT(true);
+
             return getStackTag().getBoolean(IGNORE_NBT);
         }
 

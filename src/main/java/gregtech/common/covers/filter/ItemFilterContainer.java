@@ -170,7 +170,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                         }))
                 .child(IKey.dynamic(() -> hasItemFilter() ?
                                 getFilterInventory().getStackInSlot(0).getDisplayName() :
-                                IKey.lang("cover.conveyor.item_filter.title").get())
+                                IKey.lang("metaitem.item_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
     }

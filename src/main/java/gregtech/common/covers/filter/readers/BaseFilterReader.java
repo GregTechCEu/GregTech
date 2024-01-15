@@ -7,15 +7,18 @@ import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.utils.ItemStackItemHandler;
 
+import java.util.function.Supplier;
+
 public abstract class BaseFilterReader extends ItemStackItemHandler {
 
     protected final ItemStack container;
+    protected Supplier<Integer> maxStackSizer = () -> 1;
+    protected int cache;
     protected static final String KEY_ITEMS = "Items";
     protected static final String BLACKLIST = "is_blacklist";
     public BaseFilterReader(ItemStack container, int slots) {
         super(container, slots);
         this.container = container;
-        setBlacklistFilter(false);
     }
 
     public ItemStack getContainer () {
@@ -30,6 +33,9 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
     }
 
     public final boolean isBlacklistFilter() {
+        if (!getStackTag().hasKey(BLACKLIST))
+            setBlacklistFilter(false);
+
         return getStackTag().getBoolean(BLACKLIST);
     }
 

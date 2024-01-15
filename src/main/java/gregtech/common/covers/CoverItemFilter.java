@@ -162,11 +162,13 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                 .size(176, 188).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()).left(4))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
-                        .child(new Row().coverChildren().marginBottom(4).left(0)
+                        .child(new Row().coverChildrenHeight()
+                                .widthRel(1f).marginBottom(4).left(0)
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
                                 .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
-                                .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH)))
-                        .child(getItemFilter().createWidgets(guiSyncManager)))
+                                .child(createFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH))
+                                .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight)))
+                        .child(getItemFilter().createWidgets(guiSyncManager).left(0)))
                 .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
     }
 

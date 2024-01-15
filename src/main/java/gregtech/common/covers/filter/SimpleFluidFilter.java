@@ -1,21 +1,12 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
-import com.cleanroommc.modularui.widgets.layout.Row;
-
-import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuis;
-import gregtech.common.covers.filter.readers.BaseFilterReader;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
@@ -26,9 +17,10 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,9 +57,10 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPopupPanel("simple_fluid_filter", 100, 100)
+        return GTGuis.createPopupPanel("simple_fluid_filter", 98, 81)
                 .padding(4)
-                .child(createWidgets(syncManager));
+                .child(CoverWithUI.createTitleRow(getContainerStack()))
+                .child(createWidgets(syncManager).top(22));
     }
 
     @Override
@@ -91,7 +84,7 @@ public class SimpleFluidFilter extends FluidFilter {
                                     "FFF")
                             .key('F', i -> new FluidSlot()
                                     .syncHandler(syncHandlers[i]))
-                            .build())
+                            .build().marginRight(4))
                 .child(super.createWidgets(syncManager));
     }
 

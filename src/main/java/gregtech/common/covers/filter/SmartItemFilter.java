@@ -2,6 +2,9 @@ package gregtech.common.covers.filter;
 
 import com.cleanroommc.modularui.utils.Alignment;
 
+import com.cleanroommc.modularui.widgets.layout.Row;
+
+import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -87,9 +90,9 @@ public class SmartItemFilter extends ItemFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPopupPanel("smart_item_filter", 100, 100)
-                .child(IKey.str("Settings").asWidget().margin(4).align(Alignment.TopLeft))
-                .child(createWidgets(syncManager).bottom(4).left(4));
+        return GTGuis.createPopupPanel("smart_item_filter", 98 + 27, 81)
+                .child(CoverWithUI.createTitleRow(getContainerStack()))
+                .child(createWidgets(syncManager).top(22).left(4));
     }
 
     @Override
@@ -102,14 +105,16 @@ public class SmartItemFilter extends ItemFilter {
         var filterMode = new EnumSyncValue<>(SmartFilteringMode.class, filterReader::getFilteringMode, filterReader::setFilteringMode);
         syncManager.syncValue("filter_mode", filterMode);
 
-        return new Column().coverChildren()
-                .child(createFilterModeButton(filterMode, SmartFilteringMode.ELECTROLYZER))
-                .child(createFilterModeButton(filterMode, SmartFilteringMode.CENTRIFUGE))
-                .child(createFilterModeButton(filterMode, SmartFilteringMode.SIFTER));
+        return new Row().coverChildren()
+                .child(new Column().coverChildren().marginRight(4)
+                        .child(createFilterModeButton(filterMode, SmartFilteringMode.ELECTROLYZER))
+                        .child(createFilterModeButton(filterMode, SmartFilteringMode.CENTRIFUGE))
+                        .child(createFilterModeButton(filterMode, SmartFilteringMode.SIFTER)))
+                .child(super.createWidgets(syncManager));
     }
 
     private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<SmartFilteringMode> value, SmartFilteringMode mode) {
-        return new ToggleButton().height(18).width(18 * 4)
+        return new ToggleButton().height(18).width(18 * 5)
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .hoverBackground()
@@ -186,6 +191,9 @@ public class SmartItemFilter extends ItemFilter {
         }
 
         public SmartFilteringMode getFilteringMode() {
+            if (!getStackTag().hasKey(FILTER_MODE))
+                setFilteringMode(SmartFilteringMode.ELECTROLYZER);
+
             return SmartFilteringMode.values()[getStackTag().getInteger(FILTER_MODE)];
         }
 

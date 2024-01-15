@@ -218,14 +218,14 @@ public class OreDictionaryItemFilter extends ItemFilter {
                                     oreSlots.add(slot);
                                     return slot;
                                 })
-                                .build().marginRight(4))
+                                .build().marginRight(2))
                         .child(new ToggleButton()
                                 .size(18).value(caseSensitive)
                                 .background(GTGuiTextures.BUTTON_CASE_SENSITIVE[1])
                                 .hoverBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[1])
                                 .selectedBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
                                 .selectedHoverBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
-                                .marginRight(4)
+                                .marginRight(2)
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true)))
                         .child(new ToggleButton()
                                 .size(18).value(matchAll)
@@ -233,7 +233,9 @@ public class OreDictionaryItemFilter extends ItemFilter {
                                 .hoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[1])
                                 .selectedHoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
                                 .selectedBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
-                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))));
+                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                                .marginRight(2))
+                        .child(super.createWidgets(syncManager)));
     }
 
     protected void getStatusIcon(Widget<?> widget) {
@@ -408,8 +410,6 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
         public OreDictionaryItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
-            setCaseSensitive(true);
-            setMatchAll(true);
         }
 
         @Override
@@ -418,28 +418,36 @@ public class OreDictionaryItemFilter extends ItemFilter {
         }
 
         public void setExpression(String expression) {
-            if (this.getExpression().equals(expression)) return;
+            var old = getStackTag().getString(EXPRESSION);
+            if (expression.equals(old)) return;
             getStackTag().setString(EXPRESSION, expression);
             recompile();
             markDirty();
         }
 
         public String getExpression() {
+            if (!getStackTag().hasKey(EXPRESSION))
+                setExpression("");
+
             return getStackTag().getString(EXPRESSION);
         }
 
         public void setCaseSensitive(boolean caseSensitive) {
-            if (this.isCaseSensitive() == caseSensitive) return;
+            var old = getStackTag().getBoolean(CASE_SENSITIVE);
+            if (getStackTag().hasKey(CASE_SENSITIVE) && old == caseSensitive) return;
             getStackTag().setBoolean(CASE_SENSITIVE, caseSensitive);
             markDirty();
         }
 
         public boolean isCaseSensitive() {
+            if (!getStackTag().hasKey(CASE_SENSITIVE))
+                setCaseSensitive(true);
+
             return getStackTag().getBoolean(CASE_SENSITIVE);
         }
 
         public void setMatchAll(boolean matchAll) {
-            if (this.shouldMatchAll() == matchAll) return;
+            if (getStackTag().hasKey(MATCH_ALL) && this.shouldMatchAll() == matchAll) return;
             getStackTag().setBoolean(MATCH_ALL, matchAll);
             markDirty();
         }
@@ -449,6 +457,9 @@ public class OreDictionaryItemFilter extends ItemFilter {
          * all entries to match
          */
         public boolean shouldMatchAll() {
+            if (!getStackTag().hasKey(MATCH_ALL))
+                setMatchAll(true);
+
             return getStackTag().getBoolean(MATCH_ALL);
         }
     }

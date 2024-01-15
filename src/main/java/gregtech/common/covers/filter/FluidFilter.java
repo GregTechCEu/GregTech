@@ -92,7 +92,7 @@ public abstract class FluidFilter implements Filter<FluidStack> {
         }
     }
 
-    protected abstract class BaseFluidFilterReader extends BaseFilterReader {
+    protected abstract static class BaseFluidFilterReader extends BaseFilterReader {
 
         protected static final String KEY_FLUIDS = "FluidTank";
 
