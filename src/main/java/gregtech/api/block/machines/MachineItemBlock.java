@@ -10,6 +10,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -61,8 +62,8 @@ public class MachineItemBlock extends ItemBlock {
      */
     public static void addCreativeTab(CreativeTabs creativeTab) {
         Preconditions.checkNotNull(creativeTab, "creativeTab");
-        if (creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES) {
-            throw new IllegalArgumentException("Adding " + GregTechAPI.TAB_GREGTECH_MACHINES.tabLabel +
+        if (creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES) {
+            throw new IllegalArgumentException("Adding " + GTCreativeTabs.TAB_GREGTECH_MACHINES.tabLabel +
                     " as additional creative tab is redundant.");
         } else if (creativeTab == CreativeTabs.SEARCH) {
             throw new IllegalArgumentException(

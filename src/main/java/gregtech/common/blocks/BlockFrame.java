@@ -1,6 +1,5 @@
 package gregtech.common.blocks;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -15,6 +14,7 @@ import gregtech.client.model.MaterialStateMapper;
 import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.properties.PropertyMaterial;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -68,7 +68,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
         setTranslationKey("frame");
         setHardness(3.0f);
         setResistance(6.0f);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_MATERIALS);
     }
 
     @Override

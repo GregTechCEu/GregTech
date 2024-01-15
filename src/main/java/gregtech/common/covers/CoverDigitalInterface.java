@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
@@ -1046,9 +1047,11 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
         }
         RenderUtil.renderLineChart(inputEnergyList, max, -5.5f / 16, 5.5f / 16, 12f / 16, 6f / 16, 0.005f, 0XFF03FF00);
         RenderUtil.renderLineChart(outputEnergyList, max, -5.5f / 16, 5.5f / 16, 12f / 16, 6f / 16, 0.005f, 0XFFFF2F39);
-        RenderUtil.renderText(-5.7f / 16, -2.3f / 16, 0, 1.0f / 270, 0XFF03FF00, "EU I: " + energyInputPerDur + "EU/s",
+        RenderUtil.renderText(-5.7f / 16, -2.3f / 16, 0, 1.0f / 270, 0XFF03FF00,
+                "EU I: " + TextFormattingUtil.formatNumbers(energyInputPerDur / 20) + "EU/t",
                 false);
-        RenderUtil.renderText(-5.7f / 16, -1.6f / 16, 0, 1.0f / 270, 0XFFFF0000, "EU O: " + energyOutputPerDur + "EU/s",
+        RenderUtil.renderText(-5.7f / 16, -1.6f / 16, 0, 1.0f / 270, 0XFFFF0000,
+                "EU O: " + TextFormattingUtil.formatNumbers(energyOutputPerDur / 20) + "EU/t",
                 false);
         // Bandaid fix to prevent overflowing renders when dealing with items that cause long overflow, ie Ultimate
         // Battery

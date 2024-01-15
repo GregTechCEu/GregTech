@@ -1304,11 +1304,6 @@ cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mod
 cover.fluid_regulator.supply_exact=Supply Exact: %s
 cover.fluid_regulator.keep_exact=Keep Exact: %s
 
-cover.machine_controller.title=Machine Controller Settings
-cover.machine_controller.normal=Normal
-cover.machine_controller.inverted=Inverted
-cover.machine_controller.inverted.description=§eNormal§r - in this mode, the cover will require a signal weaker than the set redstone level to run/n§eInverted§r - in this mode, the cover will require a signal stronger than the set redstone level to run
-cover.machine_controller.redstone=Min Redstone Strength: %,d
 cover.machine_controller.mode.machine=Control Machine
 cover.machine_controller.mode.cover_up=Control Cover (Top)
 cover.machine_controller.mode.cover_down=Control Cover (Bottom)
@@ -1316,6 +1311,12 @@ cover.machine_controller.mode.cover_south=Control Cover (South)
 cover.machine_controller.mode.cover_north=Control Cover (North)
 cover.machine_controller.mode.cover_east=Control Cover (East)
 cover.machine_controller.mode.cover_west=Control Cover (West)
+cover.machine_controller.this_cover=§cThis cover
+cover.machine_controller.cover_not_controllable=§cNo controllable cover
+cover.machine_controller.machine_not_controllable=§cMachine not controllable
+cover.machine_controller.control=Control:
+cover.machine_controller.enable_with_redstone=Enable with Redstone
+cover.machine_controller.disable_with_redstone=Disable with Redstone
 
 cover.ender_fluid_link.title=Ender Fluid Link
 cover.ender_fluid_link.iomode.enabled=I/O Enabled

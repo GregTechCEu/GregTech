@@ -482,7 +482,7 @@ public class WoodRecipeLoader {
                 'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
         if (ConfigHolder.recipes.nerfWoodCrafting) {
             ModHandler.addShapedRecipe("treated_wood_stick_saw", OreDictUnifier.get(OrePrefix.stick, TreatedWood, 4),
-                    "s", "L",
+                    "s", "L", "L",
                     'L', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK));
         }
     }
