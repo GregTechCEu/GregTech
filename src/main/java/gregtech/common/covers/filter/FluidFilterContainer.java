@@ -1,5 +1,15 @@
 package gregtech.common.covers.filter;
 
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.util.IDirtyNotifiable;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.items.ItemStackHandler;
+
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
@@ -11,23 +21,6 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
-
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.ServerWidgetGroup;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
-import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.util.IDirtyNotifiable;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.ItemStackHandler;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -125,22 +118,22 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         return result;
     }
 
-    public void initUI(int y, Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new LabelWidget(10, y, "cover.pump.fluid_filter.title"));
-        widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
+    public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
+        widgetGroup.accept(new gregtech.api.gui.widgets.LabelWidget(10, y, "cover.pump.fluid_filter.title"));
+        widgetGroup.accept(new gregtech.api.gui.widgets.SlotWidget(filterInventory, 0, 10, y + 15)
+                .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT, gregtech.api.gui.GuiTextures.FILTER_SLOT_OVERLAY));
 
         this.initFilterUI(y + 15, widgetGroup);
         this.blacklistUI(y + 15, widgetGroup, () -> true);
     }
 
-    public void initFilterUI(int y, Consumer<Widget> widgetGroup) {
+    public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter, shouldShowTip()));
     }
 
-    public void blacklistUI(int y, Consumer<Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
-        ServerWidgetGroup blacklistButton = new ServerWidgetGroup(this::hasFluidFilter);
-        blacklistButton.addWidget(new ToggleButtonWidget(144, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
+    public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
+        gregtech.api.gui.widgets.ServerWidgetGroup blacklistButton = new gregtech.api.gui.widgets.ServerWidgetGroup(this::hasFluidFilter);
+        blacklistButton.addWidget(new gregtech.api.gui.widgets.ToggleButtonWidget(144, y, 18, 18, gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
                 .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
@@ -173,7 +166,7 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
                                 panel.closePanel();
                             }
                         }, true)
-                        .size(18)
+                        .size(18).marginRight(4)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
                 .child(new ButtonWidget<>()
                         .setEnabledIf(w -> hasFluidFilter())
