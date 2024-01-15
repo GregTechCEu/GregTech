@@ -16,7 +16,7 @@ import java.util.List;
 @Mixin(ForgeModIdHelper.class)
 public class JEITooltipMixin {
 
-    @Inject(method = "addModNameToIngredientTooltip", at = @At("RETURN"), remap = false)
+    @Inject(method = "addModNameToIngredientTooltip", at = @At("HEAD"), remap = false)
     public void addTooltip(List<String> tooltip, Object ingredient, IIngredientHelper<Object> ingredientHelper,
                            CallbackInfoReturnable<List<String>> cir) {
         if (ingredient instanceof FluidStack) {
