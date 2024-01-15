@@ -109,11 +109,11 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setTag("FilterInventory", filterInventory.serializeNBT());
         tagCompound.setBoolean("IsBlacklist", filterWrapper.isBlacklistFilter());
-        if (filterWrapper.getFluidFilter() != null) {
-            NBTTagCompound filterInventory = new NBTTagCompound();
-            filterWrapper.getFluidFilter().writeToNBT(filterInventory);
-            tagCompound.setTag("Filter", filterInventory);
-        }
+//        if (filterWrapper.getFluidFilter() != null) {
+//            NBTTagCompound filterInventory = new NBTTagCompound();
+//            filterWrapper.getFluidFilter().writeToNBT(filterInventory);
+//            tagCompound.setTag("Filter", filterInventory);
+//        }
         return tagCompound;
     }
 
@@ -121,8 +121,8 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
     public void deserializeNBT(NBTTagCompound tagCompound) {
         this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
         this.filterWrapper.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-        if (filterWrapper.getFluidFilter() != null) {
-            this.filterWrapper.getFluidFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
-        }
+//        if (filterWrapper.getFluidFilter() != null) {
+//            this.filterWrapper.getFluidFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
+//        }
     }
 }
