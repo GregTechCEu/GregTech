@@ -204,8 +204,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         widgetGroup.accept(stackSizeGroup);
 
-        this.fluidFilter.getFilterWrapper().initUI(y + 15, widgetGroup);
-        this.fluidFilter.getFilterWrapper().blacklistUI(y + 15, widgetGroup,
+        this.fluidFilter.initUI(y + 15, widgetGroup);
+        this.fluidFilter.blacklistUI(y + 15, widgetGroup,
                 () -> voidingMode != VoidingMode.VOID_OVERFLOW);
     }
 

@@ -46,6 +46,10 @@ public abstract class FluidFilter implements Filter<FluidStack> {
 
     public abstract void setMaxConfigurableFluidSize(int maxStackSize);
 
+    public abstract boolean isBlacklist();
+
+    public abstract void setBlacklistFilter(boolean blacklist);
+
     public final void markDirty() {
         if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();

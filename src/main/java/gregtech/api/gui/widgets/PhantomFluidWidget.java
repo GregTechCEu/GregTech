@@ -6,9 +6,14 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.util.*;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
+import gregtech.common.covers.filter.SimpleFluidFilter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -18,7 +23,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
@@ -38,7 +42,7 @@ import static gregtech.api.util.GTUtility.getFluidFromContainer;
 
 public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhostIngredientTarget {
 
-    private FluidTank fluidTank = null;
+    private SimpleFluidFilter.WritableFluidTank fluidTank = null;
     protected IGuiTexture backgroundTexture = GuiTextures.FLUID_SLOT;
 
     private Supplier<FluidStack> fluidStackSupplier;
@@ -55,7 +59,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         this.fluidStackUpdater = fluidStackUpdater;
     }
 
-    public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, FluidTank fluidTank) {
+    public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, SimpleFluidFilter.WritableFluidTank fluidTank) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.fluidTank = fluidTank;
         this.fluidStackSupplier = fluidTank::getFluid;

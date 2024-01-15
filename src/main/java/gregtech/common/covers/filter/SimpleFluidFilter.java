@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.utils.MouseData;
-
 import gregtech.api.gui.Widget;
 import gregtech.api.mui.GTGuis;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
@@ -15,18 +13,17 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
-
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,6 +50,14 @@ public class SimpleFluidFilter extends FluidFilter {
         for (int i = 0; i < filterReader.getSlots(); i++) {
             filterReader.getFluidTank(i).setCapacity(maxSize);
         }
+    }
+
+    public boolean isBlacklist() {
+        return this.filterReader.isBlacklistFilter();
+    }
+
+    public void setBlacklistFilter(boolean blacklist) {
+        this.filterReader.setBlacklistFilter(blacklist);
     }
 
     @Override
@@ -113,11 +118,11 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public void initUI(Consumer<Widget> widgetGroup) {
-//        for (int i = 0; i < 9; ++i) {
-//            widgetGroup.accept((new PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
-//                    this.fluidFilterTanks[i]))
-//                            .setBackgroundTexture(GuiTextures.SLOT).showTipSupplier(this::shouldShowTip));
-//        }
+        for (int i = 0; i < 9; ++i) {
+            widgetGroup.accept((new gregtech.api.gui.widgets.PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
+                    filterReader.getFluidTank(i)::getFluid, filterReader.getFluidTank(i)::setFluid))
+                            .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT).showTipSupplier(this::shouldShowTip));
+        }
     }
 
     private boolean shouldShowTip() {
@@ -195,7 +200,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
     }
 
-    protected static class WritableFluidTank implements IFluidTank {
+    public static class WritableFluidTank implements IFluidTank {
 
         private final NBTTagCompound fluidTank;
         protected static final String FLUID_AMOUNT = "Amount";

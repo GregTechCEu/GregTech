@@ -14,85 +14,17 @@ import java.util.function.Supplier;
 
 public class FluidFilterWrapper {
 
-    private final IDirtyNotifiable dirtyNotifiable;
-    private boolean isBlacklistFilter = false;
-    private FluidFilter currentFluidFilter;
-    private Supplier<Boolean> showTipSupplier;
-    private int maxSize = 1000;
+    FluidFilterContainer container;
 
-    public FluidFilterWrapper(IDirtyNotifiable dirtyNotifiable, int maxSize) {
-        this.dirtyNotifiable = dirtyNotifiable;
-        this.maxSize = maxSize;
-    }
-
-    public FluidFilterWrapper(IDirtyNotifiable dirtyNotifiable) {
-        this.dirtyNotifiable = dirtyNotifiable;
-    }
-
-    public void initUI(int y, Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter, shouldShowTip()));
-    }
-
-    public void blacklistUI(int y, Consumer<Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
-        ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getFluidFilter() != null);
-        blacklistButton.addWidget(new ToggleButtonWidget(144, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
-                this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
-                        .setTooltipText("cover.filter.blacklist"));
-        widgetGroup.accept(blacklistButton);
+    public FluidFilterWrapper(FluidFilterContainer container) {
+        this.container = container;
     }
 
     public void setFluidFilter(FluidFilter fluidFilter) {
-        this.currentFluidFilter = fluidFilter;
-        if (currentFluidFilter != null) {
-            currentFluidFilter.setDirtyNotifiable(dirtyNotifiable);
-            currentFluidFilter.setMaxConfigurableFluidSize(maxSize);
-        }
-    }
-
-    private Supplier<Boolean> shouldShowTip() {
-        return showTipSupplier;
-    }
-
-    protected void setTipSupplier(Supplier<Boolean> supplier) {
-        this.showTipSupplier = supplier;
+        this.container.setFluidFilter(fluidFilter);
     }
 
     public FluidFilter getFluidFilter() {
-        return currentFluidFilter;
-    }
-
-    public void onFilterInstanceChange() {
-        dirtyNotifiable.markAsDirty();
-    }
-
-    public void setBlacklistFilter(boolean blacklistFilter) {
-        isBlacklistFilter = blacklistFilter;
-        dirtyNotifiable.markAsDirty();
-    }
-
-    public boolean isBlacklistFilter() {
-        return isBlacklistFilter;
-    }
-
-    public boolean testFluidStack(FluidStack fluidStack, boolean whitelist) {
-        boolean result = true;
-        if (currentFluidFilter != null) {
-            result = currentFluidFilter.test(fluidStack);
-        }
-        if (!whitelist) {
-            result = !result;
-        }
-        return result;
-    }
-
-    public boolean testFluidStack(FluidStack fluidStack) {
-        boolean result = true;
-        if (currentFluidFilter != null) {
-            result = currentFluidFilter.test(fluidStack);
-        }
-        if (isBlacklistFilter) {
-            result = !result;
-        }
-        return result;
+        return container.getFluidFilter();
     }
 }
