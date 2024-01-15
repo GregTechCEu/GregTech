@@ -1,12 +1,16 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.utils.MouseData;
+
 import gregtech.api.gui.Widget;
 import gregtech.api.mui.GTGuis;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -19,6 +23,10 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
+
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,31 +36,15 @@ public class SimpleFluidFilter extends FluidFilter {
 
     private static final int MAX_FLUID_SLOTS = 9;
 
-//    protected final FluidTank[] fluidFilterTanks = new FluidTank[MAX_FLUID_SLOTS];
-
     private final SimpleFluidFilterReader filterReader;
 
     public SimpleFluidFilter(ItemStack stack) {
         this.filterReader = new SimpleFluidFilterReader(stack, MAX_FLUID_SLOTS);
-//        for (int i = 0; i < MAX_FLUID_SLOTS; ++i) {
-//            fluidFilterTanks[i] = new FluidTank(1000) {
-//
-//                @Override
-//                public void setFluid(@Nullable FluidStack fluid) {
-//                    super.setFluid(fluid);
-//                    SimpleFluidFilter.this.markDirty();
-//                }
-//            };
-//        }
     }
 
     @Override
     public void configureFilterTanks(int amount) {
         this.filterReader.setFluidAmounts(amount);
-//        for (FluidTank fluidTank : fluidFilterTanks) {
-//            if (fluidTank.getFluid() != null)
-//                fluidTank.getFluid().amount = amount;
-//        }
         this.markDirty();
     }
 
@@ -61,9 +53,6 @@ public class SimpleFluidFilter extends FluidFilter {
         for (int i = 0; i < filterReader.getSlots(); i++) {
             filterReader.getFluidTank(i).setCapacity(maxSize);
         }
-//        for (FluidTank fluidTank : fluidFilterTanks) {
-//            fluidTank.setCapacity(maxSize);
-//        }
     }
 
     @Override
@@ -80,19 +69,25 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
-        return GTGuis.createPanel(this.filterReader.getContainer(), 100, 100);
+        return GTGuis.createPanel(getContainerStack(), 100, 100);
     }
 
     @Override
     public @NotNull ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
+        FluidSlotSyncHandler[] syncHandlers = new FluidSlotSyncHandler[MAX_FLUID_SLOTS];
+        for (int i = 0; i < syncHandlers.length; i++) {
+            var tank = this.filterReader.getFluidTank(i);
+            syncHandlers[i] = new FixedFluidSlotSH(tank).phantom(true);
+            syncHandlers[i].setValue(tank.getFluid(), false, false);
+        }
+
         return new Column().coverChildrenHeight().widthRel(1f)
                 .child(SlotGroupWidget.builder()
                         .matrix("FFF",
                                 "FFF",
                                 "FFF")
                         .key('F', i -> new FluidSlot()
-                                .syncHandler(new FluidSlotSyncHandler(this.filterReader.getFluidTank(i))
-                                        .phantom(true)))
+                                .syncHandler(syncHandlers[i]))
                         .build());
     }
 
@@ -109,14 +104,6 @@ public class SimpleFluidFilter extends FluidFilter {
             }
         }
         this.onMatch(matched, toMatch.copy(), index);
-//        for (int i = 0; i < fluidFilterTanks.length; i++) {
-//            FluidTank fluidTank = fluidFilterTanks[i];
-//            if (fluidTank.getFluid() != null && fluidTank.getFluid().isFluidEqual(toMatch)) {
-//                matched = true;
-//                index = i;
-//                break;
-//            }
-//        }
     }
 
     @Override
@@ -166,15 +153,9 @@ public class SimpleFluidFilter extends FluidFilter {
                 limit = fluid.amount;
             }
         }
-//        for (FluidTank fluidTank : fluidFilterTanks) {
-//            if (fluidTank.getFluid() != null && fluidTank.getFluid().isFluidEqual(fluidStack)) {
-//                limit = fluidTank.getFluid().amount;
-//                break;
-//            }
-//        }
         return limit;
     }
-    protected class SimpleFluidFilterReader extends BaseFilterReader {
+    protected static class SimpleFluidFilterReader extends BaseFilterReader {
 
         protected static final String KEY_FLUIDS = "FluidTank";
         public SimpleFluidFilterReader(ItemStack container, int slots) {
@@ -214,7 +195,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
     }
 
-    protected class WritableFluidTank implements IFluidTank {
+    protected static class WritableFluidTank implements IFluidTank {
 
         private final NBTTagCompound fluidTank;
         protected static final String FLUID_AMOUNT = "Amount";
@@ -305,6 +286,105 @@ public class SimpleFluidFilter extends FluidFilter {
                 setFluid(copy);
 
             return fluid;
+        }
+    }
+
+    public class FixedFluidSlotSH extends FluidSlotSyncHandler {
+        @Nullable
+        private FluidStack lastStoredPhantomFluid;
+
+        public FixedFluidSlotSH(IFluidTank fluidTank) {
+            super(fluidTank);
+        }
+
+        @Override
+        public void readOnServer(int id, PacketBuffer buf) {
+            super.readOnServer(id, buf);
+            if (id == 0) {
+                var fluid = getFluidTank().getFluid();
+                if (this.lastStoredPhantomFluid == null && fluid != null ||
+                        (this.lastStoredPhantomFluid != null && !this.lastStoredPhantomFluid.isFluidEqual(fluid))) {
+                    this.lastStoredPhantomFluid = fluid;
+                }
+            }
+        }
+
+        @Override
+        public void tryClickPhantom(MouseData mouseData) {
+            EntityPlayer player = getSyncManager().getPlayer();
+            ItemStack currentStack = player.inventory.getItemStack();
+            FluidStack currentFluid = this.getFluidTank().getFluid();
+            IFluidHandlerItem fluidHandlerItem = currentStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+
+            if (mouseData.mouseButton == 0) {
+                if (currentStack.isEmpty() || fluidHandlerItem == null) {
+                    if (this.canDrainSlot()) {
+                        this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
+                    }
+                } else {
+                    FluidStack cellFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
+                    if ((this.controlsAmount() || currentFluid == null) && cellFluid != null) {
+                        if (this.canFillSlot()) {
+                            if (!this.controlsAmount()) {
+                                cellFluid.amount = 1;
+                            }
+                            if (this.getFluidTank().fill(cellFluid, true) > 0) {
+                                this.lastStoredPhantomFluid = cellFluid.copy();
+                            }
+                        }
+                    } else {
+                        if (this.canDrainSlot()) {
+                            this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
+                        }
+                    }
+                }
+            } else if (mouseData.mouseButton == 1) {
+                if (this.canFillSlot()) {
+                    if (currentFluid != null) {
+                        if (this.controlsAmount()) {
+                            FluidStack toFill = currentFluid.copy();
+                            toFill.amount = 1000;
+                            this.getFluidTank().fill(toFill, true);
+                        }
+                    } else if (this.lastStoredPhantomFluid != null) {
+                        FluidStack toFill = this.lastStoredPhantomFluid.copy();
+                        toFill.amount = this.controlsAmount() ? 1000 : 1;
+                        this.getFluidTank().fill(toFill, true);
+                    }
+                }
+            } else if (mouseData.mouseButton == 2 && currentFluid != null && this.canDrainSlot()) {
+                this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
+            }
+        }
+
+        @Override
+        public void tryScrollPhantom(MouseData mouseData) {
+            FluidStack currentFluid = this.getFluidTank().getFluid();
+            int amount = mouseData.mouseButton;
+            if (mouseData.shift) {
+                amount *= 10;
+            }
+            if (mouseData.ctrl) {
+                amount *= 100;
+            }
+            if (mouseData.alt) {
+                amount *= 1000;
+            }
+            if (currentFluid == null) {
+                if (amount > 0 && this.lastStoredPhantomFluid != null) {
+                    FluidStack toFill = this.lastStoredPhantomFluid.copy();
+                    toFill.amount = this.controlsAmount() ? amount : 1;
+                    this.getFluidTank().fill(toFill, true);
+                }
+                return;
+            }
+            if (amount > 0 && this.controlsAmount()) {
+                FluidStack toFill = currentFluid.copy();
+                toFill.amount = amount;
+                this.getFluidTank().fill(toFill, true);
+            } else if (amount < 0) {
+                this.getFluidTank().drain(-amount, true);
+            }
         }
     }
 }
