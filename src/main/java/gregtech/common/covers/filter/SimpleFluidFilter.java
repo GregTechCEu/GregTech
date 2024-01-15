@@ -1,6 +1,12 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.Widget;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Row;
+
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
 
@@ -20,7 +26,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -117,7 +122,7 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     @Override
-    public void initUI(Consumer<Widget> widgetGroup) {
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
         for (int i = 0; i < 9; ++i) {
             widgetGroup.accept((new gregtech.api.gui.widgets.PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
                     filterReader.getFluidTank(i)::getFluid, filterReader.getFluidTank(i)::setFluid))

@@ -1,5 +1,11 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
 
@@ -82,7 +88,15 @@ public abstract class ItemFilter implements Filter<ItemStack> {
 
     /** Uses Cleanroom MUI - Creates the widgets standalone so that they can be put into their own panel */
 
-    public abstract @NotNull ParentWidget<?> createWidgets(GuiSyncManager syncManager);
+    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+        var blacklist = new BooleanSyncValue(this.filterReader::isBlacklistFilter, this.filterReader::setBlacklistFilter);
+        return new ParentWidget<>().coverChildren()
+                .child(new CycleButtonWidget()
+                .value(blacklist)
+                .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
+                .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
+                .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
+    }
 
     @Deprecated
     public void readFromNBT(NBTTagCompound tagCompound) {

@@ -1,7 +1,7 @@
 package gregtech.common.covers.filter;
 
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 
 import gregtech.api.gui.GuiTextures;
@@ -91,10 +91,8 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    @NotNull
-    public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
-        var blacklist = new BooleanSyncValue(this.filterReader::isBlacklistFilter, this.filterReader::setBlacklistFilter);
         var ignoreDamage = new BooleanSyncValue(this.filterReader::isIgnoreDamage, this.filterReader::setIgnoreDamage);
         var ignoreNBT = new BooleanSyncValue(this.filterReader::isIgnoreNBT, this.filterReader::setIgnoreNBT);
 
@@ -123,11 +121,7 @@ public class SimpleItemFilter extends ItemFilter {
                                         })))
                         .build())
                 .child(new Column().width(18).coverChildren()
-                        .child(new CycleButtonWidget()
-                                .value(blacklist)
-                                .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
-                                .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
-                                .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")))
+                        .child(super.createWidgets(syncManager))
                         .child(new CycleButtonWidget()
                                 .value(ignoreDamage)
                                 .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_DAMAGE[state])

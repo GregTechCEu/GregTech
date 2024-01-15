@@ -26,7 +26,6 @@ import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
@@ -182,8 +181,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    @NotNull
-    public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
         var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
         var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive, this.filterReader::setCaseSensitive);
         var matchAll = new BooleanSyncValue(this.filterReader::shouldMatchAll, this.filterReader::setMatchAll);

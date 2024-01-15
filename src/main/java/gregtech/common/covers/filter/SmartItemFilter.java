@@ -20,7 +20,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -99,8 +98,7 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    @NotNull
-    public ParentWidget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
         var filterMode = new EnumSyncValue<>(SmartFilteringMode.class, filterReader::getFilteringMode, filterReader::setFilteringMode);
         syncManager.syncValue("filter_mode", filterMode);
 
