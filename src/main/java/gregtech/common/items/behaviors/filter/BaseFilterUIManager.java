@@ -11,6 +11,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 
@@ -44,6 +45,11 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     protected final ModularPanel createBasePanel(ItemStack stack) {
         return GTGuis.createPanel(stack, getWidth(), getHeight())
                 .child(CoverWithUI.createTitleRow(stack));
+    }
+
+    @Override
+    public GTGuiTheme getUITheme() {
+        return GTGuiTheme.COVER;
     }
 
     protected int getWidth() {

@@ -29,7 +29,6 @@ import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -57,6 +56,7 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
@@ -566,7 +566,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
                         .child(new TextFieldWidget()
                                 .left(18).right(18)
-                                .setTextColor(EnumDyeColor.WHITE.getColorValue())
+                                .setTextColor(Color.WHITE.darker(1))
                                 .setNumbers(1, maxItemTransferRate)
                                 .value(throughput)
                                 .background(GTGuiTextures.DISPLAY)

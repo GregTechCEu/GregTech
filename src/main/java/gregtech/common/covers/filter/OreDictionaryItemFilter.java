@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.utils.Color;
+
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -196,6 +198,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                                 slot.updatePreview();
                             }
                         })
+                        .setTextColor(Color.WHITE.darker(1))
                         .value(expression).marginBottom(4)
                         .height(18).widthRel(1f))
                 .child(new Row().coverChildrenHeight()
