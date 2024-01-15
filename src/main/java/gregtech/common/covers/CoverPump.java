@@ -1,5 +1,9 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -17,6 +21,7 @@ import gregtech.api.gui.widgets.IncrementButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -228,6 +233,17 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 .widget(primaryGroup)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 184);
         return buildUI(builder, player);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        return GTGuis.createPanel(this, 100, 100)
+                .child(CoverWithUI.createTitleRow(getPickItem()));
     }
 
     public static Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
