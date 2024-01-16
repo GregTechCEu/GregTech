@@ -1,10 +1,5 @@
 package gregtech.api.cover;
 
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
-
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.mui.GTGuiTextures;
@@ -12,31 +7,28 @@ import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.CoverGuiFactory;
 
-import gregtech.common.covers.CoverConveyor;
-import gregtech.common.covers.CoverPump;
-import gregtech.common.covers.FluidFilterMode;
-import gregtech.common.covers.ItemFilterMode;
-import gregtech.common.covers.ManualImportExportMode;
-
-import gregtech.common.covers.TransferMode;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -121,94 +113,6 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
         return new ParentWidget<>().height(16).widthRel(1.0f).marginBottom(2);
     }
 
-    default Widget<ToggleButton> createManualIoButton(EnumSyncValue<ManualImportExportMode> value, ManualImportExportMode mode) {
-        return new ToggleButton().size(18)
-                .marginRight(2)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()])
-                .addTooltipLine(IKey.lang(mode.localeName));
-    }
-
-    default Widget<ToggleButton> createTransferModeButton(EnumSyncValue<TransferMode> value, TransferMode mode) {
-        return new ToggleButton().size(18)
-                .marginRight(2)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-//                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
-                .addTooltipLine(IKey.lang(mode.localeName));
-    }
-
-    default Row createTransferModeRow(EnumSyncValue<TransferMode> transferMode) {
-        return new Row().marginBottom(2).coverChildrenHeight().widthRel(1f)
-                .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_ANY))
-                .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_EXACT))
-                .child(createTransferModeButton(transferMode, TransferMode.KEEP_EXACT))
-                .child(IKey.lang("Transfer Mode").asWidget()
-                        .align(Alignment.CenterRight)
-                        .height(18));
-    }
-
-    default ToggleButton createConveyorModeButton(EnumSyncValue<CoverConveyor.ConveyorMode> value, CoverConveyor.ConveyorMode mode) {
-        return new ToggleButton().size(18)
-                .marginRight(2)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
-                .addTooltipLine(IKey.lang(mode.localeName));
-    }
-
-    default ToggleButton createPumpModeButton(EnumSyncValue<CoverPump.PumpMode> value, CoverPump.PumpMode mode) {
-        return new ToggleButton().size(18)
-                .marginRight(2)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
-                .addTooltipLine(IKey.lang(mode.localeName));
-    }
-
-    default Row createItemFilterModeRow(EnumSyncValue<ItemFilterMode> filteringMode) {
-        return new Row().coverChildrenHeight()
-                .widthRel(1f).left(0)
-                .child(createItemFilterModeButton(filteringMode, ItemFilterMode.FILTER_INSERT))
-                .child(createItemFilterModeButton(filteringMode, ItemFilterMode.FILTER_EXTRACT))
-                .child(createItemFilterModeButton(filteringMode, ItemFilterMode.FILTER_BOTH))
-                .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight));
-    }
-
-    default ToggleButton createItemFilterModeButton(EnumSyncValue<ItemFilterMode> value, ItemFilterMode mode) {
-        return new ToggleButton().size(18)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .marginRight(2)
-//                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()]) todo new overlays
-                .addTooltipLine(IKey.lang(mode.localeName));
-    }
-
-    default Row createFluidFilterModeRow(EnumSyncValue<FluidFilterMode> filteringMode) {
-        return new Row().coverChildrenHeight()
-                .widthRel(1f).left(0)
-                .child(createFluidFilterModeButton(filteringMode, FluidFilterMode.FILTER_FILL))
-                .child(createFluidFilterModeButton(filteringMode, FluidFilterMode.FILTER_DRAIN))
-                .child(createFluidFilterModeButton(filteringMode, FluidFilterMode.FILTER_BOTH))
-                .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight));
-    }
-
-    default ToggleButton createFluidFilterModeButton(EnumSyncValue<FluidFilterMode> value, FluidFilterMode mode) {
-        return new ToggleButton().size(18)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .marginRight(2)
-//                .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()]) todo new overlays
-                .addTooltipLine(IKey.lang(mode.localeName));
-    }
-
     default int getIncrementValue(MouseData data) {
         int adjust = 1;
         if (data.shift) adjust *= 4;
@@ -248,5 +152,78 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
      */
     default BoolValue.Dynamic boolValueOf(IntSyncValue syncValue, int value) {
         return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
+    }
+
+    class EnumRowBuilder<T extends Enum<T>> {
+
+        private EnumSyncValue<T> syncValue;
+        private final Class<T> enumValue;
+        private String lang;
+        private IDrawable[] background;
+        private IDrawable selectedBackground;
+        private IDrawable[] overlay;
+
+        public EnumRowBuilder(Class<T> enumValue) {
+            this.enumValue = enumValue;
+        }
+
+        public EnumRowBuilder<T> value(EnumSyncValue<T> syncValue) {
+            this.syncValue = syncValue;
+            return this;
+        }
+
+        public EnumRowBuilder<T> lang(String lang) {
+            this.lang = lang;
+            return this;
+        }
+
+        public EnumRowBuilder<T> background(IDrawable... background) {
+            this.background = background;
+            return this;
+        }
+
+        public EnumRowBuilder<T> selectedBackground(IDrawable selectedBackground) {
+            this.selectedBackground = selectedBackground;
+            return this;
+        }
+
+        public EnumRowBuilder<T> overlay(IDrawable... overlay) {
+            this.overlay = overlay;
+            return this;
+        }
+
+        private BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
+            return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
+        }
+
+        public Row build() {
+            var row = new Row().marginBottom(2).coverChildrenHeight().widthRel(1f);
+            if (this.enumValue != null && this.syncValue != null) {
+                for (var enumVal : enumValue.getEnumConstants()) {
+                    var button = new ToggleButton().size(18).marginRight(2)
+                            .value(boolValueOf(this.syncValue, enumVal));
+
+                    if (this.background != null && this.background.length > 0)
+                        button.background(this.background);
+                    else
+                        button.background(GTGuiTextures.MC_BUTTON_DISABLED);
+
+                    if (this.selectedBackground != null)
+                        button.selectedBackground(this.selectedBackground);
+                    else
+                        button.selectedBackground(GTGuiTextures.MC_BUTTON);
+
+                    if (this.overlay != null)
+                        button.overlay(this.overlay[enumVal.ordinal()]);
+
+                    if (enumVal instanceof IStringSerializable serializable) {
+                        button.addTooltipLine(IKey.lang(serializable.getName()));
+                    }
+                    row.child(button);
+                }
+            }
+            row.child(IKey.lang(this.lang).asWidget().align(Alignment.CenterRight).height(18));
+            return row;
+        }
     }
 }

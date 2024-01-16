@@ -160,7 +160,11 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                 .size(176, 194).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
-                        .child(createFluidFilterModeRow(filteringMode))
+                        .child(new EnumRowBuilder<>(FluidFilterMode.class)
+                                .value(filteringMode)
+                                .lang("Filter Mode")
+//                                .overlay() todo fluid filter overlays
+                                .build())
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
                         .child(getFluidFilter().createWidgets(guiSyncManager)))

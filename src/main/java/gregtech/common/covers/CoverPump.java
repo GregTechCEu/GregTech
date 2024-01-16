@@ -49,29 +49,22 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.google.common.math.IntMath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
-import java.util.function.IntSupplier;
 
 public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable {
 
@@ -272,6 +265,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
 
         syncManager.syncValue("manual_io", manualIOmode);
+        syncManager.syncValue("pump_mode", pumpMode);
 
         return new Column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight()
@@ -310,19 +304,16 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                 .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))))
                 .child(getFluidFilterContainer()
                         .initUI(mainPanel, syncManager))
-                .child(new Row().coverChildrenHeight()
-                        .marginBottom(2).widthRel(1f)
-                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
-                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
-                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))
-                        .child(IKey.lang("Manual IO Mode")
-                                .asWidget()
-                                .align(Alignment.CenterRight)
-                                .height(18)))
-                .child(new Row().coverChildrenHeight()
-                        .marginBottom(2).widthRel(1f)
-                        .child(createPumpModeButton(pumpMode, PumpMode.IMPORT))
-                        .child(createPumpModeButton(pumpMode, PumpMode.EXPORT)));
+                .child(new EnumRowBuilder<>(ManualImportExportMode.class)
+                        .value(manualIOmode)
+                        .lang("Manual IO")
+                        .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
+                        .build())
+                .child(new EnumRowBuilder<>(PumpMode.class)
+                        .value(pumpMode)
+                        .lang("Pump Mode")
+                        .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
+                        .build());
     }
 
     @Override

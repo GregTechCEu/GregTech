@@ -219,7 +219,11 @@ public class CoverRoboticArm extends CoverConveyor {
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, guiSyncManager)
-                .child(createTransferModeRow(transferMode))
+                .child(new EnumRowBuilder<>(TransferMode.class)
+                        .value(transferMode)
+                        .lang("Transfer Mode")
+//                        .overlay() todo transfer mode overlays
+                        .build())
                 .child(new Row().right(0).coverChildrenHeight()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())

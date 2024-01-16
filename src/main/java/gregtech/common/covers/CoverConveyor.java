@@ -51,20 +51,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -587,23 +583,16 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))))
                 .child(getItemFilterContainer()
                         .initUI(mainPanel, guiSyncManager))
-                .child(new Row().coverChildrenHeight()
-                        .marginBottom(2).widthRel(1f)
-                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.DISABLED))
-                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.UNFILTERED))
-                        .child(createManualIoButton(manualIOmode, ManualImportExportMode.FILTERED))
-                        .child(IKey.lang("Manual IO Mode")
-                                .asWidget()
-                                .align(Alignment.CenterRight)
-                                .height(18)))
-                .child(new Row().coverChildrenHeight()
-                        .marginBottom(2).widthRel(1f)
-                        .child(createConveyorModeButton(conveyorMode, ConveyorMode.IMPORT))
-                        .child(createConveyorModeButton(conveyorMode, ConveyorMode.EXPORT))
-                        .child(IKey.lang("Conveyor Mode")
-                                .asWidget()
-                                .align(Alignment.CenterRight)
-                                .height(18)));
+                .child(new EnumRowBuilder<>(ManualImportExportMode.class)
+                        .value(manualIOmode)
+                        .lang("Manual IO Mode")
+                        .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
+                        .build())
+                .child(new EnumRowBuilder<>(ConveyorMode.class)
+                        .value(conveyorMode)
+                        .lang("Conveyor Mode")
+                        .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
+                        .build());
     }
 
     protected int getMaxStackSize() {
