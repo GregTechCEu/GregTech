@@ -266,10 +266,10 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-        EnumSyncValue<ManualImportExportMode> manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
+        var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
-
-        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
+        var throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
+        var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
 
         syncManager.syncValue("manual_io", manualIOmode);
 
@@ -318,7 +318,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         .child(IKey.lang("Manual IO Mode")
                                 .asWidget()
                                 .align(Alignment.CenterRight)
-                                .height(18)));
+                                .height(18)))
+                .child(new Row().coverChildrenHeight()
+                        .marginBottom(2).widthRel(1f)
+                        .child(createPumpModeButton(pumpMode, PumpMode.IMPORT))
+                        .child(createPumpModeButton(pumpMode, PumpMode.EXPORT)));
     }
 
     @Override

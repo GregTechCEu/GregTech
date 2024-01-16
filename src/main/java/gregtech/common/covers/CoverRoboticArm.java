@@ -1,8 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
@@ -14,7 +11,6 @@ import gregtech.api.gui.widgets.IncrementButtonWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
@@ -32,16 +28,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -185,6 +181,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.getCoverableView().markDirty();
+        getItemFilterContainer().setFilterStackSizer(this::getMaxStackSize);
         if (getItemFilterContainer().hasItemFilter()) {
             getItemFilterContainer().getItemFilter().onMaxStackSizeChange();
         }
@@ -207,39 +204,27 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        return super.buildUI(guiData, guiSyncManager).height(192 + 36);
+    }
+
+    @Override
     protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
         EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
         guiSyncManager.syncValue("transfer_mode", transferMode);
 
         var filterTransferSize = new IntSyncValue(
-                () -> getItemFilterContainer().getTransferStackSize(),
-                i -> getItemFilterContainer().setTransferStackSize(i));
+                getItemFilterContainer()::getTransferStackSize,
+                getItemFilterContainer()::setTransferStackSize);
+        filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, guiSyncManager)
-                .child(new Row().marginBottom(2).coverChildrenHeight().widthRel(1f)
-                        .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_ANY))
-                        .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_EXACT))
-                        .child(createTransferModeButton(transferMode, TransferMode.KEEP_EXACT))
-                        .child(IKey.lang("Transfer Mode").asWidget()
-                                .align(Alignment.CenterRight)
-                                .height(18)))
+                .child(createTransferModeRow(transferMode))
                 .child(new Row().right(0).coverChildrenHeight()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
-                                .value(filterTransferSize)));
-    }
-
-    private Widget<ToggleButton> createTransferModeButton(EnumSyncValue<TransferMode> value, TransferMode mode) {
-        return new ToggleButton().size(18)
-                .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-//                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
-                .addTooltipLine(switch (mode) {
-                    case TRANSFER_ANY -> IKey.lang("cover.robotic_arm.transfer_mode.transfer_any");
-                    case TRANSFER_EXACT -> IKey.lang("cover.robotic_arm.transfer_mode.transfer_exact");
-                    case KEEP_EXACT -> IKey.lang("cover.robotic_arm.transfer_mode.keep_exact");
-                });
+                                .value(filterTransferSize)
+                                .setTextColor(Color.WHITE.darker(1))));
     }
 
     @Override

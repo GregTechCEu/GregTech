@@ -1,5 +1,17 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+
+import com.cleanroommc.modularui.widgets.layout.Row;
+
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
@@ -338,6 +350,30 @@ public class CoverFluidRegulator extends CoverPump {
                 .addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
 
         return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        return super.buildUI(guiData, guiSyncManager).height(192 + 36);
+    }
+
+    @Override
+    protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+        var transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
+        syncManager.syncValue("transfer_mode", transferMode);
+
+        var filterTransferSize = new IntSyncValue(
+                getFluidFilterContainer()::getMaxTransferSize,
+                getFluidFilterContainer()::setMaxTransferSize);
+        filterTransferSize.updateCacheFromSource(true);
+
+        return super.createUI(mainPanel, syncManager)
+                .child(createTransferModeRow(transferMode))
+                .child(new Row().right(0).coverChildrenHeight()
+                        .child(new TextFieldWidget().widthRel(0.5f).right(0)
+                                .setEnabledIf(w -> shouldDisplayAmountSlider())
+                                .value(filterTransferSize)
+                                .setTextColor(Color.WHITE.darker(1))));
     }
 
     @Override

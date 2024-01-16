@@ -13,9 +13,12 @@ import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.CoverGuiFactory;
 
 import gregtech.common.covers.CoverConveyor;
+import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.FluidFilterMode;
 import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.covers.ManualImportExportMode;
+
+import gregtech.common.covers.TransferMode;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -125,25 +128,47 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
                 .overlay(GTGuiTextures.MANUAL_IO_OVERLAY[mode.ordinal()])
-                .addTooltipLine(switch (mode) {
-                    case DISABLED -> IKey.lang("cover.universal.manual_import_export.mode.disabled");
-                    case UNFILTERED -> IKey.lang("cover.universal.manual_import_export.mode.unfiltered");
-                    case FILTERED -> IKey.lang("cover.universal.manual_import_export.mode.filtered");
-                });
+                .addTooltipLine(IKey.lang(mode.localeName));
     }
 
+    default Widget<ToggleButton> createTransferModeButton(EnumSyncValue<TransferMode> value, TransferMode mode) {
+        return new ToggleButton().size(18)
+                .marginRight(2)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+//                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
+                .addTooltipLine(IKey.lang(mode.localeName));
+    }
 
-    default Widget<ToggleButton> createConveyorModeButton(EnumSyncValue<CoverConveyor.ConveyorMode> value, CoverConveyor.ConveyorMode mode) {
+    default Row createTransferModeRow(EnumSyncValue<TransferMode> transferMode) {
+        return new Row().marginBottom(2).coverChildrenHeight().widthRel(1f)
+                .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_ANY))
+                .child(createTransferModeButton(transferMode, TransferMode.TRANSFER_EXACT))
+                .child(createTransferModeButton(transferMode, TransferMode.KEEP_EXACT))
+                .child(IKey.lang("Transfer Mode").asWidget()
+                        .align(Alignment.CenterRight)
+                        .height(18));
+    }
+
+    default ToggleButton createConveyorModeButton(EnumSyncValue<CoverConveyor.ConveyorMode> value, CoverConveyor.ConveyorMode mode) {
         return new ToggleButton().size(18)
                 .marginRight(2)
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
                 .selectedBackground(GTGuiTextures.MC_BUTTON)
                 .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
-                .addTooltipLine(switch (mode) {
-                    case EXPORT -> IKey.lang("cover.conveyor.mode.export");
-                    case IMPORT -> IKey.lang("cover.conveyor.mode.import");
-                });
+                .addTooltipLine(IKey.lang(mode.localeName));
+    }
+
+    default ToggleButton createPumpModeButton(EnumSyncValue<CoverPump.PumpMode> value, CoverPump.PumpMode mode) {
+        return new ToggleButton().size(18)
+                .marginRight(2)
+                .value(boolValueOf(value, mode))
+                .background(GTGuiTextures.MC_BUTTON_DISABLED)
+                .selectedBackground(GTGuiTextures.MC_BUTTON)
+                .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY[mode.ordinal()])
+                .addTooltipLine(IKey.lang(mode.localeName));
     }
 
     default Row createItemFilterModeRow(EnumSyncValue<ItemFilterMode> filteringMode) {
@@ -155,7 +180,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
                 .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight));
     }
 
-    default Widget<ToggleButton> createItemFilterModeButton(EnumSyncValue<ItemFilterMode> value, ItemFilterMode mode) {
+    default ToggleButton createItemFilterModeButton(EnumSyncValue<ItemFilterMode> value, ItemFilterMode mode) {
         return new ToggleButton().size(18)
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
@@ -174,7 +199,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
                 .child(IKey.str("Filter Mode").asWidget().align(Alignment.CenterRight));
     }
 
-    default Widget<ToggleButton> createFluidFilterModeButton(EnumSyncValue<FluidFilterMode> value, FluidFilterMode mode) {
+    default ToggleButton createFluidFilterModeButton(EnumSyncValue<FluidFilterMode> value, FluidFilterMode mode) {
         return new ToggleButton().size(18)
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
