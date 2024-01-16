@@ -52,7 +52,7 @@ public class CoverRoboticArm extends CoverConveyor {
                            @NotNull EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(definition, coverableView, attachedSide, tier, itemsPerSecond);
         this.transferMode = TransferMode.TRANSFER_ANY;
-        this.itemFilterContainer.setMaxStackSize(1);
+        this.itemFilterContainer.setMaxTransferSize(1);
     }
 
     @Override
@@ -88,16 +88,16 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             TypeItemInfo sourceInfo = sourceItemAmount.get(iterator.next());
             int itemAmount = sourceInfo.totalCount;
-            int itemToMoveAmount = itemFilterContainer.getStackTransferLimit(sourceInfo.itemStack);
+            int itemToMoveAmount = itemFilterContainer.getTransferLimit(sourceInfo.itemStack);
 
             // if smart item filter
-            if (itemFilterContainer.getItemFilter() instanceof SmartItemFilter) {
-                if (itemFilterContainer.getTransferStackSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
+            if (itemFilterContainer.getFilter() instanceof SmartItemFilter) {
+                if (itemFilterContainer.getTransferSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
                     // get the max we can extract from the item filter variable
                     int maxMultiplier = Math.floorDiv(maxTransferAmount, itemToMoveAmount);
 
                     // multiply up to the total count of all the items
-                    itemToMoveAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                    itemToMoveAmount *= Math.min(itemFilterContainer.getTransferSize(), maxMultiplier);
                 }
             }
 
@@ -139,16 +139,16 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             Object filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
-            int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+            int itemToKeepAmount = itemFilterContainer.getTransferLimit(sourceInfo.filterSlot);
 
             // only run multiplier for smart item
-            if (itemFilterContainer.getItemFilter() instanceof SmartItemFilter) {
-                if (itemFilterContainer.getTransferStackSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
+            if (itemFilterContainer.getFilter() instanceof SmartItemFilter) {
+                if (itemFilterContainer.getTransferSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
                     // get the max we can keep from the item filter variable
                     int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);
 
                     // multiply up to the total count of all the items
-                    itemToKeepAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                    itemToKeepAmount *= Math.min(itemFilterContainer.getTransferSize(), maxMultiplier);
                 }
             }
 
@@ -181,10 +181,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.getCoverableView().markDirty();
-        getItemFilterContainer().setFilterStackSizer(this::getMaxStackSize);
-        if (getItemFilterContainer().hasItemFilter()) {
-            getItemFilterContainer().getItemFilter().onMaxStackSizeChange();
-        }
+        getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
     }
 
     public TransferMode getTransferMode() {
@@ -214,8 +211,8 @@ public class CoverRoboticArm extends CoverConveyor {
         guiSyncManager.syncValue("transfer_mode", transferMode);
 
         var filterTransferSize = new IntSyncValue(
-                getItemFilterContainer()::getTransferStackSize,
-                getItemFilterContainer()::setTransferStackSize);
+                getItemFilterContainer()::getTransferSize,
+                getItemFilterContainer()::setTransferSize);
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, guiSyncManager)
@@ -258,9 +255,9 @@ public class CoverRoboticArm extends CoverConveyor {
                         .setShouldClientCallback(false));
 
         stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20,
-                () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
+                () -> String.valueOf(itemFilterContainer.getTransferSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(
+                        itemFilterContainer.setTransferSize(
                                 MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
                 })
                         .setNumbersOnly(1, transferMode.maxStackSize)

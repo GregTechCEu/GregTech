@@ -38,7 +38,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
                 }
             });
         }
-        int newMaxStackSize = itemFilter == null ? 1 : itemFilter.getMaxStackSize();
+        int newMaxStackSize = itemFilter == null ? 1 : itemFilter.getMaxTransferSize();
         if (maxStackSize != newMaxStackSize) {
             this.maxStackSize = newMaxStackSize;
             writeUpdateInfo(3, buffer -> buffer.writeVarInt(maxStackSize));
@@ -55,7 +55,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
                 try {
                     this.itemFilter = FilterTypeRegistry.getItemFilterForStack(buffer.readItemStack());
                     this.itemFilter.initUI(this::addWidget);
-                    this.itemFilter.setMaxStackSize(maxStackSize);
+                    this.itemFilter.setMaxTransferSize(maxStackSize);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -63,7 +63,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
         } else if (id == 3) {
             this.maxStackSize = buffer.readVarInt();
             if (itemFilter != null) {
-                itemFilter.setMaxStackSize(maxStackSize);
+                itemFilter.setMaxTransferSize(maxStackSize);
             }
         }
     }

@@ -87,11 +87,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.maxFluidTransferRate = mbPerTick;
         this.transferRate = mbPerTick;
         this.fluidLeftToTransferLastSecond = transferRate;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
-    }
-
-    protected boolean shouldShowTip() {
-        return false;
+        this.fluidFilter = new FluidFilterContainer(this);
     }
 
     public void setTransferRate(int transferRate) {

@@ -6,7 +6,6 @@ import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -27,78 +26,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
+public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidFilter> implements INBTSerializable<NBTTagCompound> {
 
-    private final ItemStackHandler filterInventory;
     private final FluidFilterWrapper filterWrapper;
 
-    private final IDirtyNotifiable dirtyNotifiable;
-    private FluidFilter currentFluidFilter;
-    private Supplier<Boolean> showTipSupplier;
-    private Supplier<Integer> maxFluidSizer = () -> this.maxSize;
-    private int maxSize;
-
-    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, int capacity) {
-        this.filterWrapper = new FluidFilterWrapper(this); // for compat
-        this.maxSize = capacity;
-        this.dirtyNotifiable = dirtyNotifiable;
-        this.filterInventory = new ItemStackHandler(1) {
-
-            @Override
-            public int getSlotLimit(int slot) {
-                return 1;
-            }
-
-            @Override
-            protected void onLoad() {
-                onFilterSlotChange(false);
-            }
-        };
-    }
-
-    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, Supplier<Boolean> showTip, int maxSize) {
-        this(dirtyNotifiable, maxSize);
-        setTipSupplier(showTip);
-    }
-
-    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, Supplier<Boolean> showTip) {
-        this(dirtyNotifiable, 1000);
-        setTipSupplier(showTip);
-    }
-
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
-        this(dirtyNotifiable, 1000);
-        setTipSupplier(() -> false);
-    }
-
-    public void setFluidFilter(FluidFilter fluidFilter) {
-        this.currentFluidFilter = fluidFilter;
-        if (hasFluidFilter()) {
-            currentFluidFilter.setDirtyNotifiable(dirtyNotifiable);
-            currentFluidFilter.setMaxStackSizer(maxFluidSizer);
-        }
-    }
-
-    private Supplier<Boolean> shouldShowTip() {
-        return showTipSupplier;
-    }
-
-    protected void setTipSupplier(Supplier<Boolean> supplier) {
-        this.showTipSupplier = supplier;
-    }
-
-    public FluidFilter getFluidFilter() {
-        return currentFluidFilter;
-    }
-
-    public void onFilterInstanceChange() {
-        dirtyNotifiable.markAsDirty();
-    }
-
-    public ItemStackHandler getFilterInventory() {
-        return filterInventory;
+        super(dirtyNotifiable);
+        this.filterWrapper = new FluidFilterWrapper(this); // for compat
     }
 
     public FluidFilterWrapper getFilterWrapper() {
@@ -111,8 +46,8 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public boolean testFluidStack(FluidStack fluidStack, boolean whitelist) {
         boolean result = true;
-        if (hasFluidFilter()) {
-            result = currentFluidFilter.test(fluidStack);
+        if (hasFilter()) {
+            result = getFilter().test(fluidStack);
             if (!whitelist) {
                 result = !result;
             }
@@ -130,11 +65,11 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
     }
 
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter, shouldShowTip()));
+        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFilter, this::showGlobalTransferLimitSlider));
     }
 
     public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
-        gregtech.api.gui.widgets.ServerWidgetGroup blacklistButton = new gregtech.api.gui.widgets.ServerWidgetGroup(this::hasFluidFilter);
+        gregtech.api.gui.widgets.ServerWidgetGroup blacklistButton = new gregtech.api.gui.widgets.ServerWidgetGroup(this::hasFilter);
         blacklistButton.addWidget(new gregtech.api.gui.widgets.ToggleButtonWidget(144, y, 18, 18, gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
                 .setTooltipText("cover.filter.blacklist"));
@@ -146,8 +81,8 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         var panel = new PanelSyncHandler(main) {
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-//                getFluidFilter().setMaxStackSizer(stackSizer);
-                return getFluidFilter().createPopupPanel(syncManager);
+                getFilter().setMaxTransferSize(getMaxTransferSize());
+                return getFilter().createPopupPanel(syncManager);
             }
         };
         manager.syncValue("filter_panel", panel);
@@ -164,14 +99,14 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
                                 })
                                 .singletonSlotGroup(101))
                         .onUpdateListener(w -> {
-                            if (!hasFluidFilter() && panel.isPanelOpen()) {
+                            if (!hasFilter() && panel.isPanelOpen()) {
                                 panel.closePanel();
                             }
                         }, true)
                         .size(18).marginRight(4)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
                 .child(new ButtonWidget<>()
-                        .setEnabledIf(w -> hasFluidFilter())
+                        .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             boolean success = false;
                             if (!panel.isPanelOpen()) {
@@ -184,42 +119,14 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
                             Interactable.playButtonClickSound();
                             return success;
                         }))
-                .child(IKey.dynamic(() -> hasFluidFilter() ?
+                .child(IKey.dynamic(() -> hasFilter() ?
                                 getFilterInventory().getStackInSlot(0).getDisplayName() :
                                 IKey.lang("metaitem.fluid_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
     }
 
-    public boolean hasFluidFilter() {
-        return currentFluidFilter != null;
-    }
-
-    public boolean showGlobalTransferLimitSlider() {
-        return getMaxStackSize() > 1 && (isBlacklistFilter() || !hasFluidFilter() || currentFluidFilter.showGlobalTransferLimitSlider());
-    }
-
-    public int getMaxTransferSize() {
-        if (!showGlobalTransferLimitSlider()) {
-            return getMaxStackSize();
-        }
-        return maxSize;
-    }
-
-    public void setMaxTransferSize(int transferStackSize) {
-        this.maxSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
-        onFilterInstanceChange();
-        dirtyNotifiable.markAsDirty();
-    }
-
-    public int getMaxStackSize() {
-        return hasFluidFilter() ? currentFluidFilter.getMaxTransferSize() : maxFluidSizer.get();
-    }
-
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        packetBuffer.writeItemStack(getFilterInventory().getStackInSlot(0));
-    }
-
+    @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         var stack = ItemStack.EMPTY;
         try {
@@ -228,55 +135,35 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.filterInventory.setStackInSlot(0, stack);
 
         if (FilterTypeRegistry.isFluidFilter(stack))
-            this.currentFluidFilter = FilterTypeRegistry.getFluidFilterForStack(stack);
-    }
-
-    public void setBlacklistFilter(boolean blacklistFilter) {
-        if (hasFluidFilter()) getFluidFilter().setBlacklistFilter(blacklistFilter);
-    }
-
-    public boolean isBlacklistFilter() {
-        return hasFluidFilter() && getFluidFilter().isBlacklist();
+            setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
     }
 
     protected void onFilterSlotChange(boolean notify) {
         ItemStack filterStack = filterInventory.getStackInSlot(0);
         int newId = FilterTypeRegistry.getFilterIdForStack(filterStack);
-        int currentId = FilterTypeRegistry.getIdForFilter(getFluidFilter());
+        int currentId = FilterTypeRegistry.getIdForFilter(getFilter());
 
         if (!FilterTypeRegistry.isFluidFilter(filterStack)) {
-            if (hasFluidFilter()) {
-                setFluidFilter(null);
+            if (hasFilter()) {
+                setFilter(null);
                 setBlacklistFilter(false);
                 if (notify)
                     onFilterInstanceChange();
             }
         } else if (currentId == -1 || newId != currentId) {
-            setFluidFilter(FilterTypeRegistry.getFluidFilterForStack(filterStack));
+            setFilter(FilterTypeRegistry.getFluidFilterForStack(filterStack));
             if (notify)
                 onFilterInstanceChange();
         }
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setTag("FilterInventory", filterInventory.serializeNBT());
-//        tagCompound.setBoolean("IsBlacklist", getFluidFilter().isBlacklistFilter());
-//        if (getFluidFilter() != null) {
-//            NBTTagCompound filterInventory = new NBTTagCompound();
-//            getFluidFilter().writeToNBT(filterInventory);
-//            tagCompound.setTag("Filter", filterInventory);
-//        }
-        return tagCompound;
-    }
-
-    @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
-        this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
-        this.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-        if (getFluidFilter() != null) {
-            this.getFluidFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
+        super.deserializeNBT(tagCompound);
+        var stack = getFilterInventory().getStackInSlot(0);
+        if (FilterTypeRegistry.isFluidFilter(stack)) {
+            setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
+            this.getFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
         }
     }
 }

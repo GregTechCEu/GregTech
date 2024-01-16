@@ -39,11 +39,6 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     @Override
-    protected boolean shouldShowTip() {
-        return voidingMode != VoidingMode.VOID_ANY;
-    }
-
-    @Override
     protected void doTransferFluids() {
         IFluidHandler myFluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
                 getAttachedSide());
@@ -74,7 +69,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null &&
                     voidingMode == VoidingMode.VOID_OVERFLOW) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
+                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getTransferLimit(sourceFluid);
             }
             if (sourceFluid == null || sourceFluid.amount == 0 ||
                     !getFluidFilterContainer().testFluidStack(sourceFluid, true))

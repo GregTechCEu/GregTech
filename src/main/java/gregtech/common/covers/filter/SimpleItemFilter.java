@@ -1,6 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 
@@ -57,7 +56,7 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public int getSlotTransferLimit(int matchSlot, int globalTransferLimit) {
+    public int getTransferLimit(int matchSlot, int globalTransferLimit) {
         ItemStack stackInFilterSlot = filterReader.getStackInSlot(matchSlot);
         return Math.min(stackInFilterSlot.getCount(), globalTransferLimit);
     }
@@ -113,7 +112,7 @@ public class SimpleItemFilter extends ItemFilter {
                                     if (count > 64)
                                         tooltip.addLine(IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                 })
-                                .slot(new PhantomItemSlot(this.filterReader, index, getMaxStackSizer())
+                                .slot(new PhantomItemSlot(this.filterReader, index, this::getMaxTransferSize)
                                         .slotGroup(filterInventory)
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                             if (onlyAmountChanged && !init) {
@@ -210,24 +209,24 @@ public class SimpleItemFilter extends ItemFilter {
 
         @Override
         public int getSlotLimit(int slot) {
-            return getMaxStackSize();
+            return getMaxTransferRate();
         }
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
             if (!stack.isEmpty()) {
-                stack.setCount(Math.min(stack.getCount(), getMaxStackSize()));
+                stack.setCount(Math.min(stack.getCount(), getMaxTransferRate()));
             }
             super.setStackInSlot(slot, stack);
         }
 
         @Override
-        public void onMaxStackSizeChange() {
-            super.onMaxStackSizeChange();
+        public void onTranferRateChange() {
+            super.onTranferRateChange();
             for (int i = 0; i < getSlots(); i++) {
                 ItemStack itemStack = getStackInSlot(i);
                 if (!itemStack.isEmpty()) {
-                    itemStack.setCount(Math.min(itemStack.getCount(), getMaxStackSize()));
+                    itemStack.setCount(Math.min(itemStack.getCount(), getMaxTransferRate()));
                     setStackInSlot(i, itemStack);
                 }
             }

@@ -24,12 +24,10 @@ import net.minecraftforge.fluids.IFluidTank;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public abstract class FluidFilter implements Filter<FluidStack> {
 
     private IDirtyNotifiable dirtyNotifiable;
-    boolean showTip;
 
     private OnMatch<FluidStack> onMatch = null;
     private BaseFluidFilterReader filterReader;
@@ -51,7 +49,18 @@ public abstract class FluidFilter implements Filter<FluidStack> {
         if (this.onMatch != null) this.onMatch.onMatch(matched, stack, index);
     }
 
-    public abstract int getFluidTransferLimit(FluidStack fluidStack);
+    public int getTransferLimit(FluidStack fluidStack, int transferSize) {
+        return 0;
+    }
+
+    @Override
+    public int getTransferLimit(int slot, int transferSize) {
+        return 0;
+    }
+
+    public int getTransferLimit(FluidStack stack) {
+        return getTransferLimit(stack, getMaxTransferSize());
+    }
 
     @Deprecated
     public abstract void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup);
@@ -72,24 +81,18 @@ public abstract class FluidFilter implements Filter<FluidStack> {
         return false;
     }
 
-    public int getMaxTransferSize() {
-        return this.filterReader.getMaxCapacity();
+    @Override
+    public final int getMaxTransferSize() {
+        return this.filterReader.getMaxTransferRate();
     }
 
-    public final void setMaxTransferSize(int maxStackSize) {
-        setMaxStackSizer(() -> maxStackSize);
-    }
-
-    public final void setMaxStackSizer(Supplier<Integer> maxStackSizer) {
-        this.filterReader.setMaxCapacitySizer(maxStackSizer);
-    }
-
-    public Supplier<Integer> getMaxStackSizer() {
-        return this.filterReader.getMaxStackSizer();
+    @Override
+    public final void setMaxTransferSize(int maxTransferSize) {
+        this.filterReader.setMaxTransferRate(maxTransferSize);
     }
 
     public final void onMaxStackSizeChange() {
-        this.filterReader.onMaxStackSizeChange();
+        this.filterReader.onTranferRateChange();
     }
 
     public abstract void readFromNBT(NBTTagCompound tagCompound);
@@ -100,7 +103,8 @@ public abstract class FluidFilter implements Filter<FluidStack> {
 
     public abstract void configureFilterTanks(int amount);
 
-    public boolean isBlacklist() {
+    @Override
+    public boolean isBlacklistFilter() {
         return this.filterReader.isBlacklistFilter();
     }
 
@@ -142,23 +146,6 @@ public abstract class FluidFilter implements Filter<FluidStack> {
         public abstract IFluidTank getFluidTank(int i);
 
         @Override
-        public void onMaxStackSizeChange() {
-            this.cache = maxStackSizer.get();
-        }
-
-        public final void setMaxCapacitySizer(Supplier<Integer> maxStackSizer) {
-            if (this.cache != maxStackSizer.get()) {
-                this.maxStackSizer = maxStackSizer;
-                onMaxStackSizeChange();
-            }
-        }
-
-        public final int getMaxCapacity() {
-            return this.isBlacklistFilter() ? 1000 : this.cache;
-        }
-
-        public Supplier<Integer> getMaxStackSizer() {
-            return this.maxStackSizer;
-        }
+        public void onTranferRateChange() {}
     }
 }

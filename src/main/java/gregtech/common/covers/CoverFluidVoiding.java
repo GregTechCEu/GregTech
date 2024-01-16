@@ -39,7 +39,8 @@ public class CoverFluidVoiding extends CoverPump {
                              @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide, 0, Integer.MAX_VALUE);
         this.isWorkingAllowed = false;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, Integer.MAX_VALUE);
+        this.fluidFilter = new FluidFilterContainer(this);
+        this.fluidFilter.setMaxTransferSize(Integer.MAX_VALUE);
     }
 
     @Override

@@ -38,6 +38,7 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     @Override
+    @Deprecated
     public void configureFilterTanks(int amount) {
         this.filterReader.setFluidAmounts(amount);
         this.markDirty();
@@ -100,20 +101,21 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public boolean test(FluidStack fluidStack) {
-        return checkInputFluid(fluidStack);
+        for (int i = 0; i < filterReader.getSlots(); i++) {
+            var fluid = filterReader.getFluidStack(i);
+            if (fluid != null && fluid.isFluidEqual(fluidStack)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        for (int i = 0; i < 9; ++i) {
-            widgetGroup.accept((new gregtech.api.gui.widgets.PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
-                    filterReader.getFluidTank(i)::getFluid, filterReader.getFluidTank(i)::setFluid))
-                            .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT).showTipSupplier(this::shouldShowTip));
-        }
-    }
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
-    private boolean shouldShowTip() {
-        return showTip;
+    @Override
+    public boolean showGlobalTransferLimitSlider() {
+        return !isBlacklistFilter() || getMaxTransferSize() > 0;
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
@@ -125,18 +127,8 @@ public class SimpleFluidFilter extends FluidFilter {
 //        }
     }
 
-    public boolean checkInputFluid(FluidStack fluidStack) {
-        for (int i = 0; i < filterReader.getSlots(); i++) {
-            var fluid = filterReader.getFluidStack(i);
-            if (fluid != null && fluid.isFluidEqual(fluidStack)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
-    public int getFluidTransferLimit(FluidStack fluidStack) {
+    public int getTransferLimit(FluidStack fluidStack, int transferSize) {
         int limit = 0;
 
         for (int i = 0; i < this.filterReader.getSlots(); i++) {
@@ -147,6 +139,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
         return limit;
     }
+
     protected static class SimpleFluidFilterReader extends BaseFluidFilterReader {
         public SimpleFluidFilterReader(ItemStack container, int slots) {
             super(container, slots);
@@ -163,10 +156,10 @@ public class SimpleFluidFilter extends FluidFilter {
         }
 
         @Override
-        public void onMaxStackSizeChange() {
-            super.onMaxStackSizeChange();
+        public void onTranferRateChange() {
+            super.onTranferRateChange();
             for (int i = 0; i < getSlots(); i++) {
-                getFluidTank(i).setCapacity(getMaxCapacity());
+                getFluidTank(i).setCapacity(getMaxTransferRate());
             }
         }
     }

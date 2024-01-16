@@ -58,12 +58,7 @@ public class CoverFluidRegulator extends CoverPump {
     public CoverFluidRegulator(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
         super(definition, coverableView, attachedSide, tier, mbPerTick);
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, maxFluidTransferRate * 100);
-    }
-
-    @Override
-    protected boolean shouldShowTip() {
-        return transferMode != TransferMode.TRANSFER_ANY;
+        this.fluidFilter = new FluidFilterContainer(this);
     }
 
     public int getTransferAmount() {
@@ -102,7 +97,7 @@ public class CoverFluidRegulator extends CoverPump {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null &&
                     transferMode != TransferMode.TRANSFER_ANY) {
-                supplyAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
+                supplyAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getTransferLimit(sourceFluid);
             }
             if (fluidLeftToTransfer < supplyAmount)
                 break;
@@ -146,7 +141,7 @@ public class CoverFluidRegulator extends CoverPump {
 
             if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null &&
                     transferMode != TransferMode.TRANSFER_ANY) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(fluidStack);
+                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getTransferLimit(fluidStack);
             }
 
             // if fluid needs to be moved to meet the Keep Exact value
@@ -256,10 +251,10 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
+        if (!this.fluidFilter.hasFilter()) {
             return false;
         }
-        return this.transferMode == TransferMode.TRANSFER_EXACT || this.transferMode == TransferMode.KEEP_EXACT;
+        return this.transferMode != TransferMode.TRANSFER_ANY && this.fluidFilter.getFilter().showGlobalTransferLimitSlider();
     }
 
     public String getTransferAmountString() {
@@ -368,7 +363,10 @@ public class CoverFluidRegulator extends CoverPump {
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, syncManager)
-                .child(createTransferModeRow(transferMode))
+                .child(new EnumRowBuilder<>(TransferMode.class)
+                        .value(transferMode)
+                        .lang("Transfer Mode")
+                        .build())
                 .child(new Row().right(0).coverChildrenHeight()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())

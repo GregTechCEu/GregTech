@@ -13,7 +13,6 @@ import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -32,73 +31,19 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
+public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilter> implements INBTSerializable<NBTTagCompound> {
 
-    private final ItemStackHandler filterInventory;
     private final ItemFilterWrapper filterWrapper;
-    private final IDirtyNotifiable dirtyNotifiable;
-    private int maxStackSize = 1;
-    private Supplier<Integer> stackSizer = () -> this.maxStackSize;
-    private ItemFilter currentItemFilter;
-    private Runnable onFilterInstanceChange;
-    private int transferStackSize;
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
+        super(dirtyNotifiable);
         this.filterWrapper = new ItemFilterWrapper(this); // for compat
-        this.dirtyNotifiable = dirtyNotifiable;
-        this.filterInventory = new ItemStackHandler(1) {
-
-            @Override
-            public int getSlotLimit(int slot) {
-                return 1;
-            }
-
-            @Override
-            protected void onLoad() {
-                onFilterSlotChange(false);
-            }
-        };
-    }
-
-    public ItemStackHandler getFilterInventory() {
-        return filterInventory;
     }
 
     @Deprecated
     public ItemFilterWrapper getFilterWrapper() {
         return filterWrapper;
-    }
-
-    public int getMaxStackSize() {
-        return hasItemFilter() ? currentItemFilter.getMaxStackSize() : stackSizer.get();
-    }
-
-    public int getTransferStackSize() {
-        if (!showGlobalTransferLimitSlider()) {
-            return getMaxStackSize();
-        }
-        return transferStackSize;
-    }
-
-    public void setTransferStackSize(int transferStackSize) {
-        this.transferStackSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
-        onFilterInstanceChange();
-        dirtyNotifiable.markAsDirty();
-    }
-
-    public void adjustTransferStackSize(int amount) {
-        setTransferStackSize(transferStackSize + amount);
-    }
-
-    public void setBlacklistFilter(boolean blacklistFilter) {
-        if (hasItemFilter()) getItemFilter().setBlacklistFilter(blacklistFilter);
-        onFilterInstanceChange();
-    }
-
-    public boolean isBlacklistFilter() {
-        return hasItemFilter() && getItemFilter().isBlacklistFilter();
     }
 
     /** Deprecated, uses old builtin MUI*/
@@ -113,12 +58,12 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     /** Deprecated, uses old builtin MUI*/
     @Deprecated
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
+        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getFilter));
     }
     /** Deprecated, uses old builtin MUI*/
     @Deprecated
     public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
-        ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getItemFilter() != null);
+        ServerWidgetGroup blacklistButton = new ServerWidgetGroup(this::hasFilter);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
                 .setTooltipText("cover.filter.blacklist"));
@@ -130,8 +75,8 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         var panel = new PanelSyncHandler(main) {
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                getItemFilter().setMaxStackSizer(stackSizer);
-                return getItemFilter().createPopupPanel(syncManager);
+                getFilter().setMaxTransferSize(getMaxTransferSize());
+                return getFilter().createPopupPanel(syncManager);
             }
         };
         manager.syncValue("filter_panel", panel);
@@ -148,14 +93,14 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                                 })
                                 .singletonSlotGroup(101))
                         .onUpdateListener(w -> {
-                            if (!hasItemFilter() && panel.isPanelOpen()) {
+                            if (!hasFilter() && panel.isPanelOpen()) {
                                 panel.closePanel();
                             }
                         }, true)
                         .size(18).marginRight(2)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
                 .child(new ButtonWidget<>()
-                        .setEnabledIf(w -> hasItemFilter())
+                        .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             boolean success = false;
                             if (!panel.isPanelOpen()) {
@@ -168,7 +113,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                             Interactable.playButtonClickSound();
                             return success;
                         }))
-                .child(IKey.dynamic(() -> hasItemFilter() ?
+                .child(IKey.dynamic(() -> hasFilter() ?
                                 getFilterInventory().getStackInSlot(0).getDisplayName() :
                                 IKey.lang("metaitem.item_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
@@ -178,92 +123,23 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
     protected void onFilterSlotChange(boolean notify) {
         ItemStack filterStack = filterInventory.getStackInSlot(0);
         int newId = FilterTypeRegistry.getFilterIdForStack(filterStack);
-        int currentId = FilterTypeRegistry.getIdForFilter(getItemFilter());
+        int currentId = FilterTypeRegistry.getIdForFilter(getFilter());
 
         if (!FilterTypeRegistry.isItemFilter(filterStack)) {
-            if (hasItemFilter()) {
-                setItemFilter(null);
+            if (hasFilter()) {
+                setFilter(null);
                 setBlacklistFilter(false);
                 if (notify)
                     onFilterInstanceChange();
             }
         } else if (currentId == -1 || newId != currentId) {
-                    setItemFilter(FilterTypeRegistry.getItemFilterForStack(filterStack));
+                    setFilter(FilterTypeRegistry.getItemFilterForStack(filterStack));
                     if (notify)
                         onFilterInstanceChange();
         }
     }
 
-    public void setOnFilterInstanceChange(Runnable onFilterInstanceChange) {
-        this.onFilterInstanceChange = onFilterInstanceChange;
-    }
-
-    public void onFilterInstanceChange() {
-        this.maxStackSize = isBlacklistFilter() ? 1 : getMaxStackSize();
-        dirtyNotifiable.markAsDirty();
-    }
-
-    public void setMaxStackSize(int maxStackSizeLimit) {
-        this.maxStackSize = maxStackSizeLimit;
-        if (hasItemFilter() && !isBlacklistFilter()) {
-            setFilterStackSizer(() -> this.maxStackSize);
-        }
-    }
-
-    public void setFilterStackSizer(Supplier<Integer> stackSizer) {
-        this.stackSizer = stackSizer;
-    }
-
-    public boolean showGlobalTransferLimitSlider() {
-        return getMaxStackSize() > 1 && (isBlacklistFilter() || !hasItemFilter() || currentItemFilter.showGlobalTransferLimitSlider());
-    }
-
-    public int getSlotTransferLimit(int slotIndex) {
-        if (isBlacklistFilter() || currentItemFilter == null) {
-            return getTransferStackSize();
-        }
-        return currentItemFilter.getSlotTransferLimit(slotIndex, getTransferStackSize());
-    }
-
-    public int getStackTransferLimit(ItemStack stack) {
-        if (isBlacklistFilter() || currentItemFilter == null) {
-            return getTransferStackSize();
-        }
-        return currentItemFilter.getStackTransferLimit(stack, getTransferStackSize());
-    }
-
-    public void onMatch(ItemStack stack, Filter.OnMatch<ItemStack> onMatch) {
-        this.currentItemFilter.setOnMatched(onMatch);
-        this.currentItemFilter.match(stack);
-    }
-
-    public boolean testItemStack(ItemStack itemStack) {
-        return currentItemFilter == null || currentItemFilter.test(itemStack);
-    }
-
-
-    public void setItemFilter(ItemFilter itemFilter) {
-        this.currentItemFilter = itemFilter;
-        if (currentItemFilter != null) {
-            currentItemFilter.setDirtyNotifiable(dirtyNotifiable);
-        }
-        if (onFilterInstanceChange != null) {
-            this.onFilterInstanceChange.run();
-        }
-    }
-
-    public ItemFilter getItemFilter() {
-        return currentItemFilter;
-    }
-
-    public boolean hasItemFilter() {
-        return currentItemFilter != null;
-    }
-
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        packetBuffer.writeItemStack(getFilterInventory().getStackInSlot(0));
-    }
-
+    @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         var stack = ItemStack.EMPTY;
         try {
@@ -272,28 +148,16 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.filterInventory.setStackInSlot(0, stack);
 
         if (FilterTypeRegistry.isItemFilter(stack))
-            this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(stack);
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setTag("FilterInventory", filterInventory.serializeNBT());
-        tagCompound.setInteger("MaxStackSize", maxStackSize);
-        tagCompound.setInteger("TransferStackSize", transferStackSize);
-        return tagCompound;
+            setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
-        this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
+        super.deserializeNBT(tagCompound);
         var stack = getFilterInventory().getStackInSlot(0);
         if (FilterTypeRegistry.isItemFilter(stack)) {
-            this.currentItemFilter = FilterTypeRegistry.getItemFilterForStack(stack);
-            this.currentItemFilter.readFromNBT(tagCompound); // try to read old data
+            setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
+            getFilter().readFromNBT(tagCompound); // try to read old data
         }
-
-        this.maxStackSize = tagCompound.getInteger("MaxStackSize");
-        this.transferStackSize = tagCompound.getInteger("TransferStackSize");
     }
 }

@@ -69,10 +69,10 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
 
         ItemFilterContainer filter = conveyor.getItemFilterContainer();
         if (conveyor instanceof CoverRoboticArm roboticArm) {
-            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferStackSize(),
-                    filter.getItemFilter() != null);
+            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferSize(),
+                    filter.getFilter() != null);
         }
-        itemFilterText(probeInfo, filter.getItemFilter());
+        itemFilterText(probeInfo, filter.getFilter());
     }
 
     /**
@@ -87,8 +87,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
         ItemFilterContainer container = voiding.getItemFilterContainer();
         if (voiding instanceof CoverItemVoidingAdvanced advanced) {
             VoidingMode mode = advanced.getVoidingMode();
-            voidingText(probeInfo, mode, unit, container.getTransferStackSize(),
-                    container.getItemFilter() != null);
+            voidingText(probeInfo, mode, unit, container.getTransferSize(),
+                    container.getFilter() != null);
         }
     }
 

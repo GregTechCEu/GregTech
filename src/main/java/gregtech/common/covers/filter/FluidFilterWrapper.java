@@ -12,6 +12,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@Deprecated
 public class FluidFilterWrapper {
 
     FluidFilterContainer container;
@@ -21,10 +22,10 @@ public class FluidFilterWrapper {
     }
 
     public void setFluidFilter(FluidFilter fluidFilter) {
-        this.container.setFluidFilter(fluidFilter);
+        this.container.setFilter(fluidFilter);
     }
 
     public FluidFilter getFluidFilter() {
-        return container.getFluidFilter();
+        return container.getFilter();
     }
 }

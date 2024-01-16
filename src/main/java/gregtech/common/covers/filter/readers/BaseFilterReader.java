@@ -7,13 +7,10 @@ import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.utils.ItemStackItemHandler;
 
-import java.util.function.Supplier;
-
 public abstract class BaseFilterReader extends ItemStackItemHandler {
 
     protected final ItemStack container;
-    protected Supplier<Integer> maxStackSizer = () -> 1;
-    protected int cache;
+    protected int maxTransferRate;
     protected static final String KEY_ITEMS = "Items";
     protected static final String BLACKLIST = "is_blacklist";
     public BaseFilterReader(ItemStack container, int slots) {
@@ -25,11 +22,11 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
         return this.container;
     }
 
-    public abstract void onMaxStackSizeChange();
+    public abstract void onTranferRateChange();
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
         getStackTag().setBoolean(BLACKLIST, blacklistFilter);
-        onMaxStackSizeChange();
+        onTranferRateChange();
     }
 
     public final boolean isBlacklistFilter() {
@@ -37,6 +34,18 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
             setBlacklistFilter(false);
 
         return getStackTag().getBoolean(BLACKLIST);
+    }
+
+    public final void setMaxTransferRate(int transferRate) {
+        if (this.maxTransferRate != transferRate) {
+            this.maxTransferRate = transferRate;
+            onTranferRateChange();
+        }
+    }
+
+
+    public final int getMaxTransferRate() {
+        return this.isBlacklistFilter() ? 1 : this.maxTransferRate;
     }
 
     protected NBTTagCompound getStackTag() {

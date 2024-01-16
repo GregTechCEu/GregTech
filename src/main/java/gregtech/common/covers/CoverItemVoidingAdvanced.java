@@ -35,7 +35,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                                     @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
         this.voidingMode = VoidingMode.VOID_ANY;
-        this.itemFilterContainer.setMaxStackSize(1);
+        this.itemFilterContainer.setMaxTransferSize(1);
     }
 
     @Override
@@ -57,13 +57,13 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         for (TypeItemInfo typeItemInfo : itemTypeCount.values()) {
 
             int itemToVoidAmount = 0;
-            if (!getItemFilterContainer().hasItemFilter()) {
-                itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getTransferStackSize();
+            if (!getItemFilterContainer().hasFilter()) {
+                itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getTransferSize();
             } else {
                 AtomicInteger atomicInt = new AtomicInteger(itemToVoidAmount);
                 itemFilterContainer.onMatch(typeItemInfo.itemStack, (matched, match, matchedSlot) -> {
                     if (matched) {
-                        atomicInt.set(typeItemInfo.totalCount - itemFilterContainer.getSlotTransferLimit(matchedSlot));
+                        atomicInt.set(typeItemInfo.totalCount - itemFilterContainer.getTransferLimit(matchedSlot));
                     }
                 });
                 itemToVoidAmount = atomicInt.get();
@@ -127,7 +127,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(
-                () -> itemFilterContainer.getItemFilter() == null &&
+                () -> itemFilterContainer.hasFilter() &&
                         voidingMode == VoidingMode.VOID_OVERFLOW);
         stackSizeGroup.addWidget(new ImageWidget(111, 34, 35, 20, GuiTextures.DISPLAY));
 
@@ -143,9 +143,9 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                         .setShouldClientCallback(false));
 
         stackSizeGroup.addWidget(new TextFieldWidget2(113, 41, 31, 20,
-                () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
+                () -> String.valueOf(itemFilterContainer.getTransferSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(
+                        itemFilterContainer.setTransferSize(
                                 MathHelper.clamp(Integer.parseInt(val), 1, voidingMode.maxStackSize));
                 })
                         .setCentered(true)
@@ -169,7 +169,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     public void setVoidingMode(VoidingMode voidingMode) {
         this.voidingMode = voidingMode;
-        this.itemFilterContainer.setMaxStackSize(voidingMode.maxStackSize);
+        this.itemFilterContainer.setMaxTransferSize(voidingMode.maxStackSize);
         this.getCoverableView().markDirty();
     }
 

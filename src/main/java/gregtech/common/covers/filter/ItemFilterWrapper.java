@@ -22,35 +22,19 @@ public class ItemFilterWrapper {
     }
 
     public void setItemFilter(ItemFilter itemFilter) {
-        container.setItemFilter(itemFilter);
+        container.setFilter(itemFilter);
     }
 
     public ItemFilter getItemFilter() {
-        return container.getItemFilter();
-    }
-
-    public void setOnFilterInstanceChange(Runnable onFilterInstanceChange) {
-        this.container.setOnFilterInstanceChange(onFilterInstanceChange);
-    }
-
-    public void onFilterInstanceChange() {
-        this.container.onFilterInstanceChange();
+        return container.getFilter();
     }
 
     public void setMaxStackSize(int maxStackSize) {
-        container.setMaxStackSize(maxStackSize);
-    }
-
-    public void setBlacklistFilter(boolean blacklistFilter) {
-        container.setBlacklistFilter(blacklistFilter);
-    }
-
-    public boolean isBlacklistFilter() {
-        return container.isBlacklistFilter();
+        container.setMaxTransferSize(maxStackSize);
     }
 
     public int getMaxStackSize() {
-        return container.getMaxStackSize();
+        return container.getMaxTransferSize();
     }
 
     public boolean showGlobalTransferLimitSlider() {
@@ -58,7 +42,7 @@ public class ItemFilterWrapper {
     }
 
     public int getSlotTransferLimit(int matchSlot, int globalTransferLimit) {
-        return container.getSlotTransferLimit(matchSlot);
+        return container.getTransferLimit(matchSlot);
     }
 
     public boolean testItemStack(ItemStack itemStack) {

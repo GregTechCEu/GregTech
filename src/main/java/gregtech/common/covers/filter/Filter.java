@@ -1,13 +1,10 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.widget.ParentWidget;
-
-import com.cleanroommc.modularui.widget.Widget;
-
 import gregtech.api.util.IDirtyNotifiable;
 
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 
 public interface Filter<T> {
@@ -31,6 +28,20 @@ public interface Filter<T> {
     void markDirty();
 
     void setOnMatched(OnMatch<T> onMatch);
+
+    int getMaxTransferSize();
+
+    void setMaxTransferSize(int maxTransferSize);
+
+    boolean showGlobalTransferLimitSlider();
+
+    int getTransferLimit(int slot, int transferSize);
+
+    int getTransferLimit(T stack, int transferSize);
+
+    boolean isBlacklistFilter();
+
+    void setBlacklistFilter(boolean blacklistFilter);
 
     @FunctionalInterface
     interface OnMatch<T> {

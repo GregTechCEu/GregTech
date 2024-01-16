@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.utils.Alignment;
-
 import com.cleanroommc.modularui.widgets.layout.Row;
 
 import gregtech.api.cover.CoverWithUI;
@@ -45,7 +43,7 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public int getStackTransferLimit(ItemStack stack, int globalTransferLimit) {
+    public int getTransferLimit(ItemStack stack, int globalTransferLimit) {
         ItemAndMetadata itemAndMetadata = new ItemAndMetadata(stack);
         var filterMode = this.filterReader.getFilteringMode();
         int cachedTransferRateValue = filterMode.transferStackSizesCache.getOrDefault(itemAndMetadata, -1);
@@ -72,13 +70,13 @@ public class SmartItemFilter extends ItemFilter {
     @Override
     public void match(ItemStack itemStack) {
         var stack = itemStack.copy();
-        stack.setCount(getStackTransferLimit(itemStack, Integer.MAX_VALUE));
+        stack.setCount(getTransferLimit(itemStack, Integer.MAX_VALUE));
         this.onMatch(stack.getCount() > 0, stack, this.getFilteringMode().ordinal());
     }
 
     @Override
     public boolean test(ItemStack toTest) {
-        return getStackTransferLimit(toTest, Integer.MAX_VALUE) > 0;
+        return getTransferLimit(toTest, Integer.MAX_VALUE) > 0;
     }
 
     @Override

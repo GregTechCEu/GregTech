@@ -370,10 +370,10 @@ public class ItemNetHandler implements IItemHandler {
         AtomicBoolean atomicBool = new AtomicBoolean(false);
         arm.getItemFilterContainer().onMatch(stack, (matched, match, matchedSlot) -> {
             if (matched && matchedSlot > 0) {
-                atomicInt.set(arm.getItemFilterContainer().getSlotTransferLimit(matchedSlot));
+                atomicInt.set(arm.getItemFilterContainer().getTransferLimit(matchedSlot));
                 atomicBool.set(true);
             } else {
-                atomicInt.set(arm.getItemFilterContainer().getTransferStackSize());
+                atomicInt.set(arm.getItemFilterContainer().getTransferSize());
             }
         });
         int count, rate = atomicInt.get();

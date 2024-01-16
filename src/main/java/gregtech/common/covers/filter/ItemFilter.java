@@ -45,33 +45,25 @@ public abstract class ItemFilter implements Filter<ItemStack> {
         return filterReader.isBlacklistFilter();
     }
 
-    public final int getMaxStackSize() {
-        return this.filterReader.getMaxStackSize();
+    public final int getMaxTransferSize() {
+        return this.filterReader.getMaxTransferRate();
     }
 
-    public final void setMaxStackSize(int maxStackSize) {
-        setMaxStackSizer(() -> maxStackSize);
-    }
-
-    public final void setMaxStackSizer(Supplier<Integer> maxStackSizer) {
-        this.filterReader.setMaxStackSizer(maxStackSizer);
-    }
-
-    public Supplier<Integer> getMaxStackSizer() {
-        return this.filterReader.getMaxStackSizer();
+    public final void setMaxTransferSize(int maxStackSize) {
+        this.filterReader.setMaxTransferRate(maxStackSize);
     }
 
     public final void onMaxStackSizeChange() {
-        this.filterReader.onMaxStackSizeChange();
+        this.filterReader.onTranferRateChange();
     }
 
     public abstract boolean showGlobalTransferLimitSlider();
 
-    public int getSlotTransferLimit(int matchSlot, int globalTransferLimit) {
+    public int getTransferLimit(int matchSlot, int globalTransferLimit) {
         return 0;
     }
 
-    public int getStackTransferLimit(ItemStack stack, int globalTransferLimit) {
+    public int getTransferLimit(ItemStack stack, int globalTransferLimit) {
         return 0;
     }
 
@@ -132,21 +124,6 @@ public abstract class ItemFilter implements Filter<ItemStack> {
             super(container, slots);
         }
 
-        public void onMaxStackSizeChange() {
-            this.cache = getMaxStackSizer().get();
-        }
-
-        public final void setMaxStackSizer(Supplier<Integer> maxStackSizer) {
-            this.maxStackSizer = maxStackSizer;
-            this.cache = this.maxStackSizer.get();
-        }
-
-        public final int getMaxStackSize() {
-            return this.isBlacklistFilter() ? 1 : this.cache;
-        }
-
-        public Supplier<Integer> getMaxStackSizer() {
-            return this.maxStackSizer;
-        }
+        public void onTranferRateChange() {}
     }
 }
