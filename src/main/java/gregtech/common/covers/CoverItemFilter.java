@@ -64,8 +64,8 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
-        this.itemFilter.setItemFilter(FilterTypeRegistry.getItemFilterForStack(itemStack.copy()));
-        this.itemFilter.setMaxStackSize(1);
+        this.itemFilter.setFilter(FilterTypeRegistry.getItemFilterForStack(itemStack.copy()));
+        this.itemFilter.setMaxTransferSize(1);
     }
 
     @Override
@@ -75,8 +75,8 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        packetBuffer.writeBoolean(itemFilter.hasItemFilter());
-        if (itemFilter.hasItemFilter()) {
+        packetBuffer.writeBoolean(itemFilter.hasFilter());
+        if (itemFilter.hasFilter()) {
             packetBuffer.writeItemStack(getItemFilter().getContainerStack());
         }
     }
@@ -85,7 +85,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         if (!packetBuffer.readBoolean()) return;
         try {
-            this.itemFilter.setItemFilter(FilterTypeRegistry.getItemFilterForStack(packetBuffer.readItemStack()));
+            this.itemFilter.setFilter(FilterTypeRegistry.getItemFilterForStack(packetBuffer.readItemStack()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -101,7 +101,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     public ItemFilter getItemFilter() {
-        return this.itemFilter.getItemFilter();
+        return this.itemFilter.getFilter();
     }
 
     @Override
@@ -186,7 +186,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         super.readFromNBT(tagCompound);
         this.filterMode = ItemFilterMode.values()[tagCompound.getInteger("FilterMode")];
         var stack = new ItemStack(tagCompound.getCompoundTag("Filter"));
-        this.itemFilter.setItemFilter(FilterTypeRegistry.getItemFilterForStack(stack));
+        this.itemFilter.setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
     }
 
     @Override

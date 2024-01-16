@@ -80,18 +80,18 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
-        this.fluidFilterContainer.setFluidFilter(FilterTypeRegistry.getFluidFilterForStack(itemStack));
+        this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(itemStack));
     }
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        return this.fluidFilterContainer.hasFluidFilter() ? getFluidFilter().getContainerStack() : super.getPickItem();
+        return this.fluidFilterContainer.hasFilter() ? getFluidFilter().getContainerStack() : super.getPickItem();
     }
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        packetBuffer.writeBoolean(this.fluidFilterContainer.hasFluidFilter());
-        if (this.fluidFilterContainer.hasFluidFilter()) {
+        packetBuffer.writeBoolean(this.fluidFilterContainer.hasFilter());
+        if (this.fluidFilterContainer.hasFilter()) {
             packetBuffer.writeItemStack(getFluidFilter().getContainerStack());
         }
     }
@@ -100,7 +100,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         if (packetBuffer.readBoolean()) {
             try {
-                this.fluidFilterContainer.setFluidFilter(FilterTypeRegistry.getFluidFilterForStack(packetBuffer.readItemStack()));
+                this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(packetBuffer.readItemStack()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -112,7 +112,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     public FluidFilter getFluidFilter() {
-        return this.fluidFilterContainer.getFluidFilter();
+        return this.fluidFilterContainer.getFilter();
     }
 
     @Override
@@ -173,7 +173,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull @Unmodifiable List<@NotNull ItemStack> getDrops() {
-        return Collections.singletonList(this.fluidFilterContainer.getFluidFilter().getContainerStack());
+        return Collections.singletonList(this.fluidFilterContainer.getFilter().getContainerStack());
     }
 
     @Override
@@ -212,7 +212,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
         this.fluidFilterContainer.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         var stack = new ItemStack(tagCompound.getCompoundTag("Filter"));
-        this.fluidFilterContainer.setFluidFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
+        this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

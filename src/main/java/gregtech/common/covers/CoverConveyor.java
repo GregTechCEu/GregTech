@@ -525,8 +525,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176,192);
 
-        if (getItemFilterContainer().hasItemFilter()) {
-            getItemFilterContainer().setFilterStackSizer(this::getMaxStackSize);
+        if (getItemFilterContainer().hasFilter()) {
+            getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
         }
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
