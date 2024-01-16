@@ -44,13 +44,6 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     @Override
-    public void setMaxConfigurableFluidSize(int maxSize) {
-        for (int i = 0; i < filterReader.getSlots(); i++) {
-            filterReader.getFluidTank(i).setCapacity(maxSize);
-        }
-    }
-
-    @Override
     public ItemStack getContainerStack() {
         return this.filterReader.getContainer();
     }
@@ -92,15 +85,17 @@ public class SimpleFluidFilter extends FluidFilter {
     public void match(FluidStack toMatch) {
         boolean matched = false;
         int index = -1;
+        var returnable = toMatch.copy();
         for (int i = 0; i < filterReader.getSlots(); i++) {
             var fluid = filterReader.getFluidStack(i);
             if (fluid != null && fluid.isFluidEqual(toMatch)) {
                 matched = true;
                 index = i;
+                returnable.amount = fluid.amount;
                 break;
             }
         }
-        this.onMatch(matched, toMatch.copy(), index);
+        this.onMatch(matched, returnable, index);
     }
 
     @Override
@@ -152,7 +147,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
         return limit;
     }
-    protected class SimpleFluidFilterReader extends BaseFluidFilterReader {
+    protected static class SimpleFluidFilterReader extends BaseFluidFilterReader {
         public SimpleFluidFilterReader(ItemStack container, int slots) {
             super(container, slots);
         }
@@ -164,6 +159,14 @@ public class SimpleFluidFilter extends FluidFilter {
         public void setFluidAmounts(int amount) {
             for (int i = 0; i < getSlots(); i++) {
                 getFluidTank(i).setFluidAmount(amount);
+            }
+        }
+
+        @Override
+        public void onMaxStackSizeChange() {
+            super.onMaxStackSizeChange();
+            for (int i = 0; i < getSlots(); i++) {
+                getFluidTank(i).setCapacity(getMaxCapacity());
             }
         }
     }

@@ -6,6 +6,7 @@ import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -36,6 +37,7 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
     private final IDirtyNotifiable dirtyNotifiable;
     private FluidFilter currentFluidFilter;
     private Supplier<Boolean> showTipSupplier;
+    private Supplier<Integer> maxFluidSizer = () -> this.maxSize;
     private int maxSize;
 
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, int capacity) {
@@ -75,7 +77,7 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.currentFluidFilter = fluidFilter;
         if (hasFluidFilter()) {
             currentFluidFilter.setDirtyNotifiable(dirtyNotifiable);
-            currentFluidFilter.setMaxConfigurableFluidSize(maxSize);
+            currentFluidFilter.setMaxStackSizer(maxFluidSizer);
         }
     }
 
@@ -191,6 +193,27 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public boolean hasFluidFilter() {
         return currentFluidFilter != null;
+    }
+
+    public boolean showGlobalTransferLimitSlider() {
+        return getMaxStackSize() > 1 && (isBlacklistFilter() || !hasFluidFilter() || currentFluidFilter.showGlobalTransferLimitSlider());
+    }
+
+    public int getMaxTransferSize() {
+        if (!showGlobalTransferLimitSlider()) {
+            return getMaxStackSize();
+        }
+        return maxSize;
+    }
+
+    public void setMaxTransferSize(int transferStackSize) {
+        this.maxSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
+        onFilterInstanceChange();
+        dirtyNotifiable.markAsDirty();
+    }
+
+    public int getMaxStackSize() {
+        return hasFluidFilter() ? currentFluidFilter.getMaxTransferSize() : maxFluidSizer.get();
     }
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {

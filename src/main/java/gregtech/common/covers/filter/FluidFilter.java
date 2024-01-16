@@ -24,19 +24,19 @@ import net.minecraftforge.fluids.IFluidTank;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class FluidFilter implements Filter<FluidStack> {
 
     private IDirtyNotifiable dirtyNotifiable;
     boolean showTip;
 
+    private OnMatch<FluidStack> onMatch = null;
     private BaseFluidFilterReader filterReader;
 
     protected void setFilterReader(BaseFluidFilterReader filterReader) {
         this.filterReader = filterReader;
     }
-
-    private OnMatch<FluidStack> onMatch = null;
 
     public abstract void match(FluidStack toMatch);
 
@@ -68,6 +68,30 @@ public abstract class FluidFilter implements Filter<FluidStack> {
 
     public abstract ItemStack getContainerStack();
 
+    public boolean showGlobalTransferLimitSlider() {
+        return false;
+    }
+
+    public int getMaxTransferSize() {
+        return this.filterReader.getMaxCapacity();
+    }
+
+    public final void setMaxTransferSize(int maxStackSize) {
+        setMaxStackSizer(() -> maxStackSize);
+    }
+
+    public final void setMaxStackSizer(Supplier<Integer> maxStackSizer) {
+        this.filterReader.setMaxCapacitySizer(maxStackSizer);
+    }
+
+    public Supplier<Integer> getMaxStackSizer() {
+        return this.filterReader.getMaxStackSizer();
+    }
+
+    public final void onMaxStackSizeChange() {
+        this.filterReader.onMaxStackSizeChange();
+    }
+
     public abstract void readFromNBT(NBTTagCompound tagCompound);
 
     public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
@@ -75,8 +99,6 @@ public abstract class FluidFilter implements Filter<FluidStack> {
     }
 
     public abstract void configureFilterTanks(int amount);
-
-    public abstract void setMaxConfigurableFluidSize(int maxStackSize);
 
     public boolean isBlacklist() {
         return this.filterReader.isBlacklistFilter();
@@ -121,7 +143,22 @@ public abstract class FluidFilter implements Filter<FluidStack> {
 
         @Override
         public void onMaxStackSizeChange() {
+            this.cache = maxStackSizer.get();
+        }
 
+        public final void setMaxCapacitySizer(Supplier<Integer> maxStackSizer) {
+            if (this.cache != maxStackSizer.get()) {
+                this.maxStackSizer = maxStackSizer;
+                onMaxStackSizeChange();
+            }
+        }
+
+        public final int getMaxCapacity() {
+            return this.isBlacklistFilter() ? 1000 : this.cache;
+        }
+
+        public Supplier<Integer> getMaxStackSizer() {
+            return this.maxStackSizer;
         }
     }
 }
