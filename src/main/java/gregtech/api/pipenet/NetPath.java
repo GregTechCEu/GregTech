@@ -14,17 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NodeDataType extends INodeData<NodeDataType>> {
 
-    private final List<NodeG<PipeType, NodeDataType>> nodeList;
-    private final List<NetEdge> edgeList;
+    private List<NodeG<PipeType, NodeDataType>> nodeList;
+    private List<NetEdge> edgeList;
 
-    private final NodeG<PipeType, NodeDataType> sourceNode;
+    private NodeG<PipeType, NodeDataType> sourceNode;
 
-    private final NodeG<PipeType, NodeDataType> targetNode;
+    private NodeG<PipeType, NodeDataType> targetNode;
 
-    private final double weight;
+    private double weight;
 
     private NodeDataType data = null;
 
@@ -45,7 +45,7 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     /**
      * Generates a NetPath from an ordered list of nodes, edges, and a weight.
      * Used exclusively for single path generation.
-     * 
+     *
      * @param nodes  List of nodes.
      * @param edges  List of edges.
      * @param weight Sum weight of the path.
@@ -72,6 +72,8 @@ public final class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
                 targetNode.getData().getWeightFactor()) / 2;
         this.edgeList = path.getEdgeList();
     }
+
+    protected NetPath() {}
 
     public List<NodeG<PipeType, NodeDataType>> getNodeList() {
         return nodeList;

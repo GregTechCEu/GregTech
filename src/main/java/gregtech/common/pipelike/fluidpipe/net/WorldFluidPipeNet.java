@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gregtech.api.pipenet.WorldPipeFlowNetG;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
@@ -9,7 +10,7 @@ import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class WorldFluidPipeNet extends WorldPipeNetG<FluidPipeProperties, FluidPipeType> {
+public class WorldFluidPipeNet extends WorldPipeFlowNetG<FluidPipeProperties, FluidPipeType> {
 
     private static final String DATA_ID_BASE = "gregtech.fluid_pipe_net";
 
@@ -25,12 +26,7 @@ public class WorldFluidPipeNet extends WorldPipeNetG<FluidPipeProperties, FluidP
     }
 
     public WorldFluidPipeNet(String name) {
-        super(name);
-    }
-
-    @Override
-    public boolean isDirected() {
-        return true;
+        super(name, true);
     }
 
     @Override

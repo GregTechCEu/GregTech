@@ -83,6 +83,19 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     }
 
     /**
+     * Creates a dummy node for flow network calculations.
+     * Should never be required to reference its net, data, mte, or position.
+     */
+    public NodeG() {
+        this.nodePos = null;
+        this.net = null;
+        this.data = null;
+        this.heldMTE = new WeakReference<>(null);
+        this.activeConnections = 0;
+        this.blockedConnections = 0;
+    }
+
+    /**
      * For construction during NBT reading only
      */
     public NodeG(NBTTagCompound tag, WorldPipeNetG<NodeDataType, PipeType> net) {

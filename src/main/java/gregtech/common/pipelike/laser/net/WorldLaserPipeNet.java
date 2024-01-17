@@ -16,12 +16,7 @@ public class WorldLaserPipeNet extends WorldPipeNetG<LaserPipeProperties, LaserP
     private static final String DATA_ID = "gregtech.laser_pipe_net";
 
     public WorldLaserPipeNet(String name) {
-        super(name);
-    }
-
-    @Override
-    protected boolean isSinglePath() {
-        return true;
+        super(name, false, true);
     }
 
     @Override

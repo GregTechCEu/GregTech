@@ -26,7 +26,7 @@ public class WorldEnergyNet extends WorldPipeNetG<WireProperties, Insulation> {
     }
 
     public WorldEnergyNet(String name) {
-        super(name);
+        super(name, false, false);
     }
 
     @Override

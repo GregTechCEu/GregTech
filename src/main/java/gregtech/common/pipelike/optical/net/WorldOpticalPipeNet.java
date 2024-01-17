@@ -16,12 +16,7 @@ public class WorldOpticalPipeNet extends WorldPipeNetG<OpticalPipeProperties, Op
     private static final String DATA_ID = "gregtech.optical_pipe_net";
 
     public WorldOpticalPipeNet(String name) {
-        super(name);
-    }
-
-    @Override
-    protected boolean isSinglePath() {
-        return true;
+        super(name, false, true);
     }
 
     @Override

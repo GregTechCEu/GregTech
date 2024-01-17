@@ -30,12 +30,7 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
     }
 
     public WorldItemPipeNet(String name) {
-        super(name);
-    }
-
-    @Override
-    public boolean isDirected() {
-        return true;
+        super(name, true, false);
     }
 
     @Override

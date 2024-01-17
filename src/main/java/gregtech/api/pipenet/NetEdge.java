@@ -10,7 +10,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.Map;
 
-class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound> {
+public final class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound> {
 
     private AbstractEdgePredicate<?> predicate;
     private boolean invertedPredicate;
@@ -29,12 +29,12 @@ class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagComp
     }
 
     @Override
-    protected NodeG<?, ?> getSource() {
+    public NodeG<?, ?> getSource() {
         return (NodeG<?, ?>) super.getSource();
     }
 
     @Override
-    protected NodeG<?, ?> getTarget() {
+    public NodeG<?, ?> getTarget() {
         return (NodeG<?, ?>) super.getTarget();
     }
 
