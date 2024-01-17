@@ -131,13 +131,13 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     protected int doKeepExact(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        Map<Object, GroupItemInfo> currentItemAmount = doCountDestinationInventoryItemsByMatchIndex(itemHandler,
+        Map<Integer, GroupItemInfo> currentItemAmount = doCountDestinationInventoryItemsByMatchIndex(itemHandler,
                 myItemHandler);
-        Map<Object, GroupItemInfo> sourceItemAmounts = doCountDestinationInventoryItemsByMatchIndex(myItemHandler,
+        Map<Integer, GroupItemInfo> sourceItemAmounts = doCountDestinationInventoryItemsByMatchIndex(myItemHandler,
                 itemHandler);
-        Iterator<Object> iterator = sourceItemAmounts.keySet().iterator();
+        Iterator<Integer> iterator = sourceItemAmounts.keySet().iterator();
         while (iterator.hasNext()) {
-            Object filterSlotIndex = iterator.next();
+            int filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
             int itemToKeepAmount = itemFilterContainer.getTransferLimit(sourceInfo.filterSlot);
 

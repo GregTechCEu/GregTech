@@ -26,6 +26,8 @@ import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -195,7 +197,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected int doTransferItemsByGroup(IItemHandler itemHandler, IItemHandler myItemHandler,
-                                         Map<Object, GroupItemInfo> itemInfos, int maxTransferAmount) {
+                                         Map<Integer, GroupItemInfo> itemInfos, int maxTransferAmount) {
         if (conveyorMode == ConveyorMode.IMPORT) {
             return moveInventoryItems(itemHandler, myItemHandler, itemInfos, maxTransferAmount);
         } else if (conveyorMode == ConveyorMode.EXPORT) {
@@ -204,7 +206,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return 0;
     }
 
-    protected Map<Object, GroupItemInfo> doCountDestinationInventoryItemsByMatchIndex(IItemHandler itemHandler,
+    protected Map<Integer, GroupItemInfo> doCountDestinationInventoryItemsByMatchIndex(IItemHandler itemHandler,
                                                                                       IItemHandler myItemHandler) {
         if (conveyorMode == ConveyorMode.IMPORT) {
             return countInventoryItemsByMatchSlot(myItemHandler);
@@ -292,7 +294,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected int moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory,
-                                     Map<Object, GroupItemInfo> itemInfos, int maxTransferAmount) {
+                                     Map<Integer, GroupItemInfo> itemInfos, int maxTransferAmount) {
         int itemsLeftToTransfer = maxTransferAmount;
         for (int i = 0; i < sourceInventory.getSlots(); i++) {
             ItemStack itemStack = sourceInventory.getStackInSlot(i);
@@ -432,8 +434,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @NotNull
-    protected Map<Object, GroupItemInfo> countInventoryItemsByMatchSlot(@NotNull IItemHandler inventory) {
-        Map<Object, GroupItemInfo> result = new Object2ObjectOpenHashMap<>();
+    protected Map<Integer, GroupItemInfo> countInventoryItemsByMatchSlot(@NotNull IItemHandler inventory) {
+        Map<Integer, GroupItemInfo> result = new Int2ObjectOpenHashMap<>();
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
             ItemStack itemStack = inventory.getStackInSlot(srcIndex);
             if (itemStack.isEmpty()) {
