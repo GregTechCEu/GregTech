@@ -40,7 +40,7 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
         return getStackTag().getBoolean(BLACKLIST);
     }
 
-    public final void setMaxTransferRate(int transferRate) {
+    public void setMaxTransferRate(int transferRate) {
         transferRate = MathHelper.clamp(transferRate, 1, Integer.MAX_VALUE);
         if (this.maxTransferRate != transferRate) {
             this.maxTransferRate = transferRate;
