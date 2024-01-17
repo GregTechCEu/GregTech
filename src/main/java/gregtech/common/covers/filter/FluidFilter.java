@@ -138,7 +138,7 @@ public abstract class FluidFilter implements Filter<FluidStack> {
         }
 
         public final boolean isBucketOnly() {
-            return getStackTag().getBoolean(BUCKET_ONLY);
+            return getStackTag().getBoolean(BUCKET_ONLY) || isBlacklistFilter();
         }
 
         @Override
@@ -160,5 +160,10 @@ public abstract class FluidFilter implements Filter<FluidStack> {
         }
 
         public abstract IFluidTank getFluidTank(int i);
+
+        @Override
+        public void setMaxTransferRate(int transferRate) {
+            super.setMaxTransferRate(isBucketOnly() ? 1000 : transferRate);
+        }
     }
 }

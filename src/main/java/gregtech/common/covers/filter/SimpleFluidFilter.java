@@ -162,6 +162,11 @@ public class SimpleFluidFilter extends FluidFilter {
         }
 
         @Override
+        public int getMaxTransferRate() {
+            return isBucketOnly() ? 1000 : super.getMaxTransferRate();
+        }
+
+        @Override
         public void onTransferRateChange() {
             for (int i = 0; i < getSlots(); i++) {
                 var stack = getFluidStack(i);
@@ -323,7 +328,6 @@ public class SimpleFluidFilter extends FluidFilter {
                 if (currentStack.isEmpty() || fluidHandlerItem == null) {
                     if (this.canDrainSlot()) {
                         this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
-                        this.setValue(this.getFluidTank().getFluid(), false, true);
                     }
                 } else {
                     FluidStack cellFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
@@ -339,7 +343,6 @@ public class SimpleFluidFilter extends FluidFilter {
                     } else {
                         if (this.canDrainSlot()) {
                             this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
-                            this.setValue(this.getFluidTank().getFluid(), false, true);
                         }
                     }
                 }
@@ -350,19 +353,17 @@ public class SimpleFluidFilter extends FluidFilter {
                             FluidStack toFill = currentFluid.copy();
                             toFill.amount = 1000;
                             this.getFluidTank().fill(toFill, true);
-                            this.setValue(this.getFluidTank().getFluid(), false, true);
                         }
                     } else if (this.lastStoredPhantomFluid != null) {
                         FluidStack toFill = this.lastStoredPhantomFluid.copy();
                         toFill.amount = this.controlsAmount() ? 1000 : 1;
                         this.getFluidTank().fill(toFill, true);
-                        this.setValue(this.getFluidTank().getFluid(), false, true);
                     }
                 }
             } else if (mouseData.mouseButton == 2 && currentFluid != null && this.canDrainSlot()) {
                 this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
-                this.setValue(this.getFluidTank().getFluid(), false, true);
             }
+            this.setValue(this.getFluidTank().getFluid(), false, true);
         }
 
         @Override

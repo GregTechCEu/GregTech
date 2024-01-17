@@ -397,6 +397,7 @@ public class CoverFluidRegulator extends CoverPump {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.transferMode = packetBuffer.readEnumValue(TransferMode.class);
+        getFluidFilterContainer().setBucketOnly(this.transferMode == TransferMode.TRANSFER_ANY);
         this.transferAmount = packetBuffer.readInt();
     }
 

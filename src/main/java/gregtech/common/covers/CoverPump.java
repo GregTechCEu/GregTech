@@ -353,6 +353,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         super.readInitialSyncData(packetBuffer);
         this.pumpMode = packetBuffer.readEnumValue(PumpMode.class);
         getFluidFilterContainer().readInitialSyncData(packetBuffer);
+        getFluidFilterContainer().setBucketOnly(true);
     }
 
     @Override

@@ -49,7 +49,7 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
     }
 
 
-    public final int getMaxTransferRate() {
+    public int getMaxTransferRate() {
         return this.maxTransferRate;
     }
 
