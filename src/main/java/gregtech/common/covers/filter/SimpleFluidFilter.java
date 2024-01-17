@@ -137,16 +137,22 @@ public class SimpleFluidFilter extends FluidFilter {
                 limit = fluid.amount;
             }
         }
-        return limit;
+        return isBlacklistFilter() ? transferSize : limit;
     }
 
     protected static class SimpleFluidFilterReader extends BaseFluidFilterReader {
+
+        protected WritableFluidTank[] fluidTanks;
         public SimpleFluidFilterReader(ItemStack container, int slots) {
             super(container, slots);
+            fluidTanks = new WritableFluidTank[slots];
+            for (int i = 0; i < fluidTanks.length; i++) {
+                fluidTanks[i] = new WritableFluidTank(this, getItemsNbt().getCompoundTagAt(i), 1000);
+            }
         }
 
         public WritableFluidTank getFluidTank(int i) {
-            return new WritableFluidTank(getItemsNbt().getCompoundTagAt(i), 1000);
+            return fluidTanks[i];
         }
 
         public void setFluidAmounts(int amount) {
@@ -161,20 +167,23 @@ public class SimpleFluidFilter extends FluidFilter {
                 var stack = getFluidStack(i);
                 if (stack == null) continue;
                 getFluidTank(i).setFluidAmount(Math.min(stack.amount, getMaxTransferRate()));
+                getFluidTank(i).setCapacity(getMaxTransferRate());
             }
         }
     }
 
     public static class WritableFluidTank implements IFluidTank {
-
         private final NBTTagCompound fluidTank;
+        private final SimpleFluidFilterReader filterReader;
         protected static final String FLUID_AMOUNT = "Amount";
         protected static final String CAPACITY = "Capacity";
         protected static final String FLUID = "Fluid";
         protected static final String EMPTY = "Empty";
-        public WritableFluidTank(NBTTagCompound fluidTank, int initialCapacity) {
+
+        protected WritableFluidTank(SimpleFluidFilterReader filterReader, NBTTagCompound fluidTank, int initialCapacity) {
+            this.filterReader = filterReader;
             this.fluidTank = fluidTank;
-            setCapacity(initialCapacity);
+            setCapacity(fluidTank.hasKey(CAPACITY) ? fluidTank.getInteger(CAPACITY) : initialCapacity);
         }
 
         public void setCapacity(int capacity) {
@@ -210,6 +219,10 @@ public class SimpleFluidFilter extends FluidFilter {
             }
         }
 
+        protected boolean isBucketOnly() {
+            return filterReader.isBucketOnly();
+        }
+
         @Override
         public int getFluidAmount() {
             return isEmpty() ? 0 : getFluidTag().getInteger(FLUID_AMOUNT);
@@ -230,14 +243,16 @@ public class SimpleFluidFilter extends FluidFilter {
         public int fill(FluidStack resource, boolean doFill) {
             if (isEmpty() || !getFluid().isFluidEqual(resource)) {
                 setFluid(resource);
+                if (isBucketOnly()) setFluidAmount(1000);
                 return resource.amount;
-            } else {
+            } else if (!isBucketOnly()) {
                 var fluid = getFluid();
                 int accepted = Math.min(resource.amount, getCapacity() - fluid.amount);
                 fluid.amount += accepted;
                 setFluid(fluid);
                 return accepted;
             }
+            return 0;
         }
 
         @SuppressWarnings("DataFlowIssue")
@@ -250,11 +265,15 @@ public class SimpleFluidFilter extends FluidFilter {
             var copy = getFluid();
             copy.amount -= fluid.amount;
 
-            if (copy.amount == 0)
+            if (isBucketOnly()) {
                 setFluid(null);
-            else
-                setFluid(copy);
+            } else {
+                if (copy.amount == 0)
+                    setFluid(null);
+                else
+                    setFluid(copy);
 
+            }
             return fluid;
         }
     }

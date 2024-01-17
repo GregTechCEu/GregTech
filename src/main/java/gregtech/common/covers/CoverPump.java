@@ -77,7 +77,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
-    protected FluidFilterContainer fluidFilter;
+    protected FluidFilterContainer fluidFilterContainer;
     protected BucketMode bucketMode = BucketMode.MILLI_BUCKET;
 
     public CoverPump(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
@@ -87,7 +87,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.maxFluidTransferRate = mbPerTick;
         this.transferRate = mbPerTick;
         this.fluidLeftToTransferLastSecond = transferRate;
-        this.fluidFilter = new FluidFilterContainer(this);
+        this.fluidFilterContainer = new FluidFilterContainer(this);
     }
 
     public void setTransferRate(int transferRate) {
@@ -135,7 +135,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     public FluidFilterContainer getFluidFilterContainer() {
-        return fluidFilter;
+        return fluidFilterContainer;
     }
 
     @Override
@@ -165,16 +165,16 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                            int transferLimit) {
         if (pumpMode == PumpMode.IMPORT) {
             return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit,
-                    fluidFilter::testFluidStack);
+                    fluidFilterContainer::testFluidStack);
         } else if (pumpMode == PumpMode.EXPORT) {
             return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit,
-                    fluidFilter::testFluidStack);
+                    fluidFilterContainer::testFluidStack);
         }
         return 0;
     }
 
     protected boolean checkInputFluid(FluidStack fluidStack) {
-        return fluidFilter.testFluidStack(fluidStack);
+        return fluidFilterContainer.testFluidStack(fluidStack);
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
@@ -230,7 +230,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                         .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
-        this.fluidFilter.initUI(88, primaryGroup::addWidget);
+        this.fluidFilterContainer.initUI(88, primaryGroup::addWidget);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 184 + 82)
                 .widget(primaryGroup)
@@ -356,7 +356,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     @Override
     public void onRemoval() {
-        dropInventoryContents(fluidFilter.getFilterInventory());
+        dropInventoryContents(fluidFilterContainer.getFilterInventory());
     }
 
     @Override
@@ -405,7 +405,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
-        tagCompound.setTag("Filter", fluidFilter.serializeNBT());
+        tagCompound.setTag("Filter", fluidFilterContainer.serializeNBT());
     }
 
     @Override
@@ -417,6 +417,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.fluidFilterContainer.setBucketOnly(true);
     }
 
     @Override

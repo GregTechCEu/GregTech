@@ -1,32 +1,26 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.factory.SidedPosGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
-import com.cleanroommc.modularui.widget.ParentWidget;
-
-import com.cleanroommc.modularui.widgets.layout.Row;
-
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.IncrementButtonWidget;
+import gregtech.api.gui.widgets.ServerWidgetGroup;
+import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -39,6 +33,15 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.google.common.math.IntMath;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.apache.logging.log4j.message.FormattedMessage;
@@ -58,8 +61,7 @@ public class CoverFluidRegulator extends CoverPump {
     public CoverFluidRegulator(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
         super(definition, coverableView, attachedSide, tier, mbPerTick);
-        this.fluidFilter = new FluidFilterContainer(this);
-        this.fluidFilter.setMaxTransferSize(1000);
+        this.fluidFilterContainer = new FluidFilterContainer(this);
     }
 
     public int getTransferAmount() {
@@ -83,11 +85,11 @@ public class CoverFluidRegulator extends CoverPump {
         }
         return switch (transferMode) {
             case TRANSFER_ANY -> GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit,
-                    fluidFilter::testFluidStack);
-            case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack,
+                    fluidFilterContainer::testFluidStack);
+            case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilterContainer::testFluidStack,
                     this.transferAmount);
             case TRANSFER_EXACT -> doTransferExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilter::testFluidStack, this.transferAmount);
+                    fluidFilterContainer::testFluidStack, this.transferAmount);
         };
     }
 
@@ -96,9 +98,8 @@ public class CoverFluidRegulator extends CoverPump {
         int fluidLeftToTransfer = transferLimit;
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null &&
-                    transferMode != TransferMode.TRANSFER_ANY) {
-                supplyAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getTransferLimit(sourceFluid);
+            if (this.fluidFilterContainer.hasFilter()) {
+                supplyAmount = this.fluidFilterContainer.getFilter().getTransferLimit(sourceFluid, supplyAmount);
             }
             if (fluidLeftToTransfer < supplyAmount)
                 break;
@@ -140,9 +141,8 @@ public class CoverFluidRegulator extends CoverPump {
             if (transferred >= transferLimit)
                 break;
 
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null &&
-                    transferMode != TransferMode.TRANSFER_ANY) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getTransferLimit(fluidStack);
+            if (this.fluidFilterContainer.hasFilter()) {
+                keepAmount = this.fluidFilterContainer.getFilter().getTransferLimit(fluidStack, keepAmount);
             }
 
             // if fluid needs to be moved to meet the Keep Exact value
@@ -243,8 +243,21 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     public void setTransferMode(TransferMode transferMode) {
-        this.transferMode = transferMode;
-        this.markDirty();
+        if (this.transferMode != transferMode) {
+            this.transferMode = transferMode;
+            this.fluidFilterContainer.setBucketOnly(transferMode == TransferMode.TRANSFER_ANY);
+            this.fluidFilterContainer.setMaxTransferSize(getMaxTransferSize());
+            this.setTransferAmount(getTransferAmount());
+            this.markDirty();
+        }
+    }
+
+    public int getMaxTransferSize() {
+        return switch (this.transferMode) {
+            case TRANSFER_ANY -> 0;
+            case TRANSFER_EXACT -> maxFluidTransferRate;
+            case KEEP_EXACT -> Integer.MAX_VALUE;
+        };
     }
 
     public TransferMode getTransferMode() {
@@ -255,7 +268,7 @@ public class CoverFluidRegulator extends CoverPump {
         if (transferMode == TransferMode.TRANSFER_ANY) {
             return false;
         }
-        return fluidFilter.showGlobalTransferLimitSlider();
+        return fluidFilterContainer.showGlobalTransferLimitSlider();
     }
 
     public String getTransferAmountString() {
@@ -289,15 +302,12 @@ public class CoverFluidRegulator extends CoverPump {
     private void adjustTransferSize(int amount) {
         if (bucketMode == BucketMode.BUCKET)
             amount *= 1000;
-        switch (this.transferMode) {
-            case TRANSFER_EXACT -> setTransferAmount(
-                    MathHelper.clamp(this.transferAmount + amount, 0, this.maxFluidTransferRate));
-            case KEEP_EXACT -> setTransferAmount(MathHelper.clamp(this.transferAmount + amount, 0, Integer.MAX_VALUE));
-        }
+
+        setTransferAmount(this.transferAmount + amount);
     }
 
     private void setTransferAmount(int transferAmount) {
-        this.transferAmount = transferAmount;
+        this.transferAmount = MathHelper.clamp(transferAmount, 0, getMaxTransferSize());
         markDirty();
     }
 
@@ -358,9 +368,9 @@ public class CoverFluidRegulator extends CoverPump {
         var transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
         syncManager.syncValue("transfer_mode", transferMode);
 
-        var filterTransferSize = new IntSyncValue(
-                getFluidFilterContainer()::getMaxTransferSize,
-                getFluidFilterContainer()::setMaxTransferSize);
+        var filterTransferSize = new StringSyncValue(
+                this::getTransferAmountString,
+                s -> setTransferAmount(Integer.parseInt(s)));
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, syncManager)
@@ -371,8 +381,23 @@ public class CoverFluidRegulator extends CoverPump {
                 .child(new Row().right(0).coverChildrenHeight()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
+                                .setNumbers(0, Integer.MAX_VALUE)
                                 .value(filterTransferSize)
                                 .setTextColor(Color.WHITE.darker(1))));
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
+        packetBuffer.writeEnumValue(this.transferMode);
+        packetBuffer.writeInt(this.transferAmount);
+    }
+
+    @Override
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
+        this.transferMode = packetBuffer.readEnumValue(TransferMode.class);
+        this.transferAmount = packetBuffer.readInt();
     }
 
     @Override
@@ -387,11 +412,11 @@ public class CoverFluidRegulator extends CoverPump {
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
+        this.fluidFilterContainer.setBucketOnly(transferMode == TransferMode.TRANSFER_ANY);
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
-            FluidFilter filter = getFluidFilterContainer().getFilterWrapper().getFluidFilter();
-            if (filter != null) {
-                filter.configureFilterTanks(tagCompound.getInteger("TransferAmount"));
+            if (this.fluidFilterContainer.hasFilter()) {
+                this.fluidFilterContainer.getFilter().configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
         }
         this.transferAmount = tagCompound.getInteger("TransferAmount");
