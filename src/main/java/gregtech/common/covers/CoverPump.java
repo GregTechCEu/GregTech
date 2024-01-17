@@ -1,5 +1,7 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -91,7 +93,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     public void setTransferRate(int transferRate) {
-        this.transferRate = transferRate;
+        this.transferRate = MathHelper.clamp(transferRate, 1, maxFluidTransferRate);
         markDirty();
     }
 
@@ -101,7 +103,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     protected void adjustTransferRate(int amount) {
         amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
-        setTransferRate(MathHelper.clamp(transferRate + amount, 1, maxFluidTransferRate));
+        setTransferRate(this.transferRate + amount);
     }
 
     public void setPumpMode(PumpMode pumpMode) {
@@ -257,11 +259,20 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
         var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
+        manualIOmode.updateCacheFromSource(true);
+
         var throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
+        throughput.updateCacheFromSource(true);
+
+        var throughputString = new StringSyncValue(throughput::getStringValue, throughput::setStringValue);
+        throughputString.updateCacheFromSource(true);
+
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
+        pumpMode.updateCacheFromSource(true);
 
         syncManager.syncValue("manual_io", manualIOmode);
         syncManager.syncValue("pump_mode", pumpMode);
+        syncManager.syncValue("throughput", throughput);
 
         return new Column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight()
@@ -281,7 +292,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                 .left(18).right(18)
                                 .setTextColor(Color.WHITE.darker(1))
                                 .setNumbers(1, maxFluidTransferRate)
-                                .value(throughput)
+                                .value(throughputString)
                                 .background(GTGuiTextures.DISPLAY)
                                 .onUpdateListener(w -> {
                                     if (throughput.updateCacheFromSource(false)) {
@@ -416,7 +427,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
-        this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         this.fluidFilterContainer.setBucketOnly(true);
     }
