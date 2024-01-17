@@ -64,12 +64,12 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
-        FluidSlotSyncHandler[] syncHandlers = new FluidSlotSyncHandler[MAX_FLUID_SLOTS];
-        for (int i = 0; i < syncHandlers.length; i++) {
-            var tank = this.filterReader.getFluidTank(i);
-            syncHandlers[i] = new FixedFluidSlotSH(tank).phantom(true);
-            syncHandlers[i].updateCacheFromSource(true);
-        }
+//        FluidSlotSyncHandler[] syncHandlers = new FluidSlotSyncHandler[MAX_FLUID_SLOTS];
+//        for (int i = 0; i < syncHandlers.length; i++) {
+//            var tank = this.filterReader.getFluidTank(i);
+//            syncHandlers[i] = new FixedFluidSlotSH(tank).phantom(true);
+//            syncHandlers[i].updateCacheFromSource(true);
+//        }
 
         return new Row().coverChildrenHeight().widthRel(1f)
                     .child(SlotGroupWidget.builder()
@@ -77,7 +77,7 @@ public class SimpleFluidFilter extends FluidFilter {
                                     "FFF",
                                     "FFF")
                             .key('F', i -> new FluidSlot()
-                                    .syncHandler(syncHandlers[i]))
+                                    .syncHandler(new FixedFluidSlotSH(filterReader.getFluidTank(i)).phantom(true)))
                             .build().marginRight(4))
                 .child(super.createWidgets(syncManager));
     }
@@ -265,6 +265,9 @@ public class SimpleFluidFilter extends FluidFilter {
 
         public FixedFluidSlotSH(IFluidTank fluidTank) {
             super(fluidTank);
+            if (this.updateCacheFromSource(true) && fluidTank.getFluid() != null) {
+                this.lastStoredPhantomFluid = fluidTank.getFluid().copy();
+            }
         }
 
         @Override
@@ -280,6 +283,17 @@ public class SimpleFluidFilter extends FluidFilter {
         }
 
         @Override
+        public void setValue(@Nullable FluidStack value, boolean setSource, boolean sync) {
+            super.setValue(value, setSource, sync);
+            if (setSource) {
+                this.getFluidTank().drain(Integer.MAX_VALUE, true);
+                if (!isFluidEmpty(value)) {
+                    this.getFluidTank().fill(value.copy(), true);
+                }
+            }
+        }
+
+        @Override
         public void tryClickPhantom(MouseData mouseData) {
             EntityPlayer player = getSyncManager().getPlayer();
             ItemStack currentStack = player.inventory.getItemStack();
@@ -290,6 +304,7 @@ public class SimpleFluidFilter extends FluidFilter {
                 if (currentStack.isEmpty() || fluidHandlerItem == null) {
                     if (this.canDrainSlot()) {
                         this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
+                        this.setValue(this.getFluidTank().getFluid(), false, true);
                     }
                 } else {
                     FluidStack cellFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
@@ -305,6 +320,7 @@ public class SimpleFluidFilter extends FluidFilter {
                     } else {
                         if (this.canDrainSlot()) {
                             this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
+                            this.setValue(this.getFluidTank().getFluid(), false, true);
                         }
                     }
                 }
@@ -315,15 +331,18 @@ public class SimpleFluidFilter extends FluidFilter {
                             FluidStack toFill = currentFluid.copy();
                             toFill.amount = 1000;
                             this.getFluidTank().fill(toFill, true);
+                            this.setValue(this.getFluidTank().getFluid(), false, true);
                         }
                     } else if (this.lastStoredPhantomFluid != null) {
                         FluidStack toFill = this.lastStoredPhantomFluid.copy();
                         toFill.amount = this.controlsAmount() ? 1000 : 1;
                         this.getFluidTank().fill(toFill, true);
+                        this.setValue(this.getFluidTank().getFluid(), false, true);
                     }
                 }
             } else if (mouseData.mouseButton == 2 && currentFluid != null && this.canDrainSlot()) {
                 this.getFluidTank().drain(mouseData.shift ? Integer.MAX_VALUE : 1000, true);
+                this.setValue(this.getFluidTank().getFluid(), false, true);
             }
         }
 
@@ -346,6 +365,7 @@ public class SimpleFluidFilter extends FluidFilter {
                     toFill.amount = this.controlsAmount() ? amount : 1;
                     this.getFluidTank().fill(toFill, true);
                 }
+                this.setValue(this.getFluidTank().getFluid(), false, true);
                 return;
             }
             if (amount > 0 && this.controlsAmount()) {
@@ -355,6 +375,7 @@ public class SimpleFluidFilter extends FluidFilter {
             } else if (amount < 0) {
                 this.getFluidTank().drain(-amount, true);
             }
+            this.setValue(this.getFluidTank().getFluid(), false, true);
         }
     }
 }
