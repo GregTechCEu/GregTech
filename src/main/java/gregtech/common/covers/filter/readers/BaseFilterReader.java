@@ -23,13 +23,13 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
         return this.container;
     }
 
-    public abstract void onTranferRateChange();
+    public abstract void onTransferRateChange();
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
         var old = getStackTag().getBoolean(BLACKLIST);
         if (old != blacklistFilter) {
             getStackTag().setBoolean(BLACKLIST, blacklistFilter);
-            onTranferRateChange();
+            onTransferRateChange();
         }
     }
 
@@ -44,7 +44,7 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
         transferRate = MathHelper.clamp(transferRate, 1, Integer.MAX_VALUE);
         if (this.maxTransferRate != transferRate) {
             this.maxTransferRate = transferRate;
-            onTranferRateChange();
+            onTransferRateChange();
         }
     }
 

@@ -156,7 +156,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
 
         @Override
-        public void onTranferRateChange() {
+        public void onTransferRateChange() {
             for (int i = 0; i < getSlots(); i++) {
                 var stack = getFluidStack(i);
                 if (stack == null) continue;

@@ -17,7 +17,6 @@ import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public abstract class ItemFilter implements Filter<ItemStack> {
 
@@ -54,7 +53,7 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     }
 
     public final void onMaxStackSizeChange() {
-        this.filterReader.onTranferRateChange();
+        this.filterReader.onTransferRateChange();
     }
 
     public abstract boolean showGlobalTransferLimitSlider();
@@ -124,6 +123,6 @@ public abstract class ItemFilter implements Filter<ItemStack> {
             super(container, slots);
         }
 
-        public void onTranferRateChange() {}
+        public void onTransferRateChange() {}
     }
 }

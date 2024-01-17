@@ -93,7 +93,7 @@ public abstract class FluidFilter implements Filter<FluidStack> {
     }
 
     public final void onMaxStackSizeChange() {
-        this.filterReader.onTranferRateChange();
+        this.filterReader.onTransferRateChange();
     }
 
     public abstract void readFromNBT(NBTTagCompound tagCompound);

@@ -221,7 +221,7 @@ public class SimpleItemFilter extends ItemFilter {
         }
 
         @Override
-        public void onTranferRateChange() {
+        public void onTransferRateChange() {
             for (int i = 0; i < getSlots(); i++) {
                 ItemStack itemStack = getStackInSlot(i);
                 if (!itemStack.isEmpty()) {
