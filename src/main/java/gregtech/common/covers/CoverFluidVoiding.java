@@ -39,8 +39,8 @@ public class CoverFluidVoiding extends CoverPump {
                              @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide, 0, Integer.MAX_VALUE);
         this.isWorkingAllowed = false;
-        this.fluidFilter = new FluidFilterContainer(this);
-        this.fluidFilter.setMaxTransferSize(Integer.MAX_VALUE);
+        this.fluidFilterContainer = new FluidFilterContainer(this);
+        this.fluidFilterContainer.setMaxTransferSize(Integer.MAX_VALUE);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CoverFluidVoiding extends CoverPump {
         if (myFluidHandler == null) {
             return;
         }
-        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilterContainer::testFluidStack);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CoverFluidVoiding extends CoverPump {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
 
-        this.fluidFilter.initUI(20, primaryGroup::addWidget);
+        this.fluidFilterContainer.initUI(20, primaryGroup::addWidget);
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
                 "cover.voiding.label.disabled", "cover.voiding.label.enabled")
@@ -121,7 +121,7 @@ public class CoverFluidVoiding extends CoverPump {
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (fluidFilter.testFluidStack(resource)) {
+            if (fluidFilterContainer.testFluidStack(resource)) {
                 return resource.amount;
             }
             return 0;

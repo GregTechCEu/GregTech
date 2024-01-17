@@ -47,8 +47,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         }
         switch (voidingMode) {
             case VOID_ANY -> GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE,
-                    fluidFilter::testFluidStack);
-            case VOID_OVERFLOW -> voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);
+                    fluidFilterContainer::testFluidStack);
+            case VOID_OVERFLOW -> voidOverflow(myFluidHandler, fluidFilterContainer::testFluidStack, this.transferAmount);
         }
     }
 
@@ -67,9 +67,9 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null &&
+            if (this.fluidFilterContainer.getFilterWrapper().getFluidFilter() != null &&
                     voidingMode == VoidingMode.VOID_OVERFLOW) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getTransferLimit(sourceFluid);
+                keepAmount = this.fluidFilterContainer.getFilterWrapper().getFluidFilter().getTransferLimit(sourceFluid);
             }
             if (sourceFluid == null || sourceFluid.amount == 0 ||
                     !getFluidFilterContainer().testFluidStack(sourceFluid, true))
@@ -114,7 +114,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
+        if (this.fluidFilterContainer.getFilterWrapper().getFluidFilter() != null) {
             return false;
         }
 
@@ -157,7 +157,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     public void initFilterUI(int y, Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.pump.fluid_filter.title"));
-        widgetGroup.accept(new SlotWidget(fluidFilter.getFilterInventory(), 0, 10, y + 15)
+        widgetGroup.accept(new SlotWidget(fluidFilterContainer.getFilterInventory(), 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
@@ -199,8 +199,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         widgetGroup.accept(stackSizeGroup);
 
-        this.fluidFilter.initUI(y + 15, widgetGroup);
-        this.fluidFilter.blacklistUI(y + 15, widgetGroup,
+        this.fluidFilterContainer.initUI(y + 15, widgetGroup);
+        this.fluidFilterContainer.blacklistUI(y + 15, widgetGroup,
                 () -> voidingMode != VoidingMode.VOID_OVERFLOW);
     }
 
