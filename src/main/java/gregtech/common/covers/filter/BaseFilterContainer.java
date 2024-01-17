@@ -35,8 +35,8 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     }
 
     public void setMaxTransferSize(int maxTransferSize) {
-        this.maxTransferSize = maxTransferSize;
-        if (hasFilter()) currentItemFilter.setMaxTransferSize(maxTransferSize);
+        this.maxTransferSize = MathHelper.clamp(maxTransferSize, 1, Integer.MAX_VALUE);
+        if (hasFilter()) currentItemFilter.setMaxTransferSize(this.maxTransferSize);
     }
 
     public boolean hasFilter() {
@@ -67,7 +67,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return getMaxTransferSize() > 1 && (isBlacklistFilter() || !hasFilter() || currentItemFilter.showGlobalTransferLimitSlider());
+        return getMaxTransferSize() > 0 && (isBlacklistFilter() || !hasFilter() || currentItemFilter.showGlobalTransferLimitSlider());
     }
 
     public int getTransferLimit(int slotIndex) {

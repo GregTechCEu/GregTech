@@ -68,7 +68,7 @@ public class SimpleFluidFilter extends FluidFilter {
         for (int i = 0; i < syncHandlers.length; i++) {
             var tank = this.filterReader.getFluidTank(i);
             syncHandlers[i] = new FixedFluidSlotSH(tank).phantom(true);
-            syncHandlers[i].setValue(tank.getFluid(), false, false);
+            syncHandlers[i].updateCacheFromSource(true);
         }
 
         return new Row().coverChildrenHeight().widthRel(1f)
@@ -115,7 +115,7 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public boolean showGlobalTransferLimitSlider() {
-        return !isBlacklistFilter() || getMaxTransferSize() > 0;
+        return isBlacklistFilter() && getMaxTransferSize() > 0;
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
@@ -157,9 +157,10 @@ public class SimpleFluidFilter extends FluidFilter {
 
         @Override
         public void onTranferRateChange() {
-            super.onTranferRateChange();
             for (int i = 0; i < getSlots(); i++) {
-                getFluidTank(i).setCapacity(getMaxTransferRate());
+                var stack = getFluidStack(i);
+                if (stack == null) continue;
+                getFluidTank(i).setFluidAmount(Math.min(stack.amount, getMaxTransferRate()));
             }
         }
     }

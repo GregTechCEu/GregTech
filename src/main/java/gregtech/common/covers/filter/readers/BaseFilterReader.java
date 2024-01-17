@@ -3,6 +3,7 @@ package gregtech.common.covers.filter.readers;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.utils.ItemStackItemHandler;
@@ -10,7 +11,7 @@ import com.cleanroommc.modularui.utils.ItemStackItemHandler;
 public abstract class BaseFilterReader extends ItemStackItemHandler {
 
     protected final ItemStack container;
-    protected int maxTransferRate;
+    protected int maxTransferRate = 1;
     protected static final String KEY_ITEMS = "Items";
     protected static final String BLACKLIST = "is_blacklist";
     public BaseFilterReader(ItemStack container, int slots) {
@@ -25,8 +26,11 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
     public abstract void onTranferRateChange();
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
-        getStackTag().setBoolean(BLACKLIST, blacklistFilter);
-        onTranferRateChange();
+        var old = getStackTag().getBoolean(BLACKLIST);
+        if (old != blacklistFilter) {
+            getStackTag().setBoolean(BLACKLIST, blacklistFilter);
+            onTranferRateChange();
+        }
     }
 
     public final boolean isBlacklistFilter() {
@@ -37,6 +41,7 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
     }
 
     public final void setMaxTransferRate(int transferRate) {
+        transferRate = MathHelper.clamp(transferRate, 1, Integer.MAX_VALUE);
         if (this.maxTransferRate != transferRate) {
             this.maxTransferRate = transferRate;
             onTranferRateChange();
@@ -45,7 +50,7 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
 
 
     public final int getMaxTransferRate() {
-        return this.isBlacklistFilter() ? 1 : this.maxTransferRate;
+        return this.maxTransferRate;
     }
 
     protected NBTTagCompound getStackTag() {

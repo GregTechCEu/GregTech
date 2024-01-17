@@ -22,6 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -124,6 +125,7 @@ public abstract class FluidFilter implements Filter<FluidStack> {
 
         public BaseFluidFilterReader(ItemStack container, int slots) {
             super(container, slots);
+            this.maxTransferRate = 1000;
         }
 
         @Override
@@ -139,13 +141,11 @@ public abstract class FluidFilter implements Filter<FluidStack> {
             return nbt.getTagList(KEY_FLUIDS, Constants.NBT.TAG_COMPOUND);
         }
 
+        @Nullable
         public FluidStack getFluidStack(int i) {
             return getFluidTank(i).getFluid();
         }
 
         public abstract IFluidTank getFluidTank(int i);
-
-        @Override
-        public void onTranferRateChange() {}
     }
 }

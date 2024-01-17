@@ -59,6 +59,7 @@ public class CoverFluidRegulator extends CoverPump {
                                @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
         super(definition, coverableView, attachedSide, tier, mbPerTick);
         this.fluidFilter = new FluidFilterContainer(this);
+        this.fluidFilter.setMaxTransferSize(1000);
     }
 
     public int getTransferAmount() {
@@ -251,10 +252,10 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        if (!this.fluidFilter.hasFilter()) {
+        if (transferMode == TransferMode.TRANSFER_ANY) {
             return false;
         }
-        return this.transferMode != TransferMode.TRANSFER_ANY && this.fluidFilter.getFilter().showGlobalTransferLimitSlider();
+        return fluidFilter.showGlobalTransferLimitSlider();
     }
 
     public String getTransferAmountString() {

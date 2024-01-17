@@ -103,7 +103,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
                                 panel.closePanel();
                             }
                         }, true)
-                        .size(18).marginRight(4)
+                        .size(18).marginRight(2)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
                 .child(new ButtonWidget<>()
                         .setEnabledIf(w -> hasFilter())
