@@ -36,6 +36,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
 
     public void setMaxTransferSize(int maxTransferSize) {
         this.maxTransferSize = MathHelper.clamp(maxTransferSize, 1, Integer.MAX_VALUE);
+        this.transferSize = MathHelper.clamp(this.transferSize, 1, this.maxTransferSize);
         if (hasFilter()) currentItemFilter.setMaxTransferSize(this.maxTransferSize);
     }
 
@@ -58,7 +59,6 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     }
 
     public void onFilterInstanceChange() {
-        this.maxTransferSize = isBlacklistFilter() ? 1 : getMaxTransferSize();
         dirtyNotifiable.markAsDirty();
     }
 
@@ -94,13 +94,12 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         if (!showGlobalTransferLimitSlider()) {
             return getMaxTransferSize();
         }
-        return maxTransferSize;
+        return this.transferSize;
     }
 
     public void setTransferSize(int transferSize) {
         this.transferSize = MathHelper.clamp(transferSize, 1, getMaxTransferSize());
         onFilterInstanceChange();
-        dirtyNotifiable.markAsDirty();
     }
 
     @Deprecated
