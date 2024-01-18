@@ -2,26 +2,16 @@ package gregtech.common.covers;
 
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.IncrementButtonWidget;
-import gregtech.api.gui.widgets.ServerWidgetGroup;
-import gregtech.api.gui.widgets.TextFieldWidget2;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.IItemHandler;
 
 import codechicken.lib.render.CCRenderState;
@@ -33,7 +23,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -179,9 +169,11 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     public void setTransferMode(TransferMode transferMode) {
-        this.transferMode = transferMode;
-        this.getCoverableView().markDirty();
-        getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
+        if (this.transferMode != transferMode) {
+            this.transferMode = transferMode;
+            this.getCoverableView().markDirty();
+            this.itemFilterContainer.setMaxTransferSize(transferMode.maxStackSize);
+        }
     }
 
     public TransferMode getTransferMode() {
@@ -210,16 +202,16 @@ public class CoverRoboticArm extends CoverConveyor {
         EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
         guiSyncManager.syncValue("transfer_mode", transferMode);
 
-        var filterTransferSize = new IntSyncValue(
-                getItemFilterContainer()::getTransferSize,
-                getItemFilterContainer()::setTransferSize);
+        var filterTransferSize = new StringSyncValue(
+                () -> String.valueOf(this.itemFilterContainer.getTransferSize()),
+                s -> this.itemFilterContainer.setTransferSize(Integer.parseInt(s)));
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, guiSyncManager)
                 .child(new EnumRowBuilder<>(TransferMode.class)
                         .value(transferMode)
                         .lang("Transfer Mode")
-//                        .overlay() todo transfer mode overlays
+                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY)
                         .build())
                 .child(new Row().right(0).coverChildrenHeight()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
@@ -234,41 +226,41 @@ public class CoverRoboticArm extends CoverConveyor {
         return getTransferMode().maxStackSize;
     }
 
-    @Override
-    protected ModularUI buildUI(Builder builder, EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
-                TransferMode.class, this::getTransferMode, this::setTransferMode)
-                        .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
-
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(
-                new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
-                        .setDefaultTooltip()
-                        .setTextScale(0.7f)
-                        .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512,
-                itemFilterContainer::adjustTransferStackSize)
-                        .setDefaultTooltip()
-                        .setTextScale(0.7f)
-                        .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20,
-                () -> String.valueOf(itemFilterContainer.getTransferSize()), val -> {
-                    if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferSize(
-                                MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
-                })
-                        .setNumbersOnly(1, transferMode.maxStackSize)
-                        .setMaxLength(4)
-                        .setScale(0.9f));
-
-        primaryGroup.addWidget(stackSizeGroup);
-
-        return super.buildUI(builder.widget(primaryGroup), player);
-    }
+//    @Override
+//    protected ModularUI buildUI(Builder builder, EntityPlayer player) {
+//        WidgetGroup primaryGroup = new WidgetGroup();
+//        primaryGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
+//                TransferMode.class, this::getTransferMode, this::setTransferMode)
+//                        .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
+//
+//        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
+//        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
+//
+//        stackSizeGroup.addWidget(
+//                new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
+//                        .setDefaultTooltip()
+//                        .setTextScale(0.7f)
+//                        .setShouldClientCallback(false));
+//        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512,
+//                itemFilterContainer::adjustTransferStackSize)
+//                        .setDefaultTooltip()
+//                        .setTextScale(0.7f)
+//                        .setShouldClientCallback(false));
+//
+//        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20,
+//                () -> String.valueOf(itemFilterContainer.getTransferSize()), val -> {
+//                    if (val != null && !val.isEmpty())
+//                        itemFilterContainer.setTransferSize(
+//                                MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
+//                })
+//                        .setNumbersOnly(1, transferMode.maxStackSize)
+//                        .setMaxLength(4)
+//                        .setScale(0.9f));
+//
+//        primaryGroup.addWidget(stackSizeGroup);
+//
+//        return super.buildUI(builder.widget(primaryGroup), player);
+//    }
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {

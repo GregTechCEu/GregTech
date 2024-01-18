@@ -2,31 +2,16 @@ package gregtech.common.covers;
 
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.IncrementButtonWidget;
-import gregtech.api.gui.widgets.ServerWidgetGroup;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -40,15 +25,12 @@ import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-import com.google.common.math.IntMath;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.apache.logging.log4j.message.FormattedMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -56,16 +38,11 @@ import java.util.function.Predicate;
 public class CoverFluidRegulator extends CoverPump {
 
     protected TransferMode transferMode = TransferMode.TRANSFER_ANY;
-    protected int transferAmount = 0;
 
     public CoverFluidRegulator(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
         super(definition, coverableView, attachedSide, tier, mbPerTick);
         this.fluidFilterContainer = new FluidFilterContainer(this);
-    }
-
-    public int getTransferAmount() {
-        return transferAmount;
     }
 
     @Override
@@ -87,9 +64,9 @@ public class CoverFluidRegulator extends CoverPump {
             case TRANSFER_ANY -> GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit,
                     fluidFilterContainer::testFluidStack);
             case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilterContainer::testFluidStack,
-                    this.transferAmount);
+                    this.fluidFilterContainer.getTransferSize());
             case TRANSFER_EXACT -> doTransferExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::testFluidStack, this.transferAmount);
+                    fluidFilterContainer::testFluidStack, this.fluidFilterContainer.getTransferSize());
         };
     }
 
@@ -247,7 +224,6 @@ public class CoverFluidRegulator extends CoverPump {
             this.transferMode = transferMode;
             this.fluidFilterContainer.setBucketOnly(transferMode == TransferMode.TRANSFER_ANY);
             this.fluidFilterContainer.setMaxTransferSize(getMaxTransferSize());
-            this.setTransferAmount(getTransferAmount());
             this.markDirty();
         }
     }
@@ -271,92 +247,72 @@ public class CoverFluidRegulator extends CoverPump {
         return fluidFilterContainer.showGlobalTransferLimitSlider();
     }
 
-    public String getTransferAmountString() {
-        return Integer.toString(this.bucketMode == BucketMode.BUCKET ? transferAmount / 1000 : transferAmount);
-    }
-
-    private String getTransferSizeString() {
-        int val = transferAmount;
-        if (this.bucketMode == BucketMode.BUCKET) {
-            val /= 1000;
-        }
-        return val == -1 ? "" : TextFormattingUtil.formatLongToCompactString(val);
-    }
-
-    protected void getHoverString(List<ITextComponent> textList) {
-        ITextComponent keepComponent = new TextComponentString(getTransferSizeString());
-        TextComponentTranslation hoverKeep = new TextComponentTranslation(
-                "cover.fluid_regulator." + transferMode.name().toLowerCase(), this.transferAmount);
-        keepComponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverKeep));
-        textList.add(keepComponent);
-    }
-
-    @Override
-    public void setBucketMode(BucketMode bucketMode) {
-        super.setBucketMode(bucketMode);
-        if (this.bucketMode == BucketMode.BUCKET) {
-            setTransferAmount(transferAmount / 1000 * 1000);
-        }
-    }
-
-    private void adjustTransferSize(int amount) {
-        if (bucketMode == BucketMode.BUCKET)
-            amount *= 1000;
-
-        setTransferAmount(this.transferAmount + amount);
-    }
-
-    private void setTransferAmount(int transferAmount) {
-        this.transferAmount = MathHelper.clamp(transferAmount, 0, getMaxTransferSize());
-        markDirty();
-    }
+//    @Override
+//    public void setBucketMode(BucketMode bucketMode) {
+//        super.setBucketMode(bucketMode);
+//        if (this.bucketMode == BucketMode.BUCKET) {
+//            setTransferAmount(transferAmount / 1000 * 1000);
+//        }
+//    }
+//
+//    private void adjustTransferSize(int amount) {
+//        if (bucketMode == BucketMode.BUCKET)
+//            amount *= 1000;
+//
+//        setTransferAmount(this.transferAmount + amount);
+//    }
+//
+//    private void setTransferAmount(int transferAmount) {
+//        this.transferAmount = MathHelper.clamp(transferAmount, 0, getMaxTransferSize());
+//        markDirty();
+//    }
 
     @Override
     protected String getUITitle() {
         return "cover.fluid_regulator.title";
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    @Override
-    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(92, 43, 75, 18,
-                TransferMode.class, this::getTransferMode, this::setTransferMode)
-                        .setTooltipHoverString("cover.fluid_regulator.transfer_mode.description"));
-
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(110, 64, 38, 18, GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(new IncrementButtonWidget(148, 64, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup
-                .addWidget(new IncrementButtonWidget(92, 64, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
-                        .setDefaultTooltip()
-                        .setTextScale(0.7f)
-                        .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(111, 70, 36, 11, this::getTransferAmountString, val -> {
-            if (val != null && !val.isEmpty()) {
-                int amount = Integer.parseInt(val);
-                if (this.bucketMode == BucketMode.BUCKET) {
-                    amount = IntMath.saturatedMultiply(amount, 1000);
-                }
-                setTransferAmount(amount);
-            }
-        })
-                .setCentered(true)
-                .setNumbersOnly(1,
-                        transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)
-                .setMaxLength(10)
-                .setScale(0.6f));
-
-        stackSizeGroup
-                .addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
-
-        return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
-    }
+//    @SuppressWarnings("UnstableApiUsage")
+//    @Override
+//    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
+//        WidgetGroup filterGroup = new WidgetGroup();
+//        filterGroup.addWidget(new CycleButtonWidget(92, 43, 75, 18,
+//                TransferMode.class, this::getTransferMode, this::setTransferMode)
+//                        .setTooltipHoverString("cover.fluid_regulator.transfer_mode.description"));
+//
+//        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
+//        stackSizeGroup.addWidget(new ImageWidget(110, 64, 38, 18, GuiTextures.DISPLAY));
+//
+//        stackSizeGroup.addWidget(new IncrementButtonWidget(148, 64, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
+//                .setDefaultTooltip()
+//                .setTextScale(0.7f)
+//                .setShouldClientCallback(false));
+//        stackSizeGroup
+//                .addWidget(new IncrementButtonWidget(92, 64, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
+//                        .setDefaultTooltip()
+//                        .setTextScale(0.7f)
+//                        .setShouldClientCallback(false));
+//
+//        stackSizeGroup.addWidget(new TextFieldWidget2(111, 70, 36, 11, this::getTransferAmountString, val -> {
+//            if (val != null && !val.isEmpty()) {
+//                int amount = Integer.parseInt(val);
+//                if (this.bucketMode == BucketMode.BUCKET) {
+//                    amount = IntMath.saturatedMultiply(amount, 1000);
+//                }
+//                setTransferAmount(amount);
+//            }
+//        })
+//                .setCentered(true)
+//                .setNumbersOnly(1,
+//                        transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)
+//                .setMaxLength(10)
+//                .setScale(0.6f));
+//
+//        stackSizeGroup
+//                .addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
+//
+//        return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
+//    }
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
@@ -374,16 +330,19 @@ public class CoverFluidRegulator extends CoverPump {
         syncManager.syncValue("bucket_mode", bucketMode);
 
         var filterTransferSize = new StringSyncValue(
-                this::getTransferAmountString,
-                s -> setTransferAmount(getBucketMode() == BucketMode.MILLI_BUCKET ?
-                        Integer.parseInt(s) :
-                        Integer.parseInt(s) * 1000));
+                () -> String.valueOf(this.fluidFilterContainer.getTransferSize()),
+                s -> this.fluidFilterContainer.setTransferSize(
+                        getBucketMode() == BucketMode.MILLI_BUCKET ?
+                            Integer.parseInt(s) :
+                            Integer.parseInt(s) * 1000
+                ));
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, syncManager)
                 .child(new EnumRowBuilder<>(TransferMode.class)
                         .value(transferMode)
                         .lang("Transfer Mode")
+                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY)
                         .build())
                 .child(new EnumRowBuilder<>(BucketMode.class)
                         .value(bucketMode)
@@ -400,7 +359,7 @@ public class CoverFluidRegulator extends CoverPump {
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeEnumValue(this.transferMode);
-        packetBuffer.writeInt(this.transferAmount);
+//        packetBuffer.writeInt(this.transferAmount);
     }
 
     @Override
@@ -408,14 +367,14 @@ public class CoverFluidRegulator extends CoverPump {
         super.readInitialSyncData(packetBuffer);
         this.transferMode = packetBuffer.readEnumValue(TransferMode.class);
         getFluidFilterContainer().setBucketOnly(this.transferMode == TransferMode.TRANSFER_ANY);
-        this.transferAmount = packetBuffer.readInt();
+//        this.transferAmount = packetBuffer.readInt();
     }
 
     @Override
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferMode", transferMode.ordinal());
-        tagCompound.setInteger("TransferAmount", transferAmount);
+//        tagCompound.setInteger("TransferAmount", transferAmount);
         tagCompound.setTag("filterv2", new NBTTagCompound());
     }
 
@@ -430,7 +389,8 @@ public class CoverFluidRegulator extends CoverPump {
                 this.fluidFilterContainer.getFilter().configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
         }
-        this.transferAmount = tagCompound.getInteger("TransferAmount");
+//        this.transferAmount = tagCompound.getInteger("TransferAmount");
+        this.fluidFilterContainer.setTransferSize(tagCompound.getInteger("TransferAmount"));
     }
 
     @Override
