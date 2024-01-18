@@ -103,7 +103,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      */
     private static void pumpInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverPump pump) {
         String rateUnit = IProbeInfo.STARTLOC + (pump.getBucketMode() == CoverPump.BucketMode.BUCKET ?
-                "{*cover.bucket.mode.bucket_rate*}" : "{*cover.bucket.mode.milli_bucket_rate*}") + IProbeInfo.ENDLOC;
+                "cover.bucket.mode.bucket_rate" : "cover.bucket.mode.milli_bucket_rate") + IProbeInfo.ENDLOC;
 
         if (pump instanceof CoverFluidVoiding) {
             fluidVoidingInfo(probeInfo, (CoverFluidVoiding) pump);
@@ -119,12 +119,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
         if (pump instanceof CoverFluidRegulator regulator) {
             if (regulator.getTransferMode() != TransferMode.TRANSFER_ANY)
                 rateUnit = IProbeInfo.STARTLOC + (regulator.getBucketMode() == CoverPump.BucketMode.BUCKET ?
-            "{*cover.bucket.mode.bucket_exact*}" : "{*cover.bucket.mode.milli_bucket_exact*}") + IProbeInfo.ENDLOC;
+            "cover.bucket.mode.bucket_exact" : "cover.bucket.mode.milli_bucket_exact") + IProbeInfo.ENDLOC;
 
             transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator
-                    .getFluidFilterContainer().getTransferSize(), filter.hasFilter());
+                    .getFluidFilterContainer().getTransferSize(), filter.hasFilter() && !filter.isBlacklistFilter());
         }
-        fluidFilterText(probeInfo, filter.getFilterWrapper().getFluidFilter());
+        fluidFilterText(probeInfo, filter.getFilter());
     }
 
     /**
