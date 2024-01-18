@@ -1,5 +1,7 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
@@ -346,7 +348,7 @@ public class CoverFluidRegulator extends CoverPump {
                         .build())
                 .child(new EnumRowBuilder<>(BucketMode.class)
                         .value(bucketMode)
-//                        .overlay() todo bucket mode overlays
+                        .overlay(IKey.str("kL"), IKey.str("L"))
                         .build()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
