@@ -341,7 +341,7 @@ public class CoverFluidRegulator extends CoverPump {
         return super.createUI(mainPanel, syncManager)
                 .child(new EnumRowBuilder<>(TransferMode.class)
                         .value(transferMode)
-                        .lang("Transfer Mode")
+                        .lang("cover.generic.transfer_mode")
                         .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY)
                         .build())
                 .child(new EnumRowBuilder<>(BucketMode.class)

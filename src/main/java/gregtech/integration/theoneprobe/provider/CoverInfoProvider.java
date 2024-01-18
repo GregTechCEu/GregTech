@@ -57,20 +57,23 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      * @param conveyor  the conveyor to get data from
      */
     private static void conveyorInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverConveyor conveyor) {
-        String rateUnit = " {*cover.conveyor.transfer_rate*}";
+        String rateUnit = IProbeInfo.STARTLOC + "{*cover.conveyor.transfer_rate*}" + IProbeInfo.ENDLOC;
 
         if (conveyor instanceof CoverItemVoiding) {
             itemVoidingInfo(probeInfo, (CoverItemVoiding) conveyor);
-        } else if (!(conveyor instanceof CoverRoboticArm) ||
-                ((CoverRoboticArm) conveyor).getTransferMode() == TransferMode.TRANSFER_ANY) {
+        } else if (!(conveyor instanceof CoverRoboticArm arm) ||
+                arm.getTransferMode() == TransferMode.TRANSFER_ANY) {
                     // only display the regular rate if the cover does not have a specialized rate
-                    transferRateText(probeInfo, conveyor.getConveyorMode(), rateUnit, conveyor.getTransferRate());
-                }
+                    transferRateText(probeInfo, conveyor.getConveyorMode(), " " + rateUnit, conveyor.getTransferRate());
+        }
 
         ItemFilterContainer filter = conveyor.getItemFilterContainer();
         if (conveyor instanceof CoverRoboticArm roboticArm) {
-            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferSize(),
-                    filter.getFilter() != null);
+            if (roboticArm.getTransferMode() != TransferMode.TRANSFER_ANY)
+                rateUnit = IProbeInfo.STARTLOC + "{*cover.robotic_arm.exact*}" + IProbeInfo.ENDLOC;
+
+            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit,
+                    filter.getTransferSize(), filter.getFilter() != null);
         }
         itemFilterText(probeInfo, filter.getFilter());
     }
@@ -99,12 +102,13 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      * @param pump      the pump to get data from
      */
     private static void pumpInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverPump pump) {
-        String rateUnit = IProbeInfo.STARTLOC + pump.getBucketMode().getName() + IProbeInfo.ENDLOC;
+        String rateUnit = IProbeInfo.STARTLOC + (pump.getBucketMode() == CoverPump.BucketMode.BUCKET ?
+                "{*cover.bucket.mode.bucket_rate*}" : "{*cover.bucket.mode.milli_bucket_rate*}") + IProbeInfo.ENDLOC;
 
         if (pump instanceof CoverFluidVoiding) {
             fluidVoidingInfo(probeInfo, (CoverFluidVoiding) pump);
-        } else if (!(pump instanceof CoverFluidRegulator) ||
-                ((CoverFluidRegulator) pump).getTransferMode() == TransferMode.TRANSFER_ANY) {
+        } else if (!(pump instanceof CoverFluidRegulator regulator) ||
+                regulator.getTransferMode() == TransferMode.TRANSFER_ANY) {
                     // do not display the regular rate if the cover has a specialized rate
                     transferRateText(probeInfo, pump.getPumpMode(), " " + rateUnit,
                             pump.getBucketMode() == CoverPump.BucketMode.BUCKET ? pump.getTransferRate() / 1000 :
@@ -113,8 +117,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
 
         FluidFilterContainer filter = pump.getFluidFilterContainer();
         if (pump instanceof CoverFluidRegulator regulator) {
-            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(),
-                    filter.getFilterWrapper().getFluidFilter() != null);
+            if (regulator.getTransferMode() != TransferMode.TRANSFER_ANY)
+                rateUnit = IProbeInfo.STARTLOC + (regulator.getBucketMode() == CoverPump.BucketMode.BUCKET ?
+            "{*cover.bucket.mode.bucket_exact*}" : "{*cover.bucket.mode.milli_bucket_exact*}") + IProbeInfo.ENDLOC;
+
+            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator
+                    .getFluidFilterContainer().getTransferSize(), filter.hasFilter());
         }
         fluidFilterText(probeInfo, filter.getFilterWrapper().getFluidFilter());
     }
@@ -197,7 +205,6 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      *
      * @param probeInfo the info to add the text to
      * @param mode      the transfer mode of the cover
-     * @param rateUnit  the unit of what is transferred
      * @param rate      the transfer rate of the mode
      * @param hasFilter whether the cover has a filter installed
      */
@@ -205,7 +212,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
                                          @NotNull String rateUnit, int rate, boolean hasFilter) {
         String text = TextStyleClass.OK + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
         if (!hasFilter && mode != TransferMode.TRANSFER_ANY)
-            text += TextStyleClass.LABEL + " " + TextFormattingUtil.formatNumbers(rate) + rateUnit;
+            text += TextStyleClass.LABEL + " " + TextFormattingUtil.formatNumbers(rate) + " " + rateUnit;
+
         probeInfo.text(text);
     }
 

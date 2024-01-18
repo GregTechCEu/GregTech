@@ -210,7 +210,7 @@ public class CoverRoboticArm extends CoverConveyor {
         return super.createUI(mainPanel, guiSyncManager)
                 .child(new EnumRowBuilder<>(TransferMode.class)
                         .value(transferMode)
-                        .lang("Transfer Mode")
+                        .lang("cover.generic.transfer_mode")
                         .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY)
                         .build())
                 .child(new Row().right(0).coverChildrenHeight()

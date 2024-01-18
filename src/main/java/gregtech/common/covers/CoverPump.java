@@ -314,12 +314,12 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         .initUI(mainPanel, syncManager))
                 .child(new EnumRowBuilder<>(ManualImportExportMode.class)
                         .value(manualIOmode)
-                        .lang("Manual IO")
+                        .lang("cover.generic.manual_io")
                         .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
                         .build())
                 .child(new EnumRowBuilder<>(PumpMode.class)
                         .value(pumpMode)
-                        .lang("Pump Mode")
+                        .lang("cover.pump.mode")
                         .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
                         .build());
     }
