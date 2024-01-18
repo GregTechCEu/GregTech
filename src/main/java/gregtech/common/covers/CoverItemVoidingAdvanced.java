@@ -2,12 +2,17 @@ package gregtech.common.covers;
 
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 
 import com.cleanroommc.modularui.widgets.layout.Row;
+
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
@@ -15,6 +20,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -172,14 +178,32 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192);
+        return super.buildUI(guiData, guiSyncManager).height(192 + 18);
     }
 
     @Override
     protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
-        return super.createUI(mainPanel, guiSyncManager);
-//                .child(new Row()
-//                        .child());
+        var voidingMode = new EnumSyncValue<>(VoidingMode.class, this::getVoidingMode, this::setVoidingMode);
+        guiSyncManager.syncValue("transfer_mode", voidingMode);
+
+        var filterTransferSize = new StringSyncValue(
+                () -> String.valueOf(this.itemFilterContainer.getTransferSize()),
+                s -> this.itemFilterContainer.setTransferSize(Integer.parseInt(s)));
+        filterTransferSize.updateCacheFromSource(true);
+
+        return super.createUI(mainPanel, guiSyncManager)
+                .child(new EnumRowBuilder<>(VoidingMode.class)
+                        .value(voidingMode)
+                        .lang("cover.voiding.voiding_mode")
+//                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY) todo voiding mode overlay
+                        .build())
+                .child(new Row().right(0).coverChildrenHeight()
+                        .child(new TextFieldWidget().widthRel(0.5f).right(0)
+                                .setEnabledIf(w -> this.itemFilterContainer.showGlobalTransferLimitSlider() &&
+                                        this.voidingMode == VoidingMode.VOID_OVERFLOW)
+                                .setNumbers(0, Integer.MAX_VALUE)
+                                .value(filterTransferSize)
+                                .setTextColor(Color.WHITE.darker(1))));
     }
 
     @Override

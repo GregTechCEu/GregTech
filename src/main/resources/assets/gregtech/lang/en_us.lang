@@ -1255,6 +1255,7 @@ cover.item_filter.ignore_nbt.disabled=Respect NBT
 
 cover.voiding.voiding_mode.void_any=Void Matching
 cover.voiding.voiding_mode.void_overflow=Void Overflow
+cover.voiding.voiding_mode=Voiding Mode
 cover.voiding.voiding_mode.description=§eVoid Matching§r will void anything matching the filter. /n§eVoid Overflow§r will void anything matching the filter, up to the specified amount.
 cover.fluid.voiding.title=Fluid Voiding Settings
 cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
