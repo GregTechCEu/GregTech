@@ -86,6 +86,8 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
             }
         };
         manager.syncValue("filter_panel", panel);
+        var filterButton = new ButtonWidget<>();
+        filterButton.setEnabled(hasFilter());
 
         return new Row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
@@ -105,7 +107,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
                         }, true)
                         .size(18).marginRight(2)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
-                .child(new ButtonWidget<>()
+                .child(filterButton
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             boolean success = false;
