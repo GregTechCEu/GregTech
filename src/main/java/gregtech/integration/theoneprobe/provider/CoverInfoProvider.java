@@ -91,7 +91,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
         if (voiding instanceof CoverItemVoidingAdvanced advanced) {
             VoidingMode mode = advanced.getVoidingMode();
             voidingText(probeInfo, mode, unit, container.getTransferSize(),
-                    container.getFilter() != null);
+                    container.hasFilter() && !container.isBlacklistFilter());
         }
     }
 

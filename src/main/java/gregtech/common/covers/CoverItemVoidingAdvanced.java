@@ -1,5 +1,14 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
+
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
@@ -159,6 +168,18 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
         this.itemFilterContainer.blacklistUI(y + 38, widgetGroup,
                 () -> voidingMode != VoidingMode.VOID_OVERFLOW);
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        return super.buildUI(guiData, guiSyncManager).height(192);
+    }
+
+    @Override
+    protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
+        return super.createUI(mainPanel, guiSyncManager);
+//                .child(new Row()
+//                        .child());
     }
 
     @Override
