@@ -529,9 +529,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176,192);
 
-        if (getItemFilterContainer().hasFilter()) {
-            getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
-        }
+        getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(createUI(panel, guiSyncManager))
@@ -539,6 +537,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
+        var column = new Column().top(24).margin(7, 0)
+                .widthRel(1f).coverChildrenHeight();
+
         EnumSyncValue<ManualImportExportMode> manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
 
@@ -554,46 +555,70 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
         guiSyncManager.syncValue("throughput", throughput);
 
-        return new Column().top(24).margin(7, 0)
-                .widthRel(1f).coverChildrenHeight()
-                .child(new Row().coverChildrenHeight()
-                        .marginBottom(2).widthRel(1f)
-                        .child(new ButtonWidget<>()
-                                .left(0).width(18)
-                                .onMousePressed(mouseButton -> {
-                                    int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                    throughput.setValue(val, true, true);
-                                    Interactable.playButtonClickSound();
-                                    return true;
-                                })
-                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
-                        .child(new TextFieldWidget()
-                                .left(18).right(18)
-                                .setTextColor(Color.WHITE.darker(1))
-                                .setNumbers(1, maxItemTransferRate)
-                                .value(formattedThroughput)
-                                .background(GTGuiTextures.DISPLAY))
-                        .child(new ButtonWidget<>()
-                                .right(0).width(18)
-                                .onMousePressed(mouseButton -> {
-                                    int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                    throughput.setValue(val, true, true);
-                                    Interactable.playButtonClickSound();
-                                    return true;
-                                })
-                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))))
-                .child(getItemFilterContainer()
-                        .initUI(mainPanel, guiSyncManager))
-                .child(new EnumRowBuilder<>(ManualImportExportMode.class)
-                        .value(manualIOmode)
-                        .lang("cover.generic.manual_io")
-                        .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
-                        .build())
-                .child(new EnumRowBuilder<>(ConveyorMode.class)
-                        .value(conveyorMode)
-                        .lang("cover.conveyor.mode")
-                        .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
-                        .build());
+        if (createThroughputRow())
+            column.child(new Row().coverChildrenHeight()
+                    .marginBottom(2).widthRel(1f)
+                    .child(new ButtonWidget<>()
+                            .left(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                throughput.setValue(val, true, true);
+                                Interactable.playButtonClickSound();
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                    .child(new TextFieldWidget()
+                            .left(18).right(18)
+                            .setTextColor(Color.WHITE.darker(1))
+                            .setNumbers(1, maxItemTransferRate)
+                            .value(formattedThroughput)
+                            .background(GTGuiTextures.DISPLAY))
+                    .child(new ButtonWidget<>()
+                            .right(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                throughput.setValue(val, true, true);
+                                Interactable.playButtonClickSound();
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+
+
+        if (createFilterRow())
+            column.child(getItemFilterContainer().initUI(mainPanel, guiSyncManager));
+
+        if (createManualIOModeRow())
+            column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
+                    .value(manualIOmode)
+                    .lang("cover.generic.manual_io")
+                    .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
+                    .build());
+
+        if (createConveyorModeRow())
+            column.child(new EnumRowBuilder<>(ConveyorMode.class)
+                    .value(conveyorMode)
+                    .lang("cover.conveyor.mode")
+                    .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
+                    .build());
+
+        return column;
+
+    }
+
+    protected boolean createThroughputRow() {
+        return true;
+    }
+
+    protected boolean createFilterRow() {
+        return true;
+    }
+
+    protected boolean createManualIOModeRow() {
+        return true;
+    }
+
+    protected boolean createConveyorModeRow() {
+        return true;
     }
 
     protected int getMaxStackSize() {
