@@ -222,7 +222,10 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
                     row.child(button);
                 }
             }
-            row.child(IKey.lang(this.lang).asWidget().align(Alignment.CenterRight).height(18));
+
+            if (this.lang != null && !this.lang.isEmpty())
+                row.child(IKey.lang(this.lang).asWidget().align(Alignment.CenterRight).height(18));
+
             return row;
         }
     }
