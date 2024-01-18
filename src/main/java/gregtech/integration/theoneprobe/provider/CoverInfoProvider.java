@@ -234,7 +234,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void voidingText(@NotNull IProbeInfo probeInfo, @NotNull VoidingMode mode, @NotNull String unit,
                                     int amount, boolean hasFilter) {
         String text = TextFormatting.RED + lang(mode.getName());
-        if (mode != VoidingMode.VOID_ANY && !hasFilter) text += " " + TextFormattingUtil.formatNumbers(amount) + unit;
+        if (mode != VoidingMode.VOID_ANY && !hasFilter) text += " " + TextFormattingUtil.formatNumbers(amount) + " " + unit;
         probeInfo.text(text);
     }
 
