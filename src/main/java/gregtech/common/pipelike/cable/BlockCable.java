@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.cable;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -15,6 +14,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.pipelike.cable.net.WorldEnergyNet;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -54,7 +54,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     public BlockCable(Insulation cableType, MaterialRegistry registry) {
         super(cableType, registry);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_CABLES);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_CABLES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
 

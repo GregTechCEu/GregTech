@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
+import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -11,6 +12,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.NumberFormat;
 import org.jetbrains.annotations.NotNull;
 
 public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
@@ -52,7 +54,7 @@ public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
         } else {
             currentProgress = Math.round(currentProgress / 20.0F);
             maxProgress = Math.round(maxProgress / 20.0F);
-            text = " / " + maxProgress + " s";
+            text = " / " + TextFormattingUtil.formatNumbers(maxProgress) + " s";
         }
 
         if (maxProgress > 0) {
@@ -61,7 +63,7 @@ public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
                     .suffix(text)
                     .filledColor(color)
                     .alternateFilledColor(color)
-                    .borderColor(0xFF555555));
+                    .borderColor(0xFF555555).numberFormat(NumberFormat.COMMAS));
         }
     }
 }

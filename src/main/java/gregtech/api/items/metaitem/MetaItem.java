@@ -1,7 +1,6 @@
 package gregtech.api.items.metaitem;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IFilteredFluidContainer;
@@ -12,7 +11,18 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
-import gregtech.api.items.metaitem.stats.*;
+import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
+import gregtech.api.items.metaitem.stats.IFoodBehavior;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
+import gregtech.api.items.metaitem.stats.IItemColorProvider;
+import gregtech.api.items.metaitem.stats.IItemComponent;
+import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
+import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
+import gregtech.api.items.metaitem.stats.IItemNameProvider;
+import gregtech.api.items.metaitem.stats.IItemUseManager;
+import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -22,6 +32,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -40,7 +51,12 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -72,21 +88,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * MetaItem is item that can have up to Short.MAX_VALUE items inside one id.
- * These items even can be edible, have custom behaviours, be electric or act like fluid containers!
- * They can also have different burn time, plus be handheld, oredicted or invisible!
- * They also can be reactor components.
+ * MetaItem is item that can have up to Short.MAX_VALUE items inside one id. These items even can be edible, have custom
+ * behaviours, be electric or act like fluid containers! They can also have different burn time, plus be handheld,
+ * oredicted or invisible! They also can be reactor components.
  * <p>
  * You can also extend this class and occupy some of it's MetaData, and just pass an meta offset in constructor, and
  * everything will work properly.
  * <p>
  * Items are added in MetaItem via {@link #addItem(int, String)}. You will get {@link MetaValueItem} instance, which you
  * can configure in builder-alike pattern:
- * {@code addItem(0, "test_item").addStats(new ElectricStats(10000, 1,  false)) }
- * This will add single-use (not rechargeable) LV battery with initial capacity 10000 EU
+ * {@code addItem(0, "test_item").addStats(new ElectricStats(10000, 1,  false)) } This will add single-use (not
+ * rechargeable) LV battery with initial capacity 10000 EU
  */
 @Optional.Interface(modid = GTValues.MODID_ECORE, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
 public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
@@ -107,11 +129,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     protected final short metaItemOffset;
 
-    private CreativeTabs[] defaultCreativeTabs = new CreativeTabs[] { GregTechAPI.TAB_GREGTECH };
+    private CreativeTabs[] defaultCreativeTabs = new CreativeTabs[] { GTCreativeTabs.TAB_GREGTECH };
     private final Set<CreativeTabs> additionalCreativeTabs = new ObjectArraySet<>();
 
+    private String translationKey = "metaitem";
+
     public MetaItem(short metaItemOffset) {
-        setTranslationKey("meta_item");
         setHasSubtypes(true);
         this.metaItemOffset = metaItemOffset;
         META_ITEMS.add(this);
@@ -354,6 +377,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
     }
 
+    @NotNull
     @Override
     public ItemStack onItemUseFinish(@NotNull ItemStack stack, @NotNull World world, @NotNull EntityLivingBase player) {
         if (player instanceof EntityPlayer) {
@@ -527,10 +551,28 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return !ItemStack.areItemStacksEqual(oldStack, newStack);
     }
 
+    @NotNull
     @Override
-    public String getTranslationKey(ItemStack stack) {
-        T metaItem = getItem(stack);
-        return metaItem == null ? getTranslationKey() : getTranslationKey() + "." + metaItem.unlocalizedName;
+    public MetaItem<T> setTranslationKey(@NotNull String key) {
+        this.translationKey = Objects.requireNonNull(key, "key == null");
+        return this;
+    }
+
+    @NotNull
+    @Override
+    public String getTranslationKey() {
+        return getTranslationKey((T) null);
+    }
+
+    @NotNull
+    @Override
+    public String getTranslationKey(@NotNull ItemStack stack) {
+        return getTranslationKey(getItem(stack));
+    }
+
+    @NotNull
+    protected String getTranslationKey(@Nullable T metaValueItem) {
+        return metaValueItem == null ? this.translationKey : this.translationKey + "." + metaValueItem.unlocalizedName;
     }
 
     @NotNull
@@ -541,7 +583,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             if (item == null) {
                 return "invalid item";
             }
-            String unlocalizedName = String.format("metaitem.%s.name", item.unlocalizedName);
+            String unlocalizedName = getTranslationKey(item) + ".name";
             if (item.getNameProvider() != null) {
                 return item.getNameProvider().getItemStackDisplayName(stack, unlocalizedName);
             }
@@ -564,7 +606,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                                @NotNull ITooltipFlag tooltipFlag) {
         T item = getItem(itemStack);
         if (item == null) return;
-        String unlocalizedTooltip = "metaitem." + item.unlocalizedName + ".tooltip";
+        String unlocalizedTooltip = getTranslationKey(item) + ".tooltip";
         if (I18n.hasKey(unlocalizedTooltip)) {
             Collections.addAll(lines, LocalizationUtils.formatLines(unlocalizedTooltip));
         }
@@ -660,25 +702,27 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @NotNull
     @Override
-    public CreativeTabs[] getCreativeTabs() {
+    public CreativeTabs @NotNull [] getCreativeTabs() {
         if (additionalCreativeTabs.isEmpty()) return defaultCreativeTabs; // short circuit
         Set<CreativeTabs> tabs = new ObjectArraySet<>(additionalCreativeTabs);
         tabs.addAll(Arrays.asList(defaultCreativeTabs));
         return tabs.toArray(new CreativeTabs[0]);
     }
 
+    @NotNull
     @Override
-    public MetaItem<T> setCreativeTab(CreativeTabs tab) {
+    public MetaItem<T> setCreativeTab(@NotNull CreativeTabs tab) {
         this.defaultCreativeTabs = new CreativeTabs[] { tab };
         return this;
     }
 
-    public MetaItem<T> setCreativeTabs(CreativeTabs... tabs) {
+    @NotNull
+    public MetaItem<T> setCreativeTabs(@NotNull CreativeTabs @NotNull... tabs) {
         this.defaultCreativeTabs = tabs;
         return this;
     }
 
-    public void addAdditionalCreativeTabs(CreativeTabs... tabs) {
+    public void addAdditionalCreativeTabs(@NotNull CreativeTabs @NotNull... tabs) {
         for (CreativeTabs tab : tabs) {
             if (!ArrayUtils.contains(defaultCreativeTabs, tab) && tab != CreativeTabs.SEARCH) {
                 additionalCreativeTabs.add(tab);
@@ -687,7 +731,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     @Override
-    protected boolean isInCreativeTab(CreativeTabs tab) {
+    protected boolean isInCreativeTab(@NotNull CreativeTabs tab) {
         return tab == CreativeTabs.SEARCH ||
                 ArrayUtils.contains(defaultCreativeTabs, tab) ||
                 additionalCreativeTabs.contains(tab);
