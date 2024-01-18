@@ -18,8 +18,6 @@ import java.util.Map;
 public final class MaximumFlowAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>>
         extends PushRelabelMFImpl<NodeG<PT, NDT>, NetEdge> implements NetAlgorithm<PT, NDT> {
 
-    private final NetAlgorithmWrapper<PT, NDT> wrapper;
-
     private NodeG<PT, NDT> superSource = new NodeG<>();
     private Map<NodeG<PT, NDT>, Double> activeSources = new Object2DoubleOpenHashMap<>();
 
@@ -27,9 +25,8 @@ public final class MaximumFlowAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, ND
     private Map<NodeG<PT, NDT>, Double> activeSinks = new Object2DoubleOpenHashMap<>();
 
 
-    public MaximumFlowAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> network, NetAlgorithmWrapper<PT, NDT> wrapper) {
+    public MaximumFlowAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> network) {
         super(network);
-        this.wrapper = wrapper;
     }
 
     @Override
@@ -44,7 +41,7 @@ public final class MaximumFlowAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, ND
 
         for (NodeG<PT, NDT> v : source.getGroup().getNodes()) {
             if (v == source) continue;
-            paths.add(new FlowPath<>(wrapper));
+//            paths.add(new FlowPath<>(wrapper));
         }
         return paths;
     }
@@ -87,25 +84,5 @@ public final class MaximumFlowAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, ND
             return;
         }
         activeSinks.put(sink, amount);
-    }
-
-    public static final class FlowPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-            NodeDataType extends INodeData<NodeDataType>> extends NetPath<PipeType, NodeDataType> {
-
-        private final NetAlgorithmWrapper<PipeType, NodeDataType> alg;
-
-        public FlowPath(NetAlgorithmWrapper<PipeType, NodeDataType> alg) {
-            super();
-            this.alg = alg;
-        }
-
-        // this roundabout method is necessary since a new MaximumFlowAlgorithm is created every time the graph changes.
-        private MaximumFlowAlgorithm<PipeType, NodeDataType> getAlg() {
-            if (alg.getAlg() instanceof MaximumFlowAlgorithm<PipeType,NodeDataType> algorithm) {
-                return algorithm;
-            } else {
-                throw new IllegalStateException("A WorldPipeNetG was changed away from a flow graph during runtime!");
-            }
-        }
     }
 }

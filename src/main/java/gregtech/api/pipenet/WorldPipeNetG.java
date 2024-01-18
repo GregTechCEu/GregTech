@@ -43,7 +43,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     private WeakReference<World> worldRef = new WeakReference<>(null);
     // TODO move graph & algorithm into NetGroup to reduce unnecessary algorithm cost
-    final Graph<NodeG<PipeType, NodeDataType>, NetEdge> pipeGraph;
+    Graph<NodeG<PipeType, NodeDataType>, NetEdge> pipeGraph;
     final Map<BlockPos, NodeG<PipeType, NodeDataType>> pipeMap = new Object2ObjectOpenHashMap<>();
 
     final NetAlgorithm.NetAlgorithmWrapper<PipeType, NodeDataType> netAlgorithm;

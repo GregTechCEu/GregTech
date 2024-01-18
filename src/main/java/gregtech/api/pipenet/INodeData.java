@@ -4,6 +4,10 @@ import java.util.Set;
 
 public interface INodeData<T extends INodeData<?>> {
 
+    default int getChannelMax() {
+        return 1;
+    }
+
     default double getWeightFactor() {
         return 1;
     }

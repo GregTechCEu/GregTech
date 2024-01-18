@@ -2,10 +2,13 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
@@ -22,6 +25,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph;
 
     private final Set<NodeG<PipeType, NodeDataType>> nodes;
+    private final Map<Object, FlowChannel<PipeType, NodeDataType>> channels = new Object2ObjectOpenHashMap<>();
 
     private final AbstractGroupData<PipeType, NodeDataType> data;
 
@@ -74,7 +78,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NetGroup<?, ?> targetGroup = target.getGroup();
         if (sourceGroup == targetGroup) {
             if (sourceGroup == null) return true;
-            sourceGroup.clearPathCaches();
+            sourceGroup.clearCaches();
             return false;
         }
         if (sourceGroup != null) {
@@ -92,7 +96,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             this.addNodes(group.getNodes());
             group.clear();
         } else addNode(cast);
-        this.clearPathCaches();
+        this.clearCaches();
     }
 
     /**
@@ -103,7 +107,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      */
     public boolean splitNode(NodeG<PipeType, NodeDataType> source) {
         if (graph.containsVertex(source)) {
-            this.clearPathCaches();
+            this.clearCaches();
             List<NodeG<?, ?>> targets = graph.outgoingEdgesOf(source).stream().map(a -> {
                 // handling so undirected graphs don't throw an error
                 if (net.isDirected()) return a.getTarget();
@@ -149,7 +153,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      */
     public boolean splitEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
         if (graph.removeEdge(source, target) != null) {
-            this.clearPathCaches();
+            this.clearCaches();
             Set<NodeG<PipeType, NodeDataType>> targetGroup = new ObjectOpenHashSet<>();
             BreadthFirstIterator<NodeG<PipeType, NodeDataType>, NetEdge> i = new BreadthFirstIterator<>(graph, target);
             NodeG<PipeType, NodeDataType> temp;
@@ -179,12 +183,22 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return nodes;
     }
 
-    protected void clearPathCaches() {
+    protected void clearCaches() {
         this.nodes.forEach(NodeG::clearPathCache);
+        this.channels.clear();
     }
 
     public AbstractGroupData<PipeType, NodeDataType> getData() {
         return this.data;
+    }
+
+    protected void setChannel(Object key, FlowChannel<PipeType, NodeDataType> channel) {
+        this.channels.put(key, channel);
+    }
+
+    @Nullable
+    protected FlowChannel<PipeType, NodeDataType> getChannel(Object key) {
+        return this.channels.get(key);
     }
 
     @Override

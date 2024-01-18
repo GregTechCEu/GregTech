@@ -3,6 +3,11 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -18,6 +23,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NodeDataType extends INodeData<NodeDataType>>
@@ -53,6 +59,11 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     private final BlockPos nodePos;
 
     private NetGroup<PipeType, NodeDataType> group = null;
+
+    /**
+     * Stores the channels that this node is involved with. Used exclusively for flow graphs.
+     */
+    private final Set<FlowChannel<PipeType, NodeDataType>> channels = new ObjectOpenHashSet<>();
 
     private List<NetPath<PipeType, NodeDataType>> pathCache = null;
 
@@ -261,6 +272,36 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     public void clearPathCache() {
         this.pathCache = null;
+    }
+
+    /**
+     * @param channel The channel to test. Can be null to check only if there is space for another channel.
+     * @return {@code true} if the provided channel can be supported by the node.
+     */
+    public boolean canSupportChannel(FlowChannel<PipeType, NodeDataType> channel) {
+        return this.channels.size() < this.data.getChannelMax() || this.channels.contains(channel);
+    }
+
+    /**
+     * Adds a channel to a node's collection. Cannot go over the node's chnnael limit.
+     * @param channel the channel to add.
+     * @return {@code true} if the channel was added.
+     */
+    public boolean addChannel(FlowChannel<PipeType, NodeDataType> channel) {
+        if (this.channels.size() < this.data.getChannelMax()) {
+            this.channels.add(channel);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes a channel from a node's collection.
+     * @param channel the channel to remove.
+     * @return {@code true} if the channel was in the node's collection.
+     */
+    public boolean removeChannel(FlowChannel<PipeType, NodeDataType> channel) {
+        return this.channels.remove(channel);
     }
 
     @Override
