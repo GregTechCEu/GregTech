@@ -366,11 +366,18 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
         var transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
+        transferMode.updateCacheFromSource(true);
         syncManager.syncValue("transfer_mode", transferMode);
+
+        var bucketMode = new EnumSyncValue<>(BucketMode.class, this::getBucketMode, this::setBucketMode);
+        bucketMode.updateCacheFromSource(true);
+        syncManager.syncValue("bucket_mode", bucketMode);
 
         var filterTransferSize = new StringSyncValue(
                 this::getTransferAmountString,
-                s -> setTransferAmount(Integer.parseInt(s)));
+                s -> setTransferAmount(getBucketMode() == BucketMode.MILLI_BUCKET ?
+                        Integer.parseInt(s) :
+                        Integer.parseInt(s) * 1000));
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, syncManager)
@@ -378,7 +385,10 @@ public class CoverFluidRegulator extends CoverPump {
                         .value(transferMode)
                         .lang("Transfer Mode")
                         .build())
-                .child(new Row().right(0).coverChildrenHeight()
+                .child(new EnumRowBuilder<>(BucketMode.class)
+                        .value(bucketMode)
+//                        .overlay() todo bucket mode overlays
+                        .build()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
                                 .setNumbers(0, Integer.MAX_VALUE)

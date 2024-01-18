@@ -264,7 +264,15 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         var throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
         throughput.updateCacheFromSource(true);
 
-        var throughputString = new StringSyncValue(throughput::getStringValue, throughput::setStringValue);
+        var throughputString = new StringSyncValue(
+                () -> String.valueOf(switch (getBucketMode()) {
+                    case BUCKET -> throughput.getIntValue() / 1000;
+                    case MILLI_BUCKET -> throughput.getIntValue();
+        }),
+                s -> throughput.setValue(switch (getBucketMode()) {
+                    case BUCKET -> Integer.parseInt(s) * 1000;
+                    case MILLI_BUCKET -> Integer.parseInt(s);
+        }));
         throughputString.updateCacheFromSource(true);
 
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
@@ -281,7 +289,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         .child(new ButtonWidget<>()
                                 .left(0).width(18)
                                 .onMousePressed(mouseButton -> {
-                                    throughput.updateCacheFromSource(false);
                                     int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
                                     throughput.setValue(val, true, true);
                                     Interactable.playButtonClickSound();
@@ -293,16 +300,10 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                 .setTextColor(Color.WHITE.darker(1))
                                 .setNumbers(1, maxFluidTransferRate)
                                 .value(throughputString)
-                                .background(GTGuiTextures.DISPLAY)
-                                .onUpdateListener(w -> {
-                                    if (throughput.updateCacheFromSource(false)) {
-                                        w.setText(throughput.getStringValue());
-                                    }
-                                }))
+                                .background(GTGuiTextures.DISPLAY))
                         .child(new ButtonWidget<>()
                                 .right(0).width(18)
                                 .onMousePressed(mouseButton -> {
-                                    throughput.updateCacheFromSource(false);
                                     int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
                                     throughput.setValue(val, true, true);
                                     Interactable.playButtonClickSound();
