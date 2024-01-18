@@ -192,6 +192,14 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
             return this;
         }
 
+        public EnumRowBuilder<T> overlay(int size, IDrawable... overlay) {
+            this.overlay = new IDrawable[overlay.length];
+            for (int i = 0; i < overlay.length; i++) {
+                this.overlay[i] = overlay[i].asIcon().size(size);
+            }
+            return this;
+        }
+
         private BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
             return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
         }
