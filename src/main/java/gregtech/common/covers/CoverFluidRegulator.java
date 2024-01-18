@@ -225,17 +225,9 @@ public class CoverFluidRegulator extends CoverPump {
         if (this.transferMode != transferMode) {
             this.transferMode = transferMode;
             this.fluidFilterContainer.setBucketOnly(transferMode == TransferMode.TRANSFER_ANY);
-            this.fluidFilterContainer.setMaxTransferSize(getMaxTransferSize());
+            this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
             this.markDirty();
         }
-    }
-
-    public int getMaxTransferSize() {
-        return switch (this.transferMode) {
-            case TRANSFER_ANY -> 0;
-            case TRANSFER_EXACT -> maxFluidTransferRate;
-            case KEEP_EXACT -> Integer.MAX_VALUE;
-        };
     }
 
     public TransferMode getTransferMode() {
@@ -331,13 +323,7 @@ public class CoverFluidRegulator extends CoverPump {
         bucketMode.updateCacheFromSource(true);
         syncManager.syncValue("bucket_mode", bucketMode);
 
-        var filterTransferSize = new StringSyncValue(
-                () -> String.valueOf(this.fluidFilterContainer.getTransferSize()),
-                s -> this.fluidFilterContainer.setTransferSize(
-                        getBucketMode() == BucketMode.MILLI_BUCKET ?
-                            Integer.parseInt(s) :
-                            Integer.parseInt(s) * 1000
-                ));
+        var filterTransferSize = new StringSyncValue(this::getStringTransferRate, this::setStringTransferRate);
         filterTransferSize.updateCacheFromSource(true);
 
         return super.createUI(mainPanel, syncManager)
@@ -355,6 +341,15 @@ public class CoverFluidRegulator extends CoverPump {
                                 .setNumbers(0, Integer.MAX_VALUE)
                                 .value(filterTransferSize)
                                 .setTextColor(Color.WHITE.darker(1))));
+    }
+
+    @Override
+    public int getMaxTransferRate() {
+        return switch (this.transferMode) {
+            case TRANSFER_ANY -> 0;
+            case TRANSFER_EXACT -> maxFluidTransferRate;
+            case KEEP_EXACT -> Integer.MAX_VALUE;
+        };
     }
 
     @Override

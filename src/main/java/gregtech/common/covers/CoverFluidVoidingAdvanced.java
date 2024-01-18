@@ -1,11 +1,24 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 
@@ -76,14 +89,6 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 continue;
             sourceFluid.amount = sourceFluid.amount - keepAmount;
             sourceHandler.drain(sourceFluid, true);
-        }
-    }
-
-    @Override
-    public void setBucketMode(BucketMode bucketMode) {
-        super.setBucketMode(bucketMode);
-        if (this.bucketMode == BucketMode.BUCKET) {
-            setTransferAmount(transferAmount / 1000 * 1000);
         }
     }
 
@@ -202,6 +207,46 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         this.fluidFilterContainer.initUI(y + 15, widgetGroup);
         this.fluidFilterContainer.blacklistUI(y + 15, widgetGroup,
                 () -> voidingMode != VoidingMode.VOID_OVERFLOW);
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        return super.buildUI(guiData, guiSyncManager).height(192 + 38);
+    }
+
+    @Override
+    protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+        var voidingMode = new EnumSyncValue<>(VoidingMode.class, this::getVoidingMode, this::setVoidingMode);
+        syncManager.syncValue("voiding_mode", voidingMode);
+
+        var bucketMode = new EnumSyncValue<>(BucketMode.class, this::getBucketMode, this::setBucketMode);
+        bucketMode.updateCacheFromSource(true);
+        syncManager.syncValue("bucket_mode", bucketMode);
+
+        var filterTransferSize = new StringSyncValue(this::getTransferAmountString, this::setStringTransferRate);
+        filterTransferSize.updateCacheFromSource(true);
+
+        return super.createUI(mainPanel, syncManager)
+                .child(new EnumRowBuilder<>(VoidingMode.class)
+                        .value(voidingMode)
+                        .lang("cover.voiding.voiding_mode")
+//                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY) todo voiding mode overlay
+                        .build())
+                .child(new EnumRowBuilder<>(BucketMode.class)
+                        .value(bucketMode)
+                        .overlay(IKey.str("kL"), IKey.str("L"))
+                        .build()
+                        .child(new TextFieldWidget().widthRel(0.5f).right(0)
+                                .setEnabledIf(w -> this.fluidFilterContainer.showGlobalTransferLimitSlider() &&
+                                        this.voidingMode == VoidingMode.VOID_OVERFLOW)
+                                .setNumbers(0, Integer.MAX_VALUE)
+                                .value(filterTransferSize)
+                                .setTextColor(Color.WHITE.darker(1))));
+    }
+
+    @Override
+    protected int getMaxTransferRate() {
+        return getVoidingMode().maxStackSize;
     }
 
     @Override

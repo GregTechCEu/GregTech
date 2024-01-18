@@ -1,5 +1,16 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
+
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
@@ -89,6 +100,33 @@ public class CoverFluidVoiding extends CoverPump {
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.FLUID_VOIDING.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        return super.buildUI(guiData, guiSyncManager).height(192);
+    }
+
+    @Override
+    protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+        var isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
+
+        return super.createUI(mainPanel, syncManager)
+                .child(new Row().height(18).widthRel(1f)
+                        .marginBottom(2)
+                        .child(new ToggleButton()
+                                .value(isWorking)
+                                .overlay(IKey.dynamic(() -> this.isWorkingAllowed ?
+                                                "Working Enabled" :
+                                                "Working Disabled")
+                                        .color(Color.WHITE.darker(1)))
+                                .widthRel(0.6f)
+                                .left(0)));
+    }
+
+    @Override
+    protected boolean createThroughputRow() {
+        return false;
     }
 
     @Override

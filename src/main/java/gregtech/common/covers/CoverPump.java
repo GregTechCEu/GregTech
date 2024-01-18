@@ -92,6 +92,19 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.fluidFilterContainer = new FluidFilterContainer(this);
     }
 
+    public void setStringTransferRate(String s) {
+        this.fluidFilterContainer.setTransferSize(
+                getBucketMode() == BucketMode.MILLI_BUCKET ?
+                        Integer.parseInt(s) :
+                        Integer.parseInt(s) * 1000);
+    }
+
+    public String getStringTransferRate() {
+        return String.valueOf(getBucketMode() == BucketMode.MILLI_BUCKET ?
+                this.fluidFilterContainer.getTransferSize() :
+                this.fluidFilterContainer.getTransferSize() / 1000);
+    }
+
     public void setTransferRate(int transferRate) {
         this.transferRate = MathHelper.clamp(transferRate, 1, maxFluidTransferRate);
         markDirty();
@@ -249,7 +262,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176,192);
 
-        //todo set fluid filter stuffs here
+        getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(createUI(panel, guiSyncManager))
@@ -282,9 +295,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         syncManager.syncValue("pump_mode", pumpMode);
         syncManager.syncValue("throughput", throughput);
 
-        return new Column().top(24).margin(7, 0)
-                .widthRel(1f).coverChildrenHeight()
-                .child(new Row().coverChildrenHeight()
+        var column = new Column().top(24).margin(7, 0)
+                .widthRel(1f).coverChildrenHeight();
+
+        if (createThroughputRow())
+                column.child(new Row().coverChildrenHeight()
                         .marginBottom(2).widthRel(1f)
                         .child(new ButtonWidget<>()
                                 .left(0).width(18)
@@ -309,19 +324,47 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                     Interactable.playButtonClickSound();
                                     return true;
                                 })
-                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))))
-                .child(getFluidFilterContainer()
-                        .initUI(mainPanel, syncManager))
-                .child(new EnumRowBuilder<>(ManualImportExportMode.class)
+                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+
+        if (createFilterRow())
+                column.child(getFluidFilterContainer()
+                        .initUI(mainPanel, syncManager));
+
+        if (createManualIOModeRow())
+                column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
                         .value(manualIOmode)
                         .lang("cover.generic.manual_io")
                         .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
-                        .build())
-                .child(new EnumRowBuilder<>(PumpMode.class)
+                        .build());
+
+        if (createPumpModeRow())
+                column.child(new EnumRowBuilder<>(PumpMode.class)
                         .value(pumpMode)
                         .lang("cover.pump.mode")
                         .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
                         .build());
+
+        return column;
+    }
+
+    protected boolean createThroughputRow() {
+        return true;
+    }
+
+    protected boolean createFilterRow() {
+        return true;
+    }
+
+    protected boolean createManualIOModeRow() {
+        return true;
+    }
+
+    protected boolean createPumpModeRow() {
+        return true;
+    }
+
+    protected int getMaxTransferRate() {
+        return 1000;
     }
 
     @Override

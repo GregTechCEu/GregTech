@@ -184,7 +184,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     @Override
     protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
         var voidingMode = new EnumSyncValue<>(VoidingMode.class, this::getVoidingMode, this::setVoidingMode);
-        guiSyncManager.syncValue("transfer_mode", voidingMode);
+        guiSyncManager.syncValue("voiding_mode", voidingMode);
 
         var filterTransferSize = new StringSyncValue(
                 () -> String.valueOf(this.itemFilterContainer.getTransferSize()),
@@ -204,6 +204,11 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                                 .setNumbers(0, Integer.MAX_VALUE)
                                 .value(filterTransferSize)
                                 .setTextColor(Color.WHITE.darker(1))));
+    }
+
+    @Override
+    protected int getMaxStackSize() {
+        return getVoidingMode().maxStackSize;
     }
 
     @Override
