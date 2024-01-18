@@ -224,6 +224,7 @@ public class CoverRoboticArm extends CoverConveyor {
                 .child(new Row().right(0).coverChildrenHeight()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
+                                .setNumbers(0, Integer.MAX_VALUE)
                                 .value(filterTransferSize)
                                 .setTextColor(Color.WHITE.darker(1))));
     }
