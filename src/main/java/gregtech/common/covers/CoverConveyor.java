@@ -1,5 +1,7 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -544,9 +546,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 this::getConveyorMode, this::setConveyorMode);
 
         IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
+        throughput.updateCacheFromSource(true);
+
+        StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue, throughput::setStringValue);
 
         guiSyncManager.syncValue("manual_io", manualIOmode);
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
+        guiSyncManager.syncValue("throughput", throughput);
 
         return new Column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight()
@@ -555,7 +561,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         .child(new ButtonWidget<>()
                                 .left(0).width(18)
                                 .onMousePressed(mouseButton -> {
-                                    throughput.updateCacheFromSource(false);
                                     int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
                                     throughput.setValue(val, true, true);
                                     Interactable.playButtonClickSound();
@@ -566,17 +571,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                                 .left(18).right(18)
                                 .setTextColor(Color.WHITE.darker(1))
                                 .setNumbers(1, maxItemTransferRate)
-                                .value(throughput)
-                                .background(GTGuiTextures.DISPLAY)
-                                .onUpdateListener(w -> {
-                                    if (throughput.updateCacheFromSource(false)) {
-                                        w.setText(throughput.getStringValue());
-                                    }
-                                }))
+                                .value(formattedThroughput)
+                                .background(GTGuiTextures.DISPLAY))
                         .child(new ButtonWidget<>()
                                 .right(0).width(18)
                                 .onMousePressed(mouseButton -> {
-                                    throughput.updateCacheFromSource(false);
                                     int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
                                     throughput.setValue(val, true, true);
                                     Interactable.playButtonClickSound();
