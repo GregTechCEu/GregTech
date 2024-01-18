@@ -14,6 +14,6 @@ public class SmartFilterUIManager extends BaseFilterUIManager {
         var filter = FilterTypeRegistry.getItemFilterForStack(guiData.getUsedItemStack());
         return createBasePanel(filter.getContainerStack()).height(166)
                 .child(filter.createWidgets(guiSyncManager).left(7).top(22))
-                .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
+                .child(SlotGroupWidget.playerInventory().bottom(7).left(7));
     }
 }

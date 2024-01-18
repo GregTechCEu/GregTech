@@ -15,6 +15,6 @@ public class OreDictFilterUIManager extends BaseFilterUIManager{
         var filter = FilterTypeRegistry.getItemFilterForStack(guiData.getUsedItemStack());
         return createBasePanel(filter.getContainerStack()).height(160)
                 .child(filter.createWidgets(guiSyncManager).top(22).margin(7, 0))
-                .child(SlotGroupWidget.playerInventory(0).bottom(7).left(7));
+                .child(SlotGroupWidget.playerInventory().bottom(7).left(7));
     }
 }
