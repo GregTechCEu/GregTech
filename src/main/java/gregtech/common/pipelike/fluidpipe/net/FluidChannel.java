@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.FlowChannel;
 import gregtech.api.pipenet.NetEdge;
 import gregtech.api.pipenet.NetGroup;
@@ -9,6 +10,11 @@ import gregtech.api.pipenet.WorldPipeFlowNetG;
 import gregtech.api.pipenet.alg.MaximumFlowAlgorithm;
 
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.common.covers.CoverPump;
+import gregtech.common.covers.CoverShutter;
+import gregtech.common.covers.ManualImportExportMode;
+import gregtech.common.covers.filter.FluidFilter;
+import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
@@ -149,17 +155,38 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
                         continue;
                     }
                 }
-                // TODO check our and their cover
+                Cover thisCover = sink.getHeldMTE().getCoverableImplementation().getCoverAtSide(connected.getKey());
+                Cover themCover = getCoverOnNeighbour(sink, connected.getKey().getOpposite());
+                int transferMax = evaluateCover(themCover, evaluateCover(thisCover, amount));
                 IFluidHandler handler = connected.getValue().getCapability(
                         CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, connected.getKey().getOpposite());
                 if (handler != null) {
-                    fill = handler.fill(new FluidStack(this.fluid.getFluid(), amount), doFill);
+                    fill = handler.fill(new FluidStack(this.fluid.getFluid(), transferMax), doFill);
                     flow += fill;
                     amount -= fill;
                 }
             }
         }
         return flow;
+    }
+
+    private int evaluateCover(Cover cover, int transferMax) {
+        if (cover instanceof CoverPump p) {
+            switch (p.getManualImportExportMode()) {
+                case DISABLED -> {
+                    return 0;
+                }
+                case FILTERED -> {
+                    if (!p.getFluidFilterContainer().testFluidStack(this.fluid)) return 0;
+                }
+            }
+            return Math.min(transferMax, p.getTransferRate());
+        }
+        if (cover instanceof FluidFilter f) {
+            return f.testFluid(this.fluid) ? transferMax : 0;
+        }
+        if (cover instanceof CoverShutter) return 0;
+        return transferMax;
     }
 
     public static FluidChannel getChannelFromGroup(Fluid key, NetGroup<FluidPipeType, FluidPipeProperties> group) {

@@ -1,12 +1,19 @@
 package gregtech.api.pipenet;
 
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.pipenet.block.IPipeType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraft.util.math.BlockPos;
+
+import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 
 import java.util.Map;
@@ -92,5 +99,17 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
     public void removeSink(NodeG<PT, NDT> sink) {
         this.activeSources.remove(sink);
         this.network.removeEdge(sink, this.superSink);
+    }
+
+    @Nullable
+    protected static Cover getCoverOnNeighbour(NodeG<?, ?> node, EnumFacing facing) {
+        TileEntity tile = node.getConnnected(facing);
+        if (tile != null) {
+            CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER,
+                    facing.getOpposite());
+            if (coverHolder == null) return null;
+            return coverHolder.getCoverAtSide(facing.getOpposite());
+        }
+        return null;
     }
 }
