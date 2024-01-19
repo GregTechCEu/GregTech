@@ -78,7 +78,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     }
 
     public boolean testItemStack(R toTest) {
-        return hasFilter() || getFilter().test(toTest);
+        return !hasFilter() || getFilter().test(toTest);
     }
 
     public int getTransferLimit(R stack) {
@@ -156,6 +156,11 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         @Override
         protected void onLoad() {
             onFilterSlotChange(false);
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            onFilterSlotChange(true);
         }
     }
 }
