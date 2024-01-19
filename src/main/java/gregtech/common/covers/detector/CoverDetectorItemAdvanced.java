@@ -78,7 +78,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         // "cover.generic.advanced_detector.invert_label"));
         group.addWidget(
                 new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
+                        "behaviour.soft_hammer.enabled", "behaviour.soft_hammer.disabled")
                                 .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
         // group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING),
         // "cover.generic.advanced_detector.latch_label"));
