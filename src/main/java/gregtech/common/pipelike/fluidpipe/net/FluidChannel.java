@@ -2,6 +2,7 @@ package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.pipenet.FlowChannel;
 import gregtech.api.pipenet.NetEdge;
+import gregtech.api.pipenet.NetGroup;
 import gregtech.api.pipenet.NodeG;
 
 import gregtech.api.pipenet.WorldPipeFlowNetG;
@@ -16,14 +17,19 @@ import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import org.jgrapht.Graph;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties> {
 
@@ -46,14 +52,16 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
     public void evaluate() {
         activate();
 
-        if (network instanceof WorldPipeFlowNetG.IFlowGraph graph) {
+        if (network instanceof WorldPipeFlowNetG.IFlowGraph<?, ?> graph) {
             graph.setTestObject(fluid.getFluid());
+            ((WorldPipeFlowNetG.IFlowGraph<FluidPipeProperties, FluidPipeType>) graph)
+                    .setQueryingChannel(this);
         }
         else throw new IllegalStateException("Attempted to do flow calculations on a non-flow graph!");
 
         if (alg == null) alg = new MaximumFlowAlgorithm<>(network);
 
-        double max = alg.calculateMaximumFlow(superSource, superSink);
+        alg.calculateMaximumFlow(superSource, superSink);
         Map<NetEdge, Double> flows = alg.getFlowMap();
         Map<NodeG<?, ?>, Double> inMap = new Object2DoubleOpenHashMap<>();
         Map<NodeG<?, ?>, Double> outMap = new Object2DoubleOpenHashMap<>();
@@ -85,26 +93,81 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
             oldNode.removeChannel(this);
         }
         oldNodes = nodes;
-        for (Map.Entry<NodeG<FluidPipeType, FluidPipeProperties>, Double> sink : activeSinks.entrySet()) {
-            if (sink.getKey().getHeldMTE() instanceof TileEntityFluidPipeTickable f) {
-                double flow = outMap.getOrDefault(sink.getKey(), 0d);
-                // insert flow to the node's neighbors
-            }
+
+        // Everything should be properly balanced at this point due to earlier operations.
+        // If something is off, it's too late to fix.
+        for (NodeG<FluidPipeType, FluidPipeProperties> source : activeSources) {
+            double flow = inMap.getOrDefault(source, 0d);
+            if (flow != 0)
+                pullFromNode(source, (int) flow, true);
+        }
+        for (NodeG<FluidPipeType, FluidPipeProperties> sink : activeSinks) {
+            double flow = outMap.getOrDefault(sink, 0d);
+            if (flow != 0)
+                pushToNode(sink, (int) flow, true);
         }
 
         deactivate();
     }
 
     @Override
-    public void adjustSource(NodeG<FluidPipeType, FluidPipeProperties> source, Function<Double, Double> adjuster) {
-        this.alg = null;
-        super.adjustSource(source, adjuster);
+    protected double getSourceValue(NodeG<FluidPipeType, FluidPipeProperties> source) {
+        return pullFromNode(source, Integer.MAX_VALUE, false);
+    }
+
+    private double pullFromNode(NodeG<FluidPipeType, FluidPipeProperties> source, int amount, boolean doDrain) {
+        FluidStack stack = null;
+        if (source.getHeldMTE() instanceof TileEntityFluidPipeTickable f) {
+            IFluidHandler handler = f.getCapability(
+                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+            if (handler != null) {
+                stack = handler.drain(new FluidStack(this.fluid.getFluid(), amount), doDrain);
+            }
+        }
+        return stack != null ? stack.amount : 0;
     }
 
     @Override
-    public void adjustSink(NodeG<FluidPipeType, FluidPipeProperties> sink, Function<Double, Double> adjuster) {
-        this.alg = null;
-        super.adjustSink(sink, adjuster);
+    protected double getSinkValue(NodeG<FluidPipeType, FluidPipeProperties> sink) {
+        return pushToNode(sink, Integer.MAX_VALUE, false);
     }
 
+    private double pushToNode(NodeG<FluidPipeType, FluidPipeProperties> sink, int amount, boolean doFill) {
+        int flow = 0;
+        if (sink.getHeldMTE() instanceof TileEntityFluidPipeTickable f) {
+            int fill;
+            Byte receiveSides = this.receiveSidesMap.get(sink);
+            for (Map.Entry<EnumFacing, TileEntity> connected : sink.getConnecteds().entrySet()) {
+                if (receiveSides != null) {
+                    int facing = (1 << connected.getKey().getIndex());
+                    if ((receiveSides & facing) != 0) {
+                        if (doFill) this.receiveSidesMap.compute(sink, (k, v) -> {
+                            assert v != null;
+                            // bitwise XOR to remove this side from the map
+                            return (byte) (v ^ facing);
+                        });
+                        continue;
+                    }
+                }
+                // TODO check our and their cover
+                IFluidHandler handler = connected.getValue().getCapability(
+                        CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, connected.getKey().getOpposite());
+                if (handler != null) {
+                    fill = handler.fill(new FluidStack(this.fluid.getFluid(), amount), doFill);
+                    flow += fill;
+                    amount -= fill;
+                }
+            }
+        }
+        return flow;
+    }
+
+    public static FluidChannel getChannelFromGroup(Fluid key, NetGroup<FluidPipeType, FluidPipeProperties> group) {
+        FluidChannel channel = (FluidChannel) group.getChannel(key);
+        if (channel == null) {
+            channel = new FluidChannel(group.getGraph(), key);
+            group.setChannel(key, channel);
+        }
+        return channel;
+    }
 }

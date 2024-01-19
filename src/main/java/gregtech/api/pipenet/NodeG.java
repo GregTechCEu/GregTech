@@ -117,6 +117,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.heldMTE = new WeakReference<>(null);
     }
 
+    // TODO guarantee every node has a group
     @Nullable
     public NetGroup<PipeType, NodeDataType> getGroup() {
         return group;

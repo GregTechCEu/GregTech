@@ -78,7 +78,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             newFluid.amount = Math.min(pipe.getCapacityPerTank(), newFluid.amount);
             if (doFill) {
                 tank.setFluid(newFluid);
-                pipe.receivedFrom(facing);
+                pipe.receivedFrom(newFluid.getFluid(), facing);
                 pipe.checkAndDestroy(newFluid);
             }
             return newFluid.amount;
@@ -88,7 +88,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             if (toAdd > 0) {
                 if (doFill) {
                     currentFluid.amount += toAdd;
-                    pipe.receivedFrom(facing);
+                    pipe.receivedFrom(currentFluid.getFluid(), facing);
                     pipe.checkAndDestroy(currentFluid);
                 }
                 return toAdd;

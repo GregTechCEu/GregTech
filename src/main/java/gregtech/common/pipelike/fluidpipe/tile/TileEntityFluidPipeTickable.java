@@ -14,6 +14,7 @@ import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.ManualImportExportMode;
+import gregtech.common.pipelike.fluidpipe.net.FluidChannel;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -72,34 +73,34 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     @Override
     public void update() {
-        timer++;
+//        timer++;
         getCoverableImplementation().update();
-        if (!world.isRemote && getOffsetTimer() % FREQUENCY == 0) {
-            lastReceivedFrom &= 63;
-            if (lastReceivedFrom == 63) {
-                lastReceivedFrom = 0;
-            }
-
-            boolean shouldDistribute = (oldLastReceivedFrom == lastReceivedFrom);
-            int tanks = getNodeData().getTanks();
-            for (int i = 0, j = GTValues.RNG.nextInt(tanks); i < tanks; i++) {
-                int index = (i + j) % tanks;
-                FluidTank tank = getFluidTanks()[index];
-                FluidStack fluid = tank.getFluid();
-                if (fluid == null)
-                    continue;
-                if (fluid.amount <= 0) {
-                    tank.setFluid(null);
-                    continue;
-                }
-
-                if (shouldDistribute) {
-                    distributeFluid(index, tank, fluid);
-                    lastReceivedFrom = 0;
-                }
-            }
-            oldLastReceivedFrom = lastReceivedFrom;
-        }
+//        if (!world.isRemote && getOffsetTimer() % FREQUENCY == 0) {
+//            lastReceivedFrom &= 63;
+//            if (lastReceivedFrom == 63) {
+//                lastReceivedFrom = 0;
+//            }
+//
+//            boolean shouldDistribute = (oldLastReceivedFrom == lastReceivedFrom);
+//            int tanks = getNodeData().getTanks();
+//            for (int i = 0, j = GTValues.RNG.nextInt(tanks); i < tanks; i++) {
+//                int index = (i + j) % tanks;
+//                FluidTank tank = getFluidTanks()[index];
+//                FluidStack fluid = tank.getFluid();
+//                if (fluid == null)
+//                    continue;
+//                if (fluid.amount <= 0) {
+//                    tank.setFluid(null);
+//                    continue;
+//                }
+//
+//                if (shouldDistribute) {
+//                    distributeFluid(index, tank, fluid);
+//                    lastReceivedFrom = 0;
+//                }
+//            }
+//            oldLastReceivedFrom = lastReceivedFrom;
+//        }
     }
 
     @Override
@@ -357,9 +358,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, oppositeSide);
     }
 
-    public void receivedFrom(EnumFacing facing) {
+    public void receivedFrom(Fluid fluid, EnumFacing facing) {
+        // on fluid received, add us as a source to the proper channel
+        FluidChannel channel = FluidChannel.getChannelFromGroup(fluid, this.getNode().getGroup());
+        channel.addSource(this.getNode());
         if (facing != null) {
-            lastReceivedFrom |= (1 << facing.getIndex());
+            channel.addReceiveSide(this.getNode(), facing);
         }
     }
 

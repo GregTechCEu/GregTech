@@ -333,7 +333,7 @@ public class ItemNetHandler implements IItemHandler {
             testHandler.setStackInSlot(0, ItemStack.EMPTY);
         }
         IItemHandler neighbourHandler = routePath.getTargetTE()
-                .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, routePath.facing);
+                .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, routePath.facing.getOpposite());
         if (pipeCover instanceof CoverRoboticArm &&
                 ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
             return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed,

@@ -2,24 +2,27 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
-import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.common.pipelike.fluidpipe.FluidPipeType;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
-import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
+import net.minecraft.util.EnumFacing;
+
 import org.jgrapht.Graph;
 
 import java.util.Map;
-import java.util.function.Function;
+import java.util.Set;
 
 public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> {
 
     protected final Graph<NodeG<PT, NDT>, NetEdge> network;
 
     protected NodeG<PT, NDT> superSource = new NodeG<>();
-    protected Map<NodeG<PT, NDT>, Double> activeSources = new Object2DoubleOpenHashMap<>();
+    protected Set<NodeG<PT, NDT>> activeSources = new ObjectOpenHashSet<>();
 
     protected NodeG<PT, NDT> superSink = new NodeG<>();
-    protected Map<NodeG<PT, NDT>, Double> activeSinks = new Object2DoubleOpenHashMap<>();
+    protected Set<NodeG<PT, NDT>> activeSinks = new ObjectOpenHashSet<>();
+
+    protected Map<NodeG<PT, NDT>, Byte> receiveSidesMap = new Object2ObjectOpenHashMap<>();
 
     public FlowChannel(Graph<NodeG<PT, NDT>, NetEdge> network) {
         this.network = network;
@@ -31,11 +34,15 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
      * Prime the edges to the super nodes to prepare for calculations.
      */
     protected void activate() {
-        for (Map.Entry<NodeG<PT, NDT>, Double> source : activeSources.entrySet()) {
-            network.setEdgeWeight(superSource, source.getKey(), source.getValue());
+        for (NodeG<PT, NDT> source : activeSources) {
+            double v = getSourceValue(source);
+            network.setEdgeWeight(superSource, source, v);
+            if (v == 0) removeSource(source);
         }
-        for (Map.Entry<NodeG<PT, NDT>, Double> sink : activeSinks.entrySet()) {
-            network.setEdgeWeight(sink.getKey(), superSink, sink.getValue());
+        for (NodeG<PT, NDT> sink : activeSinks) {
+            double v = getSinkValue(sink);
+            network.setEdgeWeight(sink, superSink, v);
+            if (v == 0) removeSink(sink);
         }
     }
 
@@ -43,21 +50,47 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
      * Zero out the edges to the super nodes to prevent other calculations from using them.
      */
     protected void deactivate() {
-        for (Map.Entry<NodeG<PT, NDT>, Double> source : activeSources.entrySet()) {
-            network.setEdgeWeight(superSource, source.getKey(), 0);
+        for (NodeG<PT, NDT> source : activeSources) {
+            network.setEdgeWeight(superSource, source, 0);
         }
-        for (Map.Entry<NodeG<PT, NDT>, Double> sink : activeSinks.entrySet()) {
-            network.setEdgeWeight(sink.getKey(), superSink, 0);
+        for (NodeG<PT, NDT> sink : activeSinks) {
+            network.setEdgeWeight(sink, superSink, 0);
         }
     }
 
-    public void adjustSource(NodeG<PT, NDT> source, Function<Double, Double> adjuster) {
-        activeSources.compute(source, (k, v) -> (v == null) ? adjuster.apply(0d) : adjuster.apply(v));
-        if (activeSources.get(source) <= 0) activeSources.remove(source);
+    protected abstract double getSourceValue(NodeG<PT, NDT> source);
+    protected abstract double getSinkValue(NodeG<PT, NDT> sink);
+
+    public void addSource(NodeG<PT, NDT> source) {
+        this.activeSources.add(source);
+        this.network.addEdge(this.superSource, source);
     }
 
-    public void adjustSink(NodeG<PT, NDT> sink, Function<Double, Double> adjuster) {
-        activeSinks.compute(sink, (k, v) -> (v == null) ? adjuster.apply(0d) : adjuster.apply(v));
-        if (activeSinks.get(sink) <= 0) activeSinks.remove(sink);
+    public void addReceiveSide(NodeG<PT, NDT> node, EnumFacing side) {
+        this.receiveSidesMap.compute(node, (k, v) -> {
+            if (v == null) {
+                byte a = 0;
+                a |= (1 << side.getIndex());
+                return a;
+            }
+            byte a = v;
+            a |= (1 << side.getIndex());
+            return a;
+        });
+    }
+
+    public void removeSource(NodeG<PT, NDT> source) {
+        this.activeSources.remove(source);
+        this.network.removeEdge(this.superSource, source);
+    }
+
+    public void addSink(NodeG<PT, NDT> sink) {
+        this.activeSources.add(sink);
+        this.network.addEdge(sink, this.superSink);
+    }
+
+    public void removeSink(NodeG<PT, NDT> sink) {
+        this.activeSources.remove(sink);
+        this.network.removeEdge(sink, this.superSink);
     }
 }

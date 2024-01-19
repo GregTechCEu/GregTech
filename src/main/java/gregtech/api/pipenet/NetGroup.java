@@ -188,16 +188,20 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.channels.clear();
     }
 
+    public Graph<NodeG<PipeType, NodeDataType>, NetEdge> getGraph() {
+        return graph;
+    }
+
     public AbstractGroupData<PipeType, NodeDataType> getData() {
         return this.data;
     }
 
-    protected void setChannel(Object key, FlowChannel<PipeType, NodeDataType> channel) {
+    public void setChannel(Object key, FlowChannel<PipeType, NodeDataType> channel) {
         this.channels.put(key, channel);
     }
 
     @Nullable
-    protected FlowChannel<PipeType, NodeDataType> getChannel(Object key) {
+    public FlowChannel<PipeType, NodeDataType> getChannel(Object key) {
         return this.channels.get(key);
     }
 
