@@ -116,6 +116,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     public void setVoidingMode(VoidingMode transferMode) {
         this.voidingMode = transferMode;
+        this.fluidFilterContainer.setBucketOnly(transferMode == VoidingMode.VOID_ANY);
+        this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
         this.markDirty();
     }
 
@@ -216,7 +218,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192 + 38);
+        return super.buildUI(guiData, guiSyncManager).height(192 + 20);
     }
 
     @Override

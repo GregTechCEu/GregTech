@@ -106,12 +106,13 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     public void setTransferRate(int transferRate) {
+        if (bucketMode == BucketMode.BUCKET) transferRate *= 1000;
         this.transferRate = MathHelper.clamp(transferRate, 1, maxFluidTransferRate);
         markDirty();
     }
 
     public int getTransferRate() {
-        return transferRate;
+        return bucketMode == BucketMode.BUCKET ? transferRate / 1000 : transferRate;
     }
 
     protected void adjustTransferRate(int amount) {
@@ -278,14 +279,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         throughput.updateCacheFromSource(true);
 
         var throughputString = new StringSyncValue(
-                () -> String.valueOf(switch (getBucketMode()) {
-                    case BUCKET -> throughput.getIntValue() / 1000;
-                    case MILLI_BUCKET -> throughput.getIntValue();
-        }),
-                s -> throughput.setValue(switch (getBucketMode()) {
-                    case BUCKET -> Integer.parseInt(s) * 1000;
-                    case MILLI_BUCKET -> Integer.parseInt(s);
-        }));
+                throughput::getStringValue,
+                throughput::setStringValue);
         throughputString.updateCacheFromSource(true);
 
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);

@@ -162,11 +162,6 @@ public class SimpleFluidFilter extends FluidFilter {
         }
 
         @Override
-        public int getMaxTransferRate() {
-            return isBucketOnly() ? 1000 : super.getMaxTransferRate();
-        }
-
-        @Override
         public void onTransferRateChange() {
             for (int i = 0; i < getSlots(); i++) {
                 var stack = getFluidStack(i);
@@ -230,7 +225,7 @@ public class SimpleFluidFilter extends FluidFilter {
 
         @Override
         public int getFluidAmount() {
-            return isEmpty() ? 0 : getFluidTag().getInteger(FLUID_AMOUNT);
+            return getFluidTag().getInteger(FLUID_AMOUNT);
         }
 
         @Override
