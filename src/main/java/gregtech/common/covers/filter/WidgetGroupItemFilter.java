@@ -8,6 +8,7 @@ import net.minecraft.network.PacketBuffer;
 import java.io.IOException;
 import java.util.function.Supplier;
 
+@Deprecated
 public class WidgetGroupItemFilter extends AbstractWidgetGroup {
 
     private final Supplier<ItemFilter> itemFilterSupplier;

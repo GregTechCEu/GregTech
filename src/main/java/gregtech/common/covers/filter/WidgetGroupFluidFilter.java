@@ -7,6 +7,7 @@ import net.minecraft.network.PacketBuffer;
 
 import java.util.function.Supplier;
 
+@Deprecated
 public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
 
     private final Supplier<FluidFilter> fluidFilterSupplier;
