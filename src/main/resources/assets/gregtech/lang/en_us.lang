@@ -1336,7 +1336,7 @@ cover.machine_controller.disable_with_redstone=Disable with Redstone
 cover.ender_fluid_link.title=Ender Fluid Link
 cover.ender_fluid_link.iomode.enabled=I/O Enabled
 cover.ender_fluid_link.iomode.disabled=I/O Disabled
-cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
+cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode\nPrivate mode uses the player who originally placed the cover
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 

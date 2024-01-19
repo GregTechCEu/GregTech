@@ -4,6 +4,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 
@@ -15,6 +16,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
@@ -205,6 +207,7 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
         var panel = GTGuis.createPanel(this, 176,192);
 
         getFluidFilterContainer().setMaxTransferSize(1000);
+        getFluidFilterContainer().setBucketOnly(true);
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(createWidgets(panel, guiSyncManager))
@@ -224,22 +227,40 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
 
         var ioEnabled = new BooleanSyncValue(this::isIOEnabled, this::setIoEnabled);
 
+        var fluidTank = new FluidSlotSyncHandler(this.linkedTank);
+        fluidTank.updateCacheFromSource(true);
+
         return new Column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
                 .child(new Row().marginBottom(2)
                         .coverChildrenHeight()
                         .child(new ToggleButton()
+                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                                .tooltipBuilder(tooltip ->
+                                        tooltip.addLine(IKey.lang(this.isPrivate ?
+                                                "cover.ender_fluid_link.private.tooltip.enabled" :
+                                                "cover.ender_fluid_link.private.tooltip.disabled")))
                                 .marginRight(2)
                                 .value(isPrivate))
-                        .child(new DynamicDrawable(() -> new Rectangle().setColor(this.color))
+                        .child(new DynamicDrawable(() ->
+                                new Rectangle()
+                                        .setColor(this.color)
+                                        .asIcon().size(16))
                                 .asWidget()
+                                .background(GTGuiTextures.SLOT)
                                 .size(18).marginRight(2))
                         .child(new TextFieldWidget().height(18)
                                 .value(color)
+                                .setValidator(s -> {
+                                    if (s.length() != 8) {
+                                        return color.getStringValue();
+                                    }
+                                    return s;
+                                })
                                 .setPattern(COLOR_INPUT_PATTERN)
                                 .widthRel(0.5f).marginRight(2))
                         .child(new FluidSlot().size(18)
-                                .syncHandler(this.linkedTank)))
+                                .syncHandler(fluidTank)))
                 .child(new Row().marginBottom(2)
                         .coverChildrenHeight()
                         .child(new ToggleButton()
@@ -250,11 +271,11 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
                                         .color(Color.WHITE.darker(1)))
                                 .widthRel(0.6f)
                                 .left(0)))
+                .child(getFluidFilterContainer().initUI(panel, syncManager))
                 .child(new EnumRowBuilder<>(CoverPump.PumpMode.class)
                         .value(pumpMode)
                         .lang("Pump Mode")
-                        .build())
-                .child(getFluidFilterContainer().initUI(panel, syncManager));
+                        .build());
     }
 
     public void updateColor(String str) {
