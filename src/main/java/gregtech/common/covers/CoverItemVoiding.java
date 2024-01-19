@@ -105,7 +105,7 @@ public class CoverItemVoiding extends CoverConveyor {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192);
+        return super.buildUI(guiData, guiSyncManager).height(192 - 22);
     }
 
     @Override
@@ -117,9 +117,9 @@ public class CoverItemVoiding extends CoverConveyor {
                         .marginBottom(2)
                         .child(new ToggleButton()
                                 .value(isWorking)
-                                .overlay(IKey.dynamic(() -> this.isWorkingAllowed ?
-                                        "Working Enabled" :
-                                        "Working Disabled")
+                                .overlay(IKey.dynamic(() -> IKey.lang(this.isWorkingAllowed ?
+                                        "behaviour.soft_hammer.enabled" :
+                                        "behaviour.soft_hammer.disabled").get())
                                         .color(Color.WHITE.darker(1)))
                                 .widthRel(0.6f)
                                 .left(0)));
