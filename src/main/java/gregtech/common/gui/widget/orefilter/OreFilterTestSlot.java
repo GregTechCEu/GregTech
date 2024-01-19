@@ -1,7 +1,5 @@
 package gregtech.common.gui.widget.orefilter;
 
-import com.cleanroommc.modularui.drawable.UITexture;
-
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.function.BooleanConsumer;
 import gregtech.api.util.oreglob.OreGlob;
@@ -33,7 +31,7 @@ public class OreFilterTestSlot extends ItemSlot {
     private MatchType matchType = MatchType.INVALID;
     private boolean matchSuccess;
 
-//    private boolean initialized = false;
+    // private boolean initialized = false;
 
     private boolean matchAll;
 
@@ -49,18 +47,17 @@ public class OreFilterTestSlot extends ItemSlot {
                         "cover.ore_dictionary_filter.test_slot.no_oredict.matches" :
                         "cover.ore_dictionary_filter.test_slot.no_oredict.matches_not"));
                 case ORE_DICT_MATCH -> this.testResult.object2BooleanEntrySet()
-                        .stream().map(e ->
-                                IKey.lang(e.getBooleanValue() ?
-                                        "cover.ore_dictionary_filter.test_slot.matches" :
-                                        "cover.ore_dictionary_filter.test_slot.matches_not", e.getKey()))
+                        .stream().map(e -> IKey.lang(e.getBooleanValue() ?
+                                "cover.ore_dictionary_filter.test_slot.matches" :
+                                "cover.ore_dictionary_filter.test_slot.matches_not", e.getKey()))
                         .collect(Collectors.toList());
                 default -> Collections.singletonList(IKey.lang("cover.ore_dictionary_filter.test_slot.info"));
             });
         });
-//        this.match = new ImageWidget(18 - 5, -3, 9, 6, GuiTextures.ORE_FILTER_MATCH);
-//        this.noMatch = new ImageWidget(18 - 5, -3, 7, 7, GuiTextures.ORE_FILTER_NO_MATCH);
-//        child(this.match);
-//        child(this.noMatch);
+        // this.match = new ImageWidget(18 - 5, -3, 9, 6, GuiTextures.ORE_FILTER_MATCH);
+        // this.noMatch = new ImageWidget(18 - 5, -3, 7, 7, GuiTextures.ORE_FILTER_NO_MATCH);
+        // child(this.match);
+        // child(this.noMatch);
     }
 
     public OreFilterTestSlot setGlobSupplier(Supplier<OreGlob> supplier) {
@@ -121,15 +118,15 @@ public class OreFilterTestSlot extends ItemSlot {
             }
             updateAndNotifyMatchSuccess(this.expectedResult == success);
             this.tooltip().markDirty();
-//            this.match.setVisible(this.expectedResult == success);
-//            this.noMatch.setVisible(this.expectedResult != success);
+            // this.match.setVisible(this.expectedResult == success);
+            // this.noMatch.setVisible(this.expectedResult != success);
             return;
         }
         this.testResult = Object2BooleanMaps.emptyMap();
         this.matchType = MatchType.INVALID;
         updateAndNotifyMatchSuccess(false);
-//        this.match.setVisible(false);
-//        this.noMatch.setVisible(false);
+        // this.match.setVisible(false);
+        // this.noMatch.setVisible(false);
     }
 
     private void updateAndNotifyMatchSuccess(boolean newValue) {

@@ -65,7 +65,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
                 arm.getTransferMode() == TransferMode.TRANSFER_ANY) {
                     // only display the regular rate if the cover does not have a specialized rate
                     transferRateText(probeInfo, conveyor.getConveyorMode(), " " + rateUnit, conveyor.getTransferRate());
-        }
+                }
 
         ItemFilterContainer filter = conveyor.getItemFilterContainer();
         if (conveyor instanceof CoverRoboticArm roboticArm) {
@@ -185,7 +185,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
         fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
-            probeInfo.text(TextStyleClass.INFO + lang("gregtech.top.link_cover.color") + " " + enderFluidLink.getColorStr());
+            probeInfo.text(
+                    TextStyleClass.INFO + lang("gregtech.top.link_cover.color") + " " + enderFluidLink.getColorStr());
         }
     }
 
@@ -234,7 +235,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void voidingText(@NotNull IProbeInfo probeInfo, @NotNull VoidingMode mode, @NotNull String unit,
                                     int amount, boolean hasFilter) {
         String text = TextFormatting.RED + lang(mode.getName());
-        if (mode != VoidingMode.VOID_ANY && !hasFilter) text += " " + TextFormattingUtil.formatNumbers(amount) + " " + unit;
+        if (mode != VoidingMode.VOID_ANY && !hasFilter)
+            text += " " + TextFormattingUtil.formatNumbers(amount) + " " + unit;
         probeInfo.text(text);
     }
 

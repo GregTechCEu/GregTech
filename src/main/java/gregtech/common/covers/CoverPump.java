@@ -1,7 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -59,6 +57,7 @@ import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -261,7 +260,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        var panel = GTGuis.createPanel(this, 176,192);
+        var panel = GTGuis.createPanel(this, 176, 192);
 
         getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
 
@@ -294,50 +293,50 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 .widthRel(1f).coverChildrenHeight();
 
         if (createThroughputRow())
-                column.child(new Row().coverChildrenHeight()
-                        .marginBottom(2).widthRel(1f)
-                        .child(new ButtonWidget<>()
-                                .left(0).width(18)
-                                .onMousePressed(mouseButton -> {
-                                    int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                    throughput.setValue(val, true, true);
-                                    Interactable.playButtonClickSound();
-                                    return true;
-                                })
-                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
-                        .child(new TextFieldWidget()
-                                .left(18).right(18)
-                                .setTextColor(Color.WHITE.darker(1))
-                                .setNumbers(1, maxFluidTransferRate)
-                                .value(throughputString)
-                                .background(GTGuiTextures.DISPLAY))
-                        .child(new ButtonWidget<>()
-                                .right(0).width(18)
-                                .onMousePressed(mouseButton -> {
-                                    int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                    throughput.setValue(val, true, true);
-                                    Interactable.playButtonClickSound();
-                                    return true;
-                                })
-                                .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+            column.child(new Row().coverChildrenHeight()
+                    .marginBottom(2).widthRel(1f)
+                    .child(new ButtonWidget<>()
+                            .left(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                throughput.setValue(val, true, true);
+                                Interactable.playButtonClickSound();
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                    .child(new TextFieldWidget()
+                            .left(18).right(18)
+                            .setTextColor(Color.WHITE.darker(1))
+                            .setNumbers(1, maxFluidTransferRate)
+                            .value(throughputString)
+                            .background(GTGuiTextures.DISPLAY))
+                    .child(new ButtonWidget<>()
+                            .right(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                throughput.setValue(val, true, true);
+                                Interactable.playButtonClickSound();
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
         if (createFilterRow())
-                column.child(getFluidFilterContainer()
-                        .initUI(mainPanel, syncManager));
+            column.child(getFluidFilterContainer()
+                    .initUI(mainPanel, syncManager));
 
         if (createManualIOModeRow())
-                column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
-                        .value(manualIOmode)
-                        .lang("cover.generic.manual_io")
-                        .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
-                        .build());
+            column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
+                    .value(manualIOmode)
+                    .lang("cover.generic.manual_io")
+                    .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
+                    .build());
 
         if (createPumpModeRow())
-                column.child(new EnumRowBuilder<>(PumpMode.class)
-                        .value(pumpMode)
-                        .lang("cover.pump.mode")
-                        .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
-                        .build());
+            column.child(new EnumRowBuilder<>(PumpMode.class)
+                    .value(pumpMode)
+                    .lang("cover.pump.mode")
+                    .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY) // todo pump mode overlays
+                    .build());
 
         return column;
     }

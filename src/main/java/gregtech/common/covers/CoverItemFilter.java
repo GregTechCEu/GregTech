@@ -160,7 +160,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                         .child(new EnumRowBuilder<>(ItemFilterMode.class)
                                 .value(filteringMode)
                                 .lang("Filter Mode")
-//                                .overlay() todo item filter overlays
+                                // .overlay() todo item filter overlays
                                 .build())
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))

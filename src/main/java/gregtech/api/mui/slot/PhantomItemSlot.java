@@ -1,13 +1,15 @@
 package gregtech.api.mui.slot;
 
-import com.cleanroommc.modularui.widgets.slot.ModularSlot;
-
 import net.minecraftforge.items.IItemHandler;
+
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 
 import java.util.function.Supplier;
 
 public class PhantomItemSlot extends ModularSlot {
+
     protected Supplier<Integer> maxStackSizer;
+
     public PhantomItemSlot(IItemHandler itemHandler, int index, Supplier<Integer> maxStackSizer) {
         super(itemHandler, index);
         this.maxStackSizer = maxStackSizer;

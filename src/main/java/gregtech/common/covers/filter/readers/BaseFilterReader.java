@@ -14,12 +14,13 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
     protected int maxTransferRate = 1;
     protected static final String KEY_ITEMS = "Items";
     protected static final String BLACKLIST = "is_blacklist";
+
     public BaseFilterReader(ItemStack container, int slots) {
         super(container, slots);
         this.container = container;
     }
 
-    public ItemStack getContainer () {
+    public ItemStack getContainer() {
         return this.container;
     }
 
@@ -47,7 +48,6 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
             onTransferRateChange();
         }
     }
-
 
     public int getMaxTransferRate() {
         return this.maxTransferRate;

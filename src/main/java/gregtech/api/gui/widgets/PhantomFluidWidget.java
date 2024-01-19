@@ -13,7 +13,6 @@ import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.common.covers.filter.SimpleFluidFilter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

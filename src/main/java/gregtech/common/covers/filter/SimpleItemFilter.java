@@ -1,8 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
@@ -10,25 +7,24 @@ import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.slot.PhantomItemSlot;
-
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
-
-import net.minecraftforge.items.ItemStackHandler;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -45,13 +41,15 @@ public class SimpleItemFilter extends ItemFilter {
 
     @Override
     public MatchResult<ItemStack> match(ItemStack itemStack) {
-        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(), itemStack);
+        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
+                itemStack);
         return createResult(matchedSlot != -1, filterReader.getStackInSlot(matchedSlot), matchedSlot);
     }
 
     @Override
     public boolean test(ItemStack toTest) {
-        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(), toTest);
+        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
+                toTest);
         return matchedSlot != -1;
     }
 
@@ -73,7 +71,8 @@ public class SimpleItemFilter extends ItemFilter {
                     .setBackgroundTexture(GuiTextures.SLOT));
         }
         widgetGroup.accept(new ToggleButtonWidget(74, 0, 20, 20, GuiTextures.BUTTON_FILTER_DAMAGE,
-                filterReader::isIgnoreDamage, filterReader::setIgnoreDamage).setTooltipText("cover.item_filter.ignore_damage"));
+                filterReader::isIgnoreDamage, filterReader::setIgnoreDamage)
+                        .setTooltipText("cover.item_filter.ignore_damage"));
         widgetGroup.accept(new ToggleButtonWidget(99, 0, 20, 20, GuiTextures.BUTTON_FILTER_NBT,
                 filterReader::isIgnoreNBT, filterReader::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
     }
@@ -110,7 +109,8 @@ public class SimpleItemFilter extends ItemFilter {
                                             .getCompoundTagAt(index)
                                             .getInteger(SimpleItemFilterReader.COUNT);
                                     if (count > 64)
-                                        tooltip.addLine(IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
+                                        tooltip.addLine(
+                                                IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                 })
                                 .slot(new PhantomItemSlot(this.filterReader, index, this::getMaxTransferSize)
                                         .slotGroup(filterInventory)
@@ -153,7 +153,7 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     public int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage, boolean ignoreNBTData,
-                                      ItemStack itemStack) {
+                               ItemStack itemStack) {
         for (int i = 0; i < filterSlots.getSlots(); i++) {
             ItemStack filterStack = filterSlots.getStackInSlot(i);
             if (!filterStack.isEmpty() && areItemsEqual(ignoreDamage, ignoreNBTData, filterStack, itemStack)) {
@@ -164,7 +164,7 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     private boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData, ItemStack filterStack,
-                                         ItemStack itemStack) {
+                                  ItemStack itemStack) {
         if (ignoreDamage) {
             if (!filterStack.isItemEqualIgnoreDurability(itemStack)) {
                 return false;
@@ -179,6 +179,7 @@ public class SimpleItemFilter extends ItemFilter {
 
         public static final String IGNORE_NBT = "ignore_nbt";
         public static final String IGNORE_DAMAGE = "ignore_damage";
+
         public SimpleItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
         }

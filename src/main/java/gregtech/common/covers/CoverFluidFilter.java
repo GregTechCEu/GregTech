@@ -1,12 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.drawable.Rectangle;
-
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-
-import com.cleanroommc.modularui.widgets.layout.Column;
-
 import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
@@ -42,10 +35,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -100,7 +97,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         if (packetBuffer.readBoolean()) {
             try {
-                this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(packetBuffer.readItemStack()));
+                this.fluidFilterContainer
+                        .setFilter(FilterTypeRegistry.getFluidFilterForStack(packetBuffer.readItemStack()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -163,7 +161,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                         .child(new EnumRowBuilder<>(FluidFilterMode.class)
                                 .value(filteringMode)
                                 .lang("Filter Mode")
-//                                .overlay() todo fluid filter overlays
+                                // .overlay() todo fluid filter overlays
                                 .build())
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
@@ -200,9 +198,9 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", this.filterMode.ordinal());
-//        tagCompound.setBoolean("IsBlacklist", this.fluidFilter.isBlacklistFilter());
-//        NBTTagCompound filterComponent = new NBTTagCompound();
-//        this.fluidFilter.getFluidFilter().writeToNBT(filterComponent);
+        // tagCompound.setBoolean("IsBlacklist", this.fluidFilter.isBlacklistFilter());
+        // NBTTagCompound filterComponent = new NBTTagCompound();
+        // this.fluidFilter.getFluidFilter().writeToNBT(filterComponent);
         tagCompound.setTag("Filter", getFluidFilter().getContainerStack().serializeNBT());
     }
 

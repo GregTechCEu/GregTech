@@ -52,7 +52,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
         if (id == 2) {
             clearAllWidgets();
             if (buffer.readBoolean()) {
-//                int filterId = buffer.readVarInt();
+                // int filterId = buffer.readVarInt();
                 try {
                     this.itemFilter = FilterTypeRegistry.getItemFilterForStack(buffer.readItemStack());
                     this.itemFilter.initUI(this::addWidget);

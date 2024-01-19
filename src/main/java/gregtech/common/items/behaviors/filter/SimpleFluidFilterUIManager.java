@@ -1,11 +1,11 @@
 package gregtech.common.items.behaviors.filter;
 
+import gregtech.common.covers.filter.FilterTypeRegistry;
+
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-
-import gregtech.common.covers.filter.FilterTypeRegistry;
 
 public class SimpleFluidFilterUIManager extends BaseFilterUIManager {
 

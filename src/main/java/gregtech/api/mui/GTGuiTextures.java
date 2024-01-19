@@ -157,11 +157,12 @@ public class GTGuiTextures {
     public static final UITexture[] BUTTON_BLACKLIST = slice("textures/gui/widget/button_blacklist.png",
             16, 32, 16, 16, true);
     public static final UITexture[] BUTTON_IGNORE_DAMAGE = slice("textures/gui/widget/button_filter_damage.png",
-        16, 32, 16, 16,true);
+            16, 32, 16, 16, true);
     public static final UITexture[] BUTTON_IGNORE_NBT = slice("textures/gui/widget/button_filter_nbt.png",
-            16, 32, 16, 16,true);
+            16, 32, 16, 16, true);
 
-    public static final UITexture[] BUTTON_CASE_SENSITIVE = slice("textures/gui/widget/ore_filter/button_case_sensitive.png",
+    public static final UITexture[] BUTTON_CASE_SENSITIVE = slice(
+            "textures/gui/widget/ore_filter/button_case_sensitive.png",
             16, 32, 16, 16, true);
 
     public static final UITexture[] BUTTON_MATCH_ALL = slice("textures/gui/widget/ore_filter/button_match_all.png",
@@ -484,7 +485,8 @@ public class GTGuiTextures {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static UITexture[] slice(String path, int imageWidth, int imageHeight, int sliceWidth, int sliceHeight, boolean canApplyTheme) {
+    private static UITexture[] slice(String path, int imageWidth, int imageHeight, int sliceWidth, int sliceHeight,
+                                     boolean canApplyTheme) {
         if (imageWidth % sliceWidth != 0 || imageHeight % sliceHeight != 0)
             throw new IllegalArgumentException("Slice height and slice width must divide the image evenly!");
 

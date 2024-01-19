@@ -195,7 +195,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 .child(new EnumRowBuilder<>(VoidingMode.class)
                         .value(voidingMode)
                         .lang("cover.voiding.voiding_mode")
-//                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY) todo voiding mode overlay
+                        // .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY) todo voiding mode overlay
                         .build())
                 .child(new Row().right(0).coverChildrenHeight()
                         .child(transferTextField
@@ -226,7 +226,6 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     public VoidingMode getVoidingMode() {
         return voidingMode;
     }
-
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {

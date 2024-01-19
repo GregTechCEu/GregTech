@@ -368,7 +368,6 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate,
                                         int allowed, boolean ignoreLimit) {
-
         var matched = arm.getItemFilterContainer().match(stack);
         boolean isStackSpecific = false;
         int rate, count;

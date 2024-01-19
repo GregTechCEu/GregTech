@@ -1,6 +1,7 @@
 package gregtech.common.covers.filter;
 
 public class MatchResult<T> {
+
     boolean matched;
     T matchedStack;
     int filterIndex;

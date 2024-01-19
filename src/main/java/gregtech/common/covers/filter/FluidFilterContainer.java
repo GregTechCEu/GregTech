@@ -8,7 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
@@ -27,7 +26,8 @@ import java.io.IOException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidFilter> implements INBTSerializable<NBTTagCompound> {
+public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidFilter>
+                                  implements INBTSerializable<NBTTagCompound> {
 
     private final FluidFilterWrapper filterWrapper;
 
@@ -58,7 +58,8 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new gregtech.api.gui.widgets.LabelWidget(10, y, "cover.pump.fluid_filter.title"));
         widgetGroup.accept(new gregtech.api.gui.widgets.SlotWidget(filterInventory, 0, 10, y + 15)
-                .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT, gregtech.api.gui.GuiTextures.FILTER_SLOT_OVERLAY));
+                .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT,
+                        gregtech.api.gui.GuiTextures.FILTER_SLOT_OVERLAY));
 
         this.initFilterUI(y + 15, widgetGroup);
         this.blacklistUI(y + 15, widgetGroup, () -> true);
@@ -69,16 +70,19 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
     }
 
     public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
-        gregtech.api.gui.widgets.ServerWidgetGroup blacklistButton = new gregtech.api.gui.widgets.ServerWidgetGroup(this::hasFilter);
-        blacklistButton.addWidget(new gregtech.api.gui.widgets.ToggleButtonWidget(144, y, 18, 18, gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST,
+        gregtech.api.gui.widgets.ServerWidgetGroup blacklistButton = new gregtech.api.gui.widgets.ServerWidgetGroup(
+                this::hasFilter);
+        blacklistButton.addWidget(new gregtech.api.gui.widgets.ToggleButtonWidget(144, y, 18, 18,
+                gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
-                .setTooltipText("cover.filter.blacklist"));
+                        .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
     }
 
-    /** Uses Cleanroom MUI*/
+    /** Uses Cleanroom MUI */
     public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
         var panel = new PanelSyncHandler(main) {
+
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 getFilter().setMaxTransferSize(getMaxTransferSize());
@@ -122,8 +126,8 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
                             return success;
                         }))
                 .child(IKey.dynamic(() -> hasFilter() ?
-                                getFilterInventory().getStackInSlot(0).getDisplayName() :
-                                IKey.lang("metaitem.fluid_filter.name").get())
+                        getFilterInventory().getStackInSlot(0).getDisplayName() :
+                        IKey.lang("metaitem.fluid_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
     }

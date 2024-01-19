@@ -204,7 +204,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected Map<Integer, GroupItemInfo> doCountDestinationInventoryItemsByMatchIndex(IItemHandler itemHandler,
-                                                                                      IItemHandler myItemHandler) {
+                                                                                       IItemHandler myItemHandler) {
         if (conveyorMode == ConveyorMode.IMPORT) {
             return countInventoryItemsByMatchSlot(myItemHandler);
         } else if (conveyorMode == ConveyorMode.EXPORT) {
@@ -409,7 +409,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (!matchResult.isMatched()) continue;
 
             if (!result.containsKey(itemStack)) {
-                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), matchResult.getFilterIndex(), new IntArrayList(), 0);
+                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), matchResult.getFilterIndex(),
+                        new IntArrayList(), 0);
                 itemInfo.totalCount += itemStack.getCount();
                 itemInfo.slots.add(srcIndex);
                 result.put(itemStack.copy(), itemInfo);
@@ -515,7 +516,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        var panel = GTGuis.createPanel(this, 176,192);
+        var panel = GTGuis.createPanel(this, 176, 192);
 
         getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
@@ -537,7 +538,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
         throughput.updateCacheFromSource(true);
 
-        StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue, throughput::setStringValue);
+        StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue,
+                throughput::setStringValue);
 
         guiSyncManager.syncValue("manual_io", manualIOmode);
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
@@ -571,7 +573,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
-
         if (createFilterRow())
             column.child(getItemFilterContainer().initUI(mainPanel, guiSyncManager));
 
@@ -590,7 +591,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     .build());
 
         return column;
-
     }
 
     protected boolean createThroughputRow() {

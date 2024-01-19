@@ -1,7 +1,6 @@
 package gregtech.common.covers.filter;
 
 import gregtech.api.unification.stack.ItemAndMetadata;
-import gregtech.api.util.GTLog;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.item.ItemStack;
@@ -92,7 +91,8 @@ public class FilterTypeRegistry {
     public static @NotNull ItemFilter getItemFilterForStack(ItemStack itemStack) {
         int filterId = getFilterIdForStack(itemStack);
         if (filterId == -1) {
-            throw new IllegalArgumentException(String.format("Failed to create filter instance for stack %s", itemStack));
+            throw new IllegalArgumentException(
+                    String.format("Failed to create filter instance for stack %s", itemStack));
         }
         Class<? extends ItemFilter> filterClass = itemFilterById.get(filterId);
         return createNewFilterInstance(filterClass, itemStack);
@@ -101,7 +101,8 @@ public class FilterTypeRegistry {
     public static @NotNull FluidFilter getFluidFilterForStack(ItemStack itemStack) {
         int filterId = getFilterIdForStack(itemStack);
         if (filterId == -1) {
-            throw new IllegalArgumentException(String.format("Failed to create filter instance for stack %s", itemStack));
+            throw new IllegalArgumentException(
+                    String.format("Failed to create filter instance for stack %s", itemStack));
         }
         Class<? extends FluidFilter> filterClass = fluidFilterById.get(filterId);
         return createNewFilterInstance(filterClass, itemStack);
@@ -118,8 +119,9 @@ public class FilterTypeRegistry {
         try {
             return filterClass.getDeclaredConstructor(stack.getClass()).newInstance(stack);
         } catch (ReflectiveOperationException exception) {
-//            GTLog.logger.error("Failed to create filter instance for class {}", filterClass, exception);
-            throw new IllegalArgumentException(String.format("Failed to create filter instance for class %s", filterClass), exception);
+            // GTLog.logger.error("Failed to create filter instance for class {}", filterClass, exception);
+            throw new IllegalArgumentException(
+                    String.format("Failed to create filter instance for class %s", filterClass), exception);
         }
     }
 

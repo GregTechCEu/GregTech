@@ -66,7 +66,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         switch (voidingMode) {
             case VOID_ANY -> GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE,
                     fluidFilterContainer::testFluidStack);
-            case VOID_OVERFLOW -> voidOverflow(myFluidHandler, fluidFilterContainer::testFluidStack, this.transferAmount);
+            case VOID_OVERFLOW -> voidOverflow(myFluidHandler, fluidFilterContainer::testFluidStack,
+                    this.transferAmount);
         }
     }
 
@@ -87,7 +88,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilterContainer.getFilterWrapper().getFluidFilter() != null &&
                     voidingMode == VoidingMode.VOID_OVERFLOW) {
-                keepAmount = this.fluidFilterContainer.getFilterWrapper().getFluidFilter().getTransferLimit(sourceFluid);
+                keepAmount = this.fluidFilterContainer.getFilterWrapper().getFluidFilter()
+                        .getTransferLimit(sourceFluid);
             }
             if (sourceFluid == null || sourceFluid.amount == 0 ||
                     !getFluidFilterContainer().testFluidStack(sourceFluid, true))
@@ -239,7 +241,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .child(new EnumRowBuilder<>(VoidingMode.class)
                         .value(voidingMode)
                         .lang("cover.voiding.voiding_mode")
-//                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY) todo voiding mode overlay
+                        // .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY) todo voiding mode overlay
                         .build())
                 .child(new EnumRowBuilder<>(BucketMode.class)
                         .value(bucketMode)

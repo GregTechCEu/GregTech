@@ -41,10 +41,10 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
                 }
             });
         }
-//        if (fluidFilter != null && showTipSupplier != null && fluidFilter.showTip != showTipSupplier.get()) {
-//            fluidFilter.showTip = showTipSupplier.get();
-//            writeUpdateInfo(3, buffer -> buffer.writeBoolean(fluidFilter.showTip));
-//        }
+        // if (fluidFilter != null && showTipSupplier != null && fluidFilter.showTip != showTipSupplier.get()) {
+        // fluidFilter.showTip = showTipSupplier.get();
+        // writeUpdateInfo(3, buffer -> buffer.writeBoolean(fluidFilter.showTip));
+        // }
     }
 
     @Override
@@ -58,7 +58,7 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
                 this.fluidFilter.initUI(this::addWidget);
             }
         } else if (id == 3) {
-//            fluidFilter.showTip = buffer.readBoolean();
+            // fluidFilter.showTip = buffer.readBoolean();
         }
     }
 }

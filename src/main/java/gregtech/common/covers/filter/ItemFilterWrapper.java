@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 @Deprecated
 public class ItemFilterWrapper {
+
     private final ItemFilterContainer container;
 
     public ItemFilterWrapper(ItemFilterContainer container) {

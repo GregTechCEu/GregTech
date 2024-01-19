@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.utils.Color;
-
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -25,6 +23,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.Tooltip;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
@@ -85,8 +84,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
-    }
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
     @Override
     public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
@@ -104,7 +102,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
     @Override
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
         var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
-        var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive, this.filterReader::setCaseSensitive);
+        var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive,
+                this.filterReader::setCaseSensitive);
         var matchAll = new BooleanSyncValue(this.filterReader::shouldMatchAll, this.filterReader::setMatchAll);
 
         List<OreFilterTestSlot> oreSlots = new ArrayList<>();
@@ -299,7 +298,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
             }
             this.matchCache.put(item, cacheEntry);
         }
-        boolean matches = this.filterReader.shouldMatchAll() ? this.glob.matchesAll(itemStack) : this.glob.matchesAny(itemStack);
+        boolean matches = this.filterReader.shouldMatchAll() ? this.glob.matchesAll(itemStack) :
+                this.glob.matchesAny(itemStack);
         cacheEntry.put(itemStack, matches);
         return matches;
     }
@@ -369,7 +369,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
         }
 
         /**
-         * {@code false} requires any of the entry to be match in order for the match to be success, {@code true} requires
+         * {@code false} requires any of the entry to be match in order for the match to be success, {@code true}
+         * requires
          * all entries to match
          */
         public boolean shouldMatchAll() {
@@ -379,5 +380,4 @@ public class OreDictionaryItemFilter extends ItemFilter {
             return getStackTag().getBoolean(MATCH_ALL);
         }
     }
-
 }

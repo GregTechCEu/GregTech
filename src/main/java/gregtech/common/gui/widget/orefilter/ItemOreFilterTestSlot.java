@@ -22,23 +22,21 @@ public class ItemOreFilterTestSlot extends ModularSlot {
         this.parent = parent;
     }
 
-
     public void setGlob(@Nullable OreGlob glob) {
         if (this.glob == glob) return;
         this.glob = glob;
     }
 
-
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public boolean mouseClicked(int mouseX, int mouseY, int button) {
-//        if (isMouseOverElement(mouseX, mouseY)) {
-//            EntityPlayer player = Minecraft.getMinecraft().player;
-//            putItem(player.inventory.getItemStack());
-//            return true;
-//        }
-//        return false;
-//    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public boolean mouseClicked(int mouseX, int mouseY, int button) {
+    // if (isMouseOverElement(mouseX, mouseY)) {
+    // EntityPlayer player = Minecraft.getMinecraft().player;
+    // putItem(player.inventory.getItemStack());
+    // return true;
+    // }
+    // return false;
+    // }
 
     @Override
     public void putStack(ItemStack stack) {
@@ -52,26 +50,26 @@ public class ItemOreFilterTestSlot extends ModularSlot {
         }
     }
 
-//    @Override
-//    public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
-//        if (!(ingredient instanceof ItemStack)) {
-//            return Collections.emptyList();
-//        }
-//        Rectangle rectangle = toRectangleBox();
-//        return Lists.newArrayList(new IGhostIngredientHandler.Target<Object>() {
-//
-//            @NotNull
-//            @Override
-//            public Rectangle getArea() {
-//                return rectangle;
-//            }
-//
-//            @Override
-//            public void accept(@NotNull Object ingredient) {
-//                if (ingredient instanceof ItemStack) {
-//                    putItem((ItemStack) ingredient);
-//                }
-//            }
-//        });
-//    }
+    // @Override
+    // public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
+    // if (!(ingredient instanceof ItemStack)) {
+    // return Collections.emptyList();
+    // }
+    // Rectangle rectangle = toRectangleBox();
+    // return Lists.newArrayList(new IGhostIngredientHandler.Target<Object>() {
+    //
+    // @NotNull
+    // @Override
+    // public Rectangle getArea() {
+    // return rectangle;
+    // }
+    //
+    // @Override
+    // public void accept(@NotNull Object ingredient) {
+    // if (ingredient instanceof ItemStack) {
+    // putItem((ItemStack) ingredient);
+    // }
+    // }
+    // });
+    // }
 }

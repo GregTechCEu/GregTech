@@ -14,6 +14,7 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INBTSerializable<NBTTagCompound> {
+
     private final IDirtyNotifiable dirtyNotifiable;
     private int maxTransferSize = 1;
     private T currentItemFilter;
@@ -67,7 +68,8 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return getMaxTransferSize() > 0 && (isBlacklistFilter() || !hasFilter() || currentItemFilter.showGlobalTransferLimitSlider());
+        return getMaxTransferSize() > 0 &&
+                (isBlacklistFilter() || !hasFilter() || currentItemFilter.showGlobalTransferLimitSlider());
     }
 
     public int getTransferLimit(int slotIndex) {
@@ -123,7 +125,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         return hasFilter() && getFilter().isBlacklistFilter();
     }
 
-    /** Uses Cleanroom MUI*/
+    /** Uses Cleanroom MUI */
     public abstract IWidget initUI(ModularPanel main, GuiSyncManager manager);
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {

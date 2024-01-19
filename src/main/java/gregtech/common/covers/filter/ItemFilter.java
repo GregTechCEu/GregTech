@@ -77,7 +77,8 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     /** Uses Cleanroom MUI - Creates the widgets standalone so that they can be put into their own panel */
 
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
-        var blacklist = new BooleanSyncValue(this.filterReader::isBlacklistFilter, this.filterReader::setBlacklistFilter);
+        var blacklist = new BooleanSyncValue(this.filterReader::isBlacklistFilter,
+                this.filterReader::setBlacklistFilter);
         return new ParentWidget<>().coverChildren()
                 .child(new CycleButtonWidget()
                         .value(blacklist)
@@ -107,7 +108,9 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     }
 
     protected static class BaseItemFilterReader extends BaseFilterReader {
+
         protected static final String COUNT = "Count";
+
         public BaseItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
         }

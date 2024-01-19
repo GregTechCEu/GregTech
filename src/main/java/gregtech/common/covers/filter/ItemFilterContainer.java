@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
@@ -14,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
@@ -23,6 +20,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -32,7 +30,8 @@ import java.io.IOException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilter> implements INBTSerializable<NBTTagCompound> {
+public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilter>
+                                 implements INBTSerializable<NBTTagCompound> {
 
     private final ItemFilterWrapper filterWrapper;
 
@@ -46,7 +45,7 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
         return filterWrapper;
     }
 
-    /** Deprecated, uses old builtin MUI*/
+    /** Deprecated, uses old builtin MUI */
     @Deprecated
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.conveyor.item_filter.title"));
@@ -55,24 +54,27 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
 
         this.initFilterUI(y + 38, widgetGroup);
     }
-    /** Deprecated, uses old builtin MUI*/
+
+    /** Deprecated, uses old builtin MUI */
     @Deprecated
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new WidgetGroupItemFilter(y, this::getFilter));
     }
-    /** Deprecated, uses old builtin MUI*/
+
+    /** Deprecated, uses old builtin MUI */
     @Deprecated
     public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(this::hasFilter);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
-                .setTooltipText("cover.filter.blacklist"));
+                        .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
     }
 
-    /** Uses Cleanroom MUI*/
+    /** Uses Cleanroom MUI */
     public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
         var panel = new PanelSyncHandler(main) {
+
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 getFilter().setMaxTransferSize(getMaxTransferSize());
@@ -116,8 +118,8 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
                             return success;
                         }))
                 .child(IKey.dynamic(() -> hasFilter() ?
-                                getFilterInventory().getStackInSlot(0).getDisplayName() :
-                                IKey.lang("metaitem.item_filter.name").get())
+                        getFilterInventory().getStackInSlot(0).getDisplayName() :
+                        IKey.lang("metaitem.item_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
     }
@@ -135,9 +137,9 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
                     onFilterInstanceChange();
             }
         } else if (currentId == -1 || newId != currentId) {
-                    setFilter(FilterTypeRegistry.getItemFilterForStack(filterStack));
-                    if (notify)
-                        onFilterInstanceChange();
+            setFilter(FilterTypeRegistry.getItemFilterForStack(filterStack));
+            if (notify)
+                onFilterInstanceChange();
         }
     }
 

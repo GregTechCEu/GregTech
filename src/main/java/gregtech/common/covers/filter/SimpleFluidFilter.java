@@ -65,21 +65,21 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
-//        FluidSlotSyncHandler[] syncHandlers = new FluidSlotSyncHandler[MAX_FLUID_SLOTS];
-//        for (int i = 0; i < syncHandlers.length; i++) {
-//            var tank = this.filterReader.getFluidTank(i);
-//            syncHandlers[i] = new FixedFluidSlotSH(tank).phantom(true);
-//            syncHandlers[i].updateCacheFromSource(true);
-//        }
+        // FluidSlotSyncHandler[] syncHandlers = new FluidSlotSyncHandler[MAX_FLUID_SLOTS];
+        // for (int i = 0; i < syncHandlers.length; i++) {
+        // var tank = this.filterReader.getFluidTank(i);
+        // syncHandlers[i] = new FixedFluidSlotSH(tank).phantom(true);
+        // syncHandlers[i].updateCacheFromSource(true);
+        // }
 
         return new Row().coverChildrenHeight().widthRel(1f)
-                    .child(SlotGroupWidget.builder()
-                            .matrix("FFF",
-                                    "FFF",
-                                    "FFF")
-                            .key('F', i -> new FluidSlot()
-                                    .syncHandler(new FixedFluidSlotSH(filterReader.getFluidTank(i)).phantom(true)))
-                            .build().marginRight(4))
+                .child(SlotGroupWidget.builder()
+                        .matrix("FFF",
+                                "FFF",
+                                "FFF")
+                        .key('F', i -> new FluidSlot()
+                                .syncHandler(new FixedFluidSlotSH(filterReader.getFluidTank(i)).phantom(true)))
+                        .build().marginRight(4))
                 .child(super.createWidgets(syncManager));
     }
 
@@ -114,7 +114,7 @@ public class SimpleFluidFilter extends FluidFilter {
         for (int i = 0; i < 9; ++i) {
             widgetGroup.accept((new gregtech.api.gui.widgets.PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
                     filterReader.getFluidTank(i)))
-                    .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
+                            .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
         }
     }
 
@@ -149,6 +149,7 @@ public class SimpleFluidFilter extends FluidFilter {
     protected static class SimpleFluidFilterReader extends BaseFluidFilterReader {
 
         protected WritableFluidTank[] fluidTanks;
+
         public SimpleFluidFilterReader(ItemStack container, int slots) {
             super(container, slots);
             fluidTanks = new WritableFluidTank[slots];
@@ -179,6 +180,7 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     public static class WritableFluidTank extends FluidTank {
+
         private final NBTTagCompound fluidTank;
         private final SimpleFluidFilterReader filterReader;
         protected static final String FLUID_AMOUNT = "Amount";
@@ -186,7 +188,8 @@ public class SimpleFluidFilter extends FluidFilter {
         protected static final String FLUID = "Fluid";
         protected static final String EMPTY = "Empty";
 
-        protected WritableFluidTank(SimpleFluidFilterReader filterReader, NBTTagCompound fluidTank, int initialCapacity) {
+        protected WritableFluidTank(SimpleFluidFilterReader filterReader, NBTTagCompound fluidTank,
+                                    int initialCapacity) {
             super(initialCapacity);
             this.filterReader = filterReader;
             this.fluidTank = fluidTank;
@@ -282,6 +285,7 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     public static class FixedFluidSlotSH extends FluidSlotSyncHandler {
+
         @Nullable
         private FluidStack lastStoredPhantomFluid;
 
@@ -320,7 +324,8 @@ public class SimpleFluidFilter extends FluidFilter {
             EntityPlayer player = getSyncManager().getPlayer();
             ItemStack currentStack = player.inventory.getItemStack();
             FluidStack currentFluid = this.getFluidTank().getFluid();
-            IFluidHandlerItem fluidHandlerItem = currentStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandlerItem = currentStack
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
 
             if (mouseData.mouseButton == 0) {
                 if (currentStack.isEmpty() || fluidHandlerItem == null) {

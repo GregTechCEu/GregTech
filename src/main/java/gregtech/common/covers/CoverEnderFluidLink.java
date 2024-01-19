@@ -1,13 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.drawable.DynamicDrawable;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
-import com.cleanroommc.modularui.widgets.FluidSlot;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
@@ -43,15 +35,22 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -168,9 +167,10 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     public ModularUI createUI(EntityPlayer player) {
         gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
         widgetGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(10, 5, "cover.ender_fluid_link.title"));
-        widgetGroup.addWidget(new gregtech.api.gui.widgets.ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
-                this::isPrivate, this::setPrivate)
-                        .setTooltipText("cover.ender_fluid_link.private.tooltip"));
+        widgetGroup.addWidget(
+                new gregtech.api.gui.widgets.ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
+                        this::isPrivate, this::setPrivate)
+                                .setTooltipText("cover.ender_fluid_link.private.tooltip"));
         widgetGroup.addWidget(new gregtech.api.gui.widgets.SyncableColorRectWidget(35, 18, 18, 18, () -> color)
                 .setBorderWidth(1)
                 .drawCheckerboard(4, 4));
@@ -204,7 +204,7 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        var panel = GTGuis.createPanel(this, 176,192);
+        var panel = GTGuis.createPanel(this, 176, 192);
 
         getFluidFilterContainer().setMaxTransferSize(1000);
         getFluidFilterContainer().setBucketOnly(true);
@@ -236,19 +236,17 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
                         .coverChildrenHeight()
                         .child(new ToggleButton()
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                                .tooltipBuilder(tooltip ->
-                                        tooltip.addLine(IKey.lang(this.isPrivate ?
-                                                "cover.ender_fluid_link.private.tooltip.enabled" :
-                                                "cover.ender_fluid_link.private.tooltip.disabled")))
+                                .tooltipBuilder(tooltip -> tooltip.addLine(IKey.lang(this.isPrivate ?
+                                        "cover.ender_fluid_link.private.tooltip.enabled" :
+                                        "cover.ender_fluid_link.private.tooltip.disabled")))
                                 .marginRight(2)
                                 .value(isPrivate))
-                        .child(new DynamicDrawable(() ->
-                                new Rectangle()
-                                        .setColor(this.color)
-                                        .asIcon().size(16))
-                                .asWidget()
-                                .background(GTGuiTextures.SLOT)
-                                .size(18).marginRight(2))
+                        .child(new DynamicDrawable(() -> new Rectangle()
+                                .setColor(this.color)
+                                .asIcon().size(16))
+                                        .asWidget()
+                                        .background(GTGuiTextures.SLOT)
+                                        .size(18).marginRight(2))
                         .child(new TextFieldWidget().height(18)
                                 .value(color)
                                 .setValidator(s -> {
@@ -266,8 +264,8 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
                         .child(new ToggleButton()
                                 .value(ioEnabled)
                                 .overlay(IKey.dynamic(() -> IKey.lang(this.ioEnabled ?
-                                                "behaviour.soft_hammer.enabled" :
-                                                "behaviour.soft_hammer.disabled").get())
+                                        "behaviour.soft_hammer.enabled" :
+                                        "behaviour.soft_hammer.disabled").get())
                                         .color(Color.WHITE.darker(1)))
                                 .widthRel(0.6f)
                                 .left(0)))

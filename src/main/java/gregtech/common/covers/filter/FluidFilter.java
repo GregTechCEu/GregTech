@@ -1,16 +1,7 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
-
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
-
 import gregtech.common.covers.filter.readers.BaseFilterReader;
 
 import net.minecraft.item.ItemStack;
@@ -18,9 +9,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
-
 import net.minecraftforge.fluids.IFluidTank;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +52,8 @@ public abstract class FluidFilter implements Filter<FluidStack> {
     }
 
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
-        var blacklist = new BooleanSyncValue(this.filterReader::isBlacklistFilter, this.filterReader::setBlacklistFilter);
+        var blacklist = new BooleanSyncValue(this.filterReader::isBlacklistFilter,
+                this.filterReader::setBlacklistFilter);
         return new ParentWidget<>().coverChildren()
                 .child(new CycleButtonWidget()
                         .value(blacklist)

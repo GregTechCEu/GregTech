@@ -10,14 +10,17 @@ import org.jetbrains.annotations.NotNull;
 public interface Filter<T> {
 
     /** Uses Cleanroom MUI */
-    @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager);
+    @NotNull
+    ModularPanel createPopupPanel(GuiSyncManager syncManager);
 
     /** Uses Cleanroom MUI */
-    @NotNull ModularPanel createPanel(GuiSyncManager syncManager);
+    @NotNull
+    ModularPanel createPanel(GuiSyncManager syncManager);
 
     /** Uses Cleanroom MUI - Creates the widgets standalone so that they can be put into their own panel */
 
-    @NotNull Widget<?> createWidgets(GuiSyncManager syncManager);
+    @NotNull
+    Widget<?> createWidgets(GuiSyncManager syncManager);
 
     MatchResult<T> match(T toMatch);
 

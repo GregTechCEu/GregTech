@@ -7,7 +7,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 
-public class SimpleFilterUIManager extends BaseFilterUIManager{
+public class SimpleFilterUIManager extends BaseFilterUIManager {
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {

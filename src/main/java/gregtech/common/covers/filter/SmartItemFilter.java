@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.widgets.layout.Row;
-
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
@@ -24,6 +22,7 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +30,7 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 public class SmartItemFilter extends ItemFilter {
+
     private SmartItemFilterReader filterReader;
 
     public SmartItemFilter(ItemStack stack) {
@@ -100,7 +100,8 @@ public class SmartItemFilter extends ItemFilter {
 
     @Override
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
-        var filterMode = new EnumSyncValue<>(SmartFilteringMode.class, filterReader::getFilteringMode, filterReader::setFilteringMode);
+        var filterMode = new EnumSyncValue<>(SmartFilteringMode.class, filterReader::getFilteringMode,
+                filterReader::setFilteringMode);
         syncManager.syncValue("filter_mode", filterMode);
 
         return new Row().coverChildren()
@@ -111,7 +112,8 @@ public class SmartItemFilter extends ItemFilter {
                 .child(super.createWidgets(syncManager));
     }
 
-    private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<SmartFilteringMode> value, SmartFilteringMode mode) {
+    private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<SmartFilteringMode> value,
+                                                        SmartFilteringMode mode) {
         return new ToggleButton().height(18).width(18 * 5)
                 .value(boolValueOf(value, mode))
                 .background(GTGuiTextures.MC_BUTTON_DISABLED)
@@ -120,7 +122,7 @@ public class SmartItemFilter extends ItemFilter {
                 .overlay(IKey.lang(mode.localeName));
     }
 
-    protected  <T extends Enum<T>> BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
+    protected <T extends Enum<T>> BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
         return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
     }
 
@@ -184,6 +186,7 @@ public class SmartItemFilter extends ItemFilter {
     protected class SmartItemFilterReader extends BaseItemFilterReader {
 
         private static final String FILTER_MODE = "FilterMode";
+
         public SmartItemFilterReader(ItemStack container) {
             super(container, 0);
         }
