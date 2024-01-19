@@ -402,7 +402,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                                     timeToFill));
                         } else if (averageInLastSec < averageOutLastSec) {
                             ITextComponent timeToDrain = getTimeToFillDrainText(
-                                    energyStored.divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20)));
+                                    energyStored.divide(BigInteger.valueOf(
+                                            (averageOutLastSec - averageInLastSec) * 20)));
                             TextComponentUtil.setColor(timeToDrain, TextFormatting.RED);
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
