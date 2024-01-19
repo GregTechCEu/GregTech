@@ -230,6 +230,9 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         var filterTransferSize = new StringSyncValue(this::getTransferAmountString, this::setStringTransferRate);
         filterTransferSize.updateCacheFromSource(true);
+        var transferTextField = new TextFieldWidget().widthRel(0.5f).right(0);
+        transferTextField.setEnabled(this.fluidFilterContainer.showGlobalTransferLimitSlider() &&
+                this.voidingMode == VoidingMode.VOID_OVERFLOW);
 
         return super.createUI(mainPanel, syncManager)
                 .child(new EnumRowBuilder<>(VoidingMode.class)
@@ -241,7 +244,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                         .value(bucketMode)
                         .overlay(IKey.str("kL"), IKey.str("L"))
                         .build()
-                        .child(new TextFieldWidget().widthRel(0.5f).right(0)
+                        .child(transferTextField
                                 .setEnabledIf(w -> this.fluidFilterContainer.showGlobalTransferLimitSlider() &&
                                         this.voidingMode == VoidingMode.VOID_OVERFLOW)
                                 .setNumbers(0, Integer.MAX_VALUE)

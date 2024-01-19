@@ -193,6 +193,9 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 () -> String.valueOf(this.itemFilterContainer.getTransferSize()),
                 s -> this.itemFilterContainer.setTransferSize(Integer.parseInt(s)));
         filterTransferSize.updateCacheFromSource(true);
+        var transferTextField = new TextFieldWidget().widthRel(0.5f).right(0);
+        transferTextField.setEnabled(this.itemFilterContainer.showGlobalTransferLimitSlider() &&
+                this.voidingMode == VoidingMode.VOID_OVERFLOW);
 
         return super.createUI(mainPanel, guiSyncManager)
                 .child(new EnumRowBuilder<>(VoidingMode.class)
@@ -201,7 +204,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 //                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY) todo voiding mode overlay
                         .build())
                 .child(new Row().right(0).coverChildrenHeight()
-                        .child(new TextFieldWidget().widthRel(0.5f).right(0)
+                        .child(transferTextField
                                 .setEnabledIf(w -> this.itemFilterContainer.showGlobalTransferLimitSlider() &&
                                         this.voidingMode == VoidingMode.VOID_OVERFLOW)
                                 .setNumbers(0, Integer.MAX_VALUE)
@@ -222,7 +225,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     public void setVoidingMode(VoidingMode voidingMode) {
         this.voidingMode = voidingMode;
-        this.itemFilterContainer.setMaxTransferSize(voidingMode.maxStackSize);
+        this.itemFilterContainer.setMaxTransferSize(getMaxStackSize());
         this.getCoverableView().markDirty();
     }
 
