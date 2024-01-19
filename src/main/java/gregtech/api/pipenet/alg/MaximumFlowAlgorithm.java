@@ -9,7 +9,6 @@ import gregtech.api.pipenet.block.IPipeType;
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
 import org.jgrapht.alg.flow.PushRelabelMFImpl;
 
 import java.util.List;
@@ -37,9 +36,9 @@ public final class MaximumFlowAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, ND
         List<NetPath<PT, NDT>> paths = new ObjectArrayList<>();
         paths.add(new NetPath<>(source));
         // if the source has no group, it has no paths other than the path to itself.
-        if (source.getGroup() == null) return paths;
+        if (source.getGroupSafe() == null) return paths;
 
-        for (NodeG<PT, NDT> v : source.getGroup().getNodes()) {
+        for (NodeG<PT, NDT> v : source.getGroupSafe().getNodes()) {
             if (v == source) continue;
 //            paths.add(new FlowPath<>(wrapper));
         }

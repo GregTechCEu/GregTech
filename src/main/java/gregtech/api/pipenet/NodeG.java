@@ -3,9 +3,6 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -117,10 +114,17 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.heldMTE = new WeakReference<>(null);
     }
 
-    // TODO guarantee every node has a group
+    public NetGroup<PipeType, NodeDataType> getGroupSafe() {
+        if (this.group == null) {
+            new NetGroup<>(this.net.pipeGraph, this.net).addNodes(this);
+            // addNodes automatically sets our group to the new group
+        }
+        return this.group;
+    }
+
     @Nullable
-    public NetGroup<PipeType, NodeDataType> getGroup() {
-        return group;
+    public NetGroup<PipeType, NodeDataType> getGroupUnsafe() {
+        return this.group;
     }
 
     NetGroup<PipeType, NodeDataType> setGroup(NetGroup<PipeType, NodeDataType> group) {

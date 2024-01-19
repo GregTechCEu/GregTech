@@ -70,7 +70,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     }
 
     private void setPipesActive() {
-        NetGroup<OpticalPipeType, OpticalPipeProperties> group = getNet().getNode(this.pipe.getPipePos()).getGroup();
+        NetGroup<OpticalPipeType, OpticalPipeProperties> group = getNet().getNode(this.pipe.getPipePos()).getGroupSafe();
         if (group != null) {
             for (NodeG<OpticalPipeType, OpticalPipeProperties> node : group.getNodes()) {
                 if (node.getHeldMTE() instanceof TileEntityOpticalPipe opticalPipe) {

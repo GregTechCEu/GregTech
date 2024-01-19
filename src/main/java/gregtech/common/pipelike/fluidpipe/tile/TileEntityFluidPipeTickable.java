@@ -360,7 +360,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     public void receivedFrom(Fluid fluid, EnumFacing facing) {
         // on fluid received, add us as a source to the proper channel
-        FluidChannel channel = FluidChannel.getChannelFromGroup(fluid, this.getNode().getGroup());
+        FluidChannel channel = FluidChannel.getChannelFromGroup(fluid, this.getNode().getGroupSafe());
         channel.addSource(this.getNode());
         if (facing != null) {
             channel.addReceiveSide(this.getNode(), facing);

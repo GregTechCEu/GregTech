@@ -1,7 +1,6 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.pipenet.alg.MaximumFlowAlgorithm;
 import gregtech.api.pipenet.alg.NetAlgorithm;
 import gregtech.api.pipenet.alg.ShortestPathsAlgorithm;
 import gregtech.api.pipenet.alg.SinglePathAlgorithm;
@@ -310,9 +309,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target, double weight,
                         @Nullable AbstractEdgePredicate<?> predicate) {
         if (pipeGraph.addEdge(source, target) != null) {
-            if (NetGroup.mergeEdge(source, target)) {
-                new NetGroup<>(this.pipeGraph, this).addNodes(source, target);
-            }
+            NetGroup.mergeEdge(source, target);
             pipeGraph.setEdgeWeight(source, target, weight);
             if (predicate != null) {
                 pipeGraph.getEdge(source, target).setPredicate(predicate);
@@ -378,7 +375,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     }
 
     public void removeEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
-        if (source.getGroup() != null && source.getGroup().splitEdge(source, target)) {
+        if (source.getGroupSafe() != null && source.getGroupSafe().splitEdge(source, target)) {
             this.validAlgorithmInstance = false;
             this.markDirty();
         }
@@ -391,8 +388,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     public void removeNode(@Nullable NodeG<PipeType, NodeDataType> node) {
         if (node != null) {
             if (this.pipeGraph.edgesOf(node).size() != 0) this.validAlgorithmInstance = false;
-            if (node.getGroup() != null) {
-                node.getGroup().splitNode(node);
+            if (node.getGroupSafe() != null) {
+                node.getGroupSafe().splitNode(node);
             } else this.pipeGraph.removeVertex(node);
             this.pipeMap.remove(node.getNodePos());
             this.markDirty();
@@ -402,7 +399,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     public NetGroup<PipeType, NodeDataType> getGroup(BlockPos pos) {
         NodeG<PipeType, NodeDataType> node = this.getNode(pos);
         if (node == null) return null;
-        if (node.getGroup() != null) return node.getGroup();
+        if (node.getGroupSafe() != null) return node.getGroupSafe();
         return node.setGroup(new NetGroup<>(this.pipeGraph, this));
     }
 
@@ -456,7 +453,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         NBTTagList allPipeNodes = new NBTTagList();
         Set<NetGroup<PipeType, NodeDataType>> groups = new ObjectOpenHashSet<>();
         for (NodeG<PipeType, NodeDataType> node : pipeGraph.vertexSet()) {
-            if (node.getGroup() != null) groups.add(node.getGroup());
+            if (node.getGroupSafe() != null) groups.add(node.getGroupSafe());
             NBTTagCompound nodeTag = node.serializeNBT();
             NBTTagCompound dataTag = new NBTTagCompound();
             writeNodeData(node.getData(), dataTag);

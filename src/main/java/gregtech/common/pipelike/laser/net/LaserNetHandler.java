@@ -31,7 +31,7 @@ public class LaserNetHandler implements ILaserContainer {
     }
 
     private void setPipesActive() {
-        NetGroup<LaserPipeType, LaserPipeProperties> group = getNet().getNode(this.pipe.getPipePos()).getGroup();
+        NetGroup<LaserPipeType, LaserPipeProperties> group = getNet().getNode(this.pipe.getPipePos()).getGroupSafe();
         if (group != null) {
             for (NodeG<LaserPipeType, LaserPipeProperties> node : group.getNodes()) {
                 if (node.getHeldMTE() instanceof TileEntityLaserPipe laserPipe) {

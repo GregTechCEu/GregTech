@@ -71,28 +71,27 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * 
      * @param source the source node of the edge
      * @param target the target node of the edge
-     * @return True if both nodes belonged to no group, and no merge could be conducted.
      */
-    public static boolean mergeEdge(NodeG<?, ?> source, NodeG<?, ?> target) {
-        NetGroup<?, ?> sourceGroup = source.getGroup();
-        NetGroup<?, ?> targetGroup = target.getGroup();
+    public static void mergeEdge(NodeG<?, ?> source, NodeG<?, ?> target) {
+        NetGroup<?, ?> sourceGroup = source.getGroupUnsafe();
+        NetGroup<?, ?> targetGroup = target.getGroupUnsafe();
         if (sourceGroup == targetGroup) {
-            if (sourceGroup == null) return true;
+            if (sourceGroup == null) {
+                sourceGroup = source.getGroupSafe();
+            }
             sourceGroup.clearCaches();
-            return false;
         }
         if (sourceGroup != null) {
             sourceGroup.mergeNode(target);
         } else {
             targetGroup.mergeNode(source);
         }
-        return false;
     }
 
     protected void mergeNode(NodeG<?, ?> node) {
         NodeG<PipeType, NodeDataType> cast = (NodeG<PipeType, NodeDataType>) node;
-        if (cast.getGroup() != null) {
-            NetGroup<PipeType, NodeDataType> group = cast.getGroup();
+        if (cast.getGroupUnsafe() != null) {
+            NetGroup<PipeType, NodeDataType> group = cast.getGroupUnsafe();
             this.addNodes(group.getNodes());
             group.clear();
         } else addNode(cast);
