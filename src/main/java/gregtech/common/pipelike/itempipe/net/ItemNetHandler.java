@@ -6,7 +6,11 @@ import gregtech.api.cover.CoverHolder;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
-import gregtech.common.covers.*;
+import gregtech.common.covers.CoverConveyor;
+import gregtech.common.covers.CoverItemFilter;
+import gregtech.common.covers.CoverRoboticArm;
+import gregtech.common.covers.DistributionMode;
+import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.item.ItemStack;
@@ -26,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ItemNetHandler implements IItemHandler {
 
@@ -366,18 +368,18 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate,
                                         int allowed, boolean ignoreLimit) {
-        AtomicInteger atomicInt = new AtomicInteger();
-        AtomicBoolean atomicBool = new AtomicBoolean(false);
-        arm.getItemFilterContainer().onMatch(stack, (matched, match, matchedSlot) -> {
-            if (matched && matchedSlot > 0) {
-                atomicInt.set(arm.getItemFilterContainer().getTransferLimit(matchedSlot));
-                atomicBool.set(true);
-            } else {
-                atomicInt.set(arm.getItemFilterContainer().getTransferSize());
-            }
-        });
-        int count, rate = atomicInt.get();
-        boolean isStackSpecific = atomicBool.get();
+
+        var matched = arm.getItemFilterContainer().match(stack);
+        boolean isStackSpecific = false;
+        int rate, count;
+
+        if (matched.isMatched()) {
+            int index = matched.getFilterIndex();
+            rate = arm.getItemFilterContainer().getTransferLimit(index);
+            isStackSpecific = true;
+        } else {
+            rate = arm.getItemFilterContainer().getTransferSize();
+        }
 
         switch (arm.getTransferMode()) {
             case TRANSFER_ANY:
@@ -411,7 +413,7 @@ public class ItemNetHandler implements IItemHandler {
             ItemStack slot = handler.getStackInSlot(i);
             if (slot.isEmpty()) continue;
             if (isStackSpecific ? ItemStackHashStrategy.comparingAllButCount().equals(stack, slot) :
-                    arm.getItemFilterContainer().testItemStack(slot)) {
+                    arm.getItemFilterContainer().test(slot)) {
                 count += slot.getCount();
             }
         }

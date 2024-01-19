@@ -42,7 +42,6 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class CoverItemVoidingAdvanced extends CoverItemVoiding {
@@ -78,13 +77,8 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
             if (!getItemFilterContainer().hasFilter()) {
                 itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getTransferSize();
             } else {
-                AtomicInteger atomicInt = new AtomicInteger(itemToVoidAmount);
-                itemFilterContainer.onMatch(typeItemInfo.itemStack, (matched, match, matchedSlot) -> {
-                    if (matched) {
-                        atomicInt.set(typeItemInfo.totalCount - itemFilterContainer.getTransferLimit(matchedSlot));
-                    }
-                });
-                itemToVoidAmount = atomicInt.get();
+                var result = itemFilterContainer.match(typeItemInfo.itemStack);
+                itemToVoidAmount = result.getMatchedStack().getCount();
             }
 
             if (itemToVoidAmount <= 0) {

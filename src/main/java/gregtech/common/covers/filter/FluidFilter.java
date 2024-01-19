@@ -29,25 +29,10 @@ import java.util.function.Consumer;
 public abstract class FluidFilter implements Filter<FluidStack> {
 
     private IDirtyNotifiable dirtyNotifiable;
-
-    private OnMatch<FluidStack> onMatch = null;
     private BaseFluidFilterReader filterReader;
 
     protected void setFilterReader(BaseFluidFilterReader filterReader) {
         this.filterReader = filterReader;
-    }
-
-    public abstract void match(FluidStack toMatch);
-
-    public abstract boolean test(FluidStack fluidStack);
-
-    @Override
-    public final void setOnMatched(OnMatch<FluidStack> onMatch) {
-        this.onMatch = onMatch;
-    }
-
-    protected final void onMatch(boolean matched, FluidStack stack, int index) {
-        if (this.onMatch != null) this.onMatch.onMatch(matched, stack, index);
     }
 
     public int getTransferLimit(FluidStack fluidStack, int transferSize) {
@@ -65,6 +50,10 @@ public abstract class FluidFilter implements Filter<FluidStack> {
 
     @Deprecated
     public abstract void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup);
+
+    protected static MatchResult<FluidStack> createResult(boolean matched, FluidStack fluidStack, int index) {
+        return new MatchResult<>(matched, fluidStack, index);
+    }
 
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
         var blacklist = new BooleanSyncValue(this.filterReader::isBlacklistFilter, this.filterReader::setBlacklistFilter);

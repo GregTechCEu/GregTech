@@ -77,8 +77,15 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         return currentItemFilter.getTransferLimit(slotIndex, getTransferSize());
     }
 
-    public boolean testItemStack(R toTest) {
+    public boolean test(R toTest) {
         return !hasFilter() || getFilter().test(toTest);
+    }
+
+    public MatchResult<R> match(R toMatch) {
+        if (!hasFilter())
+            return new MatchResult<>(true, toMatch, -1);
+
+        return getFilter().match(toMatch);
     }
 
     public int getTransferLimit(R stack) {
@@ -114,11 +121,6 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
 
     public boolean isBlacklistFilter() {
         return hasFilter() && getFilter().isBlacklistFilter();
-    }
-
-    public void onMatch(R toTest, Filter.OnMatch<R> onMatch) {
-        this.getFilter().setOnMatched(onMatch);
-        this.getFilter().match(toTest);
     }
 
     /** Uses Cleanroom MUI*/

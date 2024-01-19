@@ -124,7 +124,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     public boolean testItemStack(ItemStack stack) {
-        return itemFilter.testItemStack(stack);
+        return itemFilter.test(stack);
     }
 
     @Override
@@ -213,7 +213,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT || !itemFilter.testItemStack(stack)) {
+            if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT || !itemFilter.test(stack)) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
@@ -224,7 +224,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (getFilterMode() != ItemFilterMode.FILTER_INSERT) {
                 ItemStack result = super.extractItem(slot, amount, true);
-                if (result.isEmpty() || !itemFilter.testItemStack(result)) {
+                if (result.isEmpty() || !itemFilter.test(result)) {
                     return ItemStack.EMPTY;
                 }
                 return simulate ? result : super.extractItem(slot, amount, false);

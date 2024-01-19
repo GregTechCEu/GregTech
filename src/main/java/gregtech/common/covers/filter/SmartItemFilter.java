@@ -68,10 +68,10 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     @Override
-    public void match(ItemStack itemStack) {
+    public MatchResult<ItemStack> match(ItemStack itemStack) {
         var stack = itemStack.copy();
         stack.setCount(getTransferLimit(itemStack, Integer.MAX_VALUE));
-        this.onMatch(stack.getCount() > 0, stack, this.getFilteringMode().ordinal());
+        return createResult(stack.getCount() > 0, stack, this.getFilteringMode().ordinal());
     }
 
     @Override

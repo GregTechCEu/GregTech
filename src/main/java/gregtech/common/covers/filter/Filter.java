@@ -19,15 +19,13 @@ public interface Filter<T> {
 
     @NotNull Widget<?> createWidgets(GuiSyncManager syncManager);
 
-    void match(T toMatch);
+    MatchResult<T> match(T toMatch);
 
     boolean test(T toTest);
 
     void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable);
 
     void markDirty();
-
-    void setOnMatched(OnMatch<T> onMatch);
 
     int getMaxTransferSize();
 
@@ -42,9 +40,4 @@ public interface Filter<T> {
     boolean isBlacklistFilter();
 
     void setBlacklistFilter(boolean blacklistFilter);
-
-    @FunctionalInterface
-    interface OnMatch<T> {
-        void onMatch(boolean matched, T match, int matchedSlot);
-    }
 }

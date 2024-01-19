@@ -44,9 +44,9 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public void match(ItemStack itemStack) {
+    public MatchResult<ItemStack> match(ItemStack itemStack) {
         int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(), itemStack);
-        this.onMatch(matchedSlot != -1, itemStack.copy(), matchedSlot);
+        return createResult(matchedSlot != -1, filterReader.getStackInSlot(matchedSlot), matchedSlot);
     }
 
     @Override

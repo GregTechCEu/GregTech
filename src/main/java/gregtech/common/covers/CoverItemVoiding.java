@@ -70,7 +70,7 @@ public class CoverItemVoiding extends CoverConveyor {
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
+            if (!itemFilterContainer.test(sourceStack)) {
                 continue;
             }
             myItemHandler.extractItem(srcIndex, Integer.MAX_VALUE, false);
@@ -179,7 +179,7 @@ public class CoverItemVoiding extends CoverConveyor {
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            if (!itemFilterContainer.testItemStack(stack)) {
+            if (!itemFilterContainer.test(stack)) {
                 return stack;
             }
             return ItemStack.EMPTY;

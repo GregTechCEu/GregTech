@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class OreDictionaryItemFilter extends ItemFilter {
 
@@ -250,12 +249,11 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public void match(ItemStack itemStack) {
+    public MatchResult<ItemStack> match(ItemStack itemStack) {
         // "wtf is this system?? i can put any non null object here and it i will work??? $arch"
         // not anymore :thanosdaddy: -ghzdude
         var match = matchesItemStack(itemStack);
-        this.onMatch(match, match ? itemStack.copy() : ItemStack.EMPTY, -1);
-//        return ItemFilter.createResult(match, -1);
+        return createResult(match, match ? itemStack.copy() : ItemStack.EMPTY, -1);
     }
 
     @Override

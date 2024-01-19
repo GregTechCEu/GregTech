@@ -84,20 +84,18 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     @Override
-    public void match(FluidStack toMatch) {
-        boolean matched = false;
+    public MatchResult<FluidStack> match(FluidStack toMatch) {
         int index = -1;
-        var returnable = toMatch.copy();
+        FluidStack returnable = null;
         for (int i = 0; i < filterReader.getSlots(); i++) {
             var fluid = filterReader.getFluidStack(i);
             if (fluid != null && fluid.isFluidEqual(toMatch)) {
-                matched = true;
                 index = i;
-                returnable.amount = fluid.amount;
+                returnable = fluid.copy();
                 break;
             }
         }
-        this.onMatch(matched, returnable, index);
+        return createResult(index != -1, returnable, index);
     }
 
     @Override

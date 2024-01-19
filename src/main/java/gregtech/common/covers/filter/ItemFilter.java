@@ -23,8 +23,6 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     private IDirtyNotifiable dirtyNotifiable;
     private BaseItemFilterReader filterReader;
 
-    private OnMatch<ItemStack> onMatch = null;
-
     protected void setFilterReader(BaseItemFilterReader reader) {
         this.filterReader = reader;
     }
@@ -94,13 +92,9 @@ public abstract class ItemFilter implements Filter<ItemStack> {
         markDirty();
     }
 
-    public abstract void match(ItemStack itemStack);
-
-    protected final void onMatch(boolean matched, ItemStack stack, int matchSlot) {
-        if (this.onMatch != null) this.onMatch.onMatch(matched, stack, matchSlot);
+    protected static MatchResult<ItemStack> createResult(boolean matched, ItemStack stack, int index) {
+        return new MatchResult<>(matched, stack, index);
     }
-
-    public abstract boolean test(ItemStack toTest);
 
     public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
@@ -110,11 +104,6 @@ public abstract class ItemFilter implements Filter<ItemStack> {
         if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();
         }
-    }
-
-    @Override
-    public void setOnMatched(OnMatch<ItemStack> onMatch) {
-        this.onMatch = onMatch;
     }
 
     protected static class BaseItemFilterReader extends BaseFilterReader {

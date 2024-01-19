@@ -46,6 +46,6 @@ public class ItemFilterWrapper {
     }
 
     public boolean testItemStack(ItemStack itemStack) {
-        return container.testItemStack(itemStack);
+        return container.test(itemStack);
     }
 }

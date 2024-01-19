@@ -151,7 +151,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         int storedItems = 0;
 
         for (int i = 0; i < itemHandler.getSlots(); i++) {
-            if (itemFilter.testItemStack(itemHandler.getStackInSlot(i)))
+            if (itemFilter.test(itemHandler.getStackInSlot(i)))
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
