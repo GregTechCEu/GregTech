@@ -1,5 +1,12 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.widgets.FluidSlot;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
@@ -8,7 +15,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.VirtualTankRegistry;
@@ -20,7 +27,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -30,6 +41,15 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.drawable.Rectangle;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,28 +164,28 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup widgetGroup = new WidgetGroup();
-        widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"));
-        widgetGroup.addWidget(new ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
+        gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(10, 5, "cover.ender_fluid_link.title"));
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
                 this::isPrivate, this::setPrivate)
                         .setTooltipText("cover.ender_fluid_link.private.tooltip"));
-        widgetGroup.addWidget(new SyncableColorRectWidget(35, 18, 18, 18, () -> color)
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.SyncableColorRectWidget(35, 18, 18, 18, () -> color)
                 .setBorderWidth(1)
                 .drawCheckerboard(4, 4));
-        widgetGroup.addWidget(new TextFieldWidget(58, 13, 58, 18, true,
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.TextFieldWidget(58, 13, 58, 18, true,
                 this::getColorStr, this::updateColor, 8)
                         .setValidator(str -> COLOR_INPUT_PATTERN.matcher(str).matches()));
-        widgetGroup.addWidget(new TankWidget(this.linkedTank, 123, 18, 18, 18)
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.TankWidget(this.linkedTank, 123, 18, 18, 18)
                 .setContainerClicking(true, true)
                 .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
-        widgetGroup.addWidget(new ImageWidget(147, 19, 16, 16)
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(147, 19, 16, 16)
                 .setImage(GuiTextures.INFO_ICON)
                 .setPredicate(() -> isColorTemp)
                 .setTooltip("cover.ender_fluid_link.incomplete_hex")
                 .setIgnoreColor(true));
-        widgetGroup.addWidget(new CycleButtonWidget(10, 42, 75, 18,
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(10, 42, 75, 18,
                 CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode));
-        widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(92, 42, 75, 18,
                 this::isIoEnabled, this::setIoEnabled, "cover.ender_fluid_link.iomode.disabled",
                 "cover.ender_fluid_link.iomode.enabled"));
         this.fluidFilter.initUI(65, widgetGroup::addWidget);
@@ -173,6 +193,68 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
                 .widget(widgetGroup)
                 .bindPlayerInventory(player.inventory, 139)
                 .build(this, player);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+        var panel = GTGuis.createPanel(this, 176,192);
+
+        getFluidFilterContainer().setMaxTransferSize(1000);
+
+        return panel.child(CoverWithUI.createTitleRow(getPickItem()))
+                .child(createWidgets(panel, guiSyncManager))
+                .bindPlayerInventory();
+    }
+
+    protected Column createWidgets(ModularPanel panel, GuiSyncManager syncManager) {
+        var isPrivate = new BooleanSyncValue(this::isPrivate, this::setPrivate);
+        isPrivate.updateCacheFromSource(true);
+
+        var color = new StringSyncValue(this::getColorStr, this::updateColor);
+        color.updateCacheFromSource(true);
+
+        var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
+        syncManager.syncValue("pump_mode", pumpMode);
+        pumpMode.updateCacheFromSource(true);
+
+        var ioEnabled = new BooleanSyncValue(this::isIOEnabled, this::setIoEnabled);
+
+        return new Column().coverChildrenHeight().top(24)
+                .margin(7, 0).widthRel(1f)
+                .child(new Row().marginBottom(2)
+                        .coverChildrenHeight()
+                        .child(new ToggleButton()
+                                .marginRight(2)
+                                .value(isPrivate))
+                        .child(new DynamicDrawable(() -> new Rectangle().setColor(this.color))
+                                .asWidget()
+                                .size(18).marginRight(2))
+                        .child(new TextFieldWidget().height(18)
+                                .value(color)
+                                .setPattern(COLOR_INPUT_PATTERN)
+                                .widthRel(0.5f).marginRight(2))
+                        .child(new FluidSlot().size(18)
+                                .syncHandler(this.linkedTank)))
+                .child(new Row().marginBottom(2)
+                        .coverChildrenHeight()
+                        .child(new ToggleButton()
+                                .value(ioEnabled)
+                                .overlay(IKey.dynamic(() -> IKey.lang(this.ioEnabled ?
+                                                "behaviour.soft_hammer.enabled" :
+                                                "behaviour.soft_hammer.disabled").get())
+                                        .color(Color.WHITE.darker(1)))
+                                .widthRel(0.6f)
+                                .left(0)))
+                .child(new EnumRowBuilder<>(CoverPump.PumpMode.class)
+                        .value(pumpMode)
+                        .lang("Pump Mode")
+                        .build())
+                .child(getFluidFilterContainer().initUI(panel, syncManager));
     }
 
     public void updateColor(String str) {

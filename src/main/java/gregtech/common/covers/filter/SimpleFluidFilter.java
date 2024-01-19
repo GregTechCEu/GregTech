@@ -6,6 +6,7 @@ import gregtech.api.mui.GTGuis;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -119,12 +120,13 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
-//        NBTTagList filterSlots = tagCompound.getTagList("FluidFilter", 10);
-//        for (NBTBase nbtBase : filterSlots) {
-//            NBTTagCompound stackTag = (NBTTagCompound) nbtBase;
-//            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(stackTag);
-//            this.fluidFilterTanks[stackTag.getInteger("Slot")].setFluid(fluidStack);
-//        }
+        NBTTagList filterSlots = tagCompound.getTagList("FluidFilter", 10);
+        for (int i = 0; i < this.filterReader.getSlots(); i++) {
+            NBTTagCompound stackTag = filterSlots.getCompoundTagAt(i);
+            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(stackTag);
+            if (fluidStack == null) continue;
+            this.filterReader.getFluidTank(i).setFluid(fluidStack);
+        }
     }
 
     @Override
