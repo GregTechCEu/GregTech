@@ -230,8 +230,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         bucketMode.updateCacheFromSource(true);
         syncManager.syncValue("bucket_mode", bucketMode);
 
-        var filterTransferSize = new StringSyncValue(this::getTransferAmountString, this::setStringTransferRate);
-        filterTransferSize.updateCacheFromSource(true);
+        var filterTransferSize = new StringSyncValue(this::getStringTransferRate, this::setStringTransferRate);
         var transferTextField = new TextFieldWidget().widthRel(0.5f).right(0);
         transferTextField.setEnabled(this.fluidFilterContainer.showGlobalTransferLimitSlider() &&
                 this.voidingMode == VoidingMode.VOID_OVERFLOW);
