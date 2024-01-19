@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -112,7 +112,13 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     @Override
-    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
+        for (int i = 0; i < 9; ++i) {
+            widgetGroup.accept((new gregtech.api.gui.widgets.PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
+                    filterReader.getFluidTank(i)))
+                    .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
+        }
+    }
 
     @Override
     public boolean showGlobalTransferLimitSlider() {
@@ -174,7 +180,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
     }
 
-    public static class WritableFluidTank implements IFluidTank {
+    public static class WritableFluidTank extends FluidTank {
         private final NBTTagCompound fluidTank;
         private final SimpleFluidFilterReader filterReader;
         protected static final String FLUID_AMOUNT = "Amount";
@@ -183,6 +189,7 @@ public class SimpleFluidFilter extends FluidFilter {
         protected static final String EMPTY = "Empty";
 
         protected WritableFluidTank(SimpleFluidFilterReader filterReader, NBTTagCompound fluidTank, int initialCapacity) {
+            super(initialCapacity);
             this.filterReader = filterReader;
             this.fluidTank = fluidTank;
             setCapacity(fluidTank.hasKey(CAPACITY) ? fluidTank.getInteger(CAPACITY) : initialCapacity);
@@ -213,6 +220,7 @@ public class SimpleFluidFilter extends FluidFilter {
             return FluidStack.loadFluidStackFromNBT(getFluidTag());
         }
 
+        @Override
         public void setFluid(@Nullable FluidStack stack) {
             if (stack == null) {
                 this.fluidTank.setTag(FLUID, new NBTTagCompound());
@@ -233,11 +241,6 @@ public class SimpleFluidFilter extends FluidFilter {
         @Override
         public int getCapacity() {
             return this.fluidTank.getInteger(CAPACITY);
-        }
-
-        @Override
-        public FluidTankInfo getInfo() {
-            return new FluidTankInfo(getFluid(), getCapacity());
         }
 
         @SuppressWarnings("DataFlowIssue")
