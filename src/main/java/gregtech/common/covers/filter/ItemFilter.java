@@ -45,7 +45,7 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     }
 
     public final int getMaxTransferSize() {
-        return isBlacklistFilter() ? 1 : this.filterReader.getMaxTransferRate();
+        return this.filterReader.getMaxTransferRate();
     }
 
     public final void setMaxTransferSize(int maxStackSize) {

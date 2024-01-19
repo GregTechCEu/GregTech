@@ -215,7 +215,7 @@ public class SimpleItemFilter extends ItemFilter {
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
             if (!stack.isEmpty()) {
-                stack.setCount(Math.min(stack.getCount(), getMaxTransferRate()));
+                stack.setCount(Math.min(stack.getCount(), isBlacklistFilter() ? 1 : getMaxTransferRate()));
             }
             super.setStackInSlot(slot, stack);
         }
@@ -225,7 +225,7 @@ public class SimpleItemFilter extends ItemFilter {
             for (int i = 0; i < getSlots(); i++) {
                 ItemStack itemStack = getStackInSlot(i);
                 if (!itemStack.isEmpty()) {
-                    itemStack.setCount(Math.min(itemStack.getCount(), getMaxTransferRate()));
+                    itemStack.setCount(Math.min(itemStack.getCount(), isBlacklistFilter() ? 1 : getMaxTransferRate()));
                     setStackInSlot(i, itemStack);
                 }
             }
