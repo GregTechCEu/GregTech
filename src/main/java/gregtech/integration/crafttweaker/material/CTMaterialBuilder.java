@@ -1,6 +1,5 @@
 package gregtech.integration.crafttweaker.material;
 
-import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.store.FluidStorageKey;
@@ -14,6 +13,7 @@ import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 
 import net.minecraft.enchantment.Enchantment;
 
@@ -264,7 +264,7 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
+    @net.minecraftforge.fml.common.Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     public CTMaterialBuilder addDefaultEnchant(IEnchantment enchantment) {
         Enchantment enchantmentType = (Enchantment) enchantment.getDefinition().getInternal();
         backingBuilder.addDefaultEnchant(enchantmentType, enchantment.getLevel());

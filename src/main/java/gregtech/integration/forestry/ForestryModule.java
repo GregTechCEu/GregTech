@@ -15,6 +15,7 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.Mods;
 import gregtech.common.items.ToolItems;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
@@ -31,7 +32,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -52,7 +52,7 @@ import java.util.List;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_FR,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_FR,
+                modDependencies = Mods.Names.FORESTRY,
                 name = "GregTech Forestry Integration",
                 description = "Forestry Integration Module")
 public class ForestryModule extends IntegrationSubmodule {
@@ -165,7 +165,7 @@ public class ForestryModule extends IntegrationSubmodule {
             }
         }
 
-        if (Loader.isModLoaded(GTValues.MODID_EB)) {
+        if (Mods.ExtraBees.isModLoaded()) {
             registerAlvearyMutators();
         }
 
@@ -222,14 +222,13 @@ public class ForestryModule extends IntegrationSubmodule {
             ELECTRODE_OBSIDIAN = forestryMetaItem.addItem(10, "electrode.obsidian");
             ELECTRODE_TIN = forestryMetaItem.addItem(11, "electrode.tin");
 
-            if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+            if (Mods.IndustrialCraft2.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
                 ELECTRODE_IRON = forestryMetaItem.addItem(12, "electrode.iron");
             }
-            if (Loader.isModLoaded(GTValues.MODID_XU2)) {
+            if (Mods.ExtraUtilities2.isModLoaded()) {
                 ELECTRODE_ORCHID = forestryMetaItem.addItem(13, "electrode.orchid");
             }
-            if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) ||
-                    Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+            if (Mods.IndustrialCraft2.isModLoaded() || Mods.TechReborn.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
                 ELECTRODE_RUBBER = forestryMetaItem.addItem(14, "electrode.rubber");
             }
         }

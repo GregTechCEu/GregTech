@@ -27,6 +27,7 @@ import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.Mods;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.crafttweaker.CTRecipeHelper;
@@ -942,7 +943,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    @Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Method(modid = Mods.Names.GROOVY_SCRIPT)
     private VirtualizedRecipeMap getGroovyScriptRecipeMap() {
         return ((VirtualizedRecipeMap) grsVirtualizedRecipeMap);
     }
@@ -1291,7 +1292,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenMethod("findRecipe")
-    @Method(modid = GTValues.MODID_CT)
+    @Method(modid = Mods.Names.CRAFT_TWEAKER)
     @Nullable
     public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs,
                                  @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
@@ -1304,7 +1305,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenGetter("recipes")
-    @Method(modid = GTValues.MODID_CT)
+    @Method(modid = Mods.Names.CRAFT_TWEAKER)
     public List<CTRecipe> ctGetRecipeList() {
         return getRecipeList().stream().map(recipe -> new CTRecipe(this, recipe)).collect(Collectors.toList());
     }
@@ -1393,7 +1394,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenMethod("recipeBuilder")
-    @Method(modid = GTValues.MODID_CT)
+    @Method(modid = Mods.Names.CRAFT_TWEAKER)
     public CTRecipeBuilder ctRecipeBuilder() {
         return new CTRecipeBuilder(recipeBuilder());
     }

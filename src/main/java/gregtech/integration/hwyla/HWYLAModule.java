@@ -2,6 +2,7 @@ package gregtech.integration.hwyla;
 
 import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.hwyla.provider.*;
 import gregtech.modules.GregTechModules;
@@ -17,7 +18,7 @@ import mcp.mobius.waila.api.WailaPlugin;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_HWYLA,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_HWYLA,
+                modDependencies = Mods.Names.HWYLA,
                 name = "GregTech HWYLA Integration",
                 description = "HWYLA (WAILA) Integration Module")
 public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {

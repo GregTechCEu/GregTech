@@ -10,6 +10,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
+import gregtech.api.util.Mods;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
@@ -52,7 +53,6 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -77,7 +77,7 @@ public class ClientProxy extends CommonProxy {
 
         SoundSystemConfig.setNumberNormalChannels(ConfigHolder.client.maxNumSounds);
 
-        if (!Loader.isModLoaded(GTValues.MODID_CTM)) {
+        if (!Mods.CTM.isModLoaded()) {
             Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(),
                     MetadataSectionCTM.class);
             MinecraftForge.EVENT_BUS.register(CustomTextureModelHandler.INSTANCE);

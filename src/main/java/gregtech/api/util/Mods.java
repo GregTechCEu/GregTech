@@ -42,6 +42,7 @@ public enum Mods {
     GregTech(Names.GREGTECH),
     GregTechFoodOption(Names.GREGTECH_FOOD_OPTION),
     GroovyScript(Names.GROOVY_SCRIPT),
+    GTCE2OC(Names.GTCE_2_OC),
     HWYLA(Names.HWYLA),
     ImmersiveEngineering(Names.IMMERSIVE_ENGINEERING),
     IndustrialCraft2(Names.INDUSTRIAL_CRAFT2),
@@ -86,6 +87,7 @@ public enum Mods {
         public static final String GREGTECH = GTValues.MODID;
         public static final String GREGTECH_FOOD_OPTION = "gregtechfoodoption";
         public static final String GROOVY_SCRIPT = "groovyscript";
+        public static final String GTCE_2_OC = "gtce2oc";
         public static final String HWYLA = "hwyla";
         public static final String IMMERSIVE_ENGINEERING = "immersiveengineering";
         public static final String INDUSTRIAL_CRAFT2 = "ic2";
@@ -159,6 +161,10 @@ public enum Mods {
     @SideOnly(Side.CLIENT)
     private static void throwClientIncompatibility(List<String> messages) {
         throw new ModIncompatibilityException(messages);
+    }
+
+    public ItemStack getItem(@NotNull String name) {
+        return getItem(name, 0, 1, null);
     }
 
     @NotNull

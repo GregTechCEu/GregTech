@@ -1,6 +1,6 @@
 package gregtech.integration.forestry;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.forestry.bees.GTCombType;
 import gregtech.integration.forestry.bees.GTDropType;
@@ -30,33 +30,33 @@ public class ForestryUtil {
     }
 
     @Nullable
-    public static IAlleleBeeEffect getEffect(@NotNull String modid, @NotNull String name) {
-        String s = switch (modid) {
-            case GTValues.MODID_EB -> "extrabees.effect." + name;
-            case GTValues.MODID_MB -> "magicbees.effect" + name;
-            case GTValues.MODID -> "gregtech.effect." + name;
+    public static IAlleleBeeEffect getEffect(@NotNull Mods mod, @NotNull String name) {
+        String s = switch (mod) {
+            case ExtraBees -> "extrabees.effect." + name;
+            case MagicBees -> "magicbees.effect" + name;
+            case GregTech -> "gregtech.effect." + name;
             default -> "forestry.effect" + name;
         };
         return (IAlleleBeeEffect) AlleleManager.alleleRegistry.getAllele(s);
     }
 
     @Nullable
-    public static IAlleleFlowers getFlowers(@NotNull String modid, @NotNull String name) {
-        String s = switch (modid) {
-            case GTValues.MODID_EB -> "extrabees.flower." + name;
-            case GTValues.MODID_MB -> "magicbees.flower" + name;
-            case GTValues.MODID -> "gregtech.flower." + name;
+    public static IAlleleFlowers getFlowers(@NotNull Mods mod, @NotNull String name) {
+        String s = switch (mod) {
+            case ExtraBees -> "extrabees.flower." + name;
+            case MagicBees -> "magicbees.flower" + name;
+            case GregTech -> "gregtech.flower." + name;
             default -> "forestry.flowers" + name;
         };
         return (IAlleleFlowers) AlleleManager.alleleRegistry.getAllele(s);
     }
 
     @Nullable
-    public static IAlleleBeeSpecies getSpecies(@NotNull String modid, @NotNull String name) {
-        String s = switch (modid) {
-            case GTValues.MODID_EB -> "extrabees.species." + name;
-            case GTValues.MODID_MB -> "magicbees.species" + name;
-            case GTValues.MODID -> "gregtech.species." + name;
+    public static IAlleleBeeSpecies getSpecies(@NotNull Mods mod, @NotNull String name) {
+        String s = switch (mod) {
+            case ExtraBees -> "extrabees.species." + name;
+            case MagicBees -> "magicbees.species" + name;
+            case GregTech -> "gregtech.species." + name;
             default -> "forestry.species" + name;
         };
         return (IAlleleBeeSpecies) AlleleManager.alleleRegistry.getAllele(s);

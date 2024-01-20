@@ -120,7 +120,7 @@ public class GTValues {
             "Overpowered Voltage", "Maximum Voltage" };
 
     /**
-     * ModID strings, since they are quite common parameters
+     * GregTech Mod ID
      */
     public static final String MODID = "gregtech";
 
