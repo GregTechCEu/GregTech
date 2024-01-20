@@ -135,16 +135,19 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
                     updatePreviousFluid(null);
                 } else if (previousFluid.getFluid().equals(currentFluid.getFluid()) &&
                         previousFluid.amount != currentFluid.amount) {
-                    int currentFill = MathHelper.floor(16 * ((float) currentFluid.amount) / fluidTank.getCapacity());
-                    int previousFill = MathHelper.floor(16 * ((float) previousFluid.amount) / fluidTank.getCapacity());
-                    // tank has fluid with changed amount
-                    previousFluid.amount = currentFluid.amount;
-                    writeCustomData(UPDATE_FLUID_AMOUNT, buf -> {
-                        buf.writeInt(currentFluid.amount);
-                        buf.writeBoolean(currentFill != previousFill);
-                    });
+                            int currentFill = MathHelper
+                                    .floor(16 * ((float) currentFluid.amount) / fluidTank.getCapacity());
+                            int previousFill = MathHelper
+                                    .floor(16 * ((float) previousFluid.amount) / fluidTank.getCapacity());
+                            // tank has fluid with changed amount
+                            previousFluid.amount = currentFluid.amount;
+                            writeCustomData(UPDATE_FLUID_AMOUNT, buf -> {
+                                buf.writeInt(currentFluid.amount);
+                                buf.writeBoolean(currentFill != previousFill);
+                            });
 
-                } else if (!previousFluid.equals(currentFluid)) {
+                        } else
+                    if (!previousFluid.equals(currentFluid)) {
                         // tank has a different fluid from before
                         updatePreviousFluid(currentFluid);
                     }

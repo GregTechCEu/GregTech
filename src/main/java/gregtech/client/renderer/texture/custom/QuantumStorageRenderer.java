@@ -66,8 +66,10 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
                 .registerSprite(new ResourceLocation("gregtech:blocks/overlay/machine/overlay_screen_glass"));
     }
 
-    public <T extends MetaTileEntity & ITieredMetaTileEntity> void renderMachine(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                                                                       T mte) {
+    public <T extends MetaTileEntity & ITieredMetaTileEntity> void renderMachine(CCRenderState renderState,
+                                                                                 Matrix4 translation,
+                                                                                 IVertexOperation[] pipeline,
+                                                                                 T mte) {
         EnumFacing frontFacing = mte.getFrontFacing();
         int tier = mte.getTier();
         Textures.renderFace(renderState, translation, pipeline, frontFacing, glassBox, glassTexture,
@@ -158,13 +160,14 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         Textures.renderFace(renderState, translation, pipeline, frontFacing, partialFluidBox, fluidStillSprite,
                 BlockRenderLayer.CUTOUT_MIPPED);
 
-        Textures.renderFace(renderState, translation, pipeline, gas ? EnumFacing.DOWN : EnumFacing.UP, partialFluidBox, fluidStillSprite,
+        Textures.renderFace(renderState, translation, pipeline, gas ? EnumFacing.DOWN : EnumFacing.UP, partialFluidBox,
+                fluidStillSprite,
                 BlockRenderLayer.CUTOUT_MIPPED);
 
-//        for (EnumFacing facing : EnumFacing.VALUES) {
-//            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
-//                    BlockRenderLayer.CUTOUT_MIPPED);
-//        }
+        // for (EnumFacing facing : EnumFacing.VALUES) {
+        // Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
+        // BlockRenderLayer.CUTOUT_MIPPED);
+        // }
         GlStateManager.resetColor();
 
         renderState.reset();
