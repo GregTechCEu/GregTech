@@ -7,6 +7,7 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
 
 import net.minecraft.client.Minecraft;
@@ -107,7 +108,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
     public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine,
                                         ItemStack stack, long count, float partialTicks) {
-        if (stack.isEmpty() || count == 0)
+        if (stack.isEmpty() || count == 0 || !ConfigHolder.client.enableFancyChestRender)
             return;
 
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
@@ -132,14 +133,16 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
     public static void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                                        FluidTank tank, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
+        FluidStack stack = tank.getFluid();
+        if (stack == null || stack.amount == 0 || !ConfigHolder.client.enableFancyChestRender)
+            return;
+
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+
         if (world != null) {
             renderState.setBrightness(world, pos);
         }
-        FluidStack stack = tank.getFluid();
-        if (stack == null || stack.amount == 0)
-            return;
 
         Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0,
                 14.9375 / 16.0, 14.9375 / 16.0);
@@ -184,6 +187,9 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderAmountText(double x, double y, double z, long amount, EnumFacing frontFacing) {
+        if (!ConfigHolder.client.enableFancyChestRender)
+            return;
+
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         GlStateManager.translate(frontFacing.getXOffset() * -1 / 16f, frontFacing.getYOffset() * -1 / 16f,
