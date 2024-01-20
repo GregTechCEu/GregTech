@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.utils.Color;
-
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
@@ -18,6 +16,7 @@ import net.minecraft.util.IStringSerializable;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;

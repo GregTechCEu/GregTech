@@ -184,7 +184,8 @@ public class GTGuiTextures {
     public static final UITexture[] TRANSFER_MODE_OVERLAY = slice("textures/gui/overlay/transfer_mode_overlay.png",
             18, 18 * 3, 18, 18, true);
 
-    public static final UITexture[] FLUID_TRANSFER_MODE_OVERLAY = slice("textures/gui/overlay/fluid_transfer_mode_overlay.png",
+    public static final UITexture[] FLUID_TRANSFER_MODE_OVERLAY = slice(
+            "textures/gui/overlay/fluid_transfer_mode_overlay.png",
             18, 18 * 3, 18, 18, true);
 
     // todo bronze/steel/primitive fluid slots?
