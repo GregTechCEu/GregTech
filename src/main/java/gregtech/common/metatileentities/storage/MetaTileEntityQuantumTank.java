@@ -40,6 +40,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -134,11 +135,16 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
                     updatePreviousFluid(null);
                 } else if (previousFluid.getFluid().equals(currentFluid.getFluid()) &&
                         previousFluid.amount != currentFluid.amount) {
-                            // tank has fluid with changed amount
-                            previousFluid.amount = currentFluid.amount;
-                            writeCustomData(UPDATE_FLUID_AMOUNT, buf -> buf.writeInt(currentFluid.amount));
-                        } else
-                    if (!previousFluid.equals(currentFluid)) {
+                    int currentFill = MathHelper.floor(16 * ((float) currentFluid.amount) / fluidTank.getCapacity());
+                    int previousFill = MathHelper.floor(16 * ((float) previousFluid.amount) / fluidTank.getCapacity());
+                    // tank has fluid with changed amount
+                    previousFluid.amount = currentFluid.amount;
+                    writeCustomData(UPDATE_FLUID_AMOUNT, buf -> {
+                        buf.writeInt(currentFluid.amount);
+                        buf.writeBoolean(currentFill != previousFill);
+                    });
+
+                } else if (!previousFluid.equals(currentFluid)) {
                         // tank has a different fluid from before
                         updatePreviousFluid(currentFluid);
                     }
@@ -450,8 +456,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
             try {
                 this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
             } catch (IOException ignored) {
-                GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at {} on a routine fluid update",
-                        this.getPos());
+                GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() +
+                        " on a routine fluid update");
             }
             scheduleRenderUpdate();
         } else if (dataId == UPDATE_FLUID_AMOUNT) {
