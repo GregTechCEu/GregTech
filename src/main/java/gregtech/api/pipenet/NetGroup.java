@@ -2,8 +2,6 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -25,7 +23,9 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph;
 
     private final Set<NodeG<PipeType, NodeDataType>> nodes;
-    private final Map<Object, FlowChannel<PipeType, NodeDataType>> channels = new Object2ObjectOpenHashMap<>();
+
+    @Nullable
+    private FlowChannelManager<PipeType, NodeDataType> channelManager = null;
 
     private final AbstractGroupData<PipeType, NodeDataType> data;
 
@@ -47,6 +47,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     private void clear() {
         this.nodes.clear();
+        this.channelManager = null;
     }
 
     protected void addNode(NodeG<PipeType, NodeDataType> node) {
@@ -78,21 +79,27 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         if (sourceGroup == targetGroup) {
             if (sourceGroup == null) {
                 sourceGroup = source.getGroupSafe();
+            } else {
+                sourceGroup.clearCaches();
+                return;
             }
-            sourceGroup.clearCaches();
         }
         if (sourceGroup != null) {
             sourceGroup.mergeNode(target);
         } else {
+            assert targetGroup != null;
             targetGroup.mergeNode(source);
         }
     }
 
     protected void mergeNode(NodeG<?, ?> node) {
         NodeG<PipeType, NodeDataType> cast = (NodeG<PipeType, NodeDataType>) node;
-        if (cast.getGroupUnsafe() != null) {
-            NetGroup<PipeType, NodeDataType> group = cast.getGroupUnsafe();
+        NetGroup<PipeType, NodeDataType> group = cast.getGroupUnsafe();
+        if (group != null) {
             this.addNodes(group.getNodes());
+            if (this.net.isFlow()) {
+                this.getChannelManager().merge(group.getChannelManager());
+            }
             group.clear();
         } else addNode(cast);
         this.clearCaches();
@@ -114,6 +121,10 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                 return a.getSource();
             }).collect(Collectors.toList());
             graph.removeVertex(source);
+            this.nodes.remove(source);
+            if (this.net.isFlow()) {
+                this.getChannelManager().removeNode(source);
+            }
             while (!targets.isEmpty()) {
                 // get the lastmost target; if this throws a cast exception, something is very wrong with the graph.
                 NodeG<PipeType, NodeDataType> target = (NodeG<PipeType, NodeDataType>) targets
@@ -130,12 +141,15 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                     targets.remove(temp);
                 }
                 this.nodes.removeAll(targetGroup);
-                // if 1 or fewer nodes are in the new group, no need to create it.
-                if (targetGroup.size() > 1) {
-                    // No need to do more than create it, the involved nodes are automatically updated in constructor
-                    new NetGroup<>(this.graph, this.net, targetGroup);
-                } else {
-                    targetGroup.forEach(NodeG::clearGroup);
+                if (targetGroup.size() > 0) {
+                    if (this.net.isFlow()) {
+                        // remove our owned nodes from their manager, and remove their nodes from our manager.
+                        new NetGroup<>(this.graph, this.net, targetGroup)
+                                .setChannelManager(this.getChannelManager().subManager(this.nodes));
+                        this.getChannelManager().removeNodes(targetGroup);
+                    } else {
+                        new NetGroup<>(this.graph, this.net, targetGroup);
+                    }
                 }
             }
             return true;
@@ -163,12 +177,15 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                 targetGroup.add(temp);
             }
             this.nodes.removeAll(targetGroup);
-            // if 1 or fewer nodes are in the new group, no need to create it.
-            if (targetGroup.size() > 1) {
-                // No need to do more than create it, the involved nodes are automatically updated in constructor
-                new NetGroup<>(this.graph, this.net, targetGroup);
-            } else {
-                targetGroup.forEach(NodeG::clearGroup);
+            if (targetGroup.size() > 0) {
+                if (this.net.isFlow()) {
+                    // remove our owned nodes from their manager, and remove their nodes from our manager.
+                    new NetGroup<>(this.graph, this.net, targetGroup)
+                        .setChannelManager(this.getChannelManager().subManager(this.nodes));
+                    this.getChannelManager().removeNodes(targetGroup);
+                } else {
+                    new NetGroup<>(this.graph, this.net, targetGroup);
+                }
             }
             return true;
         }
@@ -184,7 +201,6 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     protected void clearCaches() {
         this.nodes.forEach(NodeG::clearPathCache);
-        this.channels.clear();
     }
 
     public Graph<NodeG<PipeType, NodeDataType>, NetEdge> getGraph() {
@@ -196,12 +212,23 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     }
 
     public void setChannel(Object key, FlowChannel<PipeType, NodeDataType> channel) {
-        this.channels.put(key, channel);
+        this.getChannelManager().setChannel(key, channel);
     }
 
     @Nullable
     public FlowChannel<PipeType, NodeDataType> getChannel(Object key) {
-        return this.channels.get(key);
+        return this.getChannelManager().getChannel(key);
+    }
+
+    private void setChannelManager(FlowChannelManager<PipeType, NodeDataType> manager) {
+        this.channelManager = manager;
+    }
+
+    private FlowChannelManager<PipeType, NodeDataType> getChannelManager() {
+        if (this.channelManager == null) {
+            this.channelManager = new FlowChannelManager<>();
+        }
+        return this.channelManager;
     }
 
     @Override

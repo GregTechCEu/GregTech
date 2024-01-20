@@ -17,7 +17,7 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
      *                     If the graph is not directed, pipes should not support blocked connections.
      */
     public WorldPipeFlowNetG(String name, boolean isDirected) {
-        super(name, isDirected, false);
+        super(name, isDirected, false, true);
         if (isDirected())
             this.pipeGraph = new FlowDirected<>();
         else this.pipeGraph = new FlowUndirected<>();

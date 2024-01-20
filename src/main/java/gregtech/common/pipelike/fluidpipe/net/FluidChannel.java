@@ -2,6 +2,7 @@ package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.FlowChannel;
+import gregtech.api.pipenet.FlowChannelManager;
 import gregtech.api.pipenet.NetEdge;
 import gregtech.api.pipenet.NetGroup;
 import gregtech.api.pipenet.NodeG;
@@ -56,6 +57,12 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
 
     @Override
     public void evaluate() {
+        // Kill this channel if we have no more active sources
+        if (this.activeSources.size() == 0) {
+            this.manager.removeChannel(this.fluid.getFluid());
+            return;
+        }
+
         activate();
 
         if (network instanceof WorldPipeFlowNetG.IFlowGraph<?, ?> graph) {
@@ -67,7 +74,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
 
         if (alg == null) alg = new MaximumFlowAlgorithm<>(network);
 
-        alg.calculateMaximumFlow(superSource, superSink);
+        alg.calculateMaximumFlow(this.manager.getSuperSource(), this.manager.getSuperSink());
         Map<NetEdge, Double> flows = alg.getFlowMap();
         Map<NodeG<?, ?>, Double> inMap = new Object2DoubleOpenHashMap<>();
         Map<NodeG<?, ?>, Double> outMap = new Object2DoubleOpenHashMap<>();
@@ -107,7 +114,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
             if (flow != 0)
                 pullFromNode(source, (int) flow, true);
         }
-        for (NodeG<FluidPipeType, FluidPipeProperties> sink : activeSinks) {
+        for (NodeG<FluidPipeType, FluidPipeProperties> sink : this.manager.getActiveSinks()) {
             double flow = outMap.getOrDefault(sink, 0d);
             if (flow != 0)
                 pushToNode(sink, (int) flow, true);
@@ -196,5 +203,10 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
             group.setChannel(key, channel);
         }
         return channel;
+    }
+
+    @Override
+    protected FlowChannel<FluidPipeType, FluidPipeProperties> getNew() {
+        return new FluidChannel(this.network, this.fluid.getFluid());
     }
 }

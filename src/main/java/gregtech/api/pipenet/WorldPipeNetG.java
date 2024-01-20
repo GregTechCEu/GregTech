@@ -39,6 +39,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     private final boolean isDirected;
     private final boolean isSinglePath;
+    private final boolean isFlow;
 
     private WeakReference<World> worldRef = new WeakReference<>(null);
     // TODO move graph & algorithm into NetGroup to reduce unnecessary algorithm cost
@@ -64,12 +65,28 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         this.netAlgorithm = new NetAlgorithm.NetAlgorithmWrapper<>();
         this.isDirected = isDirected;
         this.isSinglePath = isSinglePath;
+        this.isFlow = false;
     }
+
+    WorldPipeNetG(String name, boolean isDirected, boolean isSinglePath, boolean isFlow) {
+        super(name);
+        if (isDirected())
+            this.pipeGraph = new SimpleDirectedWeightedGraph<>(NetEdge.class);
+        else this.pipeGraph = new SimpleWeightedGraph<>(NetEdge.class);
+        this.netAlgorithm = new NetAlgorithm.NetAlgorithmWrapper<>();
+        this.isDirected = isDirected;
+        this.isSinglePath = isSinglePath;
+        this.isFlow = isFlow;
+    }
+
     public final boolean isDirected() {
         return isDirected;
     }
     public final boolean isSinglePath() {
         return isSinglePath;
+    }
+    public final boolean isFlow() {
+        return isFlow;
     }
 
     public World getWorld() {

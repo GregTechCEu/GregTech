@@ -11,8 +11,6 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import net.minecraft.util.math.BlockPos;
-
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 
@@ -23,16 +21,19 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
 
     protected final Graph<NodeG<PT, NDT>, NetEdge> network;
 
-    protected NodeG<PT, NDT> superSource = new NodeG<>();
-    protected Set<NodeG<PT, NDT>> activeSources = new ObjectOpenHashSet<>();
+    protected final Set<NodeG<PT, NDT>> activeSources = new ObjectOpenHashSet<>();
 
-    protected NodeG<PT, NDT> superSink = new NodeG<>();
-    protected Set<NodeG<PT, NDT>> activeSinks = new ObjectOpenHashSet<>();
+    protected final Map<NodeG<PT, NDT>, Byte> receiveSidesMap = new Object2ObjectOpenHashMap<>();
 
-    protected Map<NodeG<PT, NDT>, Byte> receiveSidesMap = new Object2ObjectOpenHashMap<>();
+    protected FlowChannelManager<PT, NDT> manager;
 
     public FlowChannel(Graph<NodeG<PT, NDT>, NetEdge> network) {
         this.network = network;
+    }
+
+    FlowChannel<PT, NDT> setManager(FlowChannelManager<PT, NDT> manager) {
+        this.manager = manager;
+        return this;
     }
 
     public abstract void evaluate();
@@ -43,13 +44,12 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
     protected void activate() {
         for (NodeG<PT, NDT> source : activeSources) {
             double v = getSourceValue(source);
-            network.setEdgeWeight(superSource, source, v);
+            network.setEdgeWeight(this.manager.getSuperSource(), source, v);
             if (v == 0) removeSource(source);
         }
-        for (NodeG<PT, NDT> sink : activeSinks) {
+        for (NodeG<PT, NDT> sink : this.manager.getActiveSinks()) {
             double v = getSinkValue(sink);
-            network.setEdgeWeight(sink, superSink, v);
-            if (v == 0) removeSink(sink);
+            network.setEdgeWeight(sink, this.manager.getSuperSink(), v);
         }
     }
 
@@ -58,10 +58,10 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
      */
     protected void deactivate() {
         for (NodeG<PT, NDT> source : activeSources) {
-            network.setEdgeWeight(superSource, source, 0);
+            network.setEdgeWeight(this.manager.getSuperSource(), source, 0);
         }
-        for (NodeG<PT, NDT> sink : activeSinks) {
-            network.setEdgeWeight(sink, superSink, 0);
+        for (NodeG<PT, NDT> sink : this.manager.getActiveSinks()) {
+            network.setEdgeWeight(sink, this.manager.getSuperSink(), 0);
         }
     }
 
@@ -70,7 +70,7 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
 
     public void addSource(NodeG<PT, NDT> source) {
         this.activeSources.add(source);
-        this.network.addEdge(this.superSource, source);
+        this.network.addEdge(this.manager.getSuperSource(), source);
     }
 
     public void addReceiveSide(NodeG<PT, NDT> node, EnumFacing side) {
@@ -88,17 +88,7 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
 
     public void removeSource(NodeG<PT, NDT> source) {
         this.activeSources.remove(source);
-        this.network.removeEdge(this.superSource, source);
-    }
-
-    public void addSink(NodeG<PT, NDT> sink) {
-        this.activeSources.add(sink);
-        this.network.addEdge(sink, this.superSink);
-    }
-
-    public void removeSink(NodeG<PT, NDT> sink) {
-        this.activeSources.remove(sink);
-        this.network.removeEdge(sink, this.superSink);
+        this.network.removeEdge(this.manager.getSuperSource(), source);
     }
 
     @Nullable
@@ -112,4 +102,26 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
         }
         return null;
     }
+
+    protected FlowChannel<PT, NDT> merge(FlowChannel<PT, NDT> otherChannel) {
+        this.activeSources.addAll(otherChannel.activeSources);
+        for (Map.Entry<NodeG<PT, NDT>, Byte> entry : otherChannel.receiveSidesMap.entrySet()) {
+            this.receiveSidesMap.merge(entry.getKey(), entry.getValue(), (a, b) -> (byte) (a | b));
+        }
+        return this;
+    }
+
+    protected void removeNodes(Set<NodeG<PT, NDT>> nodes) {
+        this.activeSources.removeAll(nodes);
+        for (NodeG<PT, NDT> node : nodes) {
+            this.receiveSidesMap.remove(node);
+        }
+    }
+
+    protected void removeNode(NodeG<PT, NDT> node) {
+        this.activeSources.remove(node);
+        this.receiveSidesMap.remove(node);
+    }
+
+    protected abstract FlowChannel<PT, NDT> getNew();
 }
