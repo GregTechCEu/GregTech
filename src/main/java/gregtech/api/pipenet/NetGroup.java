@@ -3,6 +3,7 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -53,17 +54,32 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     protected void addNode(NodeG<PipeType, NodeDataType> node) {
         this.nodes.add(node);
         node.setGroup(this);
+        this.connectionChange(node);
     }
 
     protected void addNodes(Set<NodeG<PipeType, NodeDataType>> nodes) {
         this.nodes.addAll(nodes);
-        nodes.forEach(a -> a.setGroup(this));
+        nodes.forEach(a -> {
+            a.setGroup(this);
+            this.connectionChange(a);
+        });
     }
 
     @SafeVarargs
     protected final void addNodes(NodeG<PipeType, NodeDataType>... nodes) {
         for (NodeG<PipeType, NodeDataType> node : nodes) {
             this.addNode(node);
+            this.connectionChange(node);
+        }
+    }
+
+    public void connectionChange(NodeG<PipeType, NodeDataType> node) {
+        if (!this.net.isFlow()) return;
+        // if it has non-pipe TE connections, we need to treat it as an active sink. Very wide definition.
+        if (node.getConnecteds().size() != 0) {
+            this.getChannelManager().getActiveSinks().add(node);
+        } else {
+            this.getChannelManager().getActiveSinks().remove(node);
         }
     }
 
@@ -141,7 +157,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                     targets.remove(temp);
                 }
                 this.nodes.removeAll(targetGroup);
-                if (targetGroup.size() > 0) {
+                if (targetGroup.size() != 0) {
                     if (this.net.isFlow()) {
                         // remove our owned nodes from their manager, and remove their nodes from our manager.
                         new NetGroup<>(this.graph, this.net, targetGroup)
@@ -177,7 +193,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                 targetGroup.add(temp);
             }
             this.nodes.removeAll(targetGroup);
-            if (targetGroup.size() > 0) {
+            if (targetGroup.size() != 0) {
                 if (this.net.isFlow()) {
                     // remove our owned nodes from their manager, and remove their nodes from our manager.
                     new NetGroup<>(this.graph, this.net, targetGroup)

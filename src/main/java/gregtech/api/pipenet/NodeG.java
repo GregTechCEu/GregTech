@@ -175,6 +175,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             this.activeConnections &= ~(1 << facing.getIndex());
         }
         this.getHeldMTE().onConnectionChange();
+        this.getGroupSafe().connectionChange(this);
     }
 
     public int getActiveConnections() {
