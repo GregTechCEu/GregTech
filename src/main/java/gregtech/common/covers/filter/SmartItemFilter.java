@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.utils.Color;
+
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
@@ -116,10 +118,9 @@ public class SmartItemFilter extends ItemFilter {
                                                         SmartFilteringMode mode) {
         return new ToggleButton().height(18).width(18 * 5)
                 .value(boolValueOf(value, mode))
-                .background(GTGuiTextures.MC_BUTTON_DISABLED)
-                .hoverBackground()
-                .selectedBackground(GTGuiTextures.MC_BUTTON)
-                .overlay(IKey.lang(mode.localeName));
+                .background(GTGuiTextures.MC_BUTTON)
+                .selectedBackground(GTGuiTextures.MC_BUTTON_DISABLED)
+                .overlay(IKey.lang(mode.getName()).color(Color.WHITE.darker(1)));
     }
 
     protected <T extends Enum<T>> BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
