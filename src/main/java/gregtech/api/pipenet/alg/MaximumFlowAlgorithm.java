@@ -14,74 +14,13 @@ import org.jgrapht.alg.flow.PushRelabelMFImpl;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Secretly just {@link PushRelabelMFImpl}, but may be modified in the future.
+ */
 public final class MaximumFlowAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>>
-                                       extends PushRelabelMFImpl<NodeG<PT, NDT>, NetEdge>
-                                       implements NetAlgorithm<PT, NDT> {
-
-    private NodeG<PT, NDT> superSource = new NodeG<>();
-    private Map<NodeG<PT, NDT>, Double> activeSources = new Object2DoubleOpenHashMap<>();
-
-    private NodeG<PT, NDT> superSink = new NodeG<>();
-    private Map<NodeG<PT, NDT>, Double> activeSinks = new Object2DoubleOpenHashMap<>();
+                                       extends PushRelabelMFImpl<NodeG<PT, NDT>, NetEdge> {
 
     public MaximumFlowAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> network) {
         super(network);
-    }
-
-    @Override
-    public List<NetPath<PT, NDT>> getPathsList(NodeG<PT, NDT> source) {
-        if (!network.containsVertex(source)) {
-            throw new IllegalArgumentException("Graph must contain the source vertex");
-        }
-        List<NetPath<PT, NDT>> paths = new ObjectArrayList<>();
-        paths.add(new NetPath<>(source));
-        // if the source has no group, it has no paths other than the path to itself.
-        if (source.getGroupSafe() == null) return paths;
-
-        for (NodeG<PT, NDT> v : source.getGroupSafe().getNodes()) {
-            if (v == source) continue;
-            // paths.add(new FlowPath<>(wrapper));
-        }
-        return paths;
-    }
-
-    /**
-     * Prime the edges to the super nodes to prepare for calculations.
-     */
-    private void activate() {
-        for (Map.Entry<NodeG<PT, NDT>, Double> source : activeSources.entrySet()) {
-            network.setEdgeWeight(superSource, source.getKey(), source.getValue());
-        }
-        for (Map.Entry<NodeG<PT, NDT>, Double> sink : activeSinks.entrySet()) {
-            network.setEdgeWeight(superSink, sink.getKey(), sink.getValue());
-        }
-    }
-
-    /**
-     * Zero out the edges to the super nodes to prevent other calculations from using them.
-     */
-    private void deactivate() {
-        for (Map.Entry<NodeG<PT, NDT>, Double> source : activeSources.entrySet()) {
-            network.setEdgeWeight(superSource, source.getKey(), 0);
-        }
-        for (Map.Entry<NodeG<PT, NDT>, Double> sink : activeSinks.entrySet()) {
-            network.setEdgeWeight(superSink, sink.getKey(), 0);
-        }
-    }
-
-    public void setSource(NodeG<PT, NDT> source, double amount) {
-        if (amount <= 0) {
-            activeSources.remove(source);
-            return;
-        }
-        activeSources.put(source, amount);
-    }
-
-    public void setSink(NodeG<PT, NDT> sink, double amount) {
-        if (amount <= 0) {
-            activeSinks.remove(sink);
-            return;
-        }
-        activeSinks.put(sink, amount);
     }
 }

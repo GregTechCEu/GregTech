@@ -68,15 +68,18 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         this.isFlow = false;
     }
 
-    WorldPipeNetG(String name, boolean isDirected, boolean isSinglePath, boolean isFlow) {
+    /**
+     * Override ONLY for use by {@link WorldPipeFlowNetG}
+     */
+    WorldPipeNetG(boolean isDirected, boolean isSinglePath, String name) {
         super(name);
         if (isDirected())
             this.pipeGraph = new SimpleDirectedWeightedGraph<>(NetEdge.class);
         else this.pipeGraph = new SimpleWeightedGraph<>(NetEdge.class);
-        this.netAlgorithm = new NetAlgorithm.NetAlgorithmWrapper<>();
+        this.netAlgorithm = null;
         this.isDirected = isDirected;
         this.isSinglePath = isSinglePath;
-        this.isFlow = isFlow;
+        this.isFlow = true;
     }
 
     public final boolean isDirected() {

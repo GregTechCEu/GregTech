@@ -3,8 +3,13 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.alg.MaximumFlowAlgorithm;
 import gregtech.api.pipenet.block.IPipeType;
 
+import gregtech.api.pipenet.tile.TileEntityPipeBase;
+
+import org.jetbrains.annotations.Nullable;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
+
+import java.util.List;
 
 public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataType>,
         PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldPipeNetG<NodeDataType, PipeType> {
@@ -15,16 +20,17 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
      *                   If the graph is not directed, pipes should not support blocked connections.
      */
     public WorldPipeFlowNetG(String name, boolean isDirected) {
-        super(name, isDirected, false, true);
+        super(isDirected, false, name);
         if (isDirected())
             this.pipeGraph = new FlowDirected<>();
         else this.pipeGraph = new FlowUndirected<>();
     }
 
     @Override
-    protected void rebuildNetAlgorithm() {
-        this.netAlgorithm.setAlg(new MaximumFlowAlgorithm<>(pipeGraph));
-        this.validAlgorithmInstance = true;
+    public List<NetPath<PipeType, NodeDataType>> getPaths(@Nullable NodeG<PipeType, NodeDataType> node,
+                                                          @Nullable TileEntityPipeBase<PipeType, NodeDataType> tile) {
+        throw new IllegalStateException("Cannot get paths from a flow network. " +
+                "Must locally instantiate algorithm and evaluate; look at the FluidChannel class as an example.");
     }
 
     public interface IFlowGraph<NDT extends INodeData<NDT>, PT extends Enum<PT> & IPipeType<NDT>> {

@@ -7,6 +7,7 @@ import gregtech.api.pipenet.block.IPipeType;
 
 import java.util.List;
 
+@FunctionalInterface
 public interface NetAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> {
 
     List<NetPath<PT, NDT>> getPathsList(NodeG<PT, NDT> source);

@@ -86,6 +86,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
                 // destroyethify
                 if (node.getHeldMTE() instanceof TileEntityFluidPipeTickable f) {
                     f.checkAndDestroy(fluid);
+                    // TODO implement fluid leakage?
                 }
             }
         }
