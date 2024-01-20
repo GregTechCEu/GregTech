@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Deprecated
 public class IntegrationUtil {
 
     /** Should only be called after {@link net.minecraftforge.fml.common.event.FMLPreInitializationEvent} */

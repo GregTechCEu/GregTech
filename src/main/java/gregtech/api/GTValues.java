@@ -122,8 +122,10 @@ public class GTValues {
     /**
      * ModID strings, since they are quite common parameters
      */
-    public static final String MODID = "gregtech",
-            MODID_FR = "forestry",
+    public static final String MODID = "gregtech";
+
+    @Deprecated
+    public static final String MODID_FR = "forestry",
             MODID_CT = "crafttweaker",
             MODID_TOP = "theoneprobe",
             MODID_CTM = "ctm",
