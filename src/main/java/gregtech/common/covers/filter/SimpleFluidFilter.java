@@ -65,13 +65,6 @@ public class SimpleFluidFilter extends FluidFilter {
 
     @Override
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
-        // FluidSlotSyncHandler[] syncHandlers = new FluidSlotSyncHandler[MAX_FLUID_SLOTS];
-        // for (int i = 0; i < syncHandlers.length; i++) {
-        // var tank = this.filterReader.getFluidTank(i);
-        // syncHandlers[i] = new FixedFluidSlotSH(tank).phantom(true);
-        // syncHandlers[i].updateCacheFromSource(true);
-        // }
-
         return new Row().coverChildrenHeight().widthRel(1f)
                 .child(SlotGroupWidget.builder()
                         .matrix("FFF",
