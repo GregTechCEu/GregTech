@@ -1,5 +1,6 @@
 package gregtech.common.gui.widget;
 
+import com.cleanroommc.modularui.api.value.IStringValue;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldHandler;
@@ -35,8 +36,9 @@ public class HighlightedTextField extends TextFieldWidget {
         return getThis();
     }
 
-    public HighlightedTextField value(StringSyncValue stringValue) {
-        this.stringSyncValue = stringValue;
+    @Override
+    public HighlightedTextField value(IStringValue<?> stringValue) {
+        this.stringSyncValue = (StringSyncValue) stringValue;
         super.value(stringValue);
         return getThis();
     }
@@ -49,7 +51,8 @@ public class HighlightedTextField extends TextFieldWidget {
     @Override
     public void onRemoveFocus(GuiContext context) {
         super.onRemoveFocus(context);
-        this.stringSyncValue.setStringValue(highlighter.getOriginalText(), true, true);
+        if (isSynced())
+            this.stringSyncValue.setStringValue(highlighter.getOriginalText(), true, true);
         onUnfocus.run();
     }
 
