@@ -6,7 +6,6 @@ import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.Serial;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
