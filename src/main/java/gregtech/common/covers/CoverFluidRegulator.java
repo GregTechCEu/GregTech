@@ -268,7 +268,7 @@ public class CoverFluidRegulator extends CoverPump {
                 .child(new EnumRowBuilder<>(TransferMode.class)
                         .value(transferMode)
                         .lang("cover.generic.transfer_mode")
-                        .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY)
+                        .overlay(GTGuiTextures.FLUID_TRANSFER_MODE_OVERLAY)
                         .build())
                 .child(new EnumRowBuilder<>(BucketMode.class)
                         .value(bucketMode)
