@@ -23,9 +23,6 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 
 public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFactory {
 
-    protected static final ModularPanel ERROR = GTGuis.createPanel("ERROR", 100, 100)
-            .child(IKey.str("This is an error!").asWidget().align(Alignment.Center));
-
     @Override
     public final ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
