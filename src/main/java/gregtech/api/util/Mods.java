@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +39,7 @@ public enum Mods {
     ExtraTrees(Names.EXTRA_TREES),
     ExtraUtilities2(Names.EXTRA_UTILITIES2),
     Forestry(Names.FORESTRY),
+    GalacticraftCore(Names.GALACTICRAFT_CORE),
     Genetics(Names.GENETICS),
     GregTech(Names.GREGTECH),
     GregTechFoodOption(Names.GREGTECH_FOOD_OPTION),
@@ -46,9 +48,11 @@ public enum Mods {
     HWYLA(Names.HWYLA),
     ImmersiveEngineering(Names.IMMERSIVE_ENGINEERING),
     IndustrialCraft2(Names.INDUSTRIAL_CRAFT2),
+    InventoryTweaks(Names.INVENTORY_TWEAKS),
     JourneyMap(Names.JOURNEY_MAP),
     JustEnoughItems(Names.JUST_ENOUGH_ITEMS),
     MagicBees(Names.MAGIC_BEES),
+    Nothirium(Names.NOTHIRIUM),
     NuclearCraft(Names.NUCLEAR_CRAFT, v -> !v.contains("2o")),
     NuclearCraftOverhauled(Names.NUCLEAR_CRAFT, v -> v.contains("2o")),
     OpenComputers(Names.OPEN_COMPUTERS),
@@ -62,7 +66,24 @@ public enum Mods {
     VoxelMap(Names.VOXEL_MAP),
     XaerosMinimap(Names.XAEROS_MINIMAP),
 
-    ;
+    // Special Optifine handler, but consolidated here for simplicity
+    Optifine(null) {
+
+        @Override
+        public boolean isModLoaded() {
+            if (this.modLoaded == null) {
+                try {
+                    Class<?> c = Class.forName("net.optifine.shaders.Shaders");
+                    Field f = c.getDeclaredField("shaderPackLoaded");
+                    f.setAccessible(true);
+                    this.modLoaded = f.getBoolean(null);
+                } catch (Exception ignored) {
+                    this.modLoaded = false;
+                }
+            }
+            return this.modLoaded;
+        }
+    };
 
     public static class Names {
 
@@ -83,6 +104,7 @@ public enum Mods {
         public static final String EXTRA_TREES = "extratrees";
         public static final String EXTRA_UTILITIES2 = "extrautils2";
         public static final String FORESTRY = "forestry";
+        public static final String GALACTICRAFT_CORE = "galacticraftcore";
         public static final String GENETICS = "genetics";
         public static final String GREGTECH = GTValues.MODID;
         public static final String GREGTECH_FOOD_OPTION = "gregtechfoodoption";
@@ -91,9 +113,11 @@ public enum Mods {
         public static final String HWYLA = "hwyla";
         public static final String IMMERSIVE_ENGINEERING = "immersiveengineering";
         public static final String INDUSTRIAL_CRAFT2 = "ic2";
+        public static final String INVENTORY_TWEAKS = "inventorytweaks";
         public static final String JOURNEY_MAP = "journeymap";
         public static final String JUST_ENOUGH_ITEMS = "jei";
         public static final String MAGIC_BEES = "magicbees";
+        public static final String NOTHIRIUM = "nothirium";
         public static final String NUCLEAR_CRAFT = "nuclearcraft";
         public static final String OPEN_COMPUTERS = "opencomputers";
         public static final String PROJECT_RED_CORE = "projred-core";
@@ -109,7 +133,7 @@ public enum Mods {
 
     private final String ID;
     private final Function<String, Boolean> versionTester;
-    private Boolean modLoaded;
+    protected Boolean modLoaded;
 
     Mods(String ID) {
         this.ID = ID;
