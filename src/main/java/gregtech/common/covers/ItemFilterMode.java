@@ -1,6 +1,8 @@
 package gregtech.common.covers;
 
-public enum ItemFilterMode implements IFilterMode {
+import net.minecraft.util.IStringSerializable;
+
+public enum ItemFilterMode implements IStringSerializable {
 
     FILTER_INSERT("cover.filter.mode.filter_insert"),
     FILTER_EXTRACT("cover.filter.mode.filter_extract"),

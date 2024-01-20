@@ -10,6 +10,7 @@ import gregtech.common.covers.filter.*;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -241,12 +242,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     }
 
     /**
-     * Displays text for {@link IFilterMode} covers
+     * Displays text for {@link net.minecraft.util.IStringSerializable} covers
      *
      * @param probeInfo the info to add the text to
      * @param mode      the filter mode of the cover
      */
-    private static void filterModeText(@NotNull IProbeInfo probeInfo, @NotNull IFilterMode mode) {
+    private static void filterModeText(@NotNull IProbeInfo probeInfo, @NotNull IStringSerializable mode) {
         probeInfo.text(TextStyleClass.WARNING + lang(mode.getName()));
     }
 
