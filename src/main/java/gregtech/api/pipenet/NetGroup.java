@@ -181,7 +181,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                 if (this.net.isFlow()) {
                     // remove our owned nodes from their manager, and remove their nodes from our manager.
                     new NetGroup<>(this.graph, this.net, targetGroup)
-                        .setChannelManager(this.getChannelManager().subManager(this.nodes));
+                            .setChannelManager(this.getChannelManager().subManager(this.nodes));
                     this.getChannelManager().removeNodes(targetGroup);
                 } else {
                     new NetGroup<>(this.graph, this.net, targetGroup);

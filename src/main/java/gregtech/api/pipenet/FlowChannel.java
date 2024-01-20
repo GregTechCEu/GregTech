@@ -5,12 +5,11 @@ import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.pipenet.block.IPipeType;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 
@@ -66,6 +65,7 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
     }
 
     protected abstract double getSourceValue(NodeG<PT, NDT> source);
+
     protected abstract double getSinkValue(NodeG<PT, NDT> sink);
 
     public void addSource(NodeG<PT, NDT> source) {

@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.pipenet.WorldPipeFlowNetG;
-import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;

@@ -2,37 +2,27 @@ package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.FlowChannel;
-import gregtech.api.pipenet.FlowChannelManager;
 import gregtech.api.pipenet.NetEdge;
 import gregtech.api.pipenet.NetGroup;
 import gregtech.api.pipenet.NodeG;
-
 import gregtech.api.pipenet.WorldPipeFlowNetG;
 import gregtech.api.pipenet.alg.MaximumFlowAlgorithm;
-
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.CoverShutter;
-import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.covers.filter.FluidFilter;
-import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
-
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
-
-import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jgrapht.Graph;
 
 import java.util.Map;
@@ -65,12 +55,11 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
 
         activate();
 
-        if (network instanceof WorldPipeFlowNetG.IFlowGraph<?, ?> graph) {
+        if (network instanceof WorldPipeFlowNetG.IFlowGraph<?, ?>graph) {
             graph.setTestObject(fluid.getFluid());
             ((WorldPipeFlowNetG.IFlowGraph<FluidPipeProperties, FluidPipeType>) graph)
                     .setQueryingChannel(this);
-        }
-        else throw new IllegalStateException("Attempted to do flow calculations on a non-flow graph!");
+        } else throw new IllegalStateException("Attempted to do flow calculations on a non-flow graph!");
 
         if (alg == null) alg = new MaximumFlowAlgorithm<>(network);
 
@@ -87,7 +76,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
             nodes.add((NodeG<FluidPipeType, FluidPipeProperties>) flow.getKey().getSource());
             nodes.add((NodeG<FluidPipeType, FluidPipeProperties>) flow.getKey().getTarget());
         }
-        
+
         for (NodeG<FluidPipeType, FluidPipeProperties> node : nodes) {
             // dataless nodes are only the superSource and superSink
             if (node.getData() == null) continue;

@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 public final class MaximumFlowAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>>
-        extends PushRelabelMFImpl<NodeG<PT, NDT>, NetEdge> implements NetAlgorithm<PT, NDT> {
+                                       extends PushRelabelMFImpl<NodeG<PT, NDT>, NetEdge>
+                                       implements NetAlgorithm<PT, NDT> {
 
     private NodeG<PT, NDT> superSource = new NodeG<>();
     private Map<NodeG<PT, NDT>, Double> activeSources = new Object2DoubleOpenHashMap<>();
 
     private NodeG<PT, NDT> superSink = new NodeG<>();
     private Map<NodeG<PT, NDT>, Double> activeSinks = new Object2DoubleOpenHashMap<>();
-
 
     public MaximumFlowAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> network) {
         super(network);
@@ -40,7 +40,7 @@ public final class MaximumFlowAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, ND
 
         for (NodeG<PT, NDT> v : source.getGroupSafe().getNodes()) {
             if (v == source) continue;
-//            paths.add(new FlowPath<>(wrapper));
+            // paths.add(new FlowPath<>(wrapper));
         }
         return paths;
     }

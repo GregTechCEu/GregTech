@@ -3,8 +3,6 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -14,6 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -289,6 +288,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     /**
      * Adds a channel to a node's collection. Cannot go over the node's chnnael limit.
+     * 
      * @param channel the channel to add.
      * @return {@code true} if the channel was added.
      */
@@ -302,6 +302,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     /**
      * Removes a channel from a node's collection.
+     * 
      * @param channel the channel to remove.
      * @return {@code true} if the channel was in the node's collection.
      */

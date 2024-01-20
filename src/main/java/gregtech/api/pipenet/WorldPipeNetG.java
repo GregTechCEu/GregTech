@@ -82,9 +82,11 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     public final boolean isDirected() {
         return isDirected;
     }
+
     public final boolean isSinglePath() {
         return isSinglePath;
     }
+
     public final boolean isFlow() {
         return isFlow;
     }
@@ -505,5 +507,4 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
      * Used for reading persistent node data
      */
     protected abstract NodeDataType readNodeData(NBTTagCompound tagCompound);
-
 }

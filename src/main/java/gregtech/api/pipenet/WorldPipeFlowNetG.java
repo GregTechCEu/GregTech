@@ -3,8 +3,6 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.alg.MaximumFlowAlgorithm;
 import gregtech.api.pipenet.block.IPipeType;
 
-import net.minecraftforge.fluids.Fluid;
-
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -12,9 +10,9 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
         PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldPipeNetG<NodeDataType, PipeType> {
 
     /**
-     * @param isDirected   Determines whether this net needs directed graph handling.
-     *                     Used to respect filter directions in the item net and fluid net, for example.
-     *                     If the graph is not directed, pipes should not support blocked connections.
+     * @param isDirected Determines whether this net needs directed graph handling.
+     *                   Used to respect filter directions in the item net and fluid net, for example.
+     *                   If the graph is not directed, pipes should not support blocked connections.
      */
     public WorldPipeFlowNetG(String name, boolean isDirected) {
         super(name, isDirected, false, true);
@@ -37,7 +35,8 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
     }
 
     protected static class FlowUndirected<NDT extends INodeData<NDT>, PT extends Enum<PT> & IPipeType<NDT>>
-            extends SimpleWeightedGraph<NodeG<PT, NDT>, NetEdge> implements IFlowGraph<NDT, PT> {
+                                         extends SimpleWeightedGraph<NodeG<PT, NDT>, NetEdge>
+                                         implements IFlowGraph<NDT, PT> {
 
         Object testObject;
         FlowChannel<PT, NDT> queryingChannel;
@@ -64,7 +63,8 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
     }
 
     protected static class FlowDirected<NDT extends INodeData<NDT>, PT extends Enum<PT> & IPipeType<NDT>>
-            extends SimpleDirectedWeightedGraph<NodeG<PT, NDT>, NetEdge> implements IFlowGraph<NDT, PT> {
+                                       extends SimpleDirectedWeightedGraph<NodeG<PT, NDT>, NetEdge>
+                                       implements IFlowGraph<NDT, PT> {
 
         Object testObject;
         FlowChannel<PT, NDT> queryingChannel;

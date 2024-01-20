@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>>
-        implements NetAlgorithm<PT, NDT> {
+                                      implements NetAlgorithm<PT, NDT> {
 
     private final Graph<NodeG<PT, NDT>, NetEdge> graph;
     private final boolean isDirected;
