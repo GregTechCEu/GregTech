@@ -82,7 +82,11 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        return this.fluidFilterContainer.hasFilter() ? getFluidFilter().getContainerStack() : super.getPickItem();
+        if (this.fluidFilterContainer.hasFilter()) {
+            var stack = getFluidFilter().getContainerStack();
+            return GTUtility.copy(1, stack);
+        }
+        return super.getPickItem();
     }
 
     @Override

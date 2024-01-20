@@ -70,7 +70,11 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        return this.getItemFilter() == null ? super.getPickItem() : this.getItemFilter().getContainerStack();
+        if (this.itemFilter.hasFilter()) {
+            var stack = getItemFilter().getContainerStack();
+            return GTUtility.copy(1, stack);
+        }
+        return super.getPickItem();
     }
 
     @Override

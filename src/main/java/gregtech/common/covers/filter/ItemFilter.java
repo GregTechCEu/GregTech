@@ -28,9 +28,7 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     }
 
     public ItemStack getContainerStack() {
-        var stack = this.filterReader.getContainer();
-        stack.setCount(1);
-        return stack;
+        return this.filterReader.getContainer();
     }
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
