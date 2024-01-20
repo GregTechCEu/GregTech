@@ -505,10 +505,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return defaultValue;
     }
 
-    protected String getUITitle() {
-        return "cover.conveyor.title";
-    }
-
     @Override
     public boolean usesMui2() {
         return true;
@@ -611,55 +607,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     protected int getMaxStackSize() {
         return 1;
-    }
-
-    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
-        return builder.build(this, player);
-    }
-
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle(), GTValues.VN[tier]));
-
-        primaryGroup.addWidget(new IncrementButtonWidget(136, 20, 30, 20, 1, 8, 64, 512, this::adjustTransferRate)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-        primaryGroup.addWidget(new IncrementButtonWidget(10, 20, 30, 20, -1, -8, -64, -512, this::adjustTransferRate)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-
-        primaryGroup.addWidget(new ImageWidget(40, 20, 96, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new TextFieldWidget2(42, 26, 92, 20, () -> String.valueOf(transferRate), val -> {
-            if (val != null && !val.isEmpty())
-                setTransferRate(MathHelper.clamp(Integer.parseInt(val), 1, maxItemTransferRate));
-        })
-                .setNumbersOnly(1, maxItemTransferRate)
-                .setMaxLength(4)
-                .setPostFix("cover.conveyor.transfer_rate"));
-
-        primaryGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(10, 45, 75, 20,
-                ConveyorMode.class, this::getConveyorMode, this::setConveyorMode));
-        primaryGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(7, 166, 116, 20,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
-
-        if (getTileEntityHere() instanceof TileEntityItemPipe ||
-                getNeighbor(getAttachedSide()) instanceof TileEntityItemPipe) {
-            final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20,
-                    GuiTextures.DISTRIBUTION_MODE, 3,
-                    () -> distributionMode.ordinal(),
-                    val -> setDistributionMode(DistributionMode.values()[val]))
-                            .setTooltipHoverString(val -> DistributionMode.values()[val].getName());
-            primaryGroup.addWidget(distributionModeButton);
-        }
-
-        this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
-
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 190);
-        return buildUI(builder, player);
     }
 
     @Override

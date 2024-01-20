@@ -188,11 +188,6 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    protected String getUITitle() {
-        return "cover.robotic_arm.title";
-    }
-
-    @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         return super.buildUI(guiData, guiSyncManager).height(192 + 36);
     }

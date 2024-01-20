@@ -70,32 +70,6 @@ public class CoverFluidVoiding extends CoverPump {
     }
 
     @Override
-    protected String getUITitle() {
-        return "cover.fluid.voiding.title";
-    }
-
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-
-        this.fluidFilterContainer.initUI(20, primaryGroup::addWidget);
-
-        primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
-                "cover.voiding.label.disabled", "cover.voiding.label.enabled")
-                        .setTooltipHoverString("cover.voiding.tooltip"));
-
-        primaryGroup.addWidget(new CycleButtonWidget(10, 112, 116, 18,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
-
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82 + 16 + 24)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100 + 16 + 24);
-        return builder.build(this, player);
-    }
-
-    @Override
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.FLUID_VOIDING.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);

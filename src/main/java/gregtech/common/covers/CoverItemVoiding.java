@@ -78,32 +78,6 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
-    protected String getUITitle() {
-        return "cover.item.voiding.title";
-    }
-
-    @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-        this.itemFilterContainer.initUI(20, primaryGroup::addWidget);
-
-        primaryGroup
-                .addWidget(new CycleButtonWidget(10, 92 + 23, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
-                        "cover.voiding.label.disabled", "cover.voiding.label.enabled")
-                                .setTooltipHoverString("cover.voiding.tooltip"));
-
-        primaryGroup.addWidget(new CycleButtonWidget(10, 112 + 23, 116, 18,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
-
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 125 + 82 + 16 + 24)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 125 + 16 + 24);
-        return builder.build(this, player);
-    }
-
-    @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         return super.buildUI(guiData, guiSyncManager).height(192 - 22);
     }
