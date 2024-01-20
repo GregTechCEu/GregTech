@@ -167,10 +167,6 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
                 fluidStillSprite,
                 BlockRenderLayer.CUTOUT_MIPPED);
 
-        // for (EnumFacing facing : EnumFacing.VALUES) {
-        // Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
-        // BlockRenderLayer.CUTOUT_MIPPED);
-        // }
         GlStateManager.resetColor();
 
         renderState.reset();
