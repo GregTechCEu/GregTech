@@ -42,6 +42,8 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
     private static final EnumMap<EnumFacing, Cuboid6> boxFacingMap = new EnumMap<>(EnumFacing.class);
 
+    private static final TextTexture textRenderer = new TextTexture("0", 0xFFFFFF);
+
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite glassTexture;
 
@@ -122,7 +124,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         GlStateManager.popMatrix();
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
-//        renderAmountText(x, y, z, count, frontFacing);
+        renderAmountText(x, y, z, count, frontFacing);
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
     }
 
@@ -165,7 +167,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
 
-//        renderAmountText(x, y, z, amount, frontFacing);
+        renderAmountText(x, y, z, amount, frontFacing);
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
     }
@@ -185,7 +187,9 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         GlStateManager.scale(1f / 64, 1f / 64, 0);
         GlStateManager.translate(-32, -32, 0);
         GlStateManager.disableLighting();
-        new TextTexture(amountText, 0xFFFFFF).draw(0, 24, 64, 28);
+        textRenderer.text = amountText;
+        textRenderer.setWidth(32);
+        textRenderer.draw(0, 24, 64, 28);
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
     }
