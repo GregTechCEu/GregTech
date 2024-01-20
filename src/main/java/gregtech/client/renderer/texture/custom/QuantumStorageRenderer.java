@@ -143,7 +143,8 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
                 14.9375 / 16.0, 14.9375 / 16.0);
 
         double fillFraction = (double) stack.amount / tank.getCapacity();
-        if (tank.getFluid().getFluid().isGaseous()) {
+        boolean gas = stack.getFluid().isGaseous();
+        if (gas) {
             partialFluidBox.min.y = Math.max(13.9375 - (11.875 * fillFraction), 2.0) / 16.0;
         } else {
             partialFluidBox.max.y = Math.min((11.875 * fillFraction) + 2.0625, 14.0) / 16.0;
@@ -153,10 +154,17 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         ResourceLocation fluidStill = stack.getFluid().getStill(stack);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
                 .getAtlasSprite(fluidStill.toString());
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
-                    BlockRenderLayer.CUTOUT_MIPPED);
-        }
+
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, partialFluidBox, fluidStillSprite,
+                BlockRenderLayer.CUTOUT_MIPPED);
+
+        Textures.renderFace(renderState, translation, pipeline, gas ? EnumFacing.DOWN : EnumFacing.UP, partialFluidBox, fluidStillSprite,
+                BlockRenderLayer.CUTOUT_MIPPED);
+
+//        for (EnumFacing facing : EnumFacing.VALUES) {
+//            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
+//                    BlockRenderLayer.CUTOUT_MIPPED);
+//        }
         GlStateManager.resetColor();
 
         renderState.reset();
