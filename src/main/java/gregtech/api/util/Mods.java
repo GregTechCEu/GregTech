@@ -203,7 +203,7 @@ public enum Mods {
 
     @NotNull
     public ItemStack getItem(@NotNull String name, int meta, int amount, @Nullable String nbt) {
-        if (isModLoaded()) {
+        if (!isModLoaded()) {
             return ItemStack.EMPTY;
         }
         return GameRegistry.makeItemStack(ID + ":" + name, meta, amount, nbt);

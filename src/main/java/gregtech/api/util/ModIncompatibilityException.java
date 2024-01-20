@@ -12,7 +12,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class ModIncompatibilityException extends CustomModLoadingErrorDisplayException {
 
-    @Serial
+    @SuppressWarnings("all")
     private static final long serialVersionUID = 1L;
 
     private final List<String> messages;
