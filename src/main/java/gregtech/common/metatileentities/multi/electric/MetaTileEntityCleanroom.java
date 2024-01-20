@@ -1,15 +1,31 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMufflerHatch;
+import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.CleanroomLogic;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.*;
-import gregtech.api.pattern.*;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
+import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
+import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
+import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
+import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.PatternStringError;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
@@ -61,7 +77,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                      implements ICleanroomProvider, IWorkable, IDataInfoProvider {
@@ -643,6 +665,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
             this.lDist = buf.readInt();
             this.rDist = buf.readInt();
+            this.bDist = buf.readInt();
+            this.fDist = buf.readInt();
             this.hDist = buf.readInt();
         } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.cleanroomLogic.setActive(buf.readBoolean());

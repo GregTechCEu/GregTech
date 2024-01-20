@@ -640,7 +640,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
             // MK3 reactor can overclock a MK2 recipe once, or a MK1 recipe twice.
             long euToStart = storage.getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L);
             int fusionTier = FusionEUToStartProperty.getFusionTier(euToStart);
-            if (fusionTier != 0) fusionTier -= MetaTileEntityFusionReactor.this.tier;
+            if (fusionTier != 0) fusionTier = MetaTileEntityFusionReactor.this.tier - fusionTier;
             values[2] = Math.min(fusionTier, values[2]);
         }
 

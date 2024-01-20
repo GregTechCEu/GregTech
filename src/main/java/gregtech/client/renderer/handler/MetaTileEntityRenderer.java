@@ -115,7 +115,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
 
         metaTileEntity.renderCovers(renderState, translation.copy(), renderLayer);
 
-        Textures.RENDER_STATE.set(null);
+        Textures.RENDER_STATE.remove();
         return true;
     }
 
