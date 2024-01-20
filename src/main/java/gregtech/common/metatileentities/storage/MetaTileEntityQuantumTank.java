@@ -291,6 +291,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.fluidTank.getFluid() == null || this.fluidTank.getFluid().amount == 0)
             return;
+
+        int range = 9;
+        if (x > range || y > range || z > range ||
+                x < -range || y < -range ||z < -range)
+            return;
+
         QuantumStorageRenderer.renderTankAmount(x, y, z, this.getFrontFacing(), this.fluidTank.getFluid().amount);
     }
 
