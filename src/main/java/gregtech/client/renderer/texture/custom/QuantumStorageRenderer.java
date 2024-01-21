@@ -111,6 +111,11 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         if (stack.isEmpty() || count == 0 || !ConfigHolder.client.enableFancyChestRender)
             return;
 
+        int range = 9;
+        if (x > range || y > range || z > range ||
+                x < -range || y < -range ||z < -range)
+            return;
+
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         World world = machine.getWorld();
@@ -173,6 +178,11 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, long amount) {
+        int range = 9;
+        if (x > range || y > range || z > range ||
+                x < -range || y < -range ||z < -range)
+            return;
+
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
