@@ -72,5 +72,10 @@ public class DriverPowerSubstation extends DriverSidedTileEntity {
         public Object[] getAverageOutLastSec(final Context context, final Arguments args) {
             return new Object[] { tileEntity.getAverageOutLastSec() };
         }
+
+        @Callback(doc = "function():number -- Gets the number of maintenance problems.")
+        public Object[] getMaintenanceProblems(final Context context, final Arguments args) {
+            return new Object[] { tileEntity.getNumMaintenanceProblems() };
+        }
     }
 }
