@@ -123,7 +123,7 @@ public class SimpleItemFilter extends ItemFilter {
                                             if (onlyAmountChanged && !init) {
                                                 markDirty();
                                             }
-                                        })).syncHandler("asdf"))
+                                        })))
                         .build().marginRight(4))
                 .child(new Column().width(18).coverChildren()
                         .child(super.createWidgets(syncManager))
