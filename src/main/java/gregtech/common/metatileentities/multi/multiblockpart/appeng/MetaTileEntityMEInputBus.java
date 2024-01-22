@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -22,6 +24,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -37,6 +40,7 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -81,8 +85,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && shouldSyncME() && updateMEStatus()) {
-            syncME();
+        if (!getWorld().isRemote && this.workingEnabled && updateMEStatus()) {
+            if (isStocking() && autoPull && getOffsetTimer() % 100 == 0) {
+                this.aeItemHandler.refreshList();
+            }
+            if (shouldSyncME()) {
+                syncME();
+            }
         }
     }
 
@@ -160,6 +169,16 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         return isStocking;
     }
 
+    private void setAutoPull(boolean autoPull) {
+        this.autoPull = autoPull;
+        if (this.autoPull) {
+            this.aeItemHandler.clearConfig();
+        } else {
+            this.aeItemHandler.refreshList();
+        }
+        // todo sync
+    }
+
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new MetaTileEntityMEInputBus(this.metaTileEntityId, this.isStocking);
@@ -181,6 +200,20 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);
+    }
+
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
+        if (!isStocking()) {
+            return false;
+        }
+
+        if (!getWorld().isRemote) {
+            setAutoPull(!autoPull);
+            // todo send player message
+        }
+        return true;
     }
 
     @Override
@@ -230,6 +263,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
             slots.appendTag(slotTag);
         }
         data.setTag(ITEM_BUFFER_TAG, slots);
+        if (isStocking()) {
+            data.setBoolean("AutoPull", autoPull);
+        }
         return data;
     }
 
@@ -246,6 +282,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 ExportOnlyAEItem slot = this.aeItemHandler.inventory[slotTag.getInteger("slot")];
                 slot.deserializeNBT(slotTag.getCompoundTag("stack"));
             }
+        }
+        if (isStocking()) {
+            this.autoPull = data.getBoolean("AutoPull");
         }
         this.importItems = createImportItemHandler();
     }
@@ -357,6 +396,33 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         protected int getStackLimit(int slot, @NotNull ItemStack stack) {
             return Integer.MAX_VALUE;
         }
+
+        private void clearConfig() {
+            for (var slot : inventory) {
+                slot.setConfig(null);
+            }
+        }
+
+        private void refreshList() {
+            try {
+                IMEMonitor<IAEItemStack> sg = meBus.getProxy().getStorage().getInventory(ITEM_NET);
+                Iterator<IAEItemStack> iterator = sg.getStorageList().iterator();
+                int index = 0;
+                while (iterator.hasNext() && index < CONFIG_SIZE) {
+                    IAEItemStack stack = iterator.next();
+                    if (stack.getStackSize() > 0) {
+                        IAEItemStack selectedStack = WrappedItemStack.fromItemStack(stack.createItemStack());
+                        if (selectedStack == null) continue;
+                        selectedStack.setStackSize(1);
+                        this.inventory[index].setConfig(selectedStack);
+                        index++;
+                    }
+                }
+                for (int i = index; i < CONFIG_SIZE; i++) {
+                    this.inventory[index].setConfig(null);
+                }
+            } catch (GridAccessException ignored) {}
+        }
     }
 
     public static class ExportOnlyAEItem extends ExportOnlyAESlot<IAEItemStack> implements IItemHandlerModifiable {
@@ -393,13 +459,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         }
 
         @Override
-        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-            if (meBus.isStocking) {
-                try {
-                    IMEMonitor<IAEItemStack> sg = meBus.getProxy().getStorage().getInventory(ITEM_NET);
-                } catch (GridAccessException ignored) {}
-            }
-        }
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {}
 
         @Override
         public int getSlots() {
