@@ -2,6 +2,7 @@ package gregtech.common.covers;
 
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.item.ItemStack;
@@ -109,7 +110,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 .child(new EnumRowBuilder<>(VoidingMode.class)
                         .value(voidingMode)
                         .lang("cover.voiding.voiding_mode")
-                        // .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY) todo voiding mode overlay
+                        .overlay(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
                         .build())
                 .child(new Row().right(0).coverChildrenHeight()
                         .child(transferTextField
