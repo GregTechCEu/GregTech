@@ -100,6 +100,11 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         AEItemConfigWidget pw = getParentWidget();
+        // don't allow manual interaction with config slots when auto pull is enabled
+        if (pw.isAutoPull()) {
+            return false;
+        }
+
         if (mouseOverConfig(mouseX, mouseY)) {
             if (button == 1) {
                 // Right click to clear

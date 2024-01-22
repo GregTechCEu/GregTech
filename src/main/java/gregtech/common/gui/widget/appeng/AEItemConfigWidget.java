@@ -10,6 +10,8 @@ import net.minecraft.network.PacketBuffer;
 
 import appeng.api.storage.data.IAEItemStack;
 
+import java.util.function.Supplier;
+
 /**
  * @Author GlodBlock
  * @Description Display {@link IAEItemStack} config
@@ -17,8 +19,11 @@ import appeng.api.storage.data.IAEItemStack;
  */
 public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
 
-    public AEItemConfigWidget(int x, int y, IConfigurableSlot<IAEItemStack>[] config, boolean isStocking) {
+    final Supplier<Boolean> autoPull;
+
+    public AEItemConfigWidget(int x, int y, IConfigurableSlot<IAEItemStack>[] config, boolean isStocking, Supplier<Boolean> autoPull) {
         super(x, y, config, isStocking);
+        this.autoPull = autoPull;
     }
 
     @Override
@@ -44,6 +49,10 @@ public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
             }
         }
         return false;
+    }
+
+    public boolean isAutoPull() {
+        return autoPull.get();
     }
 
     @Override

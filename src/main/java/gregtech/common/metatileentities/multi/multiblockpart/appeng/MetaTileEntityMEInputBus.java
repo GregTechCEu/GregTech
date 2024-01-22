@@ -8,6 +8,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -43,6 +44,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_PULL;
 
 /**
  * @Author GlodBlock
@@ -88,6 +91,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         if (!getWorld().isRemote && this.workingEnabled && updateMEStatus()) {
             if (isStocking() && autoPull && getOffsetTimer() % 100 == 0) {
                 this.aeItemHandler.refreshList();
+                syncME();
+                // can exit, since we know we already synced immediately
+                return;
             }
             if (shouldSyncME()) {
                 syncME();
@@ -171,12 +177,23 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
 
     private void setAutoPull(boolean autoPull) {
         this.autoPull = autoPull;
-        if (this.autoPull) {
+        if (!this.autoPull) {
             this.aeItemHandler.clearConfig();
         } else {
             this.aeItemHandler.refreshList();
         }
-        // todo sync
+        markDirty();
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_AUTO_PULL, buf -> buf.writeBoolean(this.autoPull));
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == UPDATE_AUTO_PULL) {
+            this.autoPull = buf.readBoolean();
+        }
     }
 
     @Override
@@ -196,7 +213,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 0xFFFFFFFF);
 
         // Config slots
-        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemHandler.inventory, isStocking));
+        builder.widget(new AEItemConfigWidget(7, 25, this.aeItemHandler.inventory, isStocking, () -> autoPull));
+        // todo button texture
+        builder.widget(new ImageCycleButtonWidget(151, 81, 18, 18, GuiTextures.BUTTON_POWER,
+                () -> autoPull, this::setAutoPull));
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);
