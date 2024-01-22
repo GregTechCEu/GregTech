@@ -6,7 +6,6 @@ import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.slot.PhantomItemSlot;
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.item.ItemStack;
@@ -19,6 +18,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -90,6 +90,7 @@ public class SimpleItemFilter extends ItemFilter {
         return GTGuis.createPanel("simple_item_filter", 176, 166);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
@@ -117,7 +118,8 @@ public class SimpleItemFilter extends ItemFilter {
                                         tooltip.addLine(
                                                 IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                 })
-                                .slot(new PhantomItemSlot(this.filterReader, index, this::getMaxTransferSize)
+                                .slot(SyncHandlers.phantomItemSlot(this.filterReader, index)
+                                        .ignoreMaxStackSize(true)
                                         .slotGroup(filterInventory)
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                             if (onlyAmountChanged && !init) {
