@@ -105,6 +105,11 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
+    protected boolean createDistributionModeRow() {
+        return false;
+    }
+
+    @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                             Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.ITEM_VOIDING.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
