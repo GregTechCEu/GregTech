@@ -5,7 +5,6 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;

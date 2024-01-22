@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -35,6 +33,7 @@ import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.me.GridAccessException;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;

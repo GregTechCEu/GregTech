@@ -21,7 +21,8 @@ public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
 
     final Supplier<Boolean> autoPull;
 
-    public AEItemConfigWidget(int x, int y, IConfigurableSlot<IAEItemStack>[] config, boolean isStocking, Supplier<Boolean> autoPull) {
+    public AEItemConfigWidget(int x, int y, IConfigurableSlot<IAEItemStack>[] config, boolean isStocking,
+                              Supplier<Boolean> autoPull) {
         super(x, y, config, isStocking);
         this.autoPull = autoPull;
     }
