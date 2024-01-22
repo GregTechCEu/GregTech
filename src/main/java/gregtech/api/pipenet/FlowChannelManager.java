@@ -2,6 +2,8 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
+import gregtech.common.pipelike.fluidpipe.net.FluidChannel;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +20,14 @@ public class FlowChannelManager<PipeType extends Enum<PipeType> & IPipeType<Node
     protected final Set<NodeG<PipeType, NodeDataType>> activeSinks = new ObjectOpenHashSet<>();
 
     private final Map<Object, FlowChannel<PipeType, NodeDataType>> channels = new Object2ObjectOpenHashMap<>();
+
+    public FlowChannelManager() {
+        FlowChannelTicker.addManager(this);
+    }
+
+    public void tick() {
+        channels.forEach((k, v) -> v.evaluate());
+    }
 
     /**
      * Updates active nodes based on the active nodes of another manager.

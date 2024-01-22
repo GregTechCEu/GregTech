@@ -336,7 +336,12 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
             if (!tag.getBoolean("isNull")) {
-                fluidTanks[i].setFluid(FluidStack.loadFluidStackFromNBT(tag));
+                FluidStack stack = FluidStack.loadFluidStackFromNBT(tag);
+                if (stack == null) continue;
+                fluidTanks[i].setFluid(stack);
+                // the best part is that this naturally gives us backwards compatibility.
+                FluidChannel channel = FluidChannel.getChannelFromGroup(stack.getFluid(), this.getNode().getGroupSafe());
+                channel.addSource(this.getNode());
             }
         }
     }
@@ -369,18 +374,5 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                 list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
         }
         return list;
-    }
-
-    private static class FluidTransaction {
-
-        public final IFluidHandler target;
-        public final IFluidHandler pipeTank;
-        public int amount;
-
-        private FluidTransaction(IFluidHandler target, IFluidHandler pipeTank, int amount) {
-            this.target = target;
-            this.pipeTank = pipeTank;
-            this.amount = amount;
-        }
     }
 }
