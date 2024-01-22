@@ -43,7 +43,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
     private static final EnumMap<EnumFacing, Cuboid6> boxFacingMap = new EnumMap<>(EnumFacing.class);
 
-    private static final TextTexture textRenderer = new TextTexture("0", 0xFFFFFF);
+    private static final TextTexture textRenderer = new TextTexture().setWidth(32);
 
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite glassTexture;
@@ -210,8 +210,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         GlStateManager.scale(1f / 64, 1f / 64, 0);
         GlStateManager.translate(-32, -32, 0);
         GlStateManager.disableLighting();
-        textRenderer.text = amountText;
-        textRenderer.setWidth(32);
+        textRenderer.setText(amountText);
         textRenderer.draw(0, 24, 64, 28);
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
