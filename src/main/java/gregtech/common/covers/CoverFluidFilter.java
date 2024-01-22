@@ -155,6 +155,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         var filteringMode = new EnumSyncValue<>(FluidFilterMode.class, this::getFilterMode, this::setFilterMode);
 
+        guiSyncManager.syncValue("filtering_mode", filteringMode);
+
         return getFluidFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
