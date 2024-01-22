@@ -410,6 +410,7 @@ public class MetaTileEntities {
     public static MetaTileEntity ITEM_EXPORT_BUS_ME;
     public static MetaTileEntity FLUID_IMPORT_HATCH_ME;
     public static MetaTileEntity ITEM_IMPORT_BUS_ME;
+    public static MetaTileEntity STOCKING_BUS_ME;
     public static MetaTileEntityLDItemEndpoint LONG_DIST_ITEM_ENDPOINT;
     public static MetaTileEntityLDFluidEndpoint LONG_DIST_FLUID_ENDPOINT;
     public static MetaTileEntityAlarm ALARM;
@@ -1177,7 +1178,9 @@ public class MetaTileEntities {
             FLUID_IMPORT_HATCH_ME = registerMetaTileEntity(1747,
                     new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
             ITEM_IMPORT_BUS_ME = registerMetaTileEntity(1748,
-                    new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
+                    new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus"), false));
+            STOCKING_BUS_ME = registerMetaTileEntity(1752,
+                    new MetaTileEntityMEInputBus(gregtechId("me_stocking_item_bus"), true));
         }
 
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749,

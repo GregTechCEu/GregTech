@@ -66,6 +66,8 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
 
     abstract void addStack(T stack);
 
+    abstract void setStack(T stack);
+
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();

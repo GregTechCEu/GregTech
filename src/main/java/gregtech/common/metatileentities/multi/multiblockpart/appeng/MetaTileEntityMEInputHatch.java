@@ -296,6 +296,13 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
         }
 
         @Override
+        void setStack(IAEFluidStack stack) {
+            // todo do this better
+            this.stock = WrappedFluidStack.fromFluidStack(stack.getFluidStack());
+            trigger();
+        }
+
+        @Override
         public void deserializeNBT(NBTTagCompound nbt) {
             if (nbt.hasKey(CONFIG_TAG)) {
                 this.config = WrappedFluidStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));

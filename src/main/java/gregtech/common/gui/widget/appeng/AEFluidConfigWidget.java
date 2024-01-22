@@ -17,7 +17,7 @@ import appeng.api.storage.data.IAEFluidStack;
 public class AEFluidConfigWidget extends AEConfigWidget<IAEFluidStack> {
 
     public AEFluidConfigWidget(int x, int y, IConfigurableSlot<IAEFluidStack>[] config) {
-        super(x, y, config);
+        super(x, y, config, false); // todo
     }
 
     @Override

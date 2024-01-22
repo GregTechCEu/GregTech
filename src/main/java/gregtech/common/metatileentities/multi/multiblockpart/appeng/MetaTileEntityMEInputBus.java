@@ -54,9 +54,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
     private boolean workingEnabled;
     private ExportOnlyAEItemList aeItemHandler;
 
-    public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
+    private final boolean isStocking;
+    private boolean autoPull; // todo
+
+    public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, boolean isStocking) {
         super(metaTileEntityId, GTValues.UHV, false);
         this.workingEnabled = true;
+        this.isStocking = isStocking;
     }
 
     @Override
@@ -77,41 +81,67 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME()) {
-            if (this.updateMEStatus()) {
-                try {
-                    IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
-                    for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
-                        // Try to clear the wrong item
-                        IAEItemStack exceedItem = aeSlot.exceedStack();
-                        if (exceedItem != null) {
-                            long total = exceedItem.getStackSize();
-                            IAEItemStack notInserted = aeNetwork.injectItems(exceedItem, Actionable.MODULATE,
-                                    this.getActionSource());
-                            if (notInserted != null && notInserted.getStackSize() > 0) {
-                                aeSlot.extractItem(0, (int) (total - notInserted.getStackSize()), false);
-                                continue;
-                            } else {
-                                aeSlot.extractItem(0, (int) total, false);
-                            }
+        if (!getWorld().isRemote && this.workingEnabled && shouldSyncME() && updateMEStatus()) {
+            syncME();
+        }
+    }
+
+    protected void syncME() {
+        try {
+            IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
+            for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
+                if (isStocking) {
+                    if (aeSlot.config == null) {
+                        aeSlot.setStack(null);
+                    } else {
+                        // Try to fill the slot
+                        IAEItemStack request;
+                        if (aeSlot.config instanceof WrappedItemStack wis) {
+                            request = wis.getAEStack();
+                        } else {
+                            request = aeSlot.config.copy();
                         }
-                        // Fill it
-                        IAEItemStack reqItem = aeSlot.requestStack();
-                        if (reqItem != null) {
-                            IAEItemStack extracted = aeNetwork.extractItems(reqItem, Actionable.MODULATE,
-                                    this.getActionSource());
-                            if (extracted != null) {
-                                aeSlot.addStack(extracted);
-                            }
+                        request.setStackSize(Integer.MAX_VALUE);
+                        IAEItemStack result = aeNetwork.extractItems(request, Actionable.SIMULATE, getActionSource());
+                        aeSlot.setStack(result);
+                    }
+                } else {
+                    // Try to clear the wrong item
+                    IAEItemStack exceedItem = aeSlot.exceedStack();
+                    if (exceedItem != null) {
+                        long total = exceedItem.getStackSize();
+                        IAEItemStack notInserted = aeNetwork.injectItems(exceedItem, Actionable.MODULATE,
+                                this.getActionSource());
+                        if (notInserted != null && notInserted.getStackSize() > 0) {
+                            aeSlot.extractItem(0, (int) (total - notInserted.getStackSize()), false);
+                            continue;
+                        } else {
+                            aeSlot.extractItem(0, (int) total, false);
                         }
                     }
-                } catch (GridAccessException ignore) {}
+                    // Fill it
+                    IAEItemStack reqItem = aeSlot.requestStack();
+                    if (reqItem != null) {
+                        IAEItemStack extracted = aeNetwork.extractItems(reqItem, Actionable.MODULATE,
+                                this.getActionSource());
+                        if (extracted != null) {
+                            aeSlot.addStack(extracted);
+                        }
+                    }
+                }
             }
-        }
+        } catch (GridAccessException ignore) {}
     }
 
     @Override
     public void onRemoval() {
+        if (!isStocking) {
+            flushInventory();
+        }
+        super.onRemoval();
+    }
+
+    protected void flushInventory() {
         try {
             IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
             for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
@@ -124,12 +154,15 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 }
             }
         } catch (GridAccessException ignore) {}
-        super.onRemoval();
+    }
+
+    public boolean isStocking() {
+        return isStocking;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEInputBus(this.metaTileEntityId);
+        return new MetaTileEntityMEInputBus(this.metaTileEntityId, this.isStocking);
     }
 
     @Override
@@ -144,7 +177,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 0xFFFFFFFF);
 
         // Config slots
-        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemHandler.inventory));
+        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemHandler.inventory, isStocking));
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);
@@ -244,15 +277,17 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         list.add(this.aeItemHandler);
     }
 
-    private static class ExportOnlyAEItemList extends NotifiableItemStackHandler {
+    protected static class ExportOnlyAEItemList extends NotifiableItemStackHandler {
 
+        final MetaTileEntityMEInputBus meBus;
         ExportOnlyAEItem[] inventory;
 
-        public ExportOnlyAEItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
+        public ExportOnlyAEItemList(MetaTileEntityMEInputBus holder, int slots, MetaTileEntity entityToNotify) {
             super(holder, slots, entityToNotify, false);
+            this.meBus = holder;
             this.inventory = new ExportOnlyAEItem[CONFIG_SIZE];
             for (int i = 0; i < CONFIG_SIZE; i++) {
-                this.inventory[i] = new ExportOnlyAEItem(null, null);
+                this.inventory[i] = new ExportOnlyAEItem(holder);
             }
             for (ExportOnlyAEItem slot : this.inventory) {
                 slot.trigger = this::onContentsChanged;
@@ -326,14 +361,17 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
 
     public static class ExportOnlyAEItem extends ExportOnlyAESlot<IAEItemStack> implements IItemHandlerModifiable {
 
+        private final MetaTileEntityMEInputBus meBus;
         private Consumer<Integer> trigger;
 
-        public ExportOnlyAEItem(IAEItemStack config, IAEItemStack stock) {
+        public ExportOnlyAEItem(IAEItemStack config, IAEItemStack stock, MetaTileEntityMEInputBus meBus) {
             super(config, stock);
+            this.meBus = meBus;
         }
 
-        public ExportOnlyAEItem() {
+        public ExportOnlyAEItem(MetaTileEntityMEInputBus meBus) {
             super();
+            this.meBus = meBus;
         }
 
         @Override
@@ -350,12 +388,17 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         public ExportOnlyAEItem copy() {
             return new ExportOnlyAEItem(
                     this.config == null ? null : this.config.copy(),
-                    this.stock == null ? null : this.stock.copy());
+                    this.stock == null ? null : this.stock.copy(),
+                    this.meBus);
         }
 
         @Override
         public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-            // NO-OP
+            if (meBus.isStocking) {
+                try {
+                    IMEMonitor<IAEItemStack> sg = meBus.getProxy().getStorage().getInventory(ITEM_NET);
+                } catch (GridAccessException ignored) {}
+            }
         }
 
         @Override
@@ -382,19 +425,52 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot == 0 && this.stock != null) {
-                int extracted = (int) Math.min(this.stock.getStackSize(), amount);
-                ItemStack result = this.stock.createItemStack();
-                result.setCount(extracted);
-                if (!simulate) {
-                    this.stock.decStackSize(extracted);
-                    if (this.stock.getStackSize() == 0) {
-                        this.stock = null;
+                if (meBus.isStocking) {
+                    if (this.config != null) {
+                        try {
+                            IMEMonitor<IAEItemStack> sg = meBus.getProxy().getStorage().getInventory(ITEM_NET);
+                            IAEItemStack request;
+                            if (this.config instanceof WrappedItemStack wis) {
+                                request = wis.getAEStack();
+                            } else {
+                                request = this.config.copy();
+                            }
+                            request.setStackSize(amount);
+                            IAEItemStack result = sg.extractItems(
+                                    request,
+                                    simulate ? Actionable.SIMULATE : Actionable.MODULATE,
+                                    meBus.getActionSource());
+
+                            if (result != null) {
+                                int extracted = (int) Math.min(result.getStackSize(), amount);
+                                this.stock.decStackSize(extracted); // may as well update the display here
+                                if (this.trigger != null) {
+                                    this.trigger.accept(0);
+                                }
+                                if (extracted != 0) {
+                                    ItemStack resultStack = this.config.createItemStack();
+                                    resultStack.setCount(extracted);
+                                    return resultStack;
+                                }
+                                return ItemStack.EMPTY;
+                            }
+                        } catch (GridAccessException ignored) {}
                     }
+                } else {
+                    int extracted = (int) Math.min(this.stock.getStackSize(), amount);
+                    ItemStack result = this.stock.createItemStack();
+                    result.setCount(extracted);
+                    if (!simulate) {
+                        this.stock.decStackSize(extracted);
+                        if (this.stock.getStackSize() == 0) {
+                            this.stock = null;
+                        }
+                    }
+                    if (this.trigger != null) {
+                        this.trigger.accept(0);
+                    }
+                    return result;
                 }
-                if (this.trigger != null) {
-                    this.trigger.accept(0);
-                }
-                return result;
             }
             return ItemStack.EMPTY;
         }
@@ -425,6 +501,22 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 this.stock = WrappedItemStack.fromItemStack(stack.createItemStack());
             } else {
                 this.stock.add(stack);
+            }
+            this.trigger.accept(0);
+        }
+
+        @Override
+        void setStack(IAEItemStack stack) {
+            if (this.stock == null && stack == null) {
+                return;
+            } else if (this.stock == null) {
+                this.stock = WrappedItemStack.fromItemStack(stack.createItemStack());
+            } else if (stack == null) {
+                this.stock = null;
+            } else if (this.stock.getStackSize() != stack.getStackSize()) {
+                this.stock.setStackSize(stack.getStackSize());
+            } else {
+                return;
             }
             this.trigger.accept(0);
         }

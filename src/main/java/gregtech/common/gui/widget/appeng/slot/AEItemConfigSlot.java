@@ -6,6 +6,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
+import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
@@ -31,15 +32,21 @@ import java.util.List;
  */
 public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
 
-    public AEItemConfigSlot(int x, int y, AEConfigWidget<IAEItemStack> widget, int index) {
+    public AEItemConfigSlot(int x, int y, AEItemConfigWidget widget, int index) {
         super(new Position(x, y), new Size(18, 18 * 2), widget, index);
+    }
+
+    @Override
+    public AEItemConfigWidget getParentWidget() {
+        return (AEItemConfigWidget) super.getParentWidget();
     }
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
+        AEItemConfigWidget pw = getParentWidget();
         Position position = getPosition();
-        IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
+        IConfigurableSlot<IAEItemStack> slot = pw.getDisplay(this.index);
         IAEItemStack config = slot.getConfig();
         IAEItemStack stock = slot.getStock();
         GuiTextures.SLOT.draw(position.x, position.y, 18, 18);
@@ -54,8 +61,12 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
             ItemStack stack = config.createItemStack();
             stack.setCount(1);
             drawItemStack(stack, stackX, stackY, null);
-            String amountStr = TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4);
-            drawStringFixedCorner(amountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
+
+            // Only draw the config amount if not stocking, as its meaningless when stocking
+            if (!pw.isStocking()) {
+                String amountStr = TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4);
+                drawStringFixedCorner(amountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
+            }
         }
         if (stock != null) {
             ItemStack stack = stock.createItemStack();
@@ -75,7 +86,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
     public void drawInForeground(int mouseX, int mouseY) {
         super.drawInForeground(mouseX, mouseY);
         IAEItemStack item = null;
-        IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
+        IConfigurableSlot<IAEItemStack> slot = this.getParentWidget().getDisplay(this.index);
         if (mouseOverConfig(mouseX, mouseY)) {
             item = slot.getConfig();
         } else if (mouseOverStock(mouseX, mouseY)) {
@@ -88,20 +99,33 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        AEItemConfigWidget pw = getParentWidget();
         if (mouseOverConfig(mouseX, mouseY)) {
             if (button == 1) {
                 // Right click to clear
-                this.parentWidget.disableAmount();
                 writeClientAction(REMOVE_ID, buf -> {});
+
+                if (!pw.isStocking()) {
+                    pw.disableAmount();
+                }
             } else if (button == 0) {
                 // Left click to set/select
                 ItemStack item = this.gui.entityPlayer.inventory.getItemStack();
 
                 if (!item.isEmpty()) {
-                    writeClientAction(UPDATE_ID, buf -> buf.writeItemStack(item));
+                    // Only accept the result if we are not a stocking hatch, or if the tested item is not
+                    // configured elsewhere, to prevent having the same config multiple times, causing dupes.
+                    if (!pw.isStocking() || !pw.hasStackInConfig(item)) {
+                        writeClientAction(UPDATE_ID, buf -> buf.writeItemStack(item));
+                    } else {
+                        return false;
+                    }
                 }
-                this.parentWidget.enableAmount(this.index);
-                this.select = true;
+
+                if (!pw.isStocking()) {
+                    pw.enableAmount(this.index);
+                    this.select = true;
+                }
             }
             return true;
         }
@@ -183,6 +207,8 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
 
     @SideOnly(Side.CLIENT)
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
+        // Only allow the amount scrolling if not stocking, as amount is useless for stocking
+        if (parentWidget.isStocking()) return false;
         IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
         Rectangle rectangle = toRectangleBox();
         rectangle.height /= 2;

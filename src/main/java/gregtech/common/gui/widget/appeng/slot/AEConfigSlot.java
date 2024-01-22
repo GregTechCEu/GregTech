@@ -43,6 +43,7 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget implements IGhos
         IConfigurableSlot<T> slot = this.parentWidget.getDisplay(this.index);
         if (slot.getConfig() == null && mouseOverConfig(mouseX, mouseY)) {
             List<String> hoverStringList = new ArrayList<>();
+            // todo
             hoverStringList.add(I18n.format("gregtech.gui.config_slot"));
             hoverStringList.add(I18n.format("gregtech.gui.config_slot.set"));
             hoverStringList.add(I18n.format("gregtech.gui.config_slot.scroll"));
@@ -68,5 +69,9 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget implements IGhos
     @Override
     public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
         return Collections.emptyList();
+    }
+
+    public AEConfigWidget<T> getParentWidget() {
+        return parentWidget;
     }
 }
