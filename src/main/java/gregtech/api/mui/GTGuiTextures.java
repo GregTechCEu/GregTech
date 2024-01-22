@@ -188,6 +188,10 @@ public class GTGuiTextures {
             "textures/gui/overlay/fluid_transfer_mode_overlay.png",
             18, 18 * 3, 18, 18, true);
 
+    public static final UITexture[] DISTRIBUTION_MODE_OVERLAY = slice(
+            "textures/gui/widget/button_distribution_mode.png",
+            16, 48, 16, 16, true);
+
     // todo bronze/steel/primitive fluid slots?
 
     // SLOT OVERLAYS

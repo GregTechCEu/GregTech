@@ -189,7 +189,7 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192 + 36);
+        return super.buildUI(guiData, guiSyncManager).height(192 + 36 + 18 + 2);
     }
 
     @Override

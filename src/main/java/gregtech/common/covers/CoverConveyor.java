@@ -503,7 +503,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        var panel = GTGuis.createPanel(this, 176, 192);
+        var panel = GTGuis.createPanel(this, 176, 192 + 18);
 
         getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
@@ -528,8 +528,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue,
                 throughput::setStringValue);
 
+        EnumSyncValue<DistributionMode> distributionMode = new EnumSyncValue<>(DistributionMode.class,
+                this::getDistributionMode, this::setDistributionMode);
+
         guiSyncManager.syncValue("manual_io", manualIOmode);
         guiSyncManager.syncValue("conveyor_mode", conveyorMode);
+        guiSyncManager.syncValue("distribution_mode", distributionMode);
         guiSyncManager.syncValue("throughput", throughput);
 
         if (createThroughputRow())
@@ -577,6 +581,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
                     .build());
 
+        if (createDistributionModeRow())
+            column.child(new EnumRowBuilder<>(DistributionMode.class)
+                    .value(distributionMode)
+                    .overlay(16, GTGuiTextures.DISTRIBUTION_MODE_OVERLAY)
+                    .lang("cover.conveyor.distribution.name")
+                    .build());
+
         return column;
     }
 
@@ -593,6 +604,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected boolean createConveyorModeRow() {
+        return true;
+    }
+
+    protected boolean createDistributionModeRow() {
         return true;
     }
 
