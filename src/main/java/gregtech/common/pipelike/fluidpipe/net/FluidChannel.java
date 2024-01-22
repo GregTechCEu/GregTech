@@ -12,6 +12,7 @@ import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.CoverShutter;
 import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
+import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 
 import net.minecraft.tileentity.TileEntity;
@@ -84,7 +85,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
                 throw new IllegalStateException("Node rejected channel despite approving it earlier!");
             if (!node.getData().test(fluid)) {
                 // destroyethify
-                if (node.getHeldMTE() instanceof TileEntityFluidPipeTickable f) {
+                if (node.getHeldMTE() instanceof TileEntityFluidPipe f) {
                     f.checkAndDestroy(fluid);
                     // TODO implement fluid leakage?
                 }
@@ -120,7 +121,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
 
     private double pullFromNode(NodeG<FluidPipeType, FluidPipeProperties> source, int amount, boolean doDrain) {
         FluidStack stack = null;
-        if (source.getHeldMTE() instanceof TileEntityFluidPipeTickable f) {
+        if (source.getHeldMTE() instanceof TileEntityFluidPipe f) {
             IFluidHandler handler = f.getCapability(
                     CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
             if (handler != null) {
@@ -137,7 +138,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
 
     private double pushToNode(NodeG<FluidPipeType, FluidPipeProperties> sink, int amount, boolean doFill) {
         int flow = 0;
-        if (sink.getHeldMTE() instanceof TileEntityFluidPipeTickable f) {
+        if (sink.getHeldMTE() instanceof TileEntityFluidPipe f) {
             int fill;
             Byte receiveSides = this.receiveSidesMap.get(sink);
             for (Map.Entry<EnumFacing, TileEntity> connected : sink.getConnecteds().entrySet()) {
@@ -152,7 +153,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
                         continue;
                     }
                 }
-                Cover thisCover = sink.getHeldMTE().getCoverableImplementation().getCoverAtSide(connected.getKey());
+                Cover thisCover = f.getCoverableImplementation().getCoverAtSide(connected.getKey());
                 Cover themCover = getCoverOnNeighbour(sink, connected.getKey().getOpposite());
                 int transferMax = evaluateCover(themCover, evaluateCover(thisCover, amount));
                 IFluidHandler handler = connected.getValue().getCapability(

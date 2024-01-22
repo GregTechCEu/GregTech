@@ -131,14 +131,13 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                                   @NotNull Entity entityIn) {
         if (worldIn.isRemote) return;
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-        if (pipe instanceof TileEntityFluidPipeTickable && pipe.getFrameMaterial() == null &&
-                ((TileEntityFluidPipeTickable) pipe).getOffsetTimer() % 10 == 0) {
+        if (pipe.getFrameMaterial() == null && pipe.getOffsetTimer() % 10 == 0) {
             if (entityIn instanceof EntityLivingBase) {
-                if (((TileEntityFluidPipeTickable) pipe).getFluidTanks().length > 1) {
+                if (pipe.getFluidTanks().length > 1) {
                     // apply temperature damage for the hottest and coldest pipe (multi fluid pipes)
                     int maxTemperature = Integer.MIN_VALUE;
                     int minTemperature = Integer.MAX_VALUE;
-                    for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
+                    for (FluidTank tank : pipe.getFluidTanks()) {
                         if (tank.getFluid() != null && tank.getFluid().amount > 0) {
                             maxTemperature = Math.max(maxTemperature,
                                     tank.getFluid().getFluid().getTemperature(tank.getFluid()));
@@ -153,7 +152,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                         EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, minTemperature, 1.0F, 5);
                     }
                 } else {
-                    FluidTank tank = ((TileEntityFluidPipeTickable) pipe).getFluidTanks()[0];
+                    FluidTank tank = pipe.getFluidTanks()[0];
                     if (tank.getFluid() != null && tank.getFluid().amount > 0) {
                         // Apply temperature damage for the pipe (single fluid pipes)
                         EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn,
@@ -166,7 +165,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     @Override
     public TileEntityPipeBase<FluidPipeType, FluidPipeProperties> createNewTileEntity(boolean supportsTicking) {
-        return new TileEntityFluidPipeTickable(); // fluid pipes are always ticking
+        return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
     }
 
     @Override

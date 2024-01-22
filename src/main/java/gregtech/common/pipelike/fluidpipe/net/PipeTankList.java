@@ -18,14 +18,14 @@ import java.util.Iterator;
 
 public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
-    private final TileEntityFluidPipeTickable pipe;
+    private final TileEntityFluidPipe pipe;
     private final FluidTank[] tanks;
     private IFluidTankProperties[] properties;
     private final EnumFacing facing;
 
     public PipeTankList(TileEntityFluidPipe pipe, EnumFacing facing, FluidTank... fluidTanks) {
         this.tanks = fluidTanks;
-        this.pipe = (TileEntityFluidPipeTickable) pipe;
+        this.pipe = pipe;
         this.facing = facing;
     }
 
