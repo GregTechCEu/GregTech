@@ -1252,6 +1252,7 @@ cover.item_filter.ignore_damage.enabled=Ignore Damage
 cover.item_filter.ignore_damage.disabled=Respect Damage
 cover.item_filter.ignore_nbt.enabled=Ignore NBT
 cover.item_filter.ignore_nbt.disabled=Respect NBT
+cover.item_filter.config_amount=Scroll wheel up increases amount, down decreases.\nShift[§6x4§r], Ctrl[§ex16§r], Alt[§ax64§r]\nRight click increases amount, left click decreases.\nShift Left-Click to clear
 
 cover.voiding.voiding_mode.void_any=Void Matching
 cover.voiding.voiding_mode.void_overflow=Void Overflow

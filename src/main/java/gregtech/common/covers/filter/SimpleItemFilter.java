@@ -16,6 +16,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
@@ -103,8 +104,12 @@ public class SimpleItemFilter extends ItemFilter {
                                 "XXX",
                                 "XXX")
                         .key('X', index -> new ItemSlot()
-                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                                .tooltip(tooltip -> {
+                                    tooltip.setAutoUpdate(true);
+                                    tooltip.textColor(Color.GREY.main);
+                                })
                                 .tooltipBuilder(tooltip -> {
+                                    tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
                                     int count = this.filterReader.getItemsNbt()
                                             .getCompoundTagAt(index)
                                             .getInteger(SimpleItemFilterReader.COUNT);
@@ -118,7 +123,7 @@ public class SimpleItemFilter extends ItemFilter {
                                             if (onlyAmountChanged && !init) {
                                                 markDirty();
                                             }
-                                        })))
+                                        })).syncHandler("asdf"))
                         .build().marginRight(4))
                 .child(new Column().width(18).coverChildren()
                         .child(super.createWidgets(syncManager))
