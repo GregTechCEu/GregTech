@@ -64,17 +64,13 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
-        this.itemFilter.setFilter(FilterTypeRegistry.getItemFilterForStack(itemStack.copy()));
+        this.itemFilter.setFilter(FilterTypeRegistry.getItemFilterForStack(GTUtility.copy(1, itemStack)));
         this.itemFilter.setMaxTransferSize(1);
     }
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        if (this.itemFilter.hasFilter()) {
-            var stack = getItemFilter().getContainerStack();
-            return GTUtility.copy(1, stack);
-        }
-        return super.getPickItem();
+        return getItemFilter().getContainerStack();
     }
 
     @Override
