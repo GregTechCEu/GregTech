@@ -178,8 +178,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         this.autoPull = autoPull;
         if (!this.autoPull) {
             this.aeItemHandler.clearConfig();
-        } else {
+        } else if (updateMEStatus()) {
             this.aeItemHandler.refreshList();
+            syncME();
         }
         markDirty();
         if (!getWorld().isRemote) {
@@ -419,6 +420,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         private void clearConfig() {
             for (var slot : inventory) {
                 slot.setConfig(null);
+                slot.setStock(null);
             }
         }
 
