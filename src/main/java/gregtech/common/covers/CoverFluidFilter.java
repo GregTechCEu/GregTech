@@ -132,20 +132,6 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         return EnumActionResult.SUCCESS;
     }
 
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup fluidFilterGroup = new WidgetGroup();
-        fluidFilterGroup.addWidget(new LabelWidget(10, 5, "cover.fluid_filter.title"));
-        fluidFilterGroup.addWidget(new CycleButtonWidget(10, 20, 110, 20,
-                GTUtility.mapToString(FluidFilterMode.values(), (it) -> it.localeName), () -> this.filterMode.ordinal(),
-                (newMode) -> this.setFilterMode(FluidFilterMode.values()[newMode])));
-        this.fluidFilterContainer.initUI(45, fluidFilterGroup::addWidget);
-        this.fluidFilterContainer.blacklistUI(45, fluidFilterGroup::addWidget, () -> true);
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
-                .widget(fluidFilterGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
-                .build(this, player);
-    }
-
     @Override
     public boolean usesMui2() {
         return true;

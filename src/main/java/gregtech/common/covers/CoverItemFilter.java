@@ -128,21 +128,6 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        gregtech.api.gui.widgets.WidgetGroup filterGroup = new gregtech.api.gui.widgets.WidgetGroup();
-        filterGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(10, 5, titleLocale));
-        filterGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(10, 20, 110, 20,
-                GTUtility.mapToString(ItemFilterMode.values(), it -> it.localeName),
-                () -> filterMode.ordinal(), (newMode) -> setFilterMode(ItemFilterMode.values()[newMode])));
-        this.itemFilter.initFilterUI(45, filterGroup::addWidget);
-        this.itemFilter.blacklistUI(45, filterGroup::addWidget, () -> true);
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
-                .widget(filterGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
-                .build(this, player);
-    }
-
-    @Override
     public boolean usesMui2() {
         return true;
     }
