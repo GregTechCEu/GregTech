@@ -242,7 +242,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     private FlowChannelManager<PipeType, NodeDataType> getChannelManager() {
         if (this.channelManager == null) {
-            this.channelManager = new FlowChannelManager<>();
+            this.channelManager = new FlowChannelManager<>((WorldPipeFlowNetG<NodeDataType, PipeType>) this.net);
         }
         return this.channelManager;
     }

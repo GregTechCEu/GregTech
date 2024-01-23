@@ -475,7 +475,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         NBTTagList allPipeNodes = new NBTTagList();
         Set<NetGroup<PipeType, NodeDataType>> groups = new ObjectOpenHashSet<>();
         for (NodeG<PipeType, NodeDataType> node : pipeGraph.vertexSet()) {
-            if (node.getGroupSafe() != null) groups.add(node.getGroupSafe());
+            if (node.getGroupUnsafe() != null) groups.add(node.getGroupUnsafe());
             NBTTagCompound nodeTag = node.serializeNBT();
             NBTTagCompound dataTag = new NBTTagCompound();
             writeNodeData(node.getData(), dataTag);

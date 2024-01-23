@@ -2,10 +2,9 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
-import gregtech.common.pipelike.fluidpipe.net.FluidChannel;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -14,15 +13,15 @@ import java.util.Set;
 public class FlowChannelManager<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NodeDataType extends INodeData<NodeDataType>> {
 
-    protected final NodeG<PipeType, NodeDataType> superSource = new NodeG<>();
-    protected final NodeG<PipeType, NodeDataType> superSink = new NodeG<>();
+    private final WorldPipeFlowNetG<NodeDataType, PipeType> net;
 
     protected final Set<NodeG<PipeType, NodeDataType>> activeSinks = new ObjectOpenHashSet<>();
 
     private final Map<Object, FlowChannel<PipeType, NodeDataType>> channels = new Object2ObjectOpenHashMap<>();
 
-    public FlowChannelManager() {
-        FlowChannelTicker.addManager(this);
+    public FlowChannelManager(WorldPipeFlowNetG<NodeDataType, PipeType> net) {
+        this.net = net;
+        FlowChannelTicker.addManager(net.getWorld(), this);
     }
 
     public void tick() {
@@ -44,7 +43,7 @@ public class FlowChannelManager<PipeType extends Enum<PipeType> & IPipeType<Node
      * Generates a new manager that filters this manager's active nodes by removing the provided nodes.
      */
     public FlowChannelManager<PipeType, NodeDataType> subManager(Set<NodeG<PipeType, NodeDataType>> nodes) {
-        FlowChannelManager<PipeType, NodeDataType> newManager = new FlowChannelManager<>();
+        FlowChannelManager<PipeType, NodeDataType> newManager = new FlowChannelManager<>(this.net);
         newManager.channels.putAll(this.channels);
         newManager.channels.forEach((key, value) -> {
             value.setManager(newManager);
@@ -72,11 +71,11 @@ public class FlowChannelManager<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     public NodeG<PipeType, NodeDataType> getSuperSource() {
-        return superSource;
+        return this.net.getSuperSource();
     }
 
     public NodeG<PipeType, NodeDataType> getSuperSink() {
-        return superSink;
+        return this.net.getSuperSink();
     }
 
     public Set<NodeG<PipeType, NodeDataType>> getActiveSinks() {
