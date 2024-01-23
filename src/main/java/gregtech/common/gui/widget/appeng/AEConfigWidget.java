@@ -6,7 +6,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.gui.widget.appeng.slot.AEConfigSlot;
 import gregtech.common.gui.widget.appeng.slot.AmountSetSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
 import appeng.api.storage.data.IAEStack;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;

@@ -95,6 +95,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEnti
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingBus;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCABridge;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAComputation;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCACooler;
@@ -1178,9 +1179,9 @@ public class MetaTileEntities {
             FLUID_IMPORT_HATCH_ME = registerMetaTileEntity(1747,
                     new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
             ITEM_IMPORT_BUS_ME = registerMetaTileEntity(1748,
-                    new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus"), false));
+                    new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
             STOCKING_BUS_ME = registerMetaTileEntity(1752,
-                    new MetaTileEntityMEInputBus(gregtechId("me_stocking_item_bus"), true));
+                    new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus")));
         }
 
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749,

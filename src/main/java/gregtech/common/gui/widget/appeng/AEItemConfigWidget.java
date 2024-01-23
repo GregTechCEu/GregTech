@@ -1,8 +1,8 @@
 package gregtech.common.gui.widget.appeng;
 
 import gregtech.common.gui.widget.appeng.slot.AEItemConfigSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.item.ItemStack;
@@ -12,11 +12,6 @@ import appeng.api.storage.data.IAEItemStack;
 
 import java.util.function.Supplier;
 
-/**
- * @Author GlodBlock
- * @Description Display {@link IAEItemStack} config
- * @Date 2023/4/22-1:02
- */
 public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
 
     final Supplier<Boolean> autoPull;
@@ -34,8 +29,8 @@ public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
         this.displayList = new IConfigurableSlot[this.config.length];
         this.cached = new IConfigurableSlot[this.config.length];
         for (int index = 0; index < this.config.length; index++) {
-            this.displayList[index] = new MetaTileEntityMEInputBus.ExportOnlyAEItem(null);
-            this.cached[index] = new MetaTileEntityMEInputBus.ExportOnlyAEItem(null);
+            this.displayList[index] = new ExportOnlyAEItemSlot();
+            this.cached[index] = new ExportOnlyAEItemSlot();
             line = index / 8;
             this.addWidget(new AEItemConfigSlot((index - line * 8) * 18, line * (18 * 2 + 2), this, index));
         }

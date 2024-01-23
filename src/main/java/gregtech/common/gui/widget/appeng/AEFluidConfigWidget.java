@@ -1,8 +1,8 @@
 package gregtech.common.gui.widget.appeng;
 
 import gregtech.common.gui.widget.appeng.slot.AEFluidConfigSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.network.PacketBuffer;

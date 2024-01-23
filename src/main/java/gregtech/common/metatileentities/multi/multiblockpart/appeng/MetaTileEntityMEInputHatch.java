@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAESlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
@@ -121,7 +122,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
         try {
             IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
             for (ExportOnlyAEFluid aeTank : this.aeFluidTanks) {
-                IAEFluidStack stock = aeTank.stock;
+                IAEFluidStack stock = aeTank.getStock();
                 if (stock instanceof WrappedFluidStack) {
                     stock = ((WrappedFluidStack) stock).getAEStack();
                 }
@@ -296,7 +297,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
         }
 
         @Override
-        void setStack(IAEFluidStack stack) {
+        public void setStack(IAEFluidStack stack) {
             // todo do this better
             this.stock = WrappedFluidStack.fromFluidStack(stack.getFluidStack());
             trigger();
