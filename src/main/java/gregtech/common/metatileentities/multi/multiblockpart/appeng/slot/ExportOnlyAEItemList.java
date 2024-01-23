@@ -17,10 +17,10 @@ public class ExportOnlyAEItemList extends NotifiableItemStackHandler {
     public ExportOnlyAEItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
         super(holder, slots, entityToNotify, false);
         this.size = slots;
-        createInventory();
+        createInventory(holder);
     }
 
-    protected void createInventory() {
+    protected void createInventory(MetaTileEntity holder) {
         this.inventory = new ExportOnlyAEItemSlot[size];
         for (int i = 0; i < size; i++) {
             this.inventory[i] = new ExportOnlyAEItemSlot();

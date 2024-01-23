@@ -60,7 +60,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     @Override
     public void update() {
         super.update();
-        if (autoPull && getOffsetTimer() % 100 == 0) {
+        if (!getWorld().isRemote && isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
             refreshList();
             syncME();
         }
@@ -147,6 +147,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
      * @return True if the passed stack is found as a configuration in any other stocking buses on the multiblock.
      */
     private boolean testConfiguredInOtherBus(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) return false;
         MultiblockControllerBase controller = getController();
         if (controller == null) return false;
 
@@ -202,12 +203,12 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                 IAEItemStack selectedStack = WrappedItemStack.fromItemStack(itemStack);
                 if (selectedStack == null) continue;
                 selectedStack.setStackSize(1);
-                this.aeItemHandler.getInventory()[index].setConfig(selectedStack);
+                this.getAEItemHandler().getInventory()[index].setConfig(selectedStack);
                 index++;
             }
         }
         for (int i = index; i < CONFIG_SIZE; i++) {
-            this.getAEItemHandler().getInventory()[index].setConfig(null);
+            this.getAEItemHandler().getInventory()[i].setConfig(null);
         }
     }
 
@@ -316,7 +317,6 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                             resultStack.setCount(extracted);
                             return resultStack;
                         }
-                        return ItemStack.EMPTY;
                     }
                 }
             }
@@ -335,10 +335,13 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         }
 
         @Override
-        protected void createInventory() {
+        protected void createInventory(MetaTileEntity holder) {
+            if (!(holder instanceof MetaTileEntityMEStockingBus stocking)) {
+                throw new IllegalArgumentException("Cannot create Stocking Item List for nonstocking MetaTileEntity!");
+            }
             this.inventory = new ExportOnlyAEStockingItemSlot[size];
             for (int i = 0; i < size; i++) {
-                this.inventory[i] = new ExportOnlyAEStockingItemSlot(holder);
+                this.inventory[i] = new ExportOnlyAEStockingItemSlot(stocking);
             }
             for (ExportOnlyAEItemSlot slot : this.inventory) {
                 slot.setTrigger(this::onContentsChanged);

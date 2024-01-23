@@ -52,4 +52,13 @@ public class ExportOnlyAEFluidList {
     public boolean isStocking() {
         return false;
     }
+
+    public boolean ownsSlot(ExportOnlyAEFluidSlot testSlot) {
+        for (var slot : inventory) {
+            if (slot == testSlot) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

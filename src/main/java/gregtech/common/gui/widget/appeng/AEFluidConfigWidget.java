@@ -1,18 +1,23 @@
 package gregtech.common.gui.widget.appeng;
 
 import gregtech.common.gui.widget.appeng.slot.AEFluidConfigSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fluids.FluidStack;
 
 import appeng.api.storage.data.IAEFluidStack;
 
 public class AEFluidConfigWidget extends AEConfigWidget<IAEFluidStack> {
 
-    public AEFluidConfigWidget(int x, int y, IConfigurableSlot<IAEFluidStack>[] config) {
-        super(x, y, config, false); // todo
+    final ExportOnlyAEFluidList fluidList;
+
+    public AEFluidConfigWidget(int x, int y, ExportOnlyAEFluidList fluidList) {
+        super(x, y, fluidList.getInventory(), fluidList.isStocking());
+        this.fluidList = fluidList;
     }
 
     @Override
@@ -27,6 +32,14 @@ public class AEFluidConfigWidget extends AEConfigWidget<IAEFluidStack> {
             line = index / 8;
             this.addWidget(new AEFluidConfigSlot((index - line * 8) * 18, line * (18 * 2 + 2), this, index));
         }
+    }
+
+    public boolean hasStackInConfig(FluidStack stack) {
+        return fluidList.hasStackInConfig(stack, true);
+    }
+
+    public boolean isAutoPull() {
+        return fluidList.isAutoPull();
     }
 
     @Override

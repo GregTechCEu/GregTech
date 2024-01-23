@@ -50,7 +50,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
     private boolean workingEnabled;
-    private ExportOnlyAEFluidList aeFluidHandler;
+    protected ExportOnlyAEFluidList aeFluidHandler;
 
     public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.UHV, false);
@@ -78,10 +78,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME()) {
-            if (this.updateMEStatus()) {
-                syncME();
-            }
+        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && updateMEStatus()) {
+            syncME();
         }
     }
 
@@ -152,7 +150,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
                 0xFFFFFFFF);
 
         // Config slots
-        builder.widget(new AEFluidConfigWidget(16, 25, this.getAEFluidHandler().getInventory()));
+        builder.widget(new AEFluidConfigWidget(16, 25, this.getAEFluidHandler()));
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);

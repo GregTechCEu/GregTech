@@ -168,7 +168,7 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
         this.notifiableEntities.remove(metaTileEntity);
     }
 
-    private void trigger() {
+    protected void trigger() {
         for (MetaTileEntity metaTileEntity : this.notifiableEntities) {
             if (metaTileEntity != null && metaTileEntity.isValid()) {
                 this.addToNotifiedList(metaTileEntity, this, false);
@@ -186,5 +186,9 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
                 this.config == null ? null : this.config.copy(),
                 this.stock == null ? null : this.stock.copy(),
                 null);
+    }
+
+    protected MetaTileEntity getHolder() {
+        return holder;
     }
 }
