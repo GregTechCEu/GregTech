@@ -28,7 +28,7 @@ public class PrimitiveProperty extends RecipeProperty<Boolean> {
     public int getInfoHeight(Object value) {
         return 0;
     }
-    
+
     @Override
     public boolean hideTotalEU() {
         return true;
