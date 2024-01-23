@@ -284,7 +284,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @return {@code true} if the provided channel can be supported by the node.
      */
     public boolean canSupportChannel(FlowChannel<PipeType, NodeDataType> channel) {
-        return this.channels.size() < this.data.getChannelMax() || this.channels.contains(channel);
+        return this.channels.size() < this.data.getChannelMaxCount() || this.channels.contains(channel);
     }
 
     /**
@@ -294,7 +294,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @return {@code true} if the channel was added.
      */
     public boolean addChannel(FlowChannel<PipeType, NodeDataType> channel) {
-        if (this.channels.size() < this.data.getChannelMax()) {
+        if (this.channels.size() < this.data.getChannelMaxCount()) {
             this.channels.add(channel);
             return true;
         }

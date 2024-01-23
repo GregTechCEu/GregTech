@@ -4,7 +4,7 @@ import java.util.Set;
 
 public interface INodeData<T extends INodeData<?>> {
 
-    default int getChannelMax() {
+    default int getChannelMaxCount() {
         return 1;
     }
 

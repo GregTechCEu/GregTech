@@ -141,28 +141,13 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
     }
 
     @Override
-    public double getWeightFactor() {
-        // behold 170, the magic number
-        return Math.pow(2, (int) (Double.MAX_EXPONENT / (Math.log(this.getThroughput()) * 170)));
+    public int getChannelMaxCount() {
+        return this.tanks;
     }
 
     @Override
     public FluidPipeProperties getMinData(Set<FluidPipeProperties> datas) {
-        int maxFluidTemperature = Integer.MAX_VALUE;
-        int throughput = Integer.MAX_VALUE;
-        boolean gasProof = true;
-        boolean acidProof = true;
-        boolean cryoProof = true;
-        boolean plasmaProof = true;
-        for (FluidPipeProperties data : datas) {
-            maxFluidTemperature = Math.min(maxFluidTemperature, data.getMaxFluidTemperature());
-            throughput = Math.min(throughput, data.getThroughput());
-            gasProof &= data.isGasProof();
-            acidProof &= data.isAcidProof();
-            cryoProof &= data.isCryoProof();
-            plasmaProof &= data.isPlasmaProof();
-        }
-        return new FluidPipeProperties(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof);
+        return null;
     }
 
     @Override
