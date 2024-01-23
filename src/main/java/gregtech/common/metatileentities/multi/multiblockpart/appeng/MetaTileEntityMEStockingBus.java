@@ -66,6 +66,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         }
     }
 
+    // Update the visual display for the fake items. This also is important for the item handler's
+    // getStackInSlot() method, as it uses the cached items set here.
     @Override
     protected void syncME() {
         IMEMonitor<IAEItemStack> monitor = super.getMonitor();
@@ -106,6 +108,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        // block auto-pull from working when not in a formed multiblock
         this.autoPullTest = $ -> false;
         if (this.autoPull) {
             // may as well clear if we are auto-pull, no reason to preserve the config
@@ -118,10 +121,16 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     public void onDistinctChange(boolean newValue) {
         super.onDistinctChange(newValue);
         if (!getWorld().isRemote && !newValue) {
+            // Ensure that our configured items won't match any other buses in the multiblock.
+            // Needed since we allow duplicates in distinct mode on, but not off
             validateConfig();
         }
     }
 
+    /**
+     * Test for if any of our configured items are in another stocking bus on the multi
+     * we are attached to. Prevents dupes in certain situations.
+     */
     private void validateConfig() {
         for (var slot : this.getAEItemHandler().getInventory()) {
             if (slot.getConfig() != null) {
@@ -134,6 +143,9 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         }
     }
 
+    /**
+     * @return True if the passed stack is found as a configuration in any other stocking buses on the multiblock.
+     */
     private boolean testConfiguredInOtherBus(ItemStack stack) {
         MultiblockControllerBase controller = getController();
         if (controller == null) return false;
@@ -147,7 +159,6 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                 if (ability instanceof ExportOnlyAEStockingItemList aeList) {
                     // We don't need to check for ourselves, as this case is handled elsewhere.
                     if (aeList == this.aeItemHandler) continue;
-                    // can ignore non-stocking since they hold actual items.
                     if (aeList.hasStackInConfig(stack)) {
                         return true;
                     }
@@ -171,6 +182,10 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         }
     }
 
+    /**
+     * Refresh the configuration list in auto-pull mode.
+     * Sets the config to the first 16 valid items found in the network.
+     */
     private void refreshList() {
         IMEMonitor<IAEItemStack> monitor = getMonitor();
         if (monitor == null) return;
@@ -275,6 +290,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot == 0 && this.stock != null) {
                 if (this.config != null) {
+                    // Extract the items from the real net to either validate (simulate)
+                    // or extract (modulate) when this is called
                     IMEMonitor<IAEItemStack> monitor = holder.getMonitor();
                     if (monitor == null) return ItemStack.EMPTY;
 
