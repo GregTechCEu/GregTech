@@ -17,10 +17,10 @@ public class ExportOnlyAEItemList extends NotifiableItemStackHandler {
     public ExportOnlyAEItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
         super(holder, slots, entityToNotify, false);
         this.size = slots;
-        createInventory(holder);
+        createInventory();
     }
 
-    protected void createInventory(MetaTileEntity holder) {
+    protected void createInventory() {
         this.inventory = new ExportOnlyAEItemSlot[size];
         for (int i = 0; i < size; i++) {
             this.inventory[i] = new ExportOnlyAEItemSlot();
@@ -105,7 +105,7 @@ public class ExportOnlyAEItemList extends NotifiableItemStackHandler {
         }
     }
 
-    public boolean hasStackInConfig(ItemStack stack) {
+    public boolean hasStackInConfig(ItemStack stack, boolean checkExternal) {
         if (stack == null || stack.isEmpty()) return false;
         for (ExportOnlyAEItemSlot slot : inventory) {
             IAEItemStack config = slot.getConfig();
@@ -113,6 +113,14 @@ public class ExportOnlyAEItemList extends NotifiableItemStackHandler {
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean isAutoPull() {
+        return false;
+    }
+
+    public boolean isStocking() {
         return false;
     }
 }

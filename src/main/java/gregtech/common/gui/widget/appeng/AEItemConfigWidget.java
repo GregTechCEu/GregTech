@@ -1,6 +1,7 @@
 package gregtech.common.gui.widget.appeng;
 
 import gregtech.common.gui.widget.appeng.slot.AEItemConfigSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -10,16 +11,13 @@ import net.minecraft.network.PacketBuffer;
 
 import appeng.api.storage.data.IAEItemStack;
 
-import java.util.function.Supplier;
-
 public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
 
-    final Supplier<Boolean> autoPull;
+    final ExportOnlyAEItemList itemList;
 
-    public AEItemConfigWidget(int x, int y, IConfigurableSlot<IAEItemStack>[] config, boolean isStocking,
-                              Supplier<Boolean> autoPull) {
-        super(x, y, config, isStocking);
-        this.autoPull = autoPull;
+    public AEItemConfigWidget(int x, int y, ExportOnlyAEItemList itemList) {
+        super(x, y, itemList.getInventory(), itemList.isStocking());
+        this.itemList = itemList;
     }
 
     @Override
@@ -37,18 +35,11 @@ public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
     }
 
     public boolean hasStackInConfig(ItemStack stack) {
-        if (stack == null || stack.isEmpty()) return false;
-        for (IConfigurableSlot<IAEItemStack> slot : this.displayList) {
-            IAEItemStack config = slot.getConfig();
-            if (config != null && config.isSameType(stack)) {
-                return true;
-            }
-        }
-        return false;
+        return itemList.hasStackInConfig(stack, true);
     }
 
     public boolean isAutoPull() {
-        return autoPull.get();
+        return itemList.isAutoPull();
     }
 
     @Override

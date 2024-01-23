@@ -151,7 +151,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 0xFFFFFFFF);
 
         // Config slots
-        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler().getInventory(), false, () -> false));
+        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);

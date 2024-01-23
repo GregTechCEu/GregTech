@@ -159,7 +159,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                 if (ability instanceof ExportOnlyAEStockingItemList aeList) {
                     // We don't need to check for ourselves, as this case is handled elsewhere.
                     if (aeList == this.aeItemHandler) continue;
-                    if (aeList.hasStackInConfig(stack)) {
+                    if (aeList.hasStackInConfig(stack, false)) {
                         return true;
                     }
                 }
@@ -231,7 +231,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                 0xFFFFFFFF);
 
         // Config slots
-        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler().getInventory(), true, () -> autoPull));
+        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
         // todo button texture
         builder.widget(new ImageCycleButtonWidget(151, 81, 18, 18, GuiTextures.BUTTON_POWER,
                 () -> autoPull, this::setAutoPull));
@@ -326,19 +326,18 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     private static class ExportOnlyAEStockingItemList extends ExportOnlyAEItemList {
 
-        public ExportOnlyAEStockingItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
+        private final MetaTileEntityMEStockingBus holder;
+
+        public ExportOnlyAEStockingItemList(MetaTileEntityMEStockingBus holder, int slots, MetaTileEntity entityToNotify) {
             super(holder, slots, entityToNotify);
+            this.holder = holder;
         }
 
         @Override
-        protected void createInventory(MetaTileEntity holder) {
-            if (!(holder instanceof MetaTileEntityMEStockingBus stocking)) {
-                throw new IllegalArgumentException("Cannot create Stocking Item List for non-stocking bus!");
-            }
-
+        protected void createInventory() {
             this.inventory = new ExportOnlyAEStockingItemSlot[size];
             for (int i = 0; i < size; i++) {
-                this.inventory[i] = new ExportOnlyAEStockingItemSlot(stocking);
+                this.inventory[i] = new ExportOnlyAEStockingItemSlot(holder);
             }
             for (ExportOnlyAEItemSlot slot : this.inventory) {
                 slot.setTrigger(this::onContentsChanged);
@@ -348,6 +347,26 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         @Override
         public ExportOnlyAEStockingItemSlot[] getInventory() {
             return (ExportOnlyAEStockingItemSlot[]) super.getInventory();
+        }
+
+        @Override
+        public boolean isStocking() {
+            return true;
+        }
+
+        @Override
+        public boolean isAutoPull() {
+            return holder.autoPull;
+        }
+
+        @Override
+        public boolean hasStackInConfig(ItemStack stack, boolean checkExternal) {
+            boolean inThisBus = super.hasStackInConfig(stack, false);
+            if (inThisBus) return true;
+            if (checkExternal) {
+                return holder.testConfiguredInOtherBus(stack);
+            }
+            return false;
         }
     }
 }

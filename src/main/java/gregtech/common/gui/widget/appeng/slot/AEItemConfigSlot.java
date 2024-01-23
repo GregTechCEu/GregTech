@@ -117,13 +117,8 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
                 ItemStack item = this.gui.entityPlayer.inventory.getItemStack();
 
                 if (!item.isEmpty()) {
-                    // Only accept the result if we are not a stocking hatch, or if the tested item is not
-                    // configured elsewhere, to prevent having the same config multiple times, causing dupes.
-                    if (!pw.isStocking() || !pw.hasStackInConfig(item)) {
-                        writeClientAction(UPDATE_ID, buf -> buf.writeItemStack(item));
-                    } else {
-                        return false;
-                    }
+                    writeClientAction(UPDATE_ID, buf -> buf.writeItemStack(item));
+                    return true;
                 }
 
                 if (!pw.isStocking()) {
@@ -148,6 +143,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         if (id == UPDATE_ID) {
             try {
                 ItemStack item = buffer.readItemStack();
+                if (!isItemValidForSlot(item)) return;
                 slot.setConfig(WrappedItemStack.fromItemStack(item));
                 this.parentWidget.enableAmount(this.index);
                 if (!item.isEmpty()) {
@@ -183,6 +179,14 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
                 slot.getConfig().setStackSize(amt);
             }
         }
+    }
+
+    // Method for server-side validation of an attempted new configured item
+    private boolean isItemValidForSlot(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) return true;
+        AEItemConfigWidget pw = getParentWidget();
+        if (!pw.isStocking()) return true;
+        return !pw.hasStackInConfig(stack);
     }
 
     @Override
