@@ -106,7 +106,10 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
         // this overcomplicated workaround is due to not enough protected/public visibilities.
         @Override
         public double getEdgeWeight(NetEdge netEdge) {
-            return netEdge.getPredicate().test(testObject) ? super.getEdgeWeight(netEdge) : 0;
+            // Both source and target must support the channel, and the netEdge predicate must allow our object.
+            return ((NodeG<PT, NDT>) netEdge.getSource()).canSupportChannel(queryingChannel) &&
+                    ((NodeG<PT, NDT>) netEdge.getTarget()).canSupportChannel(queryingChannel) &&
+                    netEdge.getPredicate().test(testObject) ? super.getEdgeWeight(netEdge) : 0;
         }
 
         @Override
