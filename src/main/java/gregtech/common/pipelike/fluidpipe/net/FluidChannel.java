@@ -13,7 +13,6 @@ import gregtech.common.covers.CoverShutter;
 import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

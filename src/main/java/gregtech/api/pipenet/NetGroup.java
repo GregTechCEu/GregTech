@@ -3,7 +3,6 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;

@@ -11,7 +11,6 @@ import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
-
 import gregtech.common.pipelike.fluidpipe.net.FluidChannel;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 
@@ -37,9 +36,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-
-import net.minecraftforge.fluids.capability.IFluidHandler;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +46,7 @@ import java.util.EnumMap;
 import java.util.List;
 
 public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties>
-        implements IDataInfoProvider {
+                                 implements IDataInfoProvider {
 
     private PipeTankList pipeTankList;
     private final EnumMap<EnumFacing, PipeTankList> tankLists = new EnumMap<>(EnumFacing.class);
@@ -340,7 +336,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                 if (stack == null) continue;
                 fluidTanks[i].setFluid(stack);
                 // the best part is that this naturally gives us backwards compatibility.
-                FluidChannel channel = FluidChannel.getChannelFromGroup(stack.getFluid(), this.getNode().getGroupSafe());
+                FluidChannel channel = FluidChannel.getChannelFromGroup(stack.getFluid(),
+                        this.getNode().getGroupSafe());
                 channel.addSource(this.getNode());
             }
         }

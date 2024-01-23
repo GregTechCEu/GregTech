@@ -1,15 +1,12 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
-
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraft.nbt.NBTTagList;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
@@ -65,7 +62,8 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
         for (NetEdge edge : pipeGraph.edgeSet()) {
             // prevent contamination by our manager edges
             if (edge.getSource() == superSource || edge.getTarget() == superSource ||
-                    edge.getSource() == superSink || edge.getTarget() == superSink) continue;
+                    edge.getSource() == superSink || edge.getTarget() == superSink)
+                continue;
             allNetEdges.appendTag(edge.serializeNBT());
         }
         compound.setTag("NetEdges", allNetEdges);
