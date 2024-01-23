@@ -11,6 +11,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -43,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_PULL;
 
@@ -60,13 +63,17 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
     private boolean workingEnabled;
     private ExportOnlyAEItemList aeItemHandler;
 
+    // Stocking bus stuff
     private final boolean isStocking;
-    private boolean autoPull; // todo
+    private boolean autoPull;
+    private Function<ItemStack, Boolean> autoPullTest;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, boolean isStocking) {
         super(metaTileEntityId, GTValues.UHV, false);
         this.workingEnabled = true;
         this.isStocking = isStocking;
+        // block configuring with this when not in a multiblock if it is a stocking bus
+        this.autoPullTest = isStocking ? ($ -> false) : ($ -> true);
     }
 
     @Override
@@ -168,6 +175,73 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 }
             }
         } catch (GridAccessException ignore) {}
+    }
+
+    @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        if (isStocking()) {
+            // ensure that no other stocking bus on this multiblock is configured to hold the same item.
+            // that we have in our own bus.
+            this.autoPullTest = stack -> !this.testConfiguredInOtherBus(stack);
+            // also ensure that our current config is valid given other inputs
+            validateConfig();
+        }
+    }
+
+    @Override
+    public void onDistinctChange(boolean newValue) {
+        super.onDistinctChange(newValue);
+        if (!getWorld().isRemote && isStocking() && !newValue) {
+            validateConfig();
+        }
+    }
+
+    private void validateConfig() {
+        for (var slot : this.aeItemHandler.inventory) {
+            if (slot.getConfig() != null) {
+                ItemStack configuredStack = slot.getConfig().createItemStack();
+                if (testConfiguredInOtherBus(configuredStack)) {
+                    slot.setConfig(null);
+                    slot.setStock(null);
+                }
+            }
+        }
+    }
+
+    private boolean testConfiguredInOtherBus(ItemStack stack) {
+        MultiblockControllerBase controller = getController();
+        if (controller == null) return false;
+
+        // In distinct mode, we don't need to check other buses since only one bus can run a recipe at a time.
+        if (!(controller instanceof RecipeMapMultiblockController rmmc) || !rmmc.isDistinct()) {
+            // Otherwise, we need to test for if the item is configured
+            // in any stocking bus in the multi (besides ourselves).
+            var abilityList = controller.getAbilities(MultiblockAbility.IMPORT_ITEMS);
+            for (var ability : abilityList) {
+                if (ability instanceof ExportOnlyAEItemList aeList) {
+                    // We don't need to check for ourselves, as this case is handled elsewhere.
+                    if (aeList == this.aeItemHandler) continue;
+                    // can ignore non-stocking since they hold actual items.
+                    if (aeList.meBus.isStocking() && aeList.hasStackInConfig(stack)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        if (isStocking()) {
+            this.autoPullTest = $ -> false;
+            if (this.autoPull) {
+                // may as well clear if we are auto-pull, no reason to preserve the config
+                this.aeItemHandler.clearConfig();
+            }
+        }
+        super.removeFromMultiBlock(controllerBase);
     }
 
     public boolean isStocking() {
@@ -432,7 +506,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 while (iterator.hasNext() && index < CONFIG_SIZE) {
                     IAEItemStack stack = iterator.next();
                     if (stack.getStackSize() > 0) {
-                        IAEItemStack selectedStack = WrappedItemStack.fromItemStack(stack.createItemStack());
+                        ItemStack itemStack = stack.createItemStack();
+                        if (itemStack == null || itemStack.isEmpty()) continue;
+                        // Ensure that it is valid to configure with this stack
+                        if (meBus.autoPullTest != null && !meBus.autoPullTest.apply(itemStack)) continue;
+                        IAEItemStack selectedStack = WrappedItemStack.fromItemStack(itemStack);
                         if (selectedStack == null) continue;
                         selectedStack.setStackSize(1);
                         this.inventory[index].setConfig(selectedStack);
@@ -443,6 +521,17 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                     this.inventory[index].setConfig(null);
                 }
             } catch (GridAccessException ignored) {}
+        }
+
+        private boolean hasStackInConfig(ItemStack stack) {
+            if (stack == null || stack.isEmpty()) return false;
+            for (ExportOnlyAEItem slot : inventory) {
+                IAEItemStack config = slot.getConfig();
+                if (config != null && config.isSameType(stack)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

@@ -246,6 +246,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void setDistinct(boolean isDistinct) {
         this.isDistinct = isDistinct;
         recipeMapWorkable.onDistinctChanged();
+        getMultiblockParts().forEach(part -> part.onDistinctChange(isDistinct));
         // mark buses as changed on distinct toggle
         if (this.isDistinct) {
             this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
