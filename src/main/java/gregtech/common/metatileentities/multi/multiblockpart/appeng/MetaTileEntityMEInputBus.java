@@ -3,12 +3,21 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
+import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
+import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
@@ -24,8 +33,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.config.Actionable;
@@ -39,16 +51,21 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
-                                      implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+                                      implements IMultiblockAbilityPart<IItemHandlerModifiable>,
+                                                 IGhostSlotConfigurable {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
     private boolean workingEnabled;
     protected ExportOnlyAEItemList aeItemHandler;
+    private GhostCircuitItemStackHandler circuitInventory;
+    private NotifiableItemStackHandler extraSlotInventory;
+    private ItemHandlerList actualImportItems;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.UHV, false);
@@ -64,17 +81,19 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
 
     @Override
     protected void initializeInventory() {
-        getAEItemHandler(); // initialize it
         super.initializeInventory();
-    }
-
-    protected IItemHandlerModifiable createImportItemHandler() {
-        return getAEItemHandler();
+        this.aeItemHandler = getAEItemHandler();
+        this.circuitInventory = new GhostCircuitItemStackHandler(this);
+        this.circuitInventory.addNotifiableMetaTileEntity(this);
+        this.extraSlotInventory = new NotifiableItemStackHandler(this, 1, this, false);
+        this.extraSlotInventory.addNotifiableMetaTileEntity(this);
+        this.actualImportItems = new ItemHandlerList(
+                Arrays.asList(this.aeItemHandler, this.circuitInventory, this.extraSlotInventory));
+        this.importItems = this.actualImportItems;
     }
 
     public IItemHandlerModifiable getImportItems() {
-        this.importItems = getAEItemHandler();
-        return super.getImportItems();
+        return this.actualImportItems;
     }
 
     @Override
@@ -140,6 +159,27 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
     }
 
     @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
+            if (handler instanceof INotifiableHandler notifiable) {
+                notifiable.addNotifiableMetaTileEntity(controllerBase);
+                notifiable.addToNotifiedList(this, handler, false);
+            }
+        }
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        super.removeFromMultiBlock(controllerBase);
+        for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
+            if (handler instanceof INotifiableHandler notifiable) {
+                notifiable.removeNotifiableMetaTileEntity(controllerBase);
+            }
+        }
+    }
+
+    @Override
     protected final ModularUI createUI(EntityPlayer player) {
         ModularUI.Builder builder = createUITemplate(player);
         return builder.build(this.getHolder(), player);
@@ -157,6 +197,25 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
 
         // Config slots
         builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
+
+        // Ghost circuit slot
+        SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 7 + 18 * 4, 25 + 18 * 3)
+                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
+        builder.widget(circuitSlot.setConsumer(w -> {
+            String configString;
+            if (circuitInventory == null || circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
+                configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
+            } else {
+                configString = String.valueOf(circuitInventory.getCircuitValue());
+            }
+
+            w.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
+        }));
+
+        // Extra slot
+        builder.widget(new SlotWidget(extraSlotInventory, 0, 7 + 18 * 4, 25 + 18 * 2)
+                .setBackgroundTexture(GuiTextures.SLOT)
+                .setTooltipText("gregtech.gui.me_bus.extra_slot"));
 
         builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder;
@@ -209,6 +268,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
             slots.appendTag(slotTag);
         }
         data.setTag(ITEM_BUFFER_TAG, slots);
+        this.circuitInventory.write(data);
+        // Extra slot inventory
+        GTUtility.writeItems(this.extraSlotInventory, "ExtraInventory", data);
         return data;
     }
 
@@ -226,6 +288,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 slot.deserializeNBT(slotTag.getCompoundTag("stack"));
             }
         }
+        this.circuitInventory.read(data);
+        GTUtility.readItems(this.extraSlotInventory, "ExtraInventory", data);
         this.importItems = createImportItemHandler();
     }
 
@@ -253,7 +317,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
 
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> list) {
-        list.add(this.getAEItemHandler());
+        list.add(this.actualImportItems);
     }
 
     @Nullable
@@ -264,6 +328,22 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
             return proxy.getStorage().getInventory(ITEM_NET);
         } catch (GridAccessException ignored) {
             return null;
+        }
+    }
+
+    @Override
+    public boolean hasGhostCircuitInventory() {
+        return true;
+    }
+
+    @Override
+    public void setGhostCircuitConfig(int config) {
+        if (this.circuitInventory.getCircuitValue() == config) {
+            return;
+        }
+        this.circuitInventory.setCircuitValue(config);
+        if (!getWorld().isRemote) {
+            markDirty();
         }
     }
 }
