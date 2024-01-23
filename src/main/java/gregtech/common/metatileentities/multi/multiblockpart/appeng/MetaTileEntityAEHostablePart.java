@@ -180,7 +180,9 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         } else {
             this.isOnline = false;
         }
-        writeCustomData(ONLINE_ID, buf -> buf.writeBoolean(this.isOnline));
+        if (!getWorld().isRemote) {
+            writeCustomData(ONLINE_ID, buf -> buf.writeBoolean(this.isOnline));
+        }
         return this.isOnline;
     }
 

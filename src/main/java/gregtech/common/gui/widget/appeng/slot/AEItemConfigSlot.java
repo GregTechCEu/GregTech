@@ -9,6 +9,7 @@ import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,15 +25,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @Author GlodBlock
- * @Description A configurable slot for {@link IAEItemStack}
- * @Date 2023/4/22-0:48
- */
 public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
 
     public AEItemConfigSlot(int x, int y, AEItemConfigWidget widget, int index) {
-        super(new Position(x, y), new Size(18, 18 * 2), widget, index);
+        super(new Position(x, y), new Size(18 * 6, 18), widget, index);
     }
 
     @Override
@@ -49,7 +45,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         IAEItemStack config = slot.getConfig();
         IAEItemStack stock = slot.getStock();
         GuiTextures.SLOT.draw(position.x, position.y, 18, 18);
-        GuiTextures.SLOT.draw(position.x, position.y + 18, 18, 18);
+        GuiTextures.SLOT.draw(position.x + DISPLAY_X_OFFSET, position.y, 18, 18);
         GuiTextures.CONFIG_ARROW_DARK.draw(position.x, position.y, 18, 18);
         if (this.select) {
             GuiTextures.SELECT_BOX.draw(position.x, position.y, 18, 18);
@@ -70,14 +66,14 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         if (stock != null) {
             ItemStack stack = stock.createItemStack();
             stack.setCount(1);
-            drawItemStack(stack, stackX, stackY + 18, null);
+            drawItemStack(stack, stackX + DISPLAY_X_OFFSET, stackY, null);
             String amountStr = TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4);
-            drawStringFixedCorner(amountStr, stackX + 17, stackY + 18 + 17, 16777215, true, 0.5f);
+            drawStringFixedCorner(amountStr, stackX + DISPLAY_X_OFFSET + 17, stackY + 17, 16777215, true, 0.5f);
         }
         if (mouseOverConfig(mouseX, mouseY)) {
             drawSelectionOverlay(stackX, stackY, 16, 16);
         } else if (mouseOverStock(mouseX, mouseY)) {
-            drawSelectionOverlay(stackX, stackY + 18, 16, 16);
+            drawSelectionOverlay(stackX + DISPLAY_X_OFFSET, stackY, 16, 16);
         }
     }
 
@@ -93,6 +89,16 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         }
         if (item != null) {
             drawHoveringText(item.createItemStack(), getItemToolTip(item.createItemStack()), -1, mouseX, mouseY);
+        }
+    }
+
+    @Override
+    protected void addHoverText(List<String> hoverText) {
+        if (getParentWidget().isAutoPull()) {
+            hoverText.add(I18n.format("gregtech.gui.config_slot"));
+            hoverText.add(I18n.format("gregtech.gui.config_slot.auto_pull_managed"));
+        } else {
+            super.addHoverText(hoverText);
         }
     }
 
@@ -195,7 +201,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
             return Collections.emptyList();
         }
         Rectangle rectangle = toRectangleBox();
-        rectangle.height /= 2;
+        rectangle.width /= 6;
         return Lists.newArrayList(new IGhostIngredientHandler.Target<>() {
 
             @NotNull
@@ -219,7 +225,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         if (parentWidget.isStocking()) return false;
         IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
         Rectangle rectangle = toRectangleBox();
-        rectangle.height /= 2;
+        rectangle.width /= 6;
         if (slot.getConfig() == null || wheelDelta == 0 || !rectangle.contains(mouseX, mouseY)) {
             return false;
         }

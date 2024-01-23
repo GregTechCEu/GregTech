@@ -23,14 +23,16 @@ public class AEFluidConfigWidget extends AEConfigWidget<IAEFluidStack> {
     @Override
     @SuppressWarnings("unchecked")
     void init() {
-        int line;
+        final int size = (int) Math.sqrt(this.config.length);
         this.displayList = new IConfigurableSlot[this.config.length];
         this.cached = new IConfigurableSlot[this.config.length];
-        for (int index = 0; index < this.config.length; index++) {
-            this.displayList[index] = new ExportOnlyAEFluidSlot();
-            this.cached[index] = new ExportOnlyAEFluidSlot();
-            line = index / 8;
-            this.addWidget(new AEFluidConfigSlot((index - line * 8) * 18, line * (18 * 2 + 2), this, index));
+        for (int h = 0; h < size; h++) {
+            for (int w = 0; w < size; w++) {
+                final int index = h * size + w;
+                this.displayList[index] = new ExportOnlyAEFluidSlot();
+                this.cached[index] = new ExportOnlyAEFluidSlot();
+                this.addWidget(new AEFluidConfigSlot(w * 18, h * 18, this, index));
+            }
         }
     }
 

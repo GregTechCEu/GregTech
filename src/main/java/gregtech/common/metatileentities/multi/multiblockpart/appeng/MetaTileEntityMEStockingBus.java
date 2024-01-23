@@ -21,14 +21,18 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_PULL;
@@ -171,14 +175,14 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     private void setAutoPull(boolean autoPull) {
         this.autoPull = autoPull;
-        if (!this.autoPull) {
-            this.getAEItemHandler().clearConfig();
-        } else if (updateMEStatus()) {
-            this.refreshList();
-            syncME();
-        }
         markDirty();
         if (!getWorld().isRemote) {
+            if (!this.autoPull) {
+                this.getAEItemHandler().clearConfig();
+            } else if (updateMEStatus()) {
+                this.refreshList();
+                syncME();
+            }
             writeCustomData(UPDATE_AUTO_PULL, buf -> buf.writeBoolean(this.autoPull));
         }
     }
@@ -221,24 +225,12 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
-                .label(10, 5, getMetaFullName());
-        // ME Network status
-        builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                I18n.format("gregtech.gui.me_network.online") :
-                I18n.format("gregtech.gui.me_network.offline"),
-                0xFFFFFFFF);
-
-        // Config slots
-        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
+    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
+        ModularUI.Builder builder = super.createUITemplate(player);
         // todo button texture
-        builder.widget(new ImageCycleButtonWidget(151, 81, 18, 18, GuiTextures.BUTTON_POWER,
+        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26, 16, 16, GuiTextures.BUTTON_POWER,
                 () -> autoPull, this::setAutoPull));
-
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder.build(this.getHolder(), entityPlayer);
+        return builder;
     }
 
     @Override
@@ -246,7 +238,11 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
                                       CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
             setAutoPull(!autoPull);
-            // todo send player message
+            if (autoPull) {
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.stocking_auto_pull_enabled"), false);
+            } else {
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.stocking_auto_pull_disabled"), false);
+            }
         }
         return true;
     }
@@ -262,6 +258,18 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.autoPull = data.getBoolean("AutoPull");
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(autoPull);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.autoPull = buf.readBoolean();
     }
 
     private static class ExportOnlyAEStockingItemSlot extends ExportOnlyAEItemSlot {
@@ -322,6 +330,14 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             }
             return ItemStack.EMPTY;
         }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip"));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     private static class ExportOnlyAEStockingItemList extends ExportOnlyAEItemList {

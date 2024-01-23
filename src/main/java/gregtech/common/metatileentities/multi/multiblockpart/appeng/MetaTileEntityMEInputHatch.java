@@ -139,21 +139,26 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    protected final ModularUI createUI(EntityPlayer player) {
+        ModularUI.Builder builder = createUITemplate(player);
+        return builder.build(this.getHolder(), player);
+    }
+
+    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI
                 .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
                 .label(10, 5, getMetaFullName());
         // ME Network status
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                I18n.format("gregtech.gui.me_network.online") :
-                I18n.format("gregtech.gui.me_network.offline"),
+                        I18n.format("gregtech.gui.me_network.online") :
+                        I18n.format("gregtech.gui.me_network.offline"),
                 0xFFFFFFFF);
 
         // Config slots
         builder.widget(new AEFluidConfigWidget(16, 25, this.getAEFluidHandler()));
 
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder.build(this.getHolder(), entityPlayer);
+        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
+        return builder;
     }
 
     @Override

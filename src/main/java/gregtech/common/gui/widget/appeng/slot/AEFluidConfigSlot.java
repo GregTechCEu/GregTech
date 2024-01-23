@@ -11,6 +11,7 @@ import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -37,7 +38,7 @@ import static gregtech.api.util.GTUtility.getFluidFromContainer;
 public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
 
     public AEFluidConfigSlot(int x, int y, AEFluidConfigWidget widget, int index) {
-        super(new Position(x, y), new Size(18, 18 * 2), widget, index);
+        super(new Position(x, y), new Size(18 * 6, 18), widget, index);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         IAEFluidStack config = slot.getConfig();
         IAEFluidStack stock = slot.getStock();
         GuiTextures.FLUID_SLOT.draw(position.x, position.y, 18, 18);
-        GuiTextures.FLUID_SLOT.draw(position.x, position.y + 18, 18, 18);
+        GuiTextures.FLUID_SLOT.draw(position.x + DISPLAY_X_OFFSET, position.y, 18, 18);
         GuiTextures.CONFIG_ARROW.draw(position.x, position.y, 18, 18);
         if (this.select) {
             GuiTextures.SELECT_BOX.draw(position.x, position.y, 18, 18);
@@ -70,15 +71,15 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
             }
         }
         if (stock != null) {
-            RenderUtil.drawFluidForGui(stock.getFluidStack(), stock.getFluidStack().amount, stackX, stackY + 18, 17,
-                    17);
+            RenderUtil.drawFluidForGui(stock.getFluidStack(), stock.getFluidStack().amount, stackX + DISPLAY_X_OFFSET,
+                    stackY, 17, 17);
             String amountStr = TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4) + "L";
-            drawStringFixedCorner(amountStr, stackX + 17, stackY + 18 + 17, 16777215, true, 0.5f);
+            drawStringFixedCorner(amountStr, stackX + DISPLAY_X_OFFSET + 17, stackY + 17, 16777215, true, 0.5f);
         }
         if (mouseOverConfig(mouseX, mouseY)) {
             drawSelectionOverlay(stackX, stackY, 16, 16);
         } else if (mouseOverStock(mouseX, mouseY)) {
-            drawSelectionOverlay(stackX, stackY + 18, 16, 16);
+            drawSelectionOverlay(stackX + DISPLAY_X_OFFSET, stackY, 16, 16);
         }
     }
 
@@ -108,6 +109,16 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
                 }
             }
             drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
+        }
+    }
+
+    @Override
+    protected void addHoverText(List<String> hoverText) {
+        if (getParentWidget().isAutoPull()) {
+            hoverText.add(I18n.format("gregtech.gui.config_slot"));
+            hoverText.add(I18n.format("gregtech.gui.config_slot.auto_pull_managed"));
+        } else {
+            super.addHoverText(hoverText);
         }
     }
 
@@ -227,7 +238,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
             return Collections.emptyList();
         }
         Rectangle rectangle = toRectangleBox();
-        rectangle.height /= 2;
+        rectangle.width /= 6;
         return Lists.newArrayList(new IGhostIngredientHandler.Target<>() {
 
             @NotNull
@@ -253,7 +264,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         if (parentWidget.isStocking()) return false;
         IConfigurableSlot<IAEFluidStack> slot = this.parentWidget.getDisplay(this.index);
         Rectangle rectangle = toRectangleBox();
-        rectangle.height /= 2;
+        rectangle.width /= 6;
         if (slot.getConfig() == null || wheelDelta == 0 || !rectangle.contains(mouseX, mouseY)) {
             return false;
         }
