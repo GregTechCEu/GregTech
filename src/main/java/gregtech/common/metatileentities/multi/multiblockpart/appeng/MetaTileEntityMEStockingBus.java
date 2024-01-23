@@ -328,7 +328,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
         private final MetaTileEntityMEStockingBus holder;
 
-        public ExportOnlyAEStockingItemList(MetaTileEntityMEStockingBus holder, int slots, MetaTileEntity entityToNotify) {
+        public ExportOnlyAEStockingItemList(MetaTileEntityMEStockingBus holder, int slots,
+                                            MetaTileEntity entityToNotify) {
             super(holder, slots, entityToNotify);
             this.holder = holder;
         }
