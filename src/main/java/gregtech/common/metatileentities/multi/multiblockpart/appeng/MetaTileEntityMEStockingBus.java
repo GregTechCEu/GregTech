@@ -8,7 +8,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -227,9 +226,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer player) {
         ModularUI.Builder builder = super.createUITemplate(player);
-        // todo button texture
-        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26, 16, 16, GuiTextures.BUTTON_POWER,
-                () -> autoPull, this::setAutoPull));
+        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26, 16, 16, GuiTextures.BUTTON_AUTO_PULL,
+                () -> autoPull, this::setAutoPull).setTooltipHoverString("gregtech.gui.me_bus.auto_pull_button"));
         return builder;
     }
 
@@ -239,9 +237,11 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         if (!getWorld().isRemote) {
             setAutoPull(!autoPull);
             if (autoPull) {
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.stocking_auto_pull_enabled"), false);
+                playerIn.sendStatusMessage(
+                        new TextComponentTranslation("gregtech.machine.me.stocking_auto_pull_enabled"), false);
             } else {
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.stocking_auto_pull_disabled"), false);
+                playerIn.sendStatusMessage(
+                        new TextComponentTranslation("gregtech.machine.me.stocking_auto_pull_disabled"), false);
             }
         }
         return true;

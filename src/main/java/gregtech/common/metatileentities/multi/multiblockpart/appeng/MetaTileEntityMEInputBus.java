@@ -36,7 +36,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -56,7 +55,7 @@ import java.util.List;
 
 public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
-                                                 IGhostSlotConfigurable {
+                                      IGhostSlotConfigurable {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
@@ -191,8 +190,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 .label(10, 5, getMetaFullName());
         // ME Network status
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                        I18n.format("gregtech.gui.me_network.online") :
-                        I18n.format("gregtech.gui.me_network.offline"),
+                I18n.format("gregtech.gui.me_network.online") :
+                I18n.format("gregtech.gui.me_network.offline"),
                 0xFFFFFFFF);
 
         // Config slots
@@ -203,8 +202,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
         builder.widget(circuitSlot.setConsumer(w -> {
             String configString;
-            if (circuitInventory == null || circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
-                configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
+            if (circuitInventory == null ||
+                    circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
+                configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value")
+                        .getFormattedText();
             } else {
                 configString = String.valueOf(circuitInventory.getCircuitValue());
             }

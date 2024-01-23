@@ -150,8 +150,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
                 .label(10, 5, getMetaFullName());
         // ME Network status
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                        I18n.format("gregtech.gui.me_network.online") :
-                        I18n.format("gregtech.gui.me_network.offline"),
+                I18n.format("gregtech.gui.me_network.online") :
+                I18n.format("gregtech.gui.me_network.offline"),
                 0xFFFFFFFF);
 
         // Config slots
