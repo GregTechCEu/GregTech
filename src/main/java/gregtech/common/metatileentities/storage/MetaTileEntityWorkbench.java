@@ -19,12 +19,14 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import codechicken.lib.render.CCRenderState;
@@ -32,6 +34,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -215,6 +218,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         var inventory = new SlotGroup("inventory", 9, true);
         guiSyncManager.registerSlotGroup(toolSlots);
         guiSyncManager.registerSlotGroup(inventory);
+        createCraftingRecipeLogic(guiData.getPlayer());
 
         var controller = new PagedWidget.Controller();
 
@@ -223,9 +227,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                         .coverChildren()
                         .topRel(0f, 4, 1f)
                         .child(new PageButton(0, controller)
-                                .tab(com.cleanroommc.modularui.drawable.GuiTextures.TAB_TOP, -1))
+                                .tab(GuiTextures.TAB_TOP, 0))
                         .child(new PageButton(1, controller)
-                                .tab(com.cleanroommc.modularui.drawable.GuiTextures.TAB_TOP, 0)))
+                                .tab(GuiTextures.TAB_TOP, 0)))
                 .child(new PagedWidget<>()
                         .top(7).leftRel(0.5f)
                         .coverChildren()
@@ -234,6 +238,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                 .child(new Row().coverChildrenHeight()
                                         .widthRel(1f)
                                         .marginBottom(2)
+                                        //todo
+                                        // make JEI transfer work correctly
+                                        // currently it's not possible due to getCurrent() in ModularScreen returning null
                                         .child(SlotGroupWidget.builder()
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
@@ -241,7 +248,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                                 .build())
                                         .child(new ItemSlot()
                                                 // todo figure this shit (recipe output slot) out
-                                                .slot(new ItemStackHandler(1), 0)
+                                                .slot(new InventoryWrapper(this.recipeLogic.getCraftingResultInventory()), 0)
                                                 .background(GTGuiTextures.SLOT.asIcon().size(22))
                                                 .align(Alignment.Center))
                                         .child(SlotGroupWidget.builder()
@@ -270,9 +277,48 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                 .bindPlayerInventory(7);
     }
 
+
+
+    private static class InventoryWrapper implements IItemHandlerModifiable {
+
+        IInventory inventory;
+        private InventoryWrapper(IInventory inventory) {
+            this.inventory = inventory;
+        }
+
+        @Override
+        public int getSlots() {
+            return inventory.getSizeInventory();
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return inventory.getStackInSlot(slot);
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            return stack;
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return inventory.getInventoryStackLimit();
+        }
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            inventory.setInventorySlotContents(slot, stack);
+        }
+    }
+
     @Override
     protected gregtech.api.gui.ModularUI createUI(EntityPlayer entityPlayer) {
-        createCraftingRecipeLogic(entityPlayer);
 
         gregtech.api.gui.ModularUI.Builder builder = gregtech.api.gui.ModularUI.builder(gregtech.api.gui.GuiTextures.BACKGROUND, 176, 221)
                 .bindPlayerInventory(entityPlayer.inventory, 138);
