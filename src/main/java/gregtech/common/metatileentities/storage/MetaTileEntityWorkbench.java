@@ -19,13 +19,12 @@ import gregtech.api.gui.widgets.tab.ItemTabInfo;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.storage.ICraftingStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
-import gregtech.common.gui.widget.craftingstation.ItemListGridWidget;
-import gregtech.common.gui.widget.craftingstation.MemorizedRecipeWidget;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
@@ -49,6 +48,19 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.PageButton;
+import com.cleanroommc.modularui.widgets.PagedWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -76,43 +88,43 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         super(metaTileEntityId);
     }
 
-    public static AbstractWidgetGroup createWorkbenchTab(CraftingRecipeLogic craftingRecipeLogic,
+    public static gregtech.api.gui.widgets.AbstractWidgetGroup createWorkbenchTab(CraftingRecipeLogic craftingRecipeLogic,
                                                          ItemStackHandler craftingGrid,
                                                          CraftingRecipeMemory recipeMemory,
                                                          ItemStackHandler toolInventory,
                                                          ItemStackHandler internalInventory) {
-        WidgetGroup widgetGroup = new WidgetGroup();
-        widgetGroup.addWidget(new ImageWidget(88 - 13, 44 - 14, 26, 26, GuiTextures.SLOT));
-        widgetGroup.addWidget(new CraftingSlotWidget(craftingRecipeLogic, 0, 88 - 9, 44 - 9));
+        gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(88 - 13, 44 - 14, 26, 26, gregtech.api.gui.GuiTextures.SLOT));
+        widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.CraftingSlotWidget(craftingRecipeLogic, 0, 88 - 9, 44 - 9));
 
         // crafting grid
-        widgetGroup.addWidget(new CraftingStationInputWidgetGroup(4, 7, craftingGrid, craftingRecipeLogic));
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.CraftingStationInputWidgetGroup(4, 7, craftingGrid, craftingRecipeLogic));
 
         Supplier<String> textSupplier = () -> Integer.toString(craftingRecipeLogic.getItemsCraftedAmount());
-        widgetGroup.addWidget(new SimpleTextWidget(88, 44 + 19, "", textSupplier));
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.SimpleTextWidget(88, 44 + 19, "", textSupplier));
 
-        Consumer<ClickData> clearAction = (clickData) -> craftingRecipeLogic.clearCraftingGrid();
-        widgetGroup.addWidget(new ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction)
-                .setButtonTexture(GuiTextures.BUTTON_CLEAR_GRID));
+        Consumer<gregtech.api.gui.Widget.ClickData> clearAction = (clickData) -> craftingRecipeLogic.clearCraftingGrid();
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction)
+                .setButtonTexture(gregtech.api.gui.GuiTextures.BUTTON_CLEAR_GRID));
 
-        widgetGroup.addWidget(new ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3,
-                TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3,
+                gregtech.api.gui.resources.TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                widgetGroup.addWidget(new MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid,
+                widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid,
                         168 - 18 * 3 / 2 - 27 + j * 18, 44 - 28 + i * 18));
             }
         }
         // tool inventory
         for (int i = 0; i < 9; i++) {
-            widgetGroup.addWidget(new SlotWidget(toolInventory, i, 7 + i * 18, 75)
-                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.TOOL_SLOT_OVERLAY));
+            widgetGroup.addWidget(new gregtech.api.gui.widgets.SlotWidget(toolInventory, i, 7 + i * 18, 75)
+                    .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT, gregtech.api.gui.GuiTextures.TOOL_SLOT_OVERLAY));
         }
         // internal inventory
         for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 9; ++j) {
-                widgetGroup.addWidget(new SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i * 18)
-                        .setBackgroundTexture(GuiTextures.SLOT));
+                widgetGroup.addWidget(new gregtech.api.gui.widgets.SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i * 18)
+                        .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
             }
         }
         return widgetGroup;
@@ -198,29 +210,100 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         clearInventory(itemBuffer, toolInventory);
     }
 
-    private AbstractWidgetGroup createItemListTab() {
-        WidgetGroup widgetGroup = new WidgetGroup();
-        widgetGroup.addWidget(new LabelWidget(5, 20, "gregtech.machine.workbench.storage_note_1"));
-        widgetGroup.addWidget(new LabelWidget(5, 30, "gregtech.machine.workbench.storage_note_2"));
+    private gregtech.api.gui.widgets.AbstractWidgetGroup createItemListTab() {
+        gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(5, 20, "gregtech.machine.workbench.storage_note_1"));
+        widgetGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(5, 30, "gregtech.machine.workbench.storage_note_2"));
         CraftingRecipeLogic recipeResolver = getCraftingRecipeLogic();
         IItemList itemList = recipeResolver == null ? null : recipeResolver.getItemSourceList();
-        widgetGroup.addWidget(new ItemListGridWidget(11, 45, 8, 5, itemList));
+        widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.ItemListGridWidget(11, 45, 8, 5, itemList));
         return widgetGroup;
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
+        final String nineSlot = "XXXXXXXXX";
+        final String[] craftingGrid = new String[] {"XXX", "XXX", "XXX"};
+        final char key = 'X';
+
+        var toolSlots = new SlotGroup("tool_slots", 9, true);
+        var inventory = new SlotGroup("inventory", 9, true);
+        guiSyncManager.registerSlotGroup(toolSlots);
+        guiSyncManager.registerSlotGroup(inventory);
+
+        var controller = new PagedWidget.Controller();
+
+        return GTGuis.createPanel(this, 176, 224)
+                .child(new Row()
+                        .coverChildren()
+                        .topRel(0f, 4, 1f)
+                        .child(new PageButton(0, controller)
+                                .tab(com.cleanroommc.modularui.drawable.GuiTextures.TAB_TOP, -1))
+                        .child(new PageButton(1, controller)
+                                .tab(com.cleanroommc.modularui.drawable.GuiTextures.TAB_TOP, 0)))
+                .child(new PagedWidget<>()
+                        .top(7).leftRel(0.5f)
+                        .coverChildren()
+                        .controller(controller)
+                        .addPage(new Column().coverChildren()
+                                .child(new Row().coverChildrenHeight()
+                                        .widthRel(1f)
+                                        .marginBottom(2)
+                                        .child(SlotGroupWidget.builder()
+                                                .matrix(craftingGrid)
+                                                .key(key, i -> new ItemSlot()
+                                                        .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)))
+                                                .build())
+                                        .child(new ItemSlot()
+                                                // todo figure this shit (recipe output slot) out
+                                                .slot(new ItemStackHandler(1), 0)
+                                                .background(GTGuiTextures.SLOT.asIcon().size(22))
+                                                .align(Alignment.Center))
+                                        .child(SlotGroupWidget.builder()
+                                                .matrix(craftingGrid)
+                                                .key(key, i -> new ItemSlot()
+                                                        // todo recipe memory
+                                                        .slot(SyncHandlers.phantomItemSlot(new ItemStackHandler(9), i)))
+                                                .build()
+                                                .right(0)))
+                                .child(SlotGroupWidget.builder()
+                                        .row(nineSlot)
+                                        .key(key, i -> new ItemSlot()
+                                                .overlay(GTGuiTextures.INGOT_OVERLAY)
+                                                .slot(SyncHandlers.itemSlot(this.toolInventory, i)
+                                                        .slotGroup(toolSlots)))
+                                        .build().marginBottom(2))
+                                .child(SlotGroupWidget.builder()
+                                        .row(nineSlot)
+                                        .row(nineSlot)
+                                        .key(key, i -> new ItemSlot()
+                                                .slot(SyncHandlers.itemSlot(this.internalInventory, i)
+                                                        .slotGroup(inventory)))
+                                        .build()))
+                        .addPage(new Column()
+                                .child(IKey.str("add storage things").asWidget())))
+                .bindPlayerInventory(7);
+    }
+
+    @Override
+    protected gregtech.api.gui.ModularUI createUI(EntityPlayer entityPlayer) {
         createCraftingRecipeLogic(entityPlayer);
 
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
+        gregtech.api.gui.ModularUI.Builder builder = gregtech.api.gui.ModularUI.builder(gregtech.api.gui.GuiTextures.BACKGROUND, 176, 221)
                 .bindPlayerInventory(entityPlayer.inventory, 138);
         builder.label(5, 5, getMetaFullName());
 
-        TabGroup<AbstractWidgetGroup> tabGroup = new TabGroup<>(TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
-        tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.workbench",
+        gregtech.api.gui.widgets.TabGroup<gregtech.api.gui.widgets.AbstractWidgetGroup> tabGroup = new gregtech.api.gui.widgets.TabGroup<>(
+                gregtech.api.gui.widgets.TabGroup.TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
+        tabGroup.addTab(new gregtech.api.gui.widgets.tab.ItemTabInfo("gregtech.machine.workbench.tab.workbench",
                 new ItemStack(Blocks.CRAFTING_TABLE)),
                 createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
-        tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.item_list",
+        tabGroup.addTab(new gregtech.api.gui.widgets.tab.ItemTabInfo("gregtech.machine.workbench.tab.item_list",
                 new ItemStack(Blocks.CHEST)), createItemListTab());
         builder.widget(tabGroup);
         builder.bindCloseListener(() -> discardRecipeResolver(entityPlayer));
