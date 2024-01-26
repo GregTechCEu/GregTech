@@ -18,4 +18,9 @@ public class SingleItemStackHandler extends ItemStackHandler {
     public int getSlotLimit(int slot) {
         return 1;
     }
+
+    @Override
+    protected int getStackLimit(int slot, ItemStack stack) {
+        return getSlotLimit(slot);
+    }
 }
