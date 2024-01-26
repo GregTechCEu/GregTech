@@ -3,6 +3,7 @@ package gregtech.api.storage;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public interface ICraftingStorage {
@@ -12,4 +13,6 @@ public interface ICraftingStorage {
     ItemStackHandler getCraftingGrid();
 
     CraftingRecipeMemory getRecipeMemory();
+
+    IItemHandler getInventory();
 }
