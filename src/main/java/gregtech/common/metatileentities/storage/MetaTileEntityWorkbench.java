@@ -200,10 +200,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         if (recipeLogic == null) {
             this.recipeLogic = new CraftingRecipeLogic(this);
             this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
-            ItemSources itemSources = this.recipeLogic.getItemSourceList();
-            itemSources.addItemHandler(new InventoryItemSource(getWorld(), toolInventory, -2));
-            itemSources.addItemHandler(new InventoryItemSource(getWorld(), internalInventory, -1));
-            this.recipeLogic.checkNeighbourInventories(getPos());
+//            ItemSources itemSources = this.recipeLogic.getItemSourceList();
+//            itemSources.addItemHandler(new InventoryItemSource(getWorld(), toolInventory, -2));
+//            itemSources.addItemHandler(new InventoryItemSource(getWorld(), internalInventory, -1));
+//            this.recipeLogic.checkNeighbourInventories(getPos());
         }
         this.listeners.add(entityPlayer);
     }
@@ -256,6 +256,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         guiSyncManager.registerSlotGroup(toolSlots);
         guiSyncManager.registerSlotGroup(inventory);
         createCraftingRecipeLogic(guiData.getPlayer());
+        this.recipeLogic.updateCurrentRecipe();
 
         var controller = new PagedWidget.Controller();
 
@@ -283,15 +284,14 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                                 .key(key, i -> new ItemSlot()
                                                         .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
                                                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                                                    this.recipeLogic.updateCurrentRecipe();
+                                                                    if (!init) this.recipeLogic.updateCurrentRecipe();
                                                                 })))
                                                 .build())
                                         .child(new ItemSlot()
                                                 // todo figure this shit (recipe output slot) out
-                                                .slot(new CraftingOutputSlot(
-                                                        new InventoryWrapper(
+                                                .slot(new CraftingOutputSlot(new InventoryWrapper(
                                                                 this.recipeLogic.getCraftingResultInventory(),
-                                                                guiData.getPlayer()), 0))
+                                                                guiData.getPlayer())))
                                                 .background(GTGuiTextures.SLOT.asIcon().size(22))
                                                 .align(Alignment.Center))
                                         .child(SlotGroupWidget.builder()
@@ -327,13 +327,19 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
     private class CraftingOutputSlot extends ModularSlot {
 
-        public CraftingOutputSlot(IItemHandler itemHandler, int index) {
-            super(itemHandler, index, false);
+        public CraftingOutputSlot(IItemHandler itemHandler) {
+            super(itemHandler, 0, false);
         }
 
         @Override
         public boolean canTakeStack(EntityPlayer playerIn) {
             return recipeLogic.performRecipe(playerIn);
+        }
+
+        @Override
+        public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
+            recipeLogic.handleItemCraft(stack, thePlayer);
+            return super.onTake(thePlayer, stack);
         }
     }
 
@@ -364,8 +370,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (!recipeLogic.isRecipeValid()) return ItemStack.EMPTY;
-            return inventory.getStackInSlot(slot).copy();
+            return inventory.getStackInSlot(slot);
         }
 
         @Override
@@ -377,8 +382,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         public void setStackInSlot(int slot, ItemStack stack) {
             if (!recipeLogic.isRecipeValid()) {
                 inventory.setInventorySlotContents(slot, ItemStack.EMPTY);
-            } else {
-                recipeLogic.performRecipe(this.player);
             }
 
             if (!stack.isEmpty())
@@ -415,7 +418,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     public void discardRecipeResolver(EntityPlayer entityPlayer) {
         this.listeners.remove(entityPlayer);
         if (listeners.isEmpty()) {
-            if (!getWorld().isRemote && recipeLogic != null) {
+            if (recipeLogic != null) {
                 itemsCrafted = recipeLogic.getItemsCraftedAmount();
                 this.markDirty();
             }
