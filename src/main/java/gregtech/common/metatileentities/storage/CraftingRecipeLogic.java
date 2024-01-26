@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.google.common.collect.Lists;
@@ -32,7 +33,7 @@ public class CraftingRecipeLogic {
     private final ItemSources itemSources;
     private final ItemStackHandler craftingGrid;
     private final ItemStack[] oldCraftingGrid = new ItemStack[9];
-    private final InventoryCrafting inventoryCrafting = new InventoryCrafting(new DummyContainer(), 3, 3);
+    private final InventoryCrafting inventoryCrafting;
     private final IInventory craftingResultInventory = new InventoryCraftResult();
     private ItemStack oldResult = ItemStack.EMPTY;
     private final CachedRecipeData cachedRecipeData;
@@ -47,6 +48,7 @@ public class CraftingRecipeLogic {
         this.craftingGrid = craftingStorage.getCraftingGrid();
         this.recipeMemory = craftingStorage.getRecipeMemory();
         this.itemSources = new ItemSources(world);
+        this.inventoryCrafting = new CraftingWrapper(craftingGrid);
         this.cachedRecipeData = new CachedRecipeData(itemSources, null, inventoryCrafting);
     }
 
@@ -206,5 +208,31 @@ public class CraftingRecipeLogic {
 
     public CachedRecipeData getCachedRecipeData() {
         return this.cachedRecipeData;
+    }
+
+    private static class CraftingWrapper extends InventoryCrafting {
+
+        IItemHandlerModifiable craftingHandler;
+
+        public CraftingWrapper(IItemHandlerModifiable craftingHandler) {
+            super(new DummyContainer(), 3, 3);
+            this.craftingHandler = craftingHandler;
+        }
+
+        @Override
+        public ItemStack getStackInRowAndColumn(int row, int column) {
+            int index = column + (3 * row);
+            return this.craftingHandler.getStackInSlot(index);
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int index) {
+            return craftingHandler.getStackInSlot(index);
+        }
+
+        @Override
+        public void setInventorySlotContents(int index, ItemStack stack) {
+            craftingHandler.setStackInSlot(index, stack);
+        }
     }
 }
