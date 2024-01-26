@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import com.cleanroommc.modularui.widgets.slot.ModularSlot;
-
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -42,8 +40,8 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.PageButton;
@@ -51,6 +49,7 @@ import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.ArrayUtils;
@@ -260,21 +259,31 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         createCraftingRecipeLogic(guiData.getPlayer());
         this.recipeLogic.updateCurrentRecipe();
 
+        var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
+        guiSyncManager.syncValue("amount_crafted", amountCrafted);
+        if (!guiSyncManager.isClient()) {
+            amountCrafted.setValue(this.itemsCrafted, false, true);
+        }
+
         var controller = new PagedWidget.Controller();
 
         return GTGuis.createPanel(this, 176, 224)
-                .child(new Row()
-                        .coverChildren()
-                        .topRel(0f, 4, 1f)
+                .child(new Row().widthRel(1f)
+                        .leftRel(0.5f)
+                        .margin(2, 0)
+                        .coverChildrenHeight()
+                        .topRel(0f, 3, 1f)
                         .child(new PageButton(0, controller)
                                 .tab(GuiTextures.TAB_TOP, 0))
                         .child(new PageButton(1, controller)
                                 .tab(GuiTextures.TAB_TOP, 0)))
                 .child(new PagedWidget<>()
-                        .top(7).leftRel(0.5f)
-                        .coverChildren()
+                        .top(7)
+                        .margin(7)
+                        .expanded()
                         .controller(controller)
-                        .addPage(new Column().coverChildren()
+                        .addPage(new Column()
+                                .coverChildren()
                                 .child(new Row().coverChildrenHeight()
                                         .widthRel(1f)
                                         .marginBottom(2)
@@ -289,20 +298,23 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                                                     if (!init) this.recipeLogic.updateCurrentRecipe();
                                                                 })))
                                                 .build())
-                                        .child(new ItemSlot()
-                                                // todo figure this shit (recipe output slot) out
-                                                .slot(new CraftingOutputSlot(new InventoryWrapper(
+                                        .child(new Column()
+                                                .size(54)
+                                                .child(new ItemSlot().marginTop(18)
+                                                        // todo figure this shit (recipe output slot) out
+                                                        .slot(new CraftingOutputSlot(new InventoryWrapper(
                                                                 this.recipeLogic.getCraftingResultInventory(),
                                                                 guiData.getPlayer())))
-                                                .background(GTGuiTextures.SLOT.asIcon().size(22))
-                                                .align(Alignment.Center))
+                                                        .background(GTGuiTextures.SLOT.asIcon().size(22))
+                                                        .marginBottom(4))
+                                                .child(IKey.dynamic(amountCrafted::getStringValue)
+                                                        .asWidget()))
                                         .child(SlotGroupWidget.builder()
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
                                                         // todo recipe memory
                                                         .slot(SyncHandlers.phantomItemSlot(new ItemStackHandler(9), i)))
-                                                .build()
-                                                .right(0)))
+                                                .build().right(0)))
                                 .child(SlotGroupWidget.builder()
                                         .row(nineSlot)
                                         .key(key, i -> new ItemSlot()
@@ -317,9 +329,17 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                                 .slot(SyncHandlers.itemSlot(this.internalInventory, i)
                                                         .slotGroup(inventory)))
                                         .build()))
-                        .addPage(new Column()
+                        .addPage(new Column().coverChildren()
                                 .child(IKey.str("add storage things").asWidget())))
                 .bindPlayerInventory(7);
+    }
+
+    public int getItemsCrafted() {
+        return this.itemsCrafted;
+    }
+
+    public void setItemsCrafted(int itemsCrafted) {
+        this.itemsCrafted = itemsCrafted;
     }
 
     @Override
