@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -71,6 +72,10 @@ public class CraftingRecipeLogic {
 
     public void clearCraftingGrid() {
         fillCraftingGrid(Collections.emptyMap());
+    }
+
+    public void updateInventory(IItemHandler handler) {
+        this.cachedRecipeData.updateInventory(handler);
     }
 
     public void fillCraftingGrid(Map<Integer, ItemStack> ingredients) {
