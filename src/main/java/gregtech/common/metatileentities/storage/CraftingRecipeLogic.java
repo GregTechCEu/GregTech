@@ -49,7 +49,7 @@ public class CraftingRecipeLogic {
         this.recipeMemory = craftingStorage.getRecipeMemory();
         this.itemSources = new ItemSources(world);
         this.inventoryCrafting = new CraftingWrapper(craftingGrid);
-        this.cachedRecipeData = new CachedRecipeData(itemSources, null, inventoryCrafting);
+        this.cachedRecipeData = new CachedRecipeData(craftingStorage.getInventory(), null, inventoryCrafting);
     }
 
     public ItemSources getItemSourceList() {
@@ -109,6 +109,7 @@ public class CraftingRecipeLogic {
         if (!isRecipeValid()) {
             return false;
         }
+        cachedRecipeData.updateStackIndex();
         if (!cachedRecipeData.consumeRecipeItems()) {
             return false;
         }
@@ -166,7 +167,8 @@ public class CraftingRecipeLogic {
     }
 
     public boolean isRecipeValid() {
-        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world);
+        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world) &&
+                cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
     }
 
     public void updateCurrentRecipe() {
