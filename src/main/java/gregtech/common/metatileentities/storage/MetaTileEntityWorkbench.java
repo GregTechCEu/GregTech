@@ -333,10 +333,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (recipeLogic.performRecipe(this.player)) {
-                return inventory.getStackInSlot(slot).copy();
-            }
-            return ItemStack.EMPTY;
+            if (!simulate) recipeLogic.performRecipe(this.player);
+            if (!recipeLogic.isRecipeValid()) return ItemStack.EMPTY;
+            return inventory.getStackInSlot(slot).copy();
         }
 
         @Override
@@ -346,8 +345,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            if (stack.isEmpty()) return;
-            inventory.setInventorySlotContents(slot, stack);
+            if (!recipeLogic.isRecipeValid())
+                inventory.setInventorySlotContents(slot, ItemStack.EMPTY);
+
+            if (!stack.isEmpty())
+                inventory.setInventorySlotContents(slot, stack);
         }
     }
 
