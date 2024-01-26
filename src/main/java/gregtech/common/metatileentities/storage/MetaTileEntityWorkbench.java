@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -27,6 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -253,8 +256,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                                 .build())
                                         .child(new ItemSlot()
                                                 // todo figure this shit (recipe output slot) out
-                                                .slot(SyncHandlers
-                                                        .itemSlot(new InventoryWrapper(
+                                                .slot(new CraftingOutputSlot(
+                                                        new InventoryWrapper(
                                                                 this.recipeLogic.getCraftingResultInventory(),
                                                                 guiData.getPlayer()), 0))
                                                 .background(GTGuiTextures.SLOT.asIcon().size(22))
@@ -290,6 +293,18 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         return true;
     }
 
+    private class CraftingOutputSlot extends ModularSlot {
+
+        public CraftingOutputSlot(IItemHandler itemHandler, int index) {
+            super(itemHandler, index, false);
+        }
+
+        @Override
+        public boolean canTakeStack(EntityPlayer playerIn) {
+            return recipeLogic.performRecipe(playerIn);
+        }
+    }
+
     private class InventoryWrapper implements IItemHandlerModifiable {
 
         IInventory inventory;
@@ -317,7 +332,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (!simulate) recipeLogic.performRecipe(this.player);
             if (!recipeLogic.isRecipeValid()) return ItemStack.EMPTY;
             return inventory.getStackInSlot(slot).copy();
         }
@@ -329,8 +343,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
-            if (!recipeLogic.isRecipeValid())
+            if (!recipeLogic.isRecipeValid()) {
                 inventory.setInventorySlotContents(slot, ItemStack.EMPTY);
+            } else {
+                recipeLogic.performRecipe(this.player);
+            }
 
             if (!stack.isEmpty())
                 inventory.setInventorySlotContents(slot, stack);
