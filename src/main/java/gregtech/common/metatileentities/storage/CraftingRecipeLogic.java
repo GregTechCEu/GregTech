@@ -71,45 +71,18 @@ public class CraftingRecipeLogic {
     }
 
     public void clearCraftingGrid() {
-        fillCraftingGrid(Collections.emptyMap());
+//        fillCraftingGrid(Collections.emptyMap());
     }
 
     public void updateInventory(IItemHandler handler) {
         this.cachedRecipeData.updateInventory(handler);
     }
 
-    public void fillCraftingGrid(Map<Integer, ItemStack> ingredients) {
-        for (int i = 0; i < craftingGrid.getSlots(); i++) {
-            craftingGrid.setStackInSlot(i, ingredients.getOrDefault(i + 1, ItemStack.EMPTY));
-        }
-    }
-
-    private boolean hasCraftingGridUpdated() {
-        boolean craftingGridChanged = false;
-        for (int i = 0; i < craftingGrid.getSlots(); i++) {
-            ItemStack oldStack = oldCraftingGrid[i];
-            ItemStack newStack = craftingGrid.getStackInSlot(i);
-            if (oldStack == null || oldStack.isEmpty()) {
-                if (newStack.isEmpty()) {
-                    continue;
-                }
-                oldStack = newStack;
-                oldCraftingGrid[i] = oldStack;
-                inventoryCrafting.setInventorySlotContents(i, newStack.copy());
-                craftingGridChanged = true;
-            } else if (newStack.isEmpty()) {
-                oldCraftingGrid[i] = null;
-                inventoryCrafting.setInventorySlotContents(i, ItemStack.EMPTY);
-                craftingGridChanged = true;
-            } else if (!ItemStack.areItemsEqual(oldStack, newStack) ||
-                    !ItemStack.areItemStackTagsEqual(oldStack, newStack)) {
-                        oldCraftingGrid[i] = newStack;
-                        inventoryCrafting.setInventorySlotContents(i, newStack.copy());
-                        craftingGridChanged = true;
-                    }
-        }
-        return craftingGridChanged;
-    }
+//    public void fillCraftingGrid(Map<Integer, ItemStack> ingredients) {
+//        for (int i = 0; i < craftingGrid.getSlots(); i++) {
+//            craftingGrid.setStackInSlot(i, ingredients.getOrDefault(i + 1, ItemStack.EMPTY));
+//        }
+//    }
 
     public boolean performRecipe(EntityPlayer player) {
         if (!isRecipeValid()) {
@@ -163,13 +136,13 @@ public class CraftingRecipeLogic {
         }
     }
 
-    public void refreshOutputSlot() {
-        ItemStack itemStack = ItemStack.EMPTY;
-        if (cachedRecipe != null) {
-            itemStack = cachedRecipe.getCraftingResult(inventoryCrafting);
-        }
-        this.craftingResultInventory.setInventorySlotContents(0, itemStack);
-    }
+//    public void refreshOutputSlot() {
+//        ItemStack itemStack = ItemStack.EMPTY;
+//        if (cachedRecipe != null) {
+//            itemStack = cachedRecipe.getCraftingResult(inventoryCrafting);
+//        }
+//        this.craftingResultInventory.setInventorySlotContents(0, itemStack);
+//    }
 
     public boolean isRecipeValid() {
         return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world);
@@ -194,6 +167,7 @@ public class CraftingRecipeLogic {
         // update item sources every tick for fast tinting updates
         itemSources.update();
         if (getCachedRecipeData().getRecipe() != null) {
+            //todo fix tint location
 //            tintLocation = getCachedRecipeData().attemptMatchRecipe();
         } else {
             tintLocation = ALL_INGREDIENTS_PRESENT;
@@ -204,12 +178,12 @@ public class CraftingRecipeLogic {
         return tintLocation;
     }
 
-    public void checkNeighbourInventories(BlockPos blockPos) {
-        for (EnumFacing side : EnumFacing.VALUES) {
-            TileItemSource itemSource = new TileItemSource(world, blockPos, side);
-            this.itemSources.addItemHandler(itemSource);
-        }
-    }
+//    public void checkNeighbourInventories(BlockPos blockPos) {
+//        for (EnumFacing side : EnumFacing.VALUES) {
+//            TileItemSource itemSource = new TileItemSource(world, blockPos, side);
+//            this.itemSources.addItemHandler(itemSource);
+//        }
+//    }
 
     public CachedRecipeData getCachedRecipeData() {
         return this.cachedRecipeData;
