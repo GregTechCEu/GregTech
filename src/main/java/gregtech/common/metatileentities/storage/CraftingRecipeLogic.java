@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.storage.ICraftingStorage;
 import gregtech.api.util.DummyContainer;
+import gregtech.api.util.GTUtility;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.itemsource.ItemSources;
 import gregtech.common.inventory.itemsource.sources.TileItemSource;
@@ -109,8 +110,7 @@ public class CraftingRecipeLogic {
         if (!isRecipeValid()) {
             return false;
         }
-        cachedRecipeData.updateStackIndex();
-        if (!cachedRecipeData.consumeRecipeItems()) {
+        if (cachedRecipeData.attemptMatchRecipe() != ALL_INGREDIENTS_PRESENT || !cachedRecipeData.consumeRecipeItems()) {
             return false;
         }
         ForgeHooks.setCraftingPlayer(player);
@@ -167,8 +167,7 @@ public class CraftingRecipeLogic {
     }
 
     public boolean isRecipeValid() {
-        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world) &&
-                cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
+        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world);
     }
 
     public void updateCurrentRecipe() {
@@ -233,7 +232,7 @@ public class CraftingRecipeLogic {
 
         @Override
         public void setInventorySlotContents(int index, ItemStack stack) {
-            craftingHandler.setStackInSlot(index, stack);
+            craftingHandler.setStackInSlot(index, GTUtility.copy(1, stack));
         }
     }
 }
