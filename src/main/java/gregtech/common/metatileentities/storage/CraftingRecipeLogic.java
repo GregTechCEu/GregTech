@@ -168,7 +168,7 @@ public class CraftingRecipeLogic {
                 cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
     }
 
-    private void updateCurrentRecipe() {
+    public void updateCurrentRecipe() {
         if (!cachedRecipeData.matches(inventoryCrafting, world) ||
                 !ItemStack.areItemStacksEqual(oldResult, cachedRecipe.getCraftingResult(inventoryCrafting))) {
             IRecipe newRecipe = CraftingManager.findMatchingRecipe(inventoryCrafting, world);
@@ -190,9 +190,6 @@ public class CraftingRecipeLogic {
             tintLocation = getCachedRecipeData().attemptMatchRecipe();
         } else {
             tintLocation = ALL_INGREDIENTS_PRESENT;
-        }
-        if (hasCraftingGridUpdated()) {
-            updateCurrentRecipe();
         }
     }
 
