@@ -175,17 +175,15 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     }
 
     private void createCraftingRecipeLogic(EntityPlayer entityPlayer) {
-        if (!getWorld().isRemote) {
-            if (recipeLogic == null) {
-                this.recipeLogic = new CraftingRecipeLogic(this);
-                this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
-                ItemSources itemSources = this.recipeLogic.getItemSourceList();
-                itemSources.addItemHandler(new InventoryItemSource(getWorld(), toolInventory, -2));
-                itemSources.addItemHandler(new InventoryItemSource(getWorld(), internalInventory, -1));
-                this.recipeLogic.checkNeighbourInventories(getPos());
-            }
-            this.listeners.add(entityPlayer);
+        if (recipeLogic == null) {
+            this.recipeLogic = new CraftingRecipeLogic(this);
+            this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
+            ItemSources itemSources = this.recipeLogic.getItemSourceList();
+            itemSources.addItemHandler(new InventoryItemSource(getWorld(), toolInventory, -2));
+            itemSources.addItemHandler(new InventoryItemSource(getWorld(), internalInventory, -1));
+            this.recipeLogic.checkNeighbourInventories(getPos());
         }
+        this.listeners.add(entityPlayer);
     }
 
     @Override
