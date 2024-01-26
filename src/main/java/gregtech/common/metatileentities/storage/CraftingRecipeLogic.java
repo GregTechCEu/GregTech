@@ -167,8 +167,7 @@ public class CraftingRecipeLogic {
     }
 
     public boolean isRecipeValid() {
-        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world) &&
-                cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
+        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world);
     }
 
     public void updateCurrentRecipe() {
@@ -190,7 +189,7 @@ public class CraftingRecipeLogic {
         // update item sources every tick for fast tinting updates
         itemSources.update();
         if (getCachedRecipeData().getRecipe() != null) {
-            tintLocation = getCachedRecipeData().attemptMatchRecipe();
+//            tintLocation = getCachedRecipeData().attemptMatchRecipe();
         } else {
             tintLocation = ALL_INGREDIENTS_PRESENT;
         }
@@ -222,7 +221,7 @@ public class CraftingRecipeLogic {
 
         @Override
         public ItemStack getStackInRowAndColumn(int row, int column) {
-            int index = column + (3 * row);
+            int index = row + (3 * column);
             return this.craftingHandler.getStackInSlot(index);
         }
 

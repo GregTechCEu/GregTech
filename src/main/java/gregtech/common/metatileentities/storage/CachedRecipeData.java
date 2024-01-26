@@ -25,24 +25,30 @@ public class CachedRecipeData {
     private final Object2IntMap<ItemStack> requiredItems = new Object2IntOpenCustomHashMap<>(
             ItemStackHashStrategy.comparingAllButCount());
     private final Int2ObjectMap<Object2BooleanMap<ItemStack>> replaceAttemptMap = new Int2ObjectArrayMap<>();
-    private final InventoryCrafting inventory;
+    private final InventoryCrafting craftingMatrix;
 
     public CachedRecipeData(ItemSources sourceList, IRecipe recipe, InventoryCrafting inventoryCrafting) {
         this.itemSources = sourceList;
         this.recipe = recipe;
-        this.inventory = inventoryCrafting;
+        this.craftingMatrix = inventoryCrafting;
     }
 
     public short attemptMatchRecipe() {
         short itemsFound = 0;
-        this.requiredItems.clear();
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            if (getIngredientEquivalent(i))
-                itemsFound += 1 << i; // ingredient was found, and indicate in the short of this fact
+        int i = 0;
+        for (int j = 0; j < craftingMatrix.getSizeInventory(); j++) {
+            var stack = craftingMatrix.getStackInSlot(j);
+            if (requiredItems.containsKey(stack))
+                itemsFound += 1 << i;
+            i++;
         }
-        if (itemsFound != CraftingRecipeLogic.ALL_INGREDIENTS_PRESENT) {
-            requiredItems.clear();
-        }
+//        for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
+//            if (getIngredientEquivalent(i))
+//                itemsFound += 1 << i; // ingredient was found, and indicate in the short of this fact
+//        }
+//        if (itemsFound != CraftingRecipeLogic.ALL_INGREDIENTS_PRESENT) {
+//            requiredItems.clear();
+//        }
         return itemsFound;
     }
 
@@ -75,7 +81,7 @@ public class CachedRecipeData {
     }
 
     public boolean getIngredientEquivalent(int slot) {
-        ItemStack currentStack = inventory.getStackInSlot(slot);
+        ItemStack currentStack = craftingMatrix.getStackInSlot(slot);
         if (currentStack.isEmpty()) {
             return true; // stack is empty, nothing to return
         }
@@ -84,7 +90,7 @@ public class CachedRecipeData {
             return true;
         }
 
-        ItemStack previousStack = recipe.getCraftingResult(inventory);
+        ItemStack previousStack = recipe.getCraftingResult(craftingMatrix);
 
         Object2BooleanMap<ItemStack> map = replaceAttemptMap.computeIfAbsent(slot,
                 (m) -> new Object2BooleanOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount()));
@@ -121,9 +127,9 @@ public class CachedRecipeData {
             }
 
             // update item in slot, and check that recipe matches and output item is equal to the expected one
-            inventory.setInventorySlotContents(slot, itemStack);
-            if (recipe.matches(inventory, itemSources.getWorld()) &&
-                    (ItemStack.areItemStacksEqual(recipe.getCraftingResult(inventory), previousStack) ||
+            craftingMatrix.setInventorySlotContents(slot, itemStack);
+            if (recipe.matches(craftingMatrix, itemSources.getWorld()) &&
+                    (ItemStack.areItemStacksEqual(recipe.getCraftingResult(craftingMatrix), previousStack) ||
                             recipe instanceof ShapedOreEnergyTransferRecipe)) {
                 map.put(itemStack, true);
                 // ingredient matched, attempt to extract it and return if successful
@@ -132,7 +138,7 @@ public class CachedRecipeData {
                 }
             }
             map.put(itemStack, false);
-            inventory.setInventorySlotContents(slot, currentStack);
+            craftingMatrix.setInventorySlotContents(slot, currentStack);
         }
         // nothing matched, so return null
         return false;
@@ -158,6 +164,35 @@ public class CachedRecipeData {
     public void setRecipe(IRecipe newRecipe) {
         this.recipe = newRecipe;
         this.replaceAttemptMap.clear();
+        this.requiredItems.clear();
+        if (this.recipe != null) {
+            Ingredient[] indexedIng = new Ingredient[craftingMatrix.getSizeInventory()];
+            var ingredients = this.recipe.getIngredients();
+
+            int rolling = 0;
+            for (int i = 0; i < indexedIng.length; i++) {
+                var stack = craftingMatrix.getStackInSlot(i);
+                if (rolling >= ingredients.size()) break;
+                var ingredient = ingredients.get(rolling);
+                if (ingredient == Ingredient.EMPTY) {
+                    indexedIng[i] = ingredient;
+                    rolling++;
+                    continue;
+                }
+                if (stack.isEmpty()) continue;
+                indexedIng[i] = ingredient;
+                rolling++;
+            }
+
+            for (int i = 0; i < indexedIng.length; i++) {
+                if (indexedIng[i] == null) continue;
+                var stack = craftingMatrix.getStackInSlot(i);
+                int count = requiredItems.getOrDefault(stack, 0) + 1;
+                if (!stack.isEmpty() && indexedIng[i].apply(stack)) {
+                    requiredItems.put(stack.copy(), count);
+                }
+            }
+        }
     }
 
     public IRecipe getRecipe() {
