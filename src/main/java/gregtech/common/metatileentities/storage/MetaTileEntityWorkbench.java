@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
+import com.cleanroommc.modularui.utils.Alignment;
+
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -147,6 +149,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
+        buf.writeInt(this.itemsCrafted);
         for (int i = 0; i < craftingGrid.getSlots(); i++) {
             buf.writeItemStack(craftingGrid.getStackInSlot(i));
         }
@@ -155,6 +158,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
+        this.itemsCrafted = buf.readInt();
         try {
             for (int i = 0; i < craftingGrid.getSlots(); i++) {
                 craftingGrid.setStackInSlot(i, buf.readItemStack());
@@ -201,10 +205,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         if (recipeLogic == null) {
             this.recipeLogic = new CraftingRecipeLogic(this);
             this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
-//            ItemSources itemSources = this.recipeLogic.getItemSourceList();
-//            itemSources.addItemHandler(new InventoryItemSource(getWorld(), toolInventory, -2));
-//            itemSources.addItemHandler(new InventoryItemSource(getWorld(), internalInventory, -1));
-//            this.recipeLogic.checkNeighbourInventories(getPos());
         }
         this.listeners.add(entityPlayer);
     }
@@ -217,6 +217,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                 getCraftingRecipeLogic().update();
             }
         }
+    }
+
+    @Override
+    public void onNeighborChanged() {
+        this.recipeLogic.updateInventory(getInventory());
     }
 
     private CraftingRecipeLogic getCraftingRecipeLogic() {
@@ -261,9 +266,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
         guiSyncManager.syncValue("amount_crafted", amountCrafted);
-        if (!guiSyncManager.isClient()) {
-            amountCrafted.setValue(this.itemsCrafted, false, true);
-        }
+        amountCrafted.updateCacheFromSource(true);
 
         var controller = new PagedWidget.Controller();
 
@@ -295,7 +298,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                                 .key(key, i -> new ItemSlot()
                                                         .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
                                                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                                                    if (!init) this.recipeLogic.updateCurrentRecipe();
+                                                                    if (!init) {
+                                                                        this.recipeLogic.updateCurrentRecipe();
+                                                                    }
                                                                 })))
                                                 .build())
                                         .child(new Column()
@@ -304,11 +309,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                                         // todo figure this shit (recipe output slot) out
                                                         .slot(new CraftingOutputSlot(new InventoryWrapper(
                                                                 this.recipeLogic.getCraftingResultInventory(),
-                                                                guiData.getPlayer())))
+                                                                guiData.getPlayer()), amountCrafted))
                                                         .background(GTGuiTextures.SLOT.asIcon().size(22))
                                                         .marginBottom(4))
                                                 .child(IKey.dynamic(amountCrafted::getStringValue)
-                                                        .asWidget()))
+                                                        .alignment(Alignment.Center)
+                                                        .asWidget().width(22)))
                                         .child(SlotGroupWidget.builder()
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
@@ -348,14 +354,20 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     }
 
     private class CraftingOutputSlot extends ModularSlot {
+        IntSyncValue syncValue;
 
-        public CraftingOutputSlot(IItemHandler itemHandler) {
+        public CraftingOutputSlot(IItemHandler itemHandler, IntSyncValue syncValue) {
             super(itemHandler, 0, false);
+            this.syncValue = syncValue;
         }
 
         @Override
         public boolean canTakeStack(EntityPlayer playerIn) {
-            return recipeLogic.performRecipe(playerIn);
+            boolean success = recipeLogic.performRecipe(playerIn);
+            if (success) {
+                this.syncValue.setValue(this.syncValue.getValue() + 1, true, false);
+            }
+            return success;
         }
 
         @Override
