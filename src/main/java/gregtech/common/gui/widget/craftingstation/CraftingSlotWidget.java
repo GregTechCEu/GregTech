@@ -40,85 +40,85 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
         super.handleClientAction(id, buffer);
-        if (id == 1) {
-            HashMap<Integer, ItemStack> ingredients = new HashMap<>();
-            int ingredientAmount = buffer.readVarInt();
-            try {
-                for (int i = 0; i < ingredientAmount; i++) {
-                    ingredients.put(buffer.readVarInt(), buffer.readItemStack());
-                }
-            } catch (IOException exception) {
-                throw new RuntimeException(exception);
-            }
-            recipeResolver.fillCraftingGrid(ingredients);
-        }
-        if (id == 2) {
-            if (recipeResolver.isRecipeValid()) {
-                ClickData clickData = ClickData.readFromBuf(buffer);
-                boolean isShiftDown = clickData.isShiftClick;
-                boolean isLeftClick = clickData.button == 0;
-                boolean isRightClick = clickData.button == 1;
-                EntityPlayer player = gui.entityPlayer;
-                if (isShiftDown) {
-                    OverlayedItemHandler playerInventory = new OverlayedItemHandler(
-                            new PlayerMainInvWrapper(gui.entityPlayer.inventory));
-                    ItemStack toMerge = slotReference.getStack();
-                    int crafts = this.slotReference.getStack().getCount();
-                    if (isLeftClick) {
-                        if (crafts != 0) {
-                            // limit shift click to one stack at a time
-                            int totalCrafts = 0;
-                            int maxCrafts = toMerge.getMaxStackSize() / crafts;
-                            for (int i = 0; i < maxCrafts; i++) {
-                                if (canMergeToInv(playerInventory, toMerge, crafts) &&
-                                        recipeResolver.performRecipe(gui.entityPlayer)) {
-                                    this.recipeResolver.refreshOutputSlot();
-                                    recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
-                                    totalCrafts += crafts;
-                                }
-                            }
-                            ItemStack toAdd = this.slotReference.getStack().copy();
-                            toAdd.setCount(totalCrafts);
-                            player.inventory.addItemStackToInventory(toAdd);
-                        }
-                    } else if (isRightClick) {
-                        int totalCrafts = 0;
-                        while (canMergeToInv(playerInventory, toMerge, crafts) &&
-                                recipeResolver.performRecipe(gui.entityPlayer)) {
-                            this.recipeResolver.refreshOutputSlot();
-                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
-                            totalCrafts += crafts;
-                        }
-                        ItemStack toAdd = this.slotReference.getStack().copy();
-                        toAdd.setCount(totalCrafts);
-                        player.inventory.addItemStackToInventory(toAdd);
-                    }
-                } else {
-                    if (isLeftClick) {
-                        if (canMerge(player.inventory.getItemStack(), this.slotReference.getStack()) &&
-                                recipeResolver.performRecipe(gui.entityPlayer)) {
-                            this.recipeResolver.refreshOutputSlot();
-                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
-                            // send slot changes now, both of consumed items in inventory and result slot
-                            ItemStack result = this.slotReference.getStack();
-                            mergeToHand(result);
-                        }
-                    } else if (isRightClick) {
-                        while (canMerge(player.inventory.getItemStack(), this.slotReference.getStack()) &&
-                                recipeResolver.performRecipe(gui.entityPlayer)) {
-                            this.recipeResolver.refreshOutputSlot();
-                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
-                            ItemStack result = this.slotReference.getStack();
-                            mergeToHand(result);
-                        }
-                    }
-                }
-                uiAccess.sendHeldItemUpdate();
-                // send slot changes now, both of consumed items in inventory and result slot
-                gui.entityPlayer.openContainer.detectAndSendChanges();
-                uiAccess.sendSlotUpdate(this);
-            }
-        }
+//        if (id == 1) {
+//            HashMap<Integer, ItemStack> ingredients = new HashMap<>();
+//            int ingredientAmount = buffer.readVarInt();
+//            try {
+//                for (int i = 0; i < ingredientAmount; i++) {
+//                    ingredients.put(buffer.readVarInt(), buffer.readItemStack());
+//                }
+//            } catch (IOException exception) {
+//                throw new RuntimeException(exception);
+//            }
+//            recipeResolver.fillCraftingGrid(ingredients);
+//        }
+//        if (id == 2) {
+//            if (recipeResolver.isRecipeValid()) {
+//                ClickData clickData = ClickData.readFromBuf(buffer);
+//                boolean isShiftDown = clickData.isShiftClick;
+//                boolean isLeftClick = clickData.button == 0;
+//                boolean isRightClick = clickData.button == 1;
+//                EntityPlayer player = gui.entityPlayer;
+//                if (isShiftDown) {
+//                    OverlayedItemHandler playerInventory = new OverlayedItemHandler(
+//                            new PlayerMainInvWrapper(gui.entityPlayer.inventory));
+//                    ItemStack toMerge = slotReference.getStack();
+//                    int crafts = this.slotReference.getStack().getCount();
+//                    if (isLeftClick) {
+//                        if (crafts != 0) {
+//                            // limit shift click to one stack at a time
+//                            int totalCrafts = 0;
+//                            int maxCrafts = toMerge.getMaxStackSize() / crafts;
+//                            for (int i = 0; i < maxCrafts; i++) {
+//                                if (canMergeToInv(playerInventory, toMerge, crafts) &&
+//                                        recipeResolver.performRecipe(gui.entityPlayer)) {
+//                                    this.recipeResolver.refreshOutputSlot();
+//                                    recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+//                                    totalCrafts += crafts;
+//                                }
+//                            }
+//                            ItemStack toAdd = this.slotReference.getStack().copy();
+//                            toAdd.setCount(totalCrafts);
+//                            player.inventory.addItemStackToInventory(toAdd);
+//                        }
+//                    } else if (isRightClick) {
+//                        int totalCrafts = 0;
+//                        while (canMergeToInv(playerInventory, toMerge, crafts) &&
+//                                recipeResolver.performRecipe(gui.entityPlayer)) {
+//                            this.recipeResolver.refreshOutputSlot();
+//                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+//                            totalCrafts += crafts;
+//                        }
+//                        ItemStack toAdd = this.slotReference.getStack().copy();
+//                        toAdd.setCount(totalCrafts);
+//                        player.inventory.addItemStackToInventory(toAdd);
+//                    }
+//                } else {
+//                    if (isLeftClick) {
+//                        if (canMerge(player.inventory.getItemStack(), this.slotReference.getStack()) &&
+//                                recipeResolver.performRecipe(gui.entityPlayer)) {
+//                            this.recipeResolver.refreshOutputSlot();
+//                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+//                            // send slot changes now, both of consumed items in inventory and result slot
+//                            ItemStack result = this.slotReference.getStack();
+//                            mergeToHand(result);
+//                        }
+//                    } else if (isRightClick) {
+//                        while (canMerge(player.inventory.getItemStack(), this.slotReference.getStack()) &&
+//                                recipeResolver.performRecipe(gui.entityPlayer)) {
+//                            this.recipeResolver.refreshOutputSlot();
+//                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+//                            ItemStack result = this.slotReference.getStack();
+//                            mergeToHand(result);
+//                        }
+//                    }
+//                }
+//                uiAccess.sendHeldItemUpdate();
+//                // send slot changes now, both of consumed items in inventory and result slot
+//                gui.entityPlayer.openContainer.detectAndSendChanges();
+//                uiAccess.sendSlotUpdate(this);
+//            }
+//        }
     }
 
     private static boolean canMerge(ItemStack stack, ItemStack stack1) {
