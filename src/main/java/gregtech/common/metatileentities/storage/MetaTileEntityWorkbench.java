@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -14,8 +15,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
-import gregtech.common.inventory.itemsource.ItemSources;
-import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -24,11 +23,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -57,6 +58,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -141,6 +143,24 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         int paintingColor = getPaintingColorForRendering();
         pipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(paintingColor)));
         Textures.CRAFTING_TABLE.renderOriented(renderState, translation, pipeline, getFrontFacing());
+    }
+
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        for (int i = 0; i < craftingGrid.getSlots(); i++) {
+            buf.writeItemStack(craftingGrid.getStackInSlot(i));
+        }
+    }
+
+    @Override
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        try {
+            for (int i = 0; i < craftingGrid.getSlots(); i++) {
+                craftingGrid.setStackInSlot(i, buf.readItemStack());
+            }
+        } catch (IOException ignored) {}
     }
 
     @Override
