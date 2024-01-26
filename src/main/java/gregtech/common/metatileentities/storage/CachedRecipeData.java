@@ -22,7 +22,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 public class CachedRecipeData {
 
 //    private final ItemSources itemSources;
-    private final IItemHandler handlerList;
+    private IItemHandler handlerList;
     private IRecipe recipe;
     private final Object2IntMap<ItemStack> requiredItems = new Object2IntOpenCustomHashMap<>(
             ItemStackHashStrategy.comparingAllButCount());
@@ -45,6 +45,10 @@ public class CachedRecipeData {
             if (stack.isEmpty()) continue;
             this.stackIndex.put(stack, i);
         }
+    }
+
+    public void updateInventory(IItemHandler handler) {
+        this.handlerList = handler;
     }
 
     public short attemptMatchRecipe() {
