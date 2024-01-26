@@ -164,6 +164,20 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         this.recipeMemory.deserializeNBT(data.getCompoundTag("RecipeMemory"));
     }
 
+    @Override
+    public IItemHandler getInventory() {
+        var handlerList = new ArrayList<IItemHandler>();
+        for (var facing : EnumFacing.VALUES) {
+            var neighbor = getNeighbor(facing);
+            if (neighbor == null) continue;
+            var handler = neighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+            if (handler != null) handlerList.add(handler);
+        }
+        handlerList.add(this.internalInventory);
+        handlerList.add(this.toolInventory);
+        return new ItemHandlerList(handlerList);
+    }
+
     private void createCraftingRecipeLogic(EntityPlayer entityPlayer) {
         if (recipeLogic == null) {
             this.recipeLogic = new CraftingRecipeLogic(this);
