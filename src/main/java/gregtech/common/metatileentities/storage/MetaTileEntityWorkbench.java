@@ -262,11 +262,17 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                         .child(SlotGroupWidget.builder()
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
-                                                        .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)))
+                                                        .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
+                                                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                                                    this.recipeLogic.updateCurrentRecipe();
+                                                                })))
                                                 .build())
                                         .child(new ItemSlot()
                                                 // todo figure this shit (recipe output slot) out
-                                                .slot(new InventoryWrapper(this.recipeLogic.getCraftingResultInventory()), 0)
+                                                .slot(SyncHandlers
+                                                        .itemSlot(new InventoryWrapper(
+                                                                this.recipeLogic.getCraftingResultInventory(),
+                                                                guiData.getPlayer()), 0))
                                                 .background(GTGuiTextures.SLOT.asIcon().size(22))
                                                 .align(Alignment.Center))
                                         .child(SlotGroupWidget.builder()
@@ -295,13 +301,19 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                 .bindPlayerInventory(7);
     }
 
+    @Override
+    protected boolean createTransferableScreen() {
+        return true;
+    }
 
-
-    private static class InventoryWrapper implements IItemHandlerModifiable {
+    private class InventoryWrapper implements IItemHandlerModifiable {
 
         IInventory inventory;
-        private InventoryWrapper(IInventory inventory) {
+        EntityPlayer player;
+
+        private InventoryWrapper(IInventory inventory, EntityPlayer player) {
             this.inventory = inventory;
+            this.player = player;
         }
 
         @Override
@@ -311,7 +323,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public ItemStack getStackInSlot(int slot) {
-            return inventory.getStackInSlot(slot);
+            return inventory.getStackInSlot(slot).copy();
         }
 
         @Override
@@ -321,6 +333,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (recipeLogic.performRecipe(this.player)) {
+                return inventory.getStackInSlot(slot).copy();
+            }
             return ItemStack.EMPTY;
         }
 
@@ -331,6 +346,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
+            if (stack.isEmpty()) return;
             inventory.setInventorySlotContents(slot, stack);
         }
     }
