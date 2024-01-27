@@ -49,6 +49,7 @@ public class CachedRecipeData {
 
     public void updateInventory(IItemHandler handler) {
         this.handlerList = handler;
+        updateStackIndex();
     }
 
     public short attemptMatchRecipe() {
