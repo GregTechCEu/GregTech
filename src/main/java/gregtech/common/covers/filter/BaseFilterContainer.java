@@ -17,7 +17,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
 
     private final IDirtyNotifiable dirtyNotifiable;
     private int maxTransferSize = 1;
-    private T currentItemFilter;
+    private T currentFilter;
     private Runnable onFilterInstanceChange;
     private int transferSize;
     protected final FilterSlotHandler filterInventory;
@@ -32,27 +32,27 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     }
 
     public int getMaxTransferSize() {
-        return hasFilter() ? currentItemFilter.getMaxTransferSize() : this.maxTransferSize;
+        return hasFilter() ? currentFilter.getMaxTransferSize() : this.maxTransferSize;
     }
 
     public void setMaxTransferSize(int maxTransferSize) {
         this.maxTransferSize = MathHelper.clamp(maxTransferSize, 1, Integer.MAX_VALUE);
         this.transferSize = MathHelper.clamp(this.transferSize, 1, this.maxTransferSize);
-        if (hasFilter()) currentItemFilter.setMaxTransferSize(this.maxTransferSize);
+        if (hasFilter()) currentFilter.setMaxTransferSize(this.maxTransferSize);
     }
 
     public boolean hasFilter() {
-        return currentItemFilter != null;
+        return currentFilter != null;
     }
 
     public T getFilter() {
-        return currentItemFilter;
+        return currentFilter;
     }
 
     public final void setFilter(T newFilter) {
-        this.currentItemFilter = newFilter;
-        if (currentItemFilter != null) {
-            currentItemFilter.setDirtyNotifiable(dirtyNotifiable);
+        this.currentFilter = newFilter;
+        if (currentFilter != null) {
+            currentFilter.setDirtyNotifiable(dirtyNotifiable);
         }
         if (onFilterInstanceChange != null) {
             this.onFilterInstanceChange.run();
@@ -69,14 +69,14 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
 
     public boolean showGlobalTransferLimitSlider() {
         return getMaxTransferSize() > 0 &&
-                (isBlacklistFilter() || !hasFilter() || currentItemFilter.showGlobalTransferLimitSlider());
+                (isBlacklistFilter() || !hasFilter() || currentFilter.showGlobalTransferLimitSlider());
     }
 
     public int getTransferLimit(int slotIndex) {
-        if (isBlacklistFilter() || currentItemFilter == null) {
+        if (isBlacklistFilter() || currentFilter == null) {
             return getTransferSize();
         }
-        return currentItemFilter.getTransferLimit(slotIndex, getTransferSize());
+        return currentFilter.getTransferLimit(slotIndex, getTransferSize());
     }
 
     public boolean test(R toTest) {
@@ -91,10 +91,10 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     }
 
     public int getTransferLimit(R stack) {
-        if (isBlacklistFilter() || currentItemFilter == null) {
+        if (isBlacklistFilter() || currentFilter == null) {
             return getTransferSize();
         }
-        return currentItemFilter.getTransferLimit(stack, getTransferSize());
+        return currentFilter.getTransferLimit(stack, getTransferSize());
     }
 
     protected abstract void onFilterSlotChange(boolean notify);
