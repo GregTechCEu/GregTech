@@ -50,7 +50,7 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
     }
 
     public int getMaxTransferRate() {
-        return this.maxTransferRate;
+        return isBlacklistFilter() ? 1 : this.maxTransferRate;
     }
 
     protected NBTTagCompound getStackTag() {

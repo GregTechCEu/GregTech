@@ -142,13 +142,23 @@ public class SimpleFluidFilter extends FluidFilter {
     protected static class SimpleFluidFilterReader extends BaseFluidFilterReader {
 
         protected WritableFluidTank[] fluidTanks;
+        protected static final String CAPACITY = "Capacity";
 
         public SimpleFluidFilterReader(ItemStack container, int slots) {
             super(container, slots);
             fluidTanks = new WritableFluidTank[slots];
             for (int i = 0; i < fluidTanks.length; i++) {
-                fluidTanks[i] = new WritableFluidTank(this, getItemsNbt().getCompoundTagAt(i), 1000);
+                fluidTanks[i] = new WritableFluidTank(this, getItemsNbt().getCompoundTagAt(i));
             }
+            setCapacity(getStackTag().hasKey(CAPACITY) ? getCapacity() : 1000);
+        }
+
+        public void setCapacity(int capacity) {
+            getStackTag().setInteger(CAPACITY, capacity);
+        }
+
+        public int getCapacity() {
+            return getStackTag().getInteger(CAPACITY);
         }
 
         public WritableFluidTank getFluidTank(int i) {
@@ -167,8 +177,8 @@ public class SimpleFluidFilter extends FluidFilter {
                 var stack = getFluidStack(i);
                 if (stack == null) continue;
                 getFluidTank(i).setFluidAmount(Math.min(stack.amount, getMaxTransferRate()));
-                getFluidTank(i).setCapacity(getMaxTransferRate());
             }
+            setCapacity(getMaxTransferRate());
         }
     }
 
@@ -177,24 +187,21 @@ public class SimpleFluidFilter extends FluidFilter {
         private final NBTTagCompound fluidTank;
         private final SimpleFluidFilterReader filterReader;
         protected static final String FLUID_AMOUNT = "Amount";
-        protected static final String CAPACITY = "Capacity";
         protected static final String FLUID = "Fluid";
         protected static final String EMPTY = "Empty";
 
-        protected WritableFluidTank(SimpleFluidFilterReader filterReader, NBTTagCompound fluidTank,
-                                    int initialCapacity) {
-            super(initialCapacity);
+        protected WritableFluidTank(SimpleFluidFilterReader filterReader, NBTTagCompound fluidTank) {
+            super(0);
             this.filterReader = filterReader;
             this.fluidTank = fluidTank;
-            setCapacity(fluidTank.hasKey(CAPACITY) ? fluidTank.getInteger(CAPACITY) : initialCapacity);
-        }
-
-        public void setCapacity(int capacity) {
-            this.fluidTank.setInteger(CAPACITY, capacity);
         }
 
         public void setFluidAmount(int amount) {
-            getFluidTag().setInteger(FLUID_AMOUNT, amount);
+            if (amount <= 0) {
+                setFluid(null);
+            } else {
+                getFluidTag().setInteger(FLUID_AMOUNT, amount);
+            }
         }
 
         public boolean isEmpty() {
@@ -223,8 +230,8 @@ public class SimpleFluidFilter extends FluidFilter {
             }
         }
 
-        protected boolean isBucketOnly() {
-            return filterReader.isBucketOnly();
+        protected boolean showAmount() {
+            return filterReader.shouldShowAmount();
         }
 
         @Override
@@ -234,7 +241,7 @@ public class SimpleFluidFilter extends FluidFilter {
 
         @Override
         public int getCapacity() {
-            return this.fluidTank.getInteger(CAPACITY);
+            return this.filterReader.getCapacity();
         }
 
         @SuppressWarnings("DataFlowIssue")
@@ -242,9 +249,9 @@ public class SimpleFluidFilter extends FluidFilter {
         public int fill(FluidStack resource, boolean doFill) {
             if (isEmpty() || !getFluid().isFluidEqual(resource)) {
                 setFluid(resource);
-                if (isBucketOnly()) setFluidAmount(1000);
+                if (!showAmount()) setFluidAmount(1);
                 return resource.amount;
-            } else if (!isBucketOnly()) {
+            } else if (showAmount()) {
                 var fluid = getFluid();
                 int accepted = Math.min(resource.amount, getCapacity() - fluid.amount);
                 fluid.amount += accepted;
@@ -258,21 +265,12 @@ public class SimpleFluidFilter extends FluidFilter {
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
             if (isEmpty()) return null;
-            var fluid = getFluid();
-            fluid.amount = Math.min(fluid.amount, maxDrain);
+            FluidStack fluid = getFluid();
 
-            var copy = getFluid();
-            copy.amount -= fluid.amount;
+            fluid.amount -= Math.min(fluid.amount, maxDrain);
 
-            if (isBucketOnly()) {
-                setFluid(null);
-            } else {
-                if (copy.amount == 0)
-                    setFluid(null);
-                else
-                    setFluid(copy);
+            setFluidAmount(fluid.amount);
 
-            }
             return fluid;
         }
     }
@@ -352,7 +350,7 @@ public class SimpleFluidFilter extends FluidFilter {
                         }
                     } else if (this.lastStoredPhantomFluid != null) {
                         FluidStack toFill = this.lastStoredPhantomFluid.copy();
-                        toFill.amount = this.controlsAmount() ? 1000 : 1;
+                        toFill.amount = this.controlsAmount() ? 1 : toFill.amount;
                         this.getFluidTank().fill(toFill, true);
                     }
                 }
@@ -366,6 +364,15 @@ public class SimpleFluidFilter extends FluidFilter {
         public void tryScrollPhantom(MouseData mouseData) {
             FluidStack currentFluid = this.getFluidTank().getFluid();
             int amount = mouseData.mouseButton;
+            if (!this.controlsAmount()) {
+                var fluid = getFluidTank().getFluid();
+                int newAmt = amount == 1 ? 1 : 0;
+                if (fluid != null && fluid.amount != newAmt) {
+                    fluid.amount = newAmt;
+                    setValue(fluid, true, true);
+                    return;
+                }
+            }
             if (mouseData.shift) {
                 amount *= 10;
             }
@@ -384,7 +391,7 @@ public class SimpleFluidFilter extends FluidFilter {
                 this.setValue(this.getFluidTank().getFluid(), false, true);
                 return;
             }
-            if (amount > 0 && this.controlsAmount()) {
+            if (amount > 0) {
                 FluidStack toFill = currentFluid.copy();
                 toFill.amount = amount;
                 this.getFluidTank().fill(toFill, true);
@@ -392,6 +399,14 @@ public class SimpleFluidFilter extends FluidFilter {
                 this.getFluidTank().drain(-amount, true);
             }
             this.setValue(this.getFluidTank().getFluid(), false, true);
+        }
+
+        @Override
+        public boolean controlsAmount() {
+            if (getFluidTank() instanceof WritableFluidTank writableFluidTank) {
+                return writableFluidTank.showAmount();
+            }
+            return super.controlsAmount();
         }
     }
 }

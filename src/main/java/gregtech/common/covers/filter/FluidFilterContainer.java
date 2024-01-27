@@ -132,12 +132,6 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
                         .left(36).right(0).height(18));
     }
 
-    public void setBucketOnly(boolean bucketOnly) {
-        if (hasFilter()) {
-            getFilter().setBucketOnly(bucketOnly);
-        }
-    }
-
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         var stack = ItemStack.EMPTY;

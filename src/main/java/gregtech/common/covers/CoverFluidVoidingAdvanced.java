@@ -105,7 +105,6 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     public void setVoidingMode(VoidingMode transferMode) {
         this.voidingMode = transferMode;
-        this.fluidFilterContainer.setBucketOnly(transferMode == VoidingMode.VOID_ANY);
         this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
         this.markDirty();
     }

@@ -287,7 +287,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     protected int getMaxTransferRate() {
-        return 1000;
+        return 1;
     }
 
     @Override
@@ -320,7 +320,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         super.readInitialSyncData(packetBuffer);
         this.pumpMode = packetBuffer.readEnumValue(PumpMode.class);
         getFluidFilterContainer().readInitialSyncData(packetBuffer);
-        getFluidFilterContainer().setBucketOnly(true);
     }
 
     @Override
@@ -396,7 +395,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
         this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
-        this.fluidFilterContainer.setBucketOnly(true);
     }
 
     @Override

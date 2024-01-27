@@ -206,8 +206,7 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
-        getFluidFilterContainer().setMaxTransferSize(1000);
-        getFluidFilterContainer().setBucketOnly(true);
+        getFluidFilterContainer().setMaxTransferSize(1);
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(createWidgets(panel, guiSyncManager))

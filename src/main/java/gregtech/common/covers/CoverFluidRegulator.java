@@ -224,7 +224,6 @@ public class CoverFluidRegulator extends CoverPump {
     public void setTransferMode(TransferMode transferMode) {
         if (this.transferMode != transferMode) {
             this.transferMode = transferMode;
-            this.fluidFilterContainer.setBucketOnly(transferMode == TransferMode.TRANSFER_ANY);
             this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
             this.markDirty();
         }
@@ -279,7 +278,7 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     public int getMaxTransferRate() {
         return switch (this.transferMode) {
-            case TRANSFER_ANY -> 0;
+            case TRANSFER_ANY -> 1;
             case TRANSFER_EXACT -> maxFluidTransferRate;
             case KEEP_EXACT -> Integer.MAX_VALUE;
         };
@@ -295,7 +294,6 @@ public class CoverFluidRegulator extends CoverPump {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.transferMode = packetBuffer.readEnumValue(TransferMode.class);
-        getFluidFilterContainer().setBucketOnly(this.transferMode == TransferMode.TRANSFER_ANY);
     }
 
     @Override
@@ -309,7 +307,6 @@ public class CoverFluidRegulator extends CoverPump {
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
-        this.fluidFilterContainer.setBucketOnly(transferMode == TransferMode.TRANSFER_ANY);
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
             if (this.fluidFilterContainer.hasFilter()) {

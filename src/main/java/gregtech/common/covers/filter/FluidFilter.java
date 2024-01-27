@@ -62,10 +62,6 @@ public abstract class FluidFilter implements Filter<FluidStack> {
                         .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
     }
 
-    public final void setBucketOnly(boolean bucketOnly) {
-        this.filterReader.setBucketOnly(bucketOnly);
-    }
-
     public abstract ItemStack getContainerStack();
 
     public boolean showGlobalTransferLimitSlider() {
@@ -123,8 +119,8 @@ public abstract class FluidFilter implements Filter<FluidStack> {
             getStackTag().setBoolean(BUCKET_ONLY, bucketOnly);
         }
 
-        public final boolean isBucketOnly() {
-            return getStackTag().getBoolean(BUCKET_ONLY) || isBlacklistFilter();
+        public final boolean shouldShowAmount() {
+            return getMaxTransferRate() > 1;
         }
 
         @Override
@@ -146,10 +142,5 @@ public abstract class FluidFilter implements Filter<FluidStack> {
         }
 
         public abstract IFluidTank getFluidTank(int i);
-
-        @Override
-        public void setMaxTransferRate(int transferRate) {
-            super.setMaxTransferRate(isBucketOnly() ? 1000 : transferRate);
-        }
     }
 }
