@@ -73,7 +73,6 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
         this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(GTUtility.copy(1, itemStack)));
-        this.fluidFilterContainer.setMaxTransferSize(1);
     }
 
     @Override
@@ -137,6 +136,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         var filteringMode = new EnumSyncValue<>(FluidFilterMode.class, this::getFilterMode, this::setFilterMode);
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
+        this.fluidFilterContainer.setMaxTransferSize(1);
 
         return getFluidFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)
