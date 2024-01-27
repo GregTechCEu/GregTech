@@ -149,7 +149,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(this.recipeLogic.getItemsCraftedAmount());
+        buf.writeInt(this.itemsCrafted);
         for (int i = 0; i < craftingGrid.getSlots(); i++) {
             buf.writeItemStack(craftingGrid.getStackInSlot(i));
         }
@@ -158,7 +158,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.recipeLogic.setItemsCraftedAmount(buf.readInt());
+        this.itemsCrafted = buf.readInt();
         try {
             for (int i = 0; i < craftingGrid.getSlots(); i++) {
                 craftingGrid.setStackInSlot(i, buf.readItemStack());
@@ -172,7 +172,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         data.setTag("CraftingGridInventory", craftingGrid.serializeNBT());
         data.setTag("ToolInventory", toolInventory.serializeNBT());
         data.setTag("InternalInventory", internalInventory.serializeNBT());
-        data.setInteger("ItemsCrafted", recipeLogic == null ? itemsCrafted : recipeLogic.getItemsCraftedAmount());
+        data.setInteger("ItemsCrafted", itemsCrafted);
         data.setTag("RecipeMemory", recipeMemory.serializeNBT());
         return data;
     }
@@ -324,7 +324,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                 .child(SlotGroupWidget.builder()
                                         .row(nineSlot)
                                         .key(key, i -> new ItemSlot()
-                                                .overlay(GTGuiTextures.INGOT_OVERLAY)
+                                                .background(GTGuiTextures.SLOT, GTGuiTextures.INGOT_OVERLAY)
                                                 .slot(SyncHandlers.itemSlot(this.toolInventory, i)
                                                         .slotGroup(toolSlots)))
                                         .build().marginBottom(2))
