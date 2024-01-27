@@ -4804,12 +4804,12 @@ gregtech.multiblock.data_bank.description=数据库是一个用于在多个装�
 
 gregtech.machine.power_substation.name=蓄能变电站
 gregtech.machine.power_substation.tooltip1=集中电网的核心
-gregtech.machine.power_substation.tooltip2=所有§f电容§r不需要保持同一电压等级。
-gregtech.machine.power_substation.tooltip3=最多容许§f%d层电容§r。
-gregtech.machine.power_substation.tooltip4=每§f24小时§7损失相当于总容量的§f1%%§r的能量。
+gregtech.machine.power_substation.tooltip2=所有§f电容§7不需要保持同一电压等级。
+gregtech.machine.power_substation.tooltip3=最多容许§f%d层电容§7。
+gregtech.machine.power_substation.tooltip4=每§f24小时§7损失相当于总容量的§f1%%§7的能量。
 gregtech.machine.power_substation.tooltip5=每个电容的损失上限为§f%,d EU/t§7。
 gregtech.machine.power_substation.tooltip6=可以使用
-gregtech.machine.power_substation.tooltip6.5=激光仓§r。
+gregtech.machine.power_substation.tooltip6.5=激光仓§7。
 gregtech.multiblock.power_substation.description=蓄能变电站是一个用于储存大量能量的多方块结构，它最多可以容纳18层电容，每层都必须填充完整，这意味着你可以用空电容来填充空间。
 
 gregtech.machine.active_transformer.name=有源变压器
