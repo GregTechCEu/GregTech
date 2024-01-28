@@ -6,6 +6,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface Filter<T> {
 
@@ -26,7 +27,7 @@ public interface Filter<T> {
 
     boolean test(T toTest);
 
-    void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable);
+    void setDirtyNotifiable(@Nullable IDirtyNotifiable dirtyNotifiable);
 
     void markDirty();
 
