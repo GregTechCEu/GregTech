@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -42,7 +43,7 @@ public class FilterTypeRegistry {
         itemFilterById.put(id, itemFilterClass);
     }
 
-    public static int getIdForFilter(Object filter) {
+    public static int getIdForFilter(Filter<?> filter) {
         int id = -1;
         if (filter instanceof ItemFilter) {
             id = itemFilterById.inverse().get(filter.getClass());
@@ -52,7 +53,11 @@ public class FilterTypeRegistry {
         return id;
     }
 
+    /**
+     * @deprecated use {@link FilterTypeRegistry#getIdForFilter(Filter)}
+     */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static int getIdForItemFilter(ItemFilter itemFilter) {
         Integer filterId = itemFilterById.inverse().get(itemFilter.getClass());
         if (filterId == null) {
@@ -61,7 +66,11 @@ public class FilterTypeRegistry {
         return filterId;
     }
 
+    /**
+     * @deprecated use {@link FilterTypeRegistry#getIdForFilter(Filter)}
+     */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static int getIdForFluidFilter(FluidFilter fluidFilter) {
         Integer filterId = fluidFilterById.inverse().get(fluidFilter.getClass());
         if (filterId == null) {
@@ -70,7 +79,11 @@ public class FilterTypeRegistry {
         return filterId;
     }
 
+    /**
+     * @deprecated use {@link FilterTypeRegistry#getItemFilterForStack(ItemStack)}
+     */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static ItemFilter createItemFilterById(int filterId) {
         Class<? extends ItemFilter> filterClass = itemFilterById.get(filterId);
         if (filterClass == null) {
@@ -79,7 +92,11 @@ public class FilterTypeRegistry {
         return createNewFilterInstance(filterClass);
     }
 
+    /**
+     * @deprecated use {@link FilterTypeRegistry#getFluidFilterForStack(ItemStack)}
+     */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static FluidFilter createFluidFilterById(int filterId) {
         Class<? extends FluidFilter> filterClass = fluidFilterById.get(filterId);
         if (filterClass == null) {
@@ -110,8 +127,10 @@ public class FilterTypeRegistry {
 
     public static int getFilterIdForStack(ItemStack stack) {
         int id = -1;
-        if (isItemFilter(stack)) id = itemFilterIdByStack.getOrDefault(new ItemAndMetadata(stack), -1);
-        else if (isFluidFilter(stack)) id = fluidFilterIdByStack.getOrDefault(new ItemAndMetadata(stack), -1);
+        if (isItemFilter(stack))
+            id = itemFilterIdByStack.getOrDefault(new ItemAndMetadata(stack), -1);
+        else if (isFluidFilter(stack))
+            id = fluidFilterIdByStack.getOrDefault(new ItemAndMetadata(stack), -1);
         return id;
     }
 
@@ -125,7 +144,11 @@ public class FilterTypeRegistry {
         }
     }
 
+    /**
+     * @deprecated use {@link FilterTypeRegistry#createNewFilterInstance(Class, ItemStack)}
+     */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     private static <T> T createNewFilterInstance(Class<T> filterClass) {
         return createNewFilterInstance(filterClass, ItemStack.EMPTY);
     }
