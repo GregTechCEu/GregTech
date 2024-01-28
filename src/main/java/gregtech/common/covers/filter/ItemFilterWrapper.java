@@ -2,10 +2,16 @@ package gregtech.common.covers.filter;
 
 import net.minecraft.item.ItemStack;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+/**
+ * @deprecated use {@link ItemFilterContainer}
+ */
 @Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class ItemFilterWrapper {
 
     private final ItemFilterContainer container;

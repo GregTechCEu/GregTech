@@ -1,6 +1,14 @@
 package gregtech.common.covers.filter;
 
+import net.minecraft.item.ItemStack;
+
+import org.jetbrains.annotations.ApiStatus;
+
+/**
+ * @deprecated use {@link FluidFilterContainer}
+ */
 @Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class FluidFilterWrapper {
 
     FluidFilterContainer container;
