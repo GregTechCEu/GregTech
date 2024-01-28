@@ -53,14 +53,9 @@ public class CachedRecipeData {
     }
 
     public short attemptMatchRecipe() {
-        requiredItems.clear();
         short itemsFound = 0;
         for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
-            var stack = craftingMatrix.getStackInSlot(i);
-
-            if (!getIngredientEquivalent(i)) continue;
-
-            if (indexedIngredients[i] == null || indexedIngredients[i].apply(stack))
+            if (getIngredientEquivalent(i))
                 itemsFound += (short) (1 << i);
         }
         return itemsFound;
@@ -112,6 +107,7 @@ public class CachedRecipeData {
             return true; // stack is empty, nothing to return
         }
         updateStackIndex();
+        requiredItems.clear();
 
         if (simulateExtractItem(currentStack)) {
             return true;
