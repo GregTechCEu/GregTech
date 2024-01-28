@@ -20,6 +20,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -54,6 +55,9 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
         return result;
     }
 
+    /** @deprecated uses old builtin MUI */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new gregtech.api.gui.widgets.LabelWidget(10, y, "cover.pump.fluid_filter.title"));
         widgetGroup.accept(new gregtech.api.gui.widgets.SlotWidget(filterInventory, 0, 10, y + 15)
@@ -64,10 +68,16 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
         this.blacklistUI(y + 15, widgetGroup, () -> true);
     }
 
+    /** @deprecated uses old builtin MUI */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFilter, this::showGlobalTransferLimitSlider));
     }
 
+    /** @deprecated uses old builtin MUI */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         gregtech.api.gui.widgets.ServerWidgetGroup blacklistButton = new gregtech.api.gui.widgets.ServerWidgetGroup(
                 this::hasFilter);
@@ -82,6 +92,8 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
     public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
         var panel = new PanelSyncHandler(main) {
 
+            // the panel can't be opened if there's no filter, so `getFilter()` will never be null
+            @SuppressWarnings("DataFlowIssue")
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 getFilter().setMaxTransferSize(getMaxTransferSize());

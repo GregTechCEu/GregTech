@@ -24,6 +24,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
@@ -39,13 +40,16 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
         this.filterWrapper = new ItemFilterWrapper(this); // for compat
     }
 
+    /** @deprecated use {@link ItemFilterContainer} */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public ItemFilterWrapper getFilterWrapper() {
         return filterWrapper;
     }
 
-    /** Deprecated, uses old builtin MUI */
+    /** @deprecated uses old builtin MUI */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.conveyor.item_filter.title"));
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
@@ -54,14 +58,16 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
         this.initFilterUI(y + 38, widgetGroup);
     }
 
-    /** Deprecated, uses old builtin MUI */
+    /** @deprecated uses old builtin MUI */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new WidgetGroupItemFilter(y, this::getFilter));
     }
 
-    /** Deprecated, uses old builtin MUI */
+    /** @deprecated uses old builtin MUI */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(this::hasFilter);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
@@ -74,6 +80,8 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
     public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
         var panel = new PanelSyncHandler(main) {
 
+            // the panel can't be opened if there's no filter, so `getFilter()` will never be null
+            @SuppressWarnings("DataFlowIssue")
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 getFilter().setMaxTransferSize(getMaxTransferSize());
