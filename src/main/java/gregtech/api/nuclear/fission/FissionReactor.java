@@ -4,6 +4,7 @@ import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
+import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
 import java.util.ArrayList;
@@ -26,13 +27,18 @@ public class FissionReactor {
     private ArrayList<CoolantChannel> coolantChannels;
     private ArrayList<ControlRod> effectiveControlRods;
     private ArrayList<CoolantChannel> effectiveCoolantChannels;
+
+    // TODO: Verify usefulness of the following things
     private int numberOfComponents;
 
     private double totNeutronSources;
     private double avgGeometricFactorSlowNeutrons;
     private double avgGeometricFactorFastNeutrons;
+
+    // TODO: Make this configurable
     private int geometricIntegrationSteps = 5;
 
+    // Wtf is lSlow
     private double lSlow;
     private double lFast;
     private double kSlow;
@@ -353,18 +359,18 @@ public class FissionReactor {
 
     public void prepareInitialConditions() {
         for (CoolantChannel channel : effectiveCoolantChannels) {
+
+            CoolantProperty prop = channel.getCoolant().getProperty(PropertyKey.COOLANT);
+
             temperature += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
-            // TODO: Add boiling point values
-            avgBoilingPoint += channel.getCoolant().getProperty(PropertyKey.COOLANT).getBoilingPoint() *
+            avgBoilingPoint += prop.getBoilingPoint() *
                     channel.getWeight();
-            // TODO: Add neutron absorption values
-            avgAbsorption += channel.getCoolant().getProperty(PropertyKey.COOLANT).getAbsorption() *
+            avgAbsorption += prop.getAbsorption() *
                     channel.getWeight();
-            // TODO: Add neutron moderation values
-            avgModeration += channel.getCoolant().getProperty(PropertyKey.COOLANT).getModerationFactor() *
+            avgModeration += prop.getModerationFactor() *
                     channel.getWeight();
-            // TODO: Add pressure to coolants
-            avgPressure += channel.getCoolant().getProperty(PropertyKey.COOLANT).getPressure() * channel.getWeight();
+            avgPressure += prop.getPressure() * channel.getWeight();
+            coolantHeatOfVaporization += prop.getPressure() * channel.getWeight();
         }
     }
 

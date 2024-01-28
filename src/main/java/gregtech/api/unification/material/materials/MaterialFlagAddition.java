@@ -413,6 +413,6 @@ public class MaterialFlagAddition {
          */
         DistilledWater.setProperty(PropertyKey.COOLANT,
                 new CoolantProperty(Steam, HighPressureSteam, 1., 1.,
-                        373, 10., FissionReactor.standardPressure));
+                        373, 10., FissionReactor.standardPressure, 40650));
     }
 }

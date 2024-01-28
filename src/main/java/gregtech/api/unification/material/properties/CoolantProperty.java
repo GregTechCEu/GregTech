@@ -7,13 +7,19 @@ public class CoolantProperty implements IMaterialProperty {
     private Material hotCoolant;
     private Material hotHPCoolant;
     private double moderatorFactor;
+    // eyeball this??
     private double coolingFactor;
+    // in kelvin at standard conditions
     private double boilingPoint;
+    // neutron absorption rate
     private double absorption;
+    // in pascal
     private double pressure;
+    // in J/mol
+    private double heatOfVaporization;
 
     public CoolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor, double coolingFactor,
-                           double boilingPoint, double absorption, double pressure) {
+                           double boilingPoint, double absorption, double pressure, double heatOfVaporization) {
         this.hotCoolant = hotCoolant;
         this.hotHPCoolant = hotHPCoolant;
         this.moderatorFactor = moderatorFactor;
@@ -21,6 +27,7 @@ public class CoolantProperty implements IMaterialProperty {
         this.boilingPoint = boilingPoint;
         this.absorption = absorption;
         this.pressure = pressure;
+        this.heatOfVaporization = heatOfVaporization;
     }
 
     @Override
@@ -82,5 +89,13 @@ public class CoolantProperty implements IMaterialProperty {
 
     public double getPressure() {
         return pressure;
+    }
+
+    public double getHeatOfVaporization() {
+        return heatOfVaporization;
+    }
+
+    public void setHeatOfVaporization(double heatOfVaporization) {
+        this.heatOfVaporization = heatOfVaporization;
     }
 }
