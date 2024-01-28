@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import com.cleanroommc.modularui.utils.Alignment;
-
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -10,9 +8,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.storage.ICraftingStorage;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.Position;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
 
@@ -29,6 +25,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -40,8 +37,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -54,6 +53,7 @@ import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -62,8 +62,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity implements ICraftingStorage {
 
@@ -204,7 +202,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     private void createCraftingRecipeLogic(EntityPlayer entityPlayer) {
         if (recipeLogic == null) {
             this.recipeLogic = new CraftingRecipeLogic(this);
-            this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
+            this.recipeLogic.updateInventory(getInventory());
         }
         this.listeners.add(entityPlayer);
     }
@@ -266,6 +264,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
         guiSyncManager.syncValue("amount_crafted", amountCrafted);
+        guiSyncManager.syncValue("recipe_logic", this.recipeLogic);
         amountCrafted.updateCacheFromSource(true);
 
         var controller = new PagedWidget.Controller();
@@ -273,13 +272,17 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         return GTGuis.createPanel(this, 176, 224)
                 .child(new Row().widthRel(1f)
                         .leftRel(0.5f)
-                        .margin(2, 0)
+                        .margin(3, 0)
                         .coverChildrenHeight()
                         .topRel(0f, 3, 1f)
                         .child(new PageButton(0, controller)
-                                .tab(GuiTextures.TAB_TOP, 0))
+                                .tab(GuiTextures.TAB_TOP, 0)
+                                .overlay(new ItemDrawable(getStackForm())
+                                        .asIcon().size(16)))
                         .child(new PageButton(1, controller)
-                                .tab(GuiTextures.TAB_TOP, 0)))
+                                .tab(GuiTextures.TAB_TOP, 0)
+                                .overlay(new ItemDrawable(new ItemStack(Blocks.CHEST))
+                                        .asIcon().size(16))))
                 .child(new PagedWidget<>()
                         .top(7)
                         .margin(7)
@@ -337,7 +340,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
                                         .build()))
                         .addPage(new Column().coverChildren()
                                 .child(IKey.str("add storage things").asWidget())))
-                .bindPlayerInventory(7);
+                .bindPlayerInventory();
     }
 
     public int getItemsCrafted() {
@@ -363,17 +366,39 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
         @Override
         public boolean canTakeStack(EntityPlayer playerIn) {
-            boolean success = recipeLogic.performRecipe(playerIn);
-            if (success) {
-                this.syncValue.setValue(this.syncValue.getValue() + 1, true, false);
-            }
-            return success;
+            return recipeLogic.performRecipe(playerIn);
         }
 
         @Override
         public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
-            recipeLogic.handleItemCraft(stack, thePlayer);
+            handleItemCraft(stack, thePlayer);
+            recipeLogic.sync(0, buffer -> buffer.writeItemStack(stack));
             return super.onTake(thePlayer, stack);
+        }
+
+        @Override
+        public void putStack(@NotNull ItemStack stack) {
+            super.putStack(stack);
+        }
+
+        public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
+            itemStack.onCrafting(getWorld(), player, 1);
+
+            var inventoryCrafting = recipeLogic.getCraftingMatrix();
+
+            // if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
+            FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
+
+            var cachedRecipe = recipeLogic.getCachedRecipe();
+            if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
+                player.unlockRecipes(Lists.newArrayList(cachedRecipe));
+            }
+            if (cachedRecipe != null) {
+                ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
+                this.syncValue.setValue(this.syncValue.getValue() + resultStack.getCount(), true, false);
+//                itemsCrafted += resultStack.getCount();
+                recipeMemory.notifyRecipePerformed(craftingGrid, resultStack);
+            }
         }
     }
 
