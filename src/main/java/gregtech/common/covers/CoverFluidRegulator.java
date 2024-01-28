@@ -306,7 +306,7 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
+        this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
             if (this.fluidFilterContainer.hasFilter()) {

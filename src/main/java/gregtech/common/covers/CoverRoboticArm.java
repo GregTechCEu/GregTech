@@ -231,7 +231,7 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.transferMode = TransferMode.values()[packetBuffer.readInt()];
+        this.transferMode = TransferMode.VALUES[packetBuffer.readInt()];
     }
 
     @Override
@@ -243,6 +243,6 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
+        this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
     }
 }

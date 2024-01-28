@@ -195,7 +195,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.voidingMode = VoidingMode.values()[tagCompound.getInteger("VoidingMode")];
+        this.voidingMode = VoidingMode.VALUES[tagCompound.getInteger("VoidingMode")];
         this.transferAmount = tagCompound.getInteger("TransferAmount");
     }
 }

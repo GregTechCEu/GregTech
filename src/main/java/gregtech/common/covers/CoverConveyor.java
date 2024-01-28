@@ -638,8 +638,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeInt(transferRate);
-        packetBuffer.writeEnumValue(conveyorMode);
-        packetBuffer.writeEnumValue(distributionMode);
+        packetBuffer.writeByte(conveyorMode.ordinal());
+        packetBuffer.writeByte(distributionMode.ordinal());
+        packetBuffer.writeByte(manualImportExportMode.ordinal());
         getItemFilterContainer().writeInitialSyncData(packetBuffer);
     }
 
@@ -649,6 +650,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         this.transferRate = packetBuffer.readInt();
         this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
         this.distributionMode = packetBuffer.readEnumValue(DistributionMode.class);
+        this.manualImportExportMode = packetBuffer.readEnumValue(ManualImportExportMode.class);
         getItemFilterContainer().readInitialSyncData(packetBuffer);
     }
 
@@ -667,10 +669,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
-        this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
-        this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
+        this.conveyorMode = ConveyorMode.VALUES[tagCompound.getInteger("ConveyorMode")];
+        this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
-        this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
+        this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
         this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
@@ -685,6 +687,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         IMPORT("cover.conveyor.mode.import"),
         EXPORT("cover.conveyor.mode.export");
 
+        public static final ConveyorMode[] VALUES = values();
         public final String localeName;
 
         ConveyorMode(String localeName) {

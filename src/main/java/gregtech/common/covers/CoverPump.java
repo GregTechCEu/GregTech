@@ -311,7 +311,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeEnumValue(pumpMode);
+        packetBuffer.writeByte(pumpMode.ordinal());
         getFluidFilterContainer().writeInitialSyncData(packetBuffer);
     }
 
