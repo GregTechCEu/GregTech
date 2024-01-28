@@ -45,11 +45,11 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         if (hasFilter()) currentFilter.setMaxTransferSize(this.maxTransferSize);
     }
 
-    public boolean hasFilter() {
+    public final boolean hasFilter() {
         return currentFilter != null;
     }
 
-    public @Nullable T getFilter() {
+    public final @Nullable T getFilter() {
         return currentFilter;
     }
 
