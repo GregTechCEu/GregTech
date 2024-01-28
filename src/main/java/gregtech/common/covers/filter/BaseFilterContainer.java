@@ -53,7 +53,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         return currentFilter;
     }
 
-    public final void setFilter(T newFilter) {
+    public final void setFilter(@Nullable T newFilter) {
         this.currentFilter = newFilter;
         if (currentFilter != null) {
             currentFilter.setDirtyNotifiable(dirtyNotifiable);
@@ -67,7 +67,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         dirtyNotifiable.markAsDirty();
     }
 
-    public void setOnFilterInstanceChange(Runnable onFilterInstanceChange) {
+    public void setOnFilterInstanceChange(@Nullable Runnable onFilterInstanceChange) {
         this.onFilterInstanceChange = onFilterInstanceChange;
     }
 
