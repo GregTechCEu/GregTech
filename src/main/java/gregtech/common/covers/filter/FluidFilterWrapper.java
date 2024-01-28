@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import net.minecraft.item.ItemStack;
-
 import org.jetbrains.annotations.ApiStatus;
 
 /**

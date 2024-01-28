@@ -103,6 +103,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
 
     /**
      * Called when the filter slot has changed to a different filter or has been removed
+     * 
      * @param notify if true, call {@code onFilterInstanceChange()}
      */
     protected abstract void onFilterSlotChange(boolean notify);

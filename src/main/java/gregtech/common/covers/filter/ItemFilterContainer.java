@@ -26,7 +26,6 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
