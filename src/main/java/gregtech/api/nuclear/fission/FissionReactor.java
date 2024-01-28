@@ -6,6 +6,8 @@ import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.common.metatileentities.multi.MetaTileEntityFissionReactor;
+
 
 import java.util.ArrayList;
 
@@ -48,8 +50,10 @@ public class FissionReactor {
     private double avgCoolantTemperature;
     private double controlRodFactor;
 
-    private double kEff; // criticality value
+    // TODO: Determine tolerance range from config
+    private double kEff; // criticality value, based on k
 
+    // Is this still needed?
     private double avgBoilingPoint;
     private double avgAbsorption;
     private double avgPressure;
@@ -57,6 +61,7 @@ public class FissionReactor {
 
     /**
      * Thresholds important for determining the evolution of the reactor
+     * ^^^ This is a very epic comment
      */
     public int criticalRodInsertion; // determined by k value
 
@@ -81,17 +86,26 @@ public class FissionReactor {
     public double pressure = standardPressure;
     public double exteriorPressure = standardPressure;
     /**
-     * Temperature of boiling point in kelvin
+     * Temperature of boiling point in kelvin at standard pressure
+     * Determined by a weighted sum of the individual coolant boiling points in {@link FissionReactor#prepareInitialConditions()}
      */
-    public double coolantBoilingPointStandardPressure; // if we want multiple coolants, use weights for each coolant channel and average
+    public double coolantBoilingPointStandardPressure;
     /**
      * Latent heat of vaporization in J/mol
+     * Determined by a weighted sum of the individual heats of vaporization in {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantHeatOfVaporization;
+    /**
+     * Equilibrium temperature in kelvin
+     * Determined by a weighted sum of the individual heats of vaporization in {@link FissionReactor#prepareInitialConditions()}
+     */
     public double coolantBaseTemperature;
     public double fuelDepletion = 1;
     public double prevFuelDepletion;
-    public double heatRemoved; // needs logic somewhere(coolantPropery.coolantFactor * flowrate)
+    /**
+     * Calculated in {@link MetaTileEntityFissionReactor#updateFormedValid()}
+     */
+    public double heatRemoved;
     public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
     public double decayProductsAmount;
     public double envTemperature; // maybe gotten from config per dim
@@ -362,16 +376,21 @@ public class FissionReactor {
 
             CoolantProperty prop = channel.getCoolant().getProperty(PropertyKey.COOLANT);
 
-            temperature += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
-            avgBoilingPoint += prop.getBoilingPoint() *
+            coolantBaseTemperature += channel.getCoolant().getFluid().getTemperature() *
+                    channel.getWeight();
+            coolantBoilingPointStandardPressure += prop.getBoilingPoint() *
                     channel.getWeight();
             avgAbsorption += prop.getAbsorption() *
                     channel.getWeight();
             avgModeration += prop.getModerationFactor() *
                     channel.getWeight();
-            avgPressure += prop.getPressure() * channel.getWeight();
-            coolantHeatOfVaporization += prop.getPressure() * channel.getWeight();
+            avgPressure += prop.getPressure() *
+                    channel.getWeight();
+            coolantHeatOfVaporization += prop.getPressure() *
+                    channel.getWeight();
         }
+
+        temperature = coolantBaseTemperature;
     }
 
     /**

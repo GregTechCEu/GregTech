@@ -1777,6 +1777,7 @@ gregtech.material.potassium_feldspar=Potassium Feldspar
 gregtech.material.neodymium_magnetic=Magnetic Neodymium
 gregtech.material.hydrochloric_acid=Hydrochloric Acid
 gregtech.material.steam=Steam
+gregtech.material.high_pressure_steam=High Pressure Steam
 gregtech.material.distilled_water=Distilled Water
 gregtech.material.sodium_potassium=Sodium Potassium
 gregtech.material.samarium_magnetic=Magnetic Samarium

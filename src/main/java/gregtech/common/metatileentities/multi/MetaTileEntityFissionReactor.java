@@ -160,7 +160,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    protected void updateFormedValid() {
+    public void updateFormedValid() {
         // Take in coolant, take in fuel, update reactor, output steam
 
         if (this.lockingState == LockingState.LOCKED) {
@@ -168,9 +168,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             // Coolant handling
             for (ICoolantHandler coolantImport : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
                 // TODO: Move into coolant import hatch
+                int drained = coolantImport.getFluidTank().drain(this.flowRate, true).amount;
+
                 this.fissionReactor.heatRemoved += coolantImport.getCoolant().getProperty(PropertyKey.COOLANT)
-                        .getCoolingFactor() * this.flowRate;
-                coolantImport.getFluidTank().drain(this.flowRate, true);
+                        .getCoolingFactor() * drained;
             }
             for (ICoolantHandler coolantExport : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
                 // TODO: Move into coolant export hatch
@@ -459,7 +460,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             handler.setLock(true);
         }
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
-            handler.setLock(true);
+            //handler.setLock(true);
         }
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(true);

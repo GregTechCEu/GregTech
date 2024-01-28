@@ -1573,7 +1573,7 @@ public class FirstDegreeMaterials {
         HighPressureSteam = new Material.Builder(454, gregtechId("high_pressure_steam"))
                 .gas(new FluidBuilder()
                         .temperature(500)
-                        .customStill())
+                        /*.customStill()*/)
                 .color(0xC4C4C4)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
