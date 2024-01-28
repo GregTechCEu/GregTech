@@ -92,7 +92,7 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     }
 
     protected static MatchResult<ItemStack> createResult(boolean matched, ItemStack stack, int index) {
-        return new MatchResult<>(matched, stack, index);
+        return MatchResult.create(matched, stack, index);
     }
 
     public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {

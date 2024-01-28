@@ -89,7 +89,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
 
     public MatchResult<R> match(R toMatch) {
         if (!hasFilter())
-            return new MatchResult<>(true, toMatch, -1);
+            return MatchResult.create(true, toMatch, -1);
 
         return getFilter().match(toMatch);
     }

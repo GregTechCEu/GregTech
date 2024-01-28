@@ -48,7 +48,7 @@ public abstract class FluidFilter implements Filter<FluidStack> {
     public abstract void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup);
 
     protected static MatchResult<FluidStack> createResult(boolean matched, FluidStack fluidStack, int index) {
-        return new MatchResult<>(matched, fluidStack, index);
+        return MatchResult.create(matched, fluidStack, index);
     }
 
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {

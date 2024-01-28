@@ -1,12 +1,12 @@
 package gregtech.common.covers.filter;
 
-public class MatchResult<T> {
+public final class MatchResult<T> {
 
-    boolean matched;
-    T matchedStack;
-    int filterIndex;
+    private final boolean matched;
+    private final T matchedStack;
+    private final int filterIndex;
 
-    MatchResult(boolean matched, T matchedStack, int filterIndex) {
+    private MatchResult(boolean matched, T matchedStack, int filterIndex) {
         this.matched = matched;
         this.matchedStack = matchedStack;
         this.filterIndex = filterIndex;
@@ -22,5 +22,9 @@ public class MatchResult<T> {
 
     public int getFilterIndex() {
         return filterIndex;
+    }
+
+    public static <T> MatchResult<T> create(boolean matched, T matchedStack, int filterIndex) {
+        return new MatchResult<>(matched, matchedStack, filterIndex);
     }
 }
