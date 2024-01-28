@@ -159,8 +159,8 @@ public class SimpleItemFilter extends ItemFilter {
         this.filterReader.setIgnoreNBT(tagCompound.getBoolean("IgnoreNBT"));
     }
 
-    public int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage, boolean ignoreNBTData,
-                               ItemStack itemStack) {
+    public static int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage,
+                                      boolean ignoreNBTData, ItemStack itemStack) {
         for (int i = 0; i < filterSlots.getSlots(); i++) {
             ItemStack filterStack = filterSlots.getStackInSlot(i);
             if (!filterStack.isEmpty() && areItemsEqual(ignoreDamage, ignoreNBTData, filterStack, itemStack)) {
@@ -170,8 +170,8 @@ public class SimpleItemFilter extends ItemFilter {
         return -1;
     }
 
-    private boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData, ItemStack filterStack,
-                                  ItemStack itemStack) {
+    private static boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData,
+                                         ItemStack filterStack, ItemStack itemStack) {
         if (ignoreDamage) {
             if (!filterStack.isItemEqualIgnoreDurability(itemStack)) {
                 return false;
