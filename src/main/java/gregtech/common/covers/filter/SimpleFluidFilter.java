@@ -217,7 +217,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
 
         @Override
-        public FluidStack getFluid() {
+        public @Nullable FluidStack getFluid() {
             return FluidStack.loadFluidStackFromNBT(getFluidTag());
         }
 
@@ -244,6 +244,7 @@ public class SimpleFluidFilter extends FluidFilter {
             return this.filterReader.getCapacity();
         }
 
+        // getFluid() is checked for nullability, suppress
         @SuppressWarnings("DataFlowIssue")
         @Override
         public int fill(FluidStack resource, boolean doFill) {
@@ -261,6 +262,7 @@ public class SimpleFluidFilter extends FluidFilter {
             return 0;
         }
 
+        // getFluid() is checked for nullability, suppress
         @SuppressWarnings("DataFlowIssue")
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
