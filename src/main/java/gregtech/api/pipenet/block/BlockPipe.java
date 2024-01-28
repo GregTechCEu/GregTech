@@ -34,7 +34,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -485,7 +490,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                              @NotNull IBlockState state, @Nullable TileEntity te, @NotNull ItemStack stack) {
         tileEntities.set(te == null ? tileEntities.get() : (IPipeTile<PipeType, NodeDataType>) te);
         super.harvestBlock(worldIn, player, pos, state, te, stack);
-        tileEntities.set(null);
+        tileEntities.remove();
     }
 
     @Override
