@@ -287,7 +287,7 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeEnumValue(this.transferMode);
+        packetBuffer.writeByte(this.transferMode.ordinal());
     }
 
     @Override

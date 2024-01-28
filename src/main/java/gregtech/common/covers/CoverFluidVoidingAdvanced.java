@@ -182,7 +182,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeEnumValue(voidingMode);
+        packetBuffer.writeByte(this.voidingMode.ordinal());
     }
 
     @Override
