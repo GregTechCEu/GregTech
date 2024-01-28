@@ -99,7 +99,10 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
-    public ItemFilter getItemFilter() {
+
+    @SuppressWarnings("DataFlowIssue")
+    // this cover always has a filter
+    public @NotNull ItemFilter getItemFilter() {
         return this.itemFilter.getFilter();
     }
 

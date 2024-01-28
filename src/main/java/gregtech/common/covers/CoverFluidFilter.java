@@ -104,7 +104,9 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
-    public FluidFilter getFluidFilter() {
+    @SuppressWarnings("DataFlowIssue")
+    // this cover always has a filter
+    public @NotNull FluidFilter getFluidFilter() {
         return this.fluidFilterContainer.getFilter();
     }
 

@@ -12,13 +12,14 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INBTSerializable<NBTTagCompound> {
 
     private final IDirtyNotifiable dirtyNotifiable;
     private int maxTransferSize = 1;
-    private T currentFilter;
-    private Runnable onFilterInstanceChange;
+    private @Nullable T currentFilter;
+    private @Nullable Runnable onFilterInstanceChange;
     private int transferSize;
     protected final FilterSlotHandler filterInventory;
 
@@ -27,7 +28,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         filterInventory = new FilterSlotHandler();
     }
 
-    public ItemStackHandler getFilterInventory() {
+    public @NotNull ItemStackHandler getFilterInventory() {
         return filterInventory;
     }
 
@@ -45,7 +46,7 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         return currentFilter != null;
     }
 
-    public T getFilter() {
+    public @Nullable T getFilter() {
         return currentFilter;
     }
 
@@ -97,6 +98,10 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         return currentFilter.getTransferLimit(stack, getTransferSize());
     }
 
+    /**
+     * Called when the filter slot has changed to a different filter or has been removed
+     * @param notify if true, call {@code onFilterInstanceChange()}
+     */
     protected abstract void onFilterSlotChange(boolean notify);
 
     public int getTransferSize() {
