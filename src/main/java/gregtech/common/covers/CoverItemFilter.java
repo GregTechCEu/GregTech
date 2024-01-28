@@ -5,6 +5,7 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.FilterTypeRegistry;
@@ -85,7 +86,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         try {
             this.itemFilter.setFilter(FilterTypeRegistry.getItemFilterForStack(packetBuffer.readItemStack()));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            GTLog.logger.error("Failed to read filter for CoverItemFilter! %s", getPos().toString());
         }
     }
 

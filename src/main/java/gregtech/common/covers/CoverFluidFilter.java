@@ -5,6 +5,7 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.FilterTypeRegistry;
@@ -90,13 +91,12 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        if (packetBuffer.readBoolean()) {
-            try {
-                this.fluidFilterContainer
-                        .setFilter(FilterTypeRegistry.getFluidFilterForStack(packetBuffer.readItemStack()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        if (!packetBuffer.readBoolean()) return;
+        try {
+            this.fluidFilterContainer
+                    .setFilter(FilterTypeRegistry.getFluidFilterForStack(packetBuffer.readItemStack()));
+        } catch (IOException e) {
+            GTLog.logger.error("Failed to read filter for CoverFluidFilter! %s", getPos().toString());
         }
     }
 
