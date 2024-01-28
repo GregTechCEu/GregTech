@@ -7,7 +7,10 @@ public class CoolantProperty implements IMaterialProperty {
     private Material hotCoolant;
     private Material hotHPCoolant;
     private double moderatorFactor;
-    // eyeball this??
+    /**
+     * Roughly the heat transfer coefficient
+     * Do not put too much thought into this
+     */
     private double coolingFactor;
     // in kelvin at standard conditions
     private double boilingPoint;

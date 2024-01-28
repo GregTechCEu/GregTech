@@ -4,10 +4,9 @@ import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.common.metatileentities.multi.MetaTileEntityFissionReactor;
-
 
 import java.util.ArrayList;
 
@@ -63,7 +62,7 @@ public class FissionReactor {
      * Thresholds important for determining the evolution of the reactor
      * ^^^ This is a very epic comment
      */
-    public int criticalRodInsertion; // determined by k value
+    public int criticalRodInsertion = 15; // determined by k value
 
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
@@ -87,33 +86,34 @@ public class FissionReactor {
     public double exteriorPressure = standardPressure;
     /**
      * Temperature of boiling point in kelvin at standard pressure
-     * Determined by a weighted sum of the individual coolant boiling points in {@link FissionReactor#prepareInitialConditions()}
+     * Determined by a weighted sum of the individual coolant boiling points in
+     * {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantBoilingPointStandardPressure;
     /**
      * Latent heat of vaporization in J/mol
-     * Determined by a weighted sum of the individual heats of vaporization in {@link FissionReactor#prepareInitialConditions()}
+     * Determined by a weighted sum of the individual heats of vaporization in
+     * {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantHeatOfVaporization;
     /**
      * Equilibrium temperature in kelvin
-     * Determined by a weighted sum of the individual heats of vaporization in {@link FissionReactor#prepareInitialConditions()}
+     * Determined by a weighted sum of the individual heats of vaporization in
+     * {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantBaseTemperature;
     public double fuelDepletion = 1;
     public double prevFuelDepletion;
-    /**
-     * Calculated in {@link MetaTileEntityFissionReactor#updateFormedValid()}
-     */
     public double heatRemoved;
     public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
     public double decayProductsAmount;
-    public double envTemperature; // maybe gotten from config per dim
+    public double envTemperature = 293; // maybe gotten from config per dim
     public double accumulatedHydrogen;
 
     public double maxTemperature = Double.MAX_VALUE;
     public double maxPressure = Double.MAX_VALUE;
-    public double maxPower; // determined by the amount of fuel in reactor and neutron matricies
+    // In MW apparently
+    public double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
 
     /**
      *
@@ -133,6 +133,8 @@ public class FissionReactor {
 
     protected static double responseFunctionTemperature(double target, double value, double criticalRate, double rate,
                                                         double equilibrium) {
+        // Eyeballed for initial tick where temperature would blow out of proportion
+        if(rate == 0) return value * 1.1;
         value = Math.max(0.1, value);
         rate = Math.max(0.1, rate);
         return Math.max(value * criticalRate / rate * Math.sqrt(target / value), equilibrium);
@@ -394,6 +396,24 @@ public class FissionReactor {
     }
 
     /**
+     * Consumes the coolant.
+     * Calculates the heat removed by the coolant based on an amalgamation of different equations.
+     * It is not particularly realistic, but allows for some fine-tuning to happen.
+     * Heat removed is proportional to the surface area of the coolant channel (which is equivalent to the reactor's depth),
+     * as well as the flow rate of coolant and the difference in temperature between the reactor and the coolant
+     */
+    public void takeInCoolant(int flowRate) {
+        for (CoolantChannel channel : coolantChannels) {
+            int drained = channel.getInputHandler().getFluidTank().drain(flowRate, true).amount;
+
+            Material coolant = channel.getCoolant();
+
+            this.heatRemoved += coolant.getProperty(PropertyKey.COOLANT).getCoolingFactor()
+                    * this.reactorDepth * drained * (this.temperature - coolant.getFluid().getTemperature()) / 20;
+        }
+    }
+
+    /**
      * The thermodynamics is not completely realistic, but it's close enough for simple things like this, the boiling
      * point depends on pressure
      */
@@ -403,7 +423,7 @@ public class FissionReactor {
     }
 
     public void updateTemperature() {
-        this.temperature = responseFunctionTemperature(this.maxTemperature, this.temperature, this.power,
+        this.temperature = responseFunctionTemperature(this.maxTemperature, this.temperature, this.power * 1000000,
                 this.heatRemoved, this.coolantBaseTemperature);
         this.heatRemoved = 0;
     }

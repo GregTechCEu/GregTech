@@ -73,6 +73,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private int controlRodInsertionValue = 4;
     private LockingState lockingState = LockingState.UNLOCKED;
 
+    private int SYNC_REACTOR_STATS = 39454;
+
+    private double temperature;
+    private double pressure;
+    private double power;
+    private double maxPower;
+
     public MetaTileEntityFissionReactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
@@ -90,6 +97,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .widget(new SliderWidget("Control Rod Depth", 40, 30, 80, 18, 0.0f, 15.0f,
                         controlRodInsertionValue, this::setControlRodInsertionValue));
         builder.widget(new AdvancedTextWidget(50, 110, getLockingStateText(), 0xFFFFFF));
+        builder.widget(new AdvancedTextWidget(50, 120, getStatsText(), 0xFFFFFF));
         builder.bindPlayerInventory(entityPlayer.inventory, 150);
         return builder;
     }
@@ -100,7 +108,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     }
 
     private void setControlRodInsertionValue(float value) {
-        if(lockingState == LockingState.LOCKED)
+        if (lockingState == LockingState.LOCKED)
             return;
         this.controlRodInsertionValue = (int) value;
     }
@@ -122,6 +130,15 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private Consumer<List<ITextComponent>> getLockingStateText() {
         return (list) -> {
             list.add(new TextComponentString("Locking State: " + lockingState.toString()));
+        };
+    }
+
+    private Consumer<List<ITextComponent>> getStatsText() {
+        return (list) -> {
+            list.add(new TextComponentString("Temperature: " + this.temperature));
+            list.add(new TextComponentString("Pressure: " + this.pressure));
+            list.add(new TextComponentString("Power: " + this.power));
+            list.add(new TextComponentString("Max Power: " + this.maxPower));
         };
     }
 
@@ -163,16 +180,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public void updateFormedValid() {
         // Take in coolant, take in fuel, update reactor, output steam
 
-        if (this.lockingState == LockingState.LOCKED) {
+        if (this.lockingState == LockingState.LOCKED && !this.getWorld().isRemote) {
 
             // Coolant handling
-            for (ICoolantHandler coolantImport : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-                // TODO: Move into coolant import hatch
-                int drained = coolantImport.getFluidTank().drain(this.flowRate, true).amount;
-
-                this.fissionReactor.heatRemoved += coolantImport.getCoolant().getProperty(PropertyKey.COOLANT)
-                        .getCoolingFactor() * drained;
-            }
+            this.fissionReactor.takeInCoolant(flowRate);
             for (ICoolantHandler coolantExport : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
                 // TODO: Move into coolant export hatch
                 coolantExport.getFluidTank().fill(coolantExport.getCoolant().getProperty(PropertyKey.COOLANT)
@@ -205,6 +216,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     this.performSecondaryExplosion();
                 }
             }
+
+            if (getOffsetTimer() % 20 == 0) {
+                this.syncReactorStats();
+            }
+
         }
     }
 
@@ -446,6 +462,32 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         }
     }
 
+    // TODO: Abstract the stats into its own class
+    public void syncReactorStats() {
+        this.temperature = this.fissionReactor.temperature;
+        this.pressure = this.fissionReactor.pressure;
+        this.power = this.fissionReactor.power;
+        this.maxPower = this.fissionReactor.maxPower;
+        writeCustomData(SYNC_REACTOR_STATS, (packetBuffer -> {
+            packetBuffer.writeDouble(this.fissionReactor.temperature);
+            packetBuffer.writeDouble(this.fissionReactor.pressure);
+            packetBuffer.writeDouble(this.fissionReactor.power);
+            packetBuffer.writeDouble(this.fissionReactor.maxPower);
+        }));
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+
+        if(dataId == SYNC_REACTOR_STATS) {
+            this.temperature = buf.readDouble();
+            this.pressure = buf.readDouble();
+            this.power = buf.readDouble();
+            this.maxPower = buf.readDouble();
+        }
+    }
+
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
@@ -460,7 +502,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             handler.setLock(true);
         }
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
-            //handler.setLock(true);
+            // handler.setLock(true);
         }
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(true);
@@ -477,7 +519,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(false);
         }
-        //this.fissionReactor = null;
+        // this.fissionReactor = null;
         this.lockingState = LockingState.UNLOCKED;
     }
 
@@ -513,7 +555,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                             Material mat = GregTechAPI.materialManager.getMaterial(
                                     coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
                             if (mat != null && mat.hasProperty(PropertyKey.COOLANT)) {
-                                component = new CoolantChannel(100050, 0, mat);
                                 coolantIn.setCoolant(mat);
                                 BlockPos exportHatchPos = currentPos.offset(EnumFacing.DOWN, height - 1);
                                 if (getWorld().getTileEntity(
@@ -521,6 +562,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                     MetaTileEntity coolantOutMTE = coolantOutCandidate.getMetaTileEntity();
                                     if (coolantOutMTE instanceof MetaTileEntityCoolantExportHatch coolantOut) {
                                         coolantOut.setCoolant(mat);
+                                        component = new CoolantChannel(100050, 0, mat, coolantIn, coolantOut);
+
                                     }
                                 }
                             }

@@ -412,7 +412,7 @@ public class MaterialFlagAddition {
          * This sometimes cross-references materials
          */
         DistilledWater.setProperty(PropertyKey.COOLANT,
-                new CoolantProperty(Steam, HighPressureSteam, 1., 1.,
+                new CoolantProperty(Steam, HighPressureSteam, 1., 1000,
                         373, 10., FissionReactor.standardPressure, 40650));
     }
 }
