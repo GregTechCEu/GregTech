@@ -67,7 +67,7 @@ public class ReactorComponent {
 
     public static double getDistanceSquared(ReactorComponent component1, ReactorComponent component2) {
         return Math.pow(component1.getPos()[0] - component2.getPos()[0], 2) +
-                Math.pow(component1.getPos()[0] - component2.getPos()[0], 2);
+                Math.pow(component1.getPos()[1] - component2.getPos()[1], 2);
     }
 
     public static double getDistance(ReactorComponent component1, ReactorComponent component2) {

@@ -25,7 +25,7 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     private boolean workingEnabled;
     private boolean valid;
 
-    private byte insertion;
+    private byte insertion = 1;
 
     public MetaTileEntityControlRodPort(ResourceLocation metaTileEntityId, boolean isExportHatch) {
         super(metaTileEntityId, 4, false);
