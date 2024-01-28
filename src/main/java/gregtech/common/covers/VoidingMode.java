@@ -9,6 +9,7 @@ public enum VoidingMode implements IStringSerializable {
     VOID_ANY("cover.voiding.voiding_mode.void_any", 1),
     VOID_OVERFLOW("cover.voiding.voiding_mode.void_overflow", Integer.MAX_VALUE);
 
+    public static final VoidingMode[] VALUES = values();
     public final String localeName;
     public final int maxStackSize;
 
