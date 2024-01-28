@@ -98,7 +98,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                         controlRodInsertionValue, this::setControlRodInsertionValue));
         builder.widget(new AdvancedTextWidget(50, 110, getLockingStateText(), 0xFFFFFF));
         builder.widget(new AdvancedTextWidget(50, 120, getStatsText(), 0xFFFFFF));
-        builder.bindPlayerInventory(entityPlayer.inventory, 150);
+        builder.bindPlayerInventory(entityPlayer.inventory, 170);
         return builder;
     }
 
