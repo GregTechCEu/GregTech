@@ -31,8 +31,6 @@ public class OreFilterTestSlot extends ItemSlot {
     private MatchType matchType = MatchType.INVALID;
     private boolean matchSuccess;
 
-    // private boolean initialized = false;
-
     private boolean matchAll;
 
     public OreFilterTestSlot() {
@@ -54,6 +52,7 @@ public class OreFilterTestSlot extends ItemSlot {
                 default -> Collections.singletonList(IKey.lang("cover.ore_dictionary_filter.test_slot.info"));
             });
         });
+        // todo add back match and no match overlays
         // this.match = new ImageWidget(18 - 5, -3, 9, 6, GuiTextures.ORE_FILTER_MATCH);
         // this.noMatch = new ImageWidget(18 - 5, -3, 7, 7, GuiTextures.ORE_FILTER_NO_MATCH);
         // child(this.match);
@@ -118,6 +117,7 @@ public class OreFilterTestSlot extends ItemSlot {
             }
             updateAndNotifyMatchSuccess(this.expectedResult == success);
             this.tooltip().markDirty();
+            // todo add back match and no match overlays
             // this.match.setVisible(this.expectedResult == success);
             // this.noMatch.setVisible(this.expectedResult != success);
             return;
@@ -125,6 +125,7 @@ public class OreFilterTestSlot extends ItemSlot {
         this.testResult = Object2BooleanMaps.emptyMap();
         this.matchType = MatchType.INVALID;
         updateAndNotifyMatchSuccess(false);
+        // todo add back match and no match overlays
         // this.match.setVisible(false);
         // this.noMatch.setVisible(false);
     }
