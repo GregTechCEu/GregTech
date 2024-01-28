@@ -5,10 +5,16 @@ import gregtech.api.util.Position;
 
 import net.minecraft.network.PacketBuffer;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.io.IOException;
 import java.util.function.Supplier;
 
+/**
+ * @deprecated in favor of new MUI
+ */
 @Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class WidgetGroupItemFilter extends AbstractWidgetGroup {
 
     private final Supplier<ItemFilter> itemFilterSupplier;

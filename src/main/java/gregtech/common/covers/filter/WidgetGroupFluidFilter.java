@@ -5,9 +5,15 @@ import gregtech.api.util.Position;
 
 import net.minecraft.network.PacketBuffer;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.function.Supplier;
 
+/**
+ * @deprecated in favor of new MUI
+ */
 @Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
 
     private final Supplier<FluidFilter> fluidFilterSupplier;
