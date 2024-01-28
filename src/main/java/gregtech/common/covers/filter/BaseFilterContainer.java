@@ -2,6 +2,7 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.util.IDirtyNotifiable;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
@@ -13,6 +14,8 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INBTSerializable<NBTTagCompound> {
 
@@ -135,6 +138,15 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         packetBuffer.writeItemStack(this.filterInventory.getStackInSlot(0));
+    }
+
+    public ItemStack readFilterStack(PacketBuffer buffer) {
+        var stack = ItemStack.EMPTY;
+        try {
+            stack = buffer.readItemStack();
+        } catch (IOException ignore) {}
+        this.filterInventory.setStackInSlot(0, stack);
+        return stack;
     }
 
     public abstract void readInitialSyncData(@NotNull PacketBuffer packetBuffer);

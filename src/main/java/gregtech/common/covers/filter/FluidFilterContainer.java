@@ -134,11 +134,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        var stack = ItemStack.EMPTY;
-        try {
-            stack = packetBuffer.readItemStack();
-        } catch (IOException ignore) {}
-        this.filterInventory.setStackInSlot(0, stack);
+        var stack = readFilterStack(packetBuffer);
 
         if (FilterTypeRegistry.isFluidFilter(stack))
             setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
