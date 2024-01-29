@@ -64,6 +64,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         if (!isConnected() && active) {
             Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
         }
+        renderIndicatorOverlay(renderState, translation, pipeline);
     }
 
     @Override
