@@ -8,6 +8,8 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
+import net.minecraftforge.fluids.FluidStack;
+
 import java.util.ArrayList;
 
 public class FissionReactor {
@@ -388,7 +390,7 @@ public class FissionReactor {
                     channel.getWeight();
             avgPressure += prop.getPressure() *
                     channel.getWeight();
-            coolantHeatOfVaporization += prop.getPressure() *
+            coolantHeatOfVaporization += prop.getHeatOfVaporization() *
                     channel.getWeight();
         }
 
@@ -402,14 +404,26 @@ public class FissionReactor {
      * Heat removed is proportional to the surface area of the coolant channel (which is equivalent to the reactor's depth),
      * as well as the flow rate of coolant and the difference in temperature between the reactor and the coolant
      */
-    public void takeInCoolant(int flowRate) {
+    public void makeCoolantFlow(int flowRate) {
         for (CoolantChannel channel : coolantChannels) {
-            int drained = channel.getInputHandler().getFluidTank().drain(flowRate, true).amount;
+            FluidStack tryFluidDrain = channel.getInputHandler().getFluidTank().drain(flowRate, false);
+            if(tryFluidDrain != null) {
+                int drained = tryFluidDrain.amount;
 
-            Material coolant = channel.getCoolant();
+                Material coolant = channel.getCoolant();
 
-            this.heatRemoved += coolant.getProperty(PropertyKey.COOLANT).getCoolingFactor()
-                    * this.reactorDepth * drained * (this.temperature - coolant.getFluid().getTemperature()) / 20;
+                int remainingSpace = channel.getOutputHandler().getFluidTank().getCapacity() -
+                        channel.getOutputHandler().getFluidTank().getFluidAmount();
+                int actualFlowRate = Math.min(remainingSpace, drained);
+                FluidStack HPCoolant = new FluidStack(
+                        coolant.getProperty(PropertyKey.COOLANT).getHotHPCoolant().getFluid(), actualFlowRate);
+
+                channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
+                channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
+
+                this.heatRemoved += coolant.getProperty(PropertyKey.COOLANT).getCoolingFactor()
+                        * this.reactorDepth * actualFlowRate * (this.temperature - coolant.getFluid().getTemperature());
+            }
         }
     }
 
@@ -453,7 +467,7 @@ public class FissionReactor {
         this.power = responseFunction(this.realMaxPower(), this.power,
                 this.criticalRodInsertion + this.voidContribution(), this.controlRodInsertion);
         this.fuelDepletion = Math.min(this.fuelDepletion + 0.001 * this.power / this.maxPower, 1.);
-        this.decayProductsAmount += Math.max(this.prevFuelDepletion - this.fuelDepletion, 0.);
+        this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.);
         this.decayProductsAmount *= 0.99;
     }
 

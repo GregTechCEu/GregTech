@@ -92,13 +92,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 266).shouldColor(false)
-                .widget(new SliderWidget("Flow Rate", 50, 50, 100, 18, 0.0f, 10000.f, flowRate, this::setFlowRate))
-                .widget(new ToggleButtonWidget(50, 80, 18, 18, this::isLocked, this::tryLocking))
-                .widget(new SliderWidget("Control Rod Depth", 40, 30, 80, 18, 0.0f, 15.0f,
-                        controlRodInsertionValue, this::setControlRodInsertionValue));
-        builder.widget(new AdvancedTextWidget(50, 110, getLockingStateText(), 0xFFFFFF));
-        builder.widget(new AdvancedTextWidget(50, 120, getStatsText(), 0xFFFFFF));
-        builder.bindPlayerInventory(entityPlayer.inventory, 170);
+                .widget(new ToggleButtonWidget(10, 10, 18, 18, this::isLocked, this::tryLocking))
+                .widget(new AdvancedTextWidget(35, 14, getLockingStateText(), getLockedTextColor()))
+                .widget(new SliderWidget(String.format("Control Rod Depth: %d", controlRodInsertionValue), 10, 30, 100, 18, 0.0f, 15.0f,
+                        controlRodInsertionValue, this::setControlRodInsertionValue))
+                .widget(new SliderWidget("Flow Rate", 10, 50, 150, 18, 0.0f, 16000.f, flowRate, this::setFlowRate));
+        builder.widget(new AdvancedTextWidget(10, 120, getStatsText(), 0x2020D0));
+        builder.bindPlayerInventory(entityPlayer.inventory, 178);
         return builder;
     }
 
@@ -115,6 +115,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     private boolean isLocked() {
         return lockingState == LockingState.LOCKED;
+    }
+
+    private int getLockedTextColor() {
+        if(lockingState == LockingState.LOCKED)
+            return 0x00A000;
+        if(lockingState == LockingState.INVALID_COMPONENT)
+            return 0xC08000;
+        if(lockingState == LockingState.UNLOCKED)
+            return 0x0050D0;
+        if(lockingState == LockingState.MISSING_INPUTS)
+            return getWorld().getWorldTime() % 2 == 0 ? 0xA00000 : 0xC08000;
+        return 0x000000;
     }
 
     private void tryLocking(boolean lock) {
@@ -135,10 +147,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     private Consumer<List<ITextComponent>> getStatsText() {
         return (list) -> {
-            list.add(new TextComponentString("Temperature: " + this.temperature));
-            list.add(new TextComponentString("Pressure: " + this.pressure));
-            list.add(new TextComponentString("Power: " + this.power));
-            list.add(new TextComponentString("Max Power: " + this.maxPower));
+            list.add(new TextComponentString(String.format("Temperature: %.3f K", this.temperature)));
+            list.add(new TextComponentString(String.format("Pressure: \n    %.3f Pa (%.3f Atm)", this.pressure, (this.pressure / FissionReactor.standardPressure))));
+            list.add(new TextComponentString(String.format("Power: %.3f MW / %.3f MW", this.power, this.maxPower)));
         };
     }
 
@@ -183,12 +194,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         if (this.lockingState == LockingState.LOCKED && !this.getWorld().isRemote) {
 
             // Coolant handling
-            this.fissionReactor.takeInCoolant(flowRate);
-            for (ICoolantHandler coolantExport : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
-                // TODO: Move into coolant export hatch
-                coolantExport.getFluidTank().fill(coolantExport.getCoolant().getProperty(PropertyKey.COOLANT)
-                        .getHotHPCoolant().getFluid(this.flowRate), true);
-            }
+            this.fissionReactor.makeCoolantFlow(flowRate);
 
             // Fuel handling
             if (this.fissionReactor.fuelDepletion == 1.) {
@@ -206,20 +212,22 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
             this.updateReactorState();
 
-            if (this.fissionReactor.checkForMeltdown()) {
-                this.performMeltdownEffects();
-            }
-
-            if (this.fissionReactor.checkForExplosion()) {
-                this.performPrimaryExplosion();
-                if (this.fissionReactor.checkForSecondaryExplosion()) {
-                    this.performSecondaryExplosion();
-                }
-            }
-
             if (getOffsetTimer() % 20 == 0) {
                 this.syncReactorStats();
             }
+
+//            if (this.fissionReactor.checkForMeltdown()) {
+//                this.performMeltdownEffects();
+//            }
+//
+//            if (this.fissionReactor.checkForExplosion()) {
+//                this.performPrimaryExplosion();
+//                if (this.fissionReactor.checkForSecondaryExplosion()) {
+//                    this.performSecondaryExplosion();
+//                }
+//            }
+
+
 
         }
     }
