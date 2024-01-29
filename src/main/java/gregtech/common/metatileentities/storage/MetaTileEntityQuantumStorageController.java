@@ -304,6 +304,10 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
 
+    public final long getEnergyUsage() {
+        return energyConsumption;
+    }
+
     private void reinitializeEnergyContainer() {
         energyContainer = new QuantumControllerEnergyContainer(this);
     }
