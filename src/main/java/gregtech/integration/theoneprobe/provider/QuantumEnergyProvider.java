@@ -3,23 +3,19 @@ package gregtech.integration.theoneprobe.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumEnergyAcceptor;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumStorageController;
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoProvider;
 import mcjty.theoneprobe.api.ProbeMode;
-
 import mcjty.theoneprobe.api.TextStyleClass;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 
 public class QuantumEnergyProvider implements IProbeInfoProvider {
 

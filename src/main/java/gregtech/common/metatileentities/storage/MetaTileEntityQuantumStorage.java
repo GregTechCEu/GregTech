@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.gui.GuiTextures;
@@ -11,11 +7,8 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
-
 import gregtech.client.renderer.texture.Textures;
-
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-
 import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.client.resources.I18n;
@@ -27,10 +20,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +60,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         } else {
             texture = Textures.QUANTUM_INDICATOR;
         }
-        texture.renderSided(getFrontFacing(), renderState, RenderUtil.adjustTrans(translation, getFrontFacing(), 1), pipeline);
+        texture.renderSided(getFrontFacing(), renderState, RenderUtil.adjustTrans(translation, getFrontFacing(), 1),
+                pipeline);
     }
 
     @Override
