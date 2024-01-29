@@ -23,4 +23,6 @@ public interface IQuantumController extends ICapabilityProvider {
     IEnergyContainer getEnergyContainer();
 
     boolean isPowered();
+
+    long getEnergyUsage();
 }

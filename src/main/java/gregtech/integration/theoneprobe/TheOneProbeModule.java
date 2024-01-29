@@ -43,6 +43,7 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         oneProbe.registerProvider(new LampInfoProvider());
         oneProbe.registerProvider(new LDPipeProvider());
         oneProbe.registerProvider(new LaserContainerInfoProvider());
+        oneProbe.registerProvider(new QuantumEnergyProvider());
         oneProbe.registerProvider(new ActiveTransformerInfoProvider());
         oneProbe.registerProvider(new BatteryBufferInfoProvider());
 
