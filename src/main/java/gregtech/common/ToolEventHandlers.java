@@ -305,7 +305,7 @@ public class ToolEventHandlers {
                                                     ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
         if (state.getBlock() instanceof BlockPipe<?, ?, ?>pipe) {
             if (isSneaking &&
-                    (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
+                    (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass() || GTUtility.isSprayCan(mainHand) || GTUtility.isSprayCan(offHand))) {
                 return true;
             } else {
                 Set<String> mainToolClasses = mainHand.getItem().getToolClasses(mainHand);
