@@ -5,6 +5,7 @@ public class ReactorComponent {
     private final double moderationFactor;
     private final double maxTemperature;
     private final double thermalConductivity;
+    private final double mass;
 
     private final int[] pos = new int[2];
 
@@ -12,11 +13,12 @@ public class ReactorComponent {
 
     private int ID = -1;
 
-    public ReactorComponent(double moderationFactor, double maxTemperature, double thermalConductivity,
+    public ReactorComponent(double moderationFactor, double maxTemperature, double thermalConductivity, double mass,
                             boolean isValid) {
         this.moderationFactor = moderationFactor;
         this.maxTemperature = maxTemperature;
         this.thermalConductivity = thermalConductivity;
+        this.mass = mass;
         this.isValid = isValid;
     }
 
@@ -72,5 +74,9 @@ public class ReactorComponent {
 
     public static double getDistance(ReactorComponent component1, ReactorComponent component2) {
         return Math.sqrt(getDistanceSquared(component1, component2));
+    }
+
+    public double getMass() {
+        return mass;
     }
 }

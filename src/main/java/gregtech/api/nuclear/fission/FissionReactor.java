@@ -100,7 +100,7 @@ public class FissionReactor {
     public double coolantHeatOfVaporization;
     /**
      * Equilibrium temperature in kelvin
-     * Determined by a weighted sum of the individual heats of vaporization in
+     * Determined by a weighted sum of the individual coolant temperatures in
      * {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantBaseTemperature;
@@ -122,6 +122,10 @@ public class FissionReactor {
      */
     public double coolingFactor; // same as the other cooling stuff(weighted with the channels)
 
+    public double coolantMass;
+    public double fuelMass;
+    public double structuralMass;
+
     protected static double responseFunction(double target, double value, double criticalRate, double rate) {
         if (value <= 0) {
             if (rate > criticalRate) {
@@ -133,13 +137,12 @@ public class FissionReactor {
         return value * criticalRate / rate * Math.sqrt(target / value);
     }
 
-    protected static double responseFunctionTemperature(double target, double value, double criticalRate, double rate,
+    protected double responseFunctionTemperature(double target, double value, double criticalRate, double rate,
                                                         double equilibrium) {
-        // Eyeballed for initial tick where temperature would blow out of proportion
-        if(rate == 0) return value * 1.1;
         value = Math.max(0.1, value);
         rate = Math.max(0.1, rate);
-        return Math.max(value * criticalRate / rate * Math.sqrt(target / value), equilibrium);
+        //return Math.max(value * criticalRate / rate * Math.sqrt(target / value), equilibrium);
+        return Math.max(value + (criticalRate - rate) / ((this.coolantMass + this.structuralMass + this.fuelMass) * this.coolingFactor) * Math.sqrt(Math.abs(target - value)/target) , equilibrium);
     }
 
     public FissionReactor(int size, int depth, int controlRodInsertion) {
@@ -176,13 +179,13 @@ public class FissionReactor {
             for (int j = 0; j < reactorLayout[i].length; j++) {
                 /*
                  * Check for null because the layout
-                 * is in generally not a square
+                 * is in general not a square
                  */
                 if (reactorLayout[i][j] != null && reactorLayout[i][j].isValid()) {
                     reactorLayout[i][j].setPos(i, j);
                     numberOfComponents++;
                     maxTemperature = Double.min(maxTemperature, reactorLayout[i][j].getMaxTemperature());
-
+                    structuralMass += reactorLayout[i][j].getMass();
                     if (reactorLayout[i][j] instanceof FuelRod) {
                         reactorLayout[i][j].setID(idRod);
                         fuelRods.add((FuelRod) reactorLayout[i][j]);
@@ -392,6 +395,8 @@ public class FissionReactor {
                     channel.getWeight();
             coolantHeatOfVaporization += prop.getHeatOfVaporization() *
                     channel.getWeight();
+            coolingFactor += prop.getCoolingFactor() *
+                    channel.getWeight();
         }
 
         temperature = coolantBaseTemperature;
@@ -419,12 +424,18 @@ public class FissionReactor {
                         coolant.getProperty(PropertyKey.COOLANT).getHotHPCoolant().getFluid(), actualFlowRate);
 
                 channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
-                channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
+
+                if(this.temperature > this.coolantBoilingPoint()) {
+                    channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
+                }
+
+                this.coolantMass += actualFlowRate * coolant.getMass();
 
                 this.heatRemoved += coolant.getProperty(PropertyKey.COOLANT).getCoolingFactor()
-                        * this.reactorDepth * actualFlowRate * (this.temperature - coolant.getFluid().getTemperature());
+                        * this.reactorDepth * actualFlowRate * (this.coolantBoilingPoint() - coolant.getFluid().getTemperature());
             }
         }
+        this.coolantMass /= 1000;
     }
 
     /**

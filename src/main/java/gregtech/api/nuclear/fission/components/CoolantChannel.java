@@ -19,9 +19,9 @@ public class CoolantChannel extends ReactorComponent {
     private ICoolantHandler inputHandler;
     private ICoolantHandler outputHandler;
 
-    public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant,
+    public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant, double mass,
                           ICoolantHandler inputHandler, ICoolantHandler outputHandler) {
-        super(coolant.getProperty(PropertyKey.COOLANT).getModerationFactor(), maxTemperature, thermalConductivity,
+        super(coolant.getProperty(PropertyKey.COOLANT).getModerationFactor(), maxTemperature, thermalConductivity, mass,
                 true);
         this.coolant = coolant;
         this.weight = 0;

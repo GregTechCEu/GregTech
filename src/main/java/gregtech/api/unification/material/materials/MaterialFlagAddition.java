@@ -407,12 +407,12 @@ public class MaterialFlagAddition {
         oreProp = Pyrochlore.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Apatite, Calcium, Niobium);
 
-        /*
+        /**
          * Coolant property addition
          * This sometimes cross-references materials
          */
         DistilledWater.setProperty(PropertyKey.COOLANT,
-                new CoolantProperty(Steam, HighPressureSteam, 1., 1000,
+                new CoolantProperty(Steam, HighPressureSteam, 1., 4.168,
                         373, 10., FissionReactor.standardPressure, 40650));
     }
 }

@@ -13,8 +13,8 @@ public class ControlRod extends ReactorComponent {
     private double insertion;
     private final List<Pair<FuelRod, FuelRod>> fuelRodPairs = new ObjectArrayList<>();
 
-    public ControlRod(double maxTemperature, boolean tipModeration, double thermalConductivity, double insertion) {
-        super(0, maxTemperature, thermalConductivity, true);
+    public ControlRod(double maxTemperature, boolean tipModeration, double thermalConductivity, double mass, double insertion) {
+        super(0, maxTemperature, thermalConductivity, mass, true);
         this.tipModeration = tipModeration;
         this.insertion = insertion;
         this.weight = 0;

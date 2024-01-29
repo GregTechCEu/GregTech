@@ -204,7 +204,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 }
                 if (!hasEmpty) {
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                        fuelImport.getStackHandler().extractItem(0, 1, false);
+                        ItemStack is = fuelImport.getStackHandler().extractItem(0, 1, false);
+
+                        this.fissionReactor.fuelMass += 60;
                     }
                     this.fissionReactor.fuelDepletion = 0.;
                 }
@@ -570,7 +572,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                     MetaTileEntity coolantOutMTE = coolantOutCandidate.getMetaTileEntity();
                                     if (coolantOutMTE instanceof MetaTileEntityCoolantExportHatch coolantOut) {
                                         coolantOut.setCoolant(mat);
-                                        component = new CoolantChannel(100050, 0, mat, coolantIn, coolantOut);
+                                        component = new CoolantChannel(100050, 0, mat, 1000, coolantIn, coolantOut);
 
                                     }
                                 }
@@ -583,11 +585,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                             if (mat != null && OreDictUnifier.getPrefix(lockedFuel) == OrePrefix.fuelRod) {
                                 FissionFuelProperty property = mat.material.getProperty(PropertyKey.FISSION_FUEL);
                                 if (property != null)
-                                    component = new FuelRod(property.getMaxTemperature(), 1, property, 3);
+                                    component = new FuelRod(property.getMaxTemperature(), 1, property, 650, 3);
                             }
                         }
                     } else if (mte instanceof MetaTileEntityControlRodPort controlIn) {
-                        component = new ControlRod(100000, true, 1, controlIn.getInsertionAmount());
+                        component = new ControlRod(100000, true, 1, 800,controlIn.getInsertionAmount());
                     } else {
                         foundPort = false;
                     }
