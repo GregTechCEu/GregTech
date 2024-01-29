@@ -2,10 +2,12 @@ package gregtech.common.items.armor;
 
 import gregtech.api.items.armoritem.ArmorHelper;
 import gregtech.api.items.armoritem.IArmorBehavior;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

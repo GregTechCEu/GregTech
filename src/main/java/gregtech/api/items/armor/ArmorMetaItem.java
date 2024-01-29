@@ -1,13 +1,9 @@
 package gregtech.api.items.armor;
 
-import com.google.common.base.Preconditions;
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
-import net.minecraft.client.util.ITooltipFlag;
 import gregtech.common.creativetab.GTCreativeTabs;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +16,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,22 +38,24 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     @NotNull
     private IArmorLogic getArmorLogic(ItemStack itemStack) {
         T metaValueItem = getItem(itemStack);
-        return metaValueItem == null ? new DummyArmorLogic(EntityEquipmentSlot.HEAD, "") : metaValueItem.getArmorLogic();
+        return metaValueItem == null ? new DummyArmorLogic(EntityEquipmentSlot.HEAD, "") :
+                metaValueItem.getArmorLogic();
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
+    public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source,
+                                         double damage, int slot) {
         return new ArmorProperties(0, 0, Integer.MAX_VALUE);
     }
 
     @Override
-    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
+    public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         return 0;
     }
 
     @Override
-    public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
-    }
+    public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, DamageSource source, int damage,
+                            int slot) {}
 
     @Override
     public boolean isValidArmor(@NotNull ItemStack stack, @NotNull EntityEquipmentSlot armorType,
@@ -83,12 +80,13 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
+    public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines,
+                               @NotNull ITooltipFlag tooltipFlag) {
         lines.add(TextFormatting.RED + "Deprecated Item! Convert in an Assembler to get the new version"); // todo lang
     }
 
     @Override
-    public boolean isEnchantable(@Nonnull ItemStack stack) {
+    public boolean isEnchantable(@NotNull ItemStack stack) {
         return false;
     }
 

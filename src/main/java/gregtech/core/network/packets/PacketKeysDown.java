@@ -3,14 +3,12 @@ package gregtech.core.network.packets;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.api.util.input.KeyBind;
-import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
-import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
+
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.List;
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 
 public class PacketKeysDown implements IPacket, IServerExecutor {
 

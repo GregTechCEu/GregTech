@@ -1,6 +1,7 @@
 package gregtech.asm.hooks;
 
 import gregtech.api.items.armor.ArmorMetaItem;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -26,7 +27,8 @@ public class ArmorRenderHooks {
     }
 
     public static boolean isArmorItem(ItemStack itemStack, EntityEquipmentSlot slot) {
-        return (itemStack.getItem() instanceof ArmorMetaItem<?> && itemStack.getItem().getEquipmentSlot(itemStack) == slot);
+        return (itemStack.getItem() instanceof ArmorMetaItem<?> &&
+                itemStack.getItem().getEquipmentSlot(itemStack) == slot);
     }
 
     public static void renderArmorLayer(LayerArmorBase<ModelBase> layer, EntityLivingBase entity, float limbSwing,
@@ -61,14 +63,16 @@ public class ArmorRenderHooks {
         return equipmentSlot == EntityEquipmentSlot.LEGS;
     }
 
-    private static ResourceLocation getArmorTexture(EntityLivingBase entity, ItemStack itemStack, EntityEquipmentSlot slot) {
+    private static ResourceLocation getArmorTexture(EntityLivingBase entity, ItemStack itemStack,
+                                                    EntityEquipmentSlot slot) {
         ResourceLocation registryName = itemStack.getItem().getRegistryName();
         if (registryName == null) {
             throw new IllegalArgumentException(
                     "ItemStack " + itemStack.getTranslationKey() + "has a null registry name");
         }
 
-        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", registryName.getNamespace(), registryName.getPath(),
+        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", registryName.getNamespace(),
+                registryName.getPath(),
                 (isLegSlot(slot) ? 2 : 1), "");
         return new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, itemStack, s1, slot, null));
     }

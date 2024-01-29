@@ -3,6 +3,7 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.items.armoritem.ArmorHelper;
 import gregtech.api.items.armoritem.IGTArmor;
+
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,7 +21,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import static net.minecraft.inventory.EntityEquipmentSlot.*;
+import static net.minecraft.inventory.EntityEquipmentSlot.MAINHAND;
+import static net.minecraft.inventory.EntityEquipmentSlot.OFFHAND;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class ArmorEventHandlers {
@@ -63,7 +65,8 @@ public class ArmorEventHandlers {
                 NBTTagCompound behaviorTag = ArmorHelper.getBehaviorsTag(armorStack);
                 if (behaviorTag.getBoolean(ArmorHelper.FALL_DAMAGE_KEY)) {
                     if (gtArmor.areBehaviorsActive(armorStack)) {
-                        gtArmor.damageArmor(player, armorStack, DamageSource.FALL, (int) (player.fallDistance - 1.2f), slot.getIndex());
+                        gtArmor.damageArmor(player, armorStack, DamageSource.FALL, (int) (player.fallDistance - 1.2f),
+                                slot.getIndex());
                         player.fallDistance = 0;
                         event.setCanceled(true);
                         return;
@@ -76,10 +79,8 @@ public class ArmorEventHandlers {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onClientPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.START
-                && !event.player.isSpectator()
-                && !(event.player instanceof EntityOtherPlayerMP)
-                && !(event.player instanceof FakePlayer)) {
+        if (event.phase == TickEvent.Phase.START && !event.player.isSpectator() &&
+                !(event.player instanceof EntityOtherPlayerMP) && !(event.player instanceof FakePlayer)) {
             onPlayerTick(event);
         }
     }
@@ -87,9 +88,8 @@ public class ArmorEventHandlers {
     @SubscribeEvent
     @SideOnly(Side.SERVER)
     public static void onServerPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.START
-                && !event.player.isSpectator()
-                && !(event.player instanceof FakePlayer)) {
+        if (event.phase == TickEvent.Phase.START && !event.player.isSpectator() &&
+                !(event.player instanceof FakePlayer)) {
             onPlayerTick(event);
         }
     }

@@ -7,7 +7,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.BlockUtility;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
@@ -35,11 +34,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
@@ -153,7 +148,6 @@ public class EventHandlers {
     public static boolean canMineWithPick(String tool) {
         return ToolClasses.WRENCH.equals(tool) || ToolClasses.WIRE_CUTTER.equals(tool);
     }
-
 
     @SubscribeEvent
     public static void onWorldLoadEvent(WorldEvent.Load event) {

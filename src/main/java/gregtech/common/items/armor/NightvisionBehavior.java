@@ -4,6 +4,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armoritem.ArmorHelper;
 import gregtech.api.items.armoritem.IElectricArmorBehavior;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +51,8 @@ public class NightvisionBehavior implements IElectricArmorBehavior {
     }
 
     @Override
-    public void onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack, @NotNull IElectricItem electricItem) {
+    public void onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack,
+                            @NotNull IElectricItem electricItem) {
         if (world.isRemote) return;
         NBTTagCompound tag = ArmorHelper.getBehaviorsTag(stack);
         if (tag.getBoolean(ArmorHelper.NIGHT_VISION_KEY) && electricItem.canUse(2)) {

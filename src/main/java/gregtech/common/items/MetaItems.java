@@ -11,7 +11,6 @@ import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.handler.FacadeRenderer;
-import gregtech.common.items.armor.MetaArmor;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -25,7 +24,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.base.CaseFormat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class MetaItems {
 

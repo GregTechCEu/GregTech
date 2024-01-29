@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.items.metaitem.ElectricStats;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,13 +51,15 @@ public class ItemGTElectricArmor extends ItemGTArmor {
     }
 
     @Override
-    public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, @Nullable DamageSource source, int damage, int slot) {
+    public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, @Nullable DamageSource source,
+                            int damage, int slot) {
         IElectricItem electricItem = getElectricItem(stack);
         long amountDrawn, amountToDraw = energyPerUse * damage / energyScaleFactor;
         amountDrawn = electricItem.discharge(amountToDraw, electricItem.getTier(), true, false, false);
         if (amountDrawn < amountToDraw) {
             // send remaining damage to durability (will be tested in super if it should be checked)
-            super.damageArmor(entity, stack, source, (int) Math.max(1, damage * (amountToDraw - amountDrawn) / amountToDraw), slot);
+            super.damageArmor(entity, stack, source,
+                    (int) Math.max(1, damage * (amountToDraw - amountDrawn) / amountToDraw), slot);
         }
     }
 
@@ -63,7 +67,8 @@ public class ItemGTElectricArmor extends ItemGTArmor {
     public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         IElectricItem electricItem = getElectricItem(armor);
         if (electricItem.getCharge() < energyPerUse) {
-            return (int) Math.round(4.0f * getDamageModifier() * getDefinition().getDamageAbsorption(getEquipmentSlot(), null));
+            return (int) Math
+                    .round(4.0f * getDamageModifier() * getDefinition().getDamageAbsorption(getEquipmentSlot(), null));
         }
         return super.getArmorDisplay(player, armor, slot);
     }
@@ -75,7 +80,8 @@ public class ItemGTElectricArmor extends ItemGTArmor {
     }
 
     @Override
-    protected @NotNull List<ICapabilityProvider> getCapabilityProviders(@NotNull ItemStack stack, @Nullable NBTTagCompound tag) {
+    protected @NotNull List<ICapabilityProvider> getCapabilityProviders(@NotNull ItemStack stack,
+                                                                        @Nullable NBTTagCompound tag) {
         List<ICapabilityProvider> providers = super.getCapabilityProviders(stack, tag);
         ElectricStats stats = new ElectricStats(maxCharge, tier, true, canChargeExternally);
         providers.add(stats.createProvider(stack));
@@ -90,7 +96,8 @@ public class ItemGTElectricArmor extends ItemGTArmor {
         protected int energyScaleFactor = 1; // todo, just setting this because of div by 0
         protected boolean canChargeExternally;
 
-        public static @NotNull Builder of(@NotNull String domain, @NotNull String id, @NotNull EntityEquipmentSlot slot) {
+        public static @NotNull Builder of(@NotNull String domain, @NotNull String id,
+                                          @NotNull EntityEquipmentSlot slot) {
             return new Builder(domain, id, slot);
         }
 
@@ -122,7 +129,8 @@ public class ItemGTElectricArmor extends ItemGTArmor {
 
         @Override
         public Supplier<ItemGTElectricArmor> supply(IGTArmorDefinition definition) {
-            return () -> new ItemGTElectricArmor(domain, id, definition, tier, maxCharge, energyPerUse, energyScaleFactor, canChargeExternally);
+            return () -> new ItemGTElectricArmor(domain, id, definition, tier, maxCharge, energyPerUse,
+                    energyScaleFactor, canChargeExternally);
         }
 
         @Override

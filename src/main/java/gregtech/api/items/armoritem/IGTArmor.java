@@ -1,6 +1,7 @@
 package gregtech.api.items.armoritem;
 
 import gregtech.api.items.armoritem.armorset.IArmorSet;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -10,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,13 +23,17 @@ public interface IGTArmor extends ISpecialArmor {
 
     String getId();
 
-    @NotNull IGTArmorDefinition getDefinition();
+    @NotNull
+    IGTArmorDefinition getDefinition();
 
-    @NotNull List<IArmorBehavior> getBehaviors();
+    @NotNull
+    List<IArmorBehavior> getBehaviors();
 
-    @NotNull EntityEquipmentSlot getEquipmentSlot();
+    @NotNull
+    EntityEquipmentSlot getEquipmentSlot();
 
-    @Nullable IArmorSet getArmorSet();
+    @Nullable
+    IArmorSet getArmorSet();
 
     /**
      * If behavior logic can be run at all. Most commonly used for energy checks on electric armors.
@@ -43,7 +49,8 @@ public interface IGTArmor extends ISpecialArmor {
         return (Item) this;
     }
 
-    @NotNull ItemStack getStack();
+    @NotNull
+    ItemStack getStack();
 
     @SideOnly(Side.CLIENT)
     default String getModelPath() {
