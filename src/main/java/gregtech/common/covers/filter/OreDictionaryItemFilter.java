@@ -334,37 +334,42 @@ public class OreDictionaryItemFilter extends ItemFilter {
         }
 
         public void setExpression(String expression) {
-            var old = getStackTag().getString(EXPRESSION);
-            if (expression.equals(old)) return;
+            if (getStackTag().getString(EXPRESSION).equals(expression))
+                return;
+
             getStackTag().setString(EXPRESSION, expression);
             recompile();
             markDirty();
         }
 
         public String getExpression() {
-            if (!getStackTag().hasKey(EXPRESSION))
-                setExpression("");
-
             return getStackTag().getString(EXPRESSION);
         }
 
         public void setCaseSensitive(boolean caseSensitive) {
-            var old = getStackTag().getBoolean(CASE_SENSITIVE);
-            if (getStackTag().hasKey(CASE_SENSITIVE) && old == caseSensitive) return;
-            getStackTag().setBoolean(CASE_SENSITIVE, caseSensitive);
+            if (isCaseSensitive() == caseSensitive)
+                return;
+
+            if (!caseSensitive)
+                getStackTag().setBoolean(CASE_SENSITIVE, false);
+            else
+                getStackTag().removeTag(CASE_SENSITIVE);
             markDirty();
         }
 
         public boolean isCaseSensitive() {
-            if (!getStackTag().hasKey(CASE_SENSITIVE))
-                setCaseSensitive(true);
-
-            return getStackTag().getBoolean(CASE_SENSITIVE);
+            return !getStackTag().hasKey(CASE_SENSITIVE);
         }
 
         public void setMatchAll(boolean matchAll) {
-            if (getStackTag().hasKey(MATCH_ALL) && this.shouldMatchAll() == matchAll) return;
-            getStackTag().setBoolean(MATCH_ALL, matchAll);
+            if (shouldMatchAll() == matchAll)
+                return;
+
+            if (!matchAll)
+                getStackTag().setBoolean(MATCH_ALL, false);
+            else
+                getStackTag().removeTag(MATCH_ALL);
+
             markDirty();
         }
 
@@ -374,10 +379,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
          * all entries to match
          */
         public boolean shouldMatchAll() {
-            if (!getStackTag().hasKey(MATCH_ALL))
-                setMatchAll(true);
-
-            return getStackTag().getBoolean(MATCH_ALL);
+            return !getStackTag().hasKey(MATCH_ALL);
         }
     }
 }

@@ -27,18 +27,21 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
     public abstract void onTransferRateChange();
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
-        var old = getStackTag().getBoolean(BLACKLIST);
-        if (old != blacklistFilter) {
-            getStackTag().setBoolean(BLACKLIST, blacklistFilter);
-            onTransferRateChange();
-        }
+        setWhitelist(!blacklistFilter);
     }
 
     public final boolean isBlacklistFilter() {
-        if (!getStackTag().hasKey(BLACKLIST))
-            setBlacklistFilter(false);
-
         return getStackTag().getBoolean(BLACKLIST);
+    }
+
+    private void setWhitelist(boolean whitelist) {
+        if (getStackTag().getBoolean(BLACKLIST) == whitelist) {
+            if (whitelist)
+                getStackTag().removeTag(BLACKLIST);
+            else
+                getStackTag().setBoolean(BLACKLIST, true);
+            onTransferRateChange();
+        }
     }
 
     public void setMaxTransferRate(int transferRate) {

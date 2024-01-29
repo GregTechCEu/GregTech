@@ -184,35 +184,41 @@ public class SimpleItemFilter extends ItemFilter {
 
     protected class SimpleItemFilterReader extends BaseItemFilterReader {
 
-        public static final String IGNORE_NBT = "ignore_nbt";
-        public static final String IGNORE_DAMAGE = "ignore_damage";
+        public static final String RESPECT_NBT = "ignore_nbt";
+        public static final String RESPECT_DAMAGE = "ignore_damage";
 
         public SimpleItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
         }
 
         protected void setIgnoreDamage(boolean ignoreDamage) {
-            getStackTag().setBoolean(IGNORE_DAMAGE, ignoreDamage);
+            if (!getStackTag().getBoolean(RESPECT_DAMAGE) == ignoreDamage)
+                return;
+
+            if (ignoreDamage)
+                getStackTag().removeTag(RESPECT_DAMAGE);
+            else
+                getStackTag().setBoolean(RESPECT_DAMAGE, true);
             markDirty();
         }
 
         protected void setIgnoreNBT(boolean ignoreNBT) {
-            getStackTag().setBoolean(IGNORE_NBT, ignoreNBT);
+            if (!getStackTag().getBoolean(RESPECT_NBT) == ignoreNBT)
+                return;
+
+            if (ignoreNBT)
+                getStackTag().removeTag(RESPECT_NBT);
+            else
+                getStackTag().setBoolean(RESPECT_NBT, true);
             markDirty();
         }
 
         public boolean isIgnoreDamage() {
-            if (!getStackTag().hasKey(IGNORE_DAMAGE))
-                setIgnoreDamage(true);
-
-            return getStackTag().getBoolean(IGNORE_DAMAGE);
+            return !getStackTag().getBoolean(RESPECT_DAMAGE);
         }
 
         public boolean isIgnoreNBT() {
-            if (!getStackTag().hasKey(IGNORE_NBT))
-                setIgnoreNBT(true);
-
-            return getStackTag().getBoolean(IGNORE_NBT);
+            return !getStackTag().getBoolean(RESPECT_NBT);
         }
 
         @Override
