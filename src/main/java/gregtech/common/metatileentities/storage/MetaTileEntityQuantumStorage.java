@@ -79,13 +79,13 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     // use this to make sure controller is properly initialized
     @Override
-    public IQuantumController getController() {
+    public final IQuantumController getController() {
         if (isConnected()) {
             if (controller.get() != null) return controller.get();
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), controllerPos);
-            if (mte instanceof IQuantumController) {
-                controller = new WeakReference<>((IQuantumController) mte);
-                return (IQuantumController) mte;
+            if (mte instanceof IQuantumController quantumController) {
+                controller = new WeakReference<>(quantumController);
+                return quantumController;
             } else {
                 // controller is no longer there for some reason, need to disconnect
                 setDisconnected();
@@ -95,7 +95,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public boolean isConnected() {
+    public final boolean isConnected() {
         // use controllerPos here because it is synced
         // on both sides, where controller is not
         return controllerPos != null;
