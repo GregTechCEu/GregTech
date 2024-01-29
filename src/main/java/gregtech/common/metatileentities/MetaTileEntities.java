@@ -230,8 +230,8 @@ public class MetaTileEntities {
     public static MetaTileEntityQuantumEnergyAcceptor QUANTUM_ENERGY_ACCEPTOR;
     public static MetaTileEntityQuantumProxy QUANTUM_STORAGE_PROXY;
     public static MetaTileEntityQuantumExtender QUANTUM_STORAGE_EXTENDER;
-    public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[11];
-    public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[11];
+    public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
+    public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
     public static final MetaTileEntityBuffer[] BUFFER = new MetaTileEntityBuffer[3];
     public static final MetaTileEntityPump[] PUMP = new MetaTileEntityPump[8];
     public static final MetaTileEntityBlockBreaker[] BLOCK_BREAKER = new MetaTileEntityBlockBreaker[4];
@@ -985,38 +985,32 @@ public class MetaTileEntities {
         PUMP[2] = registerMetaTileEntity(1532, new MetaTileEntityPump(gregtechId("pump.hv"), 3));
         PUMP[3] = registerMetaTileEntity(1533, new MetaTileEntityPump(gregtechId("pump.ev"), 4));
 
-        // Super / Quantum Chests, IDs 1559-1574, 1752, 1754, 1755
-        QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1559,
+        // Quantum Storage Network 1752 - 1755
+        QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1752,
                 new MetaTileEntityQuantumStorageController(gregtechId("quantum_storage_controller")));
-        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1754,
+        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1753,
                 new MetaTileEntityQuantumProxy(gregtechId("quantum_storage_proxy")));
-        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1755,
+        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1754,
                 new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
-        QUANTUM_ENERGY_ACCEPTOR = registerMetaTileEntity(1756,
+        QUANTUM_ENERGY_ACCEPTOR = registerMetaTileEntity(1755,
                 new MetaTileEntityQuantumEnergyAcceptor(gregtechId("quantum_energy_acceptor")));
 
-        QUANTUM_CHEST[10] = new MetaTileEntityQuantumChest(
-                gregtechId("super_chest." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000L);
-        registerMetaTileEntity(1752, QUANTUM_CHEST[10]);
+        // Super / Quantum Chests, IDs 1559-1574
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("super_chest." + voltageName), i + 1,
                     4000000L * (int) Math.pow(2, i));
-            registerMetaTileEntity(1560 + i, QUANTUM_CHEST[i]);
+            registerMetaTileEntity(1559 + i, QUANTUM_CHEST[i]);
         }
 
-        for (int i = 5; i < QUANTUM_CHEST.length - 1; i++) {
+        for (int i = 5; i < QUANTUM_CHEST.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             long capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000L * (int) Math.pow(2, i);
             QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest." + voltageName), i, capacity);
             registerMetaTileEntity(1565 + i, QUANTUM_CHEST[i]);
         }
 
-        // Super / Quantum Tanks, IDs 1575-1589, 1753
-
-        QUANTUM_TANK[10] = new MetaTileEntityQuantumTank(
-                gregtechId("super_tank." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000);
-        registerMetaTileEntity(1753, QUANTUM_TANK[10]);
+        // Super / Quantum Tanks, IDs 1575-1589
 
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
@@ -1025,7 +1019,7 @@ public class MetaTileEntities {
             registerMetaTileEntity(1575 + i, QUANTUM_TANK[i]);
         }
 
-        for (int i = 5; i < QUANTUM_TANK.length - 1; i++) {
+        for (int i = 5; i < QUANTUM_TANK.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             int capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000 * (int) Math.pow(2, i);
             QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank." + voltageName), i, capacity);
