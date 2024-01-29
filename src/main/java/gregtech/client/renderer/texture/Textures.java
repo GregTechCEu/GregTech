@@ -115,6 +115,15 @@ public class Textures {
     public static final SimpleOverlayRenderer QUANTUM_EXTENDER_ACTIVE = new SimpleOverlayRenderer(
             "casings/quantum/extender_active");
 
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_disconnected");
+
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR_CONNECTED = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_connected");
+
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR_POWERED = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_powered");
+
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer(
             "casings/steam/bronze");

@@ -12,6 +12,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 
+import gregtech.client.renderer.texture.Textures;
+
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+
+import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -48,9 +54,18 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         super(metaTileEntityId);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @SideOnly(Side.CLIENT)
-    protected void renderIndicatorOverly(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        // todo create indicator overlay
+    protected void renderIndicatorOverlay(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        SimpleOverlayRenderer texture;
+        if (isConnected()) {
+            texture = getController().isPowered() ?
+                    Textures.QUANTUM_INDICATOR_POWERED :
+                    Textures.QUANTUM_INDICATOR_CONNECTED;
+        } else {
+            texture = Textures.QUANTUM_INDICATOR;
+        }
+        texture.renderSided(getFrontFacing(), renderState, RenderUtil.adjustTrans(translation, getFrontFacing(), 1), pipeline);
     }
 
     @Override
@@ -61,6 +76,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             this.controllerPos = controller.getPos();
             if (!getWorld().isRemote) {
                 writeCustomData(UPDATE_CONTROLLER_POS, buf -> buf.writeBlockPos(controllerPos));
+                scheduleRenderUpdate();
                 markDirty();
             }
         }
@@ -72,6 +88,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             controller.clear();
             controllerPos = null;
             writeCustomData(REMOVE_CONTROLLER, buf -> {});
+            scheduleRenderUpdate();
             tryFindNetwork();
             markDirty();
         }
