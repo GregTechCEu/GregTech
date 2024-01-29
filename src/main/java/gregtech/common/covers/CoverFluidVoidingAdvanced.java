@@ -86,21 +86,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         }
     }
 
-    private void adjustTransferSize(int amount) {
-        if (bucketMode == BucketMode.BUCKET)
-            amount *= 1000;
-        if (this.voidingMode == VoidingMode.VOID_OVERFLOW) {
-            setTransferAmount(MathHelper.clamp(this.transferAmount + amount, 0, Integer.MAX_VALUE));
-        }
-    }
-
-    private void setTransferAmount(int transferAmount) {
-        this.transferAmount = transferAmount;
-        markDirty();
-    }
-
     public int getTransferAmount() {
-        return this.transferAmount;
+        return this.fluidFilterContainer.getTransferSize();
     }
 
     public void setVoidingMode(VoidingMode transferMode) {
@@ -111,18 +98,6 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     public VoidingMode getVoidingMode() {
         return voidingMode;
-    }
-
-    private boolean shouldDisplayAmountSlider() {
-        if (this.fluidFilterContainer.getFilterWrapper().getFluidFilter() != null) {
-            return false;
-        }
-
-        return this.voidingMode == VoidingMode.VOID_OVERFLOW;
-    }
-
-    public String getTransferAmountString() {
-        return Integer.toString(this.bucketMode == BucketMode.BUCKET ? transferAmount / 1000 : transferAmount);
     }
 
     @Override
