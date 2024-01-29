@@ -14,7 +14,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
@@ -29,7 +33,8 @@ import java.util.List;
 
 @Deprecated
 public class AdvancedQuarkTechSuite extends QuarkTechSuite {
-    //A replacement for checking the current world time, to get around the gamerule that stops it
+
+    // A replacement for checking the current world time, to get around the gamerule that stops it
     private long timer = 0L;
     private List<Pair<NonNullList<ItemStack>, List<Integer>>> inventoryIndexMap;
 

@@ -1,6 +1,7 @@
 package gregtech.api.items.armoritem.jetpack;
 
 import net.minecraft.util.EnumParticleTypes;
+
 import org.jetbrains.annotations.Nullable;
 
 public interface IJetpackStats {
@@ -21,5 +22,6 @@ public interface IJetpackStats {
 
     float getFallDamageReduction();
 
-    @Nullable EnumParticleTypes getParticle();
+    @Nullable
+    EnumParticleTypes getParticle();
 }

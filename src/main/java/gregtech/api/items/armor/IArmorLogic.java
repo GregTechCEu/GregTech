@@ -1,6 +1,5 @@
 package gregtech.api.items.armor;
 
-import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,8 +13,8 @@ public interface IArmorLogic {
 
     EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack);
 
-    default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
-    }
+    default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage,
+                             EntityEquipmentSlot equipmentSlot) {}
 
     default void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {}
 

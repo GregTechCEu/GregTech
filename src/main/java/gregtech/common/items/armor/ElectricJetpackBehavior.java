@@ -4,7 +4,9 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armoritem.jetpack.IJetpackStats;
 import gregtech.api.items.armoritem.jetpack.JetpackBehavior;
+
 import net.minecraft.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 
 public class ElectricJetpackBehavior extends JetpackBehavior {

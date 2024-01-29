@@ -3,6 +3,7 @@ package gregtech.api.items.armoritem.jetpack;
 import gregtech.api.items.armoritem.ArmorHelper;
 import gregtech.api.items.armoritem.IArmorBehavior;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -11,6 +12,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +63,8 @@ public abstract class JetpackBehavior implements IArmorBehavior {
 
     /*
      * Called every tick, performs flying if the correct keys are pressed.
-     * Logic from SimplyJetpacks2: https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java
+     * Logic from SimplyJetpacks2:
+     * https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java
      */
     private void performFlying(@NotNull EntityPlayer player, @NotNull ItemStack stack, boolean hover) {
         double currentAccel = jetpackStats.getVerticalAcceleration() * (player.motionY < 0.3D ? 2.5D : 1.0D);
@@ -71,22 +74,29 @@ public abstract class JetpackBehavior implements IArmorBehavior {
 
         if (flyKeyDown || hover && !player.onGround) {
             if (!player.isInWater() && !player.isInLava() && drainFuel(stack, getFuelPerUse(), true)) {
-                drainFuel(stack, (int) (player.isSprinting() ? Math.round(getFuelPerUse() * jetpackStats.getSprintEnergyModifier()) : getFuelPerUse()), false);
+                drainFuel(stack,
+                        (int) (player.isSprinting() ?
+                                Math.round(getFuelPerUse() * jetpackStats.getSprintEnergyModifier()) : getFuelPerUse()),
+                        false);
 
                 if (flyKeyDown) {
                     if (!hover) {
                         player.motionY = Math.min(player.motionY + currentAccel, currentSpeedVertical);
                     } else {
-                        if (descendKeyDown) player.motionY = Math.min(player.motionY + currentAccel, jetpackStats.getVerticalHoverSlowSpeed());
-                        else player.motionY = Math.min(player.motionY + currentAccel, jetpackStats.getVerticalHoverSpeed());
+                        if (descendKeyDown) player.motionY = Math.min(player.motionY + currentAccel,
+                                jetpackStats.getVerticalHoverSlowSpeed());
+                        else player.motionY = Math.min(player.motionY + currentAccel,
+                                jetpackStats.getVerticalHoverSpeed());
                     }
                 } else if (descendKeyDown) {
                     player.motionY = Math.min(player.motionY + currentAccel, -jetpackStats.getVerticalHoverSpeed());
                 } else {
                     player.motionY = Math.min(player.motionY + currentAccel, -jetpackStats.getVerticalHoverSlowSpeed());
                 }
-                float speedSideways = (float) (player.isSneaking() ? jetpackStats.getSidewaysSpeed() * 0.5f : jetpackStats.getSidewaysSpeed());
-                float speedForward = (float) (player.isSprinting() ? speedSideways * jetpackStats.getSprintSpeedModifier() : speedSideways);
+                float speedSideways = (float) (player.isSneaking() ? jetpackStats.getSidewaysSpeed() * 0.5f :
+                        jetpackStats.getSidewaysSpeed());
+                float speedForward = (float) (player.isSprinting() ?
+                        speedSideways * jetpackStats.getSprintSpeedModifier() : speedSideways);
 
                 if (KeyBind.VANILLA_FORWARD.isKeyDown(player))
                     player.moveRelative(0, 0, speedForward, speedForward);
@@ -111,7 +121,8 @@ public abstract class JetpackBehavior implements IArmorBehavior {
     private static void spawnParticle(@NotNull World world, EntityPlayer player, EnumParticleTypes type) {
         if (type != null && world.isRemote) {
             Vec3d forward = player.getForward();
-            world.spawnParticle(type, player.posX - forward.x, player.posY + 0.5D, player.posZ - forward.z, 0.0D, -0.6D, 0.0D);
+            world.spawnParticle(type, player.posX - forward.x, player.posY + 0.5D, player.posZ - forward.z, 0.0D, -0.6D,
+                    0.0D);
         }
     }
 

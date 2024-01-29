@@ -2,8 +2,10 @@ package gregtech.common.items.armor;
 
 import gregtech.api.items.armoritem.ArmorHelper;
 import gregtech.api.items.armoritem.IArmorBehavior;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import org.jetbrains.annotations.NotNull;
 
 // todo Nano was 0.75, quantum was 0.5

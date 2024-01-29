@@ -2,10 +2,12 @@ package gregtech.api.items.armoritem;
 
 import gregtech.api.items.armoritem.armorset.IArmorSet;
 import gregtech.api.items.armoritem.jetpack.IJetpackStats;
+
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.IRarity;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,6 +78,7 @@ public abstract class ArmorBuilder<T extends IGTArmor, U extends ArmorBuilder<T,
 
     protected final IGTArmorDefinition buildDefinition() {
         return new IGTArmorDefinition() {
+
             @Override
             public @NotNull EntityEquipmentSlot getEquippedSlot() {
                 return slot;

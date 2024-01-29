@@ -3,10 +3,12 @@ package gregtech.core.network.packets;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.api.util.input.KeyBind;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
+
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 public class PacketKeyPressed implements IPacket, IServerExecutor {
 

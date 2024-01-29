@@ -1,6 +1,7 @@
 package gregtech.api.items.armoritem.armorset;
 
 import gregtech.api.items.armoritem.ArmorHelper;
+
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Set;
