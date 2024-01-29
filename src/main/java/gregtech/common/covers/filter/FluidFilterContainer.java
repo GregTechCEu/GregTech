@@ -29,15 +29,8 @@ import java.util.function.Consumer;
 public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidFilter>
                                   implements INBTSerializable<NBTTagCompound> {
 
-    private final FluidFilterWrapper filterWrapper;
-
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
-        this.filterWrapper = new FluidFilterWrapper(this); // for compat
-    }
-
-    public FluidFilterWrapper getFilterWrapper() {
-        return filterWrapper;
     }
 
     public boolean testFluidStack(FluidStack fluidStack) {

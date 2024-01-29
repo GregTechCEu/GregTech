@@ -33,18 +33,8 @@ import java.util.function.Consumer;
 public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilter>
                                  implements INBTSerializable<NBTTagCompound> {
 
-    private final ItemFilterWrapper filterWrapper;
-
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
-        this.filterWrapper = new ItemFilterWrapper(this); // for compat
-    }
-
-    /** @deprecated use {@link ItemFilterContainer} */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public ItemFilterWrapper getFilterWrapper() {
-        return filterWrapper;
     }
 
     /** @deprecated uses old builtin MUI */
