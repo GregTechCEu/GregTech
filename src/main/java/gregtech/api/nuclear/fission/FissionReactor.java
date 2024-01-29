@@ -142,7 +142,11 @@ public class FissionReactor {
         value = Math.max(0.1, value);
         rate = Math.max(0.1, rate);
         //return Math.max(value * criticalRate / rate * Math.sqrt(target / value), equilibrium);
-        return Math.max(value + (criticalRate - rate) / ((this.coolantMass + this.structuralMass + this.fuelMass) * this.coolingFactor) * Math.sqrt(Math.abs(target - value)/target) , equilibrium);
+        // TODO: just use abs of target - value maybe
+        if (target > value)
+            return Math.max(value + (criticalRate - rate) / ((this.coolantMass + this.structuralMass + this.fuelMass) * this.coolingFactor) - this.coolingFactor * Math.sqrt((target - value)/target) , equilibrium);
+        else
+            return Math.max(value + (criticalRate - rate) / ((this.coolantMass + this.structuralMass + this.fuelMass) * this.coolingFactor) - this.coolingFactor * Math.sqrt((value - target)/value) , equilibrium);
     }
 
     public FissionReactor(int size, int depth, int controlRodInsertion) {

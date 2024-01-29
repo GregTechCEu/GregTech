@@ -191,7 +191,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public void updateFormedValid() {
         // Take in coolant, take in fuel, update reactor, output steam
 
-        if (this.lockingState == LockingState.LOCKED && !this.getWorld().isRemote) {
+        if (this.lockingState == LockingState.LOCKED && !this.getWorld().isRemote && this.getOffsetTimer() % 20 == 0) {
 
             // Coolant handling
             this.fissionReactor.makeCoolantFlow(flowRate);
@@ -214,9 +214,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
             this.updateReactorState();
 
-            if (getOffsetTimer() % 20 == 0) {
-                this.syncReactorStats();
-            }
+            this.syncReactorStats();
 
 //            if (this.fissionReactor.checkForMeltdown()) {
 //                this.performMeltdownEffects();
