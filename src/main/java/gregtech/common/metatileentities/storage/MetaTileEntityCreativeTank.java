@@ -64,6 +64,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         }
         QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, this.fluidTank, getWorld(), getPos(),
                 getFrontFacing());
+        renderIndicatorOverlay(renderState, translation, pipeline);
     }
 
     @Override

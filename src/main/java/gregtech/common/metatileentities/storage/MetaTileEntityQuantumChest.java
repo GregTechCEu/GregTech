@@ -111,6 +111,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
+        renderIndicatorOverlay(renderState, translation, pipeline);
     }
 
     @Override
