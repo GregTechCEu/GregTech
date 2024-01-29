@@ -9,7 +9,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.ISpecialArmor;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -18,13 +17,12 @@ import org.spongepowered.asm.mixin.injection.At;
 public class SpecialArmorPropertiesMixin {
 
     @ModifyExpressionValue(method = "applyArmor",
-                           at = @At(value = "INVOKE_ASSIGN",
+                           at = @At(value = "INVOKE",
                                     target = "Lnet/minecraft/util/CombatRules;getDamageAfterAbsorb(FFF)F"),
                            remap = false)
-    private static double adjustArmorAbsorption(double originalDamage, float damage, float totalArmor,
-                                                float totalToughness, @Local EntityLivingBase entity,
-                                                @Local NonNullList<ItemStack> inventory,
-                                                @Local DamageSource damageSource) {
+    private static float adjustArmorAbsorption(float originalDamage, EntityLivingBase entity,
+                                               NonNullList<ItemStack> inventory,
+                                               DamageSource damageSource, double damage) {
         double armorDamage = Math.max(1.0F, damage / 4.0F);
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack itemStack = inventory.get(i);
