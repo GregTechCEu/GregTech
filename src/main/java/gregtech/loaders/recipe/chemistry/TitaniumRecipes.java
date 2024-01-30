@@ -17,7 +17,6 @@ public class TitaniumRecipes {
 
     // Ilmenite and Rutile Processing
     private static void titaniumProcess() {
-
         // Rutile extraction from Ilmenite
         // FeTiO3 + C -> Fe + TiO2 + CO
         BLAST_RECIPES.recipeBuilder()
@@ -53,7 +52,6 @@ public class TitaniumRecipes {
     // The production of Soda Ash and Calcium Chloride from Salt and Calcite
     // Used in the Bauxite Process
     private static void solvayProcess() {
-
         // CaCO3 -> CaO + CO2
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
@@ -92,7 +90,6 @@ public class TitaniumRecipes {
 
     // Advanced separation process for Bauxite
     private static void bauxiteProcess() {
-
         // Bauxite (crushed) + Soda Ash + Calcium Chloride -> Bauxite Slurry
         MIXER_RECIPES.recipeBuilder()
                 .input(crushed, Bauxite, 32)
