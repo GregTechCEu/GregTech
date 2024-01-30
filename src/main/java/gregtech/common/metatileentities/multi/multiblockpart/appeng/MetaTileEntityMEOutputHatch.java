@@ -32,10 +32,10 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IItemList;
 import appeng.fluids.util.AEFluidStack;
-import appeng.me.GridAccessException;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -45,22 +45,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author GlodBlock
- * @Description The Output Hatch that can directly send its contents to ME storage network.
- * @Date 2023/4/19-1:18
- */
-public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart
+public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
                                          implements IMultiblockAbilityPart<IFluidTank> {
 
     public final static String FLUID_BUFFER_TAG = "FluidBuffer";
     public final static String WORKING_TAG = "WorkingEnabled";
-    private boolean workingEnabled;
+    private boolean workingEnabled = true;
     private SerializableFluidList internalBuffer;
 
     public MetaTileEntityMEOutputHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.UHV, true);
-        this.workingEnabled = true;
+        super(metaTileEntityId, GTValues.EV, true, IFluidStorageChannel.class);
     }
 
     @Override
@@ -72,21 +66,18 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME()) {
-            if (this.updateMEStatus()) {
-                if (!this.internalBuffer.isEmpty()) {
-                    try {
-                        IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
-                        for (IAEFluidStack fluid : this.internalBuffer) {
-                            IAEFluidStack notInserted = aeNetwork.injectItems(fluid.copy(), Actionable.MODULATE,
-                                    this.getActionSource());
-                            if (notInserted != null && notInserted.getStackSize() > 0) {
-                                fluid.setStackSize(notInserted.getStackSize());
-                            } else {
-                                fluid.reset();
-                            }
-                        }
-                    } catch (GridAccessException ignore) {}
+        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && updateMEStatus()) {
+            if (this.internalBuffer.isEmpty()) return;
+
+            IMEMonitor<IAEFluidStack> monitor = getMonitor();
+            if (monitor == null) return;
+
+            for (IAEFluidStack fluid : this.internalBuffer) {
+                IAEFluidStack notInserted = monitor.injectItems(fluid.copy(), Actionable.MODULATE, getActionSource());
+                if (notInserted != null && notInserted.getStackSize() > 0) {
+                    fluid.setStackSize(notInserted.getStackSize());
+                } else {
+                    fluid.reset();
                 }
             }
         }
@@ -94,12 +85,12 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart
 
     @Override
     public void onRemoval() {
-        try {
-            IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
-            for (IAEFluidStack fluid : this.internalBuffer) {
-                aeNetwork.injectItems(fluid.copy(), Actionable.MODULATE, this.getActionSource());
-            }
-        } catch (GridAccessException ignore) {}
+        IMEMonitor<IAEFluidStack> monitor = getMonitor();
+        if (monitor == null) return;
+
+        for (IAEFluidStack fluid : this.internalBuffer) {
+            monitor.injectItems(fluid.copy(), Actionable.MODULATE, this.getActionSource());
+        }
         super.onRemoval();
     }
 

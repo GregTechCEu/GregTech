@@ -31,9 +31,8 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
-import appeng.me.GridAccessException;
-import appeng.me.helpers.AENetworkProxy;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -43,18 +42,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
+public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
                                         implements IMultiblockAbilityPart<IFluidTank> {
 
     public final static String FLUID_BUFFER_TAG = "FluidTanks";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled;
+    private boolean workingEnabled = true;
     protected ExportOnlyAEFluidList aeFluidHandler;
 
     public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.UHV, false);
-        this.workingEnabled = true;
+        this(metaTileEntityId, GTValues.EV);
+    }
+
+    protected MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
+        super(metaTileEntityId, tier, false, IFluidStorageChannel.class);
     }
 
     protected ExportOnlyAEFluidList getAEFluidHandler() {
@@ -252,16 +254,5 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
     @Override
     public void registerAbilities(List<IFluidTank> list) {
         list.addAll(Arrays.asList(this.getAEFluidHandler().getInventory()));
-    }
-
-    @Nullable
-    protected IMEMonitor<IAEFluidStack> getMonitor() {
-        AENetworkProxy proxy = getProxy();
-        if (proxy == null) return null;
-        try {
-            return proxy.getStorage().getInventory(FLUID_NET);
-        } catch (GridAccessException ignored) {
-            return null;
-        }
     }
 }

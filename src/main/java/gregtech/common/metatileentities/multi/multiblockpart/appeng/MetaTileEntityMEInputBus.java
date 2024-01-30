@@ -41,9 +41,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEItemStack;
-import appeng.me.GridAccessException;
-import appeng.me.helpers.AENetworkProxy;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -53,22 +52,25 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
+public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
                                       IGhostSlotConfigurable {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled;
+    private boolean workingEnabled = true;
     protected ExportOnlyAEItemList aeItemHandler;
     private GhostCircuitItemStackHandler circuitInventory;
     private NotifiableItemStackHandler extraSlotInventory;
     private ItemHandlerList actualImportItems;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.UHV, false);
-        this.workingEnabled = true;
+        this(metaTileEntityId, GTValues.EV);
+    }
+
+    protected MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, int tier) {
+        super(metaTileEntityId, tier, false, IItemStorageChannel.class);
     }
 
     protected ExportOnlyAEItemList getAEItemHandler() {
@@ -319,17 +321,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> list) {
         list.add(this.actualImportItems);
-    }
-
-    @Nullable
-    protected IMEMonitor<IAEItemStack> getMonitor() {
-        AENetworkProxy proxy = getProxy();
-        if (proxy == null) return null;
-        try {
-            return proxy.getStorage().getInventory(ITEM_NET);
-        } catch (GridAccessException ignored) {
-            return null;
-        }
     }
 
     @Override

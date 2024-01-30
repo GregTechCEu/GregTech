@@ -169,4 +169,5 @@ public class GregtechDataCodes {
 
     // ME Parts
     public static final int UPDATE_AUTO_PULL = assignId();
+    public static final int UPDATE_ONLINE_STATUS = assignId();
 }

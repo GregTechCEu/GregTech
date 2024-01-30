@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
+import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
@@ -43,7 +44,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     private Function<ItemStack, Boolean> autoPullTest;
 
     public MetaTileEntityMEStockingBus(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId);
+        super(metaTileEntityId, GTValues.LuV);
         this.autoPullTest = $ -> false;
     }
 
