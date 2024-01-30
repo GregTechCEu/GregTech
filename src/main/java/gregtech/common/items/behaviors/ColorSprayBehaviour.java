@@ -104,9 +104,16 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             if (hitResult != null) {
                 EnumFacing facing = CoverRayTracer.determineGridSideHit(hitResult);
                 if (facing != null && mainPipe.isConnected(facing)) {
-                    traversePipes(player, world, hand, pos, facing);
-                    mainPipe.setPaintingColor(this.color.colorValue);
-                    return true;
+                    boolean paintedOthers = traversePipes(player, world, hand, pos, facing);
+                    if (mainPipe.getPaintingColor() != this.color.colorValue) {
+                        mainPipe.setPaintingColor(this.color.colorValue);
+                        // Account for traversePipes having the durability used off by one
+                        if (paintedOthers) {
+                            ItemStack heldItem = player.getHeldItem(hand);
+                            useItemDurability(player, hand, heldItem, empty.copy());
+                        }
+                        return true;
+                    } else return paintedOthers;
                 }
             }
         }
@@ -122,19 +129,27 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         return false;
     }
 
-    private void traversePipes(EntityPlayer player, World world, EnumHand hand, BlockPos startPos, EnumFacing facing) {
+    // note: automatically uses durability from recolouring pipes, apart from the last use, as this allows for proper
+    // animation of the item's use
+    private boolean traversePipes(EntityPlayer player, World world, EnumHand hand, BlockPos startPos, EnumFacing facing) {
         startPos = startPos.offset(facing);
         TileEntity connectedTe = world.getTileEntity(startPos);
         int count = 1;
+        boolean painted = false;
         while (connectedTe instanceof IPipeTile<?,?> connectedPipe && count < MAX_PIPE_TRAVERSAL_LENGTH) {
             if (connectedPipe.getPaintingColor() != (this.color == null ? -1 : this.color.colorValue)) {
                 connectedPipe.setPaintingColor(this.color == null ? -1 : this.color.colorValue);
                 connectedPipe.scheduleRenderUpdate();
-                if (getUsesLeft(player.getHeldItem(hand)) == 1 && !player.isCreative()) {
-                    useItemDurability(player, hand, player.getHeldItem(hand), empty.copy());
-                    return;
+                ItemStack heldItem = player.getHeldItem(hand);
+                if (getUsesLeft(heldItem) == 1 && !player.isCreative()) {
+                    useItemDurability(player, hand, heldItem, empty.copy());
+                    return true;
                 }
-                useItemDurability(player, hand, player.getHeldItem(hand), empty.copy());
+                // Off by one durability as the final use is handled by onItemUse, along with the use animation
+                if (painted) {
+                    useItemDurability(player, hand, heldItem, empty.copy());
+                }
+                painted = true;
             }
             if (connectedPipe.getNumConnections() == 2) {
                 int connections = connectedPipe.getConnections();
@@ -152,6 +167,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
                 break;
             }
         }
+        return painted;
     }
 
     @SuppressWarnings("unchecked, rawtypes")
@@ -190,9 +206,15 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
                 if (hitResult != null) {
                     EnumFacing facing = CoverRayTracer.determineGridSideHit(hitResult);
                     if (facing != null && pipe.isConnected(facing)) {
-                        traversePipes(player, world, hand, pos, facing);
-                        pipe.setPaintingColor(-1);
-                        return true;
+                        boolean paintedOthers = traversePipes(player, world, hand, pos, facing);
+                        if (pipe.isPainted()) {
+                            pipe.setPaintingColor(-1);
+                            if (paintedOthers) {
+                                ItemStack heldItem = player.getHeldItem(hand);
+                                useItemDurability(player, hand, heldItem, empty.copy());
+                            }
+                            return true;
+                        } else return paintedOthers;
                     }
                 }
             } else if (pipe.isPainted()) {
