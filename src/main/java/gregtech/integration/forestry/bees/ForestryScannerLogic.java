@@ -4,7 +4,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.util.Mods;
-import gregtech.integration.forestry.ForestryUtil;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
