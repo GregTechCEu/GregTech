@@ -1,7 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import codechicken.lib.raytracer.RayTracer;
-
 import gregtech.api.GTValues;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
@@ -31,6 +29,7 @@ import net.minecraft.world.World;
 
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
+import codechicken.lib.raytracer.RayTracer;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +56,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                              EnumFacing facing, float hitX, float hitY, float hitZ) {
-            ItemStack stack = player.getHeldItem(hand);
+        ItemStack stack = player.getHeldItem(hand);
         if (!player.canPlayerEdit(pos, facing, stack)) {
             return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
         }
@@ -76,7 +75,8 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         if (color == null) {
             return tryStripBlockColor(player, world, pos, block, side, hand);
         }
-        return tryPaintSpecialBlock(player, world, pos, block, hand) || block.recolorBlock(world, pos, side, this.color);
+        return tryPaintSpecialBlock(player, world, pos, block, hand) ||
+                block.recolorBlock(world, pos, side, this.color);
     }
 
     private boolean tryPaintSpecialBlock(EntityPlayer player, World world, BlockPos pos, Block block, EnumHand hand) {
@@ -99,7 +99,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             return true;
         }
         TileEntity te = world.getTileEntity(pos);
-        if (player.isSneaking() && te instanceof IPipeTile<?,?> mainPipe) {
+        if (player.isSneaking() && te instanceof IPipeTile<?, ?>mainPipe) {
             RayTraceResult hitResult = RayTracer.retraceBlock(world, player, pos);
             if (hitResult != null) {
                 EnumFacing facing = CoverRayTracer.determineGridSideHit(hitResult);
@@ -131,12 +131,13 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
 
     // note: automatically uses durability from recolouring pipes, apart from the last use, as this allows for proper
     // animation of the item's use
-    private boolean traversePipes(EntityPlayer player, World world, EnumHand hand, BlockPos startPos, EnumFacing facing) {
+    private boolean traversePipes(EntityPlayer player, World world, EnumHand hand, BlockPos startPos,
+                                  EnumFacing facing) {
         startPos = startPos.offset(facing);
         TileEntity connectedTe = world.getTileEntity(startPos);
         int count = 1;
         boolean painted = false;
-        while (connectedTe instanceof IPipeTile<?,?> connectedPipe && count < MAX_PIPE_TRAVERSAL_LENGTH) {
+        while (connectedTe instanceof IPipeTile<?, ?>connectedPipe && count < MAX_PIPE_TRAVERSAL_LENGTH) {
             if (connectedPipe.getPaintingColor() != (this.color == null ? -1 : this.color.colorValue)) {
                 connectedPipe.setPaintingColor(this.color == null ? -1 : this.color.colorValue);
                 connectedPipe.scheduleRenderUpdate();
@@ -154,7 +155,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             if (connectedPipe.getNumConnections() == 2) {
                 int connections = connectedPipe.getConnections();
                 connections &= ~(1 << facing.getOpposite().getIndex());
-                for (EnumFacing other: EnumFacing.VALUES) {
+                for (EnumFacing other : EnumFacing.VALUES) {
                     if ((connections & (1 << other.getIndex())) != 0) {
                         facing = other;
                         startPos = startPos.offset(facing);
@@ -172,7 +173,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
 
     @SuppressWarnings("unchecked, rawtypes")
     private boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block,
-                                              EnumFacing side, EnumHand hand) {
+                                       EnumFacing side, EnumHand hand) {
         // MC special cases
         if (block == Blocks.STAINED_GLASS) {
             world.setBlockState(pos, Blocks.GLASS.getDefaultState());
@@ -200,7 +201,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
 
         // TileEntityPipeBase special case
-        if (te instanceof IPipeTile<?, ?> pipe) {
+        if (te instanceof IPipeTile<?, ?>pipe) {
             if (player.isSneaking()) {
                 RayTraceResult hitResult = RayTracer.retraceBlock(world, player, pos);
                 if (hitResult != null) {

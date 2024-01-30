@@ -18,7 +18,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
-
 import gregtech.common.items.behaviors.ColorSprayBehaviour;
 
 import net.minecraft.block.BlockRedstoneWire;
@@ -569,14 +568,15 @@ public class GTUtility {
         return false;
     }
 
-    /** Checks if an item is a spray can for rendering the machine grid
+    /**
+     * Checks if an item is a spray can for rendering the machine grid
      *
      * @param itemStack itemStack to check
      * @return If the itemStack has the behaviour of a spray can
      */
     public static boolean isSprayCan(ItemStack itemStack) {
         Item item = itemStack.getItem();
-        if (item instanceof MetaItem<?> metaItem) {
+        if (item instanceof MetaItem<?>metaItem) {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
@@ -586,7 +586,6 @@ public class GTUtility {
         }
         return false;
     }
-
 
     /**
      * Default function for tank sizes, takes a tier input and returns the corresponding size
