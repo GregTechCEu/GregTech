@@ -12,6 +12,7 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
+import gregtech.client.model.miningpipe.MiningPipeModels;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.CableRenderer;
@@ -94,6 +95,7 @@ public class ClientProxy extends CommonProxy {
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
         TextureUtils.addIconRegister(PipeRenderer::initializeRestrictor);
+        MiningPipeModels.init();
     }
 
     @Override

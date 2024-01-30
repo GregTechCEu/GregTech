@@ -44,20 +44,13 @@ public final class ItemAndMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ItemAndMetadata)) return false;
-
-        ItemAndMetadata that = (ItemAndMetadata) o;
-
-        if (itemDamage != that.itemDamage) return false;
-        return item.equals(that.item);
+        return this == o ||
+                o instanceof ItemAndMetadata that && itemDamage == that.itemDamage && item.equals(that.item);
     }
 
     @Override
     public int hashCode() {
-        int result = item.hashCode();
-        result = 31 * result + itemDamage;
-        return result;
+        return 31 * item.hashCode() + itemDamage;
     }
 
     @Override

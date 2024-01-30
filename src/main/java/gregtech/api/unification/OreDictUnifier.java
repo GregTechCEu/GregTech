@@ -172,11 +172,15 @@ public class OreDictUnifier {
     @NotNull
     public static Set<String> getOreDictionaryNames(@NotNull ItemStack itemStack) {
         if (itemStack.isEmpty()) return Collections.emptySet();
-        ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
+        return getOreDictionaryNames(itemStack.getItem(), itemStack.getItemDamage());
+    }
+
+    @NotNull
+    public static Set<String> getOreDictionaryNames(@NotNull Item item, int metadata) {
+        ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(item);
         if (nameEntry == null) return Collections.emptySet();
-        short itemDamage = (short) itemStack.getItemDamage();
-        Set<String> names = nameEntry.get(itemDamage);
-        Set<String> wildcardNames = itemDamage == GTValues.W ? null : nameEntry.get(GTValues.W);
+        Set<String> names = nameEntry.get((short) metadata);
+        Set<String> wildcardNames = metadata == GTValues.W ? null : nameEntry.get(GTValues.W);
         if (names == null) {
             return wildcardNames == null ? Collections.emptySet() : Collections.unmodifiableSet(wildcardNames);
         } else if (wildcardNames == null || names == wildcardNames) { // single variant items have identical entries
@@ -225,8 +229,12 @@ public class OreDictUnifier {
 
     @Nullable
     public static MaterialStack getMaterial(ItemStack itemStack) {
-        if (itemStack.isEmpty()) return null;
-        ItemAndMetadata key = new ItemAndMetadata(itemStack);
+        return itemStack.isEmpty() ? null : getMaterial(itemStack.getItem(), itemStack.getItemDamage());
+    }
+
+    @Nullable
+    public static MaterialStack getMaterial(@NotNull Item item, int metadata) {
+        ItemAndMetadata key = new ItemAndMetadata(item, metadata);
         UnificationEntry entry = getOrWildcard(stackUnificationInfo, key);
         if (entry != null) {
             Material entryMaterial = entry.material;
@@ -248,9 +256,13 @@ public class OreDictUnifier {
     }
 
     @Nullable
-    public static OrePrefix getPrefix(ItemStack itemStack) {
-        if (itemStack.isEmpty()) return null;
-        UnificationEntry entry = getOrWildcard(stackUnificationInfo, new ItemAndMetadata(itemStack));
+    public static OrePrefix getPrefix(@NotNull ItemStack itemStack) {
+        return itemStack.isEmpty() ? null : getPrefix(itemStack.getItem(), itemStack.getItemDamage());
+    }
+
+    @Nullable
+    public static OrePrefix getPrefix(@NotNull Item item, int metadata) {
+        UnificationEntry entry = getOrWildcard(stackUnificationInfo, new ItemAndMetadata(item, metadata));
         return entry != null ? entry.orePrefix : null;
     }
 

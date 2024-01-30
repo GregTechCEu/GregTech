@@ -23,6 +23,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -125,7 +126,7 @@ public class WidgetProspectingMap extends Widget {
                     playerChunkZ, (int) player.posX, (int) player.posZ, this.mode);
 
             switch (mode) {
-                case ORE:
+                case ORE -> {
                     BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
@@ -133,42 +134,43 @@ public class WidgetProspectingMap extends Widget {
                             for (int y = 1; y < ySize; y++) {
                                 pos.setPos(x, y, z);
                                 IBlockState state = chunk.getBlockState(pos);
-                                ItemStack itemBlock = GTUtility.toItem(state);
-                                if (GTUtility.isOre(itemBlock)) {
-                                    boolean added = false;
-                                    String oreDictString = OreDictUnifier.getOreDictionaryNames(itemBlock).stream()
-                                            .findFirst()
-                                            .orElse("");
-                                    OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
-                                    if (prefix != null) {
-                                        for (StoneType type : StoneType.STONE_TYPE_REGISTRY) {
-                                            if (type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
-                                                packet.addBlock(x, y, z, oreDictString);
+                                if (!BlockUtility.isOre(state)) continue;
+
+                                Item item = Item.getItemFromBlock(state.getBlock());
+                                int meta = state.getBlock().getMetaFromState(state);
+                                boolean added = false;
+                                String oreDictString = OreDictUnifier.getOreDictionaryNames(item, meta).stream()
+                                        .findFirst()
+                                        .orElse("");
+                                OrePrefix prefix = OreDictUnifier.getPrefix(item, meta);
+                                if (prefix != null) {
+                                    for (StoneType type : StoneType.STONE_TYPE_REGISTRY) {
+                                        if (type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
+                                            packet.addBlock(x, y, z, oreDictString);
+                                            added = true;
+                                            break;
+                                        } else if (type.processingPrefix == prefix) {
+                                            MaterialStack materialStack = OreDictUnifier.getMaterial(item, meta);
+                                            if (materialStack != null) {
+                                                String oreDict = "ore" +
+                                                        oreDictString.replaceFirst(prefix.name(), "");
+                                                packet.addBlock(x, y, z, oreDict);
                                                 added = true;
                                                 break;
-                                            } else if (type.processingPrefix == prefix) {
-                                                MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
-                                                if (materialStack != null) {
-                                                    String oreDict = "ore" +
-                                                            oreDictString.replaceFirst(prefix.name(), "");
-                                                    packet.addBlock(x, y, z, oreDict);
-                                                    added = true;
-                                                    break;
-                                                }
                                             }
                                         }
                                     }
-                                    // Probably other mod's ores
-                                    if (!added) {
-                                        // Fallback
-                                        packet.addBlock(x, y, z, oreDictString);
-                                    }
+                                }
+                                // Probably other mod's ores
+                                if (!added) {
+                                    // Fallback
+                                    packet.addBlock(x, y, z, oreDictString);
                                 }
                             }
                         }
                     }
-                    break;
-                case FLUID:
+                }
+                case FLUID -> {
                     BedrockFluidVeinHandler.FluidVeinWorldEntry fStack = BedrockFluidVeinHandler
                             .getFluidVeinWorldEntry(world, chunk.x, chunk.z);
                     if (fStack != null && fStack.getDefinition() != null) {
@@ -183,9 +185,7 @@ public class WidgetProspectingMap extends Widget {
                             packet.addBlock(0, 1, 0, fluid.getName());
                         }
                     }
-                    break;
-                default:
-                    break;
+                }
             }
             writeUpdateInfo(2, packet::writePacketData);
             chunkIndex++;

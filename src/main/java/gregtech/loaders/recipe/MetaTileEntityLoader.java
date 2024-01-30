@@ -520,11 +520,6 @@ public class MetaTileEntityLoader {
                 new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'S',
                 new UnificationEntry(OrePrefix.plate, Materials.Steel), 'P',
                 new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.TinAlloy));
-        ModHandler.addShapedRecipe(true, "steam_miner", MetaTileEntities.STEAM_MINER.getStackForm(), "DSD", "SMS",
-                "GSG", 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'S',
-                new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze), 'D',
-                new UnificationEntry(OrePrefix.gem, Materials.Diamond), 'G',
-                new UnificationEntry(OrePrefix.gearSmall, Materials.Bronze));
 
         // MULTI BLOCK CONTROLLERS
         ModHandler.addShapedRecipe(true, "bronze_primitive_blast_furnace",
@@ -891,8 +886,8 @@ public class MetaTileEntityLoader {
                 'W', CABLE, 'S', OreDictNames.chestWood, 'G', GRINDER);
         registerMachineRecipe(MetaTileEntities.WORLD_ACCELERATOR, "IGI", "FHF", "IGI", 'H', HULL, 'F', EMITTER, 'G',
                 SENSOR, 'I', FIELD_GENERATOR);
-        registerMachineRecipe(MetaTileEntities.MINER, "MMM", "WHW", "CSC", 'M', MOTOR, 'W', CABLE, 'H', HULL, 'C',
-                CIRCUIT, 'S', SENSOR);
+        registerMachineRecipe(MetaTileEntities.MINER, "MSM", "WHW", "CGC", 'M', MOTOR, 'W', CABLE, 'H', HULL, 'C',
+                CIRCUIT, 'S', SENSOR, 'G', MetaItems.COMPONENT_GRINDER_DIAMOND);
 
         registerMachineRecipe(MetaTileEntities.MUFFLER_HATCH, "HM", "PR", 'H', HULL, 'M', MOTOR, 'P', PIPE_NORMAL, 'R',
                 ROTOR);

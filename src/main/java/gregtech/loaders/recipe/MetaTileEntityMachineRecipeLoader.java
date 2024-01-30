@@ -889,6 +889,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_EV, 4)
                 .input(CONVEYOR_MODULE_EV, 4)
                 .input(gear, Tungsten, 4)
+                .input(COMPONENT_GRINDER_TUNGSTEN)
                 .circuitMeta(2)
                 .output(BASIC_LARGE_MINER)
                 .duration(400).EUt(VA[EV]).buildAndRegister();
@@ -901,6 +902,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_IV, 4)
                 .input(CONVEYOR_MODULE_IV, 4)
                 .input(gear, Iridium, 4)
+                .input(COMPONENT_GRINDER_TUNGSTEN)
                 .circuitMeta(2)
                 .output(LARGE_MINER)
                 .duration(400).EUt(VA[IV]).buildAndRegister();
@@ -913,6 +915,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_LuV, 4)
                 .input(CONVEYOR_MODULE_LuV, 4)
                 .input(gear, Ruridit, 4)
+                .input(COMPONENT_GRINDER_TUNGSTEN)
                 .circuitMeta(2)
                 .output(ADVANCED_LARGE_MINER)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();

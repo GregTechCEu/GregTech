@@ -116,8 +116,10 @@ public class GuiTextures {
     public static final TextureArea BUTTON_NO_FLEX = TextureArea.fullImage("textures/gui/widget/button_no_flex.png");
     public static final TextureArea BUTTON_MULTI_MAP = TextureArea
             .fullImage("textures/gui/widget/button_multi_map.png");
-    public static final TextureArea BUTTON_MINER_MODES = TextureArea
-            .fullImage("textures/gui/widget/button_miner_modes.png");
+    public static final TextureArea BUTTON_MINER_AREA_PREVIEW = TextureArea
+            .fullImage("textures/gui/widget/button_miner_area_preview.png");
+    public static final TextureArea BUTTON_MINER_CONFIG_MODE = TextureArea
+            .fullImage("textures/gui/widget/button_miner_config_mode.png");
     public static final TextureArea BUTTON_THROTTLE_MINUS = TextureArea
             .fullImage("textures/gui/widget/button_throttle_minus.png");
     public static final TextureArea BUTTON_THROTTLE_PLUS = TextureArea
@@ -408,6 +410,8 @@ public class GuiTextures {
             .fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png");
     public static final TextureArea PROGRESS_BAR_FLUID_RIG_DEPLETION = TextureArea
             .fullImage("textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png");
+    public static final TextureArea PROGRESS_BAR_MINER_DRILLING_FLUID = TextureArea
+            .fullImage("textures/gui/progress_bar/progress_bar_miner_drilling_fluid.png");
 
     // Fusion reactor diagram progress bar parts
     public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BL = TextureArea

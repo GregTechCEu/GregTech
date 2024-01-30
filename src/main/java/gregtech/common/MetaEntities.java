@@ -4,9 +4,11 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.DynamiteRenderer;
 import gregtech.client.renderer.handler.GTBoatRenderer;
+import gregtech.client.renderer.handler.MiningPipeRenderer;
 import gregtech.client.renderer.handler.PortalRenderer;
 import gregtech.common.entities.DynamiteEntity;
 import gregtech.common.entities.GTBoatEntity;
+import gregtech.common.entities.MiningPipeEntity;
 import gregtech.common.entities.PortalEntity;
 
 import net.minecraft.client.Minecraft;
@@ -24,6 +26,8 @@ public class MetaEntities {
                 GregTechAPI.instance, 64, 5, true);
         EntityRegistry.registerModEntity(GTUtility.gregtechId("gtboat"), GTBoatEntity.class, "GTBoat", 3,
                 GregTechAPI.instance, 64, 2, true);
+        EntityRegistry.registerModEntity(GTUtility.gregtechId("mining_pipe"), MiningPipeEntity.class, "MiningPipe", 4,
+                GregTechAPI.instance, 0, 2, false);
     }
 
     @SideOnly(Side.CLIENT)
@@ -32,5 +36,6 @@ public class MetaEntities {
                 manager -> new DynamiteRenderer(manager, Minecraft.getMinecraft().getRenderItem()));
         RenderingRegistry.registerEntityRenderingHandler(PortalEntity.class, PortalRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(GTBoatEntity.class, GTBoatRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(MiningPipeEntity.class, MiningPipeRenderer::iHateJavaGenerics);
     }
 }
