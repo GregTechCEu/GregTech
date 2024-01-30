@@ -5,6 +5,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.IntegrationUtil;
 import gregtech.integration.forestry.ForestryModule;
@@ -821,8 +822,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             }),
     EXPLOSIVE(GTBranchDefinition.GT_INDUSTRIAL, "Explosionis", false, 0x7E270F, 0x747474,
             beeSpecies -> {
-                beeSpecies.addProduct(new ItemStack(Blocks.TNT), 0.2f);
-                // todo if we add a ITNT substitute, put it here instead of TNT
+                beeSpecies.addProduct(new ItemStack(MetaBlocks.ITNT), 0.2f);
                 beeSpecies.setHumidity(EnumHumidity.ARID);
                 beeSpecies.setTemperature(EnumTemperature.HELLISH);
                 beeSpecies.setHasEffect();
