@@ -357,9 +357,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             }
         }
 
-        // do not allow the controller to accept energy from other blocks
-        if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER && side != null) return null;
-
         return super.getCapability(capability, side);
     }
 
