@@ -7,6 +7,7 @@ import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GradientUtil;
+import gregtech.common.blocks.explosive.BlockGTExplosive;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
@@ -120,8 +121,13 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
                     SoundCategory.PLAYERS, 1.0F, GTValues.RNG.nextFloat() * 0.4F + 0.8F);
             IBlockState blockState = world.getBlockState(pos);
             Block block = blockState.getBlock();
-            if (block instanceof BlockTNT) {
-                ((BlockTNT) block).explode(world, pos, blockState.withProperty(BlockTNT.EXPLODE, true), player);
+            if (block instanceof BlockTNT tnt) {
+                tnt.explode(world, pos, blockState.withProperty(BlockTNT.EXPLODE, true), player);
+                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
+                return EnumActionResult.SUCCESS;
+            }
+            if (block instanceof BlockGTExplosive powderbarrel) {
+                powderbarrel.explode(world, pos, player);
                 world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
                 return EnumActionResult.SUCCESS;
             }
