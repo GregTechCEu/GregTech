@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.capability.IEnergyContainer;
