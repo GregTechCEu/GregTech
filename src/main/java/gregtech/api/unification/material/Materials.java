@@ -683,6 +683,11 @@ public class Materials {
     public static Material Lapotron;
     public static Material UUMatter;
     public static Material PCBCoolant;
+    public static Material BauxiteSlurry;
+    public static Material CrackedBauxiteSlurry;
+    public static Material BauxiteSludge;
+    public static Material DecalcifiedBauxiteSludge;
+    public static Material BauxiteSlag;
 
     /**
      * Second Degree Compounds

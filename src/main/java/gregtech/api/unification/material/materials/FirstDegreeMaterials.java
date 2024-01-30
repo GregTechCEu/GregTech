@@ -931,6 +931,7 @@ public class FirstDegreeMaterials {
         SodiumBicarbonate = new Material.Builder(366, gregtechId("sodium_bicarbonate"))
                 .dust(1)
                 .color(0x565b96).iconSet(ROUGH)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Hydrogen, 1, Carbon, 1, Oxygen, 3)
                 .build();
 
