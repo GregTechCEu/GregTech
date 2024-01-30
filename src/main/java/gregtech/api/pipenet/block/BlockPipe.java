@@ -656,8 +656,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
         if (entity instanceof EntityPlayer) {
-            return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND), entity) ||
-                    hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.OFF_HAND), entity) ||
+            return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND),
+                    entity) ||
+                    hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.OFF_HAND),
+                            entity) ||
                     entity.isSneaking() && isHoldingPipe((EntityPlayer) entity);
         }
         return false;
@@ -665,7 +667,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     public abstract boolean isHoldingPipe(EntityPlayer player);
 
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack, @Nullable Entity entity) {
+    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack,
+                                                @Nullable Entity entity) {
         if (isPipeTool(stack)) return true;
 
         if (entity != null && entity.isSneaking() && entity instanceof EntityPlayer player &&
