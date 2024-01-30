@@ -27,7 +27,7 @@ import forestry.factory.ModuleFactory;
 public class ForestryMiscRecipes {
 
     public static void init() {
-        if (ForestryConfig.enableGTBees) {
+        if (ForestryConfig.enableGTBees && Mods.ForestryApiculture.isModLoaded()) {
             // Oil Drop
             ItemStack dropStack = ForestryUtil.getDropStack(GTDropType.OIL);
             RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()

@@ -39,6 +39,9 @@ public enum Mods {
     ExtraTrees(Names.EXTRA_TREES),
     ExtraUtilities2(Names.EXTRA_UTILITIES2),
     Forestry(Names.FORESTRY),
+    ForestryApiculture(Names.FORESTRY, forestryModule(Names.FORESTRY_APICULTURE)),
+    ForestryArboriculture(Names.FORESTRY, forestryModule(Names.FORESTRY_ARBORICULTURE)),
+    ForestryLepidopterology(Names.FORESTRY, forestryModule(Names.FORESTRY_LEPIDOPTEROLOGY)),
     GalacticraftCore(Names.GALACTICRAFT_CORE),
     Genetics(Names.GENETICS),
     GregTech(Names.GREGTECH),
@@ -53,8 +56,8 @@ public enum Mods {
     JustEnoughItems(Names.JUST_ENOUGH_ITEMS),
     MagicBees(Names.MAGIC_BEES),
     Nothirium(Names.NOTHIRIUM),
-    NuclearCraft(Names.NUCLEAR_CRAFT, v -> !v.contains("2o")),
-    NuclearCraftOverhauled(Names.NUCLEAR_CRAFT, v -> v.contains("2o")),
+    NuclearCraft(Names.NUCLEAR_CRAFT, versionExcludes("2o")),
+    NuclearCraftOverhauled(Names.NUCLEAR_CRAFT, versionContains("2o")),
     OpenComputers(Names.OPEN_COMPUTERS),
     ProjectRedCore(Names.PROJECT_RED_CORE),
     Railcraft(Names.RAILCRAFT),
@@ -104,6 +107,9 @@ public enum Mods {
         public static final String EXTRA_TREES = "extratrees";
         public static final String EXTRA_UTILITIES2 = "extrautils2";
         public static final String FORESTRY = "forestry";
+        public static final String FORESTRY_APICULTURE = "apiculture";
+        public static final String FORESTRY_ARBORICULTURE = "arboriculture";
+        public static final String FORESTRY_LEPIDOPTEROLOGY = "lepidopterology";
         public static final String GALACTICRAFT_CORE = "galacticraftcore";
         public static final String GENETICS = "genetics";
         public static final String GREGTECH = GTValues.MODID;
@@ -132,30 +138,32 @@ public enum Mods {
     }
 
     private final String ID;
-    private final Function<String, Boolean> versionTester;
+    private final Function<Mods, Boolean> extraCheck;
     protected Boolean modLoaded;
 
     Mods(String ID) {
         this.ID = ID;
-        this.versionTester = null;
+        this.extraCheck = null;
     }
 
     /**
-     * @param versionTester A function to test if a specific version is loaded.
-     *                      Used in cases like NC vs NCO, where the mod id is the same
-     *                      so the version has to be parsed to test which is loaded.
+     * @param extraCheck A supplier that can be used to test additional factors, such as
+     *                   checking if a mod is at a specific version, or a sub-mod is loaded.
+     *                   Used in cases like NC vs NCO, where the mod id is the same
+     *                   so the version has to be parsed to test which is loaded.
+     *                   Another case is checking for specific Forestry modules, checking
+     *                   if Forestry is loaded and if a specific module is enabled.
      */
-    Mods(String ID, Function<String, Boolean> versionTester) {
+    Mods(String ID, Function<Mods, Boolean> extraCheck) {
         this.ID = ID;
-        this.versionTester = versionTester;
+        this.extraCheck = extraCheck;
     }
 
     public boolean isModLoaded() {
         if (this.modLoaded == null) {
             this.modLoaded = Loader.isModLoaded(this.ID);
-            if (this.modLoaded && this.versionTester != null) {
-                ModContainer container = Loader.instance().getIndexedModList().get(this.ID);
-                if (!this.versionTester.apply(container.getVersion())) {
+            if (this.modLoaded) {
+                if (this.extraCheck != null && !this.extraCheck.apply(this)) {
                     this.modLoaded = false;
                 }
             }
@@ -207,5 +215,38 @@ public enum Mods {
             return ItemStack.EMPTY;
         }
         return GameRegistry.makeItemStack(ID + ":" + name, meta, amount, nbt);
+    }
+
+    // Helpers for the extra checker
+
+    /** Test if the mod version string contains the passed value. */
+    private static Function<Mods, Boolean> versionContains(String versionPart) {
+        return mod -> {
+            if (mod.ID == null) return false;
+            if (!mod.isModLoaded()) return false;
+            ModContainer container = Loader.instance().getIndexedModList().get(mod.ID);
+            if (container == null) return false;
+            return container.getVersion().contains(versionPart);
+        };
+    }
+
+    /** Test if the mod version string does not contain the passed value. */
+    private static Function<Mods, Boolean> versionExcludes(String versionPart) {
+        return mod -> {
+            if (mod.ID == null) return false;
+            if (!mod.isModLoaded()) return false;
+            ModContainer container = Loader.instance().getIndexedModList().get(mod.ID);
+            if (container == null) return false;
+            return !container.getVersion().contains(versionPart);
+        };
+    }
+
+    /** Test if a specific Forestry module is enabled. */
+    private static Function<Mods, Boolean> forestryModule(String moduleID) {
+        if (Forestry.isModLoaded()) {
+            return mod -> forestry.modules.ModuleHelper.isEnabled(moduleID);
+        } else {
+            return $ -> false;
+        }
     }
 }

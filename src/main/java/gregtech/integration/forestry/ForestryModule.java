@@ -100,7 +100,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
         // GT Frames
         if (ForestryConfig.enableGTFrames) {
-            if (ForestryUtil.apicultureEnabled()) {
+            if (Mods.ForestryApiculture.isModLoaded()) {
                 FRAME_ACCELERATED = new GTItemFrame(GTFrameType.ACCELERATED);
                 FRAME_MUTAGENIC = new GTItemFrame(GTFrameType.MUTAGENIC);
                 FRAME_WORKING = new GTItemFrame(GTFrameType.WORKING);
@@ -126,7 +126,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
         // GT Bees
         if (ForestryConfig.enableGTBees) {
-            if (ForestryUtil.apicultureEnabled()) {
+            if (Mods.ForestryApiculture.isModLoaded()) {
                 DROPS = new GTDropItem();
                 COMBS = new GTCombItem();
             } else {
@@ -137,7 +137,7 @@ public class ForestryModule extends IntegrationSubmodule {
         // Remove duplicate/conflicting bees from other Forestry addons.
         // Done in init to have our changes applied before their registration,
         // since we load after other Forestry addons purposefully.
-        if (ForestryConfig.disableConflictingBees && ForestryUtil.apicultureEnabled()) {
+        if (ForestryConfig.disableConflictingBees && Mods.ForestryApiculture.isModLoaded()) {
             BeeRemovals.init();
         }
 
@@ -154,7 +154,7 @@ public class ForestryModule extends IntegrationSubmodule {
             ForestryElectrodeRecipes.onInit();
         }
 
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.harderForestryRecipes) {
                 ForestryMiscRecipes.initRemoval();
             }
@@ -170,7 +170,7 @@ public class ForestryModule extends IntegrationSubmodule {
         }
 
         if (event.getSide() == Side.CLIENT) {
-            if (ForestryUtil.apicultureEnabled()) {
+            if (Mods.ForestryApiculture.isModLoaded()) {
                 if (ForestryConfig.enableGTBees) {
                     Minecraft.getMinecraft().getItemColors().registerItemColorHandler((stack, tintIndex) -> {
                         if (stack.getItem() instanceof IColoredItem coloredItem) {
@@ -185,7 +185,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             getLogger().info("Copying Forestry Centrifuge recipes to GT Centrifuge");
             CombRecipes.initForestryCombs();
         }
@@ -196,7 +196,7 @@ public class ForestryModule extends IntegrationSubmodule {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         // GT Frames
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTFrames) {
                 registry.register(FRAME_ACCELERATED);
                 registry.register(FRAME_MUTAGENIC);
@@ -234,7 +234,7 @@ public class ForestryModule extends IntegrationSubmodule {
         }
 
         // GT Drops
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTBees) {
                 registry.register(DROPS);
                 registry.register(COMBS);
@@ -245,7 +245,7 @@ public class ForestryModule extends IntegrationSubmodule {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTFrames) {
                 FRAME_ACCELERATED.registerModel(FRAME_ACCELERATED, ForestryAPI.modelManager);
                 FRAME_MUTAGENIC.registerModel(FRAME_MUTAGENIC, ForestryAPI.modelManager);
@@ -264,7 +264,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             // GT Frames
             if (ForestryConfig.enableGTFrames) {
                 ForestryFrameRecipes.init();
@@ -293,7 +293,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
     @SubscribeEvent
     public static void registerMaterials(MaterialEvent event) {
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTFrames) {
                 Materials.TreatedWood.addFlags(MaterialFlags.GENERATE_LONG_ROD);
                 Materials.Uranium235.addFlags(MaterialFlags.GENERATE_LONG_ROD);

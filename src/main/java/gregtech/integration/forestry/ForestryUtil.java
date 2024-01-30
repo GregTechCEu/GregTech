@@ -11,23 +11,10 @@ import forestry.api.apiculture.IAlleleBeeEffect;
 import forestry.api.apiculture.IAlleleBeeSpecies;
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IAlleleFlowers;
-import forestry.modules.ModuleHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ForestryUtil {
-
-    public static boolean apicultureEnabled() {
-        return ModuleHelper.isEnabled("apiculture");
-    }
-
-    public static boolean arboricultureEnabled() {
-        return ModuleHelper.isEnabled("arboriculture");
-    }
-
-    public static boolean lepidopterologyEnabled() {
-        return ModuleHelper.isEnabled("lepidopterology");
-    }
 
     @Nullable
     public static IAlleleBeeEffect getEffect(@NotNull Mods mod, @NotNull String name) {
@@ -74,7 +61,7 @@ public class ForestryUtil {
                     .error("Tried to get GregTech Comb stack, but GregTech Bees config is not enabled!");
             return ItemStack.EMPTY;
         }
-        if (!apicultureEnabled()) {
+        if (!Mods.ForestryApiculture.isModLoaded()) {
             IntegrationModule.logger.error("Tried to get GregTech Comb stack, but Apiculture module is not enabled!");
             return ItemStack.EMPTY;
         }
@@ -93,7 +80,7 @@ public class ForestryUtil {
                     .error("Tried to get GregTech Drop stack, but GregTech Bees config is not enabled!");
             return ItemStack.EMPTY;
         }
-        if (!apicultureEnabled()) {
+        if (!Mods.ForestryApiculture.isModLoaded()) {
             IntegrationModule.logger.error("Tried to get GregTech Drop stack, but Apiculture module is not enabled!");
             return ItemStack.EMPTY;
         }
