@@ -152,5 +152,10 @@ public class DriverRecipeMapMultiblockController extends DriverSidedTileEntity {
         public Object[] getOutputTank(final Context context, final Arguments args) {
             return getTank(tileEntity.getOutputFluidInventory());
         }
+
+        @Callback(doc = "function():number -- Gets the number of maintenance problems.")
+        public Object[] getMaintenanceProblems(final Context context, final Arguments args) {
+            return new Object[] { tileEntity.getNumMaintenanceProblems() };
+        }
     }
 }
