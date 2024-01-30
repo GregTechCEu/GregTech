@@ -130,8 +130,8 @@ public class TitaniumRecipes {
         ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
                 .input(dust, BauxiteSlag)
                 .output(dust, Salt)
-                .chancedOutput(dust, Neodymium, 2000, 0)
-                .chancedOutput(dust, Chrome, 1000, 0)
+                .chancedOutput(dust, Neodymium, 2000, 250)
+                .chancedOutput(dust, Chrome, 1000, 250)
                 .duration(50).EUt(VA[MV]).buildAndRegister();
 
         // Bauxite Sludge -> Calcite (looped) + Decalcified Bauxite Sludge
@@ -146,9 +146,9 @@ public class TitaniumRecipes {
         CENTRIFUGE_RECIPES.recipeBuilder()
                 .fluidInputs(DecalcifiedBauxiteSludge.getFluid(250))
                 .output(dust, Rutile)
-                .chancedOutput(dust, Gallium, 3000, 0)
-                .chancedOutput(dust, SiliconDioxide, 9000, 0)
-                .chancedOutput(dust, Iron, 8000, 0)
+                .chancedOutput(dust, Gallium, 3000, 800)
+                .chancedOutput(dust, SiliconDioxide, 9000, 250)
+                .chancedOutput(dust, Iron, 8000, 250)
                 .fluidOutputs(Water.getFluid(250))
                 .duration(100).EUt(VA[MV]).buildAndRegister();
     }
