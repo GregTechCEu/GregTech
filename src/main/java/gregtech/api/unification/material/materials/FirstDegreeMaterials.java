@@ -1553,5 +1553,10 @@ public class FirstDegreeMaterials {
                         .blastStats(VA[EV], 1400)
                         .vacuumStats(VA[HV], 250))
                 .build();
+
+        IlmeniteSlag = new Material.Builder(452, gregtechId("ilmenite_slag"))
+                .dust(1)
+                .color(0x8B0000).iconSet(SAND)
+                .build();
     }
 }

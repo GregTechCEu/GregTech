@@ -619,6 +619,15 @@ public class SeparationRecipes {
                 .inputs(new ItemStack(Blocks.BOOKSHELF))
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
+
+        // Electromagnetic Separator
+
+        ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
+                .input(dust, IlmeniteSlag)
+                .chancedOutput(dust, Iron, 8000, 0)
+                .chancedOutput(dust, Tantalum, 2000, 0)
+                .chancedOutput(dust, Niobium, 500, 0)
+                .duration(50).EUt(VA[MV]).buildAndRegister();
     }
 
     @SuppressWarnings("unchecked")

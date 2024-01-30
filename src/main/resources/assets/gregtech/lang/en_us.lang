@@ -1794,6 +1794,7 @@ gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
 gregtech.material.rtm_alloy=RTM Alloy
+gregtech.material.ilmenite_slag=Ilmenite Slag
 
 
 # Organic Chemistry Materials
