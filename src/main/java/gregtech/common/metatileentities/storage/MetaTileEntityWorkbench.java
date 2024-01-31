@@ -366,7 +366,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         @Override
         public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
             handleItemCraft(stack, thePlayer);
-            recipeLogic.sync(0, buffer -> buffer.writeItemStack(stack));
             return super.onTake(thePlayer, stack);
         }
 
