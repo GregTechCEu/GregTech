@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -210,7 +211,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     @Override
     public void onNeighborChanged() {
-        this.recipeLogic.updateInventory(getAvailableHandlers());
+        getCraftingRecipeLogic().updateInventory(getAvailableHandlers());
+        writeCustomData(GregtechDataCodes.UPDATE_ITEM, this::sendHandlerToClient);
     }
 
     private @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
@@ -255,6 +257,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         guiSyncManager.registerSlotGroup(inventory);
 
         getCraftingRecipeLogic().updateCurrentRecipe();
+        if (!guiSyncManager.isClient() && getCraftingRecipeLogic().collectAvailableItems()) {
+            writeCustomData(GregtechDataCodes.UPDATE_MACHINE, getCraftingRecipeLogic()::writeAvailableStacks);
+        }
 
         var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
         guiSyncManager.syncValue("amount_crafted", amountCrafted);
@@ -335,6 +340,32 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .addPage(new Column().coverChildren()
                                 .child(IKey.str("add storage things").asWidget())))
                 .bindPlayerInventory();
+    }
+
+    public void sendHandlerToClient(PacketBuffer buffer) {
+        buffer.writeVarInt(this.combinedInventory.getSlots());
+        boolean changed = getCraftingRecipeLogic().collectAvailableItems();
+        buffer.writeBoolean(changed);
+        if (changed)
+            getCraftingRecipeLogic().writeAvailableStacks(buffer);
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.UPDATE_MACHINE) {
+            getCraftingRecipeLogic()
+                    .updateClientStacks(buf);
+
+        } else if (dataId == GregtechDataCodes.UPDATE_ITEM) {
+            getCraftingRecipeLogic()
+                    .updateInventory(new ItemStackHandler(buf.readVarInt()));
+
+            if (!buf.readBoolean()) return;
+
+            getCraftingRecipeLogic()
+                    .updateClientStacks(buf);
+        }
     }
 
     public int getItemsCrafted() {

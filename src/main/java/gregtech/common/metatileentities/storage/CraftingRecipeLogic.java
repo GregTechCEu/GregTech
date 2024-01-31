@@ -322,7 +322,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     }
 
 
-    private void writeAvailableStacks(PacketBuffer buffer) {
+    public void writeAvailableStacks(PacketBuffer buffer) {
         buffer.writeInt(this.availableItems.size());
         for (var entry : this.availableItems.entrySet()) {
             buffer.writeInt(entry.getKey());
@@ -382,17 +382,18 @@ public class CraftingRecipeLogic extends SyncHandler {
         var stack = ItemStack.EMPTY;
         try {
             var tag = buffer.readCompoundTag();
-            if (tag == null) return stack;
-            GTLog.logger.warn("Read from NBT: %s", tag);
+            if (tag == null) throw new IOException();
+            GTLog.logger.warn(String.format("Received: %s", tag));
             stack = new ItemStack(tag);
-        } catch (IOException ignore) {}
-        if (stack.isEmpty()) GTLog.logger.warn("An empty stack was read, something is seriously wrong!");
+        } catch (IOException ignore) {
+            GTLog.logger.warn("A stack was read incorrectly, something is seriously wrong!");
+        }
         return stack;
     }
 
     private static void writeStackSafe(PacketBuffer buffer, ItemStack stack) {
         var tag = stack.serializeNBT();
-        GTLog.logger.warn(String.format("Written to NBT: %s", tag));
+        GTLog.logger.warn(String.format("Sent: %s", tag));
         buffer.writeCompoundTag(tag);
     }
 
