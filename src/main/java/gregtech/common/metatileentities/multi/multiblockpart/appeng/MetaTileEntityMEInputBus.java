@@ -303,7 +303,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            Textures.ME_INPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            if (isOnline) {
+                Textures.ME_INPUT_BUS_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            } else {
+                Textures.ME_INPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            }
         }
     }
 

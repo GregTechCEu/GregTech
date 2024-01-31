@@ -102,6 +102,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_ONLINE_STATUS) {
             this.isOnline = buf.readBoolean();
+            scheduleRenderUpdate();
         }
     }
 

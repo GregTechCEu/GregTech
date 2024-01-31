@@ -173,7 +173,11 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            Textures.ME_OUTPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            if (isOnline) {
+                Textures.ME_OUTPUT_HATCH_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            } else {
+                Textures.ME_OUTPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            }
         }
     }
 
