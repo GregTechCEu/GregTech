@@ -1172,7 +1172,7 @@ public class MetaTileEntities {
         // IDs 1730-1744 are taken by 4A <-> 16A Transformers. They are grouped with other transformers for
         // organization.
 
-        // ME Hatches, IDs 1745-1748
+        // ME Hatches, IDs 1745-1748, 1752-1756
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1745,
                     new MetaTileEntityMEOutputHatch(gregtechId("me_export_fluid_hatch")));
@@ -1186,6 +1186,9 @@ public class MetaTileEntities {
                     new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus")));
             STOCKING_HATCH_ME = registerMetaTileEntity(1753,
                     new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch")));
+            // 1754: Crafting Input Bus
+            // 1755: Crafting Input Buffer
+            // 1756: Crafting Input Slave
         }
 
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749,
@@ -1195,6 +1198,8 @@ public class MetaTileEntities {
 
         // Alarm, ID 1751
         ALARM = registerMetaTileEntity(1751, new MetaTileEntityAlarm(gregtechId("alarm")));
+
+        // IDs 1752-1756 are taken by AE2 parts
 
         // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
         // EV hatches separate because of old names/IDs

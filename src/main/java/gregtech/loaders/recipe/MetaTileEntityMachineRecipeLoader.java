@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 
 import net.minecraft.init.Blocks;
@@ -1021,6 +1022,28 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(accelerationCard.copy())
                     .output(ITEM_IMPORT_BUS_ME)
                     .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(ITEM_IMPORT_BUS[LuV])
+                    .inputs(normalInterface.copy())
+                    .input(CONVEYOR_MODULE_IV)
+                    .inputs(GTUtility.copy(4, accelerationCard))
+                    .fluidInputs(SolderingAlloy.getFluid(L * 2))
+                    .fluidInputs(Lubricant.getFluid(500))
+                    .scannerResearch(ITEM_IMPORT_BUS_ME.getStackForm())
+                    .output(STOCKING_BUS_ME)
+                    .duration(300).EUt(VA[LuV]).buildAndRegister();
+
+            ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(FLUID_IMPORT_HATCH[LuV])
+                    .inputs(fluidInterface.copy())
+                    .input(ELECTRIC_PUMP_IV)
+                    .inputs(GTUtility.copy(4, accelerationCard))
+                    .fluidInputs(SolderingAlloy.getFluid(L * 2))
+                    .fluidInputs(Lubricant.getFluid(500))
+                    .scannerResearch(FLUID_IMPORT_HATCH_ME.getStackForm())
+                    .output(STOCKING_HATCH_ME)
+                    .duration(300).EUt(VA[LuV]).buildAndRegister();
         }
     }
 
