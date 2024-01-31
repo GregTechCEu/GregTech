@@ -30,6 +30,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
@@ -1547,17 +1548,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @NotNull
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return AECableType.NONE;
     }
 
     @Nullable
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AENetworkProxy getProxy() {
         return null;
     }
 
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void gridChanged() {}
 }

@@ -1,6 +1,6 @@
 package gregtech.asm;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 import gregtech.asm.util.ObfMapping;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
@@ -8,8 +8,6 @@ import gregtech.common.ConfigHolder;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -136,13 +134,12 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(0);
 
-                // fix NC recipe compat different depending on overhaul vs underhaul
-                ModContainer container = Loader.instance().getIndexedModList().get(GTValues.MODID_NC);
-                if (container.getVersion().contains("2o")) { // overhauled
+                // fix NC recipe compat different depending on overhaul vs normal
+                if (Mods.NuclearCraftOverhauled.isModLoaded()) {
                     classReader.accept(new TargetClassVisitor(classWriter,
                             NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NCO, NuclearCraftRecipeHelperVisitor::new),
                             0);
-                } else {
+                } else if (Mods.NuclearCraft.isModLoaded()) {
                     classReader.accept(new TargetClassVisitor(classWriter,
                             NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NC, NuclearCraftRecipeHelperVisitor::new), 0);
                 }

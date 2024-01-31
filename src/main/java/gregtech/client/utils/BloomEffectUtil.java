@@ -1,6 +1,7 @@
 package gregtech.client.utils;
 
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.util.Mods;
 import gregtech.client.particle.GTParticle;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.Shaders;
@@ -20,7 +21,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.common.util.EnumHelper;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -101,7 +101,7 @@ public class BloomEffectUtil {
      */
     @Contract("null -> _; !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(BlockRenderLayer fallback) {
-        return Shaders.isOptiFineShaderPackLoaded() ? fallback : bloom;
+        return Mods.Optifine.isModLoaded() ? fallback : bloom;
     }
 
     /**
@@ -133,7 +133,7 @@ public class BloomEffectUtil {
      */
     @Contract("_, null -> _; _, !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive, BlockRenderLayer fallback) {
-        return Shaders.isOptiFineShaderPackLoaded() || !isBloomActive ? fallback : bloom;
+        return Mods.Optifine.isModLoaded() || !isBloomActive ? fallback : bloom;
     }
 
     /**
@@ -221,7 +221,7 @@ public class BloomEffectUtil {
                                                         @NotNull BloomType bloomType,
                                                         @NotNull IBloomEffect render,
                                                         @Nullable Predicate<BloomRenderTicket> validityChecker) {
-        if (Shaders.isOptiFineShaderPackLoaded()) return null;
+        if (Mods.Optifine.isModLoaded()) return null;
         BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render, validityChecker);
         SCHEDULED_BLOOM_RENDERS.add(ticket);
         return ticket;
@@ -253,7 +253,7 @@ public class BloomEffectUtil {
     public static void init() {
         bloom = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[] { String.class }, "Bloom");
         BLOOM = bloom;
-        if (Loader.isModLoaded("nothirium")) {
+        if (Mods.Nothirium.isModLoaded()) {
             try {
                 // Nothirium hard copies the BlockRenderLayer enum into a ChunkRenderPass enum. Add our BLOOM layer to
                 // that too.
@@ -285,7 +285,7 @@ public class BloomEffectUtil {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
 
-        if (Shaders.isOptiFineShaderPackLoaded()) {
+        if (Mods.Optifine.isModLoaded()) {
             return renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 

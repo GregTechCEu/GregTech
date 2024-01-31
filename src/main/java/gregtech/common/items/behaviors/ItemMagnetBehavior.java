@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.util.Mods;
 import gregtech.integration.baubles.BaublesModule;
 
 import net.minecraft.client.resources.I18n;
@@ -26,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import org.jetbrains.annotations.NotNull;
@@ -162,7 +162,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         if (event.getPlayer() == null) return;
 
         IInventory inventory = event.getPlayer().inventory;
-        if (Loader.isModLoaded(GTValues.MODID_BAUBLES)) {
+        if (Mods.Baubles.isModLoaded()) {
             inventory = BaublesModule.getBaublesWrappedInventory(event.getPlayer());
         }
 

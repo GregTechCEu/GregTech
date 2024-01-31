@@ -1,6 +1,5 @@
 package gregtech.api.util;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.network.packets.PacketNotifyCapeChange;
@@ -214,13 +213,13 @@ public class CapesRegistry {
     private static final List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
     private static final List<ResourceLocation> ctFreeCapes = new ArrayList<>();
 
-    @Optional.Method(modid = GTValues.MODID_CT)
+    @Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     @ZenMethod
     public static void registerCape(String advancement, String cape) {
         ctRegisterCapes.add(new Tuple<>(new ResourceLocation(advancement), new ResourceLocation(cape)));
     }
 
-    @Optional.Method(modid = GTValues.MODID_CT)
+    @Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     @ZenMethod
     public static void registerFreeCape(String cape) {
         ctFreeCapes.add(new ResourceLocation(cape));

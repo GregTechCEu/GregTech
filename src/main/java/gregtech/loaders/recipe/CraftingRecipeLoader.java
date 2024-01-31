@@ -336,6 +336,11 @@ public class CraftingRecipeLoader {
                 new UnificationEntry(OrePrefix.wireGtQuadruple, Osmium), 'P',
                 new UnificationEntry(OrePrefix.plateDouble, Iridium), 'O',
                 MetaItems.ENERGY_LAPOTRONIC_ORB.getStackForm());
+
+        ModHandler.addShapedRecipe("powderbarrel", new ItemStack(MetaBlocks.POWDERBARREL), "PSP", "GGG", "PGP",
+                'P', new UnificationEntry(OrePrefix.plate, Wood),
+                'S', new ItemStack(Items.STRING),
+                'G', new UnificationEntry(OrePrefix.dust, Gunpowder));
     }
 
     private static void registerFacadeRecipe(Material material, int facadeAmount) {

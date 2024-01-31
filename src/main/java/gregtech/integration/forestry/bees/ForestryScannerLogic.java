@@ -3,7 +3,7 @@ package gregtech.integration.forestry.bees;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
-import gregtech.integration.forestry.ForestryUtil;
+import gregtech.api.util.Mods;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -60,7 +60,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
         List<Recipe> recipes = new ArrayList<>();
         ItemStack outputStack;
 
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             outputStack = ModuleApiculture.getItems().beeDroneGE.getItemStack();
             outputStack.setTagCompound(BeeDefinition.COMMON.getIndividual().writeToNBT(new NBTTagCompound()));
             outputStack.setTranslatableName("gregtech.scanner.forestry.drone");
@@ -98,7 +98,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .duration(DURATION).EUt(EUT).build().getResult());
         }
 
-        if (ForestryUtil.arboricultureEnabled()) {
+        if (Mods.ForestryArboriculture.isModLoaded()) {
             outputStack = ModuleArboriculture.getItems().sapling.getItemStack();
             outputStack.setTagCompound(TreeDefinition.Oak.getIndividual().writeToNBT(new NBTTagCompound()));
             outputStack.setTranslatableName("gregtech.scanner.forestry.sapling");
@@ -118,7 +118,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .duration(DURATION).EUt(EUT).build().getResult());
         }
 
-        if (ForestryUtil.lepidopterologyEnabled()) {
+        if (Mods.ForestryLepidopterology.isModLoaded()) {
             outputStack = ModuleLepidopterology.getItems().butterflyGE.getItemStack();
             outputStack
                     .setTagCompound(ButterflyDefinition.CabbageWhite.getIndividual().writeToNBT(new NBTTagCompound()));

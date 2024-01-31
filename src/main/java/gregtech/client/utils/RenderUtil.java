@@ -153,6 +153,9 @@ public class RenderUtil {
         renderInMask.run();
 
         GL11.glDisable(GL11.GL_STENCIL_TEST);
+        GL11.glClearStencil(0);
+        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, 0, 0xFF);
     }
 
     public static void useLightMap(float x, float y, Runnable codeBlock) {
