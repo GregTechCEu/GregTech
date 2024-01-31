@@ -74,8 +74,6 @@ public class CraftingRecipeLogic extends SyncHandler {
     @Override
     public void init(String key, GuiSyncManager syncManager) {
         super.init(key, syncManager);
-        if (!syncManager.isClient() && this.collectAvailableItems())
-            syncToClient(1, this::writeAvailableStacks);
     }
 
     public IInventory getCraftingResultInventory() {
@@ -96,7 +94,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     public void fillCraftingGrid(Map<Integer, ItemStack> ingredients) {
         for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
-            craftingMatrix.setInventorySlotContents(i, ingredients.getOrDefault(i + 1, ItemStack.EMPTY));
+            craftingMatrix.setInventorySlotContents(i, ingredients.getOrDefault(i, ItemStack.EMPTY));
         }
     }
 
