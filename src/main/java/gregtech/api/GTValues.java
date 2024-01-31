@@ -7,6 +7,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.time.LocalDate;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -120,10 +122,14 @@ public class GTValues {
             "Overpowered Voltage", "Maximum Voltage" };
 
     /**
-     * ModID strings, since they are quite common parameters
+     * GregTech Mod ID
      */
-    public static final String MODID = "gregtech",
-            MODID_FR = "forestry",
+    public static final String MODID = "gregtech";
+
+    /** @deprecated Use {@link gregtech.api.util.Mods} instead */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public static final String MODID_FR = "forestry",
             MODID_CT = "crafttweaker",
             MODID_TOP = "theoneprobe",
             MODID_CTM = "ctm",

@@ -4,11 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.Mods;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -989,11 +988,11 @@ public class MetaTileEntityMachineRecipeLoader {
 
         // ME Parts
 
-        if (Loader.isModLoaded(MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
 
-            ItemStack fluidInterface = GameRegistry.makeItemStack(MODID_APPENG + ":fluid_interface", 0, 1, null);
-            ItemStack normalInterface = GameRegistry.makeItemStack(MODID_APPENG + ":interface", 0, 1, null);
-            ItemStack accelerationCard = GameRegistry.makeItemStack(MODID_APPENG + ":material", 30, 2, null);
+            ItemStack fluidInterface = Mods.AppliedEnergistics2.getItem("fluid_interface");
+            ItemStack normalInterface = Mods.AppliedEnergistics2.getItem("interface");
+            ItemStack accelerationCard = Mods.AppliedEnergistics2.getItem("material", 30, 2);
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(FLUID_EXPORT_HATCH[EV])
