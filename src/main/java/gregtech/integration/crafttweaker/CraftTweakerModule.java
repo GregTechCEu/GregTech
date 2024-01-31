@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.crafttweaker.recipe.MetaItemBracketHandler;
@@ -27,7 +28,7 @@ import java.util.List;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_CT,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_CT,
+                modDependencies = Mods.Names.CRAFT_TWEAKER,
                 name = "GregTech CraftTweaker Integration",
                 description = "CraftTweaker Integration Module")
 public class CraftTweakerModule extends IntegrationSubmodule {

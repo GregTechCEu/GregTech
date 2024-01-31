@@ -28,6 +28,7 @@ import gregtech.api.pattern.PatternStringError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -64,7 +65,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -543,7 +543,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.7"));
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.8"));
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.9"));
-            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            if (Mods.AppliedEnergistics2.isModLoaded()) {
                 tooltip.add(I18n.format(AEConfig.instance().isFeatureEnabled(AEFeature.CHANNELS) ?
                         "gregtech.machine.cleanroom.tooltip.ae2.channels" :
                         "gregtech.machine.cleanroom.tooltip.ae2.no_channels"));

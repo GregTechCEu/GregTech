@@ -20,6 +20,7 @@ import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.Mods;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -68,7 +69,7 @@ import java.util.stream.Stream;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_JEI,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_JEI,
+                modDependencies = Mods.Names.JUST_ENOUGH_ITEMS,
                 name = "GregTech JEI Integration",
                 description = "JustEnoughItems Integration Module")
 public class JustEnoughItemsModule extends IntegrationSubmodule implements IModPlugin {

@@ -17,6 +17,7 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.Mods;
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.utils.RenderBufferHelper;
@@ -490,7 +491,7 @@ public class WorldProspectorARApp extends ARApplication {
         Minecraft mc = Minecraft.getMinecraft();
         World world = mc.world;
         Entity viewer = mc.getRenderViewEntity();
-        if (world != null && viewer != null && !Shaders.isOptiFineShaderPackLoaded()) {
+        if (world != null && viewer != null && !Mods.Optifine.isModLoaded()) {
 
             Framebuffer fbo = mc.getFramebuffer();
 

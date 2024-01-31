@@ -20,6 +20,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.Mods;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
 
@@ -94,7 +95,9 @@ import java.util.Set;
  * {@code addItem(0, "test_item").addStats(new ElectricStats(10000, 1,  false)) } This will add single-use (not
  * rechargeable) LV battery with initial capacity 10000 EU
  */
-@Optional.Interface(modid = GTValues.MODID_ECORE, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
+@Optional.Interface(
+                    modid = Mods.Names.ENDER_CORE,
+                    iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
 public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                               implements ItemUIFactory, IOverlayRenderAware {
 

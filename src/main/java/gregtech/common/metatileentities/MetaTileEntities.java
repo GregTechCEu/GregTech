@@ -13,6 +13,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -51,7 +52,6 @@ import gregtech.common.pipelike.itempipe.longdistance.MetaTileEntityLDItemEndpoi
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Loader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -1094,7 +1094,7 @@ public class MetaTileEntities {
         // organization.
 
         // ME Hatches, IDs 1745-1748
-        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
             FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1745,
                     new MetaTileEntityMEOutputHatch(gregtechId("me_export_fluid_hatch")));
             ITEM_EXPORT_BUS_ME = registerMetaTileEntity(1746,
@@ -1215,7 +1215,7 @@ public class MetaTileEntities {
         if (sampleMetaTileEntity instanceof IMultiblockAbilityPart abilityPart) {
             MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
         }
-        if (sampleMetaTileEntity instanceof MultiblockControllerBase && Loader.isModLoaded(GTValues.MODID_JEI)) {
+        if (sampleMetaTileEntity instanceof MultiblockControllerBase && Mods.JustEnoughItems.isModLoaded()) {
             if (((MultiblockControllerBase) sampleMetaTileEntity).shouldShowInJei()) {
                 MultiblockInfoCategory.registerMultiblock((MultiblockControllerBase) sampleMetaTileEntity);
             }
