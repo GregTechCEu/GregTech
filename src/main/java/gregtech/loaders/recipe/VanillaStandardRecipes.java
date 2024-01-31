@@ -130,18 +130,21 @@ public class VanillaStandardRecipes {
                 .output(OrePrefix.dust, Materials.QuartzSand)
                 .duration(30).buildAndRegister();
 
-        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
+        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass, 5),
                 new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
-                new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
+                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                new UnificationEntry(OrePrefix.dust, Materials.Flint));
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[ULV])
-                .input(dustSmall, Materials.Flint)
+                .input(dust, Materials.Flint)
                 .input(dust, Materials.Quartzite, 4)
                 .output(dust, Materials.Glass, 5)
                 .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])
-                .input(dustSmall, Materials.Flint)
+                .input(dust, Materials.Flint)
                 .input(dust, Materials.QuartzSand, 4)
                 .output(dust, Materials.Glass, 4)
                 .buildAndRegister();
@@ -267,12 +270,8 @@ public class VanillaStandardRecipes {
         }
         ModHandler.addShapelessRecipe("clay_block_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Clay), 'm',
                 Blocks.CLAY);
-        ModHandler.addShapelessRecipe("clay_ball_to_dust", OreDictUnifier.get(OrePrefix.dustSmall, Materials.Clay), 'm',
-                Items.CLAY_BALL);
         ModHandler.addShapelessRecipe("brick_block_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Brick), 'm',
                 Blocks.BRICK_BLOCK);
-        ModHandler.addShapelessRecipe("brick_to_dust", OreDictUnifier.get(OrePrefix.dustSmall, Materials.Brick), 'm',
-                Items.BRICK);
         ModHandler.addShapelessRecipe("wheat_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Wheat), 'm',
                 Items.WHEAT);
         ModHandler.addShapelessRecipe("gravel_to_flint", new ItemStack(Items.FLINT), 'm', Blocks.GRAVEL);
@@ -382,14 +381,14 @@ public class VanillaStandardRecipes {
         LATHE_RECIPES.recipeBuilder()
                 .input("treeSapling")
                 .outputs(new ItemStack(Items.STICK))
-                .output(dustTiny, Wood)
+                .chancedOutput(dust, Wood, 1111, 0)
                 .duration(16).EUt(VA[ULV])
                 .buildAndRegister();
 
         LATHE_RECIPES.recipeBuilder()
                 .input(slab, Wood)
                 .outputs(new ItemStack(Items.BOWL))
-                .output(dustSmall, Wood)
+                .chancedOutput(dust, Wood, 2500, 0)
                 .duration(50).EUt(VA[ULV])
                 .buildAndRegister();
 
@@ -1223,13 +1222,13 @@ public class VanillaStandardRecipes {
             LATHE_RECIPES.recipeBuilder()
                     .inputs(new ItemStack(Blocks.COBBLESTONE))
                     .output(OrePrefix.stick, Materials.Stone, 1)
-                    .output(dustSmall, Stone, 2)
+                    .chancedOutput(dust, Stone, 2500, 0)
                     .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
             LATHE_RECIPES.recipeBuilder()
                     .inputs(new ItemStack(Blocks.STONE))
                     .output(OrePrefix.stick, Materials.Stone, 1)
-                    .output(dustSmall, Stone, 2)
+                    .chancedOutput(dust, Stone, 2500, 0)
                     .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
         } else {

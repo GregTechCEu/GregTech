@@ -576,6 +576,64 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R chancedInput(ItemStack stack, int chance) {
+        if (stack == null || stack.isEmpty()) {
+            return (R) this;
+        }
+
+        if (0 >= chance) {
+            GTLog.logger.error("Chance cannot be less than 0. Actual: {}.", chance);
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            recipeStatus = EnumValidationResult.INVALID;
+            return (R) this;
+        }
+
+        GTRecipeItemInput input = new GTRecipeItemInput(stack);
+        input.setChancedInput(chance);
+        this.inputs.add(input);
+        return (R) this;
+    }
+
+    public R chancedInput(OrePrefix prefix, Material material, int count, int chance) {
+        return chancedInput(OreDictUnifier.get(prefix, material, count), chance);
+    }
+
+    public R chancedInput(OrePrefix prefix, Material material, int chance) {
+        return chancedInput(prefix, material, 1, chance);
+    }
+
+    public R chancedInput(MetaItem<?>.MetaValueItem item, int count, int chance) {
+        return chancedInput(item.getStackForm(count), chance);
+    }
+
+    public R chancedInput(MetaItem<?>.MetaValueItem item, int chance) {
+        return chancedInput(item, 1, chance);
+    }
+
+    public R chancedInput(Item item, int chance) {
+        return chancedInput(new ItemStack(item), chance);
+    }
+
+    public R chancedInput(Item item, int count, int chance) {
+        return chancedInput(new ItemStack(item, count), chance);
+    }
+
+    public R chancedInput(Item item, int count, int meta, int chance) {
+        return chancedInput(new ItemStack(item, count, meta), chance);
+    }
+
+    public R chancedInput(Item item, int count, @SuppressWarnings("unused") boolean wild, int chance) {
+        return chancedInput(new ItemStack(item, count, GTValues.W), chance);
+    }
+
+    public R chancedInput(Block block, int chance) {
+        return chancedInput(new ItemStack(block, 1), chance);
+    }
+
+    public R chancedInput(Block block, int count, int chance) {
+        return chancedInput(new ItemStack(block, count), chance);
+    }
+
     public R chancedFluidOutput(FluidStack stack, int chance, int tierChanceBoost) {
         if (stack == null || stack.amount == 0) {
             return (R) this;

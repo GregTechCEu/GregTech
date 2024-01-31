@@ -31,7 +31,7 @@ public class CircuitRecipes {
         // Boules
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, Silicon, 32)
-                .input(dustSmall, GalliumArsenide)
+                .input(dust, GalliumArsenide)
                 .circuitMeta(2)
                 .output(SILICON_BOULE)
                 .blastFurnaceTemp(1784)
@@ -40,7 +40,7 @@ public class CircuitRecipes {
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, Silicon, 64)
                 .input(dust, Phosphorus, 8)
-                .input(dustSmall, GalliumArsenide, 2)
+                .input(dust, GalliumArsenide, 2)
                 .fluidInputs(Nitrogen.getFluid(8000))
                 .output(PHOSPHORUS_BOULE)
                 .blastFurnaceTemp(2484)
@@ -446,21 +446,21 @@ public class CircuitRecipes {
         // Diode
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, Copper, 4)
-                .input(dustSmall, GalliumArsenide)
+                .input(dust, GalliumArsenide)
                 .fluidInputs(Glass.getFluid(L))
                 .output(DIODE)
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, AnnealedCopper, 4)
-                .input(dustSmall, GalliumArsenide)
+                .input(dust, GalliumArsenide)
                 .fluidInputs(Glass.getFluid(L))
                 .output(DIODE, 2)
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, Copper, 4)
-                .input(dustSmall, GalliumArsenide)
+                .input(dust, GalliumArsenide)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(DIODE, 2)
                 .duration(400).EUt(VA[LV]).buildAndRegister();
@@ -474,7 +474,7 @@ public class CircuitRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, AnnealedCopper, 4)
-                .input(dustSmall, GalliumArsenide)
+                .input(dust, GalliumArsenide)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(DIODE, 4)
                 .duration(400).EUt(VA[LV]).buildAndRegister();

@@ -176,13 +176,13 @@ public class SeparationRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(320)
                 .input(dust, Uranium238)
-                .chancedOutput(dustTiny, Plutonium239, 200, 80)
-                .chancedOutput(dustTiny, Uranium235, 2000, 350)
+                .chancedOutput(dust, Plutonium239, 20, 8)
+                .chancedOutput(dust, Uranium235, 200, 35)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(320)
                 .input(dust, Plutonium239)
-                .chancedOutput(dustTiny, Uranium238, 3000, 450)
+                .chancedOutput(dust, Uranium238, 300, 45)
                 .chancedOutput(dust, Plutonium241, 2000, 300)
                 .buildAndRegister();
 
@@ -222,12 +222,12 @@ public class SeparationRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
                 .input(dust, RareEarth)
-                .chancedOutput(dustSmall, Cadmium, 2500, 400)
-                .chancedOutput(dustSmall, Neodymium, 2500, 400)
-                .chancedOutput(dustSmall, Samarium, 2500, 400)
-                .chancedOutput(dustSmall, Cerium, 2500, 400)
-                .chancedOutput(dustSmall, Yttrium, 2500, 400)
-                .chancedOutput(dustSmall, Lanthanum, 2500, 400)
+                .chancedOutput(dust, Cadmium, 600, 100)
+                .chancedOutput(dust, Neodymium, 600, 100)
+                .chancedOutput(dust, Samarium, 600, 100)
+                .chancedOutput(dust, Cerium, 600, 100)
+                .chancedOutput(dust, Yttrium, 600, 100)
+                .chancedOutput(dust, Lanthanum, 600, 100)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
@@ -527,7 +527,7 @@ public class SeparationRecipes {
         // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()
                 .input(dust, Monazite)
-                .output(dustSmall, RareEarth)
+                .chancedOutput(dust, RareEarth, 2500, 200)
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 

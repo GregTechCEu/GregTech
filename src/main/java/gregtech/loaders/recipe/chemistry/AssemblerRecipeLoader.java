@@ -102,19 +102,6 @@ public class AssemblerRecipeLoader {
                 .output(FOAM_SPRAYER)
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
-        // Matches/lighters recipes
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(bolt, Wood)
-                .input(dustSmall, Phosphorus)
-                .output(TOOL_MATCHES)
-                .duration(16).EUt(16).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(bolt, Wood)
-                .input(dustSmall, TricalciumPhosphate)
-                .output(TOOL_MATCHES)
-                .duration(16).EUt(16).buildAndRegister();
-
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(bolt, Wood, 4)
                 .input(dust, Phosphorus)

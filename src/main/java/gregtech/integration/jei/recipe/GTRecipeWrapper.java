@@ -14,6 +14,7 @@ import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.recipeproperties.ComputationProperty;
@@ -22,6 +23,7 @@ import gregtech.api.recipes.recipeproperties.ScanProperty;
 import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ClipboardUtil;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
@@ -40,6 +42,7 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Console;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
@@ -197,6 +200,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     public void addIngredientTooltips(@NotNull Collection<String> tooltip, boolean notConsumed, boolean input,
                                       @Nullable Object ingredient, @Nullable Object ingredient2) {
+
         if (ingredient2 instanceof ChancedOutputLogic logic) {
             if (ingredient instanceof BoostableChanceEntry<?>entry) {
                 double chance = entry.getChance() / 100.0;
@@ -344,6 +348,15 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     public boolean isNotConsumedItem(int slot) {
         return slot < this.sortedInputs.size() && this.sortedInputs.get(slot).isNonConsumable();
+    }
+
+    public boolean isChancedInputItem(int slot) {
+        return slot < this.sortedInputs.size() && this.sortedInputs.get(slot).isChanced();
+    }
+
+    public int getChancedInputChance(int slot) {
+        if (slot >= this.sortedInputs.size() || slot < 0) return -1;
+        return this.sortedInputs.get(slot).getChance();
     }
 
     public boolean isNotConsumedFluid(int slot) {

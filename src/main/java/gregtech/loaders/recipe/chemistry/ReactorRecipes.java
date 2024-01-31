@@ -314,7 +314,7 @@ public class ReactorRecipes {
                 .circuitMeta(1)
                 .input(dust, Aluminium, 4)
                 .fluidInputs(IndiumConcentrate.getFluid(1000))
-                .output(dustSmall, Indium)
+                .chancedOutput(dust, Indium, 2500, 500)
                 .output(dust, AluminiumSulfite, 4)
                 .fluidOutputs(LeadZincSolution.getFluid(1000))
                 .duration(50).EUt(600).buildAndRegister();
@@ -641,8 +641,8 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.GHAST_TEAR))
                 .fluidInputs(Water.getFluid(1000))
-                .output(dustTiny, Potassium)
-                .output(dustTiny, Lithium)
+                .chancedOutput(dust, Potassium, 1111, 100)
+                .chancedOutput(dust, Lithium, 1111, 100)
                 .fluidOutputs(SaltWater.getFluid(1000))
                 .duration(400).EUt(VA[LV]).buildAndRegister();
 

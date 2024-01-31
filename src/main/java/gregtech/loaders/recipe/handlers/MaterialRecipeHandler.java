@@ -53,8 +53,6 @@ public class MaterialRecipeHandler {
         OrePrefix.frameGt.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processFrame);
 
         OrePrefix.dust.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processDust);
-        OrePrefix.dustSmall.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processSmallDust);
-        OrePrefix.dustTiny.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processTinyDust);
 
         for (int i = 0; i < GEM_ORDER.size(); i++) {
             OrePrefix gemPrefix = GEM_ORDER.get(i);
@@ -236,46 +234,6 @@ public class MaterialRecipeHandler {
                         .buildAndRegister();
             }
         }
-    }
-
-    public static void processSmallDust(OrePrefix orePrefix, Material material, DustProperty property) {
-        ItemStack smallDustStack = OreDictUnifier.get(orePrefix, material);
-        ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
-
-        ModHandler.addShapedRecipe(String.format("small_dust_disassembling_%s", material),
-                GTUtility.copy(4, smallDustStack), " X", "  ", 'X', new UnificationEntry(OrePrefix.dust, material));
-        ModHandler.addShapedRecipe(String.format("small_dust_assembling_%s", material),
-                dustStack, "XX", "XX", 'X', new UnificationEntry(orePrefix, material));
-
-        RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 4)
-                .circuitMeta(1)
-                .outputs(dustStack)
-                .buildAndRegister();
-
-        RecipeMaps.PACKER_RECIPES.recipeBuilder().input(OrePrefix.dust, material)
-                .circuitMeta(2)
-                .outputs(GTUtility.copy(4, smallDustStack))
-                .buildAndRegister();
-    }
-
-    public static void processTinyDust(OrePrefix orePrefix, Material material, DustProperty property) {
-        ItemStack tinyDustStack = OreDictUnifier.get(orePrefix, material);
-        ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
-
-        ModHandler.addShapedRecipe(String.format("tiny_dust_disassembling_%s", material),
-                GTUtility.copy(9, tinyDustStack), "X ", "  ", 'X', new UnificationEntry(OrePrefix.dust, material));
-        ModHandler.addShapedRecipe(String.format("tiny_dust_assembling_%s", material),
-                dustStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
-
-        RecipeMaps.PACKER_RECIPES.recipeBuilder().input(orePrefix, material, 9)
-                .circuitMeta(1)
-                .outputs(dustStack)
-                .buildAndRegister();
-
-        RecipeMaps.PACKER_RECIPES.recipeBuilder().input(OrePrefix.dust, material)
-                .circuitMeta(1)
-                .outputs(GTUtility.copy(9, tinyDustStack))
-                .buildAndRegister();
     }
 
     public static void processIngot(OrePrefix ingotPrefix, Material material, IngotProperty property) {

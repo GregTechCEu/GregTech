@@ -60,7 +60,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Items to recover in a muffler hatch
      */
     protected final List<ItemStack> recoveryItems = new ArrayList<>(
-            Collections.singleton(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash)));
+            Collections.singleton(OreDictUnifier.get(OrePrefix.dust, Materials.Ash)));
 
     private int timeActive;
 

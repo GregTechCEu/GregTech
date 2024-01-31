@@ -121,12 +121,6 @@ public class OrePrefix {
     public static final OrePrefix gemExquisite = new OrePrefix("gemExquisite", M * 4, null,
             MaterialIconType.gemExquisite, ENABLE_UNIFICATION, hasGemProperty);
 
-    // 1/4th of a Dust.
-    public static final OrePrefix dustSmall = new OrePrefix("dustSmall", M / 4, null, MaterialIconType.dustSmall,
-            ENABLE_UNIFICATION, hasDustProperty);
-    // 1/9th of a Dust.
-    public static final OrePrefix dustTiny = new OrePrefix("dustTiny", M / 9, null, MaterialIconType.dustTiny,
-            ENABLE_UNIFICATION, hasDustProperty);
     // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
     public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure,
             ENABLE_UNIFICATION, hasOreProperty,
@@ -444,8 +438,6 @@ public class OrePrefix {
             oreBlackgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteBlack, dust.materialAmount));
             oreBasalt.addSecondaryMaterial(new MaterialStack(Materials.Basalt, dust.materialAmount));
             oreMarble.addSecondaryMaterial(new MaterialStack(Materials.Marble, dust.materialAmount));
-            oreSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
-            oreRedSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
         }
 
         crushed.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
@@ -469,9 +461,6 @@ public class OrePrefix {
 
         plate.setIgnored(Materials.BorosilicateGlass);
         foil.setIgnored(Materials.BorosilicateGlass);
-
-        dustSmall.setIgnored(Materials.Lapotron);
-        dustTiny.setIgnored(Materials.Lapotron);
 
         block.modifyMaterialAmount(Materials.Glowstone, 4);
         block.modifyMaterialAmount(Materials.NetherQuartz, 4);

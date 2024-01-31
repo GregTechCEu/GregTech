@@ -568,8 +568,6 @@ public final class MetaItems {
 
     static {
         orePrefixes.add(OrePrefix.dust);
-        orePrefixes.add(OrePrefix.dustSmall);
-        orePrefixes.add(OrePrefix.dustTiny);
         orePrefixes.add(OrePrefix.dustImpure);
         orePrefixes.add(OrePrefix.dustPure);
         orePrefixes.add(OrePrefix.crushed);

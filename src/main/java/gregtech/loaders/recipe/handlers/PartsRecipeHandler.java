@@ -257,7 +257,7 @@ public class PartsRecipeHandler {
         LATHE_RECIPES.recipeBuilder()
                 .input(plate, material)
                 .output(lens, material)
-                .output(dustSmall, material)
+                .chancedOutput(dust, material, 2500, 0)
                 .duration(1200).EUt(120).buildAndRegister();
 
         if (!OreDictUnifier.get(gemExquisite, material).isEmpty()) {
@@ -438,7 +438,7 @@ public class PartsRecipeHandler {
 
             if (ConfigHolder.recipes.harderRods) {
                 builder.output(OrePrefix.stick, material);
-                builder.output(OrePrefix.dustSmall, material, 2);
+                builder.chancedOutput(OrePrefix.dust, material, 2500, 0);
             } else {
                 builder.output(OrePrefix.stick, material, 2);
             }

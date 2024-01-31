@@ -19,9 +19,7 @@ import java.util.List;
 public class MaterialTree implements IRecipeWrapper {
 
     private final static ImmutableList<OrePrefix> PREFIXES = ImmutableList.of(
-            OrePrefix.dustTiny,
             OrePrefix.dust,
-            OrePrefix.dustSmall,
             OrePrefix.cableGtSingle,
             OrePrefix.ingotHot,
             OrePrefix.ingot,

@@ -148,12 +148,21 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 SlotItemHandler handle = (SlotItemHandler) slotWidget.getHandle();
                 if (handle.getItemHandler() == importItems) {
                     // this is input item stack slot widget, so add it to item group
-                    itemStackGroup.init(handle.getSlotIndex(), true,
-                            new ItemStackTextRenderer(recipeWrapper.isNotConsumedItem(handle.getSlotIndex())),
-                            slotWidget.getPosition().x + 1,
-                            slotWidget.getPosition().y + 1,
-                            slotWidget.getSize().width - 2,
-                            slotWidget.getSize().height - 2, 0, 0);
+                    if (recipeWrapper.isChancedInputItem(handle.getSlotIndex())) {
+                        itemStackGroup.init(handle.getSlotIndex(), true,
+                                new ItemStackTextRenderer(recipeWrapper.getChancedInputChance(handle.getSlotIndex()), 0),
+                                slotWidget.getPosition().x + 1,
+                                slotWidget.getPosition().y + 1,
+                                slotWidget.getSize().width - 2,
+                                slotWidget.getSize().height - 2, 0, 0);
+                    } else {
+                        itemStackGroup.init(handle.getSlotIndex(), true,
+                                new ItemStackTextRenderer(recipeWrapper.isNotConsumedItem(handle.getSlotIndex())),
+                                slotWidget.getPosition().x + 1,
+                                slotWidget.getPosition().y + 1,
+                                slotWidget.getSize().width - 2,
+                                slotWidget.getSize().height - 2, 0, 0);
+                    }
                 } else if (handle.getItemHandler() == exportItems) {
                     // this is output item stack slot widget, so add it to item group
                     itemStackGroup.init(importItems.getSlots() + handle.getSlotIndex(), false,

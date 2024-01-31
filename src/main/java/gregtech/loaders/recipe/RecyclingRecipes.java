@@ -241,7 +241,10 @@ public class RecyclingRecipes {
                 if (ms.material.hasFlag(IS_MAGNETIC) || ms.material == arcSmeltInto) {
                     builder.category(RecipeCategories.ARC_FURNACE_RECYCLING);
                 }
-                builder.buildAndRegister();
+
+                if (builder.getOutputs().size() > 0) {
+                    builder.buildAndRegister();
+                }
             }
             return;
         }
@@ -507,8 +510,7 @@ public class RecyclingRecipes {
                 new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * amount)));
     }
 
-    private static final List<OrePrefix> DUST_ORDER = ImmutableList.of(OrePrefix.dust, OrePrefix.dustSmall,
-            OrePrefix.dustTiny);
+    private static final List<OrePrefix> DUST_ORDER = ImmutableList.of(OrePrefix.dust);
     private static final List<OrePrefix> INGOT_ORDER = ImmutableList.of(OrePrefix.block, OrePrefix.ingot,
             OrePrefix.nugget);
 

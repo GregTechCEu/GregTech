@@ -1,5 +1,6 @@
 package gregtech.api.recipes;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
@@ -269,7 +270,15 @@ public class Recipe {
                     continue;
                 int itemAmountToConsume = Math.min(itemAmountInSlot[j], ingredientAmount);
                 ingredientAmount -= itemAmountToConsume;
-                if (!ingredient.isNonConsumable()) itemAmountInSlot[j] -= itemAmountToConsume;
+                if (!ingredient.isNonConsumable()) {
+                    if (ingredient.isChanced()) {
+                        if (GTValues.RNG.nextInt(10000) < ingredient.getChance()) {
+                            itemAmountInSlot[j] -= itemAmountToConsume;
+                        }
+                    } else {
+                        itemAmountInSlot[j] -= itemAmountToConsume;
+                    }
+                }
                 if (ingredientAmount == 0) break;
             }
             if (ingredientAmount > 0)

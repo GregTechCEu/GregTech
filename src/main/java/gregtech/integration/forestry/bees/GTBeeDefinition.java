@@ -242,8 +242,8 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 } else {
                     beeSpecies.addProduct(getForestryComb(EnumHoneyComb.MOSSY), 0.15f);
                 }
-                beeSpecies.addSpecialty(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash), 0.2f);
-                beeSpecies.addSpecialty(OreDictUnifier.get(OrePrefix.dustTiny, Materials.DarkAsh), 0.2f);
+                beeSpecies.addSpecialty(OreDictUnifier.get(OrePrefix.dust, Materials.Ash), 0.02f);
+                beeSpecies.addSpecialty(OreDictUnifier.get(OrePrefix.dust, Materials.DarkAsh), 0.02f);
                 beeSpecies.addSpecialty(MetaItems.FERTILIZER.getStackForm(), 0.3f);
                 beeSpecies.addSpecialty(Mods.Forestry.getItem("fertilizer_compound", 0), 0.3f);
                 beeSpecies.setHumidity(EnumHumidity.DAMP);

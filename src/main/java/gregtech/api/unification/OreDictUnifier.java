@@ -310,10 +310,6 @@ public class OreDictUnifier {
             return ItemStack.EMPTY;
         if (materialAmount % M == 0 || materialAmount >= M * 16)
             return get(OrePrefix.dust, material, (int) (materialAmount / M));
-        else if ((materialAmount * 4) % M == 0 || materialAmount >= M * 8)
-            return get(OrePrefix.dustSmall, material, (int) ((materialAmount * 4) / M));
-        else if ((materialAmount * 9) >= M)
-            return get(OrePrefix.dustTiny, material, (int) ((materialAmount * 9) / M));
         return ItemStack.EMPTY;
     }
 

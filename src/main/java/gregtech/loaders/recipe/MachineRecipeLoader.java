@@ -219,17 +219,17 @@ public class MachineRecipeLoader {
 
     private static void registerPrimitiveBlastFurnaceRecipes() {
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(gem, Coal, 2).output(ingot, Steel)
-                .output(dustTiny, DarkAsh, 2).duration(1800).buildAndRegister();
+                .chancedOutput(dust, DarkAsh, 2000, 0).duration(1800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(dust, Coal, 2).output(ingot, Steel)
-                .output(dustTiny, DarkAsh, 2).duration(1800).buildAndRegister();
+                .chancedOutput(dust, DarkAsh, 2000, 0).duration(1800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(gem, Charcoal, 2).output(ingot, Steel)
-                .output(dustTiny, DarkAsh, 2).duration(1800).buildAndRegister();
+                .chancedOutput(dust, DarkAsh, 2000, 0).duration(1800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(dust, Charcoal, 2).output(ingot, Steel)
-                .output(dustTiny, DarkAsh, 2).duration(1800).buildAndRegister();
+                .chancedOutput(dust, DarkAsh, 2000, 0).duration(1800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(OREDICT_FUEL_COKE).output(ingot, Steel)
-                .output(dustTiny, Ash).duration(1500).buildAndRegister();
+                .chancedOutput(dust, Ash, 2000, 0).duration(1500).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(dust, Coke).output(ingot, Steel)
-                .output(dustTiny, Ash).duration(1500).buildAndRegister();
+                .chancedOutput(dust, Ash, 2000, 0).duration(1500).buildAndRegister();
 
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, Iron).input(block, Coal, 2).output(block, Steel)
                 .output(dust, DarkAsh, 2).duration(16200).buildAndRegister();
@@ -239,17 +239,17 @@ public class MachineRecipeLoader {
                 .output(block, Steel).output(dust, Ash).duration(13500).buildAndRegister();
 
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(gem, Coal, 2)
-                .output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(800).buildAndRegister();
+                .output(ingot, Steel).chancedOutput(dust, DarkAsh, 2000, 0).duration(800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(dust, Coal, 2)
-                .output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(800).buildAndRegister();
+                .output(ingot, Steel).chancedOutput(dust, DarkAsh, 2000, 0).duration(800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(gem, Charcoal, 2)
-                .output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(800).buildAndRegister();
+                .output(ingot, Steel).chancedOutput(dust, DarkAsh, 2000, 0).duration(800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(dust, Charcoal, 2)
-                .output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(800).buildAndRegister();
+                .output(ingot, Steel).chancedOutput(dust, DarkAsh, 2000, 0).duration(800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(OREDICT_FUEL_COKE)
-                .output(ingot, Steel).output(dustTiny, Ash).duration(600).buildAndRegister();
+                .output(ingot, Steel).chancedOutput(dust, Ash, 2000, 0).duration(600).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(dust, Coke).output(ingot, Steel)
-                .output(dustTiny, Ash).duration(600).buildAndRegister();
+                .chancedOutput(dust, Ash, 2000, 0).duration(600).buildAndRegister();
 
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, WroughtIron).input(block, Coal, 2)
                 .output(block, Steel).output(dust, DarkAsh, 2).duration(7200).buildAndRegister();
@@ -1070,7 +1070,7 @@ public class MachineRecipeLoader {
                 .input(dust, Tetrahedrite)
                 .fluidInputs(Oxygen.getFluid(3000))
                 .output(dust, CupricOxide)
-                .output(dustTiny, AntimonyTrioxide, 3)
+                .chancedOutput(dust, AntimonyTrioxide, 3333, 0)
                 .fluidOutputs(SulfurDioxide.getFluid(2000))
                 .buildAndRegister();
 
@@ -1239,40 +1239,40 @@ public class MachineRecipeLoader {
                 .inputs(new ItemStack(Items.PORKCHOP))
                 .output(dust, Meat)
                 .chancedOutput(dust, Meat, 5000, 0)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
                 .output(dust, Meat)
                 .chancedOutput(dust, Meat, 5000, 0)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.CHICKEN))
                 .output(dust, Meat)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.BEEF))
                 .output(dust, Meat)
                 .chancedOutput(dust, Meat, 5000, 0)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.RABBIT))
                 .output(dust, Meat)
                 .chancedOutput(dust, Meat, 5000, 0)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.MUTTON))
                 .output(dust, Meat)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
     }
 

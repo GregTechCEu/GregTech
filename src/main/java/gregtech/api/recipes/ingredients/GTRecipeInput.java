@@ -56,6 +56,11 @@ public abstract class GTRecipeInput {
 
     protected int amount;
     protected boolean isConsumable = true;
+    protected boolean isChanced = false;
+
+    //This is the chance of consumption out of 10000
+    protected int chance = 0;
+
     protected NBTMatcher nbtMatcher;
     protected NBTCondition nbtCondition;
 
@@ -79,6 +84,10 @@ public abstract class GTRecipeInput {
     public boolean isCached() {
         return cached;
     }
+
+    public boolean isChanced() { return isChanced; }
+
+    public int getChance() { return chance; }
 
     public void setCached() {
         this.cached = true;
@@ -115,6 +124,14 @@ public abstract class GTRecipeInput {
         if (!isConsumable) return this;
         GTRecipeInput recipeInput = cached ? copy() : this;
         recipeInput.isConsumable = false;
+        recipeInput.hashCached = false;
+        return recipeInput;
+    }
+
+    public GTRecipeInput setChancedInput(int chance) {
+        GTRecipeInput recipeInput = cached ? copy() : this;
+        recipeInput.isChanced = true;
+        recipeInput.chance = chance;
         recipeInput.hashCached = false;
         return recipeInput;
     }

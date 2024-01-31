@@ -14,6 +14,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
+import gregtech.integration.IntegrationUtil;
 import gregtech.integration.forestry.ForestryUtil;
 import gregtech.integration.forestry.bees.GTCombItem;
 import gregtech.integration.forestry.bees.GTCombType;
@@ -87,9 +88,9 @@ public class CombRecipes {
         addCentrifugeToItemStack(GTCombType.COKE, new ItemStack[] { OreDictUnifier.get(OrePrefix.gem, Materials.Coke),
                 ModuleCore.getItems().beeswax.getItemStack() }, new int[] { 5 * 100, 50 * 100 }, Voltage.ULV);
         addCentrifugeToItemStack(GTCombType.OIL,
-                new ItemStack[] { OreDictUnifier.get(OrePrefix.dustTiny, Materials.Oilsands),
+                new ItemStack[] { OreDictUnifier.get(OrePrefix.dust, Materials.Oilsands),
                         ForestryUtil.getDropStack(GTDropType.OIL), ModuleCore.getItems().beeswax.getItemStack() },
-                new int[] { 70 * 100, 100 * 100, 50 * 100 }, Voltage.ULV);
+                new int[] { 10 * 100, 100 * 100, 50 * 100 }, Voltage.ULV);
 
         // Industrial
         addCentrifugeToItemStack(GTCombType.ENERGY,
@@ -238,7 +239,7 @@ public class CombRecipes {
                 .input(OrePrefix.dust, Materials.Aluminium, 4)
                 .inputs(ForestryUtil.getCombStack(GTCombType.INDIUM))
                 .fluidInputs(Materials.IndiumConcentrate.getFluid(1000))
-                .output(OrePrefix.dustSmall, Materials.Indium, 2)
+                .chancedOutput(OrePrefix.dust, Materials.Indium, 2500, 0)
                 .output(OrePrefix.dust, Materials.AluminiumSulfite, 4)
                 .fluidOutputs(Materials.LeadZincSolution.getFluid(1000))
                 .duration(50).EUt(600).buildAndRegister();
@@ -274,8 +275,8 @@ public class CombRecipes {
             addProcessGT(GTCombType.SPARKLING, new Material[] { Materials.NetherStar }, Voltage.EV);
             addCentrifugeToItemStack(GTCombType.SPARKLING,
                     new ItemStack[] { Mods.MagicBees.getItem("wax", 0), Mods.MagicBees.getItem("resource", 5),
-                            OreDictUnifier.get(OrePrefix.dustTiny, Materials.NetherStar) },
-                    new int[] { 50 * 100, 10 * 100, 10 * 100 }, Voltage.EV);
+                            OreDictUnifier.get(OrePrefix.dust, Materials.NetherStar) },
+                    new int[] { 50 * 100, 10 * 100, 100 }, Voltage.EV);
         }
 
         addExtractorProcess(GTCombType.HELIUM, Materials.Helium.getFluid(250), Voltage.HV, 100);
@@ -412,10 +413,8 @@ public class CombRecipes {
 
             if (Math.max(1, stackSize[i]) % 9 == 0) {
                 output[i] = OreDictUnifier.get(OrePrefix.dust, material[i], Math.max(1, stackSize[i]) / 9);
-            } else if (Math.max(1, stackSize[i]) % 4 == 0) {
-                output[i] = OreDictUnifier.get(OrePrefix.dustSmall, material[i], Math.max(1, stackSize[i]) / 4);
             } else {
-                output[i] = OreDictUnifier.get(OrePrefix.dustTiny, material[i], Math.max(1, stackSize[i]));
+                output[i] = ItemStack.EMPTY;
             }
         }
         if (beeWax != ItemStack.EMPTY) {
