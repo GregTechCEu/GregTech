@@ -6,6 +6,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -154,10 +155,18 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
-                0xFFFFFFFF);
+                0x404040);
 
         // Config slots
-        builder.widget(new AEFluidConfigWidget(16, 25, this.getAEFluidHandler()));
+        builder.widget(new AEFluidConfigWidget(7, 25, this.getAEFluidHandler()));
+
+        // Arrow image
+        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
+
+        // GT Logo, cause there's some free real estate
+        builder.widget(new ImageWidget(7 + 18 * 4, 25 + 18 * 3, 17, 17,
+                GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
+                .setIgnoreColor(true));
 
         builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder;

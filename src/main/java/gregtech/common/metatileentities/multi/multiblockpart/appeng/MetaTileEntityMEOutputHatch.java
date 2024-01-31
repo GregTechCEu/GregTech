@@ -108,7 +108,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
-                0xFFFFFFFF);
+                0x404040);
         builder.label(10, 25, "gregtech.gui.waiting_list", 0xFFFFFFFF);
         builder.widget(new AEFluidGridWidget(10, 35, 3, this.internalBuffer));
 

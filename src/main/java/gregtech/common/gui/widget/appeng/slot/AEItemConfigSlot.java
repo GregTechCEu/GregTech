@@ -44,9 +44,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         IConfigurableSlot<IAEItemStack> slot = pw.getDisplay(this.index);
         IAEItemStack config = slot.getConfig();
         IAEItemStack stock = slot.getStock();
-        GuiTextures.SLOT.draw(position.x, position.y, 18, 18);
-        GuiTextures.SLOT.draw(position.x + DISPLAY_X_OFFSET, position.y, 18, 18);
-        GuiTextures.CONFIG_ARROW_DARK.draw(position.x, position.y, 18, 18);
+        drawSlots(pw.isAutoPull(), position.x, position.y);
         if (this.select) {
             GuiTextures.SELECT_BOX.draw(position.x, position.y, 18, 18);
         }
@@ -75,6 +73,17 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         } else if (mouseOverStock(mouseX, mouseY)) {
             drawSelectionOverlay(stackX + DISPLAY_X_OFFSET, stackY, 16, 16);
         }
+    }
+
+    private void drawSlots(boolean autoPull, int x, int y) {
+        if (autoPull) {
+            GuiTextures.SLOT_DARK.draw(x, y, 18, 18);
+            GuiTextures.CONFIG_ARROW.draw(x, y, 18, 18);
+        } else {
+            GuiTextures.SLOT.draw(x, y, 18, 18);
+            GuiTextures.CONFIG_ARROW_DARK.draw(x, y, 18, 18);
+        }
+        GuiTextures.SLOT_DARK.draw(x + DISPLAY_X_OFFSET, y, 18, 18);
     }
 
     @Override

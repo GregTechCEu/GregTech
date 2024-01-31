@@ -159,17 +159,16 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     protected IActionSource getActionSource() {
-        if (this.getHolder() instanceof IActionHost) {
-            return new MachineSource((IActionHost) this.getHolder());
+        if (this.getHolder() instanceof IActionHost holder) {
+            return new MachineSource(holder);
         }
         return new BaseActionSource();
     }
 
     @Nullable
     private AENetworkProxy createProxy() {
-        if (this.getHolder() instanceof IGridProxyable) {
-            AENetworkProxy proxy = new AENetworkProxy((IGridProxyable) this.getHolder(), "mte_proxy",
-                    this.getStackForm(), true);
+        if (this.getHolder() instanceof IGridProxyable holder) {
+            AENetworkProxy proxy = new AENetworkProxy(holder, "mte_proxy", this.getStackForm(), true);
             proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
             proxy.setIdlePowerUsage(ConfigHolder.compat.ae2.meHatchEnergyUsage);
             proxy.setValidSides(EnumSet.of(this.getFrontFacing()));
@@ -178,6 +177,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         return null;
     }
 
+    @NotNull
     protected IStorageChannel<T> getStorageChannel() {
         return AEApi.instance().storage().getStorageChannel(storageChannel);
     }
@@ -188,10 +188,9 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         if (proxy == null) return null;
 
         IStorageChannel<T> channel = getStorageChannel();
-        if (channel == null) return null;
 
         try {
-            return proxy.getStorage().getInventory(getStorageChannel());
+            return proxy.getStorage().getInventory(channel);
         } catch (GridAccessException ignored) {
             return null;
         }

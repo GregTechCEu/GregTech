@@ -194,7 +194,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
-                0xFFFFFFFF);
+                0x404040);
 
         // Config slots
         builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
@@ -219,6 +219,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         builder.widget(new SlotWidget(extraSlotInventory, 0, 7 + 18 * 4, 25 + 18 * 2)
                 .setBackgroundTexture(GuiTextures.SLOT)
                 .setTooltipText("gregtech.gui.me_bus.extra_slot"));
+
+        // Arrow image
+        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
 
         builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder;

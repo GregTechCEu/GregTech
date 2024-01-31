@@ -106,7 +106,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
-                0xFFFFFFFF);
+                0x404040);
         builder.label(10, 25, "gregtech.gui.waiting_list", 0xFFFFFFFF);
         builder.widget(new AEItemGridWidget(10, 35, 3, this.internalBuffer));
 

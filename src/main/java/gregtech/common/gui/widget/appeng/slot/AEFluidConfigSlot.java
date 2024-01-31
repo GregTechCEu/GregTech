@@ -54,9 +54,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         IConfigurableSlot<IAEFluidStack> slot = pw.getDisplay(this.index);
         IAEFluidStack config = slot.getConfig();
         IAEFluidStack stock = slot.getStock();
-        GuiTextures.FLUID_SLOT.draw(position.x, position.y, 18, 18);
-        GuiTextures.FLUID_SLOT.draw(position.x + DISPLAY_X_OFFSET, position.y, 18, 18);
-        GuiTextures.CONFIG_ARROW.draw(position.x, position.y, 18, 18);
+        drawSlots(pw.isAutoPull(), position.x, position.y);
         if (this.select) {
             GuiTextures.SELECT_BOX.draw(position.x, position.y, 18, 18);
         }
@@ -81,6 +79,16 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         } else if (mouseOverStock(mouseX, mouseY)) {
             drawSelectionOverlay(stackX + DISPLAY_X_OFFSET, stackY, 16, 16);
         }
+    }
+
+    private void drawSlots(boolean autoPull, int x, int y) {
+        if (autoPull) {
+            GuiTextures.SLOT_DARK.draw(x, y, 18, 18);
+        } else {
+            GuiTextures.FLUID_SLOT.draw(x, y, 18, 18);
+        }
+        GuiTextures.SLOT_DARK.draw(x + DISPLAY_X_OFFSET, y, 18, 18);
+        GuiTextures.CONFIG_ARROW.draw(x, y, 18, 18);
     }
 
     @Override

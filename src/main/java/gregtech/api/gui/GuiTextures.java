@@ -48,6 +48,9 @@ public class GuiTextures {
     public static final TextureArea FLUID_TANK_OVERLAY = TextureArea
             .fullImage("textures/gui/base/fluid_tank_overlay.png");
     public static final TextureArea SLOT = AdoptableTextureArea.fullImage("textures/gui/base/slot.png", 18, 18, 1, 1);
+    public static final TextureArea SLOT_DARK =
+            AdoptableTextureArea.fullImage("textures/gui/base/slot_dark.png", 18, 18, 1, 1);
+    @Deprecated // idek what this texture is
     public static final TextureArea SLOT_DARKENED = TextureArea.fullImage("textures/gui/base/darkened_slot.png");
     public static final SteamTexture SLOT_STEAM = SteamTexture.fullImage("textures/gui/base/slot_%s.png");
     public static final TextureArea TOGGLE_BUTTON_BACK = TextureArea
@@ -506,6 +509,7 @@ public class GuiTextures {
     public static final TextureArea SELECT_BOX = TextureArea.fullImage("textures/gui/widget/select_box.png");
     public static final TextureArea BUTTON_AUTO_PULL = TextureArea
             .fullImage("textures/gui/widget/button_me_auto_pull.png");
+    public static final TextureArea ARROW_DOUBLE = TextureArea.fullImage("textures/gui/widget/arrow_double.png");
 
     // Fusion Reactor custom images
     public static final TextureArea FUSION_REACTOR_MK1_TITLE = TextureArea
