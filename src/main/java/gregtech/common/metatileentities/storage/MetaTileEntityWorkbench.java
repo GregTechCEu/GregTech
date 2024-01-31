@@ -6,7 +6,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.storage.ICraftingStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
@@ -63,17 +62,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityWorkbench extends MetaTileEntity implements ICraftingStorage {
+public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
+    private IItemHandler combinedInventory;
+
     private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9);
     private CraftingRecipeLogic recipeLogic = null;
     private int itemsCrafted = 0;
-
-    private final ArrayList<EntityPlayer> listeners = new ArrayList<>();
 
     public MetaTileEntityWorkbench(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -185,26 +184,18 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         this.recipeMemory.deserializeNBT(data.getCompoundTag("RecipeMemory"));
     }
 
-    @Override
-    public IItemHandler getInventory() {
-        var handlerList = new ArrayList<IItemHandler>();
+    public IItemHandler getAvailableHandlers() {
+        var handlers = new ArrayList<IItemHandler>();
         for (var facing : EnumFacing.VALUES) {
             var neighbor = getNeighbor(facing);
             if (neighbor == null) continue;
             var handler = neighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
-            if (handler != null) handlerList.add(handler);
+            if (handler != null) handlers.add(handler);
         }
-        handlerList.add(this.internalInventory);
-        handlerList.add(this.toolInventory);
-        return new ItemHandlerList(handlerList);
-    }
-
-    private void createCraftingRecipeLogic(EntityPlayer entityPlayer) {
-        if (recipeLogic == null) {
-            this.recipeLogic = new CraftingRecipeLogic(this);
-            this.recipeLogic.updateInventory(getInventory());
-        }
-        this.listeners.add(entityPlayer);
+        handlers.add(this.internalInventory);
+        handlers.add(this.toolInventory);
+        this.combinedInventory = new ItemHandlerList(handlers);
+        return this.combinedInventory;
     }
 
     @Override
@@ -219,12 +210,15 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
     @Override
     public void onNeighborChanged() {
-        this.recipeLogic.updateInventory(getInventory());
+        this.recipeLogic.updateInventory(getAvailableHandlers());
     }
 
-    private CraftingRecipeLogic getCraftingRecipeLogic() {
+    private @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
         Preconditions.checkState(getWorld() != null, "getRecipeResolver called too early");
-        return recipeLogic;
+        if (this.recipeLogic == null) {
+            this.recipeLogic = new CraftingRecipeLogic(getWorld(), getAvailableHandlers(), getCraftingGrid());
+        }
+        return this.recipeLogic;
     }
 
     @Override
@@ -259,8 +253,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         var inventory = new SlotGroup("inventory", 9, true);
         guiSyncManager.registerSlotGroup(toolSlots);
         guiSyncManager.registerSlotGroup(inventory);
-        createCraftingRecipeLogic(guiData.getPlayer());
-        this.recipeLogic.updateCurrentRecipe();
+
+        getCraftingRecipeLogic().updateCurrentRecipe();
 
         var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
         guiSyncManager.syncValue("amount_crafted", amountCrafted);
