@@ -251,6 +251,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         var toolSlots = new SlotGroup("tool_slots", 9, true);
         var inventory = new SlotGroup("inventory", 9, true);
+        var craftingMatrix = new SlotGroup("crafting_matrix", 3, false);
         guiSyncManager.registerSlotGroup(toolSlots);
         guiSyncManager.registerSlotGroup(inventory);
 
@@ -297,6 +298,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
                                                         .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
+                                                                .slotGroup(craftingMatrix)
                                                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                                                     if (!init) {
                                                                         this.recipeLogic.updateCurrentRecipe();
