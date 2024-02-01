@@ -40,18 +40,18 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
         super.handleClientAction(id, buffer);
-//        if (id == 1) {
-//            HashMap<Integer, ItemStack> ingredients = new HashMap<>();
-//            int ingredientAmount = buffer.readVarInt();
-//            try {
-//                for (int i = 0; i < ingredientAmount; i++) {
-//                    ingredients.put(buffer.readVarInt(), buffer.readItemStack());
-//                }
-//            } catch (IOException exception) {
-//                throw new RuntimeException(exception);
-//            }
-//            recipeResolver.fillCraftingGrid(ingredients);
-//        }
+        if (id == 1) {
+            HashMap<Integer, ItemStack> ingredients = new HashMap<>();
+            int ingredientAmount = buffer.readVarInt();
+            try {
+                for (int i = 0; i < ingredientAmount; i++) {
+                    ingredients.put(buffer.readVarInt(), buffer.readItemStack());
+                }
+            } catch (IOException exception) {
+                throw new RuntimeException(exception);
+            }
+            recipeResolver.fillCraftingGrid(ingredients);
+        }
 //        if (id == 2) {
 //            if (recipeResolver.isRecipeValid()) {
 //                ClickData clickData = ClickData.readFromBuf(buffer);
