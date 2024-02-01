@@ -535,7 +535,7 @@ public class PartsRecipeHandler {
 
         boolean hasDoublePlate = OrePrefix.plateDouble.doGenerateItem(material);
         RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder()
-                .input(hasDoublePlate ? OrePrefix.plateDouble : OrePrefix.plate, material, hasDoublePlate ? 5 : 10)
+                .input(hasDoublePlate ? OrePrefix.plateDouble : OrePrefix.plate, material, hasDoublePlate ? 3 : 6)
                 .input(OrePrefix.screw, material, 2)
                 .outputs(OreDictUnifier.get(toolPrefix, material))
                 .duration(20)
@@ -545,7 +545,7 @@ public class PartsRecipeHandler {
         if (hasDoublePlate) {
             ModHandler.addShapedRecipe(String.format("turbine_blade_%s", material),
                     OreDictUnifier.get(toolPrefix, material),
-                    "PPP", "SPS", "fPd",
+                    "fPd", "SPS", " P ",
                     'P', new UnificationEntry(OrePrefix.plateDouble, material),
                     'S', new UnificationEntry(OrePrefix.screw, material));
         }

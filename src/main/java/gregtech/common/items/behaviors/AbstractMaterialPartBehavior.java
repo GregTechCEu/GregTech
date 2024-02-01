@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@Deprecated
 public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, IItemDurabilityManager,
                                                    IItemColorProvider, IItemNameProvider {
 

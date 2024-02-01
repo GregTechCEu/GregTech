@@ -3,6 +3,7 @@ package gregtech.api.items.materialitem;
 import gregtech.api.GTValues;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -43,7 +44,7 @@ import java.util.Objects;
 
 public class MetaPrefixItem extends StandardMetaItem {
 
-    private final MaterialRegistry registry;
+    protected final MaterialRegistry registry;
     private final OrePrefix prefix;
 
     public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<>();
@@ -66,10 +67,14 @@ public class MetaPrefixItem extends StandardMetaItem {
         for (Material material : registry) {
             short i = (short) registry.getIDForObject(material);
             if (prefix != null && canGenerate(prefix, material)) {
-                addItem(i, new UnificationEntry(prefix, material).toString());
+                MetaItem<?>.MetaValueItem mvi = addItem(i, new UnificationEntry(prefix, material).toString());
+                attachComponents(mvi);
             }
         }
     }
+
+    /** Provided for override */
+    protected void attachComponents(@NotNull MetaItem<?>.MetaValueItem mvi) {}
 
     public void registerOreDict() {
         for (short metaItem : metaItems.keySet()) {

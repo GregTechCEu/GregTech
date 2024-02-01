@@ -910,8 +910,18 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        /**
+         * @deprecated use {@link #turbineRotor(UnaryOperator)}.
+         */
+        @Deprecated
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
         public Builder rotorStats(float speed, float damage, int durability) {
             properties.setProperty(PropertyKey.ROTOR, new RotorProperty(speed, damage, durability));
+            return this;
+        }
+
+        public Builder turbineRotor(UnaryOperator<RotorProperty.Builder> b) {
+            properties.setProperty(PropertyKey.ROTOR, b.apply(new RotorProperty.Builder()).build());
             return this;
         }
 

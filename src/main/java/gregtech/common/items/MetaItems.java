@@ -3,6 +3,7 @@ package gregtech.common.items;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.materialitem.MetaPrefixItem;
+import gregtech.api.items.materialitem.MetaTurbineItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.OreDictUnifier;
@@ -509,6 +510,7 @@ public final class MetaItems {
     public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor
             .values().length];
 
+    @Deprecated
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
 
     public static MetaItem<?>.MetaValueItem ENERGY_MODULE;
@@ -565,6 +567,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem MULTIBLOCK_BUILDER;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
+    private static final List<OrePrefix> turbinePrefixes = new ArrayList<>();
 
     static {
         orePrefixes.add(OrePrefix.dust);
@@ -606,6 +609,10 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.toolHeadWrench);
         orePrefixes.add(OrePrefix.toolHeadBuzzSaw);
         orePrefixes.add(OrePrefix.toolHeadScrewdriver);
+
+        turbinePrefixes.add(OrePrefix.turbineSmall);
+        turbinePrefixes.add(OrePrefix.turbineNormal);
+        turbinePrefixes.add(OrePrefix.turbineLarge);
     }
 
     public static void init() {
@@ -613,11 +620,16 @@ public final class MetaItems {
         first.setRegistryName("meta_item_1");
         MetaArmor armor = new MetaArmor();
         armor.setRegistryName("gt_armor");
-        for (OrePrefix prefix : orePrefixes) {
-            for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
+        for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
+            for (OrePrefix prefix : orePrefixes) {
                 String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
                 MetaPrefixItem metaOrePrefix = new MetaPrefixItem(registry, prefix);
                 metaOrePrefix.setRegistryName(registry.getModid(), String.format("meta_%s", regName));
+            }
+            for (OrePrefix prefix : turbinePrefixes) {
+                String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
+                MetaTurbineItem turbineItem = new MetaTurbineItem(registry, prefix);
+                turbineItem.setRegistryName(registry.getModid(), String.format("meta_%s", regName));
             }
         }
     }
@@ -673,5 +685,10 @@ public final class MetaItems {
     @SuppressWarnings("unused")
     public static void addOrePrefix(OrePrefix... prefixes) {
         orePrefixes.addAll(Arrays.asList(prefixes));
+    }
+
+    @SuppressWarnings("unused")
+    public static void addTurbinePrefix(OrePrefix... prefixes) {
+        turbinePrefixes.addAll(Arrays.asList(prefixes));
     }
 }
