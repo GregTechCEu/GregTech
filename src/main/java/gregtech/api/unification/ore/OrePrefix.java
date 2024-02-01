@@ -136,13 +136,6 @@ public class OrePrefix {
     public static final OrePrefix nugget = new OrePrefix("nugget", M / 9, null, MaterialIconType.nugget,
             ENABLE_UNIFICATION, hasIngotProperty);
 
-    // 9 Plates combined in one Item.
-    public static final OrePrefix plateDense = new OrePrefix("plateDense", M * 9, null, MaterialIconType.plateDense,
-            ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_DENSE));
-    // 2 Plates combined in one Item
-    public static final OrePrefix plateDouble = new OrePrefix("plateDouble", M * 2, null, MaterialIconType.plateDouble,
-            ENABLE_UNIFICATION, hasIngotProperty
-                    .and(mat -> mat.hasFlags(GENERATE_PLATE, GENERATE_DOUBLE_PLATE) && !mat.hasFlag(NO_SMASHING)));
     // Regular Plate made of one Ingot/Dust. Introduced by Calclavia
     public static final OrePrefix plate = new OrePrefix("plate", M, null, MaterialIconType.plate, ENABLE_UNIFICATION,
             mat -> mat.hasFlag(GENERATE_PLATE));
@@ -153,10 +146,6 @@ public class OrePrefix {
     // Foil made of 1/4 Ingot/Dust.
     public static final OrePrefix foil = new OrePrefix("foil", M / 4, null, MaterialIconType.foil, ENABLE_UNIFICATION,
             mat -> mat.hasFlag(GENERATE_FOIL));
-
-    // Stick made of an Ingot.
-    public static final OrePrefix stickLong = new OrePrefix("stickLong", M, null, MaterialIconType.stickLong,
-            ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_LONG_ROD));
     // Stick made of half an Ingot. Introduced by Eloraam
     public static final OrePrefix stick = new OrePrefix("stick", M / 2, null, MaterialIconType.stick,
             ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_ROD));
@@ -170,9 +159,6 @@ public class OrePrefix {
     // consisting out of 1/2 Stick.
     public static final OrePrefix ring = new OrePrefix("ring", M / 4, null, MaterialIconType.ring, ENABLE_UNIFICATION,
             mat -> mat.hasFlag(GENERATE_RING));
-    // consisting out of 1 Fine Wire.
-    public static final OrePrefix springSmall = new OrePrefix("springSmall", M / 4, null, MaterialIconType.springSmall,
-            ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_SPRING_SMALL) && !mat.hasFlag(NO_SMASHING));
     // consisting out of 2 Sticks.
     public static final OrePrefix spring = new OrePrefix("spring", M, null, MaterialIconType.spring, ENABLE_UNIFICATION,
             mat -> mat.hasFlag(GENERATE_SPRING) && !mat.hasFlag(NO_SMASHING));
@@ -182,8 +168,6 @@ public class OrePrefix {
     // consisting out of 4 Plates, 1 Ring and 1 Screw.
     public static final OrePrefix rotor = new OrePrefix("rotor", M * 4, null, MaterialIconType.rotor,
             ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_ROTOR));
-    public static final OrePrefix gearSmall = new OrePrefix("gearSmall", M, null, MaterialIconType.gearSmall,
-            ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_SMALL_GEAR));
     // Introduced by me because BuildCraft has ruined the gear Prefix...
     public static final OrePrefix gear = new OrePrefix("gear", M * 4, null, MaterialIconType.gear, ENABLE_UNIFICATION,
             mat -> mat.hasFlag(GENERATE_GEAR));
@@ -249,39 +233,16 @@ public class OrePrefix {
     public static final OrePrefix frameGt = new OrePrefix("frameGt", M * 2, null, null, ENABLE_UNIFICATION,
             material -> material.hasFlag(GENERATE_FRAME));
 
-    public static final OrePrefix pipeTinyFluid = new OrePrefix("pipeTinyFluid", M / 2, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeSmallFluid = new OrePrefix("pipeSmallFluid", M, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeNormalFluid = new OrePrefix("pipeNormalFluid", M * 3, null, null,
+    public static final OrePrefix pipeFluid = new OrePrefix("pipeFluid", M * 3, null, null,
             ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeLargeFluid = new OrePrefix("pipeLargeFluid", M * 6, null, null,
+    public static final OrePrefix pipeQuadrupleFluid = new OrePrefix("pipeQuadrupleFluid", M * 12, null, null,
             ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeHugeFluid = new OrePrefix("pipeHugeFluid", M * 12, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeQuadrupleFluid = new OrePrefix("pipeQuadrupleFluid", M * 4, null, null,
-            ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 9, null, null,
+    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 27, null, null,
             ENABLE_UNIFICATION, null);
 
-    public static final OrePrefix pipeTinyItem = new OrePrefix("pipeTinyItem", M / 2, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeSmallItem = new OrePrefix("pipeSmallItem", M, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeNormalItem = new OrePrefix("pipeNormalItem", M * 3, null, null,
+    public static final OrePrefix pipeItem = new OrePrefix("pipeItem", M * 3, null, null,
             ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeLargeItem = new OrePrefix("pipeLargeItem", M * 6, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeHugeItem = new OrePrefix("pipeHugeItem", M * 12, null, null, ENABLE_UNIFICATION,
-            null);
-
-    public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, null,
-            ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNormalRestrictive = new OrePrefix("pipeNormalRestrictive", M * 3, null, null,
-            ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeLargeRestrictive = new OrePrefix("pipeLargeRestrictive", M * 6, null, null,
-            ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, null,
+    public static final OrePrefix pipeRestrictive = new OrePrefix("pipeRestrictive", M * 3, null, null,
             ENABLE_UNIFICATION, null);
 
     public static final OrePrefix wireGtHex = new OrePrefix("wireGtHex", M * 8, null, null, ENABLE_UNIFICATION, null);
@@ -342,11 +303,6 @@ public class OrePrefix {
         ingotHot.heatDamageFunction = (temp) -> ((temp - 1750) / 1000.0F) + 2;
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
-
-        plateDouble.maxStackSize = 32;
-        plateDense.maxStackSize = 7;
-        rotor.maxStackSize = 16;
-        gear.maxStackSize = 16;
 
         toolHeadBuzzSaw.maxStackSize = 16;
         toolHeadScrewdriver.maxStackSize = 16;
@@ -447,11 +403,6 @@ public class OrePrefix {
                 new MaterialStack(Materials.Steel, plate.materialAmount * 4 + ring.materialAmount * 2));
         toolHeadWrench.addSecondaryMaterial(
                 new MaterialStack(Materials.Steel, ring.materialAmount + screw.materialAmount * 2));
-
-        pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
-        pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
-        pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
-        pipeHugeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
 
         cableGtSingle.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
         cableGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));

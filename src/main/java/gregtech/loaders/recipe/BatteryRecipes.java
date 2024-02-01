@@ -366,7 +366,7 @@ public class BatteryRecipes {
         // Energy Module
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(100000).duration(1200)
                 .input(ELITE_CIRCUIT_BOARD)
-                .input(plateDouble, Europium, 8)
+                .input(plate, Europium, 16)
                 .input(circuit, Tier.ZPM, 4)
                 .inputNBT(ENERGY_LAPOTRONIC_ORB_CLUSTER, NBTMatcher.ANY, NBTCondition.ANY)
                 .input(FIELD_GENERATOR_LuV)
@@ -411,7 +411,7 @@ public class BatteryRecipes {
 
         // Ultimate Battery
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(300000).duration(2000)
-                .input(plateDouble, Darmstadtium, 16)
+                .input(plate, Darmstadtium, 32)
                 .input(circuit, Tier.UHV, 4)
                 .input(ENERGY_CLUSTER, 16)
                 .input(FIELD_GENERATOR_UV, 4)

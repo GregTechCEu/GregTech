@@ -18,7 +18,7 @@ import static gregtech.api.GTValues.*;
 public class PolarizingRecipeHandler {
 
     private static final OrePrefix[] POLARIZING_PREFIXES = new OrePrefix[] {
-            OrePrefix.stick, OrePrefix.stickLong, OrePrefix.plate, OrePrefix.ingot, OrePrefix.plateDense,
+            OrePrefix.stick, OrePrefix.plate, OrePrefix.ingot,
             OrePrefix.rotor,
             OrePrefix.bolt, OrePrefix.screw, OrePrefix.wireFine, OrePrefix.foil, OrePrefix.ring };
 

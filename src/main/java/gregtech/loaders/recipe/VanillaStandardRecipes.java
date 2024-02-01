@@ -373,7 +373,7 @@ public class VanillaStandardRecipes {
 
         LATHE_RECIPES.recipeBuilder()
                 .input(log, Wood)
-                .output(stickLong, Wood, 4)
+                .output(stick, Wood, 8)
                 .output(dust, Wood, 2)
                 .duration(160).EUt(VA[ULV])
                 .buildAndRegister();

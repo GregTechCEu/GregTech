@@ -17,12 +17,12 @@ public class RecyclingRecipeHandler {
 
     private static final List<Object> CRUSHING_PREFIXES = Arrays.asList(
             OrePrefix.ingot, OrePrefix.gem, OrePrefix.stick, OrePrefix.plate, OrePrefix.plank,
-            OrePrefix.ring, OrePrefix.stickLong, OrePrefix.foil, OrePrefix.bolt,
-            OrePrefix.screw, OrePrefix.nugget, OrePrefix.gearSmall, OrePrefix.gear,
-            OrePrefix.frameGt, OrePrefix.plateDense, OrePrefix.spring,
-            OrePrefix.springSmall, OrePrefix.block, OrePrefix.wireFine,
+            OrePrefix.ring, OrePrefix.foil, OrePrefix.bolt,
+            OrePrefix.screw, OrePrefix.nugget, OrePrefix.gear,
+            OrePrefix.frameGt, OrePrefix.spring,
+            OrePrefix.block, OrePrefix.wireFine,
             OrePrefix.rotor, OrePrefix.lens, OrePrefix.turbineBlade,
-            OrePrefix.round, OrePrefix.plateDouble, OrePrefix.dust,
+            OrePrefix.round, OrePrefix.dust,
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("toolHead"),
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("gem"),
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("cableGt"),

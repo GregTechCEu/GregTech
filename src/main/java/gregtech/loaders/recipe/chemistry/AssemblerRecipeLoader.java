@@ -64,14 +64,14 @@ public class AssemblerRecipeLoader {
         // Other
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, Titanium, 2)
-                .input(pipeNormalFluid, Titanium, 4)
+                .input(pipeFluid, Titanium, 4)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, TungstenSteel, 2)
-                .input(pipeNormalFluid, TungstenSteel, 4)
+                .input(pipeFluid, TungstenSteel, 4)
                 .inputs(METAL_CASING.getItemVariant(TUNGSTENSTEEL_ROBUST))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(EXTREME_ENGINE_INTAKE_CASING,
                         ConfigHolder.recipes.casingsPerCraft))
@@ -181,8 +181,8 @@ public class AssemblerRecipeLoader {
         // Neutron Reflector
         ASSEMBLER_RECIPES.recipeBuilder().duration(4000).EUt(VA[MV])
                 .input(plate, Ruridit)
-                .input(plateDouble, Beryllium, 4)
-                .input(plateDouble, TungstenCarbide, 2)
+                .input(plate, Beryllium, 8)
+                .input(plate, TungstenCarbide, 4)
                 .fluidInputs(TinAlloy.getFluid(L * 32))
                 .output(NEUTRON_REFLECTOR)
                 .buildAndRegister();

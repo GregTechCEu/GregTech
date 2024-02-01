@@ -8,12 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
 
-    TINY("tiny", 0.25f, 1, OrePrefix.pipeTinyFluid, true),
-    SMALL("small", 0.375f, 2, OrePrefix.pipeSmallFluid, true),
-    NORMAL("normal", 0.5f, 6, OrePrefix.pipeNormalFluid, true),
-    LARGE("large", 0.75f, 12, OrePrefix.pipeLargeFluid, true),
-    HUGE("huge", 0.875f, 24, OrePrefix.pipeHugeFluid, true),
-
+    NORMAL("normal", 0.5f, 6, OrePrefix.pipeFluid, true),
     QUADRUPLE("quadruple", 0.95f, 2, OrePrefix.pipeQuadrupleFluid, true, 4),
     NONUPLE("nonuple", 0.95f, 2, OrePrefix.pipeNonupleFluid, true, 9);
 

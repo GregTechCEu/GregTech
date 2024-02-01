@@ -76,7 +76,7 @@ public class ComputerRecipes {
                 .input(frameGt, StainlessSteel)
                 .input(ELECTRIC_MOTOR_IV, 2)
                 .input(rotor, StainlessSteel, 2)
-                .input(pipeTinyFluid, StainlessSteel, 16)
+                .input(pipeFluid, StainlessSteel, 2)
                 .input(plate, Copper, 16)
                 .input(wireGtSingle, SamariumIronArsenicOxide)
                 .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT,
@@ -200,7 +200,7 @@ public class ComputerRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.ADVANCED_COMPUTER_CASING))
                 .input(plate, Aluminium, 16)
-                .input(pipeTinyFluid, StainlessSteel, 16)
+                .input(pipeFluid, StainlessSteel, 2)
                 .input(screw, StainlessSteel, 8)
                 .output(HPCA_ACTIVE_COOLER_COMPONENT)
                 .fluidInputs(PCBCoolant.getFluid(1000))

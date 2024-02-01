@@ -111,11 +111,11 @@ public class ToolRecipeHandler {
 
                 ModHandler.addShapedEnergyTransferRecipe(recipeName, powerUnitStack,
                         Ingredient.fromStacks(batteryStack), true, false,
-                        "S d", "GMG", "PBP",
+                        "S d", " MG", "PBP",
                         'M', motorItems.get(tier).getStackForm(),
                         'S', new UnificationEntry(OrePrefix.screw, baseMaterials.get(tier)),
                         'P', new UnificationEntry(OrePrefix.plate, baseMaterials.get(tier)),
-                        'G', new UnificationEntry(OrePrefix.gearSmall, baseMaterials.get(tier)),
+                        'G', new UnificationEntry(OrePrefix.gear, baseMaterials.get(tier)),
                         'B', batteryStack);
             }
         }
@@ -297,7 +297,7 @@ public class ToolRecipeHandler {
             ModHandler.addShapedRecipe(String.format("screwdriver_tip_%s", material),
                     OreDictUnifier.get(toolPrefix, material),
                     "fR", " h",
-                    'R', new UnificationEntry(OrePrefix.stickLong, material));
+                    'R', new UnificationEntry(OrePrefix.stick, material));
         }
     }
 

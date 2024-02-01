@@ -9,15 +9,8 @@ import org.jetbrains.annotations.NotNull;
 public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
 
     // TINY_OPAQUE("tiny", 0.25f, OrePrefix.pipeTinyItem, 0.25f, 2f),
-    SMALL("small", 0.375f, OrePrefix.pipeSmallItem, 0.5f, 1.5f),
-    NORMAL("normal", 0.5f, OrePrefix.pipeNormalItem, 1f, 1f),
-    LARGE("large", 0.75f, OrePrefix.pipeLargeItem, 2f, 0.75f),
-    HUGE("huge", 0.875f, OrePrefix.pipeHugeItem, 4f, 0.5f),
-
-    RESTRICTIVE_SMALL("small_restrictive", 0.375f, OrePrefix.pipeSmallRestrictive, 0.5f, 150f),
-    RESTRICTIVE_NORMAL("normal_restrictive", 0.5f, OrePrefix.pipeNormalRestrictive, 1f, 100f),
-    RESTRICTIVE_LARGE("large_restrictive", 0.75f, OrePrefix.pipeLargeRestrictive, 2f, 75f),
-    RESTRICTIVE_HUGE("huge_restrictive", 0.875f, OrePrefix.pipeHugeRestrictive, 4f, 50f);
+    NORMAL("normal", 0.5f, OrePrefix.pipeItem, 1f, 1f),
+    RESTRICTIVE_NORMAL("normal_restrictive", 0.5f, OrePrefix.pipeRestrictive, 1f, 100f);
 
     public static final ItemPipeType[] VALUES = values();
 

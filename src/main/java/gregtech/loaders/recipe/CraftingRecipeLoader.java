@@ -97,7 +97,7 @@ public class CraftingRecipeLoader {
                 OreDictUnifier.get(OrePrefix.nugget, Materials.WroughtIron));
 
         ModHandler.addShapedRecipe("clipboard", CLIPBOARD.getStackForm(), " Sd", "BWR", "PPP", 'P', Items.PAPER, 'R',
-                new UnificationEntry(OrePrefix.springSmall, Iron), 'B', new UnificationEntry(OrePrefix.bolt, Iron), 'S',
+                new UnificationEntry(OrePrefix.spring, Iron), 'B', new UnificationEntry(OrePrefix.bolt, Iron), 'S',
                 new UnificationEntry(OrePrefix.screw, Iron), 'W', new UnificationEntry(OrePrefix.plate, Wood));
 
         ModHandler.addShapedRecipe("rubber_ring", OreDictUnifier.get(OrePrefix.ring, Materials.Rubber), "k", "X", 'X',
@@ -118,11 +118,11 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("component_grinder_diamond", COMPONENT_GRINDER_DIAMOND.getStackForm(), "XSX", "SDS",
                 "XSX", 'X', new UnificationEntry(OrePrefix.dust, Materials.Diamond), 'S',
-                new UnificationEntry(OrePrefix.plateDouble, Materials.Steel), 'D',
+                new UnificationEntry(OrePrefix.plate, Materials.Steel), 'D',
                 new UnificationEntry(OrePrefix.gem, Materials.Diamond));
         ModHandler.addShapedRecipe("component_grinder_tungsten", COMPONENT_GRINDER_TUNGSTEN.getStackForm(), "WSW",
                 "SDS", "WSW", 'W', new UnificationEntry(OrePrefix.plate, Materials.Tungsten), 'S',
-                new UnificationEntry(OrePrefix.plateDouble, Materials.VanadiumSteel), 'D',
+                new UnificationEntry(OrePrefix.plate, Materials.VanadiumSteel), 'D',
                 new UnificationEntry(OrePrefix.gem, Materials.Diamond));
 
         ModHandler.addShapedRecipe("minecart_wheels_iron", IRON_MINECART_WHEELS.getStackForm(), " h ", "RSR", " w ",
@@ -173,7 +173,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe(true, "filter_casing_sterile",
                 MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.FILTER_CASING_STERILE,
                         ConfigHolder.recipes.casingsPerCraft),
-                "BEB", "ISI", "MFR", 'B', new UnificationEntry(OrePrefix.pipeLargeFluid, Polybenzimidazole), 'E',
+                "BEB", "ISI", "MFR", 'B', new UnificationEntry(OrePrefix.pipeFluid, Polybenzimidazole), 'E',
                 EMITTER_ZPM.getStackForm(), 'I', ITEM_FILTER.getStackForm(), 'S', BLACKLIGHT.getStackForm(), 'M',
                 ELECTRIC_MOTOR_ZPM.getStackForm(), 'F', new UnificationEntry(OrePrefix.frameGt, Tritanium), 'R',
                 new UnificationEntry(OrePrefix.rotor, NaquadahAlloy));
@@ -190,16 +190,8 @@ public class CraftingRecipeLoader {
                 SHAPE_EXTRUDER_RING.getStackForm());
         ModHandler.addShapedRecipe("shape_extruder_block", SHAPE_EXTRUDER_BLOCK.getStackForm(), "x  ", " S ", "   ",
                 'S', SHAPE_EXTRUDER_INGOT.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_pipe_huge", SHAPE_EXTRUDER_PIPE_HUGE.getStackForm(), "   ", " S ",
-                "  x", 'S', SHAPE_EXTRUDER_BOLT.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_pipe_large", SHAPE_EXTRUDER_PIPE_LARGE.getStackForm(), "   ", " Sx",
-                "   ", 'S', SHAPE_EXTRUDER_BOLT.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_pipe_normal", SHAPE_EXTRUDER_PIPE_NORMAL.getStackForm(), "  x",
+        ModHandler.addShapedRecipe("shape_extruder_pipe_normal", SHAPE_EXTRUDER_PIPE.getStackForm(), "  x",
                 " S ", "   ", 'S', SHAPE_EXTRUDER_BOLT.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_pipe_small", SHAPE_EXTRUDER_PIPE_SMALL.getStackForm(), " x ", " S ",
-                "   ", 'S', SHAPE_EXTRUDER_BOLT.getStackForm());
-        ModHandler.addShapedRecipe("shape_extruder_pipe_tiny", SHAPE_EXTRUDER_PIPE_TINY.getStackForm(), "x  ", " S ",
-                "   ", 'S', SHAPE_EXTRUDER_BOLT.getStackForm());
         ModHandler.addShapedRecipe("shape_extruder_wire", SHAPE_EXTRUDER_WIRE.getStackForm(), " x ", " S ", "   ", 'S',
                 SHAPE_EXTRUDER_ROD.getStackForm());
         ModHandler.addShapedRecipe("shape_extruder_ingot", SHAPE_EXTRUDER_INGOT.getStackForm(), "x  ", " S ", "   ",
@@ -307,7 +299,7 @@ public class CraftingRecipeLoader {
                 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'S',
                 MetaItems.FLUID_CELL_LARGE_STEEL.getStackForm(), 'U', MetaItems.ELECTRIC_PUMP_LV.getStackForm(), 'R',
                 new UnificationEntry(OrePrefix.rotor, Lead), 'I',
-                new UnificationEntry(OrePrefix.pipeSmallFluid, Potin));
+                new UnificationEntry(OrePrefix.pipeFluid, Potin));
         ModHandler.addShapedRecipe("electric_jetpack", MetaItems.ELECTRIC_JETPACK.getStackForm(), "xCd", "TBT", "I I",
                 'C', new UnificationEntry(OrePrefix.circuit, Tier.MV), 'T', MetaItems.POWER_THRUSTER.getStackForm(),
                 'B', MetaItems.BATTERY_MV_LITHIUM.getStackForm(), 'I',
@@ -334,7 +326,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("gravitation_engine", MetaItems.GRAVITATION_ENGINE.getStackForm(), "ESE", "POP",
                 "ESE", 'E', MetaItems.EMITTER_LuV.getStackForm(), 'S',
                 new UnificationEntry(OrePrefix.wireGtQuadruple, Osmium), 'P',
-                new UnificationEntry(OrePrefix.plateDouble, Iridium), 'O',
+                new UnificationEntry(OrePrefix.plate, Iridium), 'O',
                 MetaItems.ENERGY_LAPOTRONIC_ORB.getStackForm());
 
         ModHandler.addShapedRecipe("powderbarrel", new ItemStack(MetaBlocks.POWDERBARREL), "PSP", "GGG", "PGP",

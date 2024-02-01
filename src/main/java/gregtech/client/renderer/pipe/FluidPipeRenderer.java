@@ -29,17 +29,11 @@ public class FluidPipeRenderer extends PipeRenderer {
 
     @Override
     public void registerIcons(TextureMap map) {
-        pipeTextures.put(FluidPipeType.TINY, Textures.PIPE_TINY);
-        pipeTextures.put(FluidPipeType.SMALL, Textures.PIPE_SMALL);
         pipeTextures.put(FluidPipeType.NORMAL, Textures.PIPE_NORMAL);
-        pipeTextures.put(FluidPipeType.LARGE, Textures.PIPE_LARGE);
-        pipeTextures.put(FluidPipeType.HUGE, Textures.PIPE_HUGE);
         pipeTextures.put(FluidPipeType.QUADRUPLE, Textures.PIPE_QUADRUPLE);
         pipeTextures.put(FluidPipeType.NONUPLE, Textures.PIPE_NONUPLE);
 
-        pipeTexturesWood.put(FluidPipeType.SMALL, Textures.PIPE_SMALL_WOOD);
         pipeTexturesWood.put(FluidPipeType.NORMAL, Textures.PIPE_NORMAL_WOOD);
-        pipeTexturesWood.put(FluidPipeType.LARGE, Textures.PIPE_LARGE_WOOD);
     }
 
     @Override
