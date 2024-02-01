@@ -27,7 +27,6 @@ import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
-import gregtech.api.mui.GregTechGuiTransferrableScreen;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
@@ -485,13 +484,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @SideOnly(Side.CLIENT)
     @Override
     public final ModularScreen createScreen(PosGuiData posGuiData, ModularPanel mainPanel) {
-        return createTransferableScreen() ?
-                new GregTechGuiTransferrableScreen(mainPanel, getUITheme()) :
-                new GregTechGuiScreen(mainPanel, getUITheme());
-    }
-
-    protected boolean createTransferableScreen() {
-        return false;
+        return new GregTechGuiScreen(mainPanel, getUITheme());
     }
 
     public GTGuiTheme getUITheme() {
