@@ -392,7 +392,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         try {
             var tag = buffer.readCompoundTag();
             if (tag == null) throw new IOException();
-            GTLog.logger.warn(String.format("Received: %s", tag));
+//            GTLog.logger.warn(String.format("Received: %s", tag));
             stack = new ItemStack(tag);
         } catch (IOException ignore) {
             GTLog.logger.warn("A stack was read incorrectly, something is seriously wrong!");
@@ -402,7 +402,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     private static void writeStackSafe(PacketBuffer buffer, ItemStack stack) {
         var tag = stack.serializeNBT();
-        GTLog.logger.warn(String.format("Sent: %s", tag));
+//        GTLog.logger.warn(String.format("Sent: %s", tag));
         buffer.writeCompoundTag(tag);
     }
 
