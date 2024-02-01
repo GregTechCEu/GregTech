@@ -256,6 +256,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         var craftingMatrix = new SlotGroup("crafting_matrix", 3, false);
         guiSyncManager.registerSlotGroup(toolSlots);
         guiSyncManager.registerSlotGroup(inventory);
+        guiSyncManager.registerSlotGroup(craftingMatrix);
 
         getCraftingRecipeLogic().updateCurrentRecipe();
         if (!guiSyncManager.isClient() && getCraftingRecipeLogic().collectAvailableItems()) {

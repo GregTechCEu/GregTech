@@ -355,7 +355,16 @@ public class CraftingRecipeLogic extends SyncHandler {
     }
 
     @Override
-    public void readOnServer(int id, PacketBuffer buf) {}
+    public void readOnServer(int id, PacketBuffer buf) {
+        if (id == 0) {
+            int size = buf.readVarInt();
+            for (int i = 0; i < size; i++) {
+                try {
+                    this.craftingMatrix.setInventorySlotContents(i, buf.readItemStack());
+                } catch (IOException ignore) {}
+            }
+        }
+    }
 
     public void updateClientStacks(PacketBuffer buffer) {
         this.availableItems.clear();
