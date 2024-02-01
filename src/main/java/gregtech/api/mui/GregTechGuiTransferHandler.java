@@ -58,6 +58,7 @@ public class GregTechGuiTransferHandler implements IRecipeTransferHandler<Modula
         }
 
         recipeLogic.syncToServer(0, this::writeCraftingMatrix);
+        recipeLogic.updateClientHandler();
         recipeLogic.updateCurrentRecipe();
         return null;
     }

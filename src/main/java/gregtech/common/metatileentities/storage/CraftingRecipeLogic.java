@@ -279,6 +279,15 @@ public class CraftingRecipeLogic extends SyncHandler {
                 extracted = true;
             }
         }
+//        if (!getSyncManager().isClient())
+//            syncToClient(1, buffer -> {
+//                buffer.writeVarInt(gatheredItems.size());
+//                for (var gathered : gatheredItems.entrySet()) {
+//                    var slot = gathered.getValue();
+//                    buffer.writeVarInt(slot);
+//                    writeStackSafe(buffer, availableItems.get(slot));
+//                }
+//            });
         return extracted;
     }
 
@@ -384,6 +393,14 @@ public class CraftingRecipeLogic extends SyncHandler {
             this.stackLookupMap
                     .computeIfAbsent(serverStack, k -> new IntArrayList())
                     .add(slot);
+        }
+    }
+
+    public void updateClientHandler() {
+        for (var items : availableItems.entrySet()) {
+            int slot = items.getKey();
+            this.availableHandlers.extractItem(slot, Integer.MAX_VALUE, false);
+            this.availableHandlers.insertItem(slot, items.getValue().copy(), false);
         }
     }
 
