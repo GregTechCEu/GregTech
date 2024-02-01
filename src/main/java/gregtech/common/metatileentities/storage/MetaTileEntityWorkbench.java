@@ -374,11 +374,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         this.itemsCrafted = itemsCrafted;
     }
 
-    @Override
-    protected boolean createTransferableScreen() {
-        return true;
-    }
-
     private class CraftingOutputSlot extends ModularSlot {
         IntSyncValue syncValue;
 
