@@ -294,9 +294,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                 .child(new Row().coverChildrenHeight()
                                         .widthRel(1f)
                                         .marginBottom(2)
-                                        //todo
-                                        // make JEI transfer work correctly
-                                        // currently it's not possible due to getCurrent() in ModularScreen returning null
                                         .child(SlotGroupWidget.builder()
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
