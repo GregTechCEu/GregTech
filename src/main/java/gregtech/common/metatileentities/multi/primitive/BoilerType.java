@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.multi;
+package gregtech.common.metatileentities.multi.primitive;
 
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;

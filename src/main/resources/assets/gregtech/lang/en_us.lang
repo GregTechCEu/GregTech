@@ -2468,6 +2468,8 @@ tile.wire_coil.naquadah.name=Naquadah Coil Block
 tile.wire_coil.trinium.name=Trinium Coil Block
 tile.wire_coil.tritanium.name=Tritanium Coil Block
 
+tile.firebrick.tier_1.name=Tier 1 Firebrick
+
 # Warning sign blocks
 tile.warning_sign.yellow_stripes.name=Yellow Stripes Block
 tile.warning_sign.small_yellow_stripes.name=Yellow Stripes Block

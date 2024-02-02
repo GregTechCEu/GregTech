@@ -8,7 +8,8 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
-import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
+
+import gregtech.common.metatileentities.multi.primitive.MetaTileEntityLargeBoiler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

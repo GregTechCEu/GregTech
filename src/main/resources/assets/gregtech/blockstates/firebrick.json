@@ -1,0 +1,41 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "active=false,variant=tier_1": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/firebricks/machine_firebricks_tier_1"
+      }
+    },
+    "active=true,variant=tier_1": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/firebricks/machine_firebricks_tier_1"
+      }
+    },
+    "active=false,variant=tier_2": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/firebricks/machine_firebricks_tier_2"
+      }
+    },
+    "active=true,variant=tier_2": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/firebricks/machine_firebricks_tier_2"
+      }
+    },
+    "active=false,variant=tier_3": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/firebricks/machine_firebricks_tier_3"
+      }
+    },
+    "active=true,variant=tier_3": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/firebricks/machine_firebricks_tier_3"
+      }
+    }
+  }
+}
