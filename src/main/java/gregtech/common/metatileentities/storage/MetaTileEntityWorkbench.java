@@ -65,6 +65,10 @@ import java.util.List;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
 
+    // todo move these to GregtechDataCodes
+    public static final int UPDATE_CLIENT_STACKS = GregtechDataCodes.assignId();
+    public static final int UPDATE_CLIENT_HANDLER = GregtechDataCodes.assignId();
+
     private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
@@ -212,7 +216,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public void onNeighborChanged() {
         getCraftingRecipeLogic().updateInventory(getAvailableHandlers());
-        writeCustomData(GregtechDataCodes.UPDATE_ITEM, this::sendHandlerToClient);
+        writeCustomData(UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
     }
 
     private @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
@@ -260,7 +264,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         getCraftingRecipeLogic().updateCurrentRecipe();
         if (!guiSyncManager.isClient() && getCraftingRecipeLogic().collectAvailableItems()) {
-            writeCustomData(GregtechDataCodes.UPDATE_MACHINE, getCraftingRecipeLogic()::writeAvailableStacks);
+            writeCustomData(UPDATE_CLIENT_STACKS, getCraftingRecipeLogic()::writeAvailableStacks);
         }
 
         var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
@@ -351,11 +355,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.UPDATE_MACHINE) {
+        if (dataId == UPDATE_CLIENT_STACKS) {
             getCraftingRecipeLogic()
                     .updateClientStacks(buf);
 
-        } else if (dataId == GregtechDataCodes.UPDATE_ITEM) {
+        } else if (dataId == UPDATE_CLIENT_HANDLER) {
             getCraftingRecipeLogic()
                     .updateInventory(new ItemStackHandler(buf.readVarInt()));
 
