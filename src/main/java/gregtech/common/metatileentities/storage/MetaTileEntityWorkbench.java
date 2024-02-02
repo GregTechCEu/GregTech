@@ -344,10 +344,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     public void sendHandlerToClient(PacketBuffer buffer) {
         buffer.writeVarInt(this.combinedInventory.getSlots());
-        boolean changed = getCraftingRecipeLogic().collectAvailableItems();
-        buffer.writeBoolean(changed);
-        if (changed)
-            getCraftingRecipeLogic().writeAvailableStacks(buffer);
+        getCraftingRecipeLogic().collectAvailableItems();
+        getCraftingRecipeLogic().writeAvailableStacks(buffer);
     }
 
     @Override
@@ -360,8 +358,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         } else if (dataId == GregtechDataCodes.UPDATE_ITEM) {
             getCraftingRecipeLogic()
                     .updateInventory(new ItemStackHandler(buf.readVarInt()));
-
-            if (!buf.readBoolean()) return;
 
             getCraftingRecipeLogic()
                     .updateClientStacks(buf);

@@ -55,8 +55,6 @@ public class CraftingRecipeLogic extends SyncHandler {
     private final Map<ItemStack, Integer> requiredItems =
             new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
 
-    /** Maps every non-empty stack to their slot. DO NOT MODIFY THE ITEM STACK */
-    private final Map<Integer, ItemStack> availableItems = new Int2ObjectArrayMap<>();
     private final Map<Integer, Object2BooleanMap<ItemStack>> replaceAttemptMap = new Int2ObjectArrayMap<>();
     private final InventoryCrafting craftingMatrix;
     private final IInventory craftingResultInventory = new InventoryCraftResult();
@@ -231,7 +229,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                 craftingMatrix.setInventorySlotContents(i, current);
             }
 
-            int remainingAmount = itemStack.getCount() - GTTransferUtils.insertItem(this.availableHandlers, itemStack, false).getCount();
+            int remainingAmount = GTTransferUtils.insertItem(this.availableHandlers, itemStack, false).getCount();
             if (remainingAmount > 0) {
                 itemStack.setCount(remainingAmount);
                 if (!player.addItemStackToInventory(itemStack)) {
@@ -272,22 +270,11 @@ public class CraftingRecipeLogic extends SyncHandler {
             int slot = gathered.getValue();
             if (stack.isEmpty()) {
                 stackLookupMap.get(stack).remove(slot);
-                availableItems.remove(slot);
             } else {
-                availableItems.get(slot).shrink(stack.getCount());
                 availableHandlers.extractItem(slot, stack.getCount(), false);
                 extracted = true;
             }
         }
-//        if (!getSyncManager().isClient())
-//            syncToClient(1, buffer -> {
-//                buffer.writeVarInt(gatheredItems.size());
-//                for (var gathered : gatheredItems.entrySet()) {
-//                    var slot = gathered.getValue();
-//                    buffer.writeVarInt(slot);
-//                    writeStackSafe(buffer, availableItems.get(slot));
-//                }
-//            });
         return extracted;
     }
 
@@ -312,8 +299,6 @@ public class CraftingRecipeLogic extends SyncHandler {
     }
 
     public void update() {
-        // update item sources every tick for fast tinting updates
-//        itemSources.update();
         if (getCachedRecipeData().getRecipe() != null) {
             //todo fix tint location
 //            tintLocation = getCachedRecipeData().attemptMatchRecipe();
@@ -332,8 +317,16 @@ public class CraftingRecipeLogic extends SyncHandler {
 
 
     public void writeAvailableStacks(PacketBuffer buffer) {
-        buffer.writeInt(this.availableItems.size());
-        for (var entry : this.availableItems.entrySet()) {
+        Map<Integer, ItemStack> written = new Int2ObjectArrayMap<>();
+        for (var slots : this.stackLookupMap.entrySet()) {
+            for (var slot : slots.getValue()) {
+                var stack = this.availableHandlers.getStackInSlot(slot);
+                written.put(slot, stack);
+            }
+        }
+
+        buffer.writeInt(written.size());
+        for (var entry : written.entrySet()) {
             buffer.writeInt(entry.getKey());
             writeStackSafe(buffer, entry.getValue());
         }
@@ -342,23 +335,19 @@ public class CraftingRecipeLogic extends SyncHandler {
     public boolean collectAvailableItems() {
         var oldMap = this.stackLookupMap.clone();
         this.stackLookupMap.clear();
-        this.availableItems.clear();
         for (int i = 0; i < this.availableHandlers.getSlots(); i++) {
             var stack = this.availableHandlers.getStackInSlot(i);
             if (stack.isEmpty()) continue;
             this.stackLookupMap
                     .computeIfAbsent(stack, k -> new IntArrayList())
                     .add(i);
-            this.availableItems.put(i, stack);
         }
         return !oldMap.equals(this.stackLookupMap);
     }
 
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
-        if (id == 0) {
-//            getSyncManager().setCursorItem(buf.readItemStack());
-        } else if (id == 1) {
+        if (id == 1) {
             updateClientStacks(buf);
         }
     }
@@ -372,11 +361,14 @@ public class CraftingRecipeLogic extends SyncHandler {
                     this.craftingMatrix.setInventorySlotContents(i, buf.readItemStack());
                 } catch (IOException ignore) {}
             }
+        } else if (id == 1) {
+            if (this.collectAvailableItems()) {
+                syncToClient(1, this::writeAvailableStacks);
+            }
         }
     }
 
     public void updateClientStacks(PacketBuffer buffer) {
-        this.availableItems.clear();
         this.stackLookupMap.clear();
         int size = buffer.readInt();
         for (int i = 0; i < size; i++) {
@@ -389,18 +381,9 @@ public class CraftingRecipeLogic extends SyncHandler {
                 this.availableHandlers.insertItem(slot, serverStack.copy(), false);
             }
 
-            this.availableItems.put(slot, serverStack);
             this.stackLookupMap
                     .computeIfAbsent(serverStack, k -> new IntArrayList())
                     .add(slot);
-        }
-    }
-
-    public void updateClientHandler() {
-        for (var items : availableItems.entrySet()) {
-            int slot = items.getKey();
-            this.availableHandlers.extractItem(slot, Integer.MAX_VALUE, false);
-            this.availableHandlers.insertItem(slot, items.getValue().copy(), false);
         }
     }
 
