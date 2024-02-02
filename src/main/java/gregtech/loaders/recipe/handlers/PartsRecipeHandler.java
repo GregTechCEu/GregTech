@@ -169,7 +169,7 @@ public class PartsRecipeHandler {
         if (gearPrefix == OrePrefix.gear && material.hasProperty(PropertyKey.INGOT)) {
             int voltageMultiplier = getVoltageMultiplier(material);
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 4)
+                    .input(OrePrefix.ingot, material, 1)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_GEAR)
                     .outputs(OreDictUnifier.get(gearPrefix, material))
                     .duration((int) material.getMass() * 5)
@@ -177,7 +177,7 @@ public class PartsRecipeHandler {
                     .buildAndRegister();
 
             RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 8)
+                    .input(OrePrefix.ingot, material, 1)
                     .notConsumable(MetaItems.SHAPE_MOLD_GEAR)
                     .outputs(OreDictUnifier.get(gearPrefix, material))
                     .duration((int) material.getMass() * 10)
@@ -186,7 +186,7 @@ public class PartsRecipeHandler {
 
             if (material.hasFlag(NO_SMASHING)) {
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                        .input(OrePrefix.dust, material, 4)
+                        .input(OrePrefix.dust, material, 1)
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_GEAR)
                         .outputs(OreDictUnifier.get(gearPrefix, material))
                         .duration((int) material.getMass() * 5)
@@ -199,7 +199,7 @@ public class PartsRecipeHandler {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_GEAR)
                     .fluidInputs(
-                            material.getProperty(PropertyKey.FLUID).solidifiesFrom(L * 4))
+                            material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                     .outputs(stack)
                     .duration(100)
                     .EUt(VA[ULV])
@@ -256,50 +256,6 @@ public class PartsRecipeHandler {
                     .outputs(OreDictUnifier.get(platePrefix, material))
                     .duration(40)
                     .EUt(VA[ULV])
-                    .buildAndRegister();
-        }
-    }
-
-    public static void processPlateDouble(OrePrefix doublePrefix, Material material, IngotProperty property) {
-        if (material.hasFlag(GENERATE_PLATE)) {
-            if (!material.hasFlag(NO_SMASHING)) {
-                ModHandler.addShapedRecipe(String.format("plate_double_%s", material),
-                        OreDictUnifier.get(doublePrefix, material),
-                        "h", "P", "P", 'P', new UnificationEntry(plate, material));
-            }
-
-            BENDER_RECIPES.recipeBuilder().EUt(96).duration((int) material.getMass() * 2)
-                    .input(plate, material, 2)
-                    .output(doublePrefix, material)
-                    .circuitMeta(2)
-                    .buildAndRegister();
-
-            BENDER_RECIPES.recipeBuilder()
-                    .input(ingot, material, 2)
-                    .circuitMeta(2)
-                    .output(doublePrefix, material)
-                    .duration((int) material.getMass() * 2)
-                    .EUt(96)
-                    .buildAndRegister();
-        }
-    }
-
-    public static void processPlateDense(OrePrefix orePrefix, Material material, DustProperty property) {
-        RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, material, 9)
-                .circuitMeta(9)
-                .output(orePrefix, material)
-                .duration((int) Math.max(material.getMass() * 9L, 1L))
-                .EUt(96)
-                .buildAndRegister();
-
-        if (material.hasProperty(PropertyKey.INGOT)) {
-            RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 9)
-                    .circuitMeta(9)
-                    .output(orePrefix, material)
-                    .duration((int) Math.max(material.getMass() * 9L, 1L))
-                    .EUt(96)
                     .buildAndRegister();
         }
     }

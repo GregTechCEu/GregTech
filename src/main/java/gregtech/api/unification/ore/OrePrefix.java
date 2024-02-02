@@ -169,7 +169,7 @@ public class OrePrefix {
     public static final OrePrefix rotor = new OrePrefix("rotor", M * 4, null, MaterialIconType.rotor,
             ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_ROTOR));
     // Introduced by me because BuildCraft has ruined the gear Prefix...
-    public static final OrePrefix gear = new OrePrefix("gear", M * 4, null, MaterialIconType.gear, ENABLE_UNIFICATION,
+    public static final OrePrefix gear = new OrePrefix("gear", M, null, MaterialIconType.gear, ENABLE_UNIFICATION,
             mat -> mat.hasFlag(GENERATE_GEAR));
     // 3/4 of a Plate or Gem used to shape a Lens. Normally only used on Transparent Materials.
     public static final OrePrefix lens = new OrePrefix("lens", (M * 3) / 4, null, MaterialIconType.lens,
