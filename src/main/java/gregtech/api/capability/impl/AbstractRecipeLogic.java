@@ -232,7 +232,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if recipes should be searched for
      */
     protected boolean shouldSearchForRecipes() {
-        return canWorkWithInputs() && canFitNewOutputs();
+        return canWorkWithInputs() || canFitNewOutputs();
     }
 
     /**
