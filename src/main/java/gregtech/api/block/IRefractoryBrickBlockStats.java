@@ -1,17 +1,13 @@
 package gregtech.api.block;
 
-import gregtech.api.recipes.recipeproperties.TemperatureProperty;
-import gregtech.api.unification.material.Material;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Implement this interface on the Block Enum for your Heating Coil block
  *
  * @see gregtech.common.blocks.BlockWireCoil.CoilType
  */
-public interface IFirebrickBlockStats {
+public interface IRefractoryBrickBlockStats {
 
     /**
      * @return The Unique Name of the Heating Coil
@@ -22,7 +18,7 @@ public interface IFirebrickBlockStats {
     /**
      * @return the temperature the Heating Coil provides
      */
-    int getFirebrickTemperature();
+    int getRefractoryBrickTemperature();
 
     /**
      * This is used for the amount of parallel recipes in the multi smelter

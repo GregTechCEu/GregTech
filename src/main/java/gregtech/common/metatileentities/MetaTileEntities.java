@@ -97,6 +97,7 @@ import gregtech.common.metatileentities.multi.primitive.MetaTileEntityMultiblock
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPumpHatch;
+import gregtech.common.metatileentities.multi.primitive.MetaTileEntityReverberatoryFurnace;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityTankValve;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
@@ -377,6 +378,7 @@ public class MetaTileEntities {
     public static MetaTileEntityNetworkSwitch NETWORK_SWITCH;
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
+    public static MetaTileEntityReverberatoryFurnace REVERBERATORY_FURNACE;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -813,6 +815,8 @@ public class MetaTileEntities {
                 new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042,
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
+
+        REVERBERATORY_FURNACE = registerMetaTileEntity(1043, new MetaTileEntityReverberatoryFurnace(gregtechId("reverberatory_furnace")));
 
         // MISC MTE's START: IDs 1150-2000
 

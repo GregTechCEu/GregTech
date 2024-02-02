@@ -2468,7 +2468,11 @@ tile.wire_coil.naquadah.name=Naquadah Coil Block
 tile.wire_coil.trinium.name=Trinium Coil Block
 tile.wire_coil.tritanium.name=Tritanium Coil Block
 
-tile.firebrick.tier_1.name=Tier 1 Firebrick
+# Refractory Bricks
+tile.refractory_brick.tooltip_heat=§cBase Heat Capacity: §f%,d K
+tile.refractory_brick.tier_1.name=Tier 1 Refractory Brick
+tile.refractory_brick.tier_2.name=Tier 2 Refractory Brick
+tile.refractory_brick.tier_3.name=Tier 3 Refractory Brick
 
 # Warning sign blocks
 tile.warning_sign.yellow_stripes.name=Yellow Stripes Block
@@ -4711,7 +4715,7 @@ gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke Oven.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
-
+gregtech.machine.reverberatory_furnace.name=Reverberatory Furnace
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
 gregtech.machine.extreme_combustion_engine.name=Extreme Combustion Engine
 gregtech.machine.large_combustion_engine.tooltip.boost_regular=Supply §f20 L/s§7 of Oxygen to produce up to §f%s EU/t§7 at §f2x§7 fuel consumption.
@@ -5559,6 +5563,7 @@ gregtech.multiblock.pattern.error.limited.1=§cMinimum: %d§r
 gregtech.multiblock.pattern.error.limited.2=§cMaximum: %d per layer§r
 gregtech.multiblock.pattern.error.limited.3=§cMinimum: %d per layer§r
 gregtech.multiblock.pattern.error.coils=§cAll heating coils must be the same§r
+gregtech.multiblock.pattern.error.refractory_bricks=§cAll refractory bricks must be the same§r
 gregtech.multiblock.pattern.error.batteries=§cMust have at least one non-empty Capacitor§r
 gregtech.multiblock.pattern.error.filters=§cAll filters must be the same§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r

@@ -1,15 +1,10 @@
 package gregtech.common.blocks;
 
-import gregtech.api.block.IFirebrickBlockStats;
-import gregtech.api.block.IHeatingCoilBlockStats;
+import gregtech.api.block.IRefractoryBrickBlockStats;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -30,16 +25,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BlockFirebrick extends VariantActiveBlock<BlockFirebrick.FirebrickType> {
+public class BlockRefractoryBrick extends VariantActiveBlock<BlockRefractoryBrick.RefractoryBrickType> {
 
-    public BlockFirebrick() {
+    public BlockRefractoryBrick() {
         super(net.minecraft.block.material.Material.IRON);
-        setTranslationKey("firebrick");
+        setTranslationKey("refractory_brick");
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel(ToolClasses.WRENCH, 2);
-        setDefaultState(getState(BlockFirebrick.FirebrickType.TIER1));
+        setDefaultState(getState(RefractoryBrickType.TIER1));
     }
 
     @NotNull
@@ -48,34 +43,22 @@ public class BlockFirebrick extends VariantActiveBlock<BlockFirebrick.FirebrickT
         return BlockRenderLayer.SOLID;
     }
 
-    /*@Override
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines,
                                @NotNull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
 
         // noinspection rawtypes, unchecked
-        VariantItemBlock itemBlock = (VariantItemBlock<FirebrickType, BlockFirebrick>) itemStack.getItem();
+        VariantItemBlock itemBlock = (VariantItemBlock<RefractoryBrickType, BlockRefractoryBrick>) itemStack.getItem();
         IBlockState stackState = itemBlock.getBlockState(itemStack);
-        FirebrickType firebrickType = getState(stackState);
+        RefractoryBrickType refractorybrickType = getState(stackState);
 
-        lines.add(I18n.format("tile.wire_coil.tooltip_heat", coilType.coilTemperature));
+        lines.add(I18n.format("tile.refractory_brick.tooltip_heat", refractorybrickType.refractorybrickTemperature));
 
-        if (TooltipHelper.isShiftDown()) {
-            int coilTier = FirebrickType.ordinal();
-            lines.add(I18n.format("tile.wire_coil.tooltip_smelter"));
-            lines.add(I18n.format("tile.wire_coil.tooltip_parallel_smelter", FirebrickType.level * 32));
-            int EUt = MetaTileEntityMultiSmelter.getEUtForParallel(
-                    MetaTileEntityMultiSmelter.getMaxParallel(FirebrickType.getLevel()), FirebrickType.getEnergyDiscount());
-            lines.add(I18n.format("tile.wire_coil.tooltip_energy_smelter", EUt));
-            lines.add(I18n.format("tile.wire_coil.tooltip_pyro"));
-            lines.add(I18n.format("tile.wire_coil.tooltip_speed_pyro", coilTier == 0 ? 75 : 50 * (coilTier + 1)));
-            lines.add(I18n.format("tile.wire_coil.tooltip_cracking"));
-            lines.add(I18n.format("tile.wire_coil.tooltip_energy_cracking", 100 - 10 * coilTier));
-        } else {
-            lines.add(I18n.format("tile.wire_coil.tooltip_extended_info"));
-        }
-    }*/
+        lines.add(I18n.format("tile.wire_coil.tooltip_extended_info"));
+
+    }
 
     @Override
     public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
@@ -84,27 +67,25 @@ public class BlockFirebrick extends VariantActiveBlock<BlockFirebrick.FirebrickT
     }
 
     @Override
-    protected boolean isBloomEnabled(FirebrickType value) {
+    protected boolean isBloomEnabled(RefractoryBrickType value) {
         return ConfigHolder.client.coilsActiveEmissiveTextures;
     }
 
-    public enum FirebrickType implements IStringSerializable, IFirebrickBlockStats {
+    public enum RefractoryBrickType implements IStringSerializable, IRefractoryBrickBlockStats {
 
         TIER1("tier_1", 1800, 1, 1, 1),
         TIER2("tier_2", 2700, 2, 1, 2),
         TIER3("tier_3", 3600, 2, 2, 3);
 
         private final String name;
-        // electric blast furnace properties
-        private final int firebrickTemperature;
-        // multi smelter properties
+        private final int refractorybrickTemperature;
         private final int level;
         private final int energyDiscount;
         private final int tier;
 
-        FirebrickType(String name, int firebrickTemperature, int level, int energyDiscount, int tier) {
+        RefractoryBrickType(String name, int refractorybrickTemperature, int level, int energyDiscount, int tier) {
             this.name = name;
-            this.firebrickTemperature = firebrickTemperature;
+            this.refractorybrickTemperature = refractorybrickTemperature;
             this.level = level;
             this.energyDiscount = energyDiscount;
             this.tier = tier;
@@ -117,8 +98,8 @@ public class BlockFirebrick extends VariantActiveBlock<BlockFirebrick.FirebrickT
         }
 
         @Override
-        public int getFirebrickTemperature() {
-            return firebrickTemperature;
+        public int getRefractoryBrickTemperature() {
+            return refractorybrickTemperature;
         }
 
         @Override

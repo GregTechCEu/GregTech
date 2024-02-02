@@ -266,6 +266,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return TraceabilityPredicate.HEATING_COILS.get();
     }
 
+    public static TraceabilityPredicate refractoryBricks() {
+        return TraceabilityPredicate.REFRACTORY_BRICKS.get();
+    }
+
     public TraceabilityPredicate selfPredicate() {
         return metaTileEntities(this).setCenter();
     }

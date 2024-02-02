@@ -158,7 +158,7 @@ public class CommonProxy {
         registry.register(METAL_SHEET);
         registry.register(LARGE_METAL_SHEET);
         registry.register(STUDS);
-        registry.register(FIREBRICK);
+        registry.register(REFRACTORY_BRICK);
         for (BlockLamp block : LAMPS.values()) registry.register(block);
         for (BlockLamp block : BORDERLESS_LAMPS.values()) registry.register(block);
 
@@ -277,7 +277,7 @@ public class CommonProxy {
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
         registry.register(createItemBlock(POWDERBARREL, ItemBlock::new));
         registry.register(createItemBlock(ITNT, ItemBlock::new));
-        registry.register(createItemBlock(FIREBRICK, VariantItemBlock::new));
+        registry.register(createItemBlock(REFRACTORY_BRICK, VariantItemBlock::new));
         for (BlockCompressed block : COMPRESSED_BLOCKS) {
             registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.block)));
         }

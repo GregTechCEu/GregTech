@@ -36,7 +36,7 @@ import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
 import gregtech.common.blocks.BlockBatteryPart;
-import gregtech.common.blocks.BlockFirebrick;
+import gregtech.common.blocks.BlockRefractoryBrick;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.CommandHand;
@@ -209,8 +209,8 @@ public class CoreModule implements IGregTechModule {
         for (BlockBatteryPart.BatteryPartType type : BlockBatteryPart.BatteryPartType.values()) {
             PSS_BATTERIES.put(MetaBlocks.BATTERY_BLOCK.getState(type), type);
         }
-        for (BlockFirebrick.FirebrickType type : BlockFirebrick.FirebrickType.values()) {
-            FIREBRICKS.put(MetaBlocks.FIREBRICK.getState(type), type);
+        for (BlockRefractoryBrick.RefractoryBrickType type : BlockRefractoryBrick.RefractoryBrickType.values()) {
+            REFRACTORY_BRICKS.put(MetaBlocks.REFRACTORY_BRICK.getState(type), type);
         }
         /* End API Block Registration */
 
