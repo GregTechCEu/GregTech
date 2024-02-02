@@ -598,6 +598,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public Recipe find(@NotNull Collection<ItemStack> items, @NotNull Collection<FluidStack> fluids,
                        @NotNull Predicate<Recipe> canHandle) {
         List<List<AbstractMapIngredient>> list = prepareRecipeFind(items, fluids);
+        // couldn't build any inputs to use for search, so no recipe could be found
         if (list == null) return null;
         return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
     }
