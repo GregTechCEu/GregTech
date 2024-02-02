@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.multi;
+package gregtech.common.metatileentities.multi.primitive;
 
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;

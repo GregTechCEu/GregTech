@@ -38,10 +38,10 @@ import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
-import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
-import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
+import gregtech.common.metatileentities.multi.primitive.MetaTileEntityCokeOven;
+import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveBlastFurnace;
+import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveWaterPump;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;

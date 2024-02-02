@@ -10,7 +10,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
+import gregtech.common.metatileentities.multi.primitive.MetaTileEntityLargeBoiler;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
