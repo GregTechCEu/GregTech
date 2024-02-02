@@ -370,7 +370,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected void trySearchNewRecipe() {
         long maxVoltage = getMaxVoltage();
         Recipe currentRecipe = null;
-        Iterator<Recipe> recipeIterator = null;
+        Iterator<Recipe> recipeIterator;
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
 
@@ -387,9 +387,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return;
         }
 
+        // Search for a new recipe if the previous one is no longer valid
         while (recipeIterator != null && recipeIterator.hasNext()) {
             Recipe next = recipeIterator.next();
             if (next == null) continue;
+
+            // since previous attempts to prepare a recipe will have flagged either the input
+            // or outputs as invalid we must reset the flags before attempting to prepare another recipe
             this.isOutputsFull = false;
             this.invalidInputsForRecipes = false;
 
@@ -400,7 +404,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             }
         }
 
-        // this.isOutputsFull = true;
+        // if no valid recipes are found mark the inputs and outputs as invalid so any changes
+        // will re-trigger a recipe search
+        this.isOutputsFull = true;
         this.invalidInputsForRecipes = true;
     }
 
