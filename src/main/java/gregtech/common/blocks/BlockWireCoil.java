@@ -96,7 +96,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         HSS_G("hss_g", 5400, 4, 4, Materials.HSSG),
         NAQUADAH("naquadah", 7200, 8, 4, Materials.Naquadah),
         TRINIUM("trinium", 9001, 8, 8, Materials.Trinium),
-        TRITANIUM("tritanium", 16800, 16, 8, Materials.Tritanium);
+        TRITANIUM("tritanium", 18800, 16, 8, Materials.Tritanium);
         //STAINLESSSTEEL("stainless_steel", 12000, 32, 16, Materials.StainlessSteel);
         private final String name;
         // electric blast furnace properties
