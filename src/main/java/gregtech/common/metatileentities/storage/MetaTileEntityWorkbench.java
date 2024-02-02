@@ -36,6 +36,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
@@ -49,6 +50,7 @@ import com.cleanroommc.modularui.widgets.PageButton;
 import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
@@ -61,6 +63,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
@@ -234,16 +237,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         clearInventory(itemBuffer, toolInventory);
     }
 
-//    private gregtech.api.gui.widgets.AbstractWidgetGroup createItemListTab() {
-//        gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
-//        widgetGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(5, 20, "gregtech.machine.workbench.storage_note_1"));
-//        widgetGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(5, 30, "gregtech.machine.workbench.storage_note_2"));
-//        CraftingRecipeLogic recipeResolver = getCraftingRecipeLogic();
-//        IItemList itemList = recipeResolver == null ? null : recipeResolver.getItemSourceList();
-//        widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.ItemListGridWidget(11, 45, 8, 5, itemList));
-//        return widgetGroup;
-//    }
-
     @Override
     public boolean usesMui2() {
         return true;
@@ -254,6 +247,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         final String nineSlot = "XXXXXXXXX";
         final String[] craftingGrid = new String[] {"XXX", "XXX", "XXX"};
         final char key = 'X';
+
+        this.combinedInventory = getAvailableHandlers();
+        int rows = 1 + this.combinedInventory.getSlots() / 8;
+        final String[] combinedMatrix = new String[rows];
+        Arrays.fill(combinedMatrix, "XXXXXXXX"); // 8 slots wide
 
         var toolSlots = new SlotGroup("tool_slots", 9, true);
         var inventory = new SlotGroup("inventory", 9, true);
@@ -291,7 +289,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .child(new PagedWidget<>()
                         .top(7)
                         .margin(7)
-                        .expanded()
+                        .coverChildren()
                         .controller(controller)
                         .addPage(new Column()
                                 .coverChildren()
@@ -341,8 +339,14 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                 .slot(SyncHandlers.itemSlot(this.internalInventory, i)
                                                         .slotGroup(inventory)))
                                         .build()))
-                        .addPage(new Column().coverChildren()
-                                .child(IKey.str("add storage things").asWidget())))
+                        .addPage(new Column()
+                                .expanded()
+                                .child(new Grid()
+                                        .heightRel(.9f).coverChildrenWidth()
+                                        .child(SlotGroupWidget.builder()
+                                                .matrix(combinedMatrix)
+                                                .key(key, this::createInventoryList)
+                                                .build().marginRight(4)))))
                 .bindPlayerInventory();
     }
 
@@ -350,6 +354,14 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         buffer.writeVarInt(this.combinedInventory.getSlots());
         getCraftingRecipeLogic().collectAvailableItems();
         getCraftingRecipeLogic().writeAvailableStacks(buffer);
+    }
+
+    public IWidget createInventoryList(int slot) {
+        if (slot >= this.combinedInventory.getSlots()) {
+            return GuiTextures.DISABLED.asWidget().size(18);
+        }
+        return new ItemSlot()
+                .slot(SyncHandlers.itemSlot((IItemHandlerModifiable) this.combinedInventory, slot));
     }
 
     @Override
