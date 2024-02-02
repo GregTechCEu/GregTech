@@ -10,6 +10,7 @@ import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -51,7 +52,9 @@ public class WireRecipeHandler {
 
     public static void register() {
         // Generate 1x Wire creation recipes (Wiremill, Extruder, Wire Cutters)
-        wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::processWireSingle);
+        if (!ConfigHolder.recipeRemovalConfig.processingHandlers.removeWireRecipes) {
+            wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::processWireSingle);
+        }
 
         // Generate Cable Covering Recipes
         wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
@@ -111,6 +114,7 @@ public class WireRecipeHandler {
         int insulationAmount = INSULATION_AMOUNT.get(cablePrefix);
 
         // Generate hand-crafting recipes for ULV and LV cables
+
         if (voltageTier <= GTValues.LV) {
             generateManualRecipe(wirePrefix, material, cablePrefix, cableAmount);
         }

@@ -43,6 +43,11 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
+    @Config.Comment("Config options for selectively disable recipes generation")
+    @Config.Name("Recipe removal config")
+    @Config.RequiresMcRestart
+    public static RecipeRemovalConfig recipeRemovalConfig = new RecipeRemovalConfig();
+
     public static class MachineOptions {
 
         @Config.Comment({ "Whether insufficient energy supply should reset Machine recipe progress to zero.",
@@ -700,5 +705,57 @@ public class ConfigHolder {
         @Config.RangeInt(min = 1, max = 512)
         @Config.Comment({ "The EU/t consumption of the NanoSaber.", "Default: 64" })
         public int energyConsumption = 64;
+    }
+
+    public static class RecipeRemovalConfig {
+
+        @Config.Comment("Config options for handling ores processing handlers")
+        @Config.Name("Processing handlers")
+        public ProcessingHandlers processingHandlers = new ProcessingHandlers();
+
+        @Config.Comment("Config options to disable other recipes")
+        @Config.Name("Other stuff")
+        public OtherStuff otherStuff = new OtherStuff();
+    }
+
+    public static class ProcessingHandlers {
+
+        @Config.Name("removeRotorRecipes")
+        @Config.RequiresMcRestart
+        public boolean removeRotorRecipes;
+
+        @Config.Name("removeWireRecipes")
+        @Config.RequiresMcRestart
+        public boolean removeWireRecipes;
+
+        @Config.Name("removeFoilRecipes")
+        @Config.RequiresMcRestart
+        public boolean removeFoilRecipes;
+        @Config.Name("removeFineWireRecipes")
+        @Config.RequiresMcRestart
+        public boolean removeFineWireRecipes;
+    }
+
+    public static class OtherStuff {
+
+        @Config.Comment({ "Remove motors, pumps etc. recipes" })
+        @Config.Name("removeComponentRecipes")
+        @Config.RequiresMcRestart
+        public boolean removeComponentRecipes;
+
+        @Config.Comment({ "Remove circuit assembler recipes using liquid tin" })
+        @Config.Name("removeTinCircuitRecipes")
+        @Config.RequiresMcRestart
+        public boolean removeTinCircuitRecipes;
+
+        @Config.Comment({ "Remove ulv to uhv casing shaped recipes" })
+        @Config.Name("removeTierCasingRecipes")
+        @Config.RequiresMcRestart
+        public boolean removeTierCasingRecipes;
+
+        @Config.Comment({ "Remove all electrolysis recipes including auto-generated recipes" })
+        @Config.Name("removeElectrolysisRecipes")
+        @Config.RequiresMcRestart
+        public boolean removeElectrolysisRecipes;
     }
 }

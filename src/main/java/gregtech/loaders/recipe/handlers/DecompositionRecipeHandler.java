@@ -8,6 +8,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -93,7 +94,8 @@ public class DecompositionRecipeHandler {
 
         // generate builder
         RecipeBuilder<?> builder;
-        if (material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING)) {
+        if (material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING) &&
+                !ConfigHolder.recipeRemovalConfig.otherStuff.removeElectrolysisRecipes) {
             builder = RecipeMaps.ELECTROLYZER_RECIPES.recipeBuilder()
                     .duration(((int) material.getProtons() * totalInputAmount * 2))
                     .EUt(material.getMaterialComponents().size() <= 2 ? VA[LV] : 2 * VA[LV]);

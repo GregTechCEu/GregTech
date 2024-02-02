@@ -46,26 +46,34 @@ import static gregtech.loaders.recipe.CraftingComponent.*;
 public class MetaTileEntityLoader {
 
     public static void init() {
-        ModHandler.addShapedRecipe(true, "casing_ulv", MetaBlocks.MACHINE_CASING.getItemVariant(ULV), "PPP", "PwP",
-                "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
-        ModHandler.addShapedRecipe(true, "casing_lv", MetaBlocks.MACHINE_CASING.getItemVariant(LV), "PPP", "PwP", "PPP",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
-        ModHandler.addShapedRecipe(true, "casing_mv", MetaBlocks.MACHINE_CASING.getItemVariant(MV), "PPP", "PwP", "PPP",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium));
-        ModHandler.addShapedRecipe(true, "casing_hv", MetaBlocks.MACHINE_CASING.getItemVariant(HV), "PPP", "PwP", "PPP",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel));
-        ModHandler.addShapedRecipe(true, "casing_ev", MetaBlocks.MACHINE_CASING.getItemVariant(EV), "PPP", "PwP", "PPP",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Titanium));
-        ModHandler.addShapedRecipe(true, "casing_iv", MetaBlocks.MACHINE_CASING.getItemVariant(IV), "PPP", "PwP", "PPP",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel));
-        ModHandler.addShapedRecipe(true, "casing_luv", MetaBlocks.MACHINE_CASING.getItemVariant(LuV), "PPP", "PwP",
-                "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium));
-        ModHandler.addShapedRecipe(true, "casing_zpm", MetaBlocks.MACHINE_CASING.getItemVariant(ZPM), "PPP", "PwP",
-                "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy));
-        ModHandler.addShapedRecipe(true, "casing_uv", MetaBlocks.MACHINE_CASING.getItemVariant(UV), "PPP", "PwP", "PPP",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Darmstadtium));
-        ModHandler.addShapedRecipe(true, "casing_uhv", MetaBlocks.MACHINE_CASING.getItemVariant(UHV), "PPP", "PwP",
-                "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Neutronium));
+        if (!ConfigHolder.recipeRemovalConfig.otherStuff.removeTierCasingRecipes) {
+            ModHandler.addShapedRecipe(true, "casing_ulv", MetaBlocks.MACHINE_CASING.getItemVariant(ULV), "PPP", "PwP",
+                    "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
+            ModHandler.addShapedRecipe(true, "casing_lv", MetaBlocks.MACHINE_CASING.getItemVariant(LV), "PPP", "PwP",
+                    "PPP",
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
+            ModHandler.addShapedRecipe(true, "casing_mv", MetaBlocks.MACHINE_CASING.getItemVariant(MV), "PPP", "PwP",
+                    "PPP",
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium));
+            ModHandler.addShapedRecipe(true, "casing_hv", MetaBlocks.MACHINE_CASING.getItemVariant(HV), "PPP", "PwP",
+                    "PPP",
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel));
+            ModHandler.addShapedRecipe(true, "casing_ev", MetaBlocks.MACHINE_CASING.getItemVariant(EV), "PPP", "PwP",
+                    "PPP",
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Titanium));
+            ModHandler.addShapedRecipe(true, "casing_iv", MetaBlocks.MACHINE_CASING.getItemVariant(IV), "PPP", "PwP",
+                    "PPP",
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel));
+            ModHandler.addShapedRecipe(true, "casing_luv", MetaBlocks.MACHINE_CASING.getItemVariant(LuV), "PPP", "PwP",
+                    "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium));
+            ModHandler.addShapedRecipe(true, "casing_zpm", MetaBlocks.MACHINE_CASING.getItemVariant(ZPM), "PPP", "PwP",
+                    "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy));
+            ModHandler.addShapedRecipe(true, "casing_uv", MetaBlocks.MACHINE_CASING.getItemVariant(UV), "PPP", "PwP",
+                    "PPP",
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Darmstadtium));
+            ModHandler.addShapedRecipe(true, "casing_uhv", MetaBlocks.MACHINE_CASING.getItemVariant(UHV), "PPP", "PwP",
+                    "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Neutronium));
+        }
 
         // If these recipes are changed, change the values in MaterialInfoLoader.java
         registerMachineRecipe(false, MetaTileEntities.HULL, "PLP", "CHC", 'P', HULL_PLATE, 'L', PLATE, 'C', CABLE, 'H',
