@@ -563,12 +563,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Find a recipe Supplier using inputs
+     * Creates a Recipe Iterator using inputs
      *
      * @param maxVoltage  the maximum voltage the recipe can have
      * @param inputs      the item inputs used to search for the recipe
      * @param fluidInputs the fluid inputs used to search for the recipe
-     * @return the recipe if found, otherwise null
+     * @return the recipe iterator if this.recipeMap is valid, otherwise null
      */
     @Nullable
     protected Iterator<Recipe> getRecipeIterator(long maxVoltage, IItemHandlerModifiable inputs,
