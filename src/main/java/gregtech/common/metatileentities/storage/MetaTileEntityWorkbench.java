@@ -1,5 +1,11 @@
 package gregtech.common.metatileentities.storage;
 
+import com.cleanroommc.modularui.widget.ScrollWidget;
+
+import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
+
+import com.cleanroommc.modularui.widgets.layout.Grid;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -49,7 +55,6 @@ import com.cleanroommc.modularui.widgets.PageButton;
 import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
@@ -74,8 +79,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
-
-    private IItemHandler combinedInventory;
+    private IItemHandlerModifiable combinedInventory;
+    private IItemHandlerModifiable connectedInventory;
 
     private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9);
     private CraftingRecipeLogic recipeLogic = null;
@@ -190,7 +195,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         this.recipeMemory.deserializeNBT(data.getCompoundTag("RecipeMemory"));
     }
 
-    public IItemHandler getAvailableHandlers() {
+    public IItemHandlerModifiable getAvailableHandlers() {
         var handlers = new ArrayList<IItemHandler>();
         for (var facing : EnumFacing.VALUES) {
             var neighbor = getNeighbor(facing);
@@ -198,10 +203,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             var handler = neighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
             if (handler != null) handlers.add(handler);
         }
+        this.connectedInventory = new ItemHandlerList(handlers);
         handlers.add(this.internalInventory);
         handlers.add(this.toolInventory);
-        this.combinedInventory = new ItemHandlerList(handlers);
-        return this.combinedInventory;
+        return this.combinedInventory = new ItemHandlerList(handlers);
     }
 
     @Override
@@ -284,8 +289,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                 .tab(GuiTextures.TAB_TOP, 0)
                                 .overlay(new ItemDrawable(new ItemStack(Blocks.CHEST))
                                         .asIcon().size(16))))
+                .child(IKey.lang(getMetaFullName()).asWidget()
+                        .top(7).left(7))
                 .child(new PagedWidget<>()
-                        .top(7)
+                        .top(22)
                         .margin(7)
                         .coverChildren()
                         .controller(controller)
@@ -338,13 +345,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                         .slotGroup(inventory)))
                                         .build()))
                         .addPage(new Column()
-                                .expanded()
-                                .child(new Grid()
-                                        .heightRel(.9f).coverChildrenWidth()
-                                        .child(SlotGroupWidget.builder()
-                                                .matrix(combinedMatrix)
-                                                .key(key, this::createInventoryList)
-                                                .build().marginRight(4)))))
+                                .margin(7, 0)
+                                .background(GTGuiTextures.DISPLAY)
+                                .coverChildren()
+                                .padding(2)
+                                .child(createInventoryList(guiSyncManager))))
                 .bindPlayerInventory();
     }
 
@@ -354,12 +359,27 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         getCraftingRecipeLogic().writeAvailableStacks(buffer);
     }
 
-    public IWidget createInventoryList(int slot) {
-        if (slot >= this.combinedInventory.getSlots()) {
-            return GuiTextures.DISABLED.asWidget().size(18);
+    public IWidget createInventoryList(GuiSyncManager syncManager) {
+        var connected = new SlotGroup("connected_inventory", 9, true);
+        syncManager.registerSlotGroup(connected);
+
+        List<IWidget> list = new ArrayList<>(this.connectedInventory.getSlots());
+        for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
+            if (i < this.connectedInventory.getSlots()) {
+                list.add(new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
+                                        .slotGroup(connected)));
+                //todo maybe show what inventory a slot belongs to?
+                continue;
+            }
+            list.add(GuiTextures.DISABLED.asWidget().size(18));
         }
-        return new ItemSlot()
-                .slot(SyncHandlers.itemSlot((IItemHandlerModifiable) this.combinedInventory, slot));
+        return new Grid()
+                .coverChildrenWidth()
+                .height(18 * 6)
+                .scrollable(new VerticalScrollData(), null)
+                .minElementMargin(0, 0)
+                .mapTo(8, list, (index, value) -> value);
     }
 
     @Override
