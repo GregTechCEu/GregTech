@@ -400,7 +400,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             }
         }
 
-//        this.isOutputsFull = true;
+        // this.isOutputsFull = true;
         this.invalidInputsForRecipes = true;
     }
 
