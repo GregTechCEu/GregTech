@@ -356,9 +356,9 @@ minecraft {
     extraRunJvmArguments.add("-ea:${modGroup}")
     if (usesMixins.toBoolean()) {
         extraRunJvmArguments.addAll([
-            '-Dmixin.hotSwap=true',
-            '-Dmixin.checks.interfaces=true',
-            '-Dmixin.debug.export=true'
+                '-Dmixin.hotSwap=true',
+                '-Dmixin.checks.interfaces=true',
+                '-Dmixin.debug.export=true'
         ])
     }
 
