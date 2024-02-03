@@ -64,6 +64,11 @@
         "textures": {
           "all": "gregtech:blocks/casings/solid/machine_casing_palladium_substation"
         }
+      },
+      "oil_pipe": {
+        "textures": {
+          "all": "gregtech:blocks/casings/solid/machine_casing_oil_pipe"
+        }
       }
     }
   }

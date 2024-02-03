@@ -2620,6 +2620,7 @@ tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
 tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
 tile.metal_casing.hsse_sturdy.name=Sturdy HSS-E Machine Casing
 tile.metal_casing.palladium_substation.name=Palladium Substation Casing
+tile.metal_casing.oil_pipe.name=Oil Pipe Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
