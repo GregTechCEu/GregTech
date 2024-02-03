@@ -84,36 +84,6 @@ public class MaterialRecipeHandler {
                         .buildAndRegister();
             }
 
-            if (!mat.hasFlag(EXPLOSIVE) && !mat.hasFlag(FLAMMABLE)) {
-                RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copy(4, dustStack))
-                        .outputs(GTUtility.copy(3, gemStack))
-                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(new ItemStack(MetaBlocks.POWDERBARREL, 8))
-                        .buildAndRegister();
-
-                RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copy(4, dustStack))
-                        .outputs(GTUtility.copy(3, gemStack))
-                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesAmount(4)
-                        .buildAndRegister();
-
-                RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copy(4, dustStack))
-                        .outputs(GTUtility.copy(3, gemStack))
-                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(MetaItems.DYNAMITE.getStackForm(2))
-                        .buildAndRegister();
-
-                RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copy(4, dustStack))
-                        .outputs(GTUtility.copy(3, gemStack))
-                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(new ItemStack(MetaBlocks.ITNT))
-                        .buildAndRegister();
-            }
-
             if (oreProperty != null) {
                 Material smeltingResult = oreProperty.getDirectSmeltResult();
                 if (smeltingResult != null) {
@@ -122,38 +92,8 @@ public class MaterialRecipeHandler {
                 }
             }
 
-        } else if (mat.hasProperty(PropertyKey.INGOT)) {
-            if (!mat.hasAnyOfFlags(FLAMMABLE, NO_SMELTING)) {
-
-                boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(mat);
-                ItemStack ingotStack = OreDictUnifier.get(hasHotIngot ? OrePrefix.ingotHot : OrePrefix.ingot, mat);
-                if (ingotStack.isEmpty() && oreProperty != null) {
-                    Material smeltingResult = oreProperty.getDirectSmeltResult();
-                    if (smeltingResult != null) {
-                        ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
-                    }
-                }
-                int blastTemp = mat.getBlastTemperature();
-
-                if (blastTemp <= 0) {
-                    // smelting magnetic dusts is handled elsewhere
-                    if (!mat.hasFlag(IS_MAGNETIC)) {
-                        // do not register inputs by ore dict here. Let other mods register their own dust -> ingots
-                        ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
-                    }
-                } else {
-                    IngotProperty ingotProperty = mat.getProperty(PropertyKey.INGOT);
-                    BlastProperty blastProperty = mat.getProperty(PropertyKey.BLAST);
-
-                    processEBFRecipe(mat, blastProperty, ingotStack);
-
-                    if (ingotProperty.getMagneticMaterial() != null) {
-                        processEBFRecipe(ingotProperty.getMagneticMaterial(), blastProperty, ingotStack);
-                    }
-                }
-            }
         } else {
-            if (mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(EXCLUDE_PLATE_COMPRESSOR_RECIPE)) {
+            if (!mat.hasProperty(PropertyKey.INGOT) && mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(EXCLUDE_PLATE_COMPRESSOR_RECIPE)) {
                 RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder()
                         .inputs(dustStack)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
@@ -209,31 +149,6 @@ public class MaterialRecipeHandler {
             }
             blastBuilder.buildAndRegister();
         }
-
-        // Add Vacuum Freezer recipe if required.
-        if (ingotHot.doGenerateItem(material)) {
-            int vacuumEUt = property.getVacuumEUtOverride() != -1 ? property.getVacuumEUtOverride() : VA[MV];
-            int vacuumDuration = property.getVacuumDurationOverride() != -1 ? property.getVacuumDurationOverride() :
-                    (int) material.getMass() * 3;
-
-            if (blastTemp < 5000) {
-                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
-                        .input(ingotHot, material)
-                        .output(ingot, material)
-                        .duration(vacuumDuration)
-                        .EUt(vacuumEUt)
-                        .buildAndRegister();
-            } else {
-                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
-                        .input(ingotHot, material)
-                        .fluidInputs(Materials.Helium.getFluid(FluidStorageKeys.LIQUID, 500))
-                        .output(ingot, material)
-                        .fluidOutputs(Materials.Helium.getFluid(250))
-                        .duration(vacuumDuration)
-                        .EUt(vacuumEUt)
-                        .buildAndRegister();
-            }
-        }
     }
 
     public static void processIngot(OrePrefix ingotPrefix, Material material, IngotProperty property) {
@@ -277,6 +192,7 @@ public class MaterialRecipeHandler {
                     .EUt(4 * getVoltageMultiplier(material))
                     .buildAndRegister();
         }
+
 
         ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass())
                 .input(ingot, material)
@@ -475,7 +391,6 @@ public class MaterialRecipeHandler {
 
         // do not allow hand crafting or uncrafting, extruding or alloy smelting of blacklisted blocks
         if (!material.hasFlag(EXCLUDE_BLOCK_CRAFTING_RECIPES)) {
-
             // do not allow hand crafting or uncrafting of blacklisted blocks
             if (!material.hasFlag(EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES) &&
                     !ConfigHolder.recipes.disableManualCompression) {
@@ -502,6 +417,7 @@ public class MaterialRecipeHandler {
                         .outputs(blockStack)
                         .duration(5).EUt(4 * voltageMultiplier)
                         .buildAndRegister();
+
             } else if (material.hasProperty(PropertyKey.GEM)) {
                 COMPRESSOR_RECIPES.recipeBuilder()
                         .input(gem, material, (int) (block.getMaterialAmount(material) / M))

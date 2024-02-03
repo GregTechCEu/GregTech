@@ -59,6 +59,7 @@ public final class MetaItems {
 
     public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[13];
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PLATE;
+    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_RING;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_CREDIT;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_BOTTLE;
@@ -69,24 +70,19 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_CYLINDER;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ANVIL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_NAME;
-    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
 
     public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[27];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOLT;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_RING;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_CELL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_INGOT;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_WIRE;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BLOCK;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOTTLE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_FOIL;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR_SMALL;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD_LONG;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROTOR;
 
     public static MetaItem<?>.MetaValueItem SPRAY_SOLVENT;
@@ -575,7 +571,6 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.gemFlawless);
         orePrefixes.add(OrePrefix.gemExquisite);
         orePrefixes.add(OrePrefix.ingot);
-        orePrefixes.add(OrePrefix.ingotHot);
         orePrefixes.add(OrePrefix.plate);
         orePrefixes.add(OrePrefix.foil);
         orePrefixes.add(OrePrefix.stick);

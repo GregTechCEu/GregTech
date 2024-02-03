@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.category.RecipeCategories;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
@@ -25,6 +26,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
 import com.google.common.collect.ImmutableList;
+
+import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,9 +37,10 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static gregtech.api.GTValues.L;
-import static gregtech.api.GTValues.M;
+import static gregtech.api.GTValues.*;
+import static gregtech.api.GTValues.MV;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
+import static gregtech.api.unification.ore.OrePrefix.dust;
 
 public class RecyclingRecipes {
 
@@ -77,32 +82,8 @@ public class RecyclingRecipes {
         if (prefix != OrePrefix.dust) {
             registerMaceratorRecycling(input, components, voltageMultiplier);
         }
-        if (prefix != null) {
-            registerExtractorRecycling(input, components, voltageMultiplier, prefix);
-        }
-        if (ignoreArcSmelting) return;
 
-        if (components.size() == 1) {
-            Material m = components.get(0).material;
-
-            // skip non-ingot materials
-            if (!m.hasProperty(PropertyKey.INGOT)) {
-                return;
-            }
-
-            // Skip Ingot -> Ingot Arc Recipes
-            if (OreDictUnifier.getPrefix(input) == OrePrefix.ingot &&
-                    m.getProperty(PropertyKey.INGOT).getArcSmeltInto() == m) {
-                return;
-            }
-
-            // Prevent Magnetic dust -> Regular Ingot Arc Furnacing, avoiding the EBF recipe
-            // "I will rework magnetic materials soon" - DStrand1
-            if (prefix == OrePrefix.dust && m.hasFlag(IS_MAGNETIC)) {
-                return;
-            }
-        }
-        registerArcRecycling(input, components, prefix);
+        registerSmeltingRecycling(input, components, voltageMultiplier, prefix);
     }
 
     private static void registerMaceratorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
@@ -119,7 +100,7 @@ public class RecyclingRecipes {
         RecipeBuilder<SimpleRecipeBuilder> recipe = RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
-                .duration(calculateDuration(outputs))
+                .duration(calculateDuration(materials))
                 .EUt(2 * multiplier)
                 .category(RecipeCategories.MACERATOR_RECYCLING);
 
@@ -128,7 +109,7 @@ public class RecyclingRecipes {
         recipe.buildAndRegister();
     }
 
-    private static void registerExtractorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier,
+    private static void registerSmeltingRecycling(ItemStack input, List<MaterialStack> materials, int multiplier,
                                                    @Nullable OrePrefix prefix) {
         // Handle simple materials separately
         if (prefix != null && prefix.secondaryMaterials.isEmpty()) {
@@ -136,169 +117,108 @@ public class RecyclingRecipes {
             if (ms == null || ms.material == null) {
                 return;
             }
+
             Material m = ms.material;
+
+            /*
             if (m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getMacerateInto() != m) {
                 m = m.getProperty(PropertyKey.INGOT).getMacerateInto();
             }
+
+             */
+
             if (!m.hasProperty(PropertyKey.FLUID) || m.getFluid() == null) {
                 return;
             }
-            if (prefix == OrePrefix.dust && m.hasProperty(PropertyKey.BLAST)) {
+
+            if (!m.hasProperty(PropertyKey.BLAST)) {
+                RecipeMaps.BLAST_RECIPES.recipeBuilder()
+                        .inputs(input.copy())
+                        .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
+                        .blastFurnaceTemp(1200)
+                        .duration((int) (100 * ms.amount / M))
+                        .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                        .buildAndRegister();
+
+                //TODO REGISTER EQUIVALENT IN PRIMITIVE FURNACES
                 return;
             }
-            RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-                    .inputs(input.copy())
-                    .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
-                    .duration((int) Math.max(1, ms.amount * ms.material.getMass() / M))
-                    .EUt(GTValues.VA[GTValues.LV] * multiplier)
-                    .category(RecipeCategories.EXTRACTOR_RECYCLING)
-                    .buildAndRegister();
 
-            return;
-        }
+            var property = m.getProperty(PropertyKey.BLAST);
 
-        // Find the first Material which can create a Fluid.
-        // If no Material in the list can create a Fluid, return.
-        MaterialStack fluidMs = materials.stream()
-                .filter(ms -> ms.material.hasProperty(PropertyKey.FLUID) && ms.material.getFluid() != null)
-                .findFirst().orElse(null);
-        if (fluidMs == null) return;
-
-        // Find the next MaterialStack, which will be the Item output.
-        // This can sometimes be before the Fluid output in the list, so we have to
-        // assume it can be anywhere in the list.
-        MaterialStack itemMs = materials.stream().filter(ms -> !ms.material.equals(fluidMs.material)).findFirst()
-                .orElse(null);
-
-        // Calculate the duration based off of those two possible outputs.
-        // - Sum the two Material amounts together (if both exist)
-        // - Divide the sum by M
-        long duration = fluidMs.amount * fluidMs.material.getMass();
-        if (itemMs != null) duration += (itemMs.amount * itemMs.material.getMass());
-        duration = Math.max(1L, duration / M);
-
-        // Build the final Recipe.
-        RecipeBuilder<?> extractorBuilder = RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-                .inputs(input.copy())
-                .fluidOutputs(fluidMs.material.getFluid((int) (fluidMs.amount * L / M)))
-                .duration((int) duration)
-                .EUt(GTValues.VA[GTValues.LV] * multiplier)
-                .category(RecipeCategories.EXTRACTOR_RECYCLING);
-
-        // Null check the Item before adding it to the Builder.
-        // - Try to output an Ingot, otherwise output a Dust.
-        if (itemMs != null) {
-            extractorBuilder.outputs(OreDictUnifier.getIngotOrDust(itemMs));
-        }
-
-        cleanInputNBT(input, extractorBuilder);
-        extractorBuilder.buildAndRegister();
-    }
-
-    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials,
-                                             @Nullable OrePrefix prefix) {
-        // Block dusts from being arc'd instead of EBF'd
-        MaterialStack ms = OreDictUnifier.getMaterial(input);
-        if (prefix == OrePrefix.dust && ms != null && ms.material.hasProperty(PropertyKey.BLAST)) {
-            return;
-        } else if (prefix == OrePrefix.block) {
-            if (ms != null && !ms.material.hasProperty(PropertyKey.GEM)) {
-                Material arcSmeltInto = ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto();
-
-                // Check results to see if the material does not arc smelt into itself
-                MaterialStack materialOutput = getArcSmeltingResult(ms);
-
-                if (materialOutput == null) {
-                    return;
-                }
-
-                RecipeBuilder<?> builder;
-
-                // short circuit. Assuming ingot if material is the same
-                if (materialOutput.material == ms.material) {
-                    ItemStack output = OreDictUnifier.get(OrePrefix.ingot, arcSmeltInto, 9);
-                    builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                            .inputs(input.copy())
-                            .outputs(output)
-                            .duration(calculateDuration(Collections.singletonList(output)))
-                            .EUt(GTValues.VA[GTValues.LV]);
-                } else {
-                    // Finalize the output List
-                    List<ItemStack> outputs = finalizeOutputs(
-                            Collections.singletonList(materialOutput),
-                            RecipeMaps.ARC_FURNACE_RECIPES.getMaxOutputs(),
-                            RecyclingRecipes::getArcIngotOrDust);
-
-                    builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                            .inputs(input.copy())
-                            .outputs(outputs)
-                            .duration(calculateDuration(outputs))
-                            .EUt(GTValues.VA[GTValues.LV]);
-                }
-
-                // separate special arc smelting recipes into the regular category
-                // i.e. Iron -> Wrought Iron, Copper -> Annealed Copper
-                if (ms.material.hasFlag(IS_MAGNETIC) || ms.material == arcSmeltInto) {
-                    builder.category(RecipeCategories.ARC_FURNACE_RECYCLING);
-                }
-
-                if (builder.getOutputs().size() > 0) {
-                    builder.buildAndRegister();
-                }
+            int blastTemp = property.getBlastTemperature();
+            BlastProperty.GasTier gasTier = property.getGasTier();
+            int duration = property.getDurationOverride();
+            if (duration <= 0) {
+                duration = Math.max(1, (int) (m.getMass() * blastTemp / 50L));
             }
+            int EUt = property.getEUtOverride();
+            if (EUt <= 0) EUt = VA[MV];
+
+            BlastRecipeBuilder blastBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
+                    .input(prefix, m)
+                    .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
+                    .blastFurnaceTemp(blastTemp)
+                    .EUt(EUt);
+
+            if (gasTier != null) {
+                FluidStack gas = CraftingComponent.EBF_GASES.get(gasTier).copy();
+
+                blastBuilder.copy()
+                        .circuitMeta(1)
+                        .duration(duration)
+                        .buildAndRegister();
+
+                blastBuilder.copy()
+                        .circuitMeta(2)
+                        .fluidInputs(gas)
+                        .duration((int) (duration * 0.67))
+                        .buildAndRegister();
+            } else {
+                blastBuilder.duration(duration);
+                blastBuilder.buildAndRegister();
+            }
+
             return;
         }
 
-        // Filter down the materials list.
-        // - Map to the Arc Smelting result as defined below
-        // - Combine any MaterialStacks that have the same Material
+        // Filter down the materials list
         materials = combineStacks(materials.stream()
                 .map(RecyclingRecipes::getArcSmeltingResult)
                 .filter(Objects::nonNull)
+                .filter(m -> m.material.hasFluid())
                 .collect(Collectors.toList()));
 
-        // Finalize the output List
-        List<ItemStack> outputs = finalizeOutputs(
-                materials,
-                RecipeMaps.ARC_FURNACE_RECIPES.getMaxOutputs(),
-                RecyclingRecipes::getArcIngotOrDust);
-
         // Exit if no valid outputs exist for this recycling Recipe.
-        if (outputs.size() == 0) return;
+        if (materials.size() == 0) return;
 
-        // Build the final Recipe.
-        RecipeBuilder<SimpleRecipeBuilder> builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                .inputs(input.copy())
-                .outputs(outputs)
-                .duration(calculateDuration(outputs))
-                .EUt(GTValues.VA[GTValues.LV]);
+        int maxBlastTemp = 0;
 
-        if (needsRecyclingCategory(prefix, ms, outputs)) {
-            // all other recipes are recycling here
-            builder.category(RecipeCategories.ARC_FURNACE_RECYCLING);
-        }
-
-        cleanInputNBT(input, builder);
-        builder.buildAndRegister();
-    }
-
-    private static boolean needsRecyclingCategory(@Nullable OrePrefix prefix, @Nullable MaterialStack inputStack,
-                                                  @NotNull List<ItemStack> outputs) {
-        // separate special arc smelting recipes into the regular category
-        // i.e. Iron -> Wrought Iron, Copper -> Annealed Copper
-        if (prefix == OrePrefix.nugget || prefix == OrePrefix.ingot || prefix == OrePrefix.block) {
-            if (outputs.size() == 1) {
-                UnificationEntry entry = OreDictUnifier.getUnificationEntry(outputs.get(0));
-                if (entry != null && inputStack != null) {
-                    Material material = inputStack.material;
-                    if (!material.hasFlag(IS_MAGNETIC) && material.hasProperty(PropertyKey.INGOT)) {
-                        // use default category for separation
-                        return material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != entry.material;
-                    }
+        for (var i : materials) {
+            if (i.material.hasProperty(PropertyKey.BLAST)) {
+                if (i.material.getProperty(PropertyKey.BLAST).getBlastTemperature() > maxBlastTemp) {
+                    maxBlastTemp = i.material.getProperty(PropertyKey.BLAST).getBlastTemperature();
                 }
             }
         }
-        return true;
+
+        maxBlastTemp = Math.max(1200, maxBlastTemp);
+
+        // Build the final Recipe.
+        RecipeBuilder<BlastRecipeBuilder> builder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
+                .inputs(input.copy())
+                .blastFurnaceTemp(maxBlastTemp);
+
+        for (int i = 0; i < Math.min(3, materials.size()); i++) {
+            builder.fluidOutputs(materials.get(i).material.getFluid((int) (materials.get(i).amount * L / M)));
+        }
+
+        builder.duration(calculateDuration(materials))
+                .EUt(GTValues.VA[GTValues.LV]);
+
+        cleanInputNBT(input, builder);
+
+        builder.buildAndRegister();
     }
 
     private static MaterialStack getArcSmeltingResult(MaterialStack materialStack) {
@@ -306,17 +226,17 @@ public class RecyclingRecipes {
         long amount = materialStack.amount;
 
         if (material.hasFlag(EXPLOSIVE)) {
-            return new MaterialStack(Materials.Ash, amount / 16);
+            return null;
         }
 
         // If the Material is Flammable, return Ash
         if (material.hasFlag(FLAMMABLE)) {
-            return new MaterialStack(Materials.Ash, amount / 8);
+            return null;
         }
 
         // Else if the Material is a Gem, process its output (see below)
         if (material.hasProperty(PropertyKey.GEM)) {
-            return getGemArcSmeltResult(materialStack);
+            return null;
         }
 
         // Else if the Material has NO_SMELTING, return nothing
@@ -333,33 +253,6 @@ public class RecyclingRecipes {
             }
         }
         return materialStack;
-    }
-
-    private static ItemStack getArcIngotOrDust(@NotNull MaterialStack stack) {
-        if (stack.material == Materials.Carbon) {
-            return OreDictUnifier.getDust(stack);
-        }
-        return OreDictUnifier.getIngotOrDust(stack);
-    }
-
-    private static MaterialStack getGemArcSmeltResult(MaterialStack materialStack) {
-        Material material = materialStack.material;
-        long amount = materialStack.amount;
-
-        // If the Gem Material has Oxygen in it, return Ash
-        if (material.getMaterialComponents().stream()
-                .anyMatch(stack -> stack.material == Materials.Oxygen)) {
-            return new MaterialStack(Materials.Ash, amount / 8);
-        }
-
-        // Else if the Gem Material has Carbon in it, return Carbon
-        if (material.getMaterialComponents().stream()
-                .anyMatch(stack -> stack.material == Materials.Carbon)) {
-            return new MaterialStack(Materials.Carbon, amount / 8);
-        }
-
-        // Else return Dark Ash
-        return new MaterialStack(Materials.DarkAsh, amount / 8);
     }
 
     private static int calculateVoltageMultiplier(List<MaterialStack> materials) {
@@ -397,11 +290,10 @@ public class RecyclingRecipes {
      * - Sums the amount of material times the mass of the material for the List
      * - Divides that by M
      */
-    private static int calculateDuration(List<ItemStack> materials) {
+    private static int calculateDuration(List<MaterialStack> materials) {
         long duration = 0;
-        for (ItemStack is : materials) {
-            MaterialStack ms = OreDictUnifier.getMaterial(is);
-            if (ms != null) duration += ms.amount * ms.material.getMass() * is.getCount();
+        for (MaterialStack is : materials) {
+            if (is != null) duration += is.amount * is.material.getMass();
         }
         return (int) Math.max(1L, duration / M);
     }

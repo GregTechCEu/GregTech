@@ -92,76 +92,6 @@ public class MiscRecipeLoader {
                 .EUt(16)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(new ItemStack(Blocks.COBBLESTONE))
-                .outputs(new ItemStack(Blocks.COBBLESTONE))
-                .duration(16)
-                .EUt(VA[ULV])
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(new ItemStack(Blocks.STONE, 1, 0))
-                .outputs(new ItemStack(Blocks.STONE, 1, 0))
-                .duration(16)
-                .EUt(VA[ULV])
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(stone, Andesite)
-                .output(stone, Andesite)
-                .duration(16)
-                .EUt(60)
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(stone, Granite)
-                .output(stone, Granite)
-                .duration(16)
-                .EUt(60)
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(stone, Diorite)
-                .output(stone, Diorite)
-                .duration(16)
-                .EUt(60)
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(dust, Redstone)
-                .outputs(new ItemStack(Blocks.OBSIDIAN, 1))
-                .duration(16)
-                .EUt(240)
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(stone, Marble)
-                .output(stone, Marble)
-                .duration(16)
-                .EUt(240)
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(stone, Basalt)
-                .output(stone, Basalt)
-                .duration(16)
-                .EUt(240)
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(stone, GraniteRed)
-                .output(stone, GraniteRed)
-                .duration(16)
-                .EUt(960)
-                .buildAndRegister();
-
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(stone, GraniteBlack)
-                .output(stone, GraniteBlack)
-                .duration(16)
-                .EUt(960)
-                .buildAndRegister();
-
         // Jetpacks
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
                 .inputs(ELECTRIC_MOTOR_MV.getStackForm())
@@ -340,33 +270,12 @@ public class MiscRecipeLoader {
                 .outputs(CAMERA.getStackForm())
                 .buildAndRegister();
 
-        // Tempered Glass in Arc Furnace
-        ARC_FURNACE_RECIPES.recipeBuilder().duration(60).EUt(VA[LV])
+        // Tempered Glass
+        FURNACE_RECIPES.recipeBuilder().duration(60).EUt(VA[LV])
                 .input(block, Glass)
                 .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .buildAndRegister();
-
-        // Dyed Lens Decomposition
-        for (MetaValueItem item : GLASS_LENSES.values()) {
-            EXTRACTOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(15)
-                    .input(item)
-                    .fluidOutputs(Glass.getFluid(108))
-                    .category(RecipeCategories.EXTRACTOR_RECYCLING)
-                    .buildAndRegister();
-
-            MACERATOR_RECIPES.recipeBuilder().duration(15)
-                    .input(item)
-                    .chancedOutput(dust, Glass, 7500, 0)
-                    .category(RecipeCategories.MACERATOR_RECYCLING)
-                    .buildAndRegister();
-        }
-
-        // Glass Fluid Extraction
-        EXTRACTOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.GLASS))
-                .fluidOutputs(Glass.getFluid(L))
-                .duration(20).EUt(30).buildAndRegister();
 
         // Glass Plate in Alloy Smelter
         ALLOY_SMELTER_RECIPES.recipeBuilder()

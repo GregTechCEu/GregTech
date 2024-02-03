@@ -3,8 +3,8 @@ package gregtech.loaders.recipe.chemistry;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.ingot;
 import static gregtech.api.unification.ore.OrePrefix.dust;
-import static gregtech.api.unification.ore.OrePrefix.ingotHot;
 
 public class NaquadahRecipes {
 
@@ -76,10 +76,10 @@ public class NaquadahRecipes {
                 .output(dust, EnrichedNaquadahSulfate, 6) // Nq+SO4
                 .buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder().EUt(VA[IV]).duration(500).blastFurnaceTemp(7000)
+        REACTION_FURNACE.recipeBuilder().EUt(VA[IV]).duration(500)
                 .input(dust, EnrichedNaquadahSulfate, 6)
                 .fluidInputs(Hydrogen.getFluid(2000))
-                .output(ingotHot, NaquadahEnriched)
+                .output(dust, NaquadahEnriched, 1)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
@@ -113,10 +113,10 @@ public class NaquadahRecipes {
                 .output(dust, NaquadriaSulfate, 6)
                 .buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder().EUt(VA[ZPM]).duration(600).blastFurnaceTemp(9000)
+        REACTION_FURNACE.recipeBuilder().EUt(VA[ZPM]).duration(600)
                 .input(dust, NaquadriaSulfate, 6)
                 .fluidInputs(Hydrogen.getFluid(2000))
-                .output(ingotHot, Naquadria)
+                .output(dust, Naquadria)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
@@ -130,20 +130,20 @@ public class NaquadahRecipes {
 
         // TRINIUM
 
-        BLAST_RECIPES.recipeBuilder().duration(750).EUt(VA[LuV]).blastFurnaceTemp(Trinium.getBlastTemperature())
+        REACTION_FURNACE.recipeBuilder().duration(750).EUt(VA[LuV])
                 .input(dust, TriniumSulfide, 2)
                 .input(dust, Zinc)
-                .output(ingotHot, Trinium)
+                .output(dust, Trinium)
                 .output(dust, ZincSulfide, 2)
                 .buildAndRegister();
 
         // BYPRODUCT PROCESSING
 
         // Titanium Trifluoride
-        BLAST_RECIPES.recipeBuilder().EUt(VA[HV]).duration(900).blastFurnaceTemp(1941)
+        REACTION_FURNACE.recipeBuilder().EUt(VA[HV]).duration(900)
                 .input(dust, TitaniumTrifluoride, 4)
                 .fluidInputs(Hydrogen.getFluid(3000))
-                .output(ingotHot, Titanium)
+                .output(dust, Titanium)
                 .fluidOutputs(HydrofluoricAcid.getFluid(3000))
                 .buildAndRegister();
 

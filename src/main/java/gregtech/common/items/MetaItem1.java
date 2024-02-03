@@ -120,7 +120,7 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[10] = SHAPE_MOLD_NAME = addItem(22, "shape.mold.name")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_MOLDS[11] = SHAPE_MOLD_GEAR_SMALL = addItem(23, "shape.mold.gear.small")
+        SHAPE_MOLDS[11] = SHAPE_MOLD_RING = addItem(23, "shape.mold.ring")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[12] = SHAPE_MOLD_ROTOR = addItem(24, "shape.mold.rotor")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
@@ -130,8 +130,6 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[1] = SHAPE_EXTRUDER_ROD = addItem(32, "shape.extruder.rod")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[2] = SHAPE_EXTRUDER_BOLT = addItem(33, "shape.extruder.bolt")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[3] = SHAPE_EXTRUDER_RING = addItem(34, "shape.extruder.ring")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[4] = SHAPE_EXTRUDER_CELL = addItem(35, "shape.extruder.cell")
@@ -139,8 +137,6 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[5] = SHAPE_EXTRUDER_INGOT = addItem(36, "shape.extruder.ingot")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[6] = SHAPE_EXTRUDER_WIRE = addItem(37, "shape.extruder.wire")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE = addItem(40, "shape.extruder.pipe.normal")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(43, "shape.extruder.block")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
@@ -150,10 +146,6 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[22] = SHAPE_EXTRUDER_BOTTLE = addItem(53, "shape.extruder.bottle")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[23] = SHAPE_EXTRUDER_FOIL = addItem(54, "shape.extruder.foil")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[24] = SHAPE_EXTRUDER_GEAR_SMALL = addItem(55, "shape.extruder.gear_small")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
-        SHAPE_EXTRUDERS[25] = SHAPE_EXTRUDER_ROD_LONG = addItem(56, "shape.extruder.rod_long")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));

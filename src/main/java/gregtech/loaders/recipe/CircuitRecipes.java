@@ -29,40 +29,6 @@ public class CircuitRecipes {
 
     private static void waferRecipes() {
         // Boules
-        BLAST_RECIPES.recipeBuilder()
-                .input(dust, Silicon, 32)
-                .input(dust, GalliumArsenide)
-                .circuitMeta(2)
-                .output(SILICON_BOULE)
-                .blastFurnaceTemp(1784)
-                .duration(9000).EUt(VA[MV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(dust, Silicon, 64)
-                .input(dust, Phosphorus, 8)
-                .input(dust, GalliumArsenide, 2)
-                .fluidInputs(Nitrogen.getFluid(8000))
-                .output(PHOSPHORUS_BOULE)
-                .blastFurnaceTemp(2484)
-                .duration(12000).EUt(VA[HV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(block, Silicon, 16)
-                .input(ingot, Naquadah)
-                .input(dust, GalliumArsenide)
-                .fluidInputs(Argon.getFluid(8000))
-                .output(NAQUADAH_BOULE)
-                .blastFurnaceTemp(5400)
-                .duration(15000).EUt(VA[EV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(block, Silicon, 32)
-                .input(ingot, Neutronium, 4)
-                .input(dust, GalliumArsenide, 2)
-                .fluidInputs(Xenon.getFluid(8000))
-                .output(NEUTRONIUM_BOULE)
-                .blastFurnaceTemp(6484)
-                .duration(18000).EUt(VA[IV]).buildAndRegister();
 
         // Boule cutting
         CUTTER_RECIPES.recipeBuilder()
@@ -716,22 +682,6 @@ public class CircuitRecipes {
                 .chancedOutput(RAW_CRYSTAL_CHIP, 8000, 250)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(12000).EUt(VA[HV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(plate, Emerald)
-                .input(RAW_CRYSTAL_CHIP)
-                .fluidInputs(Helium.getFluid(1000))
-                .output(ENGRAVED_CRYSTAL_CHIP)
-                .blastFurnaceTemp(5000)
-                .duration(900).EUt(VA[HV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(plate, Olivine)
-                .input(RAW_CRYSTAL_CHIP)
-                .fluidInputs(Helium.getFluid(1000))
-                .output(ENGRAVED_CRYSTAL_CHIP)
-                .blastFurnaceTemp(5000)
-                .duration(900).EUt(VA[HV]).buildAndRegister();
 
         // Quantum Parts
         CHEMICAL_BATH_RECIPES.recipeBuilder()

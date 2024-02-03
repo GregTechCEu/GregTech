@@ -33,7 +33,6 @@ import gregtech.common.metatileentities.electric.MetaTileEntityItemCollector;
 import gregtech.common.metatileentities.electric.MetaTileEntityMagicEnergyAbsorber;
 import gregtech.common.metatileentities.electric.MetaTileEntityMiner;
 import gregtech.common.metatileentities.electric.MetaTileEntityPump;
-import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import gregtech.common.metatileentities.electric.MetaTileEntitySingleCombustion;
 import gregtech.common.metatileentities.electric.MetaTileEntitySingleTurbine;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
@@ -49,7 +48,6 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBla
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityImplosionCompressor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeChemicalReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeMiner;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
@@ -58,7 +56,6 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubsta
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityProcessingArray;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPyrolyseOven;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityResearchStation;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityVacuumFreezer;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
@@ -94,7 +91,6 @@ import gregtech.common.metatileentities.multi.primitive.BoilerType;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityCokeOvenHatch;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityMultiblockTank;
-import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPumpHatch;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityReverberatoryFurnace;
@@ -110,7 +106,6 @@ import gregtech.common.metatileentities.steam.SteamFurnace;
 import gregtech.common.metatileentities.steam.SteamHammer;
 import gregtech.common.metatileentities.steam.SteamMacerator;
 import gregtech.common.metatileentities.steam.SteamMiner;
-import gregtech.common.metatileentities.steam.SteamRockBreaker;
 import gregtech.common.metatileentities.steam.boiler.SteamCoalBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamLavaBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamSolarBoiler;
@@ -191,7 +186,6 @@ public class MetaTileEntities {
     // public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1]; // TODO Replication
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
-    public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
     public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
 
     // GENERATORS SECTION
@@ -275,8 +269,6 @@ public class MetaTileEntities {
     public static SteamFurnace STEAM_FURNACE_STEEL;
     public static SteamAlloySmelter STEAM_ALLOY_SMELTER_BRONZE;
     public static SteamAlloySmelter STEAM_ALLOY_SMELTER_STEEL;
-    public static SteamRockBreaker STEAM_ROCK_BREAKER_BRONZE;
-    public static SteamRockBreaker STEAM_ROCK_BREAKER_STEEL;
     public static SteamMiner STEAM_MINER;
     public static MetaTileEntityPumpHatch PUMP_OUTPUT_HATCH;
     public static MetaTileEntityPrimitiveWaterPump PRIMITIVE_WATER_PUMP;
@@ -291,11 +283,8 @@ public class MetaTileEntities {
     public static MetaTileEntityCleaningMaintenanceHatch CLEANING_MAINTENANCE_HATCH;
 
     // MULTIBLOCKS SECTION
-    public static MetaTileEntityPrimitiveBlastFurnace PRIMITIVE_BLAST_FURNACE;
     public static MetaTileEntityCokeOven COKE_OVEN;
     public static MetaTileEntityElectricBlastFurnace ELECTRIC_BLAST_FURNACE;
-    public static MetaTileEntityVacuumFreezer VACUUM_FREEZER;
-    public static MetaTileEntityImplosionCompressor IMPLOSION_COMPRESSOR;
     public static MetaTileEntityPyrolyseOven PYROLYSE_OVEN;
     public static MetaTileEntityDistillationTower DISTILLATION_TOWER;
     public static MetaTileEntityCrackingUnit CRACKER;
@@ -416,11 +405,6 @@ public class MetaTileEntities {
         STEAM_ALLOY_SMELTER_STEEL = registerMetaTileEntity(18,
                 new SteamAlloySmelter(gregtechId("steam_alloy_smelter_steel"), true));
 
-        STEAM_ROCK_BREAKER_BRONZE = registerMetaTileEntity(19,
-                new SteamRockBreaker(gregtechId("steam_rock_breaker_bronze"), false));
-        STEAM_ROCK_BREAKER_STEEL = registerMetaTileEntity(20,
-                new SteamRockBreaker(gregtechId("steam_rock_breaker_steel"), true));
-
         STEAM_MINER = registerMetaTileEntity(21, new SteamMiner(gregtechId("steam_miner"), 320, 4, 0));
 
         // Electric Furnace, IDs 50-64
@@ -532,10 +516,6 @@ public class MetaTileEntities {
         // registerSimpleMetaTileEntity(REPLICATOR, 365, "replicator", RecipeMaps.REPLICATOR_RECIPES,
         // Textures.REPLICATOR_OVERLAY, true);
 
-        // Fluid Heater, IDs 380-394
-        registerSimpleMetaTileEntity(FLUID_HEATER, 380, "fluid_heater", RecipeMaps.FLUID_HEATER_RECIPES,
-                Textures.FLUID_HEATER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
-
         // Fluid Solidifier, IDs 395-409
         registerSimpleMetaTileEntity(FLUID_SOLIDIFIER, 395, "fluid_solidifier", RecipeMaps.FLUID_SOLIDFICATION_RECIPES,
                 Textures.FLUID_SOLIDIFIER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
@@ -598,12 +578,6 @@ public class MetaTileEntities {
         // Circuit Assembler, IDs 650-664
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 635, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES,
                 Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
-
-        // Rock Breaker, IDs 665-679
-        registerMetaTileEntities(ROCK_BREAKER, 665, "rock_breaker",
-                (tier, voltageName) -> new MetaTileEntityRockBreaker(
-                        gregtechId(String.format("%s.%s", "rock_breaker", voltageName)),
-                        RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, tier));
 
         // Some space here for more SimpleMachines
 
@@ -672,13 +646,8 @@ public class MetaTileEntities {
         }
 
         // MULTIBLOCK START: IDs 1000-1149. Space left for addons to register Multiblocks grouped with the rest in JEI
-        PRIMITIVE_BLAST_FURNACE = registerMetaTileEntity(1000,
-                new MetaTileEntityPrimitiveBlastFurnace(gregtechId("primitive_blast_furnace.bronze")));
         ELECTRIC_BLAST_FURNACE = registerMetaTileEntity(1001,
                 new MetaTileEntityElectricBlastFurnace(gregtechId("electric_blast_furnace")));
-        VACUUM_FREEZER = registerMetaTileEntity(1002, new MetaTileEntityVacuumFreezer(gregtechId("vacuum_freezer")));
-        IMPLOSION_COMPRESSOR = registerMetaTileEntity(1003,
-                new MetaTileEntityImplosionCompressor(gregtechId("implosion_compressor")));
         PYROLYSE_OVEN = registerMetaTileEntity(1004, new MetaTileEntityPyrolyseOven(gregtechId("pyrolyse_oven")));
         DISTILLATION_TOWER = registerMetaTileEntity(1005,
                 new MetaTileEntityDistillationTower(gregtechId("distillation_tower")));
@@ -699,12 +668,6 @@ public class MetaTileEntities {
                 MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.STAINLESS_TURBINE_CASING),
                 MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.STAINLESS_STEEL_GEARBOX),
                 Textures.CLEAN_STAINLESS_STEEL_CASING, true, Textures.LARGE_GAS_TURBINE_OVERLAY));
-        LARGE_PLASMA_TURBINE = registerMetaTileEntity(1012,
-                new MetaTileEntityLargeTurbine(gregtechId("large_turbine.plasma"), RecipeMaps.PLASMA_GENERATOR_FUELS, 5,
-                        MetaBlocks.TURBINE_CASING
-                                .getState(BlockTurbineCasing.TurbineCasingType.TUNGSTENSTEEL_TURBINE_CASING),
-                        MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.TUNGSTENSTEEL_GEARBOX),
-                        Textures.ROBUST_TUNGSTENSTEEL_CASING, false, Textures.LARGE_PLASMA_TURBINE_OVERLAY));
 
         LARGE_BRONZE_BOILER = registerMetaTileEntity(1013,
                 new MetaTileEntityLargeBoiler(gregtechId("large_boiler.bronze"), BoilerType.BRONZE));

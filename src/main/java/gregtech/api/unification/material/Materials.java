@@ -124,7 +124,7 @@ public class Materials {
         EXT_METAL.add(GENERATE_ROD);
 
         EXT2_METAL.addAll(EXT_METAL);
-        EXT2_METAL.addAll(Arrays.asList(GENERATE_LONG_ROD, GENERATE_BOLT_SCREW));
+        EXT2_METAL.add(GENERATE_BOLT_SCREW);
     }
 
     public static final MarkerMaterial NULL = MarkerMaterial.create("null");

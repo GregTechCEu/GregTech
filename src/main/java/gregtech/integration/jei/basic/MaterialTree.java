@@ -21,7 +21,6 @@ public class MaterialTree implements IRecipeWrapper {
     private final static ImmutableList<OrePrefix> PREFIXES = ImmutableList.of(
             OrePrefix.dust,
             OrePrefix.cableGtSingle,
-            OrePrefix.ingotHot,
             OrePrefix.ingot,
             OrePrefix.gem,
             OrePrefix.block,

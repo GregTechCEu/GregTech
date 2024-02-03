@@ -97,10 +97,6 @@ public class OrePrefix {
     public static final OrePrefix cleanGravel = new OrePrefix("cleanGravel", -1, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix dirtyGravel = new OrePrefix("dirtyGravel", -1, null, null, ENABLE_UNIFICATION, null);
 
-    // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
-    public static final OrePrefix ingotHot = new OrePrefix("ingotHot", M, null, MaterialIconType.ingotHot,
-            ENABLE_UNIFICATION,
-            hasBlastProperty.and(mat -> mat.getProperty(PropertyKey.BLAST).getBlastTemperature() > 1750));
     // A regular Ingot. Introduced by Eloraam
     public static final OrePrefix ingot = new OrePrefix("ingot", M, null, MaterialIconType.ingot, ENABLE_UNIFICATION,
             hasIngotProperty);
@@ -166,7 +162,7 @@ public class OrePrefix {
     public static final OrePrefix wireFine = new OrePrefix("wireFine", M / 8, null, MaterialIconType.wireFine,
             ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_FINE_WIRE));
     // consisting out of 4 Plates, 1 Ring and 1 Screw.
-    public static final OrePrefix rotor = new OrePrefix("rotor", M * 4, null, MaterialIconType.rotor,
+    public static final OrePrefix rotor = new OrePrefix("rotor", M, null, MaterialIconType.rotor,
             ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_ROTOR));
     // Introduced by me because BuildCraft has ruined the gear Prefix...
     public static final OrePrefix gear = new OrePrefix("gear", M, null, MaterialIconType.gear, ENABLE_UNIFICATION,
@@ -182,7 +178,7 @@ public class OrePrefix {
     // made of 1 Ingots.
     public static final OrePrefix toolHeadScrewdriver = new OrePrefix("toolHeadScrewdriver", M, null,
             MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION,
-            hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_LONG_ROD)));
+            hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_ROD)));
     // made of 4 Ingots.
     public static final OrePrefix toolHeadDrill = new OrePrefix("toolHeadDrill", M * 4, null,
             MaterialIconType.toolHeadDrill, ENABLE_UNIFICATION,
@@ -295,12 +291,10 @@ public class OrePrefix {
         public static final Predicate<Material> hasGemProperty = mat -> mat.hasProperty(PropertyKey.GEM);
         public static final Predicate<Material> hasDustProperty = mat -> mat.hasProperty(PropertyKey.DUST);
         public static final Predicate<Material> hasIngotProperty = mat -> mat.hasProperty(PropertyKey.INGOT);
-        public static final Predicate<Material> hasBlastProperty = mat -> mat.hasProperty(PropertyKey.BLAST);
         public static final Predicate<Material> hasRotorProperty = mat -> mat.hasProperty(PropertyKey.ROTOR);
     }
 
     public static void init() {
-        ingotHot.heatDamageFunction = (temp) -> ((temp - 1750) / 1000.0F) + 2;
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
 

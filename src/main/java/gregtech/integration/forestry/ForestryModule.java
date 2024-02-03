@@ -295,10 +295,10 @@ public class ForestryModule extends IntegrationSubmodule {
     public static void registerMaterials(MaterialEvent event) {
         if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTFrames) {
-                Materials.TreatedWood.addFlags(MaterialFlags.GENERATE_LONG_ROD);
-                Materials.Uranium235.addFlags(MaterialFlags.GENERATE_LONG_ROD);
-                Materials.Plutonium241.addFlags(MaterialFlags.GENERATE_LONG_ROD, MaterialFlags.GENERATE_FOIL);
-                Materials.BlueSteel.addFlags(MaterialFlags.GENERATE_LONG_ROD);
+                Materials.TreatedWood.addFlags(MaterialFlags.GENERATE_ROD);
+                Materials.Uranium235.addFlags(MaterialFlags.GENERATE_ROD);
+                Materials.Plutonium241.addFlags(MaterialFlags.GENERATE_ROD, MaterialFlags.GENERATE_FOIL);
+                Materials.BlueSteel.addFlags(MaterialFlags.GENERATE_ROD);
             }
             if (ForestryConfig.enableGTElectronTubes) {
                 Materials.Copper.addFlags(MaterialFlags.GENERATE_BOLT_SCREW);

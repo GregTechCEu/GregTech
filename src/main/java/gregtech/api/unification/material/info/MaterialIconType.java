@@ -40,18 +40,8 @@ public class MaterialIconType {
     public static final MaterialIconType nugget = new MaterialIconType("nugget");
 
     public static final MaterialIconType ingot = new MaterialIconType("ingot");
-    public static final MaterialIconType ingotHot = new MaterialIconType("ingotHot");
-    public static final MaterialIconType ingotDouble = new MaterialIconType("ingotDouble");
-    public static final MaterialIconType ingotTriple = new MaterialIconType("ingotTriple");
-    public static final MaterialIconType ingotQuadruple = new MaterialIconType("ingotQuadruple");
-    public static final MaterialIconType ingotQuintuple = new MaterialIconType("ingotQuintuple");
 
     public static final MaterialIconType plate = new MaterialIconType("plate");
-    public static final MaterialIconType plateDouble = new MaterialIconType("plateDouble");
-    public static final MaterialIconType plateTriple = new MaterialIconType("plateTriple");
-    public static final MaterialIconType plateQuadruple = new MaterialIconType("plateQuadruple");
-    public static final MaterialIconType plateQuintuple = new MaterialIconType("plateQuintuple");
-    public static final MaterialIconType plateDense = new MaterialIconType("plateDense");
 
     public static final MaterialIconType stick = new MaterialIconType("stick");
     public static final MaterialIconType lens = new MaterialIconType("lens");
@@ -60,10 +50,7 @@ public class MaterialIconType {
     public static final MaterialIconType screw = new MaterialIconType("screw");
     public static final MaterialIconType ring = new MaterialIconType("ring");
     public static final MaterialIconType wireFine = new MaterialIconType("wireFine");
-    public static final MaterialIconType gearSmall = new MaterialIconType("gearSmall");
     public static final MaterialIconType rotor = new MaterialIconType("rotor");
-    public static final MaterialIconType stickLong = new MaterialIconType("stickLong");
-    public static final MaterialIconType springSmall = new MaterialIconType("springSmall");
     public static final MaterialIconType spring = new MaterialIconType("spring");
     public static final MaterialIconType gear = new MaterialIconType("gear");
     public static final MaterialIconType foil = new MaterialIconType("foil");

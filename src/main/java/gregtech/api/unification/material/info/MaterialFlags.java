@@ -96,16 +96,6 @@ public class MaterialFlags {
             .requireProps(PropertyKey.DUST)
             .build();
 
-    public static final MaterialFlag GENERATE_DOUBLE_PLATE = new MaterialFlag.Builder("generate_double_plate")
-            .requireFlags(GENERATE_PLATE)
-            .requireProps(PropertyKey.INGOT)
-            .build();
-
-    public static final MaterialFlag GENERATE_DENSE = new MaterialFlag.Builder("generate_dense")
-            .requireFlags(GENERATE_PLATE)
-            .requireProps(PropertyKey.DUST)
-            .build();
-
     public static final MaterialFlag GENERATE_ROD = new MaterialFlag.Builder("generate_rod")
             .requireProps(PropertyKey.DUST)
             .build();
@@ -122,11 +112,6 @@ public class MaterialFlags {
 
     public static final MaterialFlag GENERATE_GEAR = new MaterialFlag.Builder("generate_gear")
             .requireFlags(GENERATE_PLATE, GENERATE_ROD)
-            .requireProps(PropertyKey.DUST)
-            .build();
-
-    public static final MaterialFlag GENERATE_LONG_ROD = new MaterialFlag.Builder("generate_long_rod")
-            .requireFlags(GENERATE_ROD)
             .requireProps(PropertyKey.DUST)
             .build();
 
@@ -229,17 +214,7 @@ public class MaterialFlags {
             .build();
 
     public static final MaterialFlag GENERATE_SPRING = new MaterialFlag.Builder("generate_spring")
-            .requireFlags(GENERATE_LONG_ROD)
-            .requireProps(PropertyKey.INGOT)
-            .build();
-
-    public static final MaterialFlag GENERATE_SPRING_SMALL = new MaterialFlag.Builder("generate_spring_small")
             .requireFlags(GENERATE_ROD)
-            .requireProps(PropertyKey.INGOT)
-            .build();
-
-    public static final MaterialFlag GENERATE_SMALL_GEAR = new MaterialFlag.Builder("generate_small_gear")
-            .requireFlags(GENERATE_PLATE, GENERATE_ROD)
             .requireProps(PropertyKey.INGOT)
             .build();
 

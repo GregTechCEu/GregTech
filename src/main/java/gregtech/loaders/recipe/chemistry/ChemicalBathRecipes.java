@@ -78,29 +78,5 @@ public class ChemicalBathRecipes {
                 .output(dust, TungsticAcid, 7)
                 .output(dust, LithiumChloride, 4)
                 .duration(210).EUt(960).buildAndRegister();
-
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, Kanthal)
-                .fluidInputs(Water.getFluid(100))
-                .output(ingot, Kanthal)
-                .duration(400).EUt(VA[MV]).buildAndRegister();
-
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, Kanthal)
-                .fluidInputs(DistilledWater.getFluid(100))
-                .output(ingot, Kanthal)
-                .duration(250).EUt(VA[MV]).buildAndRegister();
-
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, Silicon)
-                .fluidInputs(Water.getFluid(100))
-                .output(ingot, Silicon)
-                .duration(200).EUt(VA[MV]).buildAndRegister();
-
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, Silicon)
-                .fluidInputs(DistilledWater.getFluid(100))
-                .output(ingot, Silicon)
-                .duration(125).EUt(VA[MV]).buildAndRegister();
     }
 }

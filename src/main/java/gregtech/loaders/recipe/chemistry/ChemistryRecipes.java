@@ -31,13 +31,13 @@ public class ChemistryRecipes {
         AcidRecipes.init();
 
         // A Few Random Recipes
-        FLUID_HEATER_RECIPES.recipeBuilder()
+        DISTILLERY_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(Acetone.getFluid(100))
                 .fluidOutputs(Ethenone.getFluid(100))
                 .duration(16).EUt(VA[LV]).buildAndRegister();
 
-        FLUID_HEATER_RECIPES.recipeBuilder()
+        DISTILLERY_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(DissolvedCalciumAcetate.getFluid(200))
                 .fluidOutputs(Acetone.getFluid(200))
@@ -73,11 +73,10 @@ public class ChemistryRecipes {
                 .fluidOutputs(Helium.getFluid(FluidStorageKeys.LIQUID, 1000))
                 .duration(240).EUt(VA[EV]).buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder()
+        REACTION_FURNACE.recipeBuilder()
                 .input(dust, FerriteMixture)
                 .fluidInputs(Oxygen.getFluid(2000))
                 .output(ingot, NickelZincFerrite)
-                .blastFurnaceTemp(1500)
                 .duration(400).EUt(VA[MV]).buildAndRegister();
 
         FERMENTING_RECIPES.recipeBuilder()
@@ -109,12 +108,12 @@ public class ChemistryRecipes {
                 .duration(200).EUt(256).buildAndRegister();
 
         // CaCO3 + 2NaCl -> Na2CO3 + CaCl2
-        BLAST_RECIPES.recipeBuilder()
+        REACTION_FURNACE.recipeBuilder()
                 .input(dust, Calcite, 5)
                 .input(dust, Salt, 4)
                 .output(dust, SodaAsh, 6)
                 .output(dust, CalciumChloride, 3)
-                .duration(120).EUt(VA[MV]).blastFurnaceTemp(1500)
+                .duration(120).EUt(VA[MV])
                 .buildAndRegister();
 
         // 2NaOH + CO2 -> Na2CO3 + H20

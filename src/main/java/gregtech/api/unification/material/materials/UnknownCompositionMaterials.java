@@ -516,7 +516,7 @@ public class UnknownCompositionMaterials {
         Wood = new Material.Builder(1617, gregtechId("wood"))
                 .wood()
                 .color(0x896727).iconSet(WOOD)
-                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, GENERATE_GEAR,
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_GEAR,
                         GENERATE_FRAME)
                 .fluidPipeProperties(340, 5, false)
                 .build();

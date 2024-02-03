@@ -152,34 +152,6 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    public void onUpdate(@NotNull ItemStack itemStack, @NotNull World worldIn, @NotNull Entity entityIn, int itemSlot,
-                         boolean isSelected) {
-        super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
-        if (metaItems.containsKey((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase entity) {
-            if (entityIn.ticksExisted % 20 == 0) {
-                if (prefix.heatDamageFunction == null) return;
-
-                Material material = getMaterial(itemStack);
-                if (material == null || !material.hasProperty(PropertyKey.BLAST)) return;
-
-                float heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
-                ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-                if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
-                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem())
-                            .getItem(armor);
-                    if (metaValueItem != null) heatDamage *= metaValueItem.getArmorLogic().getHeatResistance();
-                }
-
-                if (heatDamage > 0.0) {
-                    entity.attackEntityFrom(DamageSources.getHeatDamage().setDamageBypassesArmor(), heatDamage);
-                } else if (heatDamage < 0.0) {
-                    entity.attackEntityFrom(DamageSources.getFrostDamage().setDamageBypassesArmor(), -heatDamage);
-                }
-            }
-        }
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines,
                                @NotNull ITooltipFlag tooltipFlag) {

@@ -140,7 +140,6 @@ public class DistillationRecipes {
                 .fluidOutputs(Helium.getFluid(1000))
                 .fluidOutputs(Argon.getFluid(500))
                 .chancedOutput(dust, Ice, 9000, 0)
-                .disableDistilleryRecipes()
                 .duration(2000).EUt(VA[HV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
@@ -152,7 +151,6 @@ public class DistillationRecipes {
                 .fluidOutputs(Helium3.getFluid(2500))
                 .fluidOutputs(Neon.getFluid(500))
                 .chancedOutput(dust, Ash, 2250, 0)
-                .disableDistilleryRecipes()
                 .duration(2000).EUt(VA[EV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
@@ -165,7 +163,6 @@ public class DistillationRecipes {
                 .fluidOutputs(Xenon.getFluid(1000))
                 .fluidOutputs(Radon.getFluid(1000))
                 .chancedOutput(dust, EnderPearl, 1000, 0)
-                .disableDistilleryRecipes()
                 .duration(2000).EUt(VA[IV]).buildAndRegister();
     }
 }

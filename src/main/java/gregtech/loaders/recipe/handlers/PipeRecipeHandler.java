@@ -21,6 +21,7 @@ import com.google.common.base.CaseFormat;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.unification.material.Materials.Glue;
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_RING;
 import static gregtech.api.unification.material.info.MaterialFlags.NO_SMASHING;
 import static gregtech.api.unification.ore.OrePrefix.plate;
 
@@ -63,10 +64,19 @@ public class PipeRecipeHandler {
     private static void processPipe(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
+        if (material.hasFlag(GENERATE_RING)) {
+            RecipeMaps.CUTTER_RECIPES.recipeBuilder()
+                    .input(pipePrefix, material)
+                    .outputs(OreDictUnifier.get(OrePrefix.ring, material, 12))
+                    .duration((int) Math.max(material.getMass() * 6L, 1L))
+                    .EUt(4)
+                    .buildAndRegister();
+        }
+
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material, 3)
-                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_RING)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 3)
                     .EUt(6 * getVoltageMultiplier(material))
@@ -76,7 +86,7 @@ public class PipeRecipeHandler {
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.dust, material, 3)
-                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_RING)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 3)
                     .EUt(6 * getVoltageMultiplier(material))

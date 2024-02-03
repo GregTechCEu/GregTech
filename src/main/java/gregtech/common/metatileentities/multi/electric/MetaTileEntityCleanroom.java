@@ -40,7 +40,6 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityCokeOven;
-import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveWaterPump;
 import gregtech.core.sound.GTSoundEvents;
 
@@ -480,7 +479,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         if (metaTileEntity instanceof MetaTileEntityCentralMonitor) return true;
         if (metaTileEntity instanceof MetaTileEntityCleanroom) return true;
         if (metaTileEntity instanceof MetaTileEntityCokeOven) return true;
-        if (metaTileEntity instanceof MetaTileEntityPrimitiveBlastFurnace) return true;
         return metaTileEntity instanceof MetaTileEntityPrimitiveWaterPump;
     }
 

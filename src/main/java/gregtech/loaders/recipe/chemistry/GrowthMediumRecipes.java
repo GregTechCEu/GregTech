@@ -130,7 +130,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Sterile Growth Medium
-        FLUID_HEATER_RECIPES.recipeBuilder().EUt(VA[IV]).duration(20)
+        DISTILLERY_RECIPES.recipeBuilder().EUt(VA[IV]).duration(20)
                 .circuitMeta(1)
                 .fluidInputs(RawGrowthMedium.getFluid(100))
                 .fluidOutputs(SterileGrowthMedium.getFluid(100))

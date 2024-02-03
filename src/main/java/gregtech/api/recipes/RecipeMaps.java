@@ -12,10 +12,8 @@ import gregtech.api.recipes.builders.ComputationRecipeBuilder;
 import gregtech.api.recipes.builders.FuelRecipeBuilder;
 import gregtech.api.recipes.builders.FusionRecipeBuilder;
 import gregtech.api.recipes.builders.GasCollectorRecipeBuilder;
-import gregtech.api.recipes.builders.ImplosionRecipeBuilder;
 import gregtech.api.recipes.builders.PrimitiveRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.RecipeMapAssemblyLine;
 import gregtech.api.recipes.machines.RecipeMapFluidCanner;
@@ -117,19 +115,13 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ARC_FURNACE_RECIPES = new RecipeMapBuilder<>("arc_furnace",
             new SimpleRecipeBuilder())
-                    .itemInputs(1)
-                    .itemOutputs(9)
-                    .fluidInputs(1)
-                    .fluidOutputs(1)
+                    .itemInputs(3)
+                    .itemOutputs(3)
+                    .fluidInputs(3)
+                    .fluidOutputs(3)
                     .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
                     .sound(GTSoundEvents.ARC)
-                    .build()
-                    .onRecipeBuild(recipeBuilder -> {
-                        recipeBuilder.invalidateOnBuildAction();
-                        if (recipeBuilder.getFluidInputs().isEmpty()) {
-                            recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.getDuration()));
-                        }
-                    });
+                    .build();
 
     /**
      * Example:
@@ -279,8 +271,8 @@ public final class RecipeMaps {
             new BlastRecipeBuilder())
                     .itemInputs(3)
                     .itemOutputs(3)
-                    .fluidInputs(1)
-                    .fluidOutputs(1)
+                    .fluidInputs(3)
+                    .fluidOutputs(3)
                     .sound(GTSoundEvents.FURNACE)
                     .build();
 
@@ -604,7 +596,7 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> CUTTER_RECIPES = new RecipeMapBuilder<>("cutter",
             new SimpleRecipeBuilder())
-                    .itemInputs(1)
+                    .itemInputs(2)
                     .itemOutputs(2)
                     .fluidInputs(1)
                     .itemSlotOverlay(GuiTextures.SAWBLADE_OVERLAY, false)
@@ -671,8 +663,8 @@ public final class RecipeMaps {
      * This behavior can be disabled by adding a <B>.disableDistilleryRecipes()</B> onto the recipe builder.
      */
     @ZenProperty
-    public static final RecipeMap<UniversalDistillationRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapBuilder<>(
-            "distillation_tower", new UniversalDistillationRecipeBuilder())
+    public static final RecipeMap<SimpleRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapBuilder<>(
+            "distillation_tower", new SimpleRecipeBuilder())
                     .itemOutputs(1)
                     .fluidInputs(1)
                     .fluidOutputs(12)
@@ -838,31 +830,6 @@ public final class RecipeMaps {
      * Example:
      *
      * <pre>
-     * RecipeMap.FLUID_HEATER_RECIPES.recipeBuilder()
-     *         .circuitMeta(1)
-     *         .fluidInputs(Materials.Water.getFluid(6))
-     *         .fluidOutputs(Materials.Steam.getFluid(960))
-     *         .duration(30)
-     *         .EUt(GTValues.VA[GTValues.LV])
-     *         .buildAndRegister();
-     * </pre>
-     */
-    @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FLUID_HEATER_RECIPES = new RecipeMapBuilder<>("fluid_heater",
-            new SimpleRecipeBuilder())
-                    .itemInputs(1)
-                    .fluidInputs(1)
-                    .fluidOutputs(1)
-                    .itemSlotOverlay(GuiTextures.INT_CIRCUIT_OVERLAY, false, true)
-                    .fluidSlotOverlay(GuiTextures.HEATING_OVERLAY_1, false)
-                    .fluidSlotOverlay(GuiTextures.HEATING_OVERLAY_2, true)
-                    .sound(GTSoundEvents.BOILER)
-                    .build();
-
-    /**
-     * Example:
-     *
-     * <pre>
      * RecipeMap.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
      *         .notConsumable(MetaItems.SHAPE_MOLD_CYLINDER)
      *         .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L / 8))
@@ -990,53 +957,6 @@ public final class RecipeMaps {
                     .fluidSlotOverlay(GuiTextures.CENTRIFUGE_OVERLAY, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR)
                     .sound(GTSoundEvents.COOLING)
-                    .build();
-
-    /**
-     * Example:
-     *
-     * <pre>
-     * RecipeMap.IMPLOSION_RECIPES.recipeBuilder()
-     *         .input(OreDictUnifier.get(OrePrefix.gem, Materials.Coal, 64))
-     *         .explosivesAmount(8)
-     *         .outputs(OreDictUnifier.get(OrePrefix.gem, Materials.Diamond, 1),
-     *                 OreDictUnifier.get(OrePrefix.dustTiny, Materials.DarkAsh, 4))
-     *         .duration(400)
-     *         .EUt(GTValues.VA[GTValues.HV])
-     *         .buildAndRegister();
-     * </pre>
-     *
-     * <pre>
-     * RecipeMap.IMPLOSION_RECIPES.recipeBuilder()
-     *         .input(OreDictUnifier.get(OrePrefix.gem, Materials.Coal, 64))
-     *         .explosivesType(MetaItems.DYNAMITE.getStackForm(4))
-     *         .outputs(OreDictUnifier.get(OrePrefix.gem, Materials.Diamond, 1),
-     *                 OreDictUnifier.get(OrePrefix.dustTiny, Materials.DarkAsh, 4))
-     *         .duration(400)
-     *         .EUt(GTValues.VA[GTValues.HV])
-     *         .buildAndRegister();
-     * </pre>
-     *
-     * The Implosion Compressor can specify explosives used for its recipes in two different ways. The first is using
-     * <B>explosivesAmount(int amount)</B>, which will generate a recipe using TNT as the explosive, with the count of
-     * TNT
-     * being the passed amount. Note that this must be between 1 and 64 inclusive.
-     * <p>
-     * The second method is to use <B>explosivesType(ItemStack item)</B>. In this case, the passed ItemStack will be
-     * used
-     * as the explosive, with the number of explosives being the count of the passed ItemStack.
-     * Note that the count must be between 1 and 64 inclusive
-     */
-    @ZenProperty
-    public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMapBuilder<>(
-            "implosion_compressor", new ImplosionRecipeBuilder().duration(20).EUt(VA[LV]))
-                    .itemInputs(3)
-                    .itemOutputs(2)
-                    .itemSlotOverlay(GuiTextures.IMPLOSION_OVERLAY_1, false, true)
-                    .itemSlotOverlay(GuiTextures.IMPLOSION_OVERLAY_2, false, false)
-                    .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true, true)
-                    .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
-                    .sound(SoundEvents.ENTITY_GENERIC_EXPLODE)
                     .build();
 
     /**
@@ -1270,34 +1190,6 @@ public final class RecipeMaps {
      * Example:
      *
      * <pre>
-     *      RecipeMap.PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder()
-     *     			.input(OrePrefix.ingot, Materials.Iron)
-     *     			.input(OrePrefix.gem, Materials.Coal, 2)
-     *     			.output(OrePrefix.ingot, Materials.Steel)
-     *     			.output(OrePrefix.dustTiny, Materials.DarkAsh, 2)))
-     *     			.duration(1800)
-     *     			.buildAndRegister();
-     * </pre>
-     *
-     * As a Primitive Machine, the Primitive Blast Furnace does not need an <B>EUt</B> parameter specified for the
-     * Recipe Builder.
-     */
-    @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMapBuilder<>(
-            "primitive_blast_furnace", new PrimitiveRecipeBuilder())
-                    .itemInputs(3)
-                    .modifyItemInputs(false)
-                    .itemOutputs(3)
-                    .modifyItemOutputs(false)
-                    .modifyFluidInputs(false)
-                    .modifyFluidOutputs(false)
-                    .sound(GTSoundEvents.FIRE)
-                    .build();
-
-    /**
-     * Example:
-     *
-     * <pre>
      * RecipeMap.PYROLYSE_RECIPES.recipeBuilder()
      *         .input(OrePrefix.log, Materials.Wood, 16)
      *         .circuitMeta(2)
@@ -1476,6 +1368,28 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.MOTOR)
                     .build();
 
+    public static final RecipeMap<SimpleRecipeBuilder> WELDING_RECIPES = new RecipeMapBuilder<>("welder",
+            new SimpleRecipeBuilder())
+            .itemInputs(6)
+            .itemOutputs(1)
+            .itemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
+            .sound(GTSoundEvents.FURNACE)
+            .build();
+
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> REACTION_FURNACE = new RecipeMapBuilder<>("reaction_furnace",
+            new SimpleRecipeBuilder())
+            .itemInputs(3)
+            .fluidInputs(3)
+            .itemOutputs(3)
+            .fluidOutputs(3)
+            .itemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false)
+            .itemSlotOverlay(GuiTextures.FURNACE_OVERLAY_2, true)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
+            .sound(GTSoundEvents.FURNACE)
+            .build();
+
     //////////////////////////////////////
     // Fuel Recipe Maps //
     //////////////////////////////////////
@@ -1518,17 +1432,6 @@ public final class RecipeMaps {
                     .fluidSlotOverlay(GuiTextures.FURNACE_OVERLAY_2, false)
                     .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
                     .sound(GTSoundEvents.COMBUSTION)
-                    .allowEmptyOutputs()
-                    .build();
-
-    @ZenProperty
-    public static final RecipeMap<FuelRecipeBuilder> PLASMA_GENERATOR_FUELS = new RecipeMapBuilder<>("plasma_generator",
-            new FuelRecipeBuilder())
-                    .fluidInputs(1)
-                    .fluidOutputs(1)
-                    .fluidSlotOverlay(GuiTextures.CENTRIFUGE_OVERLAY, false)
-                    .progressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR)
-                    .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
                     .build();
 

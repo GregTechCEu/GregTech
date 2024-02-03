@@ -493,7 +493,7 @@ public class PolymerRecipes {
                 .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder().EUt(VA[MV]).duration(150).blastFurnaceTemp(533)
+        REACTION_FURNACE.recipeBuilder().EUt(VA[MV]).duration(150)
                 .input(dust, Caprolactam, 1)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .output(ingot, Polycaprolactam, 1)

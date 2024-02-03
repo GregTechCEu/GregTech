@@ -290,7 +290,7 @@ public class ToolRecipeHandler {
         }
 
         // screwdriver
-        if (material.hasFlag(GENERATE_LONG_ROD)) {
+        if (material.hasFlag(GENERATE_ROD)) {
             toolPrefix = OrePrefix.toolHeadScrewdriver;
             addElectricToolRecipe(toolPrefix, material, new IGTTool[] { ToolItems.SCREWDRIVER_LV });
 
