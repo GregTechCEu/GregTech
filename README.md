@@ -10,63 +10,62 @@
     <a href="https://modrinth.com/mod/gregtech-ce-unofficial"><img src="https://img.shields.io/modrinth/dt/gregtech-ce-unofficial?logo=modrinth&label=&suffix=%20&style=for-the-badge&color=2d2d2d&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
     <a href="https://github.com/GregTechCEu/GregTech/releases"><img src="https://img.shields.io/github/downloads/GregTechCEu/GregTech/total?sort=semver&logo=github&label=&style=for-the-badge&color=2d2d2d&labelColor=545454&logoColor=FFFFFF" alt="GitHub"></a>
 </h1>
+## 欢迎来到 GregTech CE：非官方
+＃＃＃ 这是什么？
+GregTech CE Unofficial，或 **GTCEu**，是一个 Minecraft 模组。 该存储库包含构建和运行该 mod 所需的所有代码和资产。
 
-## Welcome to GregTech CE: Unofficial
-### What is this?
-GregTech CE Unofficial, or **GTCEu**, is a Minecraft mod. The repository contains all the code and assets required to build and run that mod.
+### 格雷科技？
+是的，您之前可能听说过这个名字，因为它在 Minecraft 模组社区中广为人知。 GTCEu 是 _**GregTech**_ 的**间接后代**和**完全重写**。 它**既不是由 GregoriusT 创建也不是由他维护，而是在他的知识和许可下创建的。
 
-### GregTech?
-Yes, you have probably heard this name before as it is quite known in the Minecraft modding community. GTCEu is an **indirect descendant** and **total rewrite** of _**GregTech**_.  It is **neither created nor maintained by GregoriusT** but was created with his knowledge and permission.
+这个模组是关于**技术**和**进步**的。
+* 从简单粗暴的工具开始，这将使您能够更现实地处理资源......
+* 通过**蒸汽时代**，早期的机器将帮助您节省一些宝贵的资源并开启新的可能性......
+* 对于许多**电气时代**来说，日益复杂的机器和物流将成为工业体系中不可或缺的一部分。
 
-This mod is about **technology** and **progression**.
-* From simple crude tools which will allow you to process resources more realistically...
-* Through **Steam Age** where early machines will help you save some precious resources and open new possibilities...
-* To many **Electric Ages** where increasingly complex machines and logistics will become indispensable parts of your industrial regime.
+典型的 GregTech 设施拥有大量单块和多块机器，可处理大量资源，创造出更复杂的材料，用于更高级别的机器。
 
-A typical GregTech facility features large arrays of both single- and multi-block machines processing numerous resources, creating even more complex materials which will be used in machines of higher tiers.
+所有这些均由 GTCEu 自己的电力系统提供动力，包括从简单的木材燃烧产生蒸汽到等离子动力涡轮机的发电机。
 
-All of which are powered by GTCEu's own power systems, featuring generators from simple wood burning for steam to plasma-powered turbines.
+### 社区版？
+**社区版**是**GTCEu名称**的必要组成部分：
+* 使用 GregTech 名称需要获得我们的许可
+* 提醒一下，想法和设计主要是由社区驱动的
+* 需要提醒的是，实施和工作完全由社区提供。
 
-### Community Edition?
-**Community Edition** is a necessary part of the **GTCEu name**:
-* It is required by our permission to use the GregTech name
-* It is a reminder that the ideas and design are primarily driven by the community
-* It is a reminder that the implementation and work are solely provided by the community.
+当然，这并不意味着每个人都可以添加自己想要的任何内容。 但这确实意味着主要维护者在规划或开展任何项目时希望倾听社区的意见并牢记建议和想法。
 
-Of course, this does not mean that everyone can add whatever content they want.  But it does mean that the primary maintainers want to listen to the community and take suggestions and ideas to heart when planning or working on any projects.
+### 项目目标
+将 GT（Minecraft 1.7.10 版本及更早版本）中首选的 GregTech 概念和想法引入 Minecraft 1.12，目标是功能丰富、用户体验友好且全面的游戏体验，同时简化和消除臃肿和制作细节。
 
-### Project Goal
-To bring preferred GregTech concepts and ideas from GT (Minecraft 1.7.10 versions and earlier) to Minecraft 1.12, targetting a feature-rich, UX-friendly and comprehensive play-through while streamlining and eliminating bloat and make-work details.
+以Gregtech 5 Unofficial为基础，融入了GT4和GT6的一些想法。 许多社区建议已被采纳。
 
-Gregtech 5 Unofficial was used as an original base, with some ideas from GT4 and GT6 also incorporated. Many community suggestions have been since applied.
+我们与我们的插件合作伙伴合作，试图保持向后兼容性。
 
-We work with our addon-partners to attempt to preserve backwards-compatibility.
+＃＃ 贡献
+### 项目当前状态
+GTCEu 正在积极开发并定期更新。 GTCEu 社区非常活跃，定期贡献代码、测试和想法。
+我们一直在寻找贡献者！
 
-## Contribution
-### Current state of project
-GTCEu is under active development with regular updates. The GTCEu community is very active and regularly contributes code, testing and ideas.
-We are always looking for contributors!
+### 如何贡献
+请记住：每一项贡献都很重要。
+发现错误？ 请通过使用错误模板创建问题来告知我们。
+缺了点什么？ 想出一个很酷的功能创意吗？ 当然有一个模板。 我们来看看吧！
+知道如何修改或至少编码吗？ 然后不要犹豫，跳到 Discord 频道，联系维护者讨论可能的贡献。
+还要别的吗？ 一定要来 [Discord](https://discord.gg/bWSWuYvURP)。
 
-### How to contribute
-Remember: Every contribution counts.
-Found a bug? Please let us know by creating an Issue with the bug template.
-Something is missing? Thought about a cool feature idea? Of course there's a template for that.  We'll have a look!
-Know how to mod or at least code? Then don't hesitate and jump to Discord channel, contact the Maintainer to discuss possible contribution.
-Anything else? Sure come to [Discord](https://discord.gg/bWSWuYvURP).
+## 获奖作品
+加热线圈纹理、木质结构、世界加速器和极限燃烧引擎来自 **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)** 。
 
-## Credited Works
-Heating Coil Textures, Wooden Forms, World Accelerators, and the Extreme Combustion Engine are from the **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)**.
+原始水泵和超级水箱 GUI 纹理来自 **[IMPACT: GREGTECH EDITION Modpack](https://gtimpact.space/)**。
 
-Primitive Water Pump and Super Tank GUI Textures are from the **[IMPACT: GREGTECH EDITION Modpack](https://gtimpact.space/)**.
+Ender 流体连接盖、自动维护舱口、光纤和数据库纹理来自 **[TecTech](https://github.com/Technus/TecTech)**。
 
-Ender Fluid Link Cover, Auto-Maintenance Hatch, Optical Fiber, and Data Bank Textures are from **[TecTech](https://github.com/Technus/TecTech)**.
+蒸汽研磨机来自 **[GregTech++](https://www.curseforge.com/minecraft/mc-mods/gregtech-gt-gtplusplus)**。
 
-Steam Grinder is from **[GregTech++](https://www.curseforge.com/minecraft/mc-mods/gregtech-gt-gtplusplus)**.
+不再是菜鸟的证书来自 **[Crops++](https://www.curseforge.com/minecraft/mc-mods/berry)**。
 
-Certificate of Not Being a Noob Anymore is from **[Crops++](https://www.curseforge.com/minecraft/mc-mods/berries)**.
+NanoMuscle 和 QuarkTech Suite Armors 来自 **[Nukepowered Utils](https://www.curseforge.com/minecraft/mc-mods/nukepowered-utils)**。
 
-NanoMuscle and QuarkTech Suite Armors are from **[Nukepowered Utils](https://www.curseforge.com/minecraft/mc-mods/nukepowered-utils)**.
+OpenComputers 兼容性有一些来自 **[GTCE2OC](https://www.curseforge.com/minecraft/mc-mods/gtce2oc)** 的代码。
 
-OpenComputers compatibility has some code from **[GTCE2OC](https://www.curseforge.com/minecraft/mc-mods/gtce2oc)**.
-
-See something we forgot to credit? Reach out to us on Discord, or open an issue and ask for appropriate credit, we will happily mark it here
+看到我们忘记注明的内容了吗？ 在 Discord 上联系我们，或提出问题并要求适当的信用，我们很乐意在此处标记它
