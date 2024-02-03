@@ -6,9 +6,14 @@
 
 ### Features
 
+* Second take for recipes disabling config ([#3](https://github.com/tekcay/tkcy-simple-addon/pull/3)): 
+    - tier machine casing recipes
+    - hydrocarbons cracking recipes
+    - hydrocarbons desulfurization recipes
+    - coil recipes
 
 
-* First take at disable recipes config ([#1](https://github.com/tekcay/tkcy-simple-addon/pull/1)):
+* First take for recipes disabling config ([#1](https://github.com/tekcay/tkcy-simple-addon/pull/1)):
     - components (motors, pumps *etc.*)
     - components recipes (motors, pumps *etc*.)
     - tin-using circuit recipes

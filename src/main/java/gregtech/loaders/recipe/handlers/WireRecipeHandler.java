@@ -52,7 +52,7 @@ public class WireRecipeHandler {
 
     public static void register() {
         // Generate 1x Wire creation recipes (Wiremill, Extruder, Wire Cutters)
-        if (!ConfigHolder.recipeRemovalConfig.processingHandlers.disableWireRecipes) {
+        if (!ConfigHolder.recipeDisablingConfig.processingHandlers.disableWireRecipes) {
             wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::processWireSingle);
         }
 

@@ -24,7 +24,7 @@ public class NuclearRecipes {
                 .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
                 .buildAndRegister();
 
-        if (!ConfigHolder.recipeRemovalConfig.otherStuff.disableElectrolysisRecipes) {
+        if (!ConfigHolder.recipeDisablingConfig.otherStuff.disableElectrolysisRecipes) {
             ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
                     .fluidInputs(EnrichedUraniumHexafluoride.getFluid(1000))
                     .output(dust, Uranium235)

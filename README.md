@@ -10,6 +10,10 @@ Config to disable GTCEu recipe generation:
 * components recipes (motors, pumps *etc*.)
 * tin-using circuit recipes
 * electrolysis recipes
+* tier machine casing recipes
+* hydrocarbons cracking recipes
+* hydrocarbons desulfurization recipes
+* coil recipes
 
 Disable ore processing handlers:
 
