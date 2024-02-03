@@ -647,18 +647,6 @@ public class MetaTileEntityLoader {
                     "C", 'H', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'C', OreDictNames.chestWood);
         }
 
-        ModHandler.addShapedRecipe(true, "processing_array", MetaTileEntities.PROCESSING_ARRAY.getStackForm(), "COC",
-                "RHR", "CPC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'O',
-                MetaItems.TOOL_DATA_STICK.getStackForm(), 'R', MetaItems.ROBOT_ARM_EV.getStackForm(), 'P',
-                OreDictUnifier.get(OrePrefix.pipeFluid, Materials.StainlessSteel), 'H',
-                MetaTileEntities.HULL[GTValues.EV].getStackForm());
-        ModHandler.addShapedRecipe(true, "advanced_processing_array",
-                MetaTileEntities.ADVANCED_PROCESSING_ARRAY.getStackForm(), "RCR", "SPE", "HNH", 'R',
-                MetaItems.ROBOT_ARM_LuV, 'C', new UnificationEntry(OrePrefix.circuit, Tier.ZPM), 'S',
-                MetaItems.SENSOR_LuV, 'P', MetaTileEntities.PROCESSING_ARRAY.getStackForm(), 'E', MetaItems.EMITTER_LuV,
-                'H', new UnificationEntry(OrePrefix.plate, Materials.HSSE), 'N',
-                new UnificationEntry(OrePrefix.pipeFluid, Materials.Naquadah));
-
         // GENERATORS
         ModHandler.addShapedRecipe(true, "diesel_generator_lv", MetaTileEntities.COMBUSTION_GENERATOR[0].getStackForm(),
                 "PCP", "EME", "GWG", 'M', MetaTileEntities.HULL[GTValues.LV].getStackForm(), 'P',
