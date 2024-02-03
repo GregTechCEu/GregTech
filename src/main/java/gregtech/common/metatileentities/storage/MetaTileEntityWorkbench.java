@@ -1,11 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import com.cleanroommc.modularui.widget.ScrollWidget;
-
-import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
-
-import com.cleanroommc.modularui.widgets.layout.Grid;
-
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -51,11 +45,13 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.PageButton;
 import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
@@ -68,7 +64,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
@@ -253,20 +248,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         final String[] craftingGrid = new String[] {"XXX", "XXX", "XXX"};
         final char key = 'X';
 
-        this.combinedInventory = getAvailableHandlers();
-        int rows = 1 + this.combinedInventory.getSlots() / 8;
-        final String[] combinedMatrix = new String[rows];
-        Arrays.fill(combinedMatrix, "XXXXXXXX"); // 8 slots wide
-
         var toolSlots = new SlotGroup("tool_slots", 9, true);
         var inventory = new SlotGroup("inventory", 9, true);
-        var craftingMatrix = new SlotGroup("crafting_matrix", 3, false);
         guiSyncManager.registerSlotGroup(toolSlots);
         guiSyncManager.registerSlotGroup(inventory);
-        guiSyncManager.registerSlotGroup(craftingMatrix);
 
         getCraftingRecipeLogic().updateCurrentRecipe();
-        if (!guiSyncManager.isClient() && getCraftingRecipeLogic().collectAvailableItems()) {
+        if (!guiSyncManager.isClient()) {
             writeCustomData(UPDATE_CLIENT_STACKS, getCraftingRecipeLogic()::writeAvailableStacks);
         }
 
@@ -298,16 +286,17 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .margin(7)
                         .coverChildren()
                         .controller(controller)
+                        // workstation page
                         .addPage(new Column()
                                 .coverChildren()
                                 .child(new Row().coverChildrenHeight()
                                         .widthRel(1f)
                                         .marginBottom(2)
+                                        // crafting grid
                                         .child(SlotGroupWidget.builder()
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
                                                         .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
-                                                                .slotGroup(craftingMatrix)
                                                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                                                     if (!init) {
                                                                         this.recipeLogic.updateCurrentRecipe();
@@ -316,6 +305,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                 .build())
                                         .child(new Column()
                                                 .size(54)
+                                                // crafting output slot
                                                 .child(new ItemSlot().marginTop(18)
                                                         // todo figure this shit (recipe output slot) out
                                                         .slot(new CraftingOutputSlot(new InventoryWrapper(
@@ -325,13 +315,16 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                         .marginBottom(4))
                                                 .child(IKey.dynamic(amountCrafted::getStringValue)
                                                         .alignment(Alignment.Center)
-                                                        .asWidget().width(22)))
+                                                        .asWidget().widthRel(1f)))
+                                        // recipe memory
                                         .child(SlotGroupWidget.builder()
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
                                                         // todo recipe memory
-                                                        .slot(SyncHandlers.phantomItemSlot(new ItemStackHandler(9), i)))
+                                                        .slot(SyncHandlers.phantomItemSlot(new ItemStackHandler(9), i)
+                                                                .accessibility(false, false)))
                                                 .build().right(0)))
+                                // tool inventory
                                 .child(SlotGroupWidget.builder()
                                         .row(nineSlot)
                                         .key(key, i -> new ItemSlot()
@@ -339,6 +332,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                 .slot(SyncHandlers.itemSlot(this.toolInventory, i)
                                                         .slotGroup(toolSlots)))
                                         .build().marginBottom(2))
+                                // internal inventory
                                 .child(SlotGroupWidget.builder()
                                         .row(nineSlot)
                                         .row(nineSlot)
@@ -346,6 +340,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                 .slot(SyncHandlers.itemSlot(this.internalInventory, i)
                                                         .slotGroup(inventory)))
                                         .build()))
+                        // storage page
                         .addPage(new Column()
                                 .margin(7, 0)
                                 .background(GTGuiTextures.DISPLAY)
@@ -357,7 +352,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     public void sendHandlerToClient(PacketBuffer buffer) {
         buffer.writeVarInt(this.combinedInventory.getSlots());
-        getCraftingRecipeLogic().collectAvailableItems();
         getCraftingRecipeLogic().writeAvailableStacks(buffer);
     }
 
@@ -418,18 +412,25 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         @Override
         public boolean canTakeStack(EntityPlayer playerIn) {
-            return recipeLogic.performRecipe(playerIn);
+            return recipeLogic.isRecipeValid() && recipeLogic.attemptMatchRecipe();
         }
 
         @Override
         public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
+            recipeLogic.performRecipe();
             handleItemCraft(stack, thePlayer);
             return super.onTake(thePlayer, stack);
         }
 
         @Override
         public void putStack(@NotNull ItemStack stack) {
-            super.putStack(stack);
+            if (stack.isEmpty()) recipeLogic.consumeRecipeItems();
+            super.putStack(recipeLogic.getCachedRecipeData().getRecipeOutput());
+        }
+
+        @Override
+        public ItemStack decrStackSize(int amount) {
+            return getStack();
         }
 
         public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
