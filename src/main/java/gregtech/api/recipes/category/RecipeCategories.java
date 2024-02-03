@@ -6,10 +6,10 @@ import gregtech.api.recipes.RecipeMaps;
 
 public final class RecipeCategories {
 
-    public static final GTRecipeCategory ARC_FURNACE_RECYCLING = GTRecipeCategory.create(GTValues.MODID,
+    public static final GTRecipeCategory SMELT_RECYCLING = GTRecipeCategory.create(GTValues.MODID,
             "arc_furnace_recycling",
             "gregtech.recipe.category.arc_furnace_recycling",
-            RecipeMaps.ARC_FURNACE_RECIPES)
+            RecipeMaps.BLAST_RECIPES)
             .jeiIcon(GuiTextures.ARC_FURNACE_RECYLCING_CATEGORY);
 
     public static final GTRecipeCategory MACERATOR_RECYCLING = GTRecipeCategory.create(GTValues.MODID,

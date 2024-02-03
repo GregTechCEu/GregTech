@@ -2298,7 +2298,7 @@ recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.research_station.name=Research Station
 
-gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
+gregtech.recipe.category.arc_furnace_recycling=Smelt Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
 gregtech.recipe.category.extractor_recycling=Extractor Recycling
 
@@ -2456,6 +2456,8 @@ tile.wire_coil.tooltip_parallel_smelter=  §5Max Parallel: §f%s
 tile.wire_coil.tooltip_energy_smelter=  §aEnergy Usage: §f%s EU/t §8per recipe
 tile.wire_coil.tooltip_pyro=§8Pyrolyse Oven:
 tile.wire_coil.tooltip_speed_pyro=  §bProcessing Speed: §f%s%%
+tile.wire_coil.tooltip_lcr=§8Large Chemical Reactor:
+tile.wire_coil.tooltip_speed_lcr=  §bProcessing Speed: §f%s%%
 tile.wire_coil.tooltip_cracking=§8Cracking Unit:
 tile.wire_coil.tooltip_energy_cracking=  §aEnergy Usage: §f%s%%
 
@@ -4705,6 +4707,7 @@ gregtech.machine.vacuum_freezer.name=Vacuum Freezer
 gregtech.machine.implosion_compressor.name=Implosion Compressor
 gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
 gregtech.machine.pyrolyse_oven.tooltip.1=§6Cupronickel §7coils are §f25%%§7 slower. Every coil after §bKanthal§7 increases speed by §f50%%§7.
+gregtech.machine.large_chemical_reactor.tooltip.1=§6Cupronickel §7coils are §f25%%§7 slower. Every coil after §bKanthal§7 increases speed by §f50%%§7.
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
 gregtech.machine.cracker.name=Oil Cracking Unit
@@ -5639,6 +5642,9 @@ gregtech.multiblock.miner.drilling=Drilling.
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s
 gregtech.multiblock.pyrolyse_oven.speed_hover=Processing speed modifier set by the coils in the structure.
+
+gregtech.multiblock.large_chemical_reactor.speed=Processing Speed: %s
+gregtech.multiblock.large_chemical_reactor.speed_hover=Processing speed modifier set by the coils in the structure.
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s
 gregtech.multiblock.cracking_unit.energy_hover=Energy usage modifier set by the coils in the structure.

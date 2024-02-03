@@ -1,15 +1,21 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -27,6 +33,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -39,9 +47,11 @@ import java.util.List;
 
 public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockController {
 
+    private int coilTier;
+
     public MetaTileEntityLargeChemicalReactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.LARGE_CHEMICAL_RECIPES);
-        this.recipeMapWorkable = new MultiblockRecipeLogic(this, true);
+        this.recipeMapWorkable = new LargeChemicalReactorWorkableHandler(this);
     }
 
     @Override
@@ -128,6 +138,16 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     }
 
     @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        Object type = context.get("CoilType");
+        if (type instanceof IHeatingCoilBlockStats)
+            this.coilTier = ((IHeatingCoilBlockStats) type).getTier();
+        else
+            this.coilTier = 0;
+    }
+
+    @Override
     public SoundEvent getBreakdownSound() {
         return GTSoundEvents.BREAKDOWN_ELECTRICAL;
     }
@@ -136,6 +156,49 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.perfect_oc"));
+        tooltip.add(I18n.format("gregtech.machine.large_chemical_reactor.tooltip.1"));
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        int processingSpeed = coilTier == 0 ? 75 : 50 * (coilTier + 1);
+                        ITextComponent speedIncrease = TextComponentUtil.stringWithColor(
+                                getSpeedColor(processingSpeed),
+                                processingSpeed + "%");
+
+                        ITextComponent base = TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.large_chemical_reactor.speed",
+                                speedIncrease);
+
+                        ITextComponent hover = TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.large_chemical_reactor.speed_hover");
+
+                        tl.add(TextComponentUtil.setHover(base, hover));
+                    }
+                })
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
+    }
+
+    private TextFormatting getSpeedColor(int speed) {
+        if (speed < 100) {
+            return TextFormatting.RED;
+        } else if (speed == 100) {
+            return TextFormatting.GRAY;
+        } else if (speed < 250) {
+            return TextFormatting.GREEN;
+        } else {
+            return TextFormatting.LIGHT_PURPLE;
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -143,5 +206,28 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.LARGE_CHEMICAL_REACTOR_OVERLAY;
+    }
+
+    @SuppressWarnings("InnerClassMayBeStatic")
+    private class LargeChemicalReactorWorkableHandler extends MultiblockRecipeLogic {
+
+        public LargeChemicalReactorWorkableHandler(RecipeMapMultiblockController tileEntity) {
+            super(tileEntity, true);
+        }
+
+        @Override
+        protected void modifyOverclockPost(int[] resultOverclock, @NotNull IRecipePropertyStorage storage) {
+            super.modifyOverclockPost(resultOverclock, storage);
+
+            int coilTier = ((MetaTileEntityPyrolyseOven) metaTileEntity).getCoilTier();
+            if (coilTier == -1)
+                return;
+
+            if (coilTier == 0) {
+                resultOverclock[1] *= 5.0 / 4; // 25% slower with cupronickel (coilTier = 0)
+            } else resultOverclock[1] *= 2.0f / (coilTier + 1); // each coil above kanthal (coilTier = 1) is 50% faster
+
+            resultOverclock[1] = Math.max(1, resultOverclock[1]);
+        }
     }
 }

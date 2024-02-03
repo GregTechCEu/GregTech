@@ -113,44 +113,6 @@ public class MaterialRecipeHandler {
         }
     }
 
-    private static void processEBFRecipe(Material material, BlastProperty property, ItemStack output) {
-        int blastTemp = property.getBlastTemperature();
-        BlastProperty.GasTier gasTier = property.getGasTier();
-        int duration = property.getDurationOverride();
-        if (duration <= 0) {
-            duration = Math.max(1, (int) (material.getMass() * blastTemp / 50L));
-        }
-        int EUt = property.getEUtOverride();
-        if (EUt <= 0) EUt = VA[MV];
-
-        BlastRecipeBuilder blastBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
-                .input(dust, material)
-                .outputs(output)
-                .blastFurnaceTemp(blastTemp)
-                .EUt(EUt);
-
-        if (gasTier != null) {
-            FluidStack gas = CraftingComponent.EBF_GASES.get(gasTier).copy();
-
-            blastBuilder.copy()
-                    .circuitMeta(1)
-                    .duration(duration)
-                    .buildAndRegister();
-
-            blastBuilder.copy()
-                    .circuitMeta(2)
-                    .fluidInputs(gas)
-                    .duration((int) (duration * 0.67))
-                    .buildAndRegister();
-        } else {
-            blastBuilder.duration(duration);
-            if (material == Materials.Silicon) {
-                blastBuilder.circuitMeta(1);
-            }
-            blastBuilder.buildAndRegister();
-        }
-    }
-
     public static void processIngot(OrePrefix ingotPrefix, Material material, IngotProperty property) {
         if (material.hasFlag(MORTAR_GRINDABLE)) {
             ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material),

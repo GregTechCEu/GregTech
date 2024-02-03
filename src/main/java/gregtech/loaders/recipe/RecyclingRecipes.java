@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.GTValues.MV;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
-import static gregtech.api.unification.ore.OrePrefix.dust;
 
 public class RecyclingRecipes {
 
@@ -207,7 +206,8 @@ public class RecyclingRecipes {
         // Build the final Recipe.
         RecipeBuilder<BlastRecipeBuilder> builder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(input.copy())
-                .blastFurnaceTemp(maxBlastTemp);
+                .blastFurnaceTemp(maxBlastTemp)
+                .category(RecipeCategories.SMELT_RECYCLING);
 
         for (int i = 0; i < Math.min(3, materials.size()); i++) {
             builder.fluidOutputs(materials.get(i).material.getFluid((int) (materials.get(i).amount * L / M)));
