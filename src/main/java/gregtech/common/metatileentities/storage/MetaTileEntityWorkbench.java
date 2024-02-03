@@ -72,9 +72,27 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     public static final int UPDATE_CLIENT_STACKS = GregtechDataCodes.assignId();
     public static final int UPDATE_CLIENT_HANDLER = GregtechDataCodes.assignId();
 
-    private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
-    private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
+    private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18) {
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            var logic = getCraftingRecipeLogic();
+            if (logic.isValid() && logic.getSyncManager().isClient())
+                logic.syncToServer(4, buffer -> buffer.writeVarInt(slot));
+        }
+    };
+    private final ItemStackHandler toolInventory = new ToolItemStackHandler(9) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            var logic = getCraftingRecipeLogic();
+            if (logic.isValid() && logic.getSyncManager().isClient())
+                logic.syncToServer(4, buffer -> buffer.writeVarInt(slot));
+        }
+    };
+
     private IItemHandlerModifiable combinedInventory;
     private IItemHandlerModifiable connectedInventory;
 
@@ -201,8 +219,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             if (handler != null) handlers.add(handler);
         }
         this.connectedInventory = new ItemHandlerList(handlers);
+        handlers.clear();
+        
         handlers.add(this.internalInventory);
         handlers.add(this.toolInventory);
+        handlers.add(this.connectedInventory);
         return this.combinedInventory = new ItemHandlerList(handlers);
     }
 
