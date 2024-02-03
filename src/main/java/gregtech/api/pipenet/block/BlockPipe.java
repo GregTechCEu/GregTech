@@ -430,15 +430,76 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
      * @return 1 if successfully used tool, 0 if failed to use tool,
      *         -1 if ItemStack failed the capability check (no action done, continue checks).
      */
-    public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide,
+    private static final int MAX_PIPE_TRAVERSAL_LENGTH = 256;
+    //private final ItemStack empty;
+    public EnumActionResult onPipeToolUsed(World world, BlockPos startPos, ItemStack stack, EnumFacing coverSide,
                                            IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer,
                                            EnumHand hand) {
+
+
+
         if (isPipeTool(stack)) {
             if (!entityPlayer.world.isRemote) {
                 if (entityPlayer.isSneaking() && pipeTile.canHaveBlockedFaces()) {
                     boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
                     pipeTile.setFaceBlocked(coverSide, !isBlocked);
+                    pipeTile.scheduleRenderUpdate();
                     ToolHelper.playToolSound(stack, entityPlayer);
+                    int connections = pipeTile.getNumConnections();
+                    if (connections != 2) {
+                        return EnumActionResult.SUCCESS;
+                    }
+                    BlockPos curPos = startPos.offset(coverSide);
+                    EnumFacing curSide = coverSide;
+                    connections = pipeTile.getNumConnections();
+                    while (connections == 2) {
+                        pipeTile = getPipeTileEntity(world.getTileEntity(curPos));
+                        if (pipeTile.getNumConnections() != 2) {
+                            break;
+                        }
+                        boolean canContinue = false;
+                        for (EnumFacing other : EnumFacing.VALUES) {
+                            if (other != curSide.getOpposite() && pipeTile.isConnected(other)) {
+                                pipeTile.setFaceBlocked(other, !isBlocked);
+                                curSide = other;
+                                curPos = curPos.offset(curSide);
+                                canContinue = true;
+                                break;
+                            }
+                        }
+
+                        if (canContinue == false) {
+                            break;
+                        }
+                        pipeTile.scheduleRenderUpdate();
+                    }
+
+                    curPos = startPos;
+                    curSide = coverSide;
+                    pipeTile = getPipeTileEntity(world.getTileEntity(curPos));
+                    connections = pipeTile.getNumConnections();
+
+                    while (connections == 2) {
+                        pipeTile = getPipeTileEntity(world.getTileEntity(curPos));
+                        if (pipeTile.getNumConnections() != 2) {
+                            break;
+                        }
+                        pipeTile.setFaceBlocked(curSide, !isBlocked);
+                        boolean canContinue = false;
+                        for (EnumFacing other : EnumFacing.VALUES) {
+                            if (other != curSide && pipeTile.isConnected(other)) {
+                                curSide = other.getOpposite();
+                                curPos = curPos.offset(other);
+                                canContinue = true;
+                                break;
+                            }
+                        }
+
+                        if (canContinue == false) {
+                            break;
+                        }
+                        pipeTile.scheduleRenderUpdate();
+                    }
                 } else {
                     boolean isOpen = pipeTile.isConnected(coverSide);
                     pipeTile.setConnection(coverSide, !isOpen, false);
@@ -446,7 +507,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                         ToolHelper.playToolSound(stack, entityPlayer);
                     }
                 }
-                ToolHelper.damageItem(stack, entityPlayer);
                 return EnumActionResult.SUCCESS;
             }
             entityPlayer.swingArm(hand);
@@ -454,6 +514,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
         return EnumActionResult.PASS;
     }
+
+
+
+
 
     protected boolean isPipeTool(@NotNull ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WRENCH);
