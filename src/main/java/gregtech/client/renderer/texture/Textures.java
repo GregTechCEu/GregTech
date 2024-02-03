@@ -86,6 +86,8 @@ public class Textures {
             "casings/solid/machine_casing_sturdy_hsse");
     public static final SimpleOverlayRenderer PALLADIUM_SUBSTATION_CASING = new SimpleOverlayRenderer(
             "casings/solid/machine_casing_palladium_substation");
+    public static final SimpleOverlayRenderer OIL_PIPE_CASING = new SimpleOverlayRenderer(
+            "casings/solid/machine_casing_oil_pipe");
     public static final SimpleOverlayRenderer INERT_PTFE_CASING = new SimpleOverlayRenderer(
             "casings/solid/machine_casing_inert_ptfe");
     public static final SimpleOverlayRenderer PLASCRETE = new SimpleOverlayRenderer("casings/cleanroom/plascrete");
