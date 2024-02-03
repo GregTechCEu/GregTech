@@ -412,7 +412,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         @Override
         public boolean canTakeStack(EntityPlayer playerIn) {
-            return recipeLogic.isRecipeValid() && recipeLogic.attemptMatchRecipe();
+            if (recipeLogic.getSyncManager().isClient()) recipeLogic.syncToServer(3);
+            return recipeLogic.isRecipeValid();
         }
 
         @Override
@@ -424,7 +425,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         @Override
         public void putStack(@NotNull ItemStack stack) {
-            if (stack.isEmpty()) recipeLogic.consumeRecipeItems();
             super.putStack(recipeLogic.getCachedRecipeData().getRecipeOutput());
         }
 
