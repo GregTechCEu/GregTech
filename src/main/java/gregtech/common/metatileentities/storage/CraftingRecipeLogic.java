@@ -43,7 +43,7 @@ import java.util.Map;
 public class CraftingRecipeLogic extends SyncHandler {
 
     private final World world;
-    private IItemHandler availableHandlers;
+    private IItemHandlerModifiable availableHandlers;
 
     /** Used to lookup a list of slots for a given stack */
     private final Object2ObjectOpenCustomHashMap<ItemStack, List<Integer>> stackLookupMap =
@@ -62,7 +62,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     public static short ALL_INGREDIENTS_PRESENT = 511;
     private short tintLocation = ALL_INGREDIENTS_PRESENT;
 
-    public CraftingRecipeLogic(World world, IItemHandler handlers, IItemHandlerModifiable craftingMatrix) {
+    public CraftingRecipeLogic(World world, IItemHandlerModifiable handlers, IItemHandlerModifiable craftingMatrix) {
         this.world = world;
         this.availableHandlers = handlers;
         this.craftingMatrix = new CraftingWrapper(craftingMatrix);
@@ -82,7 +82,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         return this.craftingMatrix;
     }
 
-    public void updateInventory(IItemHandler handler) {
+    public void updateInventory(IItemHandlerModifiable handler) {
         this.availableHandlers = handler;
     }
 
@@ -362,6 +362,10 @@ public class CraftingRecipeLogic extends SyncHandler {
             updateClientStacks(buf);
         } else if (id == 3) {
             syncToServer(3);
+        } else if (id == 5) {
+            int slot = buf.readVarInt();
+            var stack = readStackSafe(buf);
+            this.availableHandlers.setStackInSlot(slot, stack);
         }
     }
 
@@ -378,6 +382,12 @@ public class CraftingRecipeLogic extends SyncHandler {
             syncToClient(1, this::writeAvailableStacks);
         } else if (id == 3) {
             syncToClient(1, this::writeAvailableStacks);
+        } else if (id == 4) {
+            int slot = buf.readVarInt();
+            syncToClient(5, buffer -> {
+                buffer.writeVarInt(slot);
+                writeStackSafe(buffer, availableHandlers.getStackInSlot(slot));
+            });
         }
     }
 
