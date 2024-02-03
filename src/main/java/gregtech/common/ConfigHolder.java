@@ -274,6 +274,10 @@ public class ConfigHolder {
                 "Whether to nerf the output amounts of the first circuit in a set to 1 (from 2) and SoC to 2 (from 4).",
                 "Default: false" })
         public boolean harderCircuitRecipes = false;
+
+        @Config.Comment({ "Makes nearly every GCYM Multiblock require blocks which set their maximum voltages.",
+                "Default: false" })
+        public boolean enableTieredCasings = false;
     }
 
     public static class CompatibilityOptions {
