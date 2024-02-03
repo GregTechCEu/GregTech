@@ -464,7 +464,7 @@ public class MiscRecipeLoader {
         CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, DarkAsh)
                 .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
 
-        if (!ConfigHolder.recipeRemovalConfig.otherStuff.removeElectrolysisRecipes) {
+        if (!ConfigHolder.recipeRemovalConfig.otherStuff.disableElectrolysisRecipes) {
             ELECTROLYZER_RECIPES.recipeBuilder()
                     .input(FERTILIZER)
                     .output(dust, Calcite)

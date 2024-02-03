@@ -96,7 +96,7 @@ public class PlatGroupMetalsRecipes {
 
         // PLATINUM
 
-        if (!ConfigHolder.recipeRemovalConfig.otherStuff.removeElectrolysisRecipes) {
+        if (!ConfigHolder.recipeRemovalConfig.otherStuff.disableElectrolysisRecipes) {
             ELECTROLYZER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
                     .input(dust, PlatinumRaw, 3)
                     .output(dust, Platinum)
@@ -123,7 +123,7 @@ public class PlatGroupMetalsRecipes {
                 .fluidOutputs(Hydrogen.getFluid(3000))
                 .buildAndRegister();
 
-        if (!ConfigHolder.recipeRemovalConfig.otherStuff.removeElectrolysisRecipes) {
+        if (!ConfigHolder.recipeRemovalConfig.otherStuff.disableElectrolysisRecipes) {
             ELECTROLYZER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
                     .fluidInputs(RhodiumSulfate.getFluid(1000))
                     .output(dust, Rhodium, 2)

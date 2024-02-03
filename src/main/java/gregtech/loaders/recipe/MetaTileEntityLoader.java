@@ -46,7 +46,7 @@ import static gregtech.loaders.recipe.CraftingComponent.*;
 public class MetaTileEntityLoader {
 
     public static void init() {
-        if (!ConfigHolder.recipeRemovalConfig.otherStuff.removeTierCasingRecipes) {
+        if (!ConfigHolder.recipeRemovalConfig.otherStuff.disableTierCasingRecipes) {
             ModHandler.addShapedRecipe(true, "casing_ulv", MetaBlocks.MACHINE_CASING.getItemVariant(ULV), "PPP", "PwP",
                     "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
             ModHandler.addShapedRecipe(true, "casing_lv", MetaBlocks.MACHINE_CASING.getItemVariant(LV), "PPP", "PwP",

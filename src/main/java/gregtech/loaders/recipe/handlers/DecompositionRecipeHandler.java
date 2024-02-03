@@ -95,7 +95,7 @@ public class DecompositionRecipeHandler {
         // generate builder
         RecipeBuilder<?> builder;
         if (material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING) &&
-                !ConfigHolder.recipeRemovalConfig.otherStuff.removeElectrolysisRecipes) {
+                !ConfigHolder.recipeRemovalConfig.otherStuff.disableElectrolysisRecipes) {
             builder = RecipeMaps.ELECTROLYZER_RECIPES.recipeBuilder()
                     .duration(((int) material.getProtons() * totalInputAmount * 2))
                     .EUt(material.getMaterialComponents().size() <= 2 ? VA[LV] : 2 * VA[LV]);

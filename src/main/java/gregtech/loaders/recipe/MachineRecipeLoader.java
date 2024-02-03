@@ -63,7 +63,7 @@ public class MachineRecipeLoader {
         AssemblyLineLoader.init();
         FusionLoader.init();
         AssemblerRecipeLoader.init();
-        if (!ConfigHolder.recipeRemovalConfig.otherStuff.removeComponentRecipes) {
+        if (!ConfigHolder.recipeRemovalConfig.otherStuff.disableComponentRecipes) {
             ComponentRecipes.register();
         }
         MiscRecipeLoader.init();

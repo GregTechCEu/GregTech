@@ -323,7 +323,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         // Electrolyzer
-        if (!ConfigHolder.recipeRemovalConfig.otherStuff.removeElectrolysisRecipes) {
+        if (!ConfigHolder.recipeRemovalConfig.otherStuff.disableElectrolysisRecipes) {
             ELECTROLYZER_RECIPES.recipeBuilder()
                     .input(dust, SodiumBisulfate, 7)
                     .fluidOutputs(SodiumPersulfate.getFluid(500))

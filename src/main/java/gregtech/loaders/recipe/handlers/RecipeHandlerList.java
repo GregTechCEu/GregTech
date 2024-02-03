@@ -9,7 +9,7 @@ public class RecipeHandlerList {
         OreRecipeHandler.register();
         PartsRecipeHandler.register();
         WireRecipeHandler.register();
-        if (!ConfigHolder.recipeRemovalConfig.processingHandlers.removeWireRecipes) WireCombiningHandler.register();
+        if (!ConfigHolder.recipeRemovalConfig.processingHandlers.disableWireRecipes) WireCombiningHandler.register();
         PipeRecipeHandler.register();
         ToolRecipeHandler.register();
         PolarizingRecipeHandler.register();
