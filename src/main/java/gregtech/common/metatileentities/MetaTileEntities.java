@@ -39,6 +39,7 @@ import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
 import gregtech.common.metatileentities.electric.MetaTileEntityWorldAccelerator;
 import gregtech.common.metatileentities.electric.SimpleMachineMetaTileEntityResizable;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityAlloyBlastSmelter;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityCleanroom;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityCrackingUnit;
@@ -48,8 +49,31 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBla
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeAssembler;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeAutoclave;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeBender;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeBrewery;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeCentrifuge;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeChemicalBath;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeChemicalReactor;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeCircuitAssembler;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeCutter;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeDistillery;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeElectrolyzer;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeEngraver;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeExtractor;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeExtruder;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeMacerator;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeMassFabricator;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeMiner;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeMixer;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargePackager;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargePolarizer;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeReplicator;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeSifter;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeSolidifier;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeWiremill;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityMegaBlastFurnace;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityNetworkSwitch;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
@@ -97,6 +121,7 @@ import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPrimitiveW
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityPumpHatch;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityReverberatoryFurnace;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityTankValve;
+import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamEngine;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityLargeBoiler;
@@ -321,6 +346,31 @@ public class MetaTileEntities {
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
     public static MetaTileEntityReverberatoryFurnace REVERBERATORY_FURNACE;
+    public static MetaTileEntitySteamEngine STEAM_ENGINE;
+    public static MetaTileEntityLargeMacerator LARGE_MACERATOR;
+    public static MetaTileEntityAlloyBlastSmelter ALLOY_BLAST_SMELTER;
+    public static MetaTileEntityLargeAssembler LARGE_ASSEMBLER;
+    public static MetaTileEntityLargeAutoclave LARGE_AUTOCLAVE;
+    public static MetaTileEntityLargeBender LARGE_BENDER;
+    public static MetaTileEntityLargeBrewery LARGE_BREWERY;
+    public static MetaTileEntityLargeCentrifuge LARGE_CENTRIFUGE;
+    public static MetaTileEntityLargeChemicalBath LARGE_CHEMICAL_BATH;
+    public static MetaTileEntityLargeExtractor LARGE_EXTRACTOR;
+    public static MetaTileEntityLargeCutter LARGE_CUTTER;
+    public static MetaTileEntityLargeDistillery LARGE_DISTILLERY;
+    public static MetaTileEntityLargeElectrolyzer LARGE_ELECTROLYZER;
+    public static MetaTileEntityLargePolarizer LARGE_POLARIZER;
+    public static MetaTileEntityLargeExtruder LARGE_EXTRUDER;
+    public static MetaTileEntityLargeSolidifier LARGE_SOLIDIFIER;
+    public static MetaTileEntityLargeMixer LARGE_MIXER;
+    public static MetaTileEntityLargePackager LARGE_PACKAGER;
+    public static MetaTileEntityLargeEngraver LARGE_ENGRAVER;
+    public static MetaTileEntityLargeSifter LARGE_SIFTER;
+    public static MetaTileEntityLargeWiremill LARGE_WIREMILL;
+    public static MetaTileEntityLargeMassFabricator LARGE_MASS_FABRICATOR;
+    public static MetaTileEntityLargeReplicator LARGE_REPLICATOR;
+    public static MetaTileEntityMegaBlastFurnace MEGA_BLAST_FURNACE;
+    public static MetaTileEntityLargeCircuitAssembler LARGE_CIRCUIT_ASSEMBLER;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -739,6 +789,42 @@ public class MetaTileEntities {
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
         REVERBERATORY_FURNACE = registerMetaTileEntity(1043, new MetaTileEntityReverberatoryFurnace(gregtechId("reverberatory_furnace")));
+
+        STEAM_ENGINE = registerMetaTileEntity(1044, new MetaTileEntitySteamEngine(gregtechId("steam_engine")));
+
+        LARGE_MACERATOR = registerMetaTileEntity(2000, new MetaTileEntityLargeMacerator(gregtechId("large_macerator")));
+        ALLOY_BLAST_SMELTER = registerMetaTileEntity(2001,
+                new MetaTileEntityAlloyBlastSmelter(gregtechId("alloy_blast_smelter")));
+        LARGE_ASSEMBLER = registerMetaTileEntity(2003, new MetaTileEntityLargeAssembler(gregtechId("large_assembler")));
+        LARGE_AUTOCLAVE = registerMetaTileEntity(2004, new MetaTileEntityLargeAutoclave(gregtechId("large_autoclave")));
+        LARGE_BENDER = registerMetaTileEntity(2005, new MetaTileEntityLargeBender(gregtechId("large_bender")));
+        LARGE_BREWERY = registerMetaTileEntity(2006, new MetaTileEntityLargeBrewery(gregtechId("large_brewer")));
+        LARGE_CENTRIFUGE = registerMetaTileEntity(2007, new MetaTileEntityLargeCentrifuge(gregtechId("large_centrifuge")));
+        LARGE_CHEMICAL_BATH = registerMetaTileEntity(2008,
+                new MetaTileEntityLargeChemicalBath(gregtechId("large_chemical_bath")));
+        // FREE ID: 2009
+        LARGE_EXTRACTOR = registerMetaTileEntity(2010, new MetaTileEntityLargeExtractor(gregtechId("large_extractor")));
+        LARGE_CUTTER = registerMetaTileEntity(2011, new MetaTileEntityLargeCutter(gregtechId("large_cutter")));
+        LARGE_DISTILLERY = registerMetaTileEntity(2012, new MetaTileEntityLargeDistillery(gregtechId("large_distillery")));
+        LARGE_ELECTROLYZER = registerMetaTileEntity(2013,
+                new MetaTileEntityLargeElectrolyzer(gregtechId("large_electrolyzer")));
+        LARGE_POLARIZER = registerMetaTileEntity(2014, new MetaTileEntityLargePolarizer(gregtechId("large_polarizer")));
+        LARGE_EXTRUDER = registerMetaTileEntity(2015, new MetaTileEntityLargeExtruder(gregtechId("large_extruder")));
+        LARGE_SOLIDIFIER = registerMetaTileEntity(2016, new MetaTileEntityLargeSolidifier(gregtechId("large_solidifier")));
+        LARGE_MIXER = registerMetaTileEntity(2017, new MetaTileEntityLargeMixer(gregtechId("large_mixer")));
+        LARGE_PACKAGER = registerMetaTileEntity(2018, new MetaTileEntityLargePackager(gregtechId("large_packager")));
+        LARGE_ENGRAVER = registerMetaTileEntity(2019, new MetaTileEntityLargeEngraver(gregtechId("large_engraver")));
+        LARGE_SIFTER = registerMetaTileEntity(2020, new MetaTileEntityLargeSifter(gregtechId("large_sifter")));
+        LARGE_WIREMILL = registerMetaTileEntity(2021, new MetaTileEntityLargeWiremill(gregtechId("large_wiremill")));
+        // LARGE_MASS_FABRICATOR = registerMetaTileEntity(2023, new
+        // MetaTileEntityLargeMassFabricator(gcymId("large_mass_fabricator"))); todo replication system
+        // LARGE_REPLICATOR = registerMetaTileEntity(2024, new
+        // MetaTileEntityLargeReplicator(gcymId("large_replicator")));
+        MEGA_BLAST_FURNACE = registerMetaTileEntity(2025,
+                new MetaTileEntityMegaBlastFurnace(gregtechId("mega_blast_furnace")));
+
+        LARGE_CIRCUIT_ASSEMBLER = registerMetaTileEntity(2028,
+                new MetaTileEntityLargeCircuitAssembler(gregtechId("large_circuit_assembler")));
 
         // MISC MTE's START: IDs 1150-2000
 

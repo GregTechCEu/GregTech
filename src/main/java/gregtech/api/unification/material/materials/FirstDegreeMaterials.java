@@ -6,6 +6,8 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -88,7 +90,7 @@ public class FirstDegreeMaterials {
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(1160))
                 .color(0xFFB400).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FRAME)
                 .components(Zinc, 1, Copper, 3)
                 .rotorStats(8.0f, 3.0f, 152)
                 .itemPipeProperties(2048, 1)
@@ -747,6 +749,7 @@ public class FirstDegreeMaterials {
 
         Graphene = new Material.Builder(342, gregtechId("graphene"))
                 .dust()
+                .flags(GENERATE_FOIL)
                 .color(0x808080).iconSet(SHINY)
                 .components(Carbon, 1)
                 .cableProperties(V[IV], 1, 1)
@@ -1067,7 +1070,7 @@ public class FirstDegreeMaterials {
         TungstenCarbide = new Material.Builder(396, gregtechId("tungsten_carbide"))
                 .ingot(4).fluid()
                 .color(0x330066).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Tungsten, 1, Carbon, 1)
                 .toolStats(ToolProperty.Builder.of(60.0F, 2.0F, 1024, 4)
                         .enchantability(21).build())
@@ -1490,6 +1493,86 @@ public class FirstDegreeMaterials {
                         .temp(3000, GasTier.MID)
                         .blastStats(VA[EV], 1400)
                         .vacuumStats(VA[HV], 250))
+                .build();
+
+        Stellite100 = new Material.Builder(452, gregtechId("stellite_100"))
+                .ingot().fluid()
+                .color(0xDEDEFF).iconSet(MaterialIconSet.BRIGHT)
+                .flags(GENERATE_PLATE)
+                .components(Iron, 4, Chrome, 3, Tungsten, 2, Molybdenum, 1)
+                .blast(b -> b.temp(3790, GasTier.HIGH).blastStats(VA[EV], 1000))
+                .build();
+
+        WatertightSteel = new Material.Builder(453, gregtechId("watertight_steel"))
+                .ingot().fluid()
+                .color(0x355D6A).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
+                .components(Iron, 7, Aluminium, 4, Nickel, 2, Chrome, 1, Sulfur, 1)
+                .blast(b -> b.temp(3850, GasTier.MID).blastStats(VA[EV], 800))
+                .build();
+
+        MaragingSteel300 = new Material.Builder(454, gregtechId("maraging_steel_300"))
+                .ingot().fluid()
+                .color(0x637087).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
+                .components(Iron, 16, Titanium, 1, Aluminium, 1, Nickel, 4, Cobalt, 2)
+                .blast(b -> b.temp(4000, GasTier.HIGH).blastStats(VA[EV], 1000))
+                .build();
+
+        HastelloyC276 = new Material.Builder(455, gregtechId("hastelloy_c_276"))
+                .ingot().fluid()
+                .color(0xCF3939).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
+                .components(Nickel, 12, Molybdenum, 8, Chrome, 7, Tungsten, 1, Cobalt, 1, Copper, 1)
+                .blast(b -> b.temp(4625, GasTier.MID).blastStats(VA[EV], 1000))
+                .build();
+
+        HastelloyX = new Material.Builder(456, gregtechId("hastelloy_x"))
+                .ingot().fluid()
+                .color(0x6BA3E3).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
+                .components(Nickel, 8, Iron, 3, Tungsten, 4, Molybdenum, 2, Chrome, 1, Niobium, 1)
+                .blast(b -> b.temp(4200, GasTier.HIGH).blastStats(VA[EV], 900))
+                .build();
+
+        Trinaquadalloy = new Material.Builder(457, gregtechId("trinaquadalloy"))
+                .ingot().fluid()
+                .color(0x281832).iconSet(MaterialIconSet.BRIGHT)
+                .flags(GENERATE_PLATE)
+                .components(Trinium, 6, Naquadah, 2, Carbon, 1)
+                .blast(b -> b.temp(8747, GasTier.HIGHER).blastStats(VA[ZPM], 1200))
+                .build();
+
+        Zeron100 = new Material.Builder(458, gregtechId("zeron_100"))
+                .ingot().fluid()
+                .color(0x325A8C).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE)
+                .components(Iron, 10, Nickel, 2, Tungsten, 2, Niobium, 1, Cobalt, 1)
+                .blast(b -> b.temp(3693, GasTier.MID).blastStats(VA[EV], 1000))
+                .build();
+
+        TitaniumCarbide = new Material.Builder(459, gregtechId("titanium_carbide"))
+                .ingot().fluid()
+                .color(0xB20B3A).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE)
+                .components(Titanium, 1, Carbon, 1)
+                .blast(b -> b.temp(3430, GasTier.MID).blastStats(VA[EV], 1000))
+                .build();
+
+        TantalumCarbide = new Material.Builder(460, gregtechId("tantalum_carbide"))
+                .ingot().fluid()
+                .color(0x56566A).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE)
+                .components(Tantalum, 1, Carbon, 1)
+                .blast(b -> b.temp(4120, GasTier.MID).blastStats(VA[EV], 1200))
+                .build();
+
+        MolybdenumDisilicide = new Material.Builder(461, gregtechId("molybdenum_disilicide"))
+                .ingot().fluid()
+                .color(0x6A5BA3).iconSet(MaterialIconSet.METALLIC)
+                .flags(EXT_METAL, GENERATE_SPRING, GENERATE_RING)
+                .components(Molybdenum, 1, Silicon, 2)
+                .blast(b -> b.temp(2300, GasTier.MID).blastStats(VA[EV], 800))
                 .build();
     }
 }

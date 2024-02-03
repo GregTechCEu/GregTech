@@ -1390,6 +1390,20 @@ public final class RecipeMaps {
             .sound(GTSoundEvents.FURNACE)
             .build();
 
+    @ZenProperty
+    public static final RecipeMap<BlastRecipeBuilder> ALLOY_BLAST_RECIPES = new RecipeMapBuilder<>("reaction_furnace",
+            new BlastRecipeBuilder())
+            .itemInputs(9)
+            .fluidInputs(3)
+            .itemOutputs(0)
+            .fluidOutputs(1)
+            .itemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false)
+            .fluidSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false)
+            .itemSlotOverlay(GuiTextures.FURNACE_OVERLAY_2, true)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
+            .sound(GTSoundEvents.FURNACE)
+            .build();
+
     //////////////////////////////////////
     // Fuel Recipe Maps //
     //////////////////////////////////////
