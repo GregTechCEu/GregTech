@@ -2,7 +2,7 @@
 
 ***
 
-### v0.1
+### v0.1 (based on GTCEu 2.8.6)
 
 ### Features
 
