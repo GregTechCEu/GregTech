@@ -504,6 +504,55 @@ public class Textures {
     public static final SimpleOverlayRenderer ME_OUTPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_output_bus");
     public static final SimpleOverlayRenderer ME_INPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_input_bus");
 
+    public static OrientedOverlayRenderer LARGE_MACERATOR_OVERLAY = new OrientedOverlayRenderer("multiblock/large_macerator");
+    public static OrientedOverlayRenderer ALLOY_BLAST_SMELTER_OVERLAY = new OrientedOverlayRenderer("multiblock/alloy_blast_smelter");
+    public static OrientedOverlayRenderer LARGE_ASSEMBLER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_assembler");
+    public static OrientedOverlayRenderer LARGE_CIRCUIT_ASSEMBLER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_circuit_assembler");
+    public static OrientedOverlayRenderer LARGE_AUTOCLAVE_OVERLAY = new OrientedOverlayRenderer("multiblock/large_autoclave");
+    public static OrientedOverlayRenderer LARGE_BENDER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_bender");
+    public static OrientedOverlayRenderer LARGE_BREWERY_OVERLAY = new OrientedOverlayRenderer("multiblock/large_brewery");
+    public static OrientedOverlayRenderer LARGE_CENTRIFUGE_OVERLAY = new OrientedOverlayRenderer("multiblock/large_centrifuge");
+    public static OrientedOverlayRenderer LARGE_CHEMICAL_BATH_OVERLAY = new OrientedOverlayRenderer("multiblock/large_chemical_bath");
+    public static OrientedOverlayRenderer CHEMICAL_PLANT_OVERLAY = new OrientedOverlayRenderer("multiblock/chemical_plant");
+    public static OrientedOverlayRenderer LARGE_EXTRACTOR_OVERLAY = new OrientedOverlayRenderer("multiblock/large_extractor");
+    public static OrientedOverlayRenderer LARGE_CUTTER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_cutter");
+    public static OrientedOverlayRenderer LARGE_DISTILLERY_OVERLAY = new OrientedOverlayRenderer("multiblock/large_distillery");
+    public static OrientedOverlayRenderer LARGE_ELECTROLYZER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_electrolyzer");
+    public static OrientedOverlayRenderer LARGE_POLARIZER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_polarizer");
+    public static OrientedOverlayRenderer LARGE_EXTRUDER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_extruder");
+    public static OrientedOverlayRenderer LARGE_SOLIDIFIER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_solidifier");
+    public static OrientedOverlayRenderer LARGE_MIXER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_mixer");
+    public static OrientedOverlayRenderer LARGE_PACKAGER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_packager");
+    public static OrientedOverlayRenderer LARGE_ENGRAVER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_engraver");
+    public static OrientedOverlayRenderer LARGE_SIFTER_OVERLAY = new OrientedOverlayRenderer("multiblock/large_sifter");
+    public static OrientedOverlayRenderer LARGE_WIREMILL_OVERLAY = new OrientedOverlayRenderer("multiblock/large_wiremill");
+    public static OrientedOverlayRenderer LARGE_MASS_FABRICATOR_OVERLAY = new OrientedOverlayRenderer("multiblock/large_mass_fabricator");
+    public static OrientedOverlayRenderer LARGE_REPLICATOR_OVERLAY = new OrientedOverlayRenderer("multiblock/large_replicator");
+    public static OrientedOverlayRenderer MEGA_BLAST_FURNACE_OVERLAY = new OrientedOverlayRenderer("multiblock/mega_blast_furnace");
+    public static OrientedOverlayRenderer STEAM_ENGINE_OVERLAY = new OrientedOverlayRenderer("multiblock/steam_engine");
+
+    // Hatches
+    public static OrientedOverlayRenderer PARALLEL_HATCH_MK1_OVERLAY = new OrientedOverlayRenderer("hatches/parallel_hatch_mk1");
+    public static OrientedOverlayRenderer PARALLEL_HATCH_MK2_OVERLAY = new OrientedOverlayRenderer("hatches/parallel_hatch_mk2");
+    public static OrientedOverlayRenderer PARALLEL_HATCH_MK3_OVERLAY = new OrientedOverlayRenderer("hatches/parallel_hatch_mk3");
+    public static OrientedOverlayRenderer PARALLEL_HATCH_MK4_OVERLAY = new OrientedOverlayRenderer("hatches/parallel_hatch_mk4");
+    public static OrientedOverlayRenderer TIERED_HATCH_OVERLAY = new OrientedOverlayRenderer("hatches/tiered_hatch");
+
+    // Casings
+    public static SimpleOverlayRenderer MACERATOR_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/macerator_casing");
+    public static SimpleOverlayRenderer BLAST_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/blast_casing");
+    public static SimpleOverlayRenderer ASSEMBLING_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/assembler_casing");
+    public static SimpleOverlayRenderer STRESS_PROOF_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/stress_proof_casing");
+    public static SimpleOverlayRenderer CORROSION_PROOF_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/corrosion_proof_casing");
+    public static SimpleOverlayRenderer VIBRATION_SAFE_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/vibration_safe_casing");
+    public static SimpleOverlayRenderer WATERTIGHT_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/watertight_casing");
+    public static SimpleOverlayRenderer CUTTER_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/cutter_casing");
+    public static SimpleOverlayRenderer NONCONDUCTING_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/nonconducting_casing");
+    public static SimpleOverlayRenderer MIXER_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/mixer_casing");
+    public static SimpleOverlayRenderer ENGRAVER_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/engraver_casing");
+    public static SimpleOverlayRenderer ATOMIC_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/atomic_casing");
+    public static SimpleOverlayRenderer STEAM_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/steam_casing");
+
     public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
     public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");
     public static final ResourceLocation AROMANTIC_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");

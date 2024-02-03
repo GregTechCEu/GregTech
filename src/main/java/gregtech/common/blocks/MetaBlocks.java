@@ -140,6 +140,9 @@ public class MetaBlocks {
     public static BlockBatteryPart BATTERY_BLOCK;
     public static BlockRefractoryBrick REFRACTORY_BRICK;
 
+    public static BlockUniqueCasing UNIQUE_CASING;
+    public static BlockLargeMultiblockCasing LARGE_MULTIBLOCK_CASING;
+
     public static final EnumMap<EnumDyeColor, BlockLamp> LAMPS = new EnumMap<>(EnumDyeColor.class);
     public static final EnumMap<EnumDyeColor, BlockLamp> BORDERLESS_LAMPS = new EnumMap<>(EnumDyeColor.class);
 
@@ -366,6 +369,11 @@ public class MetaBlocks {
         Blocks.FIRE.setFireInfo(RUBBER_WOOD_DOOR, 5, 20);
         Blocks.FIRE.setFireInfo(TREATED_WOOD_DOOR, 5, 20);
         Blocks.FIRE.setFireInfo(BRITTLE_CHARCOAL, 5, 5);
+
+        UNIQUE_CASING = new BlockUniqueCasing();
+        UNIQUE_CASING.setRegistryName("unique_casing");
+        LARGE_MULTIBLOCK_CASING = new BlockLargeMultiblockCasing();
+        LARGE_MULTIBLOCK_CASING.setRegistryName("large_multiblock_casing");
     }
 
     /**
@@ -512,6 +520,9 @@ public class MetaBlocks {
         for (BlockCompressed block : COMPRESSED_BLOCKS) block.onModelRegister();
         for (BlockFrame block : FRAME_BLOCKS) block.onModelRegister();
         for (BlockOre block : ORES) block.onModelRegister();
+
+        UNIQUE_CASING.onModelRegister();
+        registerItemModel(LARGE_MULTIBLOCK_CASING);
     }
 
     @SideOnly(Side.CLIENT)

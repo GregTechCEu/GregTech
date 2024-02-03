@@ -6232,3 +6232,149 @@ gregtech.scanner.forestry.larvae=§oScanned Larvae
 gregtech.scanner.forestry.serum=§oScanned Serum
 gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
+
+
+
+# multiblocks
+gregtech.machine.large_macerator.name=Large Maceration Tower
+gregtech.machine.alloy_blast_smelter.name=Alloy Blast Smelter
+gregtech.machine.large_arc_furnace.name=Large Arc Smelter
+gregtech.machine.large_assembler.name=Large Assembling Factory
+gregtech.machine.large_autoclave.name=Large Autoclave Chamber
+gregtech.machine.large_bender.name=Large Material Press
+gregtech.machine.large_brewer.name=Large Brewing Vat
+gregtech.machine.large_centrifuge.name=Large Centrifuge Unit
+gregtech.machine.large_chemical_bath.name=Large Chemical Bath
+gregtech.machine.chemical_plant.name=Chemical Plant
+gregtech.machine.chemical_plant.tooltip.1=Only runs Large Chemical Recipes in parallel
+gregtech.machine.large_extractor.name=Large Extracting Machine
+gregtech.machine.large_cutter.name=Large Cutting Machine
+gregtech.machine.large_distillery.name=Large Fractionating Distillery
+gregtech.machine.large_electrolyzer.name=Large Electrolysis Plant
+gregtech.machine.large_polarizer.name=Large Electromagnet
+gregtech.machine.large_extruder.name=Large Extrusion Machine
+gregtech.machine.large_solidifier.name=Large Solidification Array
+gregtech.machine.large_mixer.name=Large Mixing Vessel
+gregtech.machine.large_packager.name=Large Packaging Machine
+gregtech.machine.large_engraver.name=Large Engraving Machine
+gregtech.machine.large_sifter.name=Large Sifting Funnel
+gregtech.machine.large_wiremill.name=Large Wire Factory
+gregtech.machine.electric_implosion_compressor.name=Electric Implosion Compressor
+gregtech.machine.large_mass_fabricator.name=Large Mass Fabrication Chamber
+gregtech.machine.large_replicator.name=Large Replication Chamber
+gregtech.machine.mega_blast_furnace.name=Rotary Hearth Furnace
+gregtech.machine.mega_vacuum_freezer.name=Bulk Blast Chiller
+gregtech.machine.steam_engine.name=Industrial Steam Engine
+gregtech.machine.steam_engine.tooltip.1=Produces up to %s§7 power.
+gregtech.machine.large_circuit_assembler.name=Large Circuit Assembler
+
+
+gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
+gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
+gregtech.multiblock.tiered_hatch.tooltip=Max Tiered EU/t: §a%s (%s§r)
+
+
+
+# multiblock descriptions
+gregtech.multiblock.large_macerator.description=A multiblock Macerator for grinding.
+gregtech.multiblock.alloy_blast_smelter.description=A Blast Furnace built for creating alloys in high volumes.
+gregtech.multiblock.large_arc_furnace.description=A multiblock Arc Furnace for recycling.
+gregtech.multiblock.large_assembler.description=A multiblock Assembling Machine for putting things together.
+gregtech.multiblock.large_autoclave.description=A multiblock Autoclave for pressurizing things.
+gregtech.multiblock.large_bender.description=A multiblock Bending Machine, Compressor, Forming Press and Forge Hammer for forming materials.
+gregtech.multiblock.large_brewer.description=A multiblock Brewing Machine and Fermenter for producing brews.
+gregtech.multiblock.large_centrifuge.description=A multiblock Centrifuge and Thermal Centrifuge for separating materials.
+gregtech.multiblock.large_chemical_bath.description=A multiblock Chemical Bath and Ore Washing Plant for cleaning materials.
+gregtech.multiblock.chemical_plant.description=A Chemical Plant for advanced chemistry.
+gregtech.multiblock.large_extractor.description=A multiblock Extractor and Canning Machine for transferring materials.
+gregtech.multiblock.large_cutter.description=A multiblock Cutting Machine and Lathe for cutting things into smaller pieces.
+gregtech.multiblock.large_distillery.description=A multiblock Distillery and Distillation Tower for separating fluids into fractions.
+gregtech.multiblock.large_electrolyzer.description=A multiblock Electrolyzer for separating molecules.
+gregtech.multiblock.large_polarizer.description=A multiblock Polarizer and Electromagnetic Separator for magnetizing materials.
+gregtech.multiblock.large_extruder.description=A multiblock Extruder for shaping materials.
+gregtech.multiblock.large_solidifier.description=A multiblock Fluid Solidifier for casting materials.
+gregtech.multiblock.large_mixer.description=A multiblock Mixer for blending materials.
+gregtech.multiblock.large_packager.description=A multiblock Packager for boxinating items.
+gregtech.multiblock.large_engraver.description=A multiblock Laser Engraver for etching objects.
+gregtech.multiblock.large_sifter.description=A multiblock Sifting Machine for filtering materials.
+gregtech.multiblock.large_wiremill.description=A multiblock Wiremill for producing wires.
+gregtech.multiblock.electric_implosion_compressor.description=An electric version of the implosion compressor for extreme compression.
+gregtech.multiblock.large_mass_fabricator.description=A multiblock Mass Fabricator for turning matter into elementary particles.
+gregtech.multiblock.large_replicator.description=A multiblock Replicator for turning elementary particles into materials.
+gregtech.multiblock.mega_blast_furnace.description=A massive Electric Blast Furnace for extreme volume smelting.
+gregtech.multiblock.mega_vacuum_freezer.description=A massive Vacuum Freezer for extreme volume cooling.
+gregtech.multiblock.steam_engine.description=A large Steam Engine for effective power production.
+gregtech.multiblock.large_circuit_assembler.description=A multiblock Circuit Assembler for fabricating circuits.
+
+
+# hatches
+
+gregtech.machine.parallel_hatch.iv.name=Elite Parallel Control Hatch
+gregtech.machine.parallel_hatch.luv.name=Master Parallel Control Hatch
+gregtech.machine.parallel_hatch.zpm.name=Ultimate Parallel Control Hatch
+gregtech.machine.parallel_hatch.uv.name=Super Parallel Control Hatch
+gregtech.machine.parallel_hatch.tooltip=Allows up to §b%s§7 parallel recipes.
+gregtech.machine.parallel_hatch.display=Adjust the maximum parallel of the multiblock
+
+gregtech.machine.tiered_hatch.tooltip.1=Enables up to %s§7 Voltage.
+
+gregtech.machine.tiered_hatch.ulv.name=Primitive Voltage Control Unit
+gregtech.machine.tiered_hatch.lv.name=Basic Voltage Control Unit
+gregtech.machine.tiered_hatch.mv.name=Good Voltage Control Unit
+gregtech.machine.tiered_hatch.hv.name=Advanced Voltage Control Unit
+gregtech.machine.tiered_hatch.ev.name=Extreme Voltage Control Unit
+gregtech.machine.tiered_hatch.iv.name=Elite Voltage Control Unit
+gregtech.machine.tiered_hatch.luv.name=Master Voltage Control Unit
+gregtech.machine.tiered_hatch.zpm.name=Ultimate Voltage Control Unit
+gregtech.machine.tiered_hatch.uv.name=Super Voltage Control Unit
+gregtech.machine.tiered_hatch.uhv.name=Infinite Voltage Control Unit
+gregtech.machine.tiered_hatch.uev.name=Ultra Voltage Control Unit
+gregtech.machine.tiered_hatch.uiv.name=Insane Voltage Control Unit
+gregtech.machine.tiered_hatch.umv.name=Epic Voltage Control Unit
+gregtech.machine.tiered_hatch.uxv.name=Legendary Voltage Control Unit
+gregtech.machine.tiered_hatch.max.name=Maximum Voltage Control Unit
+
+gregtech.tooltip.max_energy_hatches=Energy Hatch Limit: §c%d
+
+# casings
+
+# unique casing
+tile.unique_casing.crushing_wheels.name=Crushing Wheels
+tile.unique_casing.slicing_blades.name=Slicing Blades
+tile.unique_casing.electrolytic_cell.name=Electrolytic Cell
+tile.unique_casing.heat_vent.name=Heat Vent
+tile.unique_casing.molybdenum_disilicide_coil.name=Molybdenum Disilicide Coil Block
+
+# large multiblock casing
+tile.large_multiblock_casing.macerator_casing.name=Secure Maceration Casing
+tile.large_multiblock_casing.blast_casing.name=High Temperature Smelting Casing
+tile.large_multiblock_casing.assembler_casing.name=Large-Scale Assembler Casing
+tile.large_multiblock_casing.stress_proof_casing.name=Stress Proof Casing
+tile.large_multiblock_casing.corrosion_proof_casing.name=Corrosion Proof Casing
+tile.large_multiblock_casing.vibration_safe_casing.name=Vibration-Safe Casing
+tile.large_multiblock_casing.watertight_casing.name=Watertight Casing
+tile.large_multiblock_casing.cutter_casing.name=Shock Proof Cutting Casing
+tile.large_multiblock_casing.nonconducting_casing.name=Nonconducting Casing
+tile.large_multiblock_casing.mixer_casing.name=Reaction-Safe Mixing Casing
+tile.large_multiblock_casing.engraver_casing.name=Laser-Safe Engraving Casing
+tile.large_multiblock_casing.atomic_casing.name=Atomic Casing
+tile.large_multiblock_casing.steam_casing.name=Industrial Steam Casing
+
+# RecipeMaps
+recipemap.alloy_blast_smelter.name=Alloy Blast Smelting
+
+# Materials
+gregtech.material.stellite_100=Stellite-100
+gregtech.material.watertight_steel=Watertight Steel
+gregtech.material.maraging_steel_300=Maraging Steel 300
+gregtech.material.hastelloy_c_276=Hastelloy-C276
+gregtech.material.hastelloy_x=Hastelloy-X
+gregtech.material.trinaquadalloy=Trinaquadalloy
+gregtech.material.zeron_100=Zeron-100
+gregtech.material.titanium_carbide=Titanium Carbide
+gregtech.material.tantalum_carbide=Tantalum Carbide
+gregtech.material.molybdenum_disilicide=Molybdenum Disilicide
+
+gregtech.material.hsla_steel=HSLA Steel
+gregtech.material.titanium_tungsten_carbide=Titanium Tungsten Carbide
+gregtech.material.incoloy_ma_956=Incoloy-MA956

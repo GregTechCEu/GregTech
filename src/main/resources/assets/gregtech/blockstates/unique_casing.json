@@ -1,0 +1,75 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "active=false,variant=crushing_wheels": {
+      "model": "minecraft:cube_bottom_top",
+      "textures": {
+        "top": "gregtech:blocks/casings/unique/crushing_wheels",
+        "side": "gregtech:blocks/casings/large_multiblock_casing/macerator_casing",
+        "bottom": "#side"
+      }
+    },
+    "active=true,variant=crushing_wheels": {
+      "model": "minecraft:cube_bottom_top",
+      "textures": {
+        "top": "gregtech:blocks/casings/unique/crushing_wheels_on",
+        "side": "gregtech:blocks/casings/large_multiblock_casing/macerator_casing",
+        "bottom": "#side"
+      }
+    },
+    "active=false,variant=slicing_blades": {
+      "model": "minecraft:cube_bottom_top",
+      "textures": {
+        "top": "gregtech:blocks/casings/unique/slicing_blades",
+        "side": "gregtech:blocks/casings/large_multiblock_casing/cutter_casing",
+        "bottom": "#side"
+      }
+    },
+    "active=true,variant=slicing_blades": {
+      "model": "minecraft:cube_bottom_top",
+      "textures": {
+        "top": "gregtech:blocks/casings/unique/slicing_blades_on",
+        "side": "gregtech:blocks/casings/large_multiblock_casing/cutter_casing",
+        "bottom": "#side"
+      }
+    },
+    "active=false,variant=electrolytic_cell": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/unique/electrolytic_cell"
+      }
+    },
+    "active=true,variant=electrolytic_cell": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/unique/electrolytic_cell_on"
+      }
+    },
+    "active=false,variant=heat_vent": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/unique/heat_vent"
+      }
+    },
+    "active=true,variant=heat_vent": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/unique/heat_vent",
+        "top_all": "gregtech:blocks/casings/unique/heat_vent_bloom"
+      }
+    },
+    "active=false,variant=molybdenum_disilicide_coil": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/coils/machine_coil_molybdenum_disilicide"
+      }
+    },
+    "active=true,variant=molybdenum_disilicide_coil": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/coils/machine_coil_molybdenum_disilicide",
+        "top_all": "gregtech:blocks/casings/coils/machine_coil_molybdenum_disilicide_bloom"
+      }
+    }
+  }
+}

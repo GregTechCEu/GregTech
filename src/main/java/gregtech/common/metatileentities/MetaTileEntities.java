@@ -74,11 +74,13 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMuffl
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityObjectHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityOpticalDataHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityParallelHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchFluid;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityPassthroughHatchItem;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityReservoirHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntitySubstationEnergyHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityTieredHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
@@ -358,6 +360,9 @@ public class MetaTileEntities {
     public static MetaTileEntityAlarm ALARM;
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
+
+    public static MetaTileEntityParallelHatch[] PARALLEL_HATCH = new MetaTileEntityParallelHatch[4];
+    public static MetaTileEntityTieredHatch[] TIERED_HATCH = new MetaTileEntityTieredHatch[GTValues.V.length];
 
     //spotless:on
 
@@ -1130,6 +1135,22 @@ public class MetaTileEntities {
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x." + tierName), i, 4, true));
             NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1795 + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
+        }
+
+        //Parallel hatches and tiered hatches, 1800-1850
+
+        // Hatches
+        for (int i = 0; i < PARALLEL_HATCH.length; i++) {
+            int tier = GTValues.IV + i;
+            PARALLEL_HATCH[i] = registerMetaTileEntity(1800 + i, new MetaTileEntityParallelHatch(
+                    gregtechId(String.format("parallel_hatch.%s", GTValues.VN[tier])), tier));
+        }
+        for (int i = 0; i < TIERED_HATCH.length; i++) {
+            if (!GregTechAPI.isHighTier() && i > GTValues.UHV)
+                break;
+
+            TIERED_HATCH[i] = registerMetaTileEntity(1825 + i,
+                    new MetaTileEntityTieredHatch(gregtechId(String.format("tiered_hatch.%s", GTValues.VN[i])), i));
         }
 
         /*
