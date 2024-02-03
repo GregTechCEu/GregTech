@@ -152,7 +152,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
                 widgets.get(i).add(new ItemSlot().slot(SyncHandlers.itemSlot(inventory, index)
                         .slotGroup("item_inv")
                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                            if (!onlyAmountChanged && !client) {
+                            if (!onlyAmountChanged && !client && !init) {
                                 for (var facing : EnumFacing.VALUES) {
                                     var neighbor = getNeighbor(facing);
                                     if (neighbor instanceof IGregTechTileEntity gregTechTileEntity) {
