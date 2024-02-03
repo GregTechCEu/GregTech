@@ -41,16 +41,18 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        if (!(itemHandler instanceof IItemHandlerModifiable))
-            throw new UnsupportedOperationException("Handler " + itemHandler + " does not support this method");
-        ((IItemHandlerModifiable) itemHandler).setStackInSlot(slot - baseIndexOffset.get(itemHandler), stack);
+        if (itemHandler instanceof IItemHandlerModifiable modifiable) {
+            modifiable.setStackInSlot(slot - baseIndexOffset.get(itemHandler), stack);
+        } else {
+            itemHandler.extractItem(slot, Integer.MAX_VALUE, false);
+            itemHandler.insertItem(slot, stack, false);
+        }
     }
 
     @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        int realSlot = slot - baseIndexOffset.get(itemHandler);
         return itemHandler.getStackInSlot(slot - baseIndexOffset.get(itemHandler));
     }
 
