@@ -2,6 +2,8 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.fluids.store.FluidStorageKeys;
 
+import gregtech.loaders.recipe.ManualABSRecipes;
+
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.*;
@@ -28,6 +30,7 @@ public class ChemistryRecipes {
         GemSlurryRecipes.init();
         PlatGroupMetalsRecipes.init();
         NaquadahRecipes.init();
+        ManualABSRecipes.init();
         AcidRecipes.init();
 
         // A Few Random Recipes

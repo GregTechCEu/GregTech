@@ -332,8 +332,6 @@ public class MetaTileEntities {
     public static MetaTileEntityLargeMiner BASIC_LARGE_MINER;
     public static MetaTileEntityLargeMiner LARGE_MINER;
     public static MetaTileEntityLargeMiner ADVANCED_LARGE_MINER;
-    public static MetaTileEntityProcessingArray PROCESSING_ARRAY;
-    public static MetaTileEntityProcessingArray ADVANCED_PROCESSING_ARRAY;
     public static MetaTileEntityFluidDrill BASIC_FLUID_DRILLING_RIG;
     public static MetaTileEntityFluidDrill FLUID_DRILLING_RIG;
     public static MetaTileEntityFluidDrill ADVANCED_FLUID_DRILLING_RIG;
@@ -758,11 +756,6 @@ public class MetaTileEntities {
                 GTValues.LuV, 1, 7, 6, Materials.TungstenSteel, 32));
 
         CENTRAL_MONITOR = registerMetaTileEntity(1029, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
-
-        PROCESSING_ARRAY = registerMetaTileEntity(1030,
-                new MetaTileEntityProcessingArray(gregtechId("processing_array"), 0));
-        ADVANCED_PROCESSING_ARRAY = registerMetaTileEntity(1031,
-                new MetaTileEntityProcessingArray(gregtechId("advanced_processing_array"), 1));
 
         BASIC_FLUID_DRILLING_RIG = registerMetaTileEntity(1032,
                 new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.mv"), 2));

@@ -1391,7 +1391,7 @@ public final class RecipeMaps {
             .build();
 
     @ZenProperty
-    public static final RecipeMap<BlastRecipeBuilder> ALLOY_BLAST_RECIPES = new RecipeMapBuilder<>("reaction_furnace",
+    public static final RecipeMap<BlastRecipeBuilder> ALLOY_BLAST_RECIPES = new RecipeMapBuilder<>("alloy_blast_smelting",
             new BlastRecipeBuilder())
             .itemInputs(9)
             .fluidInputs(3)

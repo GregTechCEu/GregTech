@@ -34,6 +34,14 @@ import static gregtech.common.items.MetaItems.*;
 public class MiscRecipeLoader {
 
     public static void init() {
+        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                .input(dust, Graphene)
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
+                .output(foil, Graphene, 4)
+                .duration((int) Graphene.getMass())
+                .EUt(24)
+                .buildAndRegister();
+
         // Basic Terminal Recipe
         ModHandler.addShapedRecipe(true, "basic_terminal", TERMINAL.getStackForm(),
                 "SGS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'G',
