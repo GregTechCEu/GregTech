@@ -206,9 +206,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     }
 
     public void performRecipe() {
-        if (!isRecipeValid()) {
-            return;
-        }
+        if (!isRecipeValid()) return;
 
         if (!getSyncManager().isClient())
             syncToClient(1, this::writeAvailableStacks);
@@ -362,6 +360,8 @@ public class CraftingRecipeLogic extends SyncHandler {
     public void readOnClient(int id, PacketBuffer buf) {
         if (id == 1) {
             updateClientStacks(buf);
+        } else if (id == 3) {
+            syncToServer(3);
         }
     }
 
@@ -375,6 +375,8 @@ public class CraftingRecipeLogic extends SyncHandler {
                 } catch (IOException ignore) {}
             }
         } else if (id == 1) {
+            syncToClient(1, this::writeAvailableStacks);
+        } else if (id == 3) {
             syncToClient(1, this::writeAvailableStacks);
         }
     }
