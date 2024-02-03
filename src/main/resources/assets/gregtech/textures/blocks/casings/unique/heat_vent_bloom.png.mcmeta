@@ -1,0 +1,11 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "layer": "BLOOM",
+        "gregtech": true,
+        "extra": {
+            "connect_inside": true,
+            "light": 10
+        }
+    }
+}
