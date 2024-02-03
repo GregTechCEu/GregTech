@@ -720,56 +720,53 @@ public class ConfigHolder {
 
     public static class ProcessingHandlers {
 
-        @Config.Name("disableRotorRecipes")
+        @Config.Name("disable all rotor recipes")
         @Config.RequiresMcRestart
         public boolean disableRotorRecipes;
 
-        @Config.Name("disableWireRecipes")
+        @Config.Name("disable all wire recipes")
         @Config.RequiresMcRestart
         public boolean disableWireRecipes;
 
-        @Config.Name("disableFoilRecipes")
+        @Config.Name("disable all foil recipes")
         @Config.RequiresMcRestart
         public boolean disableFoilRecipes;
-        @Config.Name("disableFineWireRecipes")
+        @Config.Name("disable all fine wire recipes")
         @Config.RequiresMcRestart
         public boolean disableFineWireRecipes;
     }
 
     public static class OtherStuff {
 
-        @Config.Comment({ "disable motors, pumps etc. recipes" })
-        @Config.Name("disableComponentRecipes")
+        @Config.Comment({ "disable motors, pumps etc. shaped and assembler/assembly line recipes" })
+        @Config.Name("disable component recipes")
         @Config.RequiresMcRestart
         public boolean disableComponentRecipes;
 
         @Config.Comment({ "disable circuit assembler recipes using liquid tin" })
-        @Config.Name("disableTinCircuitRecipes")
+        @Config.Name("disable tin circuit assembler recipes")
         @Config.RequiresMcRestart
         public boolean disableTinCircuitRecipes;
 
-        @Config.Comment({ "disable ulv to uhv casing shaped recipes" })
-        @Config.Name("disableTierCasingRecipes")
+        @Config.Comment({ "disable ulv to uhv casing shaped and assembler recipes" })
+        @Config.Name("disable tier casing recipes")
         @Config.RequiresMcRestart
         public boolean disableTierCasingRecipes;
 
-        @Config.Comment({ "disable all electrolysis recipes including auto-generated recipes" })
-        @Config.Name("disableElectrolysisRecipes")
+        @Config.Comment({ " disable all electrolysis recipes including auto-generated recipes" })
+        @Config.Name("disable electrolysis recipes")
         @Config.RequiresMcRestart
         public boolean disableElectrolysisRecipes;
 
-        @Config.Comment({ "disable hydrocarbons cracking" })
-        @Config.Name("disableCrackingRecipes")
+        @Config.Name("disable hydrocarbons cracking recipes")
         @Config.RequiresMcRestart
         public boolean disableCrackingRecipes;
 
-        @Config.Comment({ "disable desulfurization recipes" })
-        @Config.Name("disableDesulfurizationRecipes")
+        @Config.Name("disable desulfurization recipes")
         @Config.RequiresMcRestart
         public boolean disableDesulfurizationRecipes;
 
-        @Config.Comment({ "disable wirecoil recipes" })
-        @Config.Name("disableWirecoilRecipes")
+        @Config.Name("disable wire coil recipes")
         @Config.RequiresMcRestart
         public boolean disableWirecoilRecipes;
     }
