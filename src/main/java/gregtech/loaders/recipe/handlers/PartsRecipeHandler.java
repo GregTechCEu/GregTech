@@ -1,5 +1,7 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.fluids.GTFluid;
+import gregtech.api.recipes.FluidCellInput;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
@@ -21,6 +23,7 @@ import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;

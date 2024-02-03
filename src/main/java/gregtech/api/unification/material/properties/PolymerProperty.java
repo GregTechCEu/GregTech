@@ -9,7 +9,6 @@ public class PolymerProperty implements IMaterialProperty {
         properties.ensureSet(PropertyKey.DUST, true);
         properties.ensureSet(PropertyKey.INGOT, true);
 
-        properties.getMaterial().addFlags(MaterialFlags.FLAMMABLE, MaterialFlags.NO_SMASHING,
-                MaterialFlags.DISABLE_DECOMPOSITION);
+        properties.getMaterial().addFlags(MaterialFlags.FLAMMABLE, MaterialFlags.NO_SMASHING);
     }
 }

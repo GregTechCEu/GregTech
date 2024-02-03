@@ -46,23 +46,6 @@ public class MaterialFlags {
     public static final MaterialFlag NO_UNIFICATION = new MaterialFlag.Builder("no_unification").build();
 
     /**
-     * Enables electrolyzer decomposition recipe generation
-     */
-    public static final MaterialFlag DECOMPOSITION_BY_ELECTROLYZING = new MaterialFlag.Builder(
-            "decomposition_by_electrolyzing").build();
-
-    /**
-     * Enables centrifuge decomposition recipe generation
-     */
-    public static final MaterialFlag DECOMPOSITION_BY_CENTRIFUGING = new MaterialFlag.Builder(
-            "decomposition_by_centrifuging").build();
-
-    /**
-     * Disables decomposition recipe generation for this material
-     */
-    public static final MaterialFlag DISABLE_DECOMPOSITION = new MaterialFlag.Builder("disable_decomposition").build();
-
-    /**
      * Add to material if it is some kind of explosive
      */
     public static final MaterialFlag EXPLOSIVE = new MaterialFlag.Builder("explosive").build();

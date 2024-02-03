@@ -176,25 +176,6 @@ public class Material implements Comparable<Material> {
         return Arrays.stream(flags).anyMatch(this::hasFlag);
     }
 
-    protected void calculateDecompositionType() {
-        if (!materialInfo.componentList.isEmpty() &&
-                !hasFlag(MaterialFlags.DECOMPOSITION_BY_CENTRIFUGING) &&
-                !hasFlag(MaterialFlags.DECOMPOSITION_BY_ELECTROLYZING) &&
-                !hasFlag(MaterialFlags.DISABLE_DECOMPOSITION)) {
-            boolean onlyMetalMaterials = true;
-            for (MaterialStack materialStack : materialInfo.componentList) {
-                Material material = materialStack.material;
-                onlyMetalMaterials &= material.hasProperty(PropertyKey.INGOT);
-            }
-            // allow centrifuging of alloy materials only
-            if (onlyMetalMaterials) {
-                flags.addFlags(MaterialFlags.DECOMPOSITION_BY_CENTRIFUGING);
-            } else {
-                flags.addFlags(MaterialFlags.DECOMPOSITION_BY_ELECTROLYZING);
-            }
-        }
-    }
-
     /**
      * Retrieves a fluid from the material.
      * Attempts to retrieve with {@link FluidProperty#getPrimaryKey()}, {@link FluidStorageKeys#LIQUID} and
@@ -442,7 +423,6 @@ public class Material implements Comparable<Material> {
         properties.verify();
         flags.verify(this);
         this.chemicalFormula = calculateChemicalFormula();
-        calculateDecompositionType();
     }
 
     @NotNull

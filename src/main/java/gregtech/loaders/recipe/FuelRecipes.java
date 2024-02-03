@@ -93,12 +93,6 @@ public class FuelRecipes {
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
-        RecipeMaps.COMBUSTION_GENERATOR_FUELS.recipeBuilder()
-                .fluidInputs(RawOil.getFluid(64))
-                .duration(15)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
         // steam generator fuels
         RecipeMaps.STEAM_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(Steam.getFluid(640))
