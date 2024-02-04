@@ -1,6 +1,19 @@
 package gregtech.common.metatileentities.storage;
 
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.core.mixin.GuiContainerAccessor;
+import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.drawable.TextRenderer;
+import com.cleanroommc.modularui.screen.GuiScreenWrapper;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.utils.NumberFormat;
+import com.cleanroommc.modularui.widget.Widget;
+
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IFilter;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -12,16 +25,19 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -96,7 +112,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     private IItemHandlerModifiable combinedInventory;
     private IItemHandlerModifiable connectedInventory;
 
-    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9);
+    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(this.craftingGrid, 9);
     private CraftingRecipeLogic recipeLogic = null;
     private int itemsCrafted = 0;
 
@@ -338,13 +354,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                         .alignment(Alignment.Center)
                                                         .asWidget().widthRel(1f)))
                                         // recipe memory
-                                        .child(SlotGroupWidget.builder()
-                                                .matrix(craftingGrid)
-                                                .key(key, i -> new ItemSlot()
-                                                        // todo recipe memory
-                                                        .slot(SyncHandlers.phantomItemSlot(new ItemStackHandler(9), i)
-                                                                .accessibility(false, false)))
-                                                .build().right(0)))
+                                        .child(createRecipeMemory(guiSyncManager)))
                                 // tool inventory
                                 .child(SlotGroupWidget.builder()
                                         .row(nineSlot)
@@ -399,6 +409,15 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .mapTo(8, list, (index, value) -> value);
     }
 
+    public IWidget createRecipeMemory(GuiSyncManager syncManager) {
+        return SlotGroupWidget.builder()
+                .matrix("XXX",
+                        "XXX",
+                        "XXX")
+                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
+                .build().right(0);
+    }
+
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
@@ -421,6 +440,87 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     public void setItemsCrafted(int itemsCrafted) {
         this.itemsCrafted = itemsCrafted;
+    }
+
+    private static class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable {
+
+        private final CraftingRecipeMemory memory;
+        private final int index;
+        private static final TextRenderer textRenderer = new TextRenderer();
+        public RecipeMemorySlot(CraftingRecipeMemory memory, int index) {
+            this.memory = memory;
+            this.index = index;
+        }
+
+        @Override
+        public void onInit() {
+            size(ItemSlot.SIZE);
+            background(GTGuiTextures.SLOT);
+        }
+
+        @Override
+        public void draw(GuiContext context, WidgetTheme widgetTheme) {
+            super.draw(context, widgetTheme);
+            drawStack();
+        }
+
+        public void drawStack() {
+            GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
+            var recipe = memory.getRecipeAtIndex(index);
+            if (recipe == null) return;
+            ItemStack itemstack = recipe.getRecipeResult();
+
+            guiScreen.setZ(100f);
+            guiScreen.getItemRenderer().zLevel = 100.0F;
+
+//            GuiDraw.drawRect(1, 1, 16, 16, -2130706433);
+
+            if (!itemstack.isEmpty()) {
+                GlStateManager.enableDepth();
+                // render the item itself
+                guiScreen.getItemRenderer().renderItemAndEffectIntoGUI(guiScreen.mc.player, itemstack, 1, 1);
+
+                // render the amount overlay
+//                String amountText = NumberFormat.formatWithMaxDigits(1);
+//                textRenderer.setShadow(true);
+//                textRenderer.setColor(Color.WHITE.main);
+//                textRenderer.setAlignment(Alignment.BottomRight, getArea().width - 1, getArea().height - 1);
+//                textRenderer.setPos(1, 1);
+//                GlStateManager.disableLighting();
+//                GlStateManager.disableDepth();
+//                GlStateManager.disableBlend();
+//                textRenderer.draw(amountText);
+//                GlStateManager.enableLighting();
+//                GlStateManager.enableDepth();
+//                GlStateManager.enableBlend();
+
+                int cachedCount = itemstack.getCount();
+                itemstack.setCount(1); // required to not render the amount overlay
+                // render other overlays like durability bar
+                guiScreen.getItemRenderer().renderItemOverlayIntoGUI(guiScreen.getFontRenderer(), itemstack, 1, 1, null);
+                itemstack.setCount(cachedCount);
+                GlStateManager.disableDepth();
+            }
+
+            guiScreen.getItemRenderer().zLevel = 0.0F;
+            guiScreen.setZ(0f);
+        }
+
+        @NotNull
+        @Override
+        public Result onMousePressed(int mouseButton) {
+            var data = MouseData.create(mouseButton);
+            if (data.shift && data.mouseButton == 0 && memory.hasRecipe(index)) {
+                var recipe = memory.getRecipeAtIndex(index);
+                recipe.setRecipeLocked(!recipe.isRecipeLocked());
+            } else if (data.mouseButton == 0) {
+                memory.loadRecipe(index);
+            } else if (data.mouseButton == 1) {
+                if (memory.hasRecipe(index) && !memory.getRecipeAtIndex(index).isRecipeLocked())
+                    memory.removeRecipe(index);
+            }
+            return Result.ACCEPT;
+        }
     }
 
     private class CraftingOutputSlot extends ModularSlot {
@@ -546,17 +646,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         tooltip.add(I18n.format("gregtech.machine.workbench.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.workbench.tooltip2"));
     }
-
-//    public void discardRecipeResolver(EntityPlayer entityPlayer) {
-//        this.listeners.remove(entityPlayer);
-//        if (listeners.isEmpty()) {
-//            if (recipeLogic != null) {
-//                itemsCrafted = recipeLogic.getItemsCraftedAmount();
-//                this.markDirty();
-//            }
-//            recipeLogic = null;
-//        }
-//    }
 
     public ItemStackHandler getCraftingGrid() {
         return craftingGrid;
