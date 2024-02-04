@@ -379,7 +379,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             currentRecipe = this.previousRecipe;
             // If there is no active recipe, then we need to find one.
         }
-        recipeIterator = getRecipeIterator(maxVoltage, importInventory, importFluids);
 
         // proceed if previous recipe still works.
         if (currentRecipe != null && checkRecipe(currentRecipe) && prepareRecipe(currentRecipe)) {
@@ -387,27 +386,33 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return;
         }
 
+        recipeIterator = getRecipeIterator(maxVoltage, importInventory, importFluids);
+
+        boolean invalidOutputs = false;
+        boolean invalidInputs = false;
+
         // Search for a new recipe if the previous one is no longer valid
         while (recipeIterator != null && recipeIterator.hasNext()) {
             Recipe next = recipeIterator.next();
             if (next == null) continue;
 
-            // since previous attempts to prepare a recipe will have flagged either the input
-            // or outputs as invalid we must reset the flags before attempting to prepare another recipe
-            this.isOutputsFull = false;
-            this.invalidInputsForRecipes = false;
-
             if (checkRecipe(next) && prepareRecipe(next)) {
                 // If a new recipe was found, cache found recipe.
                 this.previousRecipe = next;
                 return;
+            } else {
+                // store if recipe has bad IO, then reset for next recipe checks
+                invalidOutputs = this.isOutputsFull;
+                invalidInputs = this.invalidInputsForRecipes;
+                this.isOutputsFull = false;
+                this.invalidInputsForRecipes = false;
             }
         }
 
         // if no valid recipes are found mark the inputs and outputs as invalid so any changes
         // will re-trigger a recipe search
-        this.isOutputsFull = true;
-        this.invalidInputsForRecipes = true;
+        this.isOutputsFull = invalidOutputs;
+        this.invalidInputsForRecipes = invalidInputs;
     }
 
     /**
