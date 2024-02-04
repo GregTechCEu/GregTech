@@ -16,6 +16,7 @@ public class RecipeIterator implements Iterator<Recipe> {
     RecipeMap<?> recipeMap;
     @NotNull
     Predicate<Recipe> canHandle;
+    Recipe cachedNext;
 
     RecipeIterator(@NotNull RecipeMap<?> recipeMap, List<List<AbstractMapIngredient>> ingredients,
                    @NotNull Predicate<Recipe> canHandle) {
@@ -26,20 +27,28 @@ public class RecipeIterator implements Iterator<Recipe> {
 
     @Override
     public boolean hasNext() {
+        if (cachedNext != null) return true;
         if (ingredients == null || this.index > this.ingredients.size()) return false;
 
-        int i = index;
-        while (i < ingredients.size()) {
-            Recipe r = recipeMap.recurseIngredientTreeFindRecipe(ingredients, recipeMap.getLookup(), canHandle, i, 0,
-                    (1L << i));
-            ++i;
-            if (r != null) return true;
+        while (index < ingredients.size()) {
+            Recipe r = recipeMap.recurseIngredientTreeFindRecipe(ingredients, recipeMap.getLookup(), canHandle, index, 0,
+                    (1L << index));
+            ++index;
+            if (r != null) {
+                cachedNext = r;
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public Recipe next() {
+        if (cachedNext != null) {
+            Recipe r = cachedNext.copy();
+            cachedNext = null;
+            return r;
+        }
         // couldn't build any inputs to use for search, so no recipe could be found
         if (ingredients == null) return null;
         // Try each ingredient as a starting point, save current index
