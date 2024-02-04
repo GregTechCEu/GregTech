@@ -88,7 +88,7 @@ public class MemorizedRecipeWidget extends SlotWidget {
             MemorizedRecipe recipe = recipeMemory.getRecipeAtIndex(recipeIndex);
             if (recipe != null && !recipe.getRecipeResult().isEmpty()) {
                 if (clickTypeIn == ClickType.PICKUP) {
-                    recipeMemory.loadRecipe(recipeIndex, craftingGrid);
+//                    recipeMemory.loadRecipe(recipeIndex, craftingGrid);
                     player.openContainer.detectAndSendChanges();
                 } else if (clickTypeIn == ClickType.QUICK_MOVE) {
                     recipe.setRecipeLocked(!recipe.isRecipeLocked());
