@@ -18,16 +18,24 @@ public class RecipeIterator implements Iterator<Recipe> {
     Predicate<Recipe> canHandle;
 
     RecipeIterator(@NotNull RecipeMap<?> recipeMap, List<List<AbstractMapIngredient>> ingredients,
-                   @NotNull Predicate<Recipe> canHandle) {
+                          @NotNull Predicate<Recipe> canHandle) {
         this.ingredients = ingredients;
         this.recipeMap = recipeMap;
         this.canHandle = canHandle;
     }
 
-    // does not guarantee a next recipe, just the possibility of one
     @Override
     public boolean hasNext() {
-        return ingredients != null && this.index < this.ingredients.size();
+        if (ingredients == null || this.index > this.ingredients.size()) return false;
+
+        int i = index;
+        while (i < ingredients.size()) {
+            Recipe r = recipeMap.recurseIngredientTreeFindRecipe(ingredients, recipeMap.getLookup(), canHandle, i, 0,
+                    (1L << i));
+            ++i;
+            if (r != null) return true;
+        }
+        return false;
     }
 
     @Override
