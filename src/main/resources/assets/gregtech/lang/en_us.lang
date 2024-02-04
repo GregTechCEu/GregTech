@@ -6248,6 +6248,7 @@ gregtech.machine.steam_engine.tooltip.1=Produces up to %s§7 power.
 gregtech.machine.large_circuit_assembler.name=Large Circuit Assembler
 gregtech.machine.fermentation_vat.name=Fermentation Vat
 gregtech.machine.arc_furnace.name=Arc Furnace
+gregtech.machine.fixed_bed_reactor.name=Fixed Bed Reactor
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
@@ -6343,6 +6344,7 @@ tile.large_multiblock_casing.steam_casing.name=Industrial Steam Casing
 
 # RecipeMaps
 recipemap.alloy_blast_smelter.name=Alloy Blast Smelting
+recipemap.fixed_bed_reactor.name=Fixed Bed Reactor
 
 # Materials
 gregtech.material.stellite_100=Stellite-100

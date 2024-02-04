@@ -366,6 +366,7 @@ public class MetaTileEntities {
     public static MetaTileEntityLargeCircuitAssembler LARGE_CIRCUIT_ASSEMBLER;
     public static MetaTileEntityFermentationVat FERMENTATION_VAT;
     public static MetaTileEntityArcFurnace ARC_FURNACE;
+    public static MetaTileEntityArcFurnace FIXED_BED_REACTOR;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -800,6 +801,9 @@ public class MetaTileEntities {
 
         ARC_FURNACE = registerMetaTileEntity(1068,
                 new MetaTileEntityArcFurnace(gregtechId("arc_furnace")));
+
+        FIXED_BED_REACTOR = registerMetaTileEntity(1069,
+                new MetaTileEntityArcFurnace(gregtechId("fixed_bed_reactor")));
 
         // MISC MTE's START: IDs 1150-2000
 

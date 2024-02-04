@@ -1355,6 +1355,22 @@ public final class RecipeMaps {
             .sound(GTSoundEvents.FURNACE)
             .build();
 
+    public static final RecipeMap<SimpleRecipeBuilder> FIXED_BED_REACTOR_RECIPES = new RecipeMapBuilder<>("fixed_bed_reactor",
+            new SimpleRecipeBuilder())
+            .itemInputs(3)
+            .itemOutputs(2)
+            .fluidInputs(2)
+            .fluidOutputs(2)
+            .itemSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_1, false, false)
+            .itemSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_2, false, true)
+            .itemSlotOverlay(GuiTextures.VIAL_OVERLAY_1, true)
+            .fluidSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_3, false, false)
+            .fluidSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_4, false, true)
+            .fluidSlotOverlay(GuiTextures.VIAL_OVERLAY_2, true)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
+            .sound(GTSoundEvents.FURNACE)
+            .build();
+
     //////////////////////////////////////
     // Fuel Recipe Maps //
     //////////////////////////////////////
