@@ -768,7 +768,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return a recipe
      */
     @Nullable
-    public Recipe recurseIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients,
+    protected Recipe recurseIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients,
                                                   @NotNull Branch branchMap, @NotNull Predicate<Recipe> canHandle,
                                                   int index, int count, long skip) {
         // exhausted all the ingredients, and didn't find anything
