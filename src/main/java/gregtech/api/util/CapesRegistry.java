@@ -161,8 +161,8 @@ public class CapesRegistry {
         FREE_CAPES.add(Textures.CHINA_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.PATRICK_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.MIT_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.BADBURN_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.BI_CAPE_TEXTURE);
-        FREE_CAPES.add(Textures.GENDERFLUID_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.GENDERQUEER_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.INTERSEX_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.LESBIAN_CAPE_TEXTURE);
