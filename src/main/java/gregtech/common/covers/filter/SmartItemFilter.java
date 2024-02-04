@@ -131,12 +131,6 @@ public class SmartItemFilter extends ItemFilter {
         return true;
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-        this.filterReader.setFilteringMode(SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")]);
-    }
-
     private static class ItemAndMetadataAndStackSize {
 
         public final ItemAndMetadata itemAndMetadata;
@@ -167,6 +161,7 @@ public class SmartItemFilter extends ItemFilter {
         CENTRIFUGE("cover.smart_item_filter.filtering_mode.centrifuge", RecipeMaps.CENTRIFUGE_RECIPES),
         SIFTER("cover.smart_item_filter.filtering_mode.sifter", RecipeMaps.SIFTER_RECIPES);
 
+        public static final SmartFilteringMode[] VALUES = values();
         private final Object2IntOpenHashMap<ItemAndMetadata> transferStackSizesCache = new Object2IntOpenHashMap<>();
         public final String localeName;
         public final RecipeMap<?> recipeMap;
@@ -195,12 +190,18 @@ public class SmartItemFilter extends ItemFilter {
             if (!getStackTag().hasKey(FILTER_MODE))
                 setFilteringMode(SmartFilteringMode.ELECTROLYZER);
 
-            return SmartFilteringMode.values()[getStackTag().getInteger(FILTER_MODE)];
+            return SmartFilteringMode.VALUES[getStackTag().getInteger(FILTER_MODE)];
         }
 
         public void setFilteringMode(SmartFilteringMode filteringMode) {
             getStackTag().setInteger(FILTER_MODE, filteringMode.ordinal());
             markDirty();
+        }
+
+        @Override
+        public void readFromNBT(NBTTagCompound tagCompound) {
+            super.readFromNBT(tagCompound);
+            this.setFilteringMode(SmartFilteringMode.VALUES[tagCompound.getInteger(FILTER_MODE)]);
         }
     }
 }

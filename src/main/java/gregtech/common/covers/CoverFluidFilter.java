@@ -184,16 +184,14 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", this.filterMode.ordinal());
-        tagCompound.setTag("Filter", getFluidFilter().getContainerStack().serializeNBT());
+        tagCompound.setTag("Filter", this.fluidFilterContainer.serializeNBT());
     }
 
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
-        this.fluidFilterContainer.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-        var stack = new ItemStack(tagCompound.getCompoundTag("Filter"));
-        this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
+        this.fluidFilterContainer.deserializeNBT(tagCompound);
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

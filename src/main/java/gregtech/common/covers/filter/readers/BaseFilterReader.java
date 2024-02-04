@@ -12,8 +12,8 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
 
     protected final ItemStack container;
     protected int maxTransferRate = 1;
-    protected static final String KEY_ITEMS = "Items";
-    protected static final String BLACKLIST = "is_blacklist";
+    protected static final String KEY_ITEMS = "ItemFilter";
+    protected static final String BLACKLIST = "IsBlacklist";
 
     public BaseFilterReader(ItemStack container, int slots) {
         super(container, slots);
@@ -81,5 +81,9 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
         if (slot < 0 || slot >= this.getSlots()) {
             throw new RuntimeException("Slot " + slot + " not in valid range - [0," + this.getSlots() + ")");
         }
+    }
+
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
     }
 }

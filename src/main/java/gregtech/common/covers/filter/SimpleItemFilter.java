@@ -141,24 +141,6 @@ public class SimpleItemFilter extends ItemFilter {
                                 .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.enabled"))));
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-
-        if (tagCompound.hasKey("ItemFilter")) {
-            var temp = new ItemStackHandler();
-            temp.deserializeNBT(tagCompound.getCompoundTag("ItemFilter"));
-            for (int i = 0; i < temp.getSlots(); i++) {
-                var stack = temp.getStackInSlot(i);
-                if (stack.isEmpty()) continue;
-                this.filterReader.setStackInSlot(i, stack);
-            }
-        }
-
-        this.filterReader.setIgnoreDamage(tagCompound.getBoolean("IgnoreDamage"));
-        this.filterReader.setIgnoreNBT(tagCompound.getBoolean("IgnoreNBT"));
-    }
-
     public static int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage,
                                       boolean ignoreNBTData, ItemStack itemStack) {
         for (int i = 0; i < filterSlots.getSlots(); i++) {
@@ -184,8 +166,8 @@ public class SimpleItemFilter extends ItemFilter {
 
     protected class SimpleItemFilterReader extends BaseItemFilterReader {
 
-        public static final String RESPECT_NBT = "ignore_nbt";
-        public static final String RESPECT_DAMAGE = "ignore_damage";
+        public static final String RESPECT_NBT = "IgnoreNBT";
+        public static final String RESPECT_DAMAGE = "IgnoreDamage";
 
         public SimpleItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
@@ -241,6 +223,23 @@ public class SimpleItemFilter extends ItemFilter {
                 if (!itemStack.isEmpty()) {
                     itemStack.setCount(Math.min(itemStack.getCount(), isBlacklistFilter() ? 1 : getMaxTransferRate()));
                     setStackInSlot(i, itemStack);
+                }
+            }
+        }
+
+        @Override
+        public void readFromNBT(NBTTagCompound tagCompound) {
+            super.readFromNBT(tagCompound);
+            this.setIgnoreDamage(tagCompound.getBoolean(RESPECT_DAMAGE));
+            this.setIgnoreNBT(tagCompound.getBoolean(RESPECT_NBT));
+
+            if (tagCompound.hasKey(KEY_ITEMS)) {
+                var temp = new ItemStackHandler();
+                temp.deserializeNBT(tagCompound.getCompoundTag(KEY_ITEMS));
+                for (int i = 0; i < temp.getSlots(); i++) {
+                    var stack = temp.getStackInSlot(i);
+                    if (stack.isEmpty()) continue;
+                    this.setStackInSlot(i, stack);
                 }
             }
         }

@@ -85,9 +85,8 @@ public abstract class ItemFilter implements Filter<ItemStack> {
                         .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
     }
 
-    @Deprecated
     public void readFromNBT(NBTTagCompound tagCompound) {
-        setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
+        this.filterReader.readFromNBT(tagCompound);
         markDirty();
     }
 

@@ -314,20 +314,11 @@ public class OreDictionaryItemFilter extends ItemFilter {
         return true;
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        this.filterReader.setExpression(tag.getString("OreDictionaryFilter"));
-        this.filterReader.setCaseSensitive(tag.getBoolean("caseSensitive"));
-        this.filterReader.setMatchAll(tag.getBoolean("matchAll"));
-        recompile();
-    }
-
     protected class OreDictionaryItemFilterReader extends BaseItemFilterReader {
 
-        private static final String EXPRESSION = "expression";
-        private static final String CASE_SENSITIVE = "case_sensitive";
-        private static final String MATCH_ALL = "match_all";
+        private static final String EXPRESSION = "OreDictionaryFilter";
+        private static final String CASE_SENSITIVE = "caseSensitive";
+        private static final String MATCH_ALL = "matchAll";
 
         public OreDictionaryItemFilterReader(ItemStack container, int slots) {
             super(container, slots);
@@ -380,6 +371,14 @@ public class OreDictionaryItemFilter extends ItemFilter {
          */
         public boolean shouldMatchAll() {
             return !getStackTag().hasKey(MATCH_ALL);
+        }
+
+        @Override
+        public void readFromNBT(NBTTagCompound tagCompound) {
+            super.readFromNBT(tagCompound);
+            this.setExpression(tagCompound.getString(EXPRESSION));
+            this.setCaseSensitive(tagCompound.getBoolean(CASE_SENSITIVE));
+            this.setMatchAll(tagCompound.getBoolean(MATCH_ALL));
         }
     }
 }

@@ -107,7 +107,7 @@ public abstract class FluidFilter implements Filter<FluidStack> {
 
     protected abstract static class BaseFluidFilterReader extends BaseFilterReader {
 
-        protected static final String KEY_FLUIDS = "FluidTank";
+        protected static final String KEY_FLUIDS = "FluidFilter";
         protected static final String BUCKET_ONLY = "BucketOnly";
 
         public BaseFluidFilterReader(ItemStack container, int slots) {

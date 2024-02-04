@@ -117,13 +117,7 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
-        NBTTagList filterSlots = tagCompound.getTagList("FluidFilter", 10);
-        for (int i = 0; i < this.filterReader.getSlots(); i++) {
-            NBTTagCompound stackTag = filterSlots.getCompoundTagAt(i);
-            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(stackTag);
-            if (fluidStack == null) continue;
-            this.filterReader.getFluidTank(i).setFluid(fluidStack);
-        }
+        this.filterReader.readFromNBT(tagCompound);
     }
 
     @Override
@@ -179,6 +173,16 @@ public class SimpleFluidFilter extends FluidFilter {
                 getFluidTank(i).setFluidAmount(Math.min(stack.amount, getMaxTransferRate()));
             }
             setCapacity(getMaxTransferRate());
+        }
+
+        public void readFromNBT(NBTTagCompound tagCompound) {
+            NBTTagList filterSlots = tagCompound.getTagList(KEY_FLUIDS, 10);
+            for (int i = 0; i < filterSlots.tagCount(); i++) {
+                NBTTagCompound stackTag = filterSlots.getCompoundTagAt(i);
+                FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(stackTag);
+                if (fluidStack == null) continue;
+                getFluidTank(i).setFluid(fluidStack);
+            }
         }
     }
 
