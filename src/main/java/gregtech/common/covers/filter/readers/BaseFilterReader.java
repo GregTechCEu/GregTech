@@ -7,6 +7,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.utils.ItemStackItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseFilterReader extends ItemStackItemHandler {
 
@@ -74,6 +75,12 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
             nbt.setTag(KEY_ITEMS, list);
         }
         return nbt.getTagList(KEY_ITEMS, Constants.NBT.TAG_COMPOUND);
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        super.setStackInSlot(slot, stack);
+        onContentsChanged(slot);
     }
 
     @Override

@@ -104,7 +104,7 @@ public abstract class ItemFilter implements Filter<ItemStack> {
         }
     }
 
-    protected static class BaseItemFilterReader extends BaseFilterReader {
+    protected class BaseItemFilterReader extends BaseFilterReader {
 
         protected static final String COUNT = "Count";
 
@@ -113,5 +113,10 @@ public abstract class ItemFilter implements Filter<ItemStack> {
         }
 
         public void onTransferRateChange() {}
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
     }
 }
