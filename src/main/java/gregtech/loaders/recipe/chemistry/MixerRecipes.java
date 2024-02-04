@@ -134,14 +134,6 @@ public class MixerRecipes {
                 .fluidOutputs(DrillingFluid.getFluid(5000))
                 .duration(64).EUt(16).buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
-                .input(dust, Beryllium)
-                .input(dust, Potassium, 4)
-                .fluidInputs(Nitrogen.getFluid(5000))
-                .circuitMeta(1)
-                .output(dust, EnderPearl, 10)
-                .buildAndRegister();
-
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
                 .fluidInputs(PolychlorinatedBiphenyl.getFluid(750))
                 .fluidInputs(DistilledWater.getFluid(250))

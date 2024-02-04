@@ -197,10 +197,12 @@ public class MetaBlocks {
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
             BlockCable[] cables = new BlockCable[Insulation.VALUES.length];
+
             for (Insulation ins : Insulation.VALUES) {
                 cables[ins.ordinal()] = new BlockCable(ins, registry);
                 cables[ins.ordinal()].setRegistryName(modid, ins.getName());
             }
+
             CABLES.put(modid, cables);
 
             BlockFluidPipe[] fluidPipes = new BlockFluidPipe[FluidPipeType.VALUES.length];
@@ -342,7 +344,7 @@ public class MetaBlocks {
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME),
                 MetaBlocks::createFrameBlock);
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST),
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.INGOT),
                 MetaBlocks::createSurfaceRockBlock);
 
         createGeneratedBlock(

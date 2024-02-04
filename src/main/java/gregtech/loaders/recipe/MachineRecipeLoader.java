@@ -1108,35 +1108,35 @@ public class MachineRecipeLoader {
                 .duration(100)
                 .buildAndRegister();
 
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, WroughtIron, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).circuitMeta(8).duration(25)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, WroughtIron, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).duration(25)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Steel, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LV)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Steel, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LV)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Aluminium, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.MV)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Aluminium, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.MV)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, StainlessSteel, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.HV)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, StainlessSteel, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.HV)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Titanium, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.EV)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Titanium, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.EV)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, TungstenSteel, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.IV)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, TungstenSteel, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.IV)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, RhodiumPlatedPalladium, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LuV)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, RhodiumPlatedPalladium, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LuV)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, NaquadahAlloy, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ZPM)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, NaquadahAlloy, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ZPM)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Darmstadtium, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Darmstadtium, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Neutronium, 8).circuitMeta(2)
-                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UHV)).circuitMeta(8).duration(50)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Neutronium, 8)
+                .outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UHV)).duration(50)
                 .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(OrePrefix.wireGtDouble, Materials.Cupronickel, 8)
@@ -1167,39 +1167,39 @@ public class MachineRecipeLoader {
                 .input(OrePrefix.foil, Materials.Naquadria, 8).fluidInputs(Materials.Trinium.getFluid(GTValues.L))
                 .outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.TRITANIUM)).duration(900).buildAndRegister();
 
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Bronze, 6).circuitMeta(1)
-                .inputs(new ItemStack(Blocks.BRICK_BLOCK, 1)).circuitMeta(6)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Bronze, 6)
+                .inputs(new ItemStack(Blocks.BRICK_BLOCK, 1))
                 .outputs(METAL_CASING.getItemVariant(BRONZE_BRICKS, ConfigHolder.recipes.casingsPerCraft)).duration(50)
                 .buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Invar, 6).circuitMeta(1)
-                .input(OrePrefix.frameGt, Materials.Invar, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Invar, 6)
+                .input(OrePrefix.frameGt, Materials.Invar, 1).outputs(MetaBlocks.METAL_CASING
                         .getItemVariant(MetalCasingType.INVAR_HEATPROOF, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Steel, 6).circuitMeta(1)
-                .input(OrePrefix.frameGt, Materials.Steel, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Steel, 6)
+                .input(OrePrefix.frameGt, Materials.Steel, 1).outputs(MetaBlocks.METAL_CASING
                         .getItemVariant(MetalCasingType.STEEL_SOLID, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Aluminium, 6).circuitMeta(1)
-                .input(OrePrefix.frameGt, Materials.Aluminium, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Aluminium, 6)
+                .input(OrePrefix.frameGt, Materials.Aluminium, 1).outputs(MetaBlocks.METAL_CASING
                         .getItemVariant(MetalCasingType.ALUMINIUM_FROSTPROOF, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.TungstenSteel, 6).circuitMeta(1)
-                .input(OrePrefix.frameGt, Materials.TungstenSteel, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.TungstenSteel, 6)
+                .input(OrePrefix.frameGt, Materials.TungstenSteel, 1).outputs(MetaBlocks.METAL_CASING
                         .getItemVariant(MetalCasingType.TUNGSTENSTEEL_ROBUST, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.StainlessSteel, 6).circuitMeta(1)
-                .input(OrePrefix.frameGt, Materials.StainlessSteel, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.StainlessSteel, 6)
+                .input(OrePrefix.frameGt, Materials.StainlessSteel, 1).outputs(MetaBlocks.METAL_CASING
                         .getItemVariant(MetalCasingType.STAINLESS_CLEAN, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Titanium, 6).circuitMeta(1)
-                .input(OrePrefix.frameGt, Materials.Titanium, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Titanium, 6)
+                .input(OrePrefix.frameGt, Materials.Titanium, 1).outputs(MetaBlocks.METAL_CASING
                         .getItemVariant(MetalCasingType.TITANIUM_STABLE, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        WELDING_RECIPES.recipeBuilder().EUt(16).input(plate, HSSE, 6).input(frameGt, Europium).circuitMeta(6).circuitMeta(1)
+        WELDING_RECIPES.recipeBuilder().EUt(16).input(plate, HSSE, 6).input(frameGt, Europium)
                 .outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.HSSE_STURDY,
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        WELDING_RECIPES.recipeBuilder().EUt(16).input(plate, Palladium, 6).input(frameGt, Iridium).circuitMeta(6).circuitMeta(1)
+        WELDING_RECIPES.recipeBuilder().EUt(16).input(plate, Palladium, 6).input(frameGt, Iridium)
                 .outputs(METAL_CASING.getItemVariant(MetalCasingType.PALLADIUM_SUBSTATION,
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
@@ -1281,25 +1281,25 @@ public class MachineRecipeLoader {
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(100).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Magnalium, 6)
-                .input(OrePrefix.frameGt, Materials.BlueSteel, 1).circuitMeta(6).outputs(MetaBlocks.TURBINE_CASING
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Magnalium, 6)
+                .input(OrePrefix.frameGt, Materials.BlueSteel, 1).outputs(MetaBlocks.TURBINE_CASING
                         .getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16)
                 .inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING))
-                .input(OrePrefix.plate, Materials.StainlessSteel, 6).circuitMeta(6)
+                .input(OrePrefix.plate, Materials.StainlessSteel, 6)
                 .outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STAINLESS_TURBINE_CASING,
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16)
                 .inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING))
-                .input(OrePrefix.plate, Materials.Titanium, 6).circuitMeta(6)
+                .input(OrePrefix.plate, Materials.Titanium, 6)
                 .outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TITANIUM_TURBINE_CASING,
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16)
+        RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16)
                 .inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING))
-                .input(OrePrefix.plate, Materials.TungstenSteel, 6).circuitMeta(6)
+                .input(OrePrefix.plate, Materials.TungstenSteel, 6)
                 .outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TUNGSTENSTEEL_TURBINE_CASING,
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();

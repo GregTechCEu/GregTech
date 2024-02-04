@@ -84,6 +84,24 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
         return STONE_AABB;
     }
 
+    private ItemStack getDropStack(IBlockState state, int amount) {
+        return OreDictUnifier.get(OrePrefix.nugget, getGtMaterial(state), amount);
+    }
+
+    @Override
+    @NotNull
+    public ItemStack getPickBlock(@NotNull IBlockState state, @NotNull RayTraceResult target, @NotNull World world,
+                                  @NotNull BlockPos pos, @NotNull EntityPlayer player) {
+        return getDropStack(state, 1);
+    }
+
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                         @NotNull IBlockState state, int fortune) {
+        int amount = 3 + GTValues.RNG.nextInt((int) (2 + fortune * 1.5));
+        drops.add(getDropStack(state, amount));
+    }
+
     @Override
     public boolean isFullCube(@NotNull IBlockState state) {
         return false;

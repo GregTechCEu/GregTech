@@ -379,9 +379,8 @@ public class MaterialRecipeHandler {
                     "SSS", isWoodenFrame ? "SsS" : "SwS", "SSS",
                     'S', new UnificationEntry(OrePrefix.stick, material));
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+            RecipeMaps.WELDING_RECIPES.recipeBuilder()
                     .input(OrePrefix.stick, material, 4)
-                    .circuitMeta(4)
                     .outputs(OreDictUnifier.get(framePrefix, material, 1))
                     .EUt(VA[ULV]).duration(64)
                     .buildAndRegister();

@@ -161,7 +161,7 @@ public class RecyclingRecipes {
 
             if (gasTier != null) {
                 FluidStack gas = CraftingComponent.EBF_GASES.get(gasTier).copy();
-                gas.amount *= ms.amount / M;
+                gas.amount = (int) (gas.amount * ms.amount / M);
 
                 blastBuilder.copy()
                         .circuitMeta(1)
