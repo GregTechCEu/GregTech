@@ -153,7 +153,7 @@ public class CapesRegistry {
         registerCape(GTUtility.gregtechId("steam/12_electronic_circuit"), Textures.RED_CAPE_TEXTURE, world);
         registerCape(GTUtility.gregtechId("high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE,
                 world);
-        registerCape(GTUtility.gregtechId("ludicrous_voltage/60_fusion"), Textures.GREEN_CAPE_TEXTURE, world);
+        //registerCape(GTUtility.gregtechId("ludicrous_voltage/60_fusion"), Textures.GREEN_CAPE_TEXTURE, world);
         for (Tuple<ResourceLocation, ResourceLocation> tuple : ctRegisterCapes) {
             registerCape(tuple.getFirst(), tuple.getSecond(), world);
         }
@@ -162,11 +162,11 @@ public class CapesRegistry {
         FREE_CAPES.add(Textures.PATRICK_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.MIT_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.BADBURN_CAPE_TEXTURE);
-        FREE_CAPES.add(Textures.BI_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.MATH_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.IMAGE_CAPE_TEXTURE);
-        FREE_CAPES.add(Textures.INTERSEX_CAPE_TEXTURE);
-        FREE_CAPES.add(Textures.LESBIAN_CAPE_TEXTURE);
-        FREE_CAPES.add(Textures.NONBINARY_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.KUROMI_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.BLG_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.EDG_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.PAN_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.RAINBOW_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.TRANS_CAPE_TEXTURE);
