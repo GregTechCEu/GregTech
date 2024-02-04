@@ -225,13 +225,13 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeInt(this.transferMode.ordinal());
+        packetBuffer.writeByte(this.transferMode.ordinal());
     }
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.transferMode = TransferMode.VALUES[packetBuffer.readInt()];
+        this.transferMode = TransferMode.VALUES[packetBuffer.readByte()];
     }
 
     @Override

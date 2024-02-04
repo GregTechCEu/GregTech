@@ -150,7 +150,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.voidingMode = packetBuffer.readEnumValue(VoidingMode.class);
+        this.voidingMode = VoidingMode.VALUES[packetBuffer.readByte()];
     }
 
     @Override

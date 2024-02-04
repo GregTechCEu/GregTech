@@ -648,9 +648,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.transferRate = packetBuffer.readInt();
-        this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
-        this.distributionMode = packetBuffer.readEnumValue(DistributionMode.class);
-        this.manualImportExportMode = packetBuffer.readEnumValue(ManualImportExportMode.class);
+        this.conveyorMode = ConveyorMode.VALUES[packetBuffer.readByte()];
+        this.distributionMode = DistributionMode.VALUES[packetBuffer.readByte()];
+        this.manualImportExportMode = ManualImportExportMode.VALUES[packetBuffer.readByte()];
         getItemFilterContainer().readInitialSyncData(packetBuffer);
     }
 

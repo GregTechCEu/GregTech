@@ -318,7 +318,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.pumpMode = packetBuffer.readEnumValue(PumpMode.class);
+        this.pumpMode = PumpMode.VALUES[packetBuffer.readByte()];
         getFluidFilterContainer().readInitialSyncData(packetBuffer);
     }
 
@@ -408,6 +408,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         IMPORT("cover.pump.mode.import"),
         EXPORT("cover.pump.mode.export");
 
+        public static final PumpMode[] VALUES = values();
         public final String localeName;
 
         PumpMode(String localeName) {
@@ -431,6 +432,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         BUCKET("cover.bucket.mode.bucket"),
         MILLI_BUCKET("cover.bucket.mode.milli_bucket");
 
+        public static final BucketMode[] VALUES = values();
         public final String localeName;
 
         BucketMode(String localeName) {

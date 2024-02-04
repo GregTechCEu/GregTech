@@ -293,7 +293,7 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.transferMode = packetBuffer.readEnumValue(TransferMode.class);
+        this.transferMode = TransferMode.VALUES[packetBuffer.readByte()];
     }
 
     @Override

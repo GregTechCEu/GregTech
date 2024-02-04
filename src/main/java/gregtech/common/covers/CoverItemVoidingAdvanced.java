@@ -143,15 +143,15 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        super.readInitialSyncData(packetBuffer);
-        this.voidingMode = packetBuffer.readEnumValue(VoidingMode.class);
-    }
-
-    @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeByte(this.voidingMode.ordinal());
+    }
+
+    @Override
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
+        this.voidingMode = VoidingMode.VALUES[packetBuffer.readByte()];
     }
 
     @Override
