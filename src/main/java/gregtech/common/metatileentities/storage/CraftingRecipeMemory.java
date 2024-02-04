@@ -13,15 +13,17 @@ import org.jetbrains.annotations.Nullable;
 public class CraftingRecipeMemory {
 
     private final MemorizedRecipe[] memorizedRecipes;
+    private final IItemHandlerModifiable craftingMatrix;
 
-    public CraftingRecipeMemory(int memorySize) {
+    public CraftingRecipeMemory(IItemHandlerModifiable craftingMatrix, int memorySize) {
+        this.craftingMatrix = craftingMatrix;
         this.memorizedRecipes = new MemorizedRecipe[memorySize];
     }
 
-    public void loadRecipe(int index, IItemHandlerModifiable craftingGrid) {
+    public void loadRecipe(int index) {
         MemorizedRecipe recipe = memorizedRecipes[index];
         if (recipe != null) {
-            copyInventoryItems(recipe.craftingMatrix, craftingGrid);
+            copyInventoryItems(recipe.craftingMatrix, this.craftingMatrix);
         }
     }
 
@@ -110,6 +112,16 @@ public class CraftingRecipeMemory {
             ItemStack itemStack = src.getStackInSlot(i);
             dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
         }
+    }
+
+    public final void removeRecipe(int index) {
+        if (hasRecipe(index)) {
+            memorizedRecipes[index] = null;
+        }
+    }
+
+    public final boolean hasRecipe(int index) {
+        return memorizedRecipes[index] != null;
     }
 
     public static class MemorizedRecipe {
