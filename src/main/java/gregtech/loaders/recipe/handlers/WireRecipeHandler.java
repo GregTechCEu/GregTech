@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.handlers;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.unification.OreDictUnifier;
@@ -102,11 +103,9 @@ public class WireRecipeHandler {
     }
 
     public static void generateCableCovering(OrePrefix wirePrefix, Material material, WireProperties property) {
-        // Superconductors have no Cables, so exit early
-        if (property.isSuperconductor()) return;
-
         int cableAmount = (int) (wirePrefix.getMaterialAmount(material) * 2 / GTValues.M);
         OrePrefix cablePrefix = OrePrefix.getPrefix("cable" + wirePrefix.name().substring(4));
+
         int voltageTier = GTUtility.getTierByVoltage(property.getVoltage());
         int insulationAmount = INSULATION_AMOUNT.get(cablePrefix);
 
@@ -163,6 +162,35 @@ public class WireRecipeHandler {
 
         builder.fluidInputs(StyreneButadieneRubber.getFluid(GTValues.L * insulationAmount / 4))
                 .buildAndRegister();
+
+        if (property.isSuperconductor()) {
+            OrePrefix superconPrefix = OrePrefix.getPrefix("superconductor" + wirePrefix.name().substring(4));
+
+            if (voltageTier <= GTValues.MV) {
+                ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(200)
+                        .input(wirePrefix, material)
+                        .input(pipeFluid, Silver)
+                        .output(superconPrefix, material)
+                        .fluidInputs(LiquidAir.getFluid(100))
+                        .buildAndRegister();
+            }
+
+            if (voltageTier <= GTValues.EV) {
+                ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(150)
+                        .input(wirePrefix, material)
+                        .input(pipeFluid, Silver)
+                        .output(superconPrefix, material)
+                        .fluidInputs(Oxygen.getFluid(FluidStorageKeys.LIQUID, 100))
+                        .buildAndRegister();
+            }
+
+            ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(100)
+                    .input(wirePrefix, material)
+                    .input(pipeFluid, Silver)
+                    .output(superconPrefix, material)
+                    .fluidInputs(Helium.getFluid(FluidStorageKeys.LIQUID, 100))
+                    .buildAndRegister();
+        }
     }
 
     private static void generateManualRecipe(OrePrefix wirePrefix, Material material, OrePrefix cablePrefix,

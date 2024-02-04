@@ -1532,15 +1532,6 @@ public class MachineRecipeLoader {
                 .blastFurnaceTemp(1700)
                 .duration(1600).EUt(VA[HV]).buildAndRegister();
 
-        // Tempered Glass
-        BLAST_RECIPES.recipeBuilder()
-                .input(block, Glass)
-                .fluidInputs(Oxygen.getFluid(100))
-                .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
-                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
-                .blastFurnaceTemp(1000)
-                .duration(200).EUt(VA[MV]).buildAndRegister();
-
         registerBlastFurnaceMetallurgyRecipes();
     }
 

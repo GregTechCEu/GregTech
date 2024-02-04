@@ -260,6 +260,16 @@ public class OrePrefix {
     public static final OrePrefix cableGtSingle = new OrePrefix("cableGtSingle", M / 2, null, null, ENABLE_UNIFICATION,
             null);
 
+    public static final OrePrefix superconductorGtHex = new OrePrefix("superconductorGtHex", M * 8, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix superconductorGtOctal = new OrePrefix("superconductorGtOctal", M * 4, null, null, ENABLE_UNIFICATION,
+            null);
+    public static final OrePrefix superconductorGtQuadruple = new OrePrefix("superconductorGtQuadruple", M * 2, null, null,
+            ENABLE_UNIFICATION, null);
+    public static final OrePrefix superconductorGtDouble = new OrePrefix("superconductorGtDouble", M, null, null, ENABLE_UNIFICATION,
+            null);
+    public static final OrePrefix superconductorGtSingle = new OrePrefix("superconductorGtSingle", M / 2, null, null, ENABLE_UNIFICATION,
+            null);
+
     // Special Prefix used mainly for the Crafting Handler.
     public static final OrePrefix craftingLens = new OrePrefix("craftingLens", -1, null, null, 0, null);
     // Used for the 16 dyes. Introduced by Eloraam
@@ -403,6 +413,12 @@ public class OrePrefix {
         cableGtQuadruple.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 2));
         cableGtOctal.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 3));
         cableGtHex.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 5));
+
+        superconductorGtSingle.addSecondaryMaterial(new MaterialStack(Materials.Silver, pipeItem.materialAmount));
+        superconductorGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Silver, pipeItem.materialAmount));
+        superconductorGtQuadruple.addSecondaryMaterial(new MaterialStack(Materials.Silver, pipeItem.materialAmount));
+        superconductorGtOctal.addSecondaryMaterial(new MaterialStack(Materials.Silver, pipeItem.materialAmount));
+        superconductorGtHex.addSecondaryMaterial(new MaterialStack(Materials.Silver, pipeItem.materialAmount));
 
         plate.setIgnored(Materials.BorosilicateGlass);
         foil.setIgnored(Materials.BorosilicateGlass);

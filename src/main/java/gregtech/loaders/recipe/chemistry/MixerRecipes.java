@@ -526,12 +526,6 @@ public class MixerRecipes {
                 .buildAndRegister();
 
         // Superconductor Alloys
-        MIXER_RECIPES.recipeBuilder().duration(400).EUt(24)
-                .input(dust, Manganese)
-                .input(dust, Phosphorus)
-                .circuitMeta(4)
-                .output(dust, ManganesePhosphide, 2)
-                .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(600).EUt(VA[MV])
                 .input(dust, Magnesium)

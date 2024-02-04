@@ -214,7 +214,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         FullersEarth = new Material.Builder(2027, gregtechId("fullers_earth"))
-                .dust().ore(2, 1)
+                .dust()
                 .color(0xA0A078).iconSet(FINE)
                 .components(Magnesium, 1, Silicon, 4, Hydrogen, 1, Water, 4, Oxygen, 11)
                 .build();
@@ -240,19 +240,19 @@ public class SecondDegreeMaterials {
                 .build();
 
         Trona = new Material.Builder(2031, gregtechId("trona"))
-                .dust(1).ore(2, 1)
+                .dust(1)
                 .color(0x87875F).iconSet(METALLIC)
                 .components(Sodium, 3, Carbon, 2, Hydrogen, 1, Water, 2, Oxygen, 6)
                 .build();
 
         Gypsum = new Material.Builder(2032, gregtechId("gypsum"))
-                .dust(1).ore()
+                .dust(1)
                 .color(0xE6E6FA)
                 .components(Calcium, 1, Sulfur, 1, Water, 2, Oxygen, 4)
                 .build();
 
         Zeolite = new Material.Builder(2033, gregtechId("zeolite"))
-                .dust().ore(3, 1)
+                .dust()
                 .color(0xF0E6E6)
                 .components(Sodium, 1, Calcium, 4, Silicon, 27, Aluminium, 9, Water, 28, Oxygen, 72)
                 .build();

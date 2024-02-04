@@ -77,6 +77,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         return Insulation.class;
     }
 
+    public boolean getSupportsSuperconductors() { return pipeType.supportsSuperconductors; }
+
     @Override
     protected WireProperties createProperties(Insulation insulation, Material material) {
         return insulation.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));

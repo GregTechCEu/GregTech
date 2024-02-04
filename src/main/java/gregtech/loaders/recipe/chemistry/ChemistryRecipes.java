@@ -46,36 +46,6 @@ public class ChemistryRecipes {
                 .fluidOutputs(Acetone.getFluid(200))
                 .duration(16).EUt(VA[LV]).buildAndRegister();
 
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Water.getFluid(1000))
-                .fluidOutputs(Ice.getFluid(1000))
-                .duration(50).EUt(VA[LV]).buildAndRegister();
-
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Air.getFluid(4000))
-                .fluidOutputs(LiquidAir.getFluid(4000))
-                .duration(80).EUt(VA[HV]).buildAndRegister();
-
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(NetherAir.getFluid(4000))
-                .fluidOutputs(LiquidNetherAir.getFluid(4000))
-                .duration(80).EUt(VA[EV]).buildAndRegister();
-
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(EnderAir.getFluid(4000))
-                .fluidOutputs(LiquidEnderAir.getFluid(4000))
-                .duration(80).EUt(VA[IV]).buildAndRegister();
-
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(Oxygen.getFluid(FluidStorageKeys.LIQUID, 1000))
-                .duration(240).EUt(VA[EV]).buildAndRegister();
-
-        VACUUM_RECIPES.recipeBuilder()
-                .fluidInputs(Helium.getFluid(1000))
-                .fluidOutputs(Helium.getFluid(FluidStorageKeys.LIQUID, 1000))
-                .duration(240).EUt(VA[EV]).buildAndRegister();
-
         REACTION_FURNACE.recipeBuilder()
                 .input(dust, FerriteMixture)
                 .fluidInputs(Oxygen.getFluid(2000))

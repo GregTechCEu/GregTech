@@ -746,9 +746,6 @@ public class ComponentRecipes {
 
         // Field Generators Start
         // ---------------------------------------------------------------------------------------
-        ModHandler.addShapedRecipe(true, "field_generator_lv", FIELD_GENERATOR_LV.getStackForm(), "WPW", "XGX", "WPW",
-                'W', new UnificationEntry(wireGtQuadruple, ManganesePhosphide), 'P', new UnificationEntry(plate, Steel),
-                'G', new UnificationEntry(gem, EnderPearl), 'X', new UnificationEntry(circuit, Tier.LV));
         ModHandler.addShapedRecipe(true, "field_generator_mv", FIELD_GENERATOR_MV.getStackForm(), "WPW", "XGX", "WPW",
                 'W', new UnificationEntry(wireGtQuadruple, MagnesiumDiboride), 'P',
                 new UnificationEntry(plate, Aluminium), 'G', new UnificationEntry(gem, EnderEye), 'X',
@@ -765,14 +762,6 @@ public class ComponentRecipes {
                 'W', new UnificationEntry(wireGtQuadruple, SamariumIronArsenicOxide), 'P',
                 new UnificationEntry(plate, TungstenSteel), 'G', QUANTUM_STAR.getStackForm(), 'X',
                 new UnificationEntry(circuit, Tier.IV));
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(gem, EnderPearl)
-                .input(plate, Steel, 2)
-                .input(circuit, Tier.LV, 2)
-                .input(wireGtQuadruple, ManganesePhosphide, 4)
-                .outputs(FIELD_GENERATOR_LV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(gem, EnderEye)

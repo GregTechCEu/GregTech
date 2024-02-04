@@ -116,7 +116,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Calcite = new Material.Builder(262, gregtechId("calcite"))
-                .dust(1).ore()
+                .dust(1)
                 .color(0xFAE6DC)
                 .components(Calcium, 1, Carbon, 1, Oxygen, 3)
                 .build();
@@ -360,7 +360,7 @@ public class FirstDegreeMaterials {
                 .color(0x1D291D)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .components(Niobium, 1, Nitrogen, 1)
-                .cableProperties(V[LuV], 1, 1)
+                .cableProperties(V[LuV], 2, 1, true)
                 .blast(2846, GasTier.MID)
                 .build();
 
@@ -712,7 +712,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_FOIL,
                         GENERATE_BOLT_SCREW)
                 .components(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7)
-                .cableProperties(V[UV], 4, 4)
+                .cableProperties(V[UV], 4, 4, true)
                 .blast(b -> b
                         .temp(4500, GasTier.HIGH)
                         .blastStats(VA[IV], 1000)
@@ -1015,7 +1015,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Mica = new Material.Builder(386, gregtechId("mica"))
-                .dust().ore(2, 1)
+                .dust()
                 .color(0xC3C3CD).iconSet(FINE)
                 .components(Potassium, 1, Aluminium, 3, Silicon, 3, Fluorine, 2, Oxygen, 10)
                 .build();
@@ -1039,13 +1039,13 @@ public class FirstDegreeMaterials {
         // Free ID 391
 
         Talc = new Material.Builder(392, gregtechId("talc"))
-                .dust().ore(2, 1)
+                .dust()
                 .color(0x5AB45A).iconSet(FINE)
                 .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
                 .build();
 
         Soapstone = new Material.Builder(393, gregtechId("soapstone"))
-                .dust(1).ore(3, 1)
+                .dust(1)
                 .color(0x5F915F)
                 .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
                 .build();
@@ -1264,21 +1264,12 @@ public class FirstDegreeMaterials {
                 .build();
         Samarium.getProperty(PropertyKey.INGOT).setMagneticMaterial(SamariumMagnetic);
 
-        ManganesePhosphide = new Material.Builder(424, gregtechId("manganese_phosphide"))
-                .ingot()
-                .liquid(new FluidBuilder().temperature(1368))
-                .color(0xE1B454).iconSet(METALLIC)
-                .components(Manganese, 1, Phosphorus, 1)
-                .cableProperties(GTValues.V[GTValues.LV], 2, 0, true, 78)
-                .blast(1200, GasTier.LOW)
-                .build();
-
         MagnesiumDiboride = new Material.Builder(425, gregtechId("magnesium_diboride"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1103))
                 .color(0x331900).iconSet(METALLIC)
                 .components(Magnesium, 1, Boron, 2)
-                .cableProperties(GTValues.V[GTValues.MV], 4, 0, true, 78)
+                .cableProperties(GTValues.V[GTValues.MV], 2, 2, true, 78)
                 .blast(b -> b
                         .temp(2500, GasTier.LOW)
                         .blastStats(VA[HV], 1000)
@@ -1290,7 +1281,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(1075))
                 .color(0x555555).iconSet(SHINY)
                 .components(Mercury, 1, Barium, 2, Calcium, 2, Copper, 3, Oxygen, 8)
-                .cableProperties(GTValues.V[GTValues.HV], 4, 0, true, 78)
+                .cableProperties(GTValues.V[GTValues.HV], 2, 2, true, 78)
                 .blast(b -> b
                         .temp(3300, GasTier.LOW)
                         .blastStats(VA[HV], 1500)
@@ -1302,7 +1293,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(1882))
                 .color(0x008700).iconSet(SHINY)
                 .components(Uranium238, 1, Platinum, 3)
-                .cableProperties(GTValues.V[GTValues.EV], 6, 0, true, 30)
+                .cableProperties(GTValues.V[GTValues.EV], 3, 2, true, 30)
                 .blast(b -> b
                         .temp(4400, GasTier.MID)
                         .blastStats(VA[EV], 1000)
@@ -1315,7 +1306,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(1347))
                 .color(0x330033).iconSet(SHINY)
                 .components(Samarium, 1, Iron, 1, Arsenic, 1, Oxygen, 1)
-                .cableProperties(GTValues.V[GTValues.IV], 6, 0, true, 30)
+                .cableProperties(GTValues.V[GTValues.IV], 3, 2, true, 30)
                 .blast(b -> b
                         .temp(5200, GasTier.MID)
                         .blastStats(VA[EV], 1500)
@@ -1328,7 +1319,7 @@ public class FirstDegreeMaterials {
                 .color(0x994C00).iconSet(METALLIC)
                 .flags(GENERATE_FINE_WIRE)
                 .components(Indium, 4, Tin, 2, Barium, 2, Titanium, 1, Copper, 7, Oxygen, 14)
-                .cableProperties(GTValues.V[GTValues.LuV], 8, 0, true, 5)
+                .cableProperties(GTValues.V[GTValues.LuV], 4, 2, true, 5)
                 .blast(b -> b
                         .temp(6000, GasTier.HIGH)
                         .blastStats(VA[IV], 1000)
@@ -1341,7 +1332,7 @@ public class FirstDegreeMaterials {
                 .color(0x0A0A0A)
                 .flags(GENERATE_FINE_WIRE)
                 .components(Uranium238, 1, Rhodium, 1, Naquadah, 2)
-                .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true, 5)
+                .cableProperties(GTValues.V[GTValues.ZPM], 8, 2, true, 5)
                 .blast(b -> b
                         .temp(9000, GasTier.HIGH)
                         .blastStats(VA[IV], 1500)
@@ -1356,7 +1347,7 @@ public class FirstDegreeMaterials {
                         .color(0x7D9673).iconSet(METALLIC)
                         .flags(GENERATE_FINE_WIRE)
                         .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
-                        .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
+                        .cableProperties(GTValues.V[GTValues.UV], 16, 2, true, 3)
                         .blast(b -> b
                                 .temp(9900, GasTier.HIGH)
                                 .blastStats(VA[LuV], 1200)
@@ -1369,7 +1360,7 @@ public class FirstDegreeMaterials {
                         .liquid(new FluidBuilder().temperature(23691))
                         .color(0xFFFFFF).iconSet(BRIGHT)
                         .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
-                        .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
+                        .cableProperties(GTValues.V[GTValues.UHV], 24, 2, true, 3)
                         .blast(b -> b
                                 .temp(10800, GasTier.HIGHER)
                                 .blastStats(VA[ZPM], 1000)

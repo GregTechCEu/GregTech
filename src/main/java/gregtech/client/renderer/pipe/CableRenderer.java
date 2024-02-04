@@ -23,6 +23,7 @@ public class CableRenderer extends PipeRenderer {
 
     public static final CableRenderer INSTANCE = new CableRenderer();
     private final TextureAtlasSprite[] insulationTextures = new TextureAtlasSprite[6];
+    private final TextureAtlasSprite[] shellTextures = new TextureAtlasSprite[6];
     private TextureAtlasSprite wireTexture;
 
     private CableRenderer() {
@@ -36,6 +37,8 @@ public class CableRenderer extends PipeRenderer {
         for (int i = 0; i < insulationTextures.length; i++) {
             ResourceLocation location = GTUtility.gregtechId("blocks/cable/insulation_" + i);
             this.insulationTextures[i] = map.registerSprite(location);
+            ResourceLocation location2 = GTUtility.gregtechId("blocks/cable/shell_" + i);
+            this.shellTextures[i] = map.registerSprite(location2);
         }
     }
 
@@ -47,10 +50,15 @@ public class CableRenderer extends PipeRenderer {
         }
 
         int insulationLevel = ((Insulation) pipeType).insulationLevel;
+        TextureAtlasSprite[] outsideSprite = ((Insulation) pipeType).supportsSuperconductors ? shellTextures : insulationTextures;
+
         IVertexOperation wireRender = new IconTransformation(wireTexture);
         ColourMultiplier wireColor = new ColourMultiplier(
                 GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()));
-        ColourMultiplier insulationColor = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(0x404040));
+
+        int outsideColor = ((Insulation) pipeType).supportsSuperconductors ? 0xEEEEEE : 0x404040;
+
+        ColourMultiplier insulationColor = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(outsideColor));
         if (pipeTile != null) {
             if (pipeTile.getPaintingColor() != pipeTile.getDefaultPaintingColor()) {
                 wireColor.colour = GTUtility.convertRGBtoOpaqueRGBA_CL(pipeTile.getPaintingColor());
@@ -62,14 +70,14 @@ public class CableRenderer extends PipeRenderer {
 
             if ((renderContext.getConnections() & 63) == 0) {
                 // render only insulation when cable has no connections
-                renderContext.addOpenFaceRender(false, new IconTransformation(insulationTextures[5]), insulationColor);
+                renderContext.addOpenFaceRender(false, new IconTransformation(outsideSprite[5]), insulationColor);
                 return;
             }
 
             renderContext.addOpenFaceRender(false, wireRender, wireColor)
-                    .addOpenFaceRender(false, new IconTransformation(insulationTextures[insulationLevel]),
+                    .addOpenFaceRender(false, new IconTransformation(outsideSprite[insulationLevel]),
                             insulationColor)
-                    .addSideRender(false, new IconTransformation(insulationTextures[5]), insulationColor);
+                    .addSideRender(false, new IconTransformation(outsideSprite[5]), insulationColor);
         } else {
             renderContext.addOpenFaceRender(false, wireRender, wireColor)
                     .addSideRender(false, wireRender, wireColor);
@@ -100,7 +108,7 @@ public class CableRenderer extends PipeRenderer {
             atlasSprite = wireTexture;
             particleColor = material == null ? 0xFFFFFF : material.getMaterialRGB();
         } else {
-            atlasSprite = insulationTextures[5];
+            atlasSprite = ((Insulation) pipeType).supportsSuperconductors ? shellTextures[5] : insulationTextures[5];
             particleColor = pipeTile.getPaintingColor();
         }
         return Pair.of(atlasSprite, particleColor);

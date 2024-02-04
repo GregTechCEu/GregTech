@@ -439,7 +439,6 @@ public class Materials {
     public static Material DistilledWater;
     public static Material SodiumPotassium;
     public static Material SamariumMagnetic;
-    public static Material ManganesePhosphide;
     public static Material MagnesiumDiboride;
     public static Material MercuryBariumCalciumCuprate;
     public static Material UraniumTriplatinum;

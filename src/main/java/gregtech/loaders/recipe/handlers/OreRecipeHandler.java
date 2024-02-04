@@ -52,18 +52,6 @@ public class OreRecipeHandler {
         OrePrefix.dustPure.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processPureDust);
     }
 
-    private static void processMetalSmelting(OrePrefix crushedPrefix, Material material, OreProperty property) {
-        Material smeltingResult = property.getDirectSmeltResult() != null ? property.getDirectSmeltResult() : material;
-
-        if (smeltingResult.hasProperty(PropertyKey.INGOT)) {
-            ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
-
-            if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingResult)) {
-                ModHandler.addSmeltingRecipe(new UnificationEntry(crushedPrefix, material), ingotStack, 0.5f);
-            }
-        }
-    }
-
     public static void processOre(OrePrefix orePrefix, Material material, OreProperty property) {
         Material byproductMaterial = property.getOreByProduct(0, material);
         ItemStack byproductStack = OreDictUnifier.get(OrePrefix.gem, byproductMaterial);
@@ -109,11 +97,6 @@ public class OreRecipeHandler {
             }
 
             builder.buildAndRegister();
-        }
-
-        // do not try to add smelting recipes for materials which require blast furnace
-        if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingMaterial)) {
-            ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), ingotStack, 0.5f);
         }
     }
 
@@ -201,8 +184,6 @@ public class OreRecipeHandler {
 
         ModHandler.addShapelessRecipe(String.format("crushed_ore_to_dust_%s", material),
                 impureDustStack, 'h', new UnificationEntry(crushedPrefix, material));
-
-        processMetalSmelting(crushedPrefix, material, property);
     }
 
     public static void processCrushedCentrifuged(OrePrefix centrifugedPrefix, Material material, OreProperty property) {
@@ -224,8 +205,6 @@ public class OreRecipeHandler {
 
         ModHandler.addShapelessRecipe(String.format("centrifuged_ore_to_dust_%s", material), dustStack,
                 'h', new UnificationEntry(centrifugedPrefix, material));
-
-        processMetalSmelting(centrifugedPrefix, material, property);
     }
 
     public static void processCrushedPurified(OrePrefix purifiedPrefix, Material material, OreProperty property) {
@@ -298,7 +277,6 @@ public class OreRecipeHandler {
                 builder.buildAndRegister();
             }
         }
-        processMetalSmelting(purifiedPrefix, material, property);
     }
 
     public static void processDirtyDust(OrePrefix dustPrefix, Material material, OreProperty property) {
@@ -324,9 +302,6 @@ public class OreRecipeHandler {
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();
-
-        // dust gains same amount of material as normal dust
-        processMetalSmelting(dustPrefix, material, property);
     }
 
     public static void processPureDust(OrePrefix purePrefix, Material material, OreProperty property) {
@@ -373,8 +348,6 @@ public class OreRecipeHandler {
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();
-
-        processMetalSmelting(purePrefix, material, property);
     }
 
     private static boolean doesMaterialUseNormalFurnace(Material material) {
