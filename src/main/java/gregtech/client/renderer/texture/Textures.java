@@ -558,8 +558,8 @@ public class Textures {
     public static SimpleOverlayRenderer STEAM_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/steam_casing");
 
     public static final ResourceLocation CHINA_CAPE_TEXTURE = gregtechId("textures/capes/chinacape.png");
-    public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");
-    public static final ResourceLocation AROMANTIC_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");
+    public static final ResourceLocation PATRICK_CAPE_TEXTURE = gregtechId("textures/capes/patrickcape.png");
+    public static final ResourceLocation MIT_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");
     public static final ResourceLocation BI_CAPE_TEXTURE = gregtechId("textures/capes/bicape.png");
     public static final ResourceLocation GENDERFLUID_CAPE_TEXTURE = gregtechId("textures/capes/genderfluidcape.png");
     public static final ResourceLocation GENDERQUEER_CAPE_TEXTURE = gregtechId("textures/capes/genderqueercape.png");
