@@ -6274,7 +6274,7 @@ gregtech.machine.mega_vacuum_freezer.name=Bulk Blast Chiller
 gregtech.machine.steam_engine.name=Industrial Steam Engine
 gregtech.machine.steam_engine.tooltip.1=Produces up to %s§7 power.
 gregtech.machine.large_circuit_assembler.name=Large Circuit Assembler
-
+gregtech.machine.fermentation_vat.name=Fermentation Vat
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.

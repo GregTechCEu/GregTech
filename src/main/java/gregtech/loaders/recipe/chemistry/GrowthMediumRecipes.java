@@ -29,41 +29,11 @@ public class GrowthMediumRecipes {
                 .outputs(new ItemStack(Blocks.DIRT))
                 .buildAndRegister();
 
-        // Bacteria
-        BREWING_RECIPES.recipeBuilder().EUt(VA[HV]).duration(300)
-                .input(BIO_CHAFF, 4)
-                .fluidInputs(DistilledWater.getFluid(1000))
-                .fluidOutputs(Bacteria.getFluid(1000))
-                .cleanroom(CleanroomType.STERILE_CLEANROOM)
-                .buildAndRegister();
-
         // Bacterial Sludge
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(600)
                 .fluidInputs(Biomass.getFluid(1000))
                 .fluidInputs(Bacteria.getFluid(1000))
                 .fluidOutputs(BacterialSludge.getFluid(1000))
-                .cleanroom(CleanroomType.STERILE_CLEANROOM)
-                .buildAndRegister();
-
-        // Enriched Bacterial Sludge
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
-                .input(dust, Uranium238)
-                .fluidInputs(BacterialSludge.getFluid(1000))
-                .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
-                .cleanroom(CleanroomType.STERILE_CLEANROOM)
-                .buildAndRegister();
-
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
-                .input(dust, Uranium235)
-                .fluidInputs(BacterialSludge.getFluid(1000))
-                .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
-                .cleanroom(CleanroomType.STERILE_CLEANROOM)
-                .buildAndRegister();
-
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
-                .input(dust, Naquadria)
-                .fluidInputs(BacterialSludge.getFluid(1000))
-                .fluidOutputs(EnrichedBacterialSludge.getFluid(2000))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 

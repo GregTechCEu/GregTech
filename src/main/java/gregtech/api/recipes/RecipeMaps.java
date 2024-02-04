@@ -280,32 +280,6 @@ public final class RecipeMaps {
      * Example:
      *
      * <pre>
-     * RecipeMap.BREWING_RECIPES.recipeBuilder()
-     *         .input(MetaItems.BIO_CHAFF)
-     *         .fluidInput(Materials.Water.getFluid(750))
-     *         .fluidOutput(Materials.Biomass.getFluid(750))
-     *         .duration(128).EUt(4)
-     *         .buildAndRegister();
-     * </pre>
-     *
-     * Any Recipe added to the Brewery not specifying a <B>duration</B> value will default to 128.
-     * Any Recipe added to the Brewery not specifying an <B>EUt</B> value will default 4.
-     */
-    @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> BREWING_RECIPES = new RecipeMapBuilder<>("brewery",
-            new SimpleRecipeBuilder().duration(128).EUt(4))
-                    .itemInputs(1)
-                    .fluidInputs(1)
-                    .fluidOutputs(1)
-                    .itemSlotOverlay(GuiTextures.BREWER_OVERLAY, false)
-                    .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
-                    .sound(GTSoundEvents.CHEMICAL_REACTOR)
-                    .build();
-
-    /**
-     * Example:
-     *
-     * <pre>
      * RecipeMap.CANNER_RECIPES.recipeBuilder()
      *         .input(MetaItems.BATTERY_HULL_LV)
      *         .input(OrePrefix.dust, Materials.Cadmium, 2)
