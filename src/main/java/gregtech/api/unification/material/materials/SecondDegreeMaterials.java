@@ -488,7 +488,7 @@ public class SecondDegreeMaterials {
                 .color(0x808080).iconSet(MaterialIconSet.METALLIC)
                 .flags(EXT_METAL, GENERATE_SPRING, GENERATE_FRAME)
                 .components(Invar, 2, Vanadium, 1, Titanium, 1, Molybdenum, 1)
-                .blast(b -> b.temp(1711, GasTier.LOW).blastStats(VA[HV], 1000))
+                .blast(b -> b.temp(1711, GasTier.LOW).blastStats(VA[HV], 1000).createAlloyBlast())
                 .build();
 
         TitaniumTungstenCarbide = new Material.Builder(2066, gregtechId("titanium_tungsten_carbide"))
@@ -496,7 +496,7 @@ public class SecondDegreeMaterials {
                 .color(0x800D0D).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE)
                 .components(TungstenCarbide, 1, TitaniumCarbide, 2)
-                .blast(b -> b.temp(3800, GasTier.HIGH).blastStats(VA[EV], 1000))
+                .blast(b -> b.temp(3800, GasTier.HIGH).blastStats(VA[EV], 1000).createAlloyBlast())
                 .build();
 
         IncoloyMA956 = new Material.Builder(2067, gregtechId("incoloy_ma_956"))
@@ -504,7 +504,7 @@ public class SecondDegreeMaterials {
                 .color(0x37BF7E).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
                 .components(VanadiumSteel, 4, Manganese, 2, Aluminium, 5, Yttrium, 2)
-                .blast(b -> b.temp(3625, GasTier.MID).blastStats(VA[EV], 800))
+                .blast(b -> b.temp(3625, GasTier.MID).blastStats(VA[EV], 800).createAlloyBlast())
                 .build();
     }
 }

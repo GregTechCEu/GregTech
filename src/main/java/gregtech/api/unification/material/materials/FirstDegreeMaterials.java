@@ -1492,7 +1492,7 @@ public class FirstDegreeMaterials {
                 .blast(b -> b
                         .temp(3000, GasTier.MID)
                         .blastStats(VA[EV], 1400)
-                        .vacuumStats(VA[HV], 250))
+                        .vacuumStats(VA[HV], 250).createAlloyBlast())
                 .build();
 
         Stellite100 = new Material.Builder(452, gregtechId("stellite_100"))
@@ -1500,7 +1500,7 @@ public class FirstDegreeMaterials {
                 .color(0xDEDEFF).iconSet(MaterialIconSet.BRIGHT)
                 .flags(GENERATE_PLATE)
                 .components(Iron, 4, Chrome, 3, Tungsten, 2, Molybdenum, 1)
-                .blast(b -> b.temp(3790, GasTier.HIGH).blastStats(VA[EV], 1000))
+                .blast(b -> b.temp(3790, GasTier.HIGH).blastStats(VA[EV], 1000).createAlloyBlast())
                 .build();
 
         WatertightSteel = new Material.Builder(453, gregtechId("watertight_steel"))
@@ -1508,7 +1508,7 @@ public class FirstDegreeMaterials {
                 .color(0x355D6A).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
                 .components(Iron, 7, Aluminium, 4, Nickel, 2, Chrome, 1, Sulfur, 1)
-                .blast(b -> b.temp(3850, GasTier.MID).blastStats(VA[EV], 800))
+                .blast(b -> b.temp(3850, GasTier.MID).blastStats(VA[EV], 800).createAlloyBlast())
                 .build();
 
         MaragingSteel300 = new Material.Builder(454, gregtechId("maraging_steel_300"))
@@ -1516,7 +1516,7 @@ public class FirstDegreeMaterials {
                 .color(0x637087).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
                 .components(Iron, 16, Titanium, 1, Aluminium, 1, Nickel, 4, Cobalt, 2)
-                .blast(b -> b.temp(4000, GasTier.HIGH).blastStats(VA[EV], 1000))
+                .blast(b -> b.temp(4000, GasTier.HIGH).blastStats(VA[EV], 1000).createAlloyBlast())
                 .build();
 
         HastelloyC276 = new Material.Builder(455, gregtechId("hastelloy_c_276"))
@@ -1524,7 +1524,7 @@ public class FirstDegreeMaterials {
                 .color(0xCF3939).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
                 .components(Nickel, 12, Molybdenum, 8, Chrome, 7, Tungsten, 1, Cobalt, 1, Copper, 1)
-                .blast(b -> b.temp(4625, GasTier.MID).blastStats(VA[EV], 1000))
+                .blast(b -> b.temp(4625, GasTier.MID).blastStats(VA[EV], 1000).createAlloyBlast())
                 .build();
 
         HastelloyX = new Material.Builder(456, gregtechId("hastelloy_x"))
@@ -1532,7 +1532,7 @@ public class FirstDegreeMaterials {
                 .color(0x6BA3E3).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
                 .components(Nickel, 8, Iron, 3, Tungsten, 4, Molybdenum, 2, Chrome, 1, Niobium, 1)
-                .blast(b -> b.temp(4200, GasTier.HIGH).blastStats(VA[EV], 900))
+                .blast(b -> b.temp(4200, GasTier.HIGH).blastStats(VA[EV], 900).createAlloyBlast())
                 .build();
 
         Trinaquadalloy = new Material.Builder(457, gregtechId("trinaquadalloy"))
@@ -1540,7 +1540,7 @@ public class FirstDegreeMaterials {
                 .color(0x281832).iconSet(MaterialIconSet.BRIGHT)
                 .flags(GENERATE_PLATE)
                 .components(Trinium, 6, Naquadah, 2, Carbon, 1)
-                .blast(b -> b.temp(8747, GasTier.HIGHER).blastStats(VA[ZPM], 1200))
+                .blast(b -> b.temp(8747, GasTier.HIGHER).blastStats(VA[ZPM], 1200).createAlloyBlast())
                 .build();
 
         Zeron100 = new Material.Builder(458, gregtechId("zeron_100"))
@@ -1548,7 +1548,7 @@ public class FirstDegreeMaterials {
                 .color(0x325A8C).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE)
                 .components(Iron, 10, Nickel, 2, Tungsten, 2, Niobium, 1, Cobalt, 1)
-                .blast(b -> b.temp(3693, GasTier.MID).blastStats(VA[EV], 1000))
+                .blast(b -> b.temp(3693, GasTier.MID).blastStats(VA[EV], 1000).createAlloyBlast())
                 .build();
 
         TitaniumCarbide = new Material.Builder(459, gregtechId("titanium_carbide"))
@@ -1556,7 +1556,7 @@ public class FirstDegreeMaterials {
                 .color(0xB20B3A).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE)
                 .components(Titanium, 1, Carbon, 1)
-                .blast(b -> b.temp(3430, GasTier.MID).blastStats(VA[EV], 1000))
+                .blast(b -> b.temp(3430, GasTier.MID).blastStats(VA[EV], 1000).createAlloyBlast())
                 .build();
 
         TantalumCarbide = new Material.Builder(460, gregtechId("tantalum_carbide"))
@@ -1564,7 +1564,7 @@ public class FirstDegreeMaterials {
                 .color(0x56566A).iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_PLATE)
                 .components(Tantalum, 1, Carbon, 1)
-                .blast(b -> b.temp(4120, GasTier.MID).blastStats(VA[EV], 1200))
+                .blast(b -> b.temp(4120, GasTier.MID).blastStats(VA[EV], 1200).createAlloyBlast())
                 .build();
 
         MolybdenumDisilicide = new Material.Builder(461, gregtechId("molybdenum_disilicide"))
@@ -1572,7 +1572,7 @@ public class FirstDegreeMaterials {
                 .color(0x6A5BA3).iconSet(MaterialIconSet.METALLIC)
                 .flags(EXT_METAL, GENERATE_SPRING, GENERATE_RING)
                 .components(Molybdenum, 1, Silicon, 2)
-                .blast(b -> b.temp(2300, GasTier.MID).blastStats(VA[EV], 800))
+                .blast(b -> b.temp(2300, GasTier.MID).blastStats(VA[EV], 800).createAlloyBlast())
                 .build();
     }
 }

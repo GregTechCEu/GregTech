@@ -1,16 +1,20 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.GTValues;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.FluidCellInput;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -19,8 +23,10 @@ import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.CraftingComponent;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -94,7 +100,8 @@ public class MaterialRecipeHandler {
             }
 
         } else {
-            if (!mat.hasProperty(PropertyKey.INGOT) && mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(EXCLUDE_PLATE_COMPRESSOR_RECIPE)) {
+            if (!mat.hasProperty(PropertyKey.INGOT) && mat.hasFlag(GENERATE_PLATE) &&
+                    !mat.hasFlag(EXCLUDE_PLATE_COMPRESSOR_RECIPE)) {
                 RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder()
                         .inputs(dustStack)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
@@ -109,6 +116,73 @@ public class MaterialRecipeHandler {
                     if (!ingotStack.isEmpty()) {
                         ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
                     }
+                }
+            }
+
+            if (mat.hasProperty(PropertyKey.BLAST) && mat.hasFluid()) {
+                BlastProperty blastProperty = mat.getProperty(PropertyKey.BLAST);
+
+                if (blastProperty.hasAlloyBlastSmelt()) {
+                    int componentAmount = mat.getMaterialComponents().size();
+
+                    // ignore non-alloys
+                    if (componentAmount < 2) return;
+
+                    Fluid molten = mat.getFluid();
+                    if (molten == null) return;
+
+                    BlastRecipeBuilder builder = RecipeMaps.ALLOY_BLAST_RECIPES.recipeBuilder();
+
+                    // apply the duration override
+                    int duration = blastProperty.getDurationOverride();
+                    if (duration < 0)
+                        duration = Math.max(1, (int) (mat.getMass() * blastProperty.getBlastTemperature() / 100L));
+                    builder.duration(duration);
+
+                    // apply the EUt override
+                    int EUt = blastProperty.getEUtOverride();
+                    if (EUt < 0) EUt = GTValues.VA[GTValues.MV];
+                    builder.EUt(EUt);
+
+                    int outputAmount = 0;
+                    int fluidAmount = 0;
+                    for (MaterialStack materialStack : mat.getMaterialComponents()) {
+                        final Material msMat = materialStack.material;
+                        final int msAmount = (int) materialStack.amount;
+
+                        if (msMat.hasProperty(PropertyKey.DUST)) {
+                            builder.input(OrePrefix.dust, msMat, msAmount);
+                        } else if (msMat.hasProperty(PropertyKey.FLUID)) {
+                            if (fluidAmount >= 2) {outputAmount = -1; break;} // more than 2 fluids won't fit in the machine
+                            fluidAmount++;
+                            // assume all fluids have 1000mB/mol, since other quantities should be as an item input
+                            builder.fluidInputs(msMat.getFluid(1000 * msAmount));
+                        } else {outputAmount = -1; break;} // no fluid or item prop means no valid recipe
+                        outputAmount += msAmount;
+                    }
+
+                    if (outputAmount <= 0) return;
+
+                    builder.fluidOutputs(new FluidStack(molten, GTValues.L * outputAmount));
+
+                    // apply alloy blast duration reduction: 3/4
+                    duration = duration * outputAmount * 3 / 4;
+
+                    // build the gas recipe if it exists
+                    if (blastProperty.getGasTier() != null) {
+                        RecipeBuilder<BlastRecipeBuilder> builderGas = builder.copy();
+                        FluidStack gas = CraftingComponent.EBF_GASES.get(blastProperty.getGasTier());
+                        builderGas.circuitMeta(componentAmount + 10)
+                                .fluidInputs(new FluidStack(gas, gas.amount * outputAmount))
+                                .duration((int) (duration * 0.67))
+                                .buildAndRegister();
+
+                    }
+
+                    // build the non-gas recipe
+                    builder.notConsumable(new IntCircuitIngredient(componentAmount))
+                            .duration(duration)
+                            .buildAndRegister();
                 }
             }
         }

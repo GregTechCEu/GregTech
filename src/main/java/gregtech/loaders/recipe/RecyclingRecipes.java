@@ -139,7 +139,6 @@ public class RecyclingRecipes {
                         .EUt(GTValues.VA[GTValues.LV] * multiplier)
                         .buildAndRegister();
 
-                //TODO REGISTER EQUIVALENT IN PRIMITIVE FURNACES
                 return;
             }
 
@@ -162,16 +161,17 @@ public class RecyclingRecipes {
 
             if (gasTier != null) {
                 FluidStack gas = CraftingComponent.EBF_GASES.get(gasTier).copy();
+                gas.amount *= ms.amount / M;
 
                 blastBuilder.copy()
                         .circuitMeta(1)
-                        .duration(duration)
+                        .duration((int) (duration * ms.amount / M))
                         .buildAndRegister();
 
                 blastBuilder.copy()
                         .circuitMeta(2)
                         .fluidInputs(gas)
-                        .duration((int) (duration * 0.67))
+                        .duration((int) (duration * 0.67 * ms.amount / M))
                         .buildAndRegister();
             } else {
                 blastBuilder.duration(duration);

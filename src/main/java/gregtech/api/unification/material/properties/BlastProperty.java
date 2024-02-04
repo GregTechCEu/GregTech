@@ -50,6 +50,8 @@ public class BlastProperty implements IMaterialProperty {
      */
     private int vacuumEUtOverride = -1;
 
+    private boolean alloyBlastSmelt = false;
+
     public BlastProperty(int blastTemperature) {
         this.blastTemperature = blastTemperature;
     }
@@ -60,13 +62,14 @@ public class BlastProperty implements IMaterialProperty {
     }
 
     private BlastProperty(int blastTemperature, GasTier gasTier, int eutOverride, int durationOverride,
-                          int vacuumEUtOverride, int vacuumDurationOverride) {
+                          int vacuumEUtOverride, int vacuumDurationOverride, boolean alloyBlastSmelt) {
         this.blastTemperature = blastTemperature;
         this.gasTier = gasTier;
         this.eutOverride = eutOverride;
         this.durationOverride = durationOverride;
         this.vacuumEUtOverride = vacuumEUtOverride;
         this.vacuumDurationOverride = vacuumDurationOverride;
+        this.alloyBlastSmelt = alloyBlastSmelt;
     }
 
     /**
@@ -125,6 +128,8 @@ public class BlastProperty implements IMaterialProperty {
         this.vacuumEUtOverride = eut;
     }
 
+    public boolean hasAlloyBlastSmelt() { return alloyBlastSmelt; }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.INGOT, true);
@@ -167,6 +172,7 @@ public class BlastProperty implements IMaterialProperty {
         private int durationOverride = -1;
         private int vacuumEUtOverride = -1;
         private int vacuumDurationOverride = -1;
+        private boolean alloyBlastSmelt;
 
         public Builder() {}
 
@@ -203,9 +209,14 @@ public class BlastProperty implements IMaterialProperty {
             return this;
         }
 
+        public Builder createAlloyBlast() {
+            this.alloyBlastSmelt = true;
+            return this;
+        }
+
         public BlastProperty build() {
             return new BlastProperty(temp, gasTier, eutOverride, durationOverride, vacuumEUtOverride,
-                    vacuumDurationOverride);
+                    vacuumDurationOverride, alloyBlastSmelt);
         }
     }
 }
