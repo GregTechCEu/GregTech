@@ -562,7 +562,7 @@ public class Textures {
     public static final ResourceLocation MIT_CAPE_TEXTURE = gregtechId("textures/capes/mitcape.png");
     public static final ResourceLocation BADBURN_CAPE_TEXTURE = gregtechId("textures/capes/badburncape.png");
     public static final ResourceLocation BI_CAPE_TEXTURE = gregtechId("textures/capes/bicape.png");
-    public static final ResourceLocation GENDERQUEER_CAPE_TEXTURE = gregtechId("textures/capes/genderqueercape.png");
+    public static final ResourceLocation IMAGE_CAPE_TEXTURE = gregtechId("textures/capes/genderqueercape.png");
     public static final ResourceLocation GREEN_CAPE_TEXTURE = gregtechId("textures/capes/greencape.png");
     public static final ResourceLocation GREGTECH_CAPE_TEXTURE = gregtechId("textures/capes/gregtechcape.png");
     public static final ResourceLocation INTERSEX_CAPE_TEXTURE = gregtechId("textures/capes/intersexcape.png");
