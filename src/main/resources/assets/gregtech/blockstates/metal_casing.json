@@ -69,6 +69,16 @@
         "textures": {
           "all": "gregtech:blocks/casings/solid/machine_casing_oil_pipe"
         }
+      },
+      "fluid_carrier": {
+        "textures": {
+          "all": "gregtech:blocks/casings/solid/machine_casing_fluid_carrier"
+        }
+      },
+      "pipe_stabilizer": {
+        "textures": {
+          "all": "gregtech:blocks/casings/solid/machine_casing_pipe_stabilizer"
+        }
       }
     }
   }
