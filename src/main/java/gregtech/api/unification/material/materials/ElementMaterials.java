@@ -195,7 +195,6 @@ public class ElementMaterials {
         Copper = new Material.Builder(25, gregtechId("copper"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(1358))
-                .ore()
                 .color(0xFF6400).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING, GENERATE_FINE_WIRE)
                 .element(Elements.Cu)
@@ -378,7 +377,6 @@ public class ElementMaterials {
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1811))
                 .plasma()
-                .ore()
                 .color(0xC8C8C8).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_GEAR, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         BLAST_FURNACE_CALCITE_TRIPLE)

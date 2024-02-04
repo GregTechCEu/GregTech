@@ -116,7 +116,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Calcite = new Material.Builder(262, gregtechId("calcite"))
-                .dust(1).ore()
+                .dust(1)
                 .color(0xFAE6DC)
                 .components(Calcium, 1, Carbon, 1, Oxygen, 3)
                 .build();
@@ -1015,7 +1015,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Mica = new Material.Builder(386, gregtechId("mica"))
-                .dust().ore(2, 1)
+                .dust()
                 .color(0xC3C3CD).iconSet(FINE)
                 .components(Potassium, 1, Aluminium, 3, Silicon, 3, Fluorine, 2, Oxygen, 10)
                 .build();
@@ -1039,13 +1039,13 @@ public class FirstDegreeMaterials {
         // Free ID 391
 
         Talc = new Material.Builder(392, gregtechId("talc"))
-                .dust().ore(2, 1)
+                .dust()
                 .color(0x5AB45A).iconSet(FINE)
                 .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
                 .build();
 
         Soapstone = new Material.Builder(393, gregtechId("soapstone"))
-                .dust(1).ore(3, 1)
+                .dust(1)
                 .color(0x5F915F)
                 .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
                 .build();
