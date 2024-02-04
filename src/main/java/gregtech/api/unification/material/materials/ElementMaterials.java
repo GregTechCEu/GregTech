@@ -58,6 +58,11 @@ public class ElementMaterials {
 
         Argon = new Material.Builder(5, gregtechId("argon"))
                 .gas().plasma()
+                .liquid(new FluidBuilder()
+                        .temperature(87)
+                        .color(0x00FF00)
+                        .name("liquid_argon")
+                        .translation("gregtech.fluid.liquid_generic"))
                 .color(0x00FF00)
                 .element(Elements.Ar)
                 .build();
@@ -411,7 +416,7 @@ public class ElementMaterials {
                 .color(0x8C648C)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_FINE_WIRE)
                 .element(Elements.Pb)
-                .cableProperties(V[ULV], 2, 2)
+                .cableProperties(V[LV], 2, 2, true)
                 .fluidPipeProperties(1200, 32, true)
                 .build();
 
@@ -523,6 +528,7 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0xBEB4C8).iconSet(METALLIC)
                 .element(Elements.Nb)
+                .cableProperties(GTValues.V[GTValues.HV], 1, 3, true, 78)
                 .blast(b -> b
                         .temp(2750, GasTier.MID)
                         .blastStats(VA[HV], 900))
@@ -530,6 +536,11 @@ public class ElementMaterials {
 
         Nitrogen = new Material.Builder(72, gregtechId("nitrogen"))
                 .gas().plasma()
+                .liquid(new FluidBuilder()
+                        .temperature(77)
+                        .color(0x00BFC1)
+                        .name("liquid_nitrogen")
+                        .translation("gregtech.fluid.liquid_generic"))
                 .color(0x00BFC1)
                 .element(Elements.N)
                 .build();
@@ -736,6 +747,7 @@ public class ElementMaterials {
                 .ore()
                 .color(0xDCDCFF).iconSet(SHINY)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
+                .fluidPipeProperties(1235, 25, false, false, true, false)
                 .element(Elements.Ag)
                 .cableProperties(V[HV], 1, 1)
                 .build();

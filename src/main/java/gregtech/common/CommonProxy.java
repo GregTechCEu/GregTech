@@ -86,9 +86,13 @@ public class CommonProxy {
 
                 if (material.hasProperty(PropertyKey.WIRE)) {
                     for (BlockCable cable : CABLES.get(materialRegistry.getModid())) {
-                        if (!cable.getItemPipeType(null).isCable() ||
-                                !material.getProperty(PropertyKey.WIRE).isSuperconductor())
+                        if (!material.getProperty(PropertyKey.WIRE).isSuperconductor()) {
+                            if (!cable.getSupportsSuperconductors()) {
+                                cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
+                            }
+                        } else {
                             cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
+                        }
                     }
                 }
                 if (material.hasProperty(PropertyKey.FLUID_PIPE)) {

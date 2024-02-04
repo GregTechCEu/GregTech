@@ -33,7 +33,7 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
         super.addInformation(stack, worldIn, tooltip, flagIn);
         WireProperties wireProperties = blockPipe.createItemProperties(stack);
         int tier = GTUtility.getTierByVoltage(wireProperties.getVoltage());
-        if (wireProperties.isSuperconductor())
+        if (wireProperties.getLossPerBlock() == 0)
             tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));
         tooltip.add(I18n.format("gregtech.cable.voltage", wireProperties.getVoltage(), GTValues.VNF[tier]));
         tooltip.add(I18n.format("gregtech.cable.amperage", wireProperties.getAmperage()));

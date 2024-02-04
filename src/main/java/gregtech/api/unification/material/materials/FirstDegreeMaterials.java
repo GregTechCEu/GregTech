@@ -360,7 +360,7 @@ public class FirstDegreeMaterials {
                 .color(0x1D291D)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .components(Niobium, 1, Nitrogen, 1)
-                .cableProperties(V[LuV], 1, 1)
+                .cableProperties(V[LuV], 2, 1, true)
                 .blast(2846, GasTier.MID)
                 .build();
 
@@ -712,7 +712,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_FOIL,
                         GENERATE_BOLT_SCREW)
                 .components(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7)
-                .cableProperties(V[UV], 4, 4)
+                .cableProperties(V[UV], 4, 4, true)
                 .blast(b -> b
                         .temp(4500, GasTier.HIGH)
                         .blastStats(VA[IV], 1000)
@@ -1264,21 +1264,12 @@ public class FirstDegreeMaterials {
                 .build();
         Samarium.getProperty(PropertyKey.INGOT).setMagneticMaterial(SamariumMagnetic);
 
-        ManganesePhosphide = new Material.Builder(424, gregtechId("manganese_phosphide"))
-                .ingot()
-                .liquid(new FluidBuilder().temperature(1368))
-                .color(0xE1B454).iconSet(METALLIC)
-                .components(Manganese, 1, Phosphorus, 1)
-                .cableProperties(GTValues.V[GTValues.LV], 2, 0, true, 78)
-                .blast(1200, GasTier.LOW)
-                .build();
-
         MagnesiumDiboride = new Material.Builder(425, gregtechId("magnesium_diboride"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1103))
                 .color(0x331900).iconSet(METALLIC)
                 .components(Magnesium, 1, Boron, 2)
-                .cableProperties(GTValues.V[GTValues.MV], 4, 0, true, 78)
+                .cableProperties(GTValues.V[GTValues.MV], 2, 2, true, 78)
                 .blast(b -> b
                         .temp(2500, GasTier.LOW)
                         .blastStats(VA[HV], 1000)
@@ -1290,7 +1281,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(1075))
                 .color(0x555555).iconSet(SHINY)
                 .components(Mercury, 1, Barium, 2, Calcium, 2, Copper, 3, Oxygen, 8)
-                .cableProperties(GTValues.V[GTValues.HV], 4, 0, true, 78)
+                .cableProperties(GTValues.V[GTValues.HV], 2, 2, true, 78)
                 .blast(b -> b
                         .temp(3300, GasTier.LOW)
                         .blastStats(VA[HV], 1500)
@@ -1302,7 +1293,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(1882))
                 .color(0x008700).iconSet(SHINY)
                 .components(Uranium238, 1, Platinum, 3)
-                .cableProperties(GTValues.V[GTValues.EV], 6, 0, true, 30)
+                .cableProperties(GTValues.V[GTValues.EV], 3, 2, true, 30)
                 .blast(b -> b
                         .temp(4400, GasTier.MID)
                         .blastStats(VA[EV], 1000)
@@ -1315,7 +1306,7 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(1347))
                 .color(0x330033).iconSet(SHINY)
                 .components(Samarium, 1, Iron, 1, Arsenic, 1, Oxygen, 1)
-                .cableProperties(GTValues.V[GTValues.IV], 6, 0, true, 30)
+                .cableProperties(GTValues.V[GTValues.IV], 3, 2, true, 30)
                 .blast(b -> b
                         .temp(5200, GasTier.MID)
                         .blastStats(VA[EV], 1500)
@@ -1328,7 +1319,7 @@ public class FirstDegreeMaterials {
                 .color(0x994C00).iconSet(METALLIC)
                 .flags(GENERATE_FINE_WIRE)
                 .components(Indium, 4, Tin, 2, Barium, 2, Titanium, 1, Copper, 7, Oxygen, 14)
-                .cableProperties(GTValues.V[GTValues.LuV], 8, 0, true, 5)
+                .cableProperties(GTValues.V[GTValues.LuV], 4, 2, true, 5)
                 .blast(b -> b
                         .temp(6000, GasTier.HIGH)
                         .blastStats(VA[IV], 1000)

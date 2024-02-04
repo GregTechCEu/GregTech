@@ -1326,29 +1326,6 @@ public final class RecipeMaps {
      * Example:
      *
      * <pre>
-     * RecipeMap.VACUUM_RECIPES.recipeBuilder()
-     *         .fluidInputs(Air.getFluid(4000))
-     *         .fluidOutputs(LiquidAir.getFluid(4000))
-     *         .duration(80).EUt(GTValues.VA[GTValues.HV])
-     *         .buildAndRegister();
-     * </pre>
-     *
-     * Any Recipe added to the Thermal Centrifuge not specifying an <B>EUt</B> value will default to 120.
-     */
-    @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMapBuilder<>("vacuum_freezer",
-            new SimpleRecipeBuilder().EUt(VA[MV]))
-                    .itemInputs(1)
-                    .itemOutputs(1)
-                    .fluidInputs(2)
-                    .fluidOutputs(1)
-                    .sound(GTSoundEvents.COOLING)
-                    .build();
-
-    /**
-     * Example:
-     *
-     * <pre>
      * RecipeMap.WIREMILL_RECIPES.recipeBuilder()
      *         .input(OrePrefix.ingot, Materials.Iron)
      *         .output(OrePrefix.wireGtSingle, Materials.Iron, 2)
