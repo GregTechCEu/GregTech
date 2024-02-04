@@ -45,7 +45,9 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         PTFE_INERT_CASING("ptfe_inert", 0),
         HSSE_STURDY("hsse_sturdy", 3),
         PALLADIUM_SUBSTATION("palladium_substation", 3),
-        OIL_PIPE("oil_pipe", 2);
+        OIL_PIPE("oil_pipe", 2),
+        FLUID_CARRIER("fluid_carrier", 2),
+        PIPE_STABILIZER("pipe_stabilizer", 2);
         private final String name;
         private final int harvestLevel;
 

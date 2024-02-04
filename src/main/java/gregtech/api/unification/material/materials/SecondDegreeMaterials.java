@@ -1,8 +1,11 @@
 package gregtech.api.unification.material.materials;
 
+import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -478,6 +481,30 @@ public class SecondDegreeMaterials {
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         EXCLUDE_PLATE_COMPRESSOR_RECIPE)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
+                .build();
+
+        HSLASteel = new Material.Builder(2065, gregtechId("hsla_steel"))
+                .ingot().fluid()
+                .color(0x808080).iconSet(MaterialIconSet.METALLIC)
+                .flags(EXT_METAL, GENERATE_SPRING, GENERATE_FRAME)
+                .components(Invar, 2, Vanadium, 1, Titanium, 1, Molybdenum, 1)
+                .blast(b -> b.temp(1711, GasTier.LOW).blastStats(VA[HV], 1000).createAlloyBlast())
+                .build();
+
+        TitaniumTungstenCarbide = new Material.Builder(2066, gregtechId("titanium_tungsten_carbide"))
+                .ingot().fluid()
+                .color(0x800D0D).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE)
+                .components(TungstenCarbide, 1, TitaniumCarbide, 2)
+                .blast(b -> b.temp(3800, GasTier.HIGH).blastStats(VA[EV], 1000).createAlloyBlast())
+                .build();
+
+        IncoloyMA956 = new Material.Builder(2067, gregtechId("incoloy_ma_956"))
+                .ingot().fluid()
+                .color(0x37BF7E).iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
+                .components(VanadiumSteel, 4, Manganese, 2, Aluminium, 5, Yttrium, 2)
+                .blast(b -> b.temp(3625, GasTier.MID).blastStats(VA[EV], 800).createAlloyBlast())
                 .build();
     }
 }

@@ -2621,6 +2621,8 @@ tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
 tile.metal_casing.hsse_sturdy.name=Sturdy HSS-E Machine Casing
 tile.metal_casing.palladium_substation.name=Palladium Substation Casing
 tile.metal_casing.oil_pipe.name=Oil Pipe Casing
+tile.metal_casing.pipe_stabilizer.name=Pipe Stabilizer Casing
+tile.metal_casing.fluid_carrier.name=Fluid Carrier Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
