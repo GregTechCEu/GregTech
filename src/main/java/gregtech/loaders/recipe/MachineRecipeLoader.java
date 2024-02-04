@@ -381,16 +381,6 @@ public class MachineRecipeLoader {
                 'H', MetaTileEntities.FORGE_HAMMER[IV].getStackForm(),
                 'W', new UnificationEntry(cableGtSingle, Platinum));
 
-        ModHandler.addShapedRecipe(true, "large_brewer", MetaTileEntities.LARGE_BREWERY.getStackForm(),
-                "SCS", "BPH", "TWT",
-                'S', new UnificationEntry(spring, MolybdenumDisilicide),
-                'C', new UnificationEntry(circuit, MarkerMaterials.Tier.IV),
-                'P', MetaItems.ELECTRIC_PUMP_IV.getStackForm(),
-                'B', MetaTileEntities.BREWERY[IV].getStackForm(),
-                'H', MetaTileEntities.FERMENTER[IV].getStackForm(),
-                'T', new UnificationEntry(pipeFluid, StainlessSteel),
-                'W', new UnificationEntry(cableGtSingle, Platinum));
-
         ModHandler.addShapedRecipe(true, "large_centrifuge", MetaTileEntities.LARGE_CENTRIFUGE.getStackForm(),
                 "HPH", "RCT", "MWM",
                 'C', new UnificationEntry(circuit, MarkerMaterials.Tier.IV),

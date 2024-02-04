@@ -88,55 +88,55 @@ public class ForestryMiscRecipes {
         // Honey and Juice recipes
         if (Config.isFluidEnabled(Fluids.FOR_HONEY)) {
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(MetaItems.PLANT_BALL)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(180))
                     .fluidOutputs(Materials.Biomass.getFluid(270))
                     .duration(1440).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input("treeSapling", 1)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(100))
                     .fluidOutputs(Materials.Biomass.getFluid(150))
                     .duration(600).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Items.POTATO)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Items.CARROT)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Blocks.CACTUS)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Items.REEDS)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Blocks.BROWN_MUSHROOM)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Blocks.RED_MUSHROOM)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Items.BEETROOT)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
@@ -145,55 +145,55 @@ public class ForestryMiscRecipes {
 
         if (Config.isFluidEnabled(Fluids.JUICE)) {
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(MetaItems.PLANT_BALL)
                     .fluidInputs(Fluids.JUICE.getFluid(180))
                     .fluidOutputs(Materials.Biomass.getFluid(270))
                     .duration(1440).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input("treeSapling", 1)
                     .fluidInputs(Fluids.JUICE.getFluid(100))
                     .fluidOutputs(Materials.Biomass.getFluid(150))
                     .duration(600).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Items.POTATO)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Items.CARROT)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Blocks.CACTUS)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Items.REEDS)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Blocks.BROWN_MUSHROOM)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Blocks.RED_MUSHROOM)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
-            RecipeMaps.BREWING_RECIPES.recipeBuilder()
+            RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                     .input(Items.BEETROOT)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
@@ -263,7 +263,7 @@ public class ForestryMiscRecipes {
                 .outputs(GTUtility.copy(4, compost))
                 .duration(200).EUt(16).buildAndRegister();
 
-        RecipeMaps.BREWING_RECIPES.recipeBuilder()
+        RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(2, compost))
                 .fluidInputs(Materials.Water.getFluid(375))
                 .fluidOutputs(Materials.Biomass.getFluid(375))
@@ -307,13 +307,13 @@ public class ForestryMiscRecipes {
                     .duration(600).EUt(2).buildAndRegister();
         }
 
-        RecipeMaps.BREWING_RECIPES.recipeBuilder()
+        RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(8, mulch))
                 .fluidInputs(Materials.DistilledWater.getFluid(375))
                 .fluidOutputs(Materials.Biomass.getFluid(375))
                 .duration(64).EUt(4).buildAndRegister();
 
-        RecipeMaps.BREWING_RECIPES.recipeBuilder()
+        RecipeMaps.FERMENTING_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(4, mulch))
                 .fluidInputs(Fluids.JUICE.getFluid(250))
                 .fluidOutputs(Materials.Biomass.getFluid(375))

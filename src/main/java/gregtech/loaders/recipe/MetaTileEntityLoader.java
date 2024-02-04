@@ -793,8 +793,6 @@ public class MetaTileEntityLoader {
                 'C', CIRCUIT, 'W', CABLE, 'G', PIPE_REACTOR);
         registerMachineRecipe(MetaTileEntities.BREWERY, "GPG", "WMW", "CBC", 'M', HULL, 'P', PUMP, 'B',
                 STICK_DISTILLATION, 'C', CIRCUIT, 'W', CABLE, 'G', GLASS);
-        registerMachineRecipe(MetaTileEntities.FERMENTER, "WPW", "GMG", "WCW", 'M', HULL, 'P', PUMP, 'C', CIRCUIT, 'W',
-                CABLE, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.FLUID_SOLIDIFIER, "PGP", "WMW", "CBC", 'M', HULL, 'P', PUMP, 'C',
                 CIRCUIT, 'W', CABLE, 'G', GLASS, 'B', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.DISTILLERY, "GBG", "CMC", "WPW", 'M', HULL, 'P', PUMP, 'B',
