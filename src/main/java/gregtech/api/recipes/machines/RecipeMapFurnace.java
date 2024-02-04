@@ -1,9 +1,7 @@
 package gregtech.api.recipes.machines;
 
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeIterator;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
@@ -12,8 +10,6 @@ import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -59,12 +55,18 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
 
     // probably can just extend Iterator<Recipe> directly.
     static class FurnaceRecipeIterator implements Iterator<Recipe> {
+
         Stack<Recipe> recipe = new Stack<>();
+
         FurnaceRecipeIterator(Recipe recipe) {
             this.recipe.add(recipe);
         }
+
         @Override
-        public boolean hasNext() { return !recipe.isEmpty(); }
+        public boolean hasNext() {
+            return !recipe.isEmpty();
+        }
+
         @Override
         public Recipe next() {
             if (recipe.isEmpty()) return null;

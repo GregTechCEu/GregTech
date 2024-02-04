@@ -18,7 +18,7 @@ public class RecipeIterator implements Iterator<Recipe> {
     Predicate<Recipe> canHandle;
 
     RecipeIterator(@NotNull RecipeMap<?> recipeMap, List<List<AbstractMapIngredient>> ingredients,
-                          @NotNull Predicate<Recipe> canHandle) {
+                   @NotNull Predicate<Recipe> canHandle) {
         this.ingredients = ingredients;
         this.recipeMap = recipeMap;
         this.canHandle = canHandle;
