@@ -493,7 +493,7 @@ public class MachineRecipeLoader {
                 "ECE", "PSP", "DWD",
                 'C', new UnificationEntry(circuit, MarkerMaterials.Tier.IV),
                 'S', MetaTileEntities.LASER_ENGRAVER[IV].getStackForm(),
-                'E', MetaItems.EMITTER_IV.getStackForm(),
+                'E', MetaItems.EMITTER_ELECTRON.getStackForm(),
                 'P', MetaItems.ELECTRIC_PISTON_IV.getStackForm(),
                 'D', new UnificationEntry(plate, TantalumCarbide),
                 'W', new UnificationEntry(cableGtSingle, Platinum));
@@ -555,9 +555,8 @@ public class MachineRecipeLoader {
 
         ModHandler.addShapedRecipe(true, "large_circuit_assembler",
                 MetaTileEntities.LARGE_CIRCUIT_ASSEMBLER.getStackForm(),
-                "RER", "CSC", "WPW",
+                "RRR", "CSC", "WPW",
                 'R', MetaItems.ROBOT_ARM_LuV.getStackForm(),
-                'E', MetaItems.EMITTER_LuV.getStackForm(),
                 'C', new UnificationEntry(circuit, MarkerMaterials.Tier.UV),
                 'P', MetaItems.CONVEYOR_MODULE_LuV.getStackForm(),
                 'S', MetaTileEntities.CIRCUIT_ASSEMBLER[LuV].getStackForm(),
@@ -565,38 +564,34 @@ public class MachineRecipeLoader {
 
         // Parallel Hatches
         ModHandler.addShapedRecipe(true, "parallel_hatch_iv", MetaTileEntities.PARALLEL_HATCH[0].getStackForm(),
-                "SCE", "CHC", "WCW",
+                "SCS", "CHC", "WCW",
                 'C', new UnificationEntry(circuit, MarkerMaterials.Tier.LuV),
                 'H', MetaTileEntities.HULL[IV].getStackForm(),
-                'S', MetaItems.SENSOR_IV.getStackForm(),
-                'E', MetaItems.EMITTER_IV.getStackForm(),
+                'S', ROBOT_ARM_IV.getStackForm(),
                 'W', new UnificationEntry(cableGtDouble, Platinum));
 
         ModHandler.addShapedRecipe(true, "parallel_hatch_luv",
                 MetaTileEntities.PARALLEL_HATCH[LuV - IV].getStackForm(),
-                "SCE", "CHC", "WCW",
+                "SCS", "CHC", "WCW",
                 'C', new UnificationEntry(circuit, MarkerMaterials.Tier.ZPM),
                 'H', MetaTileEntities.HULL[LuV].getStackForm(),
-                'S', MetaItems.SENSOR_LuV.getStackForm(),
-                'E', MetaItems.EMITTER_LuV.getStackForm(),
+                'S', MetaItems.ROBOT_ARM_IV.getStackForm(),
                 'W', new UnificationEntry(cableGtDouble, NiobiumTitanium));
 
         ModHandler.addShapedRecipe(true, "parallel_hatch_zpm",
                 MetaTileEntities.PARALLEL_HATCH[ZPM - IV].getStackForm(),
-                "SCE", "CHC", "WCW",
+                "SCS", "CHC", "WCW",
                 'C', new UnificationEntry(circuit, MarkerMaterials.Tier.UV),
                 'H', MetaTileEntities.HULL[ZPM].getStackForm(),
-                'S', MetaItems.SENSOR_ZPM.getStackForm(),
-                'E', MetaItems.EMITTER_ZPM.getStackForm(),
+                'S', MetaItems.ROBOT_ARM_IV.getStackForm(),
                 'W', new UnificationEntry(cableGtDouble, VanadiumGallium));
 
         ModHandler.addShapedRecipe(true, "parallel_hatch_uv",
                 MetaTileEntities.PARALLEL_HATCH[UV - IV].getStackForm(),
-                "SCE", "CHC", "WCW",
+                "SCS", "CHC", "WCW",
                 'C', new UnificationEntry(circuit, MarkerMaterials.Tier.UHV),
                 'H', MetaTileEntities.HULL[UV].getStackForm(),
-                'S', MetaItems.SENSOR_UV.getStackForm(),
-                'E', MetaItems.EMITTER_UV.getStackForm(),
+                'S', MetaItems.ROBOT_ARM_IV.getStackForm(),
                 'W', new UnificationEntry(cableGtDouble, YttriumBariumCuprate));
 
         // Tiered Hatches
@@ -1006,7 +1001,7 @@ public class MachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(COVER_ENERGY_DETECTOR)
-                .input(SENSOR_HV)
+                .input(SENSOR_ELECTRICITY)
                 .fluidInputs(solder)
                 .output(COVER_ENERGY_DETECTOR_ADVANCED)
                 .EUt(16).duration(100)
@@ -1047,7 +1042,7 @@ public class MachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(COVER_FLUID_DETECTOR)
-                .input(SENSOR_HV)
+                .input(SENSOR_ELECTRICITY)
                 .fluidInputs(solder)
                 .outputs(COVER_FLUID_DETECTOR_ADVANCED.getStackForm())
                 .EUt(16).duration(100)
@@ -1055,14 +1050,14 @@ public class MachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(COVER_ITEM_DETECTOR)
-                .input(SENSOR_HV)
+                .input(SENSOR_ELECTRICITY)
                 .fluidInputs(solder)
                 .outputs(COVER_ITEM_DETECTOR_ADVANCED.getStackForm())
                 .EUt(16).duration(100)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(EMITTER_LV)
+                .input(SENSOR_ELECTRICITY)
                 .input(plate, Steel)
                 .circuitMeta(1)
                 .fluidInputs(solder)
@@ -1085,17 +1080,6 @@ public class MachineRecipeLoader {
                 .input(circuit, MarkerMaterials.Tier.HV)
                 .output(COVER_INFINITE_WATER)
                 .EUt(VA[HV]).duration(100)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plate, EnderPearl, 9)
-                .input(plate, StainlessSteel, 2)
-                .input(SENSOR_HV)
-                .input(EMITTER_HV)
-                .input(ELECTRIC_PUMP_HV)
-                .fluidInputs(Polyethylene.getFluid(L * 2))
-                .output(COVER_ENDER_FLUID_LINK)
-                .EUt(VA[HV]).duration(320)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1237,7 +1221,7 @@ public class MachineRecipeLoader {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM])
                 .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .inputs(MetaItems.FIELD_GENERATOR_IV.getStackForm(2)).inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
+                .input(OrePrefix.superconductorGtDouble, SamariumIronArsenicOxide, 2).inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                 .inputs(MetaItems.NEUTRON_REFLECTOR.getStackForm(2))
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.LuV, 4)
                 .input(OrePrefix.pipeFluid, Materials.Naquadah, 4).input(OrePrefix.plate, Materials.Europium, 4)
@@ -1265,7 +1249,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM])
                 .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ZPM))
                 .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL))
-                .inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2)).inputs(MetaItems.FIELD_GENERATOR_LuV.getStackForm())
+                .inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2)).input(OrePrefix.superconductorGtDouble, IndiumTinBariumTitaniumCuprate, 2)
                 .input(OrePrefix.plate, Materials.Europium, 6)
                 .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 2))
                 .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_CASING_MK2,
@@ -1274,7 +1258,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[UV])
                 .inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV))
                 .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL))
-                .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2)).inputs(MetaItems.FIELD_GENERATOR_ZPM.getStackForm())
+                .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2)).input(OrePrefix.superconductorGtDouble, UraniumRhodiumDinaquadide, 2)
                 .input(OrePrefix.plate, Materials.Americium, 6)
                 .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 4))
                 .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_CASING_MK3,

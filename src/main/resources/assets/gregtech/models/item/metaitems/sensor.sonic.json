@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "gregtech:items/metaitems/emitter.mv"
+    "layer0": "gregtech:items/metaitems/sensor.sonic"
   }
 }

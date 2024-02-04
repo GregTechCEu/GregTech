@@ -911,7 +911,6 @@ public class CircuitRecipes {
                 .input(MULTILAYER_FIBER_BOARD, 16)
                 .input(PETRI_DISH)
                 .input(ELECTRIC_PUMP_LuV)
-                .input(SENSOR_IV)
                 .input(circuit, Tier.IV)
                 .input(foil, NiobiumTitanium, 16)
                 .fluidInputs(SterileGrowthMedium.getFluid(4000))

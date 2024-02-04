@@ -174,7 +174,7 @@ public class CraftingRecipeLoader {
                 MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.FILTER_CASING_STERILE,
                         ConfigHolder.recipes.casingsPerCraft),
                 "BEB", "ISI", "MFR", 'B', new UnificationEntry(OrePrefix.pipeFluid, Polybenzimidazole), 'E',
-                EMITTER_ZPM.getStackForm(), 'I', ITEM_FILTER.getStackForm(), 'S', BLACKLIGHT.getStackForm(), 'M',
+                new UnificationEntry(OrePrefix.cableGtDouble, YttriumBariumCuprate), 'I', ITEM_FILTER.getStackForm(), 'S', BLACKLIGHT.getStackForm(), 'M',
                 ELECTRIC_MOTOR_ZPM.getStackForm(), 'F', new UnificationEntry(OrePrefix.frameGt, Tritanium), 'R',
                 new UnificationEntry(OrePrefix.rotor, NaquadahAlloy));
 
@@ -316,7 +316,7 @@ public class CraftingRecipeLoader {
                 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Platinum), 'C',
                 new UnificationEntry(OrePrefix.circuit, Tier.IV));
         ModHandler.addShapedRecipe("gravitation_engine", MetaItems.GRAVITATION_ENGINE.getStackForm(), "ESE", "POP",
-                "ESE", 'E', MetaItems.EMITTER_LuV.getStackForm(), 'S',
+                "ESE", 'E', MetaItems.EMITTER_GRAVITATION.getStackForm(), 'S',
                 new UnificationEntry(OrePrefix.wireGtQuadruple, Osmium), 'P',
                 new UnificationEntry(OrePrefix.plate, Iridium), 'O',
                 MetaItems.ENERGY_LAPOTRONIC_ORB.getStackForm());

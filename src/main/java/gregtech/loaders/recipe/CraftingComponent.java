@@ -475,29 +475,6 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        SENSOR = new Component(Stream.of(new Object[][] {
-
-                { 1, MetaItems.SENSOR_LV.getStackForm() },
-                { 2, MetaItems.SENSOR_MV.getStackForm() },
-                { 3, MetaItems.SENSOR_HV.getStackForm() },
-                { 4, MetaItems.SENSOR_EV.getStackForm() },
-                { 5, MetaItems.SENSOR_IV.getStackForm() },
-                { 6, MetaItems.SENSOR_LuV.getStackForm() },
-                { 7, MetaItems.SENSOR_ZPM.getStackForm() },
-                { 8, MetaItems.SENSOR_UV.getStackForm() },
-
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
-        if (GregTechAPI.isHighTier()) {
-            SENSOR.appendIngredients(Stream.of(new Object[][] {
-                    { 9, MetaItems.SENSOR_UHV.getStackForm() },
-                    { 10, MetaItems.SENSOR_UEV.getStackForm() },
-                    { 11, MetaItems.SENSOR_UIV.getStackForm() },
-                    { 12, MetaItems.SENSOR_UXV.getStackForm() },
-                    { 13, MetaItems.SENSOR_OpV.getStackForm() },
-            }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-        }
-
         GRINDER = new Component(Stream.of(new Object[][] {
 
                 { 0, new UnificationEntry(OrePrefix.gem, Materials.Diamond) },
@@ -551,29 +528,6 @@ public class CraftingComponent {
                     { 11, MetaItems.ELECTRIC_PISTON_UIV.getStackForm() },
                     { 12, MetaItems.ELECTRIC_PISTON_UXV.getStackForm() },
                     { 13, MetaItems.ELECTRIC_PISTON_OpV.getStackForm() },
-            }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-        }
-
-        EMITTER = new Component(Stream.of(new Object[][] {
-
-                { 1, MetaItems.EMITTER_LV.getStackForm() },
-                { 2, MetaItems.EMITTER_MV.getStackForm() },
-                { 3, MetaItems.EMITTER_HV.getStackForm() },
-                { 4, MetaItems.EMITTER_EV.getStackForm() },
-                { 5, MetaItems.EMITTER_IV.getStackForm() },
-                { 6, MetaItems.EMITTER_LuV.getStackForm() },
-                { 7, MetaItems.EMITTER_ZPM.getStackForm() },
-                { 8, MetaItems.EMITTER_UV.getStackForm() },
-
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
-        if (GregTechAPI.isHighTier()) {
-            EMITTER.appendIngredients(Stream.of(new Object[][] {
-                    { 9, MetaItems.EMITTER_UHV.getStackForm() },
-                    { 10, MetaItems.EMITTER_UEV.getStackForm() },
-                    { 11, MetaItems.EMITTER_UIV.getStackForm() },
-                    { 12, MetaItems.EMITTER_UXV.getStackForm() },
-                    { 13, MetaItems.EMITTER_OpV.getStackForm() },
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -693,29 +647,6 @@ public class CraftingComponent {
                 { GTValues.FALLBACK, new UnificationEntry(OrePrefix.stick, Materials.Blaze) },
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
-        FIELD_GENERATOR = new Component(Stream.of(new Object[][] {
-
-                { 1, MetaItems.FIELD_GENERATOR_LV.getStackForm() },
-                { 2, MetaItems.FIELD_GENERATOR_MV.getStackForm() },
-                { 3, MetaItems.FIELD_GENERATOR_HV.getStackForm() },
-                { 4, MetaItems.FIELD_GENERATOR_EV.getStackForm() },
-                { 5, MetaItems.FIELD_GENERATOR_IV.getStackForm() },
-                { 6, MetaItems.FIELD_GENERATOR_LuV.getStackForm() },
-                { 7, MetaItems.FIELD_GENERATOR_ZPM.getStackForm() },
-                { 8, MetaItems.FIELD_GENERATOR_UV.getStackForm() },
-
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
-        if (GregTechAPI.isHighTier()) {
-            FIELD_GENERATOR.appendIngredients(Stream.of(new Object[][] {
-                    { 9, MetaItems.FIELD_GENERATOR_UHV.getStackForm() },
-                    { 10, MetaItems.FIELD_GENERATOR_UEV.getStackForm() },
-                    { 11, MetaItems.FIELD_GENERATOR_UIV.getStackForm() },
-                    { 12, MetaItems.FIELD_GENERATOR_UXV.getStackForm() },
-                    { 13, MetaItems.FIELD_GENERATOR_OpV.getStackForm() },
-            }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-        }
 
         STICK_ELECTROMAGNETIC = new Component(Stream.of(new Object[][] {
 

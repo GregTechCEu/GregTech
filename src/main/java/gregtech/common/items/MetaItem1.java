@@ -6,6 +6,7 @@ import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FilteredFluidStats;
 import gregtech.api.items.metaitem.FoodStats;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MusicDiscStats;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
@@ -459,50 +460,23 @@ public class MetaItem1 extends StandardMetaItem {
             lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", 16));
         })).setInvisibleIf(!GregTechAPI.isHighTier());
 
-        // Field Generators: ID 201-215
-        FIELD_GENERATOR_LV = addItem(202, "field.generator.lv");
-        FIELD_GENERATOR_MV = addItem(203, "field.generator.mv");
-        FIELD_GENERATOR_HV = addItem(204, "field.generator.hv");
-        FIELD_GENERATOR_EV = addItem(205, "field.generator.ev");
-        FIELD_GENERATOR_IV = addItem(206, "field.generator.iv");
-        FIELD_GENERATOR_LuV = addItem(207, "field.generator.luv");
-        FIELD_GENERATOR_ZPM = addItem(208, "field.generator.zpm");
-        FIELD_GENERATOR_UV = addItem(209, "field.generator.uv");
-        FIELD_GENERATOR_UHV = addItem(210, "field.generator.uhv").setInvisibleIf(!GregTechAPI.isHighTier());
-        FIELD_GENERATOR_UEV = addItem(211, "field.generator.uev").setInvisibleIf(!GregTechAPI.isHighTier());
-        FIELD_GENERATOR_UIV = addItem(212, "field.generator.uiv").setInvisibleIf(!GregTechAPI.isHighTier());
-        FIELD_GENERATOR_UXV = addItem(213, "field.generator.uxv").setInvisibleIf(!GregTechAPI.isHighTier());
-        FIELD_GENERATOR_OpV = addItem(214, "field.generator.opv").setInvisibleIf(!GregTechAPI.isHighTier());
+        // Sensors, Emitters & Lasers (200-245)
+        EMITTER_RADIO = addItem(200, "emitter.radio");
+        EMITTER_MICROWAVE = addItem(201, "emitter.microwave");
+        EMITTER_XRAY = addItem(202, "emitter.xray");
+        EMITTER_GAMMA = addItem(203, "emitter.gamma");
+        EMITTER_GRAVITATION = addItem(204, "emitter.gravitation");
+        EMITTER_SONIC = addItem(205, "emitter.sonic");
+        EMITTER_LED = addItem(206, "emitter.led");
+        EMITTER_ELECTRON = addItem(207, "emitter.electron");
 
-        // Emitters: ID 216-230
-        EMITTER_LV = addItem(217, "emitter.lv");
-        EMITTER_MV = addItem(218, "emitter.mv");
-        EMITTER_HV = addItem(219, "emitter.hv");
-        EMITTER_EV = addItem(220, "emitter.ev");
-        EMITTER_IV = addItem(221, "emitter.iv");
-        EMITTER_LuV = addItem(222, "emitter.luv");
-        EMITTER_ZPM = addItem(223, "emitter.zpm");
-        EMITTER_UV = addItem(224, "emitter.uv");
-        EMITTER_UHV = addItem(225, "emitter.uhv").setInvisibleIf(!GregTechAPI.isHighTier());
-        EMITTER_UEV = addItem(226, "emitter.uev").setInvisibleIf(!GregTechAPI.isHighTier());
-        EMITTER_UIV = addItem(227, "emitter.uiv").setInvisibleIf(!GregTechAPI.isHighTier());
-        EMITTER_UXV = addItem(228, "emitter.uxv").setInvisibleIf(!GregTechAPI.isHighTier());
-        EMITTER_OpV = addItem(229, "emitter.opv").setInvisibleIf(!GregTechAPI.isHighTier());
+        SENSOR_LIGHT = addItem(210, "sensor.light");
+        SENSOR_RADIO = addItem(211, "sensor.radio");
+        SENSOR_INFRARED = addItem(212, "sensor.infrared");
+        SENSOR_SONIC = addItem(213, "sensor.sonic");
+        SENSOR_ELECTRICITY = addItem(214, "sensor.electric");
 
-        // Sensors: ID 231-245
-        SENSOR_LV = addItem(232, "sensor.lv");
-        SENSOR_MV = addItem(233, "sensor.mv");
-        SENSOR_HV = addItem(234, "sensor.hv");
-        SENSOR_EV = addItem(235, "sensor.ev");
-        SENSOR_IV = addItem(236, "sensor.iv");
-        SENSOR_LuV = addItem(237, "sensor.luv");
-        SENSOR_ZPM = addItem(238, "sensor.zpm");
-        SENSOR_UV = addItem(239, "sensor.uv");
-        SENSOR_UHV = addItem(240, "sensor.uhv").setInvisibleIf(!GregTechAPI.isHighTier());
-        SENSOR_UEV = addItem(241, "sensor.uev").setInvisibleIf(!GregTechAPI.isHighTier());
-        SENSOR_UIV = addItem(242, "sensor.uiv").setInvisibleIf(!GregTechAPI.isHighTier());
-        SENSOR_UXV = addItem(243, "sensor.uxv").setInvisibleIf(!GregTechAPI.isHighTier());
-        SENSOR_OpV = addItem(244, "sensor.opv").setInvisibleIf(!GregTechAPI.isHighTier());
+        LASER_ND_YAG = addItem(220, "laser.ndyag");
 
         // Fluid Regulators: ID 246-260
         FLUID_REGULATOR_LV = addItem(247, "fluid.regulator.lv").addComponents(new TooltipBehavior(lines -> {

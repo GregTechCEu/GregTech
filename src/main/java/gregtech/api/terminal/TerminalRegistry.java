@@ -80,10 +80,13 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new SettingsApp()).defaultApp().build();
         AppRegistryBuilder.create(new CapeSelectorApp()).defaultApp().build();
 
+        /*
         AppRegistryBuilder.create(new TeleportApp())
                 .battery(GTValues.ZPM, 10000)
                 .device(DeviceHardware.DEVICE.FIELD_GENERATOR_UV)
                 .build();
+
+         */
 
         AppRegistryBuilder.create(new PongApp())
                 .battery(GTValues.LV, 75)
@@ -95,6 +98,7 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 150)
                 .build();
 
+        /*
         AppRegistryBuilder.create(new ProspectorApp(ProspectorMode.ORE))
                 .battery(0, GTValues.LV, 640)
                 .battery(1, GTValues.LV, 640)
@@ -126,12 +130,23 @@ public class TerminalRegistry {
                 .upgrade(4, MetaItems.SENSOR_LuV.getStackForm(1))
                 .device(DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .build();
+
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
                 .battery(GTValues.LV, 128)
                 .device(DeviceHardware.DEVICE.CAMERA)
                 .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
                 .defaultApp()
                 .build();
+
+                        AppRegistryBuilder.create(new WorldProspectorARApp())
+                .battery(GTValues.LV, 320)
+                .upgrade(0, MetaItems.EMITTER_LV.getStackForm(2))
+                .upgrade(1, MetaItems.EMITTER_MV.getStackForm(2))
+                .upgrade(2, MetaItems.EMITTER_HV.getStackForm(2))
+                .device(DeviceHardware.DEVICE.CAMERA)
+                .build();
+         */
+
         if (Mods.JustEnoughItems.isModLoaded()) {
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 160)
@@ -150,13 +165,7 @@ public class TerminalRegistry {
                 .build();
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
-        AppRegistryBuilder.create(new WorldProspectorARApp())
-                .battery(GTValues.LV, 320)
-                .upgrade(0, MetaItems.EMITTER_LV.getStackForm(2))
-                .upgrade(1, MetaItems.EMITTER_MV.getStackForm(2))
-                .upgrade(2, MetaItems.EMITTER_HV.getStackForm(2))
-                .device(DeviceHardware.DEVICE.CAMERA)
-                .build();
+
         AppRegistryBuilder.create(new VirtualTankApp())
                 .battery(GTValues.MV, 500)
                 .device(DeviceHardware.DEVICE.WIRELESS)
