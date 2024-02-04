@@ -1,6 +1,8 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.UnificationEntry;
 
@@ -12,6 +14,36 @@ import static gregtech.api.unification.ore.OrePrefix.dust;
 public class MixerRecipes {
 
     public static void init() {
+        MIXER_RECIPES.recipeBuilder()
+                .input(dust, Titanium)
+                .input(dust, Carbon)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, TitaniumCarbide, 2)
+                .duration(160).EUt(VA[EV]).buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder()
+                .input(dust, Tantalum)
+                .input(dust, Carbon)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, TantalumCarbide, 2)
+                .duration(150).EUt(VA[EV]).buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder()
+                .input(dust, Molybdenum)
+                .input(dust, Silicon, 2)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, MolybdenumDisilicide, 3)
+                .duration(180).EUt(VA[EV]).buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder()
+                .input(dust, Invar, 2)
+                .input(dust, Vanadium, 1)
+                .input(dust, Titanium, 1)
+                .input(dust, Molybdenum, 1)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, HSLASteel, 5)
+                .duration(140).EUt(VA[HV]).buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder()
                 .fluidInputs(NitricAcid.getFluid(1000))
                 .fluidInputs(SulfuricAcid.getFluid(1000))

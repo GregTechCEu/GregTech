@@ -468,6 +468,17 @@ public class Materials {
     public static Material Pyrochlore;
     public static Material RTMAlloy;
 
+    public static Material Stellite100;
+    public static Material WatertightSteel;
+    public static Material MaragingSteel300;
+    public static Material HastelloyC276;
+    public static Material HastelloyX;
+    public static Material Trinaquadalloy;
+    public static Material Zeron100;
+    public static Material TitaniumCarbide;
+    public static Material TantalumCarbide;
+    public static Material MolybdenumDisilicide;
+
     /**
      * Organic chemistry
      */
@@ -739,6 +750,10 @@ public class Materials {
     public static Material SaltWater;
     public static Material Clay;
     public static Material Redstone;
+
+    public static Material HSLASteel;
+    public static Material TitaniumTungstenCarbide;
+    public static Material IncoloyMA956;
 
     /**
      * Third Degree Materials
