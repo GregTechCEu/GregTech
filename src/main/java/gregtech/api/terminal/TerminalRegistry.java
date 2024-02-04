@@ -131,13 +131,6 @@ public class TerminalRegistry {
                 .device(DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .build();
 
-        AppRegistryBuilder.create(new MultiBlockPreviewARApp())
-                .battery(GTValues.LV, 128)
-                .device(DeviceHardware.DEVICE.CAMERA)
-                .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
-                .defaultApp()
-                .build();
-
                         AppRegistryBuilder.create(new WorldProspectorARApp())
                 .battery(GTValues.LV, 320)
                 .upgrade(0, MetaItems.EMITTER_LV.getStackForm(2))
@@ -146,6 +139,15 @@ public class TerminalRegistry {
                 .device(DeviceHardware.DEVICE.CAMERA)
                 .build();
          */
+
+        AppRegistryBuilder.create(new MultiBlockPreviewARApp())
+                .battery(GTValues.LV, 128)
+                .device(DeviceHardware.DEVICE.CAMERA)
+                .upgrade(1, MetaItems.ROBOT_ARM_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
+                .defaultApp()
+                .build();
+
+
 
         if (Mods.JustEnoughItems.isModLoaded()) {
             AppRegistryBuilder.create(new RecipeChartApp())

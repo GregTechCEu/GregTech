@@ -6324,6 +6324,7 @@ tile.unique_casing.slicing_blades.name=Slicing Blades
 tile.unique_casing.electrolytic_cell.name=Electrolytic Cell
 tile.unique_casing.heat_vent.name=Heat Vent
 tile.unique_casing.molybdenum_disilicide_coil.name=Molybdenum Disilicide Coil Block
+tile.unique_casing.graphite_electrode.name=Graphite Electrode
 
 # large multiblock casing
 tile.large_multiblock_casing.macerator_casing.name=Secure Maceration Casing
