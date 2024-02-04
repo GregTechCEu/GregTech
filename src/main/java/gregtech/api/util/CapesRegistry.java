@@ -167,7 +167,7 @@ public class CapesRegistry {
         FREE_CAPES.add(Textures.KUROMI_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.BLG_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.EDG_CAPE_TEXTURE);
-        FREE_CAPES.add(Textures.PAN_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.TETRAGON_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.RAINBOW_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.TRANS_CAPE_TEXTURE);
     }

@@ -567,7 +567,7 @@ public class Textures {
     public static final ResourceLocation GREGTECH_CAPE_TEXTURE = gregtechId("textures/capes/gregtechcape.png");
     public static final ResourceLocation KUROMI_CAPE_TEXTURE = gregtechId("textures/capes/kuromicape.png");
     public static final ResourceLocation EDG_CAPE_TEXTURE = gregtechId("textures/capes/edgcape.png");
-    public static final ResourceLocation PAN_CAPE_TEXTURE = gregtechId("textures/capes/pancape.png");
+    public static final ResourceLocation TETRAGON_CAPE_TEXTURE = gregtechId("textures/capes/tetragoncape.png");
     public static final ResourceLocation RAINBOW_CAPE_TEXTURE = gregtechId("textures/capes/rainbowcape.png");
     public static final ResourceLocation RED_CAPE_TEXTURE = gregtechId("textures/capes/redcape.png");
     public static final ResourceLocation TRANS_CAPE_TEXTURE = gregtechId("textures/capes/transcape.png");
