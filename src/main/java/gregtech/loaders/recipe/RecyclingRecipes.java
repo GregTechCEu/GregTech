@@ -139,6 +139,20 @@ public class RecyclingRecipes {
                         .EUt(GTValues.VA[GTValues.LV] * multiplier)
                         .buildAndRegister();
 
+                RecipeMaps.FURNACE_RECIPES.recipeBuilder()
+                        .inputs(input.copy())
+                        .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
+                        .duration((int) (150 * ms.amount / M))
+                        .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                        .buildAndRegister();
+
+                RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                        .inputs(input.copy())
+                        .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
+                        .duration((int) (125 * ms.amount / M))
+                        .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                        .buildAndRegister();
+
                 return;
             }
 
@@ -152,6 +166,22 @@ public class RecyclingRecipes {
             }
             int EUt = property.getEUtOverride();
             if (EUt <= 0) EUt = VA[MV];
+
+            if (blastTemp < 1500) {
+                RecipeMaps.FURNACE_RECIPES.recipeBuilder()
+                        .inputs(input.copy())
+                        .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
+                        .duration((int) (150 * ms.amount / M))
+                        .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                        .buildAndRegister();
+
+                RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                        .inputs(input.copy())
+                        .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
+                        .duration((int) (125 * ms.amount / M))
+                        .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                        .buildAndRegister();
+            }
 
             BlastRecipeBuilder blastBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
                     .input(prefix, m)

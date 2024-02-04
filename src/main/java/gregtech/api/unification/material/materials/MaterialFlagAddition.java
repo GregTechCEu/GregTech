@@ -97,20 +97,16 @@ public class MaterialFlagAddition {
         oreProp = BrownLimonite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Malachite, YellowLimonite);
         oreProp.setSeparatedInto(Iron);
-        oreProp.setDirectSmeltResult(Iron);
 
         oreProp = Cassiterite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Tin, Bismuth);
-        oreProp.setDirectSmeltResult(Tin);
 
         oreProp = CassiteriteSand.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Tin);
-        oreProp.setDirectSmeltResult(Tin);
 
         oreProp = Chalcopyrite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
         oreProp.setWashedIn(Mercury);
-        oreProp.setDirectSmeltResult(Copper);
 
         oreProp = Chromite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Magnesium, Chrome);
@@ -125,7 +121,6 @@ public class MaterialFlagAddition {
         oreProp = Cobaltite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Cobalt);
         oreProp.setWashedIn(SodiumPersulfate);
-        oreProp.setDirectSmeltResult(Cobalt);
 
         oreProp = Cooperite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Nickel, Nickel, Cobalt, Palladium);
@@ -140,11 +135,9 @@ public class MaterialFlagAddition {
         oreProp = Galena.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Silver);
         oreProp.setWashedIn(Mercury);
-        oreProp.setDirectSmeltResult(Lead);
 
         oreProp = Garnierite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Nickel);
-        oreProp.setDirectSmeltResult(Nickel);
 
         oreProp = GreenSapphire.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Aluminium, Sapphire);
@@ -165,26 +158,21 @@ public class MaterialFlagAddition {
 
         oreProp = Magnesite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Magnesium, Magnesium, Cobaltite);
-        oreProp.setDirectSmeltResult(Magnesium);
 
         oreProp = Magnetite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Gold);
         oreProp.setSeparatedInto(Gold);
         oreProp.setWashedIn(Mercury);
-        oreProp.setDirectSmeltResult(Iron);
 
         oreProp = Molybdenite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Molybdenum, Sulfur, Quartzite);
-        oreProp.setDirectSmeltResult(Molybdenum);
 
         oreProp = Pyrite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, TricalciumPhosphate, Iron);
         oreProp.setSeparatedInto(Iron);
-        oreProp.setDirectSmeltResult(Iron);
 
         oreProp = Pyrolusite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Manganese, Tantalite, Niobium);
-        oreProp.setDirectSmeltResult(Manganese);
 
         oreProp = Pyrope.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetRed, Magnesium);
@@ -222,17 +210,14 @@ public class MaterialFlagAddition {
         oreProp = Sphalerite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetYellow, Gallium, Cadmium, Zinc);
         oreProp.setWashedIn(SodiumPersulfate);
-        oreProp.setDirectSmeltResult(Zinc);
 
         oreProp = Stibnite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(AntimonyTrioxide, Antimony, Cinnabar);
         oreProp.setWashedIn(SodiumPersulfate);
-        oreProp.setDirectSmeltResult(Antimony);
 
         oreProp = Tetrahedrite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Antimony, Zinc, Cadmium);
         oreProp.setWashedIn(SodiumPersulfate);
-        oreProp.setDirectSmeltResult(Copper);
 
         oreProp = Topaz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(BlueTopaz);
@@ -248,7 +233,6 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Nickel, BrownLimonite, CobaltOxide);
         oreProp.setSeparatedInto(Iron);
         oreProp.setWashedIn(SodiumPersulfate);
-        oreProp.setDirectSmeltResult(Iron);
 
         oreProp = NetherQuartz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Quartzite);
@@ -262,11 +246,9 @@ public class MaterialFlagAddition {
         oreProp = Bornite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
         oreProp.setWashedIn(Mercury);
-        oreProp.setDirectSmeltResult(Copper);
 
         oreProp = Chalcocite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Massicot, Silver);
-        oreProp.setDirectSmeltResult(Copper);
 
         oreProp = Bastnasite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Neodymium, RareEarth);
@@ -276,7 +258,6 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Iron, Sulfur, Cobalt);
         oreProp.setSeparatedInto(Iron);
         oreProp.setWashedIn(SodiumPersulfate);
-        oreProp.setDirectSmeltResult(Nickel);
 
         oreProp = Spodumene.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Aluminium, Lithium);
@@ -291,7 +272,6 @@ public class MaterialFlagAddition {
         oreProp = Malachite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(BrownLimonite, Calcite, Zincite);
         oreProp.setWashedIn(SodiumPersulfate);
-        oreProp.setDirectSmeltResult(Copper);
 
         oreProp = Olivine.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Pyrope, Magnesium, Manganese);
@@ -343,7 +323,6 @@ public class MaterialFlagAddition {
         oreProp = GraniticMineralSand.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GraniteBlack, Magnetite);
         oreProp.setSeparatedInto(Gold);
-        oreProp.setDirectSmeltResult(Iron);
 
         oreProp = GarnetSand.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetRed, GarnetYellow);
@@ -351,12 +330,10 @@ public class MaterialFlagAddition {
         oreProp = BasalticMineralSand.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Basalt, Magnetite);
         oreProp.setSeparatedInto(Gold);
-        oreProp.setDirectSmeltResult(Iron);
 
         oreProp = BandedIron.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Magnetite, Calcium, Magnesium);
         oreProp.setSeparatedInto(Iron);
-        oreProp.setDirectSmeltResult(Iron);
 
         oreProp = Wulfenite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Manganese, Manganese, Lead);

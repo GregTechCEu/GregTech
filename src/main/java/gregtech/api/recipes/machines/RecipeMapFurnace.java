@@ -25,7 +25,7 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
 
     public RecipeMapFurnace(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
                             @NotNull RecipeMapUIFunction recipeMapUI) {
-        super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 1, 1, 0, 0);
+        super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 3, 3, 3, 3);
         setSound(GTSoundEvents.FURNACE);
     }
 

@@ -100,7 +100,7 @@ public class HigherDegreeMaterials {
                 .color(0xC80000)
                 .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
                 .components(Copper, 1, Redstone, 4)
-                .cableProperties(V[ULV], 1, 0)
+                .cableProperties(V[LV], 1, 1)
                 .build();
 
         BasalticMineralSand = new Material.Builder(2518, gregtechId("basaltic_mineral_sand"))

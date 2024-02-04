@@ -543,6 +543,8 @@ public class ElementMaterials {
                 .element(Elements.N)
                 .build();
 
+        Nitrogen.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKeys.GAS);
+
         Nobelium = new Material.Builder(73, gregtechId("nobelium"))
                 .iconSet(SHINY)
                 .element(Elements.No)
@@ -579,6 +581,7 @@ public class ElementMaterials {
                 .color(0x4CC3FF)
                 .element(Elements.O)
                 .build();
+
         Oxygen.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKeys.GAS);
 
         Palladium = new Material.Builder(77, gregtechId("palladium"))

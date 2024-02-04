@@ -1332,7 +1332,7 @@ public class FirstDegreeMaterials {
                 .color(0x0A0A0A)
                 .flags(GENERATE_FINE_WIRE)
                 .components(Uranium238, 1, Rhodium, 1, Naquadah, 2)
-                .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true, 5)
+                .cableProperties(GTValues.V[GTValues.ZPM], 8, 2, true, 5)
                 .blast(b -> b
                         .temp(9000, GasTier.HIGH)
                         .blastStats(VA[IV], 1500)
@@ -1347,7 +1347,7 @@ public class FirstDegreeMaterials {
                         .color(0x7D9673).iconSet(METALLIC)
                         .flags(GENERATE_FINE_WIRE)
                         .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
-                        .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
+                        .cableProperties(GTValues.V[GTValues.UV], 16, 2, true, 3)
                         .blast(b -> b
                                 .temp(9900, GasTier.HIGH)
                                 .blastStats(VA[LuV], 1200)
@@ -1360,7 +1360,7 @@ public class FirstDegreeMaterials {
                         .liquid(new FluidBuilder().temperature(23691))
                         .color(0xFFFFFF).iconSet(BRIGHT)
                         .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
-                        .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
+                        .cableProperties(GTValues.V[GTValues.UHV], 24, 2, true, 3)
                         .blast(b -> b
                                 .temp(10800, GasTier.HIGHER)
                                 .blastStats(VA[ZPM], 1000)

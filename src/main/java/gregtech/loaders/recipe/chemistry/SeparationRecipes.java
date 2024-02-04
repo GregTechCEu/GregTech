@@ -233,12 +233,6 @@ public class SeparationRecipes {
                 .fluidOutputs(Helium3.getFluid(5))
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(VA[ULV])
-                .fluidInputs(Air.getFluid(10000))
-                .fluidOutputs(Nitrogen.getFluid(3900))
-                .fluidOutputs(Oxygen.getFluid(1000))
-                .buildAndRegister();
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(VA[MV])
                 .fluidInputs(NetherAir.getFluid(10000))
                 .fluidOutputs(CarbonMonoxide.getFluid(3900))
