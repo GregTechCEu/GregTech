@@ -31,7 +31,8 @@ public class RecipeIterator implements Iterator<Recipe> {
         if (ingredients == null || this.index > this.ingredients.size()) return false;
 
         while (index < ingredients.size()) {
-            Recipe r = recipeMap.recurseIngredientTreeFindRecipe(ingredients, recipeMap.getLookup(), canHandle, index, 0,
+            Recipe r = recipeMap.recurseIngredientTreeFindRecipe(ingredients, recipeMap.getLookup(), canHandle, index,
+                    0,
                     (1L << index));
             ++index;
             if (r != null) {
