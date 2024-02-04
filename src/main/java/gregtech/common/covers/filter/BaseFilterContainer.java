@@ -56,7 +56,8 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     public final void setFilter(@Nullable T newFilter) {
         this.currentFilter = newFilter;
         if (hasFilter()) {
-            currentFilter.setDirtyNotifiable(dirtyNotifiable);
+            this.filterInventory.setStackInSlot(0, this.currentFilter.getContainerStack());
+            this.currentFilter.setDirtyNotifiable(dirtyNotifiable);
         }
         if (onFilterInstanceChange != null) {
             this.onFilterInstanceChange.run();

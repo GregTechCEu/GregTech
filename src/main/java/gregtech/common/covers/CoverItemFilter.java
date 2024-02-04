@@ -63,7 +63,8 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
-        this.itemFilterContainer.setFilter(FilterTypeRegistry.getItemFilterForStack(GTUtility.copy(1, itemStack)));
+        var dropStack = GTUtility.copy(1, itemStack);
+        this.itemFilterContainer.setFilter(FilterTypeRegistry.getItemFilterForStack(dropStack));
         this.itemFilterContainer.setMaxTransferSize(1);
     }
 
@@ -171,7 +172,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = ItemFilterMode.values()[tagCompound.getInteger("FilterMode")];
-        this.itemFilterContainer.deserializeNBT(tagCompound);
+        this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     @Override

@@ -217,6 +217,11 @@ public class SimpleItemFilter extends ItemFilter {
         }
 
         @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
+
+        @Override
         public void onTransferRateChange() {
             for (int i = 0; i < getSlots(); i++) {
                 ItemStack itemStack = getStackInSlot(i);

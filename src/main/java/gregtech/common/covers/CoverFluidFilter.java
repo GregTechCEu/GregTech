@@ -73,7 +73,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
-        this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(GTUtility.copy(1, itemStack)));
+        var dropStack = GTUtility.copy(1, itemStack);
+        this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(dropStack));
     }
 
     @Override

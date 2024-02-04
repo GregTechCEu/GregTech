@@ -62,8 +62,6 @@ public abstract class FluidFilter implements Filter<FluidStack> {
                         .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
     }
 
-    public abstract ItemStack getContainerStack();
-
     public boolean showGlobalTransferLimitSlider() {
         return false;
     }

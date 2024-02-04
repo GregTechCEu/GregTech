@@ -5,6 +5,9 @@ import gregtech.api.util.IDirtyNotifiable;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
+
+import net.minecraft.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +25,8 @@ public interface Filter<T> {
 
     @NotNull
     Widget<?> createWidgets(GuiSyncManager syncManager);
+
+    ItemStack getContainerStack();
 
     MatchResult<T> match(T toMatch);
 

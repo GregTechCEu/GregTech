@@ -133,7 +133,7 @@ public class SimpleFluidFilter extends FluidFilter {
         return isBlacklistFilter() ? transferSize : limit;
     }
 
-    protected static class SimpleFluidFilterReader extends BaseFluidFilterReader {
+    protected class SimpleFluidFilterReader extends BaseFluidFilterReader {
 
         protected WritableFluidTank[] fluidTanks;
         protected static final String CAPACITY = "Capacity";
@@ -149,6 +149,7 @@ public class SimpleFluidFilter extends FluidFilter {
 
         public void setCapacity(int capacity) {
             getStackTag().setInteger(CAPACITY, capacity);
+            markDirty();
         }
 
         public int getCapacity() {
@@ -186,7 +187,7 @@ public class SimpleFluidFilter extends FluidFilter {
         }
     }
 
-    public static class WritableFluidTank extends FluidTank {
+    public class WritableFluidTank extends FluidTank {
 
         private final NBTTagCompound fluidTank;
         private final SimpleFluidFilterReader filterReader;
@@ -205,6 +206,7 @@ public class SimpleFluidFilter extends FluidFilter {
                 setFluid(null);
             } else {
                 getFluidTag().setInteger(FLUID_AMOUNT, amount);
+                markDirty();
             }
         }
 
@@ -232,6 +234,7 @@ public class SimpleFluidFilter extends FluidFilter {
             } else {
                 this.fluidTank.setTag(FLUID, stack.writeToNBT(getFluidTag()));
             }
+            markDirty();
         }
 
         protected boolean showAmount() {
@@ -276,7 +279,7 @@ public class SimpleFluidFilter extends FluidFilter {
             fluid.amount -= Math.min(fluid.amount, maxDrain);
 
             setFluidAmount(fluid.amount);
-
+            markDirty();
             return fluid;
         }
     }
