@@ -15,9 +15,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 @ApiStatus.Internal
 public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
@@ -53,31 +53,10 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
         return null;
     }
 
-    // probably can just extend Iterator<Recipe> directly.
-    static class FurnaceRecipeIterator implements Iterator<Recipe> {
-
-        Stack<Recipe> recipe = new Stack<>();
-
-        FurnaceRecipeIterator(Recipe recipe) {
-            this.recipe.add(recipe);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !recipe.isEmpty();
-        }
-
-        @Override
-        public Recipe next() {
-            if (recipe.isEmpty()) return null;
-            return recipe.pop();
-        }
-    }
-
     @Override
     @NotNull
     public Iterator<Recipe> getRecipeIterator(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
                                               boolean exactVoltage) {
-        return new FurnaceRecipeIterator(this.findRecipe(voltage, inputs, fluidInputs, exactVoltage));
+        return Collections.singleton(this.findRecipe(voltage, inputs, fluidInputs, exactVoltage)).iterator();
     }
 }
