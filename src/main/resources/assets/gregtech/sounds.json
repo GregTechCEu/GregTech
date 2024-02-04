@@ -19,6 +19,16 @@
       }
     ]
   },
+  "tick.electrodes": {
+    "subtitle" : "gregtech.subtitle.tick.arc",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:test",
+        "stream": false
+      }
+    ]
+  },
   "tick.chemical_reactor": {
     "subtitle" : "gregtech.subtitle.tick.chemical_reactor",
     "category": "block",

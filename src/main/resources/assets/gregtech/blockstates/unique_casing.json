@@ -58,6 +58,19 @@
         "top_all": "gregtech:blocks/casings/unique/heat_vent_bloom"
       }
     },
+    "active=false,variant=graphite_electrode": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/unique/graphite_electrode"
+      }
+    },
+    "active=true,variant=graphite_electrode": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/unique/graphite_electrode",
+        "top_all": "gregtech:blocks/casings/unique/graphite_electrode_bloom"
+      }
+    },
     "active=false,variant=molybdenum_disilicide_coil": {
       "model": "minecraft:cube_all",
       "textures": {

@@ -49,7 +49,7 @@ public class BlockUniqueCasing extends VariantActiveBlock<BlockUniqueCasing.Uniq
         if (ConfigHolder.client.coilsActiveEmissiveTextures && value == UniqueCasingType.MOLYBDENUM_DISILICIDE_COIL) {
             return true;
         }
-        return value == UniqueCasingType.HEAT_VENT;
+        return value == UniqueCasingType.HEAT_VENT || value == UniqueCasingType.GRAPHITE_ELECTRODE;
     }
 
     public enum UniqueCasingType implements IStringSerializable {
@@ -58,7 +58,8 @@ public class BlockUniqueCasing extends VariantActiveBlock<BlockUniqueCasing.Uniq
         SLICING_BLADES("slicing_blades"),
         ELECTROLYTIC_CELL("electrolytic_cell"),
         HEAT_VENT("heat_vent"),
-        MOLYBDENUM_DISILICIDE_COIL("molybdenum_disilicide_coil");
+        MOLYBDENUM_DISILICIDE_COIL("molybdenum_disilicide_coil"),
+        GRAPHITE_ELECTRODE("graphite_electrode");
 
         private final String name;
 

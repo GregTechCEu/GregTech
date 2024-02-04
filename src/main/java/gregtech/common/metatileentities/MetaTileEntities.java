@@ -40,6 +40,7 @@ import gregtech.common.metatileentities.electric.MetaTileEntityWorldAccelerator;
 import gregtech.common.metatileentities.electric.SimpleMachineMetaTileEntityResizable;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAlloyBlastSmelter;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityArcFurnace;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityCleanroom;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityCrackingUnit;
@@ -176,7 +177,6 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] MACERATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] ALLOY_SMELTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] ARC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] AUTOCLAVE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] BENDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -365,6 +365,7 @@ public class MetaTileEntities {
     public static MetaTileEntityMegaBlastFurnace MEGA_BLAST_FURNACE;
     public static MetaTileEntityLargeCircuitAssembler LARGE_CIRCUIT_ASSEMBLER;
     public static MetaTileEntityFermentationVat FERMENTATION_VAT;
+    public static MetaTileEntityArcFurnace ARC_FURNACE;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -480,18 +481,6 @@ public class MetaTileEntities {
         // Alloy Smelter, IDs 80-94
         registerSimpleMetaTileEntity(ALLOY_SMELTER, 80, "alloy_smelter", RecipeMaps.ALLOY_SMELTER_RECIPES,
                 Textures.ALLOY_SMELTER_OVERLAY, true);
-
-        // Arc Furnace, IDs 95-109
-        registerMetaTileEntities(ARC_FURNACE, 95, "arc_furnace",
-                (tier, voltageName) -> new SimpleMachineMetaTileEntityResizable(
-                        gregtechId(String.format("%s.%s", "arc_furnace", voltageName)),
-                        RecipeMaps.ARC_FURNACE_RECIPES,
-                        -1,
-                        tier >= GTValues.EV ? 9 : 4,
-                        Textures.ARC_FURNACE_OVERLAY,
-                        tier,
-                        false,
-                        GTUtility.hvCappedTankSizeFunction));
 
         // Assembler, IDs 110-124
         registerSimpleMetaTileEntity(ASSEMBLER, 110, "assembler", RecipeMaps.ASSEMBLER_RECIPES,
@@ -808,6 +797,9 @@ public class MetaTileEntities {
 
         FERMENTATION_VAT = registerMetaTileEntity(1067,
                 new MetaTileEntityFermentationVat(gregtechId("fermentation_vat")));
+
+        ARC_FURNACE = registerMetaTileEntity(1068,
+                new MetaTileEntityArcFurnace(gregtechId("arc_furnace")));
 
         // MISC MTE's START: IDs 1150-2000
 

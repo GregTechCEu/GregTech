@@ -791,8 +791,6 @@ public class MetaTileEntityLoader {
                 'C', CIRCUIT, 'W', CABLE, 'B', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.CHEMICAL_REACTOR, "GRG", "WEW", "CMC", 'M', HULL, 'R', ROTOR, 'E', MOTOR,
                 'C', CIRCUIT, 'W', CABLE, 'G', PIPE_REACTOR);
-        registerMachineRecipe(MetaTileEntities.BREWERY, "GPG", "WMW", "CBC", 'M', HULL, 'P', PUMP, 'B',
-                STICK_DISTILLATION, 'C', CIRCUIT, 'W', CABLE, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.FLUID_SOLIDIFIER, "PGP", "WMW", "CBC", 'M', HULL, 'P', PUMP, 'C',
                 CIRCUIT, 'W', CABLE, 'G', GLASS, 'B', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.DISTILLERY, "GBG", "CMC", "WPW", 'M', HULL, 'P', PUMP, 'B',
@@ -817,8 +815,6 @@ public class MetaTileEntityLoader {
                 COIL_HEATING_DOUBLE, 'C', CIRCUIT, 'W', CABLE, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.SIFTER, "WFW", "PMP", "CFC", 'M', HULL, 'P', PISTON, 'F',
                 MetaItems.ITEM_FILTER, 'C', CIRCUIT, 'W', CABLE);
-        registerMachineRecipe(MetaTileEntities.ARC_FURNACE, "WGW", "CMC", "PPP", 'M', HULL, 'P', PLATE, 'C', CIRCUIT,
-                'W', CABLE_QUAD, 'G', new UnificationEntry(OrePrefix.dust, Materials.Graphite));
         registerMachineRecipe(MetaTileEntities.CIRCUIT_ASSEMBLER, "RIR", "CHC", "WIW", 'R', ROBOT_ARM, 'I',
                 BETTER_CIRCUIT, 'C', CONVEYOR, 'H', HULL, 'W', CABLE);
         // TODO Replication system

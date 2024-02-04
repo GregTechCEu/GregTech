@@ -120,7 +120,7 @@ public final class RecipeMaps {
                     .fluidInputs(3)
                     .fluidOutputs(3)
                     .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
-                    .sound(GTSoundEvents.ARC)
+                    .sound(GTSoundEvents.ELECTRODES)
                     .build();
 
     /**

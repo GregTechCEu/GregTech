@@ -3059,34 +3059,6 @@ gregtech.machine.alloy_smelter.uxv.tooltip=Metal Amalgamator
 gregtech.machine.alloy_smelter.opv.name=Legendary Alloy Smelter
 gregtech.machine.alloy_smelter.opv.tooltip=Metal Amalgamator
 
-# Arc Furnace
-gregtech.machine.arc_furnace.lv.name=Basic Arc Furnace
-gregtech.machine.arc_furnace.lv.tooltip=Who needs a Blast Furnace?
-gregtech.machine.arc_furnace.mv.name=Advanced Arc Furnace
-gregtech.machine.arc_furnace.mv.tooltip=Who needs a Blast Furnace?
-gregtech.machine.arc_furnace.hv.name=Advanced Arc Furnace II
-gregtech.machine.arc_furnace.hv.tooltip=Who needs a Blast Furnace?
-gregtech.machine.arc_furnace.ev.name=Advanced Arc Furnace III
-gregtech.machine.arc_furnace.ev.tooltip=Who needs a Blast Furnace?
-gregtech.machine.arc_furnace.iv.name=Elite Arc Furnace
-gregtech.machine.arc_furnace.iv.tooltip=Discharge Heater
-gregtech.machine.arc_furnace.luv.name=Elite Arc Furnace II
-gregtech.machine.arc_furnace.luv.tooltip=Discharge Heater
-gregtech.machine.arc_furnace.zpm.name=Elite Arc Furnace III
-gregtech.machine.arc_furnace.zpm.tooltip=Discharge Heater
-gregtech.machine.arc_furnace.uv.name=Ultimate Arc Furnace
-gregtech.machine.arc_furnace.uv.tooltip=Short Circuit Heater
-gregtech.machine.arc_furnace.uhv.name=Epic Arc Furnace
-gregtech.machine.arc_furnace.uhv.tooltip=Short Circuit Heater
-gregtech.machine.arc_furnace.uev.name=Epic Arc Furnace II
-gregtech.machine.arc_furnace.uev.tooltip=Short Circuit Heater
-gregtech.machine.arc_furnace.uiv.name=Epic Arc Furnace III
-gregtech.machine.arc_furnace.uiv.tooltip=Short Circuit Heater
-gregtech.machine.arc_furnace.uxv.name=Epic Arc Furnace IV
-gregtech.machine.arc_furnace.uxv.tooltip=Short Circuit Heater
-gregtech.machine.arc_furnace.opv.name=Legendary Arc Furnace
-gregtech.machine.arc_furnace.opv.tooltip=Short Circuit Heater
-
 # Assembler
 gregtech.machine.assembler.lv.name=Basic Assembling Machine
 gregtech.machine.assembler.lv.tooltip=Avengers, Assemble!
@@ -6275,6 +6247,7 @@ gregtech.machine.steam_engine.name=Industrial Steam Engine
 gregtech.machine.steam_engine.tooltip.1=Produces up to %s§7 power.
 gregtech.machine.large_circuit_assembler.name=Large Circuit Assembler
 gregtech.machine.fermentation_vat.name=Fermentation Vat
+gregtech.machine.arc_furnace.name=Arc Furnace
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
