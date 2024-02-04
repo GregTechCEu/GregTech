@@ -158,8 +158,7 @@ public class CapesRegistry {
             registerCape(tuple.getFirst(), tuple.getSecond(), world);
         }
         FREE_CAPES.addAll(ctFreeCapes);
-        FREE_CAPES.add(Textures.ACE_CAPE_TEXTURE);
-        FREE_CAPES.add(Textures.AGENDER_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.CHINA_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.AROMANTIC_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.BI_CAPE_TEXTURE);
         FREE_CAPES.add(Textures.GENDERFLUID_CAPE_TEXTURE);

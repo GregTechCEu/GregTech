@@ -557,7 +557,7 @@ public class Textures {
     public static SimpleOverlayRenderer ATOMIC_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/atomic_casing");
     public static SimpleOverlayRenderer STEAM_CASING = new SimpleOverlayRenderer("casings/large_multiblock_casing/steam_casing");
 
-    public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
+    public static final ResourceLocation CHINA_CAPE_TEXTURE = gregtechId("textures/capes/chinacape.png");
     public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");
     public static final ResourceLocation AROMANTIC_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");
     public static final ResourceLocation BI_CAPE_TEXTURE = gregtechId("textures/capes/bicape.png");
