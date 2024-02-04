@@ -2,12 +2,11 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.util.IDirtyNotifiable;
 
+import net.minecraft.item.ItemStack;
+
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
-
-import net.minecraft.item.ItemStack;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
