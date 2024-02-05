@@ -454,7 +454,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     connections = pipeTile.getNumConnections();
                     while (connections == 2) {
                         pipeTile = getPipeTileEntity(world.getTileEntity(curPos));
-                        if (pipeTile.getNumConnections() != 2) {
+                        if (pipeTile == null || pipeTile.getNumConnections() != 2) {
                             break;
                         }
                         boolean canContinue = false;
@@ -481,7 +481,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
                     while (connections == 2) {
                         pipeTile = getPipeTileEntity(world.getTileEntity(curPos));
-                        if (pipeTile.getNumConnections() != 2) {
+                        if (pipeTile == null || pipeTile.getNumConnections() != 2) {
                             break;
                         }
                         pipeTile.setFaceBlocked(curSide, !isBlocked);
