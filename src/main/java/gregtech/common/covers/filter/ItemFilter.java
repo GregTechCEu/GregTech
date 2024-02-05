@@ -48,10 +48,6 @@ public abstract class ItemFilter implements Filter<ItemStack> {
         this.filterReader.setMaxTransferRate(maxStackSize);
     }
 
-    public final void onMaxStackSizeChange() {
-        this.filterReader.onTransferRateChange();
-    }
-
     public abstract boolean showGlobalTransferLimitSlider();
 
     public int getTransferLimit(int matchSlot, int globalTransferLimit) {
@@ -105,8 +101,6 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     }
 
     protected class BaseItemFilterReader extends BaseFilterReader {
-
-        protected static final String COUNT = "Count";
 
         public BaseItemFilterReader(ItemStack container, int slots) {
             super(container, slots);

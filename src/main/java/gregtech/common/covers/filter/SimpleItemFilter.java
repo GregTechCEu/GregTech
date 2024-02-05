@@ -166,6 +166,7 @@ public class SimpleItemFilter extends ItemFilter {
 
     protected class SimpleItemFilterReader extends BaseItemFilterReader {
 
+        public static final String COUNT = "Count";
         public static final String RESPECT_NBT = "IgnoreNBT";
         public static final String RESPECT_DAMAGE = "IgnoreDamage";
 
