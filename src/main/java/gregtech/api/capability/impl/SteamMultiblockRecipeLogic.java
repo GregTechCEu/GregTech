@@ -167,4 +167,21 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
                     1.0f);
         }
     }
+
+    @Override
+    protected boolean hasEnoughPower(int @NotNull [] resultOverclock) {
+        int totalSteam = (int) (resultOverclock[0] * resultOverclock[1] / conversionRate);
+        if (totalSteam > 0) {
+            long steamStored = getEnergyStored();
+            long steamCapacity = getEnergyCapacity();
+            // if the required steam is larger than the full buffer, just require the full buffer
+            if (steamCapacity < totalSteam) {
+                return steamCapacity == steamStored;
+            }
+            // otherwise require the full amount of steam for the recipe
+            return steamStored >= totalSteam;
+        }
+        // generation case unchanged
+        return super.hasEnoughPower(resultOverclock);
+    }
 }

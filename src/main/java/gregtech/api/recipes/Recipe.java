@@ -192,8 +192,54 @@ public class Recipe {
 
     public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs,
                                  IMultipleTankHandler fluidInputs) {
-        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs),
-                GTUtility.fluidHandlerToList(fluidInputs));
+        Pair<Boolean, int[]> fluids = null;
+        Pair<Boolean, int[]> items = null;
+
+        if (fluidInputs.getFluidTanks().size() > 0) {
+            fluids = matchesFluid(GTUtility.fluidHandlerToList(fluidInputs));
+            if (!fluids.getKey()) {
+                return false;
+            }
+        }
+
+        if (inputs.getSlots() > 0) {
+            items = matchesItems(GTUtility.itemHandlerToList(inputs));
+            if (!items.getKey()) {
+                return false;
+            }
+        }
+
+        if (consumeIfSuccessful) {
+            if (fluids != null) {
+                int[] fluidAmountInTank = fluids.getValue();
+                var backedList = fluidInputs.getFluidTanks();
+
+                for (int i = 0; i < fluidAmountInTank.length; i++) {
+                    var tank = backedList.get(i);
+                    FluidStack fluidStack = tank.getFluid();
+                    int fluidAmount = fluidAmountInTank[i];
+
+                    if (fluidStack == null || fluidStack.amount == fluidAmount) {
+                        continue;
+                    }
+                    tank.drain(Math.abs(fluidAmount - fluidStack.amount), true);
+                }
+            }
+            if (items != null) {
+                int[] itemAmountInSlot = items.getValue();
+                for (int i = 0; i < itemAmountInSlot.length; i++) {
+                    ItemStack itemInSlot = inputs.getStackInSlot(i);
+                    int itemAmount = itemAmountInSlot[i];
+
+                    if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount) {
+                        continue;
+                    }
+                    inputs.extractItem(i, Math.abs(itemAmount - itemInSlot.getCount()), false);
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
