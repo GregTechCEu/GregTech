@@ -2302,6 +2302,7 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.research_station.name=Research Station
+recipemap.industrial_refrigerator.name=Industrial Refrigerator
 
 gregtech.recipe.category.arc_furnace_recycling=Smelt Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -2617,7 +2618,7 @@ tile.metal_casing.primitive_bricks.name=Firebricks
 tile.metal_casing.coke_bricks.name=Coke Oven Bricks
 tile.metal_casing.bronze_bricks.name=Bronze Machine Casing
 tile.metal_casing.invar_heatproof.name=Heat Proof Invar Machine Casing
-tile.metal_casing.aluminium_frostproof.name=Frost Proof Aluminium Machine Casing
+tile.metal_casing.magnalium_frostproof.name=Frost Proof Magnalium Machine Casing
 tile.metal_casing.steel_solid.name=Solid Steel Machine Casing
 tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
@@ -6249,6 +6250,7 @@ gregtech.machine.large_circuit_assembler.name=Large Circuit Assembler
 gregtech.machine.fermentation_vat.name=Fermentation Vat
 gregtech.machine.arc_furnace.name=Arc Furnace
 gregtech.machine.fixed_bed_reactor.name=Fixed Bed Reactor
+gregtech.machine.industrial_refrigerator.name=Industrial Refrigerator
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
