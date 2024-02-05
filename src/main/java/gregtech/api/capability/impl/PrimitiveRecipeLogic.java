@@ -39,18 +39,14 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean hasEnoughPower(int @NotNull [] resultOverclock) {
-        return true;
-    }
-
-    @Override
     public long getMaxVoltage() {
         return GTValues.LV;
     }
 
+    @NotNull
     @Override
-    protected int @NotNull [] runOverclockingLogic(@NotNull IRecipePropertyStorage propertyStorage, int recipeEUt,
-                                                   long maxVoltage, int recipeDuration, int amountOC) {
+    protected int[] runOverclockingLogic(@NotNull IRecipePropertyStorage propertyStorage, int recipeEUt,
+                                         long maxVoltage, int recipeDuration, int amountOC) {
         return standardOverclockingLogic(
                 1,
                 getMaxVoltage(),
