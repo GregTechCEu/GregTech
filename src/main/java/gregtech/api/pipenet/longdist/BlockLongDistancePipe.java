@@ -35,6 +35,8 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
         setTranslationKey("long_distance_" + pipeType.getName() + "_pipeline");
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
         setHarvestLevel(ToolClasses.WRENCH, 1);
+        setHardness(2f);
+        setResistance(10f);
     }
 
     @Override
