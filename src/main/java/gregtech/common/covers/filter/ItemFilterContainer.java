@@ -142,7 +142,8 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        var stack = readFilterStack(packetBuffer);
+        super.readInitialSyncData(packetBuffer);
+        var stack = getFilterInventory().getStackInSlot(0);
 
         if (FilterTypeRegistry.isItemFilter(stack))
             setFilter(FilterTypeRegistry.getItemFilterForStack(stack));

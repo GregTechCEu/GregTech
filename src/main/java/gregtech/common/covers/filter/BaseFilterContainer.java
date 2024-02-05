@@ -142,16 +142,14 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         packetBuffer.writeItemStack(this.filterInventory.getStackInSlot(0));
     }
 
-    public ItemStack readFilterStack(PacketBuffer buffer) {
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         var stack = ItemStack.EMPTY;
         try {
-            stack = buffer.readItemStack();
+            stack = packetBuffer.readItemStack();
         } catch (IOException ignore) {}
-        this.filterInventory.setStackInSlot(0, stack);
-        return stack;
-    }
 
-    public abstract void readInitialSyncData(@NotNull PacketBuffer packetBuffer);
+        this.filterInventory.setStackInSlot(0, stack);
+    }
 
     @Override
     public NBTTagCompound serializeNBT() {
