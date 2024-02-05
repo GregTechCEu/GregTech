@@ -80,6 +80,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityNetworkSwit
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPyrolyseOven;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityResearchStation;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityIndustrialRefrigerator;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
@@ -367,6 +368,7 @@ public class MetaTileEntities {
     public static MetaTileEntityFermentationVat FERMENTATION_VAT;
     public static MetaTileEntityArcFurnace ARC_FURNACE;
     public static MetaTileEntityArcFurnace FIXED_BED_REACTOR;
+    public static MetaTileEntityIndustrialRefrigerator INDUSTRIAL_REFRIGERATOR;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -804,6 +806,9 @@ public class MetaTileEntities {
 
         FIXED_BED_REACTOR = registerMetaTileEntity(1069,
                 new MetaTileEntityArcFurnace(gregtechId("fixed_bed_reactor")));
+
+        INDUSTRIAL_REFRIGERATOR = registerMetaTileEntity(1070,
+                new MetaTileEntityIndustrialRefrigerator(gregtechId("industrial_refrigerator")));
 
         // MISC MTE's START: IDs 1150-2000
 

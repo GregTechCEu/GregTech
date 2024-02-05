@@ -36,7 +36,7 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         BRONZE_BRICKS("bronze_bricks", 1),
         PRIMITIVE_BRICKS("primitive_bricks", 1),
         INVAR_HEATPROOF("invar_heatproof", 1),
-        ALUMINIUM_FROSTPROOF("aluminium_frostproof", 1),
+        MAGNALIUM_FROSTPROOF("magnalium_frostproof", 1),
         STEEL_SOLID("steel_solid", 2),
         STAINLESS_CLEAN("stainless_clean", 2),
         TITANIUM_STABLE("titanium_stable", 2),

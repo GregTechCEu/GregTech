@@ -1296,6 +1296,16 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.CENTRIFUGE)
                     .build();
 
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> REFRIGERATION_RECIPES = new RecipeMapBuilder<>(
+            "industrial_refrigerator", new SimpleRecipeBuilder().duration(200).EUt(128))
+            .itemInputs(1)
+            .fluidInputs(3)
+            .fluidOutputs(3)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
+            .sound(GTSoundEvents.BATH)
+            .build();
+
     /**
      * Example:
      *

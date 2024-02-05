@@ -111,10 +111,10 @@ public class MetaTileEntityLoader {
                 MetaBlocks.METAL_CASING.getItemVariant(INVAR_HEATPROOF, ConfigHolder.recipes.casingsPerCraft), "PhP",
                 "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Invar), 'F',
                 new UnificationEntry(OrePrefix.frameGt, Materials.Invar));
-        ModHandler.addShapedRecipe(true, "casing_aluminium_frostproof",
-                MetaBlocks.METAL_CASING.getItemVariant(ALUMINIUM_FROSTPROOF, ConfigHolder.recipes.casingsPerCraft),
-                "PhP", "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium), 'F',
-                new UnificationEntry(OrePrefix.frameGt, Materials.Aluminium));
+        ModHandler.addShapedRecipe(true, "casing_magnalium_frostproof",
+                MetaBlocks.METAL_CASING.getItemVariant(MAGNALIUM_FROSTPROOF, ConfigHolder.recipes.casingsPerCraft),
+                "PhP", "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Magnalium), 'F',
+                new UnificationEntry(OrePrefix.frameGt, Materials.Magnalium));
         ModHandler.addShapedRecipe(true, "casing_stainless_clean",
                 MetaBlocks.METAL_CASING.getItemVariant(STAINLESS_CLEAN, ConfigHolder.recipes.casingsPerCraft), "PhP",
                 "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel), 'F',

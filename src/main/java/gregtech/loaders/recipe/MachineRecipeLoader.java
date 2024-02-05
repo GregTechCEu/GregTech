@@ -74,6 +74,7 @@ public class MachineRecipeLoader {
         CircuitRecipes.init();
         ComputerRecipes.init();
         DecorationRecipes.init();
+        RefrigeratorRecipes.init();
         WoodRecipeLoader.registerRecipes();
 
         registerDecompositionRecipes();
@@ -1155,7 +1156,7 @@ public class MachineRecipeLoader {
                 .duration(50).buildAndRegister();
         RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Aluminium, 6)
                 .input(OrePrefix.frameGt, Materials.Aluminium, 1).outputs(MetaBlocks.METAL_CASING
-                        .getItemVariant(MetalCasingType.ALUMINIUM_FROSTPROOF, ConfigHolder.recipes.casingsPerCraft))
+                        .getItemVariant(MetalCasingType.MAGNALIUM_FROSTPROOF, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
         RecipeMaps.WELDING_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.TungstenSteel, 6)
                 .input(OrePrefix.frameGt, Materials.TungstenSteel, 1).outputs(MetaBlocks.METAL_CASING
