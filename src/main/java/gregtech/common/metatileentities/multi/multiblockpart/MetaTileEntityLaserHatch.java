@@ -73,11 +73,6 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public boolean canPartShare() {
-        return false;
-    }
-
-    @Override
     public MultiblockAbility<ILaserContainer> getAbility() {
         return isOutput ? MultiblockAbility.OUTPUT_LASER : MultiblockAbility.INPUT_LASER;
     }
@@ -114,7 +109,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", amperage));
         }
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", buffer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.universal.disabled"));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     @NotNull
