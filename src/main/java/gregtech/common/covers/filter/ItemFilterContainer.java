@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilter>
+public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
                                  implements INBTSerializable<NBTTagCompound> {
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
@@ -52,7 +52,12 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getFilter));
+        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
+    }
+
+    // todo remove when usages of old mui with filters are gone
+    public ItemFilter getItemFilter() {
+        return (ItemFilter) getFilter();
     }
 
     /** @deprecated uses old builtin MUI */
@@ -152,10 +157,10 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack, ItemFilt
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
         super.deserializeNBT(tagCompound);
-        var stack = getFilterInventory().getStackInSlot(0);
+        var stack = getFilterInventory().getFilterStack();
         if (FilterTypeRegistry.isItemFilter(stack)) {
-            setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
-            getFilter().readFromNBT(tagCompound); // try to read old data
+            getFilterInventory().setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
+            getItemFilter().readFromNBT(tagCompound); // try to read old data
         }
     }
 }

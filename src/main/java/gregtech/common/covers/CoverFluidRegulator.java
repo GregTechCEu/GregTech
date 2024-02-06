@@ -310,7 +310,7 @@ public class CoverFluidRegulator extends CoverPump {
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
             if (this.fluidFilterContainer.hasFilter()) {
-                this.fluidFilterContainer.getFilter().configureFilterTanks(tagCompound.getInteger("TransferAmount"));
+                this.fluidFilterContainer.getFluidFilter().configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
         }
         // this.transferAmount = tagCompound.getInteger("TransferAmount");

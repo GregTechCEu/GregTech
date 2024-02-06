@@ -76,7 +76,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
             transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit,
                     filter.getTransferSize(), filter.getFilter() != null);
         }
-        itemFilterText(probeInfo, filter.getFilter());
+        itemFilterText(probeInfo, filter.getItemFilter());
     }
 
     /**
@@ -127,7 +127,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
             transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator
                     .getFluidFilterContainer().getTransferSize(), filter.hasFilter() && !filter.isBlacklistFilter());
         }
-        fluidFilterText(probeInfo, filter.getFilter());
+        fluidFilterText(probeInfo, filter.getFluidFilter());
     }
 
     /**
@@ -183,7 +183,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void enderFluidLinkInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverEnderFluidLink enderFluidLink) {
         transferRateText(probeInfo, enderFluidLink.getPumpMode(), " " + lang("cover.bucket.mode.milli_bucket_rate"),
                 enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
-        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilter());
+        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFluidFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
             probeInfo.text(

@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidFilter>
+public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
                                   implements INBTSerializable<NBTTagCompound> {
 
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
@@ -65,7 +65,11 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFilter, this::showGlobalTransferLimitSlider));
+        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter, this::showGlobalTransferLimitSlider));
+    }
+
+    public FluidFilter getFluidFilter() {
+        return (FluidFilter) getFilter();
     }
 
     /** @deprecated uses old builtin MUI */
@@ -170,7 +174,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack, FluidF
         var stack = getFilterInventory().getStackInSlot(0);
         if (FilterTypeRegistry.isFluidFilter(stack)) {
             setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
-            getFilter().readFromNBT(tagCompound);
+            getFluidFilter().readFromNBT(tagCompound);
         }
     }
 }

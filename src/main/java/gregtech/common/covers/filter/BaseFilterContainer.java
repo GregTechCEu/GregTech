@@ -17,102 +17,62 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INBTSerializable<NBTTagCompound> {
-
-    private final IDirtyNotifiable dirtyNotifiable;
-    private int maxTransferSize = 1;
-    private @Nullable T currentFilter;
-    private @Nullable Runnable onFilterInstanceChange;
-    private int transferSize;
+public abstract class BaseFilterContainer<R> implements INBTSerializable<NBTTagCompound> {
     protected final FilterSlotHandler filterInventory;
 
     public BaseFilterContainer(IDirtyNotifiable dirtyNotifiable) {
-        this.dirtyNotifiable = dirtyNotifiable;
-        filterInventory = new FilterSlotHandler();
+        this.filterInventory = new FilterSlotHandler(dirtyNotifiable);
     }
 
-    public @NotNull ItemStackHandler getFilterInventory() {
+    public @NotNull FilterSlotHandler getFilterInventory() {
         return filterInventory;
     }
 
-    public int getMaxTransferSize() {
-        return hasFilter() ? currentFilter.getMaxTransferSize() : this.maxTransferSize;
-    }
-
-    public void setMaxTransferSize(int maxTransferSize) {
-        this.maxTransferSize = MathHelper.clamp(maxTransferSize, 1, Integer.MAX_VALUE);
-        this.transferSize = MathHelper.clamp(this.transferSize, 1, this.maxTransferSize);
-        if (hasFilter()) currentFilter.setMaxTransferSize(this.maxTransferSize);
-    }
-
-    public final boolean hasFilter() {
-        return currentFilter != null;
-    }
-
-    public final @Nullable T getFilter() {
-        return currentFilter;
-    }
-
     public final @NotNull ItemStack getFilterStack() {
-        return this.filterInventory.getStackInSlot(0);
+        return this.filterInventory.getFilterStack();
     }
 
-    @SuppressWarnings("unchecked") // really need to stop doing this
     public final void setFilterStack(ItemStack stack) {
-        this.filterInventory.setStackInSlot(0, stack);
-        if (FilterTypeRegistry.isItemFilter(stack)) {
-            setFilter((T) FilterTypeRegistry.getItemFilterForStack(stack));
-        } else {
-            setFilter((T) FilterTypeRegistry.getFluidFilterForStack(stack));
-        }
-    }
-
-    public final void setFilter(@Nullable T newFilter) {
-        this.currentFilter = newFilter;
-        if (hasFilter()) {
-            this.currentFilter.setDirtyNotifiable(dirtyNotifiable);
-        }
-        if (onFilterInstanceChange != null) {
-            this.onFilterInstanceChange.run();
-        }
-    }
-
-    public void onFilterInstanceChange() {
-        dirtyNotifiable.markAsDirty();
-    }
-
-    public void setOnFilterInstanceChange(@Nullable Runnable onFilterInstanceChange) {
-        this.onFilterInstanceChange = onFilterInstanceChange;
+        this.filterInventory.setFilterStack(stack);
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return getMaxTransferSize() > 0 &&
-                (isBlacklistFilter() || !hasFilter() || currentFilter.showGlobalTransferLimitSlider());
+        return this.filterInventory.showGlobalTransferLimitSlider();
     }
 
     public int getTransferLimit(int slotIndex) {
-        if (isBlacklistFilter() || currentFilter == null) {
-            return getTransferSize();
-        }
-        return currentFilter.getTransferLimit(slotIndex, getTransferSize());
+        return this.filterInventory.getTransferLimit(slotIndex);
     }
 
     public boolean test(R toTest) {
-        return !hasFilter() || getFilter().test(toTest);
+        return this.filterInventory.test(toTest);
     }
 
     public MatchResult<R> match(R toMatch) {
-        if (!hasFilter())
-            return MatchResult.create(true, toMatch, -1);
-
-        return getFilter().match(toMatch);
+        return this.filterInventory.match(toMatch);
     }
 
+    public final boolean hasFilter() {
+        return this.filterInventory.hasFilter();
+    }
+
+    public final @Nullable Filter<R> getFilter() {
+        return this.filterInventory.getFilter();
+    }
+
+    public final void setFilter(@Nullable Filter<R> newFilter) {
+        this.filterInventory.setFilter(newFilter);
+    }
+
+    public int getMaxTransferSize() {
+        return this.filterInventory.getMaxTransferSize();
+    }
+
+    public void setMaxTransferSize(int maxTransferSize) {
+        this.filterInventory.setMaxTransferSize(maxTransferSize);
+    }
     public int getTransferLimit(R stack) {
-        if (isBlacklistFilter() || currentFilter == null) {
-            return getTransferSize();
-        }
-        return currentFilter.getTransferLimit(stack, getTransferSize());
+        return this.filterInventory.getTransferLimit(stack);
     }
 
     /**
@@ -123,24 +83,19 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
     protected abstract void onFilterSlotChange(boolean notify);
 
     public int getTransferSize() {
-        if (!showGlobalTransferLimitSlider()) {
-            return getMaxTransferSize();
-        }
-        return this.transferSize;
+        return this.filterInventory.getTransferSize();
     }
 
     public void setTransferSize(int transferSize) {
-        this.transferSize = MathHelper.clamp(transferSize, 1, getMaxTransferSize());
-        onFilterInstanceChange();
+        this.filterInventory.setTransferSize(transferSize);
     }
 
     public void setBlacklistFilter(boolean blacklistFilter) {
-        if (hasFilter()) getFilter().setBlacklistFilter(blacklistFilter);
-        onFilterInstanceChange();
+        this.filterInventory.setBlacklistFilter(blacklistFilter);
     }
 
     public boolean isBlacklistFilter() {
-        return hasFilter() && getFilter().isBlacklistFilter();
+        return this.filterInventory.isBlacklistFilter();
     }
 
     /** Uses Cleanroom MUI */
@@ -155,27 +110,35 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         try {
             stack = packetBuffer.readItemStack();
         } catch (IOException ignore) {}
-
-        this.filterInventory.setStackInSlot(0, stack);
+        this.filterInventory.setFilterStack(stack);
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setInteger("MaxStackSize", getMaxTransferSize());
-        tagCompound.setInteger("TransferStackSize", getTransferSize());
-        tagCompound.setTag("FilterInventory", filterInventory.serializeNBT());
-        return tagCompound;
+        return this.filterInventory.serializeNBT();
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
-        this.maxTransferSize = tagCompound.getInteger("MaxStackSize");
-        this.transferSize = tagCompound.getInteger("TransferStackSize");
-        this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
+        this.filterInventory.deserializeNBT(tagCompound);
     }
 
-    protected class FilterSlotHandler extends ItemStackHandler {
+    public void onFilterInstanceChange() {
+        this.filterInventory.onFilterInstanceChange();
+    }
+
+    public class FilterSlotHandler extends ItemStackHandler {
+
+        private int maxTransferSize = 1;
+        private int transferSize;
+        private @Nullable Filter<R> currentFilter;
+        private @Nullable Runnable onFilterInstanceChange;
+        private final IDirtyNotifiable dirtyNotifiable;
+
+        protected FilterSlotHandler(IDirtyNotifiable dirtyNotifiable) {
+            super();
+            this.dirtyNotifiable = dirtyNotifiable;
+        }
 
         @Override
         public int getSlotLimit(int slot) {
@@ -190,6 +153,123 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         @Override
         protected void onContentsChanged(int slot) {
             onFilterSlotChange(true);
+        }
+
+        public void onFilterInstanceChange() {
+            dirtyNotifiable.markAsDirty();
+        }
+
+        public void setOnFilterInstanceChange(@Nullable Runnable onFilterInstanceChange) {
+            this.onFilterInstanceChange = onFilterInstanceChange;
+        }
+
+        public final @NotNull ItemStack getFilterStack() {
+            return this.getStackInSlot(0);
+        }
+
+        @SuppressWarnings("unchecked") // really need to stop doing this
+        public final void setFilterStack(ItemStack stack) {
+            this.setStackInSlot(0, stack);
+            if (FilterTypeRegistry.isItemFilter(stack)) {
+                setFilter((Filter<R>) FilterTypeRegistry.getItemFilterForStack(stack));
+            } else {
+                setFilter((Filter<R>) FilterTypeRegistry.getFluidFilterForStack(stack));
+            }
+        }
+
+        public int getMaxTransferSize() {
+            return hasFilter() ? currentFilter.getMaxTransferSize() : this.maxTransferSize;
+        }
+
+        public void setMaxTransferSize(int maxTransferSize) {
+            this.maxTransferSize = MathHelper.clamp(maxTransferSize, 1, Integer.MAX_VALUE);
+            this.transferSize = MathHelper.clamp(this.transferSize, 1, this.maxTransferSize);
+            if (hasFilter()) currentFilter.setMaxTransferSize(this.maxTransferSize);
+        }
+
+        public final boolean hasFilter() {
+            return currentFilter != null;
+        }
+
+        public final @Nullable Filter<R> getFilter() {
+            return currentFilter;
+        }
+
+        public final void setFilter(@Nullable Filter<R> newFilter) {
+            this.currentFilter = newFilter;
+            if (hasFilter()) {
+                this.currentFilter.setDirtyNotifiable(dirtyNotifiable);
+            }
+            if (onFilterInstanceChange != null) {
+                this.onFilterInstanceChange.run();
+            }
+        }
+
+        public boolean test(R toTest) {
+            return !hasFilter() || getFilter().test(toTest);
+        }
+
+        public MatchResult<R> match(R toMatch) {
+            if (!hasFilter())
+                return MatchResult.create(true, toMatch, -1);
+
+            return getFilter().match(toMatch);
+        }
+
+        public boolean showGlobalTransferLimitSlider() {
+            return getMaxTransferSize() > 0 &&
+                    (isBlacklistFilter() || !hasFilter() || getFilter().showGlobalTransferLimitSlider());
+        }
+
+        public void setBlacklistFilter(boolean blacklistFilter) {
+            if (hasFilter()) getFilter().setBlacklistFilter(blacklistFilter);
+            onFilterInstanceChange();
+        }
+
+        public final boolean isBlacklistFilter() {
+            return hasFilter() && getFilter().isBlacklistFilter();
+        }
+
+        public int getTransferSize() {
+            if (!showGlobalTransferLimitSlider()) {
+                return getMaxTransferSize();
+            }
+            return this.transferSize;
+        }
+
+        public int getTransferLimit(int slotIndex) {
+            if (isBlacklistFilter()) {
+                return getTransferSize();
+            }
+            return this.currentFilter.getTransferLimit(slotIndex, getTransferSize());
+        }
+
+        public int getTransferLimit(R stack) {
+            if (isBlacklistFilter()) {
+                return getTransferSize();
+            }
+            return this.currentFilter.getTransferLimit(stack, getTransferSize());
+        }
+
+        public void setTransferSize(int transferSize) {
+            this.transferSize = MathHelper.clamp(transferSize, 1, getMaxTransferSize());
+            onFilterInstanceChange();
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            tagCompound.setTag("FilterInventory", super.serializeNBT());
+            tagCompound.setInteger("MaxStackSize", getMaxTransferSize());
+            tagCompound.setInteger("TransferStackSize", getTransferSize());
+            return tagCompound;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            super.deserializeNBT(nbt.getCompoundTag("FilterInventory"));
+            this.maxTransferSize = nbt.getInteger("MaxStackSize");
+            this.transferSize = nbt.getInteger("TransferStackSize");
         }
     }
 }
