@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.widget.IWidget;
