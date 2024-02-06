@@ -1,8 +1,6 @@
 package gregtech.mixins;
 
-import gregtech.api.GTValues;
-
-import net.minecraftforge.fml.common.Loader;
+import gregtech.api.util.Mods;
 
 import zone.rong.mixinbooter.ILateMixinLoader;
 
@@ -27,10 +25,10 @@ public class GregTechLateMixinLoadingPlugin implements ILateMixinLoader {
     @Override
     public boolean shouldMixinConfigQueue(String mixinConfig) {
         return switch (mixinConfig) {
-            case "mixins.gregtech.theoneprobe.json" -> Loader.isModLoaded(GTValues.MODID_TOP);
-            case "mixins.gregtech.jei.json" -> Loader.isModLoaded(GTValues.MODID_JEI);
-            case "mixin.gregtech.ctm.json" -> Loader.isModLoaded(GTValues.MODID_CTM);
-            case "mixins.gregtech.littletiles.json" -> Loader.isModLoaded(GTValues.MODID_LITTLETILES);
+            case "mixins.gregtech.theoneprobe.json" -> Mods.TheOneProbe.isModLoaded();
+            case "mixins.gregtech.jei.json" -> Mods.JustEnoughItems.isModLoaded();
+            case "mixin.gregtech.ctm.json" -> Mods.CTM.isModLoaded();
+            case "mixins.gregtech.littletiles.json" -> Mods.LittleTiles.isModLoaded();
             default -> true;
         };
     }

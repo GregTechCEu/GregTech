@@ -1,13 +1,6 @@
 package gregtech.asm;
 
-import gregtech.asm.util.ObfMapping;
-import gregtech.asm.util.TargetClassVisitor;
-import gregtech.asm.visitors.EnchantmentCanApplyVisitor;
-import gregtech.asm.visitors.JEIVisitor;
-import gregtech.asm.visitors.LittleTilesVisitor;
-
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.launchwrapper.Launch;
 
 import org.objectweb.asm.Opcodes;
 
