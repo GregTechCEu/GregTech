@@ -27,7 +27,6 @@ import static gregtech.api.GTValues.*;
 public class CraftingComponent {
 
     public static Component CIRCUIT;
-    public static Component BETTER_CIRCUIT;
     public static Component PUMP;
     public static Component WIRE_ELECTRIC;
     public static Component WIRE_QUAD;
@@ -48,7 +47,7 @@ public class CraftingComponent {
     public static Component HULL_PLATE;
     public static Component MOTOR;
     public static Component ROTOR;
-    public static Component SENSOR;
+    public static Component LOGIC_CONTROLLER;
     public static Component GRINDER;
     public static Component SAWBLADE;
     public static Component DIAMOND;
@@ -61,7 +60,6 @@ public class CraftingComponent {
     public static Component COIL_ELECTRIC;
     public static Component STICK_MAGNETIC;
     public static Component STICK_DISTILLATION;
-    public static Component FIELD_GENERATOR;
     public static Component STICK_ELECTROMAGNETIC;
     public static Component STICK_RADIOACTIVE;
     public static Component PIPE_REACTOR;
@@ -103,25 +101,6 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        BETTER_CIRCUIT = new Component(Stream.of(new Object[][] {
-
-                { 0, new UnificationEntry(OrePrefix.circuit, Tier.LV) },
-                { 1, new UnificationEntry(OrePrefix.circuit, Tier.MV) },
-                { 2, new UnificationEntry(OrePrefix.circuit, Tier.HV) },
-                { 3, new UnificationEntry(OrePrefix.circuit, Tier.EV) },
-                { 4, new UnificationEntry(OrePrefix.circuit, Tier.IV) },
-                { 5, new UnificationEntry(OrePrefix.circuit, Tier.LuV) },
-                { 6, new UnificationEntry(OrePrefix.circuit, Tier.ZPM) },
-                { 7, new UnificationEntry(OrePrefix.circuit, Tier.UV) },
-                { 8, new UnificationEntry(OrePrefix.circuit, Tier.UHV) },
-                { 9, new UnificationEntry(OrePrefix.circuit, Tier.UEV) },
-                { 10, new UnificationEntry(OrePrefix.circuit, Tier.UIV) },
-                { 11, new UnificationEntry(OrePrefix.circuit, Tier.UXV) },
-                { 12, new UnificationEntry(OrePrefix.circuit, Tier.OpV) },
-                { 13, new UnificationEntry(OrePrefix.circuit, Tier.MAX) }
-
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
         PUMP = new Component(Stream.of(new Object[][] {
 
                 { 1, MetaItems.ELECTRIC_PUMP_LV.getStackForm() },
@@ -144,6 +123,19 @@ public class CraftingComponent {
                     { 13, MetaItems.ELECTRIC_PUMP_OpV.getStackForm() },
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
+
+        LOGIC_CONTROLLER = new Component(Stream.of(new Object[][] {
+
+                { 1, new UnificationEntry(OrePrefix.circuit, Tier.LV) },
+                { 2, MetaItems.LOGIC_CONTROLLER_MV.getStackForm() },
+                { 3, MetaItems.LOGIC_CONTROLLER_HV.getStackForm() },
+                { 4, MetaItems.LOGIC_CONTROLLER_EV.getStackForm() },
+                { 5, MetaItems.LOGIC_CONTROLLER_IV.getStackForm() },
+                { 6, MetaItems.LOGIC_CONTROLLER_LuV.getStackForm() },
+                { 7, MetaItems.LOGIC_CONTROLLER_ZPM.getStackForm() },
+                { 8, MetaItems.LOGIC_CONTROLLER_UV.getStackForm() },
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         WIRE_ELECTRIC = new Component(Stream.of(new Object[][] {
 

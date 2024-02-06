@@ -25,6 +25,125 @@ public class CircuitRecipes {
         componentRecipes();
         boardRecipes();
         circuitRecipes();
+        logicControllerRecipes();
+    }
+
+    private static void logicControllerRecipes() {
+
+        //MV
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(ELECTRONIC_CIRCUIT_MV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_MV, 4)
+                .output(LOGIC_CONTROLLER_MV, 4)
+                .duration(300).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(INTEGRATED_CIRCUIT_MV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_MV, 8)
+                .output(LOGIC_CONTROLLER_MV, 8)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(PROCESSOR_MV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_MV, 16)
+                .output(LOGIC_CONTROLLER_MV, 16)
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        //HV
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(INTEGRATED_CIRCUIT_HV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_HV, 4)
+                .output(LOGIC_CONTROLLER_HV, 4)
+                .duration(300).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(INTEGRATED_CIRCUIT_MV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_HV, 8)
+                .output(PROCESSOR_ASSEMBLY_HV, 8)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(NANO_PROCESSOR_HV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_HV, 16)
+                .output(LOGIC_CONTROLLER_HV, 16)
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        //EV
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(WORKSTATION_EV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_EV, 4)
+                .output(LOGIC_CONTROLLER_EV, 4)
+                .duration(300).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(NANO_PROCESSOR_ASSEMBLY_EV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_EV, 8)
+                .output(LOGIC_CONTROLLER_EV, 8)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(QUANTUM_PROCESSOR_EV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_EV, 16)
+                .output(LOGIC_CONTROLLER_EV, 16)
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        //IV
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(NANO_COMPUTER_IV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_IV, 4)
+                .output(LOGIC_CONTROLLER_IV, 4)
+                .duration(300).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(QUANTUM_ASSEMBLY_IV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_IV, 8)
+                .output(LOGIC_CONTROLLER_IV, 8)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(CRYSTAL_PROCESSOR_IV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_IV, 16)
+                .output(LOGIC_CONTROLLER_IV, 16)
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        //LUV
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(QUANTUM_COMPUTER_LUV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_LuV, 4)
+                .output(LOGIC_CONTROLLER_LuV, 4)
+                .duration(300).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(CRYSTAL_ASSEMBLY_LUV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_LuV, 8)
+                .output(LOGIC_CONTROLLER_LuV, 8)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(WETWARE_PROCESSOR_LUV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_LuV, 16)
+                .output(LOGIC_CONTROLLER_LuV, 16)
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        //ZPM
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(CRYSTAL_COMPUTER_ZPM, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_ZPM, 4)
+                .output(LOGIC_CONTROLLER_ZPM, 4)
+                .duration(300).EUt(VA[LV]).buildAndRegister();
+
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(WETWARE_PROCESSOR_ASSEMBLY_ZPM, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_ZPM, 8)
+                .output(LOGIC_CONTROLLER_ZPM, 8)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        //UV
+        PROGRAMMER_RECIPES .recipeBuilder()
+                .input(WETWARE_SUPER_COMPUTER_UV, 1)
+                .input(PROGRAMMABLE_LOGIC_CONTROLLER_UV, 4)
+                .output(LOGIC_CONTROLLER_UV, 4)
+                .duration(300).EUt(VA[LV]).buildAndRegister();
     }
 
     private static void waferRecipes() {
@@ -1098,31 +1217,6 @@ public class CircuitRecipes {
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
-        // IV
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[HV]).duration(800)
-                .input(frameGt, Aluminium, 2)
-                .input(WORKSTATION_EV, 2)
-                .input(component, Component.Inductor, 8)
-                .input(component, Component.Capacitor, 16)
-                .input(RANDOM_ACCESS_MEMORY, 16)
-                .input(wireGtSingle, AnnealedCopper, 16)
-                .output(MAINFRAME_IV)
-                .solderMultiplier(4)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .buildAndRegister();
-
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
-                .input(frameGt, Aluminium, 2)
-                .input(WORKSTATION_EV, 2)
-                .input(ADVANCED_SMD_INDUCTOR, 2)
-                .input(ADVANCED_SMD_CAPACITOR, 4)
-                .input(RANDOM_ACCESS_MEMORY, 16)
-                .input(wireGtSingle, AnnealedCopper, 16)
-                .output(MAINFRAME_IV)
-                .solderMultiplier(4)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .buildAndRegister();
-
         // T4: Nano ====================================================================================================
 
         // HV
@@ -1205,31 +1299,6 @@ public class CircuitRecipes {
                 .input(wireFine, Electrum, 16)
                 .output(NANO_COMPUTER_IV)
                 .solderMultiplier(2)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .buildAndRegister();
-
-        // LuV
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[EV]).duration(800)
-                .input(frameGt, Aluminium, 2)
-                .input(NANO_COMPUTER_IV, 2)
-                .input(SMD_INDUCTOR, 16)
-                .input(SMD_CAPACITOR, 32)
-                .input(RANDOM_ACCESS_MEMORY, 16)
-                .input(wireGtSingle, AnnealedCopper, 32)
-                .output(NANO_MAINFRAME_LUV)
-                .solderMultiplier(4)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .buildAndRegister();
-
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[EV]).duration(400)
-                .input(frameGt, Aluminium, 2)
-                .input(NANO_COMPUTER_IV, 2)
-                .input(ADVANCED_SMD_INDUCTOR, 4)
-                .input(ADVANCED_SMD_CAPACITOR, 8)
-                .input(RANDOM_ACCESS_MEMORY, 16)
-                .input(wireGtSingle, AnnealedCopper, 32)
-                .output(NANO_MAINFRAME_LUV)
-                .solderMultiplier(4)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
@@ -1318,31 +1387,6 @@ public class CircuitRecipes {
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
-        // ZPM
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[IV]).duration(800)
-                .input(frameGt, HSSG, 2)
-                .input(QUANTUM_COMPUTER_LUV, 2)
-                .input(SMD_INDUCTOR, 24)
-                .input(SMD_CAPACITOR, 48)
-                .input(RANDOM_ACCESS_MEMORY, 24)
-                .input(wireGtSingle, AnnealedCopper, 48)
-                .solderMultiplier(4)
-                .output(QUANTUM_MAINFRAME_ZPM)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .buildAndRegister();
-
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[IV]).duration(400)
-                .input(frameGt, HSSG, 2)
-                .input(QUANTUM_COMPUTER_LUV, 2)
-                .input(ADVANCED_SMD_INDUCTOR, 6)
-                .input(ADVANCED_SMD_CAPACITOR, 12)
-                .input(RANDOM_ACCESS_MEMORY, 24)
-                .input(wireGtSingle, AnnealedCopper, 48)
-                .solderMultiplier(4)
-                .output(QUANTUM_MAINFRAME_ZPM)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .buildAndRegister();
-
         // T6: Crystal =================================================================================================
 
         // IV
@@ -1391,23 +1435,6 @@ public class CircuitRecipes {
                 .solderMultiplier(2)
                 .output(CRYSTAL_COMPUTER_ZPM)
                 .cleanroom(CleanroomType.CLEANROOM)
-                .buildAndRegister();
-
-        // UV
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(VA[LuV]).duration(800)
-                .input(frameGt, HSSE, 2)
-                .input(CRYSTAL_COMPUTER_ZPM, 2)
-                .input(RANDOM_ACCESS_MEMORY, 32)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(wireGtSingle, NiobiumTitanium, 8)
-                .input(ADVANCED_SMD_INDUCTOR, 8)
-                .input(ADVANCED_SMD_CAPACITOR, 16)
-                .input(ADVANCED_SMD_DIODE, 8)
-                .fluidInputs(SolderingAlloy.getFluid(L * 10))
-                .output(CRYSTAL_MAINFRAME_UV)
-                .stationResearch(b -> b
-                        .researchStack(CRYSTAL_COMPUTER_ZPM.getStackForm())
-                        .CWUt(16))
                 .buildAndRegister();
 
         // T7: Wetware =================================================================================================
@@ -1476,28 +1503,6 @@ public class CircuitRecipes {
                         .researchStack(WETWARE_PROCESSOR_ASSEMBLY_ZPM.getStackForm())
                         .CWUt(16))
                 .buildAndRegister();
-
-        // UHV
-        ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(frameGt, Tritanium, 2)
-                .input(WETWARE_SUPER_COMPUTER_UV, 2)
-                .input(ADVANCED_SMD_DIODE, 32)
-                .input(ADVANCED_SMD_CAPACITOR, 32)
-                .input(ADVANCED_SMD_TRANSISTOR, 32)
-                .input(ADVANCED_SMD_RESISTOR, 32)
-                .input(ADVANCED_SMD_INDUCTOR, 32)
-                .input(foil, Polybenzimidazole, 64)
-                .input(RANDOM_ACCESS_MEMORY, 32)
-                .input(wireGtDouble, EnrichedNaquadahTriniumEuropiumDuranide, 16)
-                .input(plate, Europium, 8)
-                .fluidInputs(SolderingAlloy.getFluid(L * 20))
-                .fluidInputs(Polybenzimidazole.getFluid(L * 8))
-                .output(WETWARE_MAINFRAME_UHV)
-                .stationResearch(b -> b
-                        .researchStack(WETWARE_SUPER_COMPUTER_UV.getStackForm())
-                        .CWUt(96)
-                        .EUt(VA[UV]))
-                .EUt(300000).duration(2000).buildAndRegister();
 
         // Misc ========================================================================================================
 

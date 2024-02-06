@@ -588,7 +588,7 @@ public class MachineRecipeLoader {
         // Tiered Hatches
         MetaTileEntityLoader.registerMachineRecipe(
                 ArrayUtils.subarray(MetaTileEntities.TIERED_HATCH, 0, GregTechAPI.isHighTier() ? UHV : UV), "PPP",
-                "PCP", "PPP", 'P', CraftingComponent.PLATE, 'C', CraftingComponent.BETTER_CIRCUIT);
+                "PCP", "PPP", 'P', CraftingComponent.PLATE, 'C', CraftingComponent.CIRCUIT);
 
         if (!GregTechAPI.isHighTier()) {
             ModHandler.addShapedRecipe(true, ".machine.tiered_hatch.uhv",

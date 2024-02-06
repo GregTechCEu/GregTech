@@ -755,84 +755,84 @@ public class MetaTileEntityLoader {
                 new UnificationEntry(OrePrefix.rotor, Materials.Tin));
 
         // MACHINES
-        registerMachineRecipe(MetaTileEntities.ALLOY_SMELTER, "ECE", "CMC", "WCW", 'M', HULL, 'E', CIRCUIT, 'W', CABLE,
+        registerMachineRecipe(MetaTileEntities.ALLOY_SMELTER, "ECE", "CMC", "WCW", 'M', HULL, 'E', LOGIC_CONTROLLER, 'W', CABLE,
                 'C', COIL_HEATING_DOUBLE);
         registerMachineRecipe(MetaTileEntities.ASSEMBLER, "ACA", "VMV", "WCW", 'M', HULL, 'V', CONVEYOR, 'A', ROBOT_ARM,
                 'C', CIRCUIT, 'W', CABLE);
         registerMachineRecipe(MetaTileEntities.BENDER, "PWP", "CMC", "EBE", 'M', HULL, 'E', MOTOR, 'P', PISTON, 'C',
-                CIRCUIT, 'W', CABLE, 'B', PLATE);
-        registerMachineRecipe(MetaTileEntities.CANNER, "WPW", "CMC", "GGG", 'M', HULL, 'P', PUMP, 'C', CIRCUIT, 'W',
+                LOGIC_CONTROLLER, 'W', CABLE, 'B', PLATE);
+        registerMachineRecipe(MetaTileEntities.CANNER, "WPW", "CMC", "GGG", 'M', HULL, 'P', PUMP, 'C', LOGIC_CONTROLLER, 'W',
                 CABLE, 'G', GLASS);
-        registerMachineRecipe(MetaTileEntities.COMPRESSOR, " C ", "PMP", "WCW", 'M', HULL, 'P', PISTON, 'C', CIRCUIT,
+        registerMachineRecipe(MetaTileEntities.COMPRESSOR, " C ", "PMP", "WCW", 'M', HULL, 'P', PISTON, 'C', LOGIC_CONTROLLER,
                 'W', CABLE);
         registerMachineRecipe(MetaTileEntities.CUTTER, "WCG", "VMB", "CWE", 'M', HULL, 'E', MOTOR, 'V', CONVEYOR, 'C',
-                CIRCUIT, 'W', CABLE, 'G', GLASS, 'B', SAWBLADE);
-        registerMachineRecipe(MetaTileEntities.ELECTRIC_FURNACE, "ECE", "CMC", "WCW", 'M', HULL, 'E', CIRCUIT, 'W',
+                LOGIC_CONTROLLER, 'W', CABLE, 'G', GLASS, 'B', SAWBLADE);
+        registerMachineRecipe(MetaTileEntities.ELECTRIC_FURNACE, "ECE", "CMC", "WCW", 'M', HULL, 'E', LOGIC_CONTROLLER, 'W',
                 CABLE, 'C', COIL_HEATING);
         registerMachineRecipe(MetaTileEntities.EXTRACTOR, "GCG", "EMP", "WCW", 'M', HULL, 'E', PISTON, 'P', PUMP, 'C',
-                CIRCUIT, 'W', CABLE, 'G', GLASS);
-        registerMachineRecipe(MetaTileEntities.EXTRUDER, "CCE", "XMP", "CCE", 'M', HULL, 'X', PISTON, 'E', CIRCUIT, 'P',
+                LOGIC_CONTROLLER, 'W', CABLE, 'G', GLASS);
+        registerMachineRecipe(MetaTileEntities.EXTRUDER, "CCE", "XMP", "CCE", 'M', HULL, 'X', PISTON, 'E', LOGIC_CONTROLLER, 'P',
                 PIPE, 'C', COIL_HEATING_DOUBLE);
         registerMachineRecipe(MetaTileEntities.LATHE, "WCW", "EMD", "CWP", 'M', HULL, 'E', MOTOR, 'P', PISTON, 'C',
-                CIRCUIT, 'W', CABLE, 'D', GRINDER);
+                LOGIC_CONTROLLER, 'W', CABLE, 'D', GRINDER);
         registerMachineRecipe(MetaTileEntities.MACERATOR, "PEG", "WWM", "CCW", 'M', HULL, 'E', MOTOR, 'P', PISTON, 'C',
-                CIRCUIT, 'W', CABLE, 'G', GRINDER);
-        registerMachineRecipe(MetaTileEntities.WIREMILL, "EWE", "CMC", "EWE", 'M', HULL, 'E', MOTOR, 'C', CIRCUIT, 'W',
+                LOGIC_CONTROLLER, 'W', CABLE, 'G', GRINDER);
+        registerMachineRecipe(MetaTileEntities.WIREMILL, "EWE", "CMC", "EWE", 'M', HULL, 'E', MOTOR, 'C', LOGIC_CONTROLLER, 'W',
                 CABLE);
-        registerMachineRecipe(MetaTileEntities.CENTRIFUGE, "CEC", "WMW", "CEC", 'M', HULL, 'E', MOTOR, 'C', CIRCUIT,
+        registerMachineRecipe(MetaTileEntities.CENTRIFUGE, "CEC", "WMW", "CEC", 'M', HULL, 'E', MOTOR, 'C', LOGIC_CONTROLLER,
                 'W', CABLE);
-        registerMachineRecipe(MetaTileEntities.ELECTROLYZER, "IGI", "IMI", "CWC", 'M', HULL, 'C', CIRCUIT, 'W', CABLE,
+        registerMachineRecipe(MetaTileEntities.ELECTROLYZER, "IGI", "IMI", "CWC", 'M', HULL, 'C', LOGIC_CONTROLLER, 'W', CABLE,
                 'I', WIRE_ELECTRIC, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.THERMAL_CENTRIFUGE, "CEC", "OMO", "WEW", 'M', HULL, 'E', MOTOR, 'C',
-                CIRCUIT, 'W', CABLE, 'O', COIL_HEATING_DOUBLE);
+                LOGIC_CONTROLLER, 'W', CABLE, 'O', COIL_HEATING_DOUBLE);
         registerMachineRecipe(MetaTileEntities.ORE_WASHER, "RGR", "CEC", "WMW", 'M', HULL, 'R', ROTOR, 'E', MOTOR, 'C',
-                CIRCUIT, 'W', CABLE, 'G', GLASS);
+                LOGIC_CONTROLLER, 'W', CABLE, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.PACKER, "BCB", "RMV", "WCW", 'M', HULL, 'R', ROBOT_ARM, 'V', CONVEYOR,
-                'C', CIRCUIT, 'W', CABLE, 'B', OreDictNames.chestWood);
+                'C', LOGIC_CONTROLLER, 'W', CABLE, 'B', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.CHEMICAL_REACTOR, "GRG", "WEW", "CMC", 'M', HULL, 'R', ROTOR, 'E', MOTOR,
-                'C', CIRCUIT, 'W', CABLE, 'G', PIPE_REACTOR);
+                'C', LOGIC_CONTROLLER, 'W', CABLE, 'G', PIPE_REACTOR);
         registerMachineRecipe(MetaTileEntities.FLUID_SOLIDIFIER, "PGP", "WMW", "CBC", 'M', HULL, 'P', PUMP, 'C',
-                CIRCUIT, 'W', CABLE, 'G', GLASS, 'B', OreDictNames.chestWood);
+                LOGIC_CONTROLLER, 'W', CABLE, 'G', GLASS, 'B', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.DISTILLERY, "GBG", "CMC", "WPW", 'M', HULL, 'P', PUMP, 'B',
-                STICK_DISTILLATION, 'C', CIRCUIT, 'W', CABLE, 'G', GLASS);
+                STICK_DISTILLATION, 'C', LOGIC_CONTROLLER, 'W', CABLE, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.CHEMICAL_BATH, "VGW", "PGV", "CMC", 'M', HULL, 'P', PUMP, 'V', CONVEYOR,
-                'C', CIRCUIT, 'W', CABLE, 'G', GLASS);
+                'C', LOGIC_CONTROLLER, 'W', CABLE, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.POLARIZER, "ZSZ", "WMW", "ZSZ", 'M', HULL, 'S', STICK_ELECTROMAGNETIC,
                 'Z', COIL_ELECTRIC, 'W', CABLE);
         registerMachineRecipe(MetaTileEntities.ELECTROMAGNETIC_SEPARATOR, "VWZ", "WMS", "CWZ", 'M', HULL, 'S',
-                STICK_ELECTROMAGNETIC, 'Z', COIL_ELECTRIC, 'V', CONVEYOR, 'C', CIRCUIT, 'W', CABLE);
-        registerMachineRecipe(MetaTileEntities.AUTOCLAVE, "IGI", "IMI", "CPC", 'M', HULL, 'P', PUMP, 'C', CIRCUIT, 'I',
+                STICK_ELECTROMAGNETIC, 'Z', COIL_ELECTRIC, 'V', CONVEYOR, 'C', LOGIC_CONTROLLER, 'W', CABLE);
+        registerMachineRecipe(MetaTileEntities.AUTOCLAVE, "IGI", "IMI", "CPC", 'M', HULL, 'P', PUMP, 'C', LOGIC_CONTROLLER, 'I',
                 PLATE, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.MIXER, "GRG", "GEG", "CMC", 'M', HULL, 'E', MOTOR, 'R', ROTOR, 'C',
-                CIRCUIT, 'G', GLASS);
+                LOGIC_CONTROLLER, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.LASER_ENGRAVER, "PEP", "CMC", "WCW", 'M', HULL, 'E', MetaItems.EMITTER_ELECTRON.getStackForm(), 'P',
                 PISTON, 'C', CIRCUIT, 'W', CABLE);
-        registerMachineRecipe(MetaTileEntities.FORMING_PRESS, "WPW", "CMC", "WPW", 'M', HULL, 'P', PISTON, 'C', CIRCUIT,
+        registerMachineRecipe(MetaTileEntities.FORMING_PRESS, "WPW", "CMC", "WPW", 'M', HULL, 'P', PISTON, 'C', LOGIC_CONTROLLER,
                 'W', CABLE);
-        registerMachineRecipe(MetaTileEntities.FORGE_HAMMER, "WPW", "CMC", "WAW", 'M', HULL, 'P', PISTON, 'C', CIRCUIT,
+        registerMachineRecipe(MetaTileEntities.FORGE_HAMMER, "WPW", "CMC", "WAW", 'M', HULL, 'P', PISTON, 'C', LOGIC_CONTROLLER,
                 'W', CABLE, 'A', OreDictNames.craftingAnvil);
         registerMachineRecipe(MetaTileEntities.FLUID_HEATER, "OGO", "PMP", "WCW", 'M', HULL, 'P', PUMP, 'O',
-                COIL_HEATING_DOUBLE, 'C', CIRCUIT, 'W', CABLE, 'G', GLASS);
+                COIL_HEATING_DOUBLE, 'C', LOGIC_CONTROLLER, 'W', CABLE, 'G', GLASS);
         registerMachineRecipe(MetaTileEntities.SIFTER, "WFW", "PMP", "CFC", 'M', HULL, 'P', PISTON, 'F',
-                MetaItems.ITEM_FILTER, 'C', CIRCUIT, 'W', CABLE);
+                MetaItems.ITEM_FILTER, 'C', LOGIC_CONTROLLER, 'W', CABLE);
         registerMachineRecipe(MetaTileEntities.CIRCUIT_ASSEMBLER, "RIR", "CHC", "WIW", 'R', ROBOT_ARM, 'I',
-                BETTER_CIRCUIT, 'C', CONVEYOR, 'H', HULL, 'W', CABLE);
+                CIRCUIT, 'C', CONVEYOR, 'H', HULL, 'W', CABLE);
         // TODO Replication system
         // registerMachineRecipe(MetaTileEntities.MASS_FABRICATOR, "CFC", "QMQ", "CFC", 'M', HULL, 'Q', CABLE_QUAD, 'C',
         // BETTER_CIRCUIT, 'F', FIELD_GENERATOR);
         // registerMachineRecipe(MetaTileEntities.REPLICATOR, "EFE", "CMC", "EQE", 'M', HULL, 'Q', CABLE_QUAD, 'C',
         // BETTER_CIRCUIT, 'F', FIELD_GENERATOR, 'E', EMITTER);
-        registerMachineRecipe(MetaTileEntities.SCANNER, "CEC", "WHW", "CSC", 'C', BETTER_CIRCUIT, 'E', MetaItems.EMITTER_XRAY.getStackForm(), 'W',
+        registerMachineRecipe(MetaTileEntities.SCANNER, "CEC", "WHW", "CSC", 'C', CIRCUIT, 'E', MetaItems.EMITTER_XRAY.getStackForm(), 'W',
                 CABLE, 'H', HULL, 'S', MetaItems.SENSOR_LIGHT.getStackForm());
         registerMachineRecipe(MetaTileEntities.GAS_COLLECTOR, "WFW", "PHP", "WCW", 'W', Blocks.IRON_BARS, 'F',
                 MetaItems.FLUID_FILTER, 'P', PUMP, 'H', HULL, 'C', CIRCUIT);
-        registerMachineRecipe(MetaTileEntities.PUMP, "WGW", "GMG", "TGT", 'M', HULL, 'W', CIRCUIT, 'G', PUMP, 'T',
+        registerMachineRecipe(MetaTileEntities.PUMP, "WGW", "GMG", "TGT", 'M', HULL, 'W', LOGIC_CONTROLLER, 'G', PUMP, 'T',
                 PIPE);
-        registerMachineRecipe(MetaTileEntities.FISHER, "WTW", "PMP", "TGT", 'M', HULL, 'W', CIRCUIT, 'G', PUMP, 'T',
+        registerMachineRecipe(MetaTileEntities.FISHER, "WTW", "PMP", "TGT", 'M', HULL, 'W', LOGIC_CONTROLLER, 'G', PUMP, 'T',
                 MOTOR, 'P', PISTON);
         registerMachineRecipe(MetaTileEntities.ITEM_COLLECTOR, "MRM", "RHR", "CWC", 'M', MOTOR, 'R', ROTOR, 'H', HULL,
-                'C', CIRCUIT, 'W', CABLE);
-        registerMachineRecipe(MetaTileEntities.BLOCK_BREAKER, "MGM", "CHC", "WSW", 'M', MOTOR, 'H', HULL, 'C', CIRCUIT,
+                'C', LOGIC_CONTROLLER, 'W', CABLE);
+        registerMachineRecipe(MetaTileEntities.BLOCK_BREAKER, "MGM", "CHC", "WSW", 'M', MOTOR, 'H', HULL, 'C', LOGIC_CONTROLLER,
                 'W', CABLE, 'S', OreDictNames.chestWood, 'G', GRINDER);
         registerMachineRecipe(MetaTileEntities.WORLD_ACCELERATOR, "IGI", "FHF", "IGI", 'H', HULL, 'F', MetaItems.EMITTER_GAMMA, 'G',
                 CABLE_QUAD, 'I', MetaItems.EMITTER_GRAVITATION.getStackForm());

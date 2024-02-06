@@ -5,6 +5,8 @@ import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
 
+import gregtech.common.items.MetaItems;
+
 import net.minecraft.init.Items;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -12,11 +14,11 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.util.Map;
 
 import static gregtech.api.GTValues.*;
-import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.*;
+import static gregtech.common.items.MetaItems.PROGRAMMABLE_LOGIC_CONTROLLER_IV;
 
 public class ComponentRecipes {
 
@@ -743,5 +745,56 @@ public class ComponentRecipes {
                         .CWUt(32)
                         .EUt(VA[ZPM]))
                 .duration(600).EUt(100000).buildAndRegister();
+
+        //Logic Controllers Start
+
+        ModHandler.addShapedRecipe(true, "logic_controller_mv", PROGRAMMABLE_LOGIC_CONTROLLER_MV.getStackForm(), "CDC", "MRM", "BDB", 'C',
+                DIODE.getStackForm(), 'R', new UnificationEntry(plate, Iron), 'M',
+                new UnificationEntry(plate, Aluminium), 'D', new UnificationEntry(cableGtSingle, Copper), 'B',
+                VACUUM_TUBE.getStackForm());
+        ModHandler.addShapedRecipe(true, "logic_controller_hv", PROGRAMMABLE_LOGIC_CONTROLLER_HV.getStackForm(), "CDC", "MRM", "BDB", 'C',
+                TRANSISTOR.getStackForm(), 'R', new UnificationEntry(plate, StainlessSteel), 'M',
+                new UnificationEntry(plate, Polyethylene), 'D', new UnificationEntry(cableGtSingle, Gold), 'B',
+                DIODE.getStackForm());
+        ModHandler.addShapedRecipe(true, "logic_controller_ev", PROGRAMMABLE_LOGIC_CONTROLLER_EV.getStackForm(), "CDC", "MRM", "CDC", 'C',
+                SMD_DIODE.getStackForm(), 'R', new UnificationEntry(plate, Titanium), 'M',
+                new UnificationEntry(plate, Polyethylene), 'D', new UnificationEntry(cableGtSingle, Aluminium));
+        ModHandler.addShapedRecipe(true, "logic_controller_iv", PROGRAMMABLE_LOGIC_CONTROLLER_IV.getStackForm(), "CDC", "MRM", "CDC", 'C',
+                SMD_DIODE.getStackForm(), 'R', new UnificationEntry(plate, TungstenSteel), 'M',
+                new UnificationEntry(plate, Polytetrafluoroethylene), 'D', new UnificationEntry(cableGtSingle, Tungsten));
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(DIODE, 2)
+                .input(VACUUM_TUBE, 2)
+                .input(cableGtSingle, Copper, 2)
+                .input(plate, Aluminium, 2)
+                .input(plate, Iron, 1)
+                .outputs(PROGRAMMABLE_LOGIC_CONTROLLER_MV.getStackForm())
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(DIODE, 2)
+                .input(TRANSISTOR, 2)
+                .input(cableGtSingle, Gold, 2)
+                .input(plate, Polyethylene, 2)
+                .input(plate, StainlessSteel, 1)
+                .outputs(PROGRAMMABLE_LOGIC_CONTROLLER_HV.getStackForm())
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(SMD_DIODE, 4)
+                .input(cableGtSingle, Aluminium, 2)
+                .input(plate, Polyethylene, 2)
+                .input(plate, Titanium, 1)
+                .outputs(PROGRAMMABLE_LOGIC_CONTROLLER_EV.getStackForm())
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(SMD_DIODE, 4)
+                .input(cableGtSingle, Tungsten, 2)
+                .input(plate, Polyethylene, 2)
+                .input(plate, TungstenSteel, 1)
+                .outputs(PROGRAMMABLE_LOGIC_CONTROLLER_IV.getStackForm())
+                .duration(100).EUt(VA[LV]).buildAndRegister();
     }
 }

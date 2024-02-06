@@ -226,6 +226,22 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_UXV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_OpV;
 
+    public static MetaItem<?>.MetaValueItem LOGIC_CONTROLLER_MV;
+    public static MetaItem<?>.MetaValueItem LOGIC_CONTROLLER_HV;
+    public static MetaItem<?>.MetaValueItem LOGIC_CONTROLLER_EV;
+    public static MetaItem<?>.MetaValueItem LOGIC_CONTROLLER_IV;
+    public static MetaItem<?>.MetaValueItem LOGIC_CONTROLLER_LuV;
+    public static MetaItem<?>.MetaValueItem LOGIC_CONTROLLER_ZPM;
+    public static MetaItem<?>.MetaValueItem LOGIC_CONTROLLER_UV;
+
+    public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_MV;
+    public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_HV;
+    public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_EV;
+    public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_IV;
+    public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_LuV;
+    public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_ZPM;
+    public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_UV;
+
     public static MetaItem<?>.MetaValueItem EMITTER_RADIO;
     public static MetaItem<?>.MetaValueItem EMITTER_MICROWAVE;
     public static MetaItem<?>.MetaValueItem EMITTER_XRAY;
@@ -350,31 +366,26 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem PROCESSOR_MV;
     public static MetaItem<?>.MetaValueItem PROCESSOR_ASSEMBLY_HV;
     public static MetaItem<?>.MetaValueItem WORKSTATION_EV;
-    public static MetaItem<?>.MetaValueItem MAINFRAME_IV;
 
     // T4: Nano
     public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_HV;
     public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_ASSEMBLY_EV;
     public static MetaItem<?>.MetaValueItem NANO_COMPUTER_IV;
-    public static MetaItem<?>.MetaValueItem NANO_MAINFRAME_LUV;
 
     // T5: Quantum
     public static MetaItem<?>.MetaValueItem QUANTUM_PROCESSOR_EV;
     public static MetaItem<?>.MetaValueItem QUANTUM_ASSEMBLY_IV;
     public static MetaItem<?>.MetaValueItem QUANTUM_COMPUTER_LUV;
-    public static MetaItem<?>.MetaValueItem QUANTUM_MAINFRAME_ZPM;
 
     // T6: Crystal
     public static MetaItem<?>.MetaValueItem CRYSTAL_PROCESSOR_IV;
     public static MetaItem<?>.MetaValueItem CRYSTAL_ASSEMBLY_LUV;
     public static MetaItem<?>.MetaValueItem CRYSTAL_COMPUTER_ZPM;
-    public static MetaItem<?>.MetaValueItem CRYSTAL_MAINFRAME_UV;
 
     // T7: Wetware
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_LUV;
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_ASSEMBLY_ZPM;
     public static MetaItem<?>.MetaValueItem WETWARE_SUPER_COMPUTER_UV;
-    public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_UHV;
 
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;

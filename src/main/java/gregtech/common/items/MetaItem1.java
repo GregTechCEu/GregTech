@@ -877,27 +877,22 @@ public class MetaItem1 extends StandardMetaItem {
         PROCESSOR_MV = addItem(628, "circuit.processor").setUnificationData(OrePrefix.circuit, Tier.MV);
         PROCESSOR_ASSEMBLY_HV = addItem(629, "circuit.assembly").setUnificationData(OrePrefix.circuit, Tier.HV);
         WORKSTATION_EV = addItem(630, "circuit.workstation").setUnificationData(OrePrefix.circuit, Tier.EV);
-        MAINFRAME_IV = addItem(631, "circuit.mainframe").setUnificationData(OrePrefix.circuit, Tier.IV);
 
         // T4: Nano
         NANO_PROCESSOR_HV = addItem(632, "circuit.nano_processor").setUnificationData(OrePrefix.circuit, Tier.HV);
         NANO_PROCESSOR_ASSEMBLY_EV = addItem(633, "circuit.nano_assembly").setUnificationData(OrePrefix.circuit,
                 Tier.EV);
         NANO_COMPUTER_IV = addItem(634, "circuit.nano_computer").setUnificationData(OrePrefix.circuit, Tier.IV);
-        NANO_MAINFRAME_LUV = addItem(635, "circuit.nano_mainframe").setUnificationData(OrePrefix.circuit, Tier.LuV);
 
         // T5: Quantum
         QUANTUM_PROCESSOR_EV = addItem(636, "circuit.quantum_processor").setUnificationData(OrePrefix.circuit, Tier.EV);
         QUANTUM_ASSEMBLY_IV = addItem(637, "circuit.quantum_assembly").setUnificationData(OrePrefix.circuit, Tier.IV);
         QUANTUM_COMPUTER_LUV = addItem(638, "circuit.quantum_computer").setUnificationData(OrePrefix.circuit, Tier.LuV);
-        QUANTUM_MAINFRAME_ZPM = addItem(639, "circuit.quantum_mainframe").setUnificationData(OrePrefix.circuit,
-                Tier.ZPM);
 
         // T6: Crystal
         CRYSTAL_PROCESSOR_IV = addItem(640, "circuit.crystal_processor").setUnificationData(OrePrefix.circuit, Tier.IV);
         CRYSTAL_ASSEMBLY_LUV = addItem(641, "circuit.crystal_assembly").setUnificationData(OrePrefix.circuit, Tier.LuV);
         CRYSTAL_COMPUTER_ZPM = addItem(642, "circuit.crystal_computer").setUnificationData(OrePrefix.circuit, Tier.ZPM);
-        CRYSTAL_MAINFRAME_UV = addItem(643, "circuit.crystal_mainframe").setUnificationData(OrePrefix.circuit, Tier.UV);
 
         // T7: Wetware
         WETWARE_PROCESSOR_LUV = addItem(644, "circuit.wetware_processor").setUnificationData(OrePrefix.circuit,
@@ -906,8 +901,6 @@ public class MetaItem1 extends StandardMetaItem {
                 Tier.ZPM);
         WETWARE_SUPER_COMPUTER_UV = addItem(646, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit,
                 Tier.UV);
-        WETWARE_MAINFRAME_UHV = addItem(647, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit,
-                Tier.UHV);
 
         // T8: Bioware
 
@@ -1079,6 +1072,26 @@ public class MetaItem1 extends StandardMetaItem {
                 GLASS_LENSES.put(color, addItem(820 + i, String.format("glass_lens.%s", color.toString())));
             }
         }
+
+        // Logic Controllers: 841-860
+
+        LOGIC_CONTROLLER_MV = addItem(841, "electric.logic_controller.mv");
+        LOGIC_CONTROLLER_HV = addItem(842, "electric.logic_controller.hv");
+        LOGIC_CONTROLLER_EV = addItem(843, "electric.logic_controller.ev");
+        LOGIC_CONTROLLER_IV = addItem(844, "electric.logic_controller.iv");
+        LOGIC_CONTROLLER_LuV = addItem(845, "electric.logic_controller.luv");
+        LOGIC_CONTROLLER_ZPM = addItem(846, "electric.logic_controller.zpm");
+        LOGIC_CONTROLLER_UV = addItem(847, "electric.logic_controller.uv");
+
+        // Raw Logic Controllers: 861-880
+
+        PROGRAMMABLE_LOGIC_CONTROLLER_MV = addItem(861, "electric.programmable_logic_controller.mv");
+        PROGRAMMABLE_LOGIC_CONTROLLER_HV = addItem(862, "electric.programmable_logic_controller.hv");
+        PROGRAMMABLE_LOGIC_CONTROLLER_EV = addItem(863, "electric.programmable_logic_controller.ev");
+        PROGRAMMABLE_LOGIC_CONTROLLER_IV = addItem(864, "electric.programmable_logic_controller.iv");
+        PROGRAMMABLE_LOGIC_CONTROLLER_LuV = addItem(865, "electric.programmable_logic_controller.luv");
+        PROGRAMMABLE_LOGIC_CONTROLLER_ZPM = addItem(866, "electric.programmable_logic_controller.zpm");
+        PROGRAMMABLE_LOGIC_CONTROLLER_UV = addItem(867, "electric.programmable_logic_controller.uv");
 
         // Misc 1000+
         NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);

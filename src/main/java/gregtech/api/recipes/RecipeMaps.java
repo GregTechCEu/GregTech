@@ -1381,6 +1381,17 @@ public final class RecipeMaps {
             .sound(GTSoundEvents.FURNACE)
             .build();
 
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> PROGRAMMER_RECIPES = new RecipeMapBuilder<>("programmer",
+            new SimpleRecipeBuilder())
+            .itemInputs(2)
+            .itemOutputs(1)
+            .itemSlotOverlay(GuiTextures.DATA_ORB_OVERLAY, false, false)
+            .itemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false, true)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
+            .sound(GTSoundEvents.COMPUTATION)
+            .build();
+
     //////////////////////////////////////
     // Fuel Recipe Maps //
     //////////////////////////////////////

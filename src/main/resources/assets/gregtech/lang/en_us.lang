@@ -481,6 +481,22 @@ metaitem.robot.arm.opv.name=OpV Robot Arm
 
 metaitem.robot.arm.tooltip=Limits §fItems§7 to specific quantities as §fCover§7.
 
+metaitem.electric.logic_controller.mv.name=MV Logic Controller
+metaitem.electric.logic_controller.hv.name=HV Logic Controller
+metaitem.electric.logic_controller.ev.name=EV Logic Controller
+metaitem.electric.logic_controller.iv.name=IV Logic Controller
+metaitem.electric.logic_controller.luv.name=LuV Logic Controller
+metaitem.electric.logic_controller.zpm.name=ZPM Logic Controller
+metaitem.electric.logic_controller.uv.name=UV Logic Controller
+
+metaitem.electric.programmable_logic_controller.mv.name=Programmable MV Logic Controller
+metaitem.electric.programmable_logic_controller.hv.name=Programmable HV Logic Controller
+metaitem.electric.programmable_logic_controller.ev.name=Programmable EV Logic Controller
+metaitem.electric.programmable_logic_controller.iv.name=Programmable IV Logic Controller
+metaitem.electric.programmable_logic_controller.luv.name=Programmable LuV Logic Controller
+metaitem.electric.programmable_logic_controller.zpm.name=Programmable ZPM Logic Controller
+metaitem.electric.programmable_logic_controller.uv.name=Programmable UV Logic Controller
+
 metaitem.field.generator.lv.name=LV Field Generator
 metaitem.field.generator.mv.name=MV Field Generator
 metaitem.field.generator.hv.name=HV Field Generator
@@ -6348,6 +6364,7 @@ tile.large_multiblock_casing.steam_casing.name=Industrial Steam Casing
 # RecipeMaps
 recipemap.alloy_blast_smelter.name=Alloy Blast Smelting
 recipemap.fixed_bed_reactor.name=Fixed Bed Reactor
+recipemap.programmer.name=Programmer
 
 # Materials
 gregtech.material.stellite_100=Stellite-100
