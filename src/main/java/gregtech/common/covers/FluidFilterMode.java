@@ -8,6 +8,7 @@ public enum FluidFilterMode implements IStringSerializable {
     FILTER_DRAIN("cover.fluid_filter.mode.filter_drain"),
     FILTER_BOTH("cover.fluid_filter.mode.filter_both");
 
+    public static final FluidFilterMode[] VALUES = values();
     public final String localeName;
 
     FluidFilterMode(String localeName) {

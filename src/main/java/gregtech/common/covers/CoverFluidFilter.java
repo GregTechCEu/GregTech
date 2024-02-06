@@ -80,6 +80,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        packetBuffer.writeByte(this.filterMode.ordinal());
         packetBuffer.writeBoolean(this.fluidFilterContainer.hasFilter());
         if (this.fluidFilterContainer.hasFilter()) {
             packetBuffer.writeItemStack(this.fluidFilterContainer.getFilterStack());
@@ -88,6 +89,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
+        this.filterMode = FluidFilterMode.VALUES[packetBuffer.readByte()];
         if (!packetBuffer.readBoolean()) return;
         try {
             this.fluidFilterContainer.setFilterStack(packetBuffer.readItemStack());

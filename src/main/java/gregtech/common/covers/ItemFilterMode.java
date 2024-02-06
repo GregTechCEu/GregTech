@@ -8,6 +8,7 @@ public enum ItemFilterMode implements IStringSerializable {
     FILTER_EXTRACT("cover.filter.mode.filter_extract"),
     FILTER_BOTH("cover.filter.mode.filter_both");
 
+    public static final ItemFilterMode[] VALUES = values();
     public final String localeName;
 
     ItemFilterMode(String localeName) {
