@@ -9,11 +9,9 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.unification.stack.ItemAndMetadata;
-
 import gregtech.common.covers.filter.readers.SmartItemFilterReader;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 
 import com.cleanroommc.modularui.api.drawable.IKey;

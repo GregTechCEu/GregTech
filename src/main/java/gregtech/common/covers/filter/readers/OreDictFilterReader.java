@@ -2,7 +2,6 @@ package gregtech.common.covers.filter.readers;
 
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
-
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 
 import net.minecraft.item.ItemStack;
@@ -11,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 public class OreDictFilterReader extends SimpleItemFilterReader {
+
     private static final String EXPRESSION = "OreDictionaryFilter";
     private static final String CASE_SENSITIVE = "caseSensitive";
     private static final String MATCH_ALL = "matchAll";

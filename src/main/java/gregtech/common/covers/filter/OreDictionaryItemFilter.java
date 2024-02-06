@@ -9,7 +9,6 @@ import gregtech.api.unification.stack.MultiItemVariantMap;
 import gregtech.api.unification.stack.SingleItemVariantMap;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
-import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import gregtech.common.covers.filter.readers.OreDictFilterReader;
 import gregtech.common.gui.widget.HighlightedTextField;
 import gregtech.common.gui.widget.orefilter.OreFilterTestSlot;
@@ -17,7 +16,6 @@ import gregtech.common.gui.widget.orefilter.OreFilterTestSlot;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;

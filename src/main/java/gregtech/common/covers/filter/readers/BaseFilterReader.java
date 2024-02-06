@@ -4,15 +4,8 @@ import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.util.Constants;
-
-import com.cleanroommc.modularui.utils.ItemStackItemHandler;
-
 import net.minecraftforge.common.util.INBTSerializable;
-
-import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCompound> {
 

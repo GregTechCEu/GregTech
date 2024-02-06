@@ -8,6 +8,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 public interface FilterReader {
+
     ItemStack getContainer();
 
     @NotNull
@@ -41,7 +42,7 @@ public interface FilterReader {
     boolean validateSlotIndex(int slot);
 
     @NotNull
-    default NBTTagCompound getTagAt(int i ) {
+    default NBTTagCompound getTagAt(int i) {
         if (validateSlotIndex(i)) {
             return getInventoryNbt().getCompoundTagAt(i);
         }

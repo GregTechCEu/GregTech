@@ -1,8 +1,5 @@
 package gregtech.api.mui.sync;
 
-import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
-
 import gregtech.common.covers.filter.readers.SimpleFluidFilterReader;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +10,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class FixedFluidSlotSH extends FluidSlotSyncHandler {

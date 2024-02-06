@@ -8,7 +8,6 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.covers.filter.ItemFilter;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
