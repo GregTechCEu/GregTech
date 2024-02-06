@@ -53,7 +53,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new gregtech.api.gui.widgets.LabelWidget(10, y, "cover.pump.fluid_filter.title"));
-        widgetGroup.accept(new gregtech.api.gui.widgets.SlotWidget(filterInventory, 0, 10, y + 15)
+        widgetGroup.accept(new gregtech.api.gui.widgets.SlotWidget(this, 0, 10, y + 15)
                 .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT,
                         gregtech.api.gui.GuiTextures.FILTER_SLOT_OVERLAY));
 
@@ -104,7 +104,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
         return new Row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
+                        .slot(SyncHandlers.itemSlot(this, 0)
                                 .filter(FilterTypeRegistry::isFluidFilter)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                     if (newItem.isEmpty() || FilterTypeRegistry.isFluidFilter(newItem)) {
@@ -134,7 +134,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
                             return success;
                         }))
                 .child(IKey.dynamic(() -> hasFilter() ?
-                        getFilterInventory().getStackInSlot(0).getDisplayName() :
+                        getFilterStack().getDisplayName() :
                         IKey.lang("metaitem.fluid_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
@@ -143,14 +143,14 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        var stack = getFilterInventory().getStackInSlot(0);
+        var stack = getFilterStack();
 
         if (FilterTypeRegistry.isFluidFilter(stack))
             setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
     }
 
     protected void onFilterSlotChange(boolean notify) {
-        ItemStack filterStack = filterInventory.getStackInSlot(0);
+        ItemStack filterStack = getFilterStack();
         int newId = FilterTypeRegistry.getFilterIdForStack(filterStack);
         int currentId = FilterTypeRegistry.getIdForFilter(getFilter());
 
@@ -171,7 +171,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
         super.deserializeNBT(tagCompound);
-        var stack = getFilterInventory().getStackInSlot(0);
+        var stack = getFilterStack();
         if (FilterTypeRegistry.isFluidFilter(stack)) {
             setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
             getFluidFilter().readFromNBT(tagCompound);

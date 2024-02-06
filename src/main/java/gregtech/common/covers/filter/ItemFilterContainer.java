@@ -42,7 +42,7 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.conveyor.item_filter.title"));
-        widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
+        widgetGroup.accept(new SlotWidget(this, 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
         this.initFilterUI(y + 38, widgetGroup);
@@ -90,7 +90,7 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
         return new Row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(filterInventory, 0)
+                        .slot(SyncHandlers.itemSlot(this, 0)
                                 .filter(FilterTypeRegistry::isItemFilter)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                     if (newItem.isEmpty() || FilterTypeRegistry.isItemFilter(newItem)) {
@@ -120,14 +120,14 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
                             return success;
                         }))
                 .child(IKey.dynamic(() -> hasFilter() ?
-                        getFilterInventory().getStackInSlot(0).getDisplayName() :
+                        getFilterStack().getDisplayName() :
                         IKey.lang("metaitem.item_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
     }
 
     protected void onFilterSlotChange(boolean notify) {
-        ItemStack filterStack = filterInventory.getStackInSlot(0);
+        ItemStack filterStack = getFilterStack();
         int newId = FilterTypeRegistry.getFilterIdForStack(filterStack);
         int currentId = FilterTypeRegistry.getIdForFilter(getFilter());
 
@@ -148,7 +148,7 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        var stack = getFilterInventory().getStackInSlot(0);
+        var stack = getFilterStack();
 
         if (FilterTypeRegistry.isItemFilter(stack))
             setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
@@ -157,9 +157,9 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
         super.deserializeNBT(tagCompound);
-        var stack = getFilterInventory().getFilterStack();
+        var stack = getFilterStack();
         if (FilterTypeRegistry.isItemFilter(stack)) {
-            getFilterInventory().setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
+            setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
             getItemFilter().readFromNBT(tagCompound); // try to read old data
         }
     }
