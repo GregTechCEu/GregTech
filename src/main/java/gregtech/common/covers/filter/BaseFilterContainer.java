@@ -134,11 +134,6 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         onFilterInstanceChange();
     }
 
-    @Deprecated
-    public void adjustTransferStackSize(int amount) {
-        setTransferSize(transferSize + amount);
-    }
-
     public void setBlacklistFilter(boolean blacklistFilter) {
         if (hasFilter()) getFilter().setBlacklistFilter(blacklistFilter);
         onFilterInstanceChange();
