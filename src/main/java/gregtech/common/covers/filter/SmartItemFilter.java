@@ -10,6 +10,8 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.unification.stack.ItemAndMetadata;
 
+import gregtech.common.covers.filter.readers.SmartItemFilterReader;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
@@ -32,7 +34,7 @@ import java.util.function.Consumer;
 
 public class SmartItemFilter extends ItemFilter {
 
-    private SmartItemFilterReader filterReader;
+    private final SmartItemFilterReader filterReader;
 
     public SmartItemFilter(ItemStack stack) {
         this.filterReader = new SmartItemFilterReader(stack);
@@ -175,33 +177,6 @@ public class SmartItemFilter extends ItemFilter {
         @Override
         public String getName() {
             return localeName;
-        }
-    }
-
-    protected class SmartItemFilterReader extends BaseItemFilterReader {
-
-        private static final String FILTER_MODE = "FilterMode";
-
-        public SmartItemFilterReader(ItemStack container) {
-            super(container, 0);
-        }
-
-        public SmartFilteringMode getFilteringMode() {
-            if (!getStackTag().hasKey(FILTER_MODE))
-                setFilteringMode(SmartFilteringMode.ELECTROLYZER);
-
-            return SmartFilteringMode.VALUES[getStackTag().getInteger(FILTER_MODE)];
-        }
-
-        public void setFilteringMode(SmartFilteringMode filteringMode) {
-            getStackTag().setInteger(FILTER_MODE, filteringMode.ordinal());
-            markDirty();
-        }
-
-        @Override
-        public void readFromNBT(NBTTagCompound tagCompound) {
-            super.readFromNBT(tagCompound);
-            this.setFilteringMode(SmartFilteringMode.VALUES[tagCompound.getInteger(FILTER_MODE)]);
         }
     }
 }

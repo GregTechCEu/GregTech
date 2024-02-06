@@ -53,10 +53,23 @@ public abstract class BaseFilterContainer<R, T extends Filter<R>> implements INB
         return currentFilter;
     }
 
+    public final @NotNull ItemStack getFilterStack() {
+        return this.filterInventory.getStackInSlot(0);
+    }
+
+    @SuppressWarnings("unchecked") // really need to stop doing this
+    public final void setFilterStack(ItemStack stack) {
+        this.filterInventory.setStackInSlot(0, stack);
+        if (FilterTypeRegistry.isItemFilter(stack)) {
+            setFilter((T) FilterTypeRegistry.getItemFilterForStack(stack));
+        } else {
+            setFilter((T) FilterTypeRegistry.getFluidFilterForStack(stack));
+        }
+    }
+
     public final void setFilter(@Nullable T newFilter) {
         this.currentFilter = newFilter;
         if (hasFilter()) {
-            this.filterInventory.setStackInSlot(0, this.currentFilter.getContainerStack());
             this.currentFilter.setDirtyNotifiable(dirtyNotifiable);
         }
         if (onFilterInstanceChange != null) {

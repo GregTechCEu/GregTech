@@ -64,20 +64,19 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
         var dropStack = GTUtility.copy(1, itemStack);
-        this.itemFilterContainer.setFilter(FilterTypeRegistry.getItemFilterForStack(dropStack));
-        this.itemFilterContainer.setMaxTransferSize(1);
+        this.itemFilterContainer.setFilterStack(dropStack);
     }
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        return getItemFilter().getContainerStack();
+        return this.itemFilterContainer.getFilterStack();
     }
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         packetBuffer.writeBoolean(itemFilterContainer.hasFilter());
         if (itemFilterContainer.hasFilter()) {
-            packetBuffer.writeItemStack(getItemFilter().getContainerStack());
+            packetBuffer.writeItemStack(this.itemFilterContainer.getFilterStack());
         }
     }
 
@@ -85,7 +84,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         if (!packetBuffer.readBoolean()) return;
         try {
-            this.itemFilterContainer.setFilter(FilterTypeRegistry.getItemFilterForStack(packetBuffer.readItemStack()));
+            this.itemFilterContainer.setFilterStack(packetBuffer.readItemStack());
         } catch (IOException e) {
             GTLog.logger.error("Failed to read filter for CoverItemFilter! %s", getPos().toString());
         }

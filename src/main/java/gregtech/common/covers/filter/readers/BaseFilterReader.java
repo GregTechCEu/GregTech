@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter.readers;
 
+import gregtech.api.util.IDirtyNotifiable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -7,25 +9,44 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.utils.ItemStackItemHandler;
+
+import net.minecraftforge.common.util.INBTSerializable;
+
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseFilterReader extends ItemStackItemHandler {
+public abstract class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCompound> {
 
     protected final ItemStack container;
+    private IDirtyNotifiable dirtyNotifiable;
+    private final int size;
     protected int maxTransferRate = 1;
-    protected static final String KEY_ITEMS = "ItemFilter";
     protected static final String BLACKLIST = "IsBlacklist";
 
     public BaseFilterReader(ItemStack container, int slots) {
-        super(container, slots);
         this.container = container;
+        this.size = slots;
     }
 
     public ItemStack getContainer() {
         return this.container;
     }
 
-    public abstract void onTransferRateChange();
+    @Override
+    public int getSize() {
+        return this.size;
+    }
+
+    public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
+        this.dirtyNotifiable = dirtyNotifiable;
+    }
+
+    public final void markDirty() {
+        if (dirtyNotifiable != null) {
+            dirtyNotifiable.markAsDirty();
+        }
+    }
+
+    public void onTransferRateChange() {}
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
         setWhitelist(!blacklistFilter);
@@ -42,6 +63,7 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
             else
                 getStackTag().setBoolean(BLACKLIST, true);
             onTransferRateChange();
+            markDirty();
         }
     }
 
@@ -57,40 +79,19 @@ public abstract class BaseFilterReader extends ItemStackItemHandler {
         return isBlacklistFilter() ? 1 : this.maxTransferRate;
     }
 
-    protected NBTTagCompound getStackTag() {
-        if (!container.hasTagCompound()) {
-            container.setTagCompound(new NBTTagCompound());
-        }
-        return container.getTagCompound();
+    @Override
+    public boolean validateSlotIndex(int slot) {
+        return slot >= 0 && slot < getSize();
     }
 
     @Override
-    public NBTTagList getItemsNbt() {
-        NBTTagCompound nbt = getStackTag();
-        if (!nbt.hasKey(KEY_ITEMS)) {
-            NBTTagList list = new NBTTagList();
-            for (int i = 0; i < getSlots(); i++) {
-                list.appendTag(new NBTTagCompound());
-            }
-            nbt.setTag(KEY_ITEMS, list);
-        }
-        return nbt.getTagList(KEY_ITEMS, Constants.NBT.TAG_COMPOUND);
+    public NBTTagCompound serializeNBT() {
+        return getStackTag();
     }
 
     @Override
-    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-        super.setStackInSlot(slot, stack);
-        onContentsChanged(slot);
-    }
-
-    @Override
-    protected void validateSlotIndex(int slot) {
-        if (slot < 0 || slot >= this.getSlots()) {
-            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + this.getSlots() + ")");
-        }
-    }
-
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
+    public void deserializeNBT(NBTTagCompound nbt) {
+        if (nbt.hasKey(BLACKLIST))
+            setBlacklistFilter(nbt.getBoolean(BLACKLIST));
     }
 }

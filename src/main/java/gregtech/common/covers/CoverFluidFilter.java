@@ -74,19 +74,19 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
         var dropStack = GTUtility.copy(1, itemStack);
-        this.fluidFilterContainer.setFilter(FilterTypeRegistry.getFluidFilterForStack(dropStack));
+        this.fluidFilterContainer.setFilterStack(dropStack);
     }
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        return getFluidFilter().getContainerStack();
+        return this.fluidFilterContainer.getFilterStack();
     }
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         packetBuffer.writeBoolean(this.fluidFilterContainer.hasFilter());
         if (this.fluidFilterContainer.hasFilter()) {
-            packetBuffer.writeItemStack(getFluidFilter().getContainerStack());
+            packetBuffer.writeItemStack(this.fluidFilterContainer.getFilterStack());
         }
     }
 
@@ -94,8 +94,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         if (!packetBuffer.readBoolean()) return;
         try {
-            this.fluidFilterContainer
-                    .setFilter(FilterTypeRegistry.getFluidFilterForStack(packetBuffer.readItemStack()));
+            this.fluidFilterContainer.setFilterStack(packetBuffer.readItemStack());
         } catch (IOException e) {
             GTLog.logger.error("Failed to read filter for CoverFluidFilter! %s", getPos().toString());
         }
@@ -157,11 +156,6 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public @NotNull @Unmodifiable List<@NotNull ItemStack> getDrops() {
-        return Collections.singletonList(this.fluidFilterContainer.getFilter().getContainerStack());
-    }
-
-    @Override
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         this.texture.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
@@ -192,7 +186,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
-        this.fluidFilterContainer.deserializeNBT(tagCompound);
+        this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

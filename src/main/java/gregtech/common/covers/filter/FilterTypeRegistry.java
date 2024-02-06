@@ -115,6 +115,19 @@ public class FilterTypeRegistry {
         return createNewFilterInstance(filterClass, itemStack);
     }
 
+    public static @NotNull Filter<?> getFilterForStack(ItemStack itemStack) {
+        int id = getFilterIdForStack(itemStack);
+        if (id == -1) {
+            throw new IllegalArgumentException(
+                    String.format("Failed to create filter instance for stack %s", itemStack));
+        }
+
+        if (fluidFilterById.containsKey(id))
+            return createNewFilterInstance(fluidFilterById.get(id), itemStack);
+        else
+            return createNewFilterInstance(itemFilterById.get(id), itemStack);
+    }
+
     public static @NotNull FluidFilter getFluidFilterForStack(ItemStack itemStack) {
         int filterId = getFilterIdForStack(itemStack);
         if (filterId == -1) {

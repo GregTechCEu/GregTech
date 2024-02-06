@@ -25,9 +25,9 @@ import java.util.function.Consumer;
 public abstract class FluidFilter implements Filter<FluidStack> {
 
     private IDirtyNotifiable dirtyNotifiable;
-    private BaseFluidFilterReader filterReader;
+    private BaseFilterReader filterReader;
 
-    protected void setFilterReader(BaseFluidFilterReader filterReader) {
+    protected void setFilterReader(BaseFilterReader filterReader) {
         this.filterReader = filterReader;
     }
 
@@ -84,6 +84,7 @@ public abstract class FluidFilter implements Filter<FluidStack> {
 
     public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
+        this.filterReader.setDirtyNotifiable(dirtyNotifiable);
     }
 
     public abstract void configureFilterTanks(int amount);
@@ -101,44 +102,5 @@ public abstract class FluidFilter implements Filter<FluidStack> {
         if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();
         }
-    }
-
-    protected abstract static class BaseFluidFilterReader extends BaseFilterReader {
-
-        protected static final String KEY_FLUIDS = "FluidFilter";
-        protected static final String BUCKET_ONLY = "BucketOnly";
-
-        public BaseFluidFilterReader(ItemStack container, int slots) {
-            super(container, slots);
-            this.maxTransferRate = 1000;
-        }
-
-        public final void setBucketOnly(boolean bucketOnly) {
-            getStackTag().setBoolean(BUCKET_ONLY, bucketOnly);
-        }
-
-        public final boolean shouldShowAmount() {
-            return getMaxTransferRate() > 1;
-        }
-
-        @Override
-        public NBTTagList getItemsNbt() {
-            NBTTagCompound nbt = getStackTag();
-            if (!nbt.hasKey(KEY_FLUIDS)) {
-                NBTTagList list = new NBTTagList();
-                for (int i = 0; i < getSlots(); i++) {
-                    list.appendTag(new NBTTagCompound());
-                }
-                nbt.setTag(KEY_FLUIDS, list);
-            }
-            return nbt.getTagList(KEY_FLUIDS, Constants.NBT.TAG_COMPOUND);
-        }
-
-        @Nullable
-        public FluidStack getFluidStack(int i) {
-            return getFluidTank(i).getFluid();
-        }
-
-        public abstract IFluidTank getFluidTank(int i);
     }
 }

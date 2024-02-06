@@ -8,6 +8,8 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.TextFormattingUtil;
 
+import gregtech.common.covers.filter.readers.SimpleItemFilterReader;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
@@ -111,8 +113,7 @@ public class SimpleItemFilter extends ItemFilter {
                                 })
                                 .tooltipBuilder(tooltip -> {
                                     tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
-                                    int count = this.filterReader.getItemsNbt()
-                                            .getCompoundTagAt(index)
+                                    int count = this.filterReader.getTagAt(index)
                                             .getInteger(SimpleItemFilterReader.COUNT);
                                     if (count > 64)
                                         tooltip.addLine(
@@ -162,87 +163,5 @@ public class SimpleItemFilter extends ItemFilter {
             return false;
         }
         return ignoreNBTData || ItemStack.areItemStackTagsEqual(filterStack, itemStack);
-    }
-
-    protected class SimpleItemFilterReader extends BaseItemFilterReader {
-
-        public static final String COUNT = "Count";
-        public static final String RESPECT_NBT = "IgnoreNBT";
-        public static final String RESPECT_DAMAGE = "IgnoreDamage";
-
-        public SimpleItemFilterReader(ItemStack container, int slots) {
-            super(container, slots);
-        }
-
-        protected void setIgnoreDamage(boolean ignoreDamage) {
-            if (!getStackTag().getBoolean(RESPECT_DAMAGE) == ignoreDamage)
-                return;
-
-            if (ignoreDamage)
-                getStackTag().removeTag(RESPECT_DAMAGE);
-            else
-                getStackTag().setBoolean(RESPECT_DAMAGE, true);
-            markDirty();
-        }
-
-        protected void setIgnoreNBT(boolean ignoreNBT) {
-            if (!getStackTag().getBoolean(RESPECT_NBT) == ignoreNBT)
-                return;
-
-            if (ignoreNBT)
-                getStackTag().removeTag(RESPECT_NBT);
-            else
-                getStackTag().setBoolean(RESPECT_NBT, true);
-            markDirty();
-        }
-
-        public boolean isIgnoreDamage() {
-            return !getStackTag().getBoolean(RESPECT_DAMAGE);
-        }
-
-        public boolean isIgnoreNBT() {
-            return !getStackTag().getBoolean(RESPECT_NBT);
-        }
-
-        @Override
-        public int getSlotLimit(int slot) {
-            return getMaxTransferRate();
-        }
-
-        @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
-            if (!stack.isEmpty()) {
-                stack.setCount(Math.min(stack.getCount(), isBlacklistFilter() ? 1 : getMaxTransferRate()));
-            }
-            super.setStackInSlot(slot, stack);
-        }
-
-        @Override
-        public void onTransferRateChange() {
-            for (int i = 0; i < getSlots(); i++) {
-                ItemStack itemStack = getStackInSlot(i);
-                if (!itemStack.isEmpty()) {
-                    itemStack.setCount(Math.min(itemStack.getCount(), isBlacklistFilter() ? 1 : getMaxTransferRate()));
-                    setStackInSlot(i, itemStack);
-                }
-            }
-        }
-
-        @Override
-        public void readFromNBT(NBTTagCompound tagCompound) {
-            super.readFromNBT(tagCompound);
-            this.setIgnoreDamage(tagCompound.getBoolean(RESPECT_DAMAGE));
-            this.setIgnoreNBT(tagCompound.getBoolean(RESPECT_NBT));
-
-            if (tagCompound.hasKey(KEY_ITEMS)) {
-                var temp = new ItemStackHandler();
-                temp.deserializeNBT(tagCompound.getCompoundTag(KEY_ITEMS));
-                for (int i = 0; i < temp.getSlots(); i++) {
-                    var stack = temp.getStackInSlot(i);
-                    if (stack.isEmpty()) continue;
-                    this.setStackInSlot(i, stack);
-                }
-            }
-        }
     }
 }

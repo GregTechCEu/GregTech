@@ -21,9 +21,9 @@ import java.util.function.Consumer;
 public abstract class ItemFilter implements Filter<ItemStack> {
 
     private IDirtyNotifiable dirtyNotifiable;
-    private BaseItemFilterReader filterReader;
+    private BaseFilterReader filterReader;
 
-    protected void setFilterReader(BaseItemFilterReader reader) {
+    protected void setFilterReader(BaseFilterReader reader) {
         this.filterReader = reader;
     }
 
@@ -82,7 +82,7 @@ public abstract class ItemFilter implements Filter<ItemStack> {
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
-        this.filterReader.readFromNBT(tagCompound);
+        this.filterReader.deserializeNBT(tagCompound);
         markDirty();
     }
 
@@ -92,25 +92,12 @@ public abstract class ItemFilter implements Filter<ItemStack> {
 
     public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
+        this.filterReader.setDirtyNotifiable(dirtyNotifiable);
     }
 
     public final void markDirty() {
         if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();
-        }
-    }
-
-    protected class BaseItemFilterReader extends BaseFilterReader {
-
-        public BaseItemFilterReader(ItemStack container, int slots) {
-            super(container, slots);
-        }
-
-        public void onTransferRateChange() {}
-
-        @Override
-        protected void onContentsChanged(int slot) {
-            markDirty();
         }
     }
 }

@@ -10,6 +10,7 @@ import gregtech.api.unification.stack.SingleItemVariantMap;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
+import gregtech.common.covers.filter.readers.OreDictFilterReader;
 import gregtech.common.gui.widget.HighlightedTextField;
 import gregtech.common.gui.widget.orefilter.OreFilterTestSlot;
 
@@ -45,13 +46,10 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     private final Map<Item, ItemVariantMap.Mutable<Boolean>> matchCache = new Object2ObjectOpenHashMap<>();
     private final SingleItemVariantMap<Boolean> noOreDictMatch = new SingleItemVariantMap<>();
-
-    private OreGlob glob = ImpossibleOreGlob.getInstance();
-    private OreGlobCompileResult result;
-    private final OreDictionaryItemFilterReader filterReader;
+    private final OreDictFilterReader filterReader;
 
     public OreDictionaryItemFilter(ItemStack stack) {
-        this.filterReader = new OreDictionaryItemFilterReader(stack, 0);
+        this.filterReader = new OreDictFilterReader(stack);
         setFilterReader(this.filterReader);
         recompile();
     }
@@ -63,19 +61,12 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @NotNull
     public OreGlob getGlob() {
-        return this.glob;
+        return this.filterReader.getGlob();
     }
 
     protected void recompile() {
         clearCache();
-        String expr = this.filterReader.getExpression();
-        if (!expr.isEmpty()) {
-            result = OreGlob.compile(expr, !this.filterReader.isCaseSensitive());
-            this.glob = result.getInstance();
-        } else {
-            this.glob = ImpossibleOreGlob.getInstance();
-            result = null;
-        }
+        this.filterReader.recompile();
     }
 
     protected void clearCache() {
@@ -161,11 +152,13 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     protected void getStatusIcon(Widget<?> widget) {
         UITexture texture;
-        if (this.result == null) {
+        var result = this.filterReader.getResult();
+
+        if (result == null) {
             texture = GTGuiTextures.OREDICT_WAITING;
-        } else if (this.result.getReports().length == 0) {
+        } else if (result.getReports().length == 0) {
             texture = GTGuiTextures.OREDICT_SUCCESS;
-        } else if (this.result.hasError()) {
+        } else if (result.hasError()) {
             texture = GTGuiTextures.OREDICT_ERROR;
         } else {
             texture = GTGuiTextures.OREDICT_WARN;
@@ -174,11 +167,12 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     protected void createStatusTooltip(Tooltip tooltip) {
-        List<String> list = new ArrayList<>();
+        var result = this.filterReader.getResult();
         if (result == null) return;
+        List<String> list = new ArrayList<>();
 
         int error = 0, warn = 0;
-        for (OreGlobCompileResult.Report report : this.result.getReports()) {
+        for (OreGlobCompileResult.Report report : result.getReports()) {
             if (report.isError()) error++;
             else warn++;
             list.add((report.isError() ? TextFormatting.RED : TextFormatting.GOLD) + report.toString());
@@ -198,7 +192,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
             list.add("");
             list.add(I18n.format("cover.ore_dictionary_filter.status.explain"));
             list.add("");
-            list.addAll(this.result.getInstance().toFormattedString());
+            list.addAll(result.getInstance().toFormattedString());
         }
         tooltip.addStringLines(list);
     }
@@ -261,7 +255,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     public boolean matchesItemStack(@NotNull ItemStack itemStack) {
-        if (this.result.hasError()) return false;
+        var result = this.filterReader.getResult();
+        if (result == null || result.hasError()) return false;
         Item item = itemStack.getItem();
         ItemVariantMap<Set<String>> oreDictEntry = OreDictUnifier.getOreDictionaryEntry(item);
 
@@ -269,7 +264,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
             // no oredict entries associated
             Boolean cached = this.noOreDictMatch.getEntry();
             if (cached == null) {
-                cached = this.glob.matches("");
+                cached = this.filterReader.getGlob().matches("");
             }
             this.matchCache.put(item, this.noOreDictMatch);
             return cached;
@@ -286,7 +281,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 // no oredict entries associated
                 Boolean cached = this.noOreDictMatch.getEntry();
                 if (cached == null) {
-                    cached = this.glob.matches("");
+                    cached = this.filterReader.getGlob().matches("");
                     this.noOreDictMatch.put(cached);
                 }
                 this.matchCache.put(item, this.noOreDictMatch);
@@ -298,8 +293,9 @@ public class OreDictionaryItemFilter extends ItemFilter {
             }
             this.matchCache.put(item, cacheEntry);
         }
-        boolean matches = this.filterReader.shouldMatchAll() ? this.glob.matchesAll(itemStack) :
-                this.glob.matchesAny(itemStack);
+        boolean matches = this.filterReader.shouldMatchAll() ?
+                this.filterReader.getGlob().matchesAll(itemStack) :
+                this.filterReader.getGlob().matchesAny(itemStack);
         cacheEntry.put(itemStack, matches);
         return matches;
     }
@@ -312,73 +308,5 @@ public class OreDictionaryItemFilter extends ItemFilter {
     @Override
     public boolean showGlobalTransferLimitSlider() {
         return true;
-    }
-
-    protected class OreDictionaryItemFilterReader extends BaseItemFilterReader {
-
-        private static final String EXPRESSION = "OreDictionaryFilter";
-        private static final String CASE_SENSITIVE = "caseSensitive";
-        private static final String MATCH_ALL = "matchAll";
-
-        public OreDictionaryItemFilterReader(ItemStack container, int slots) {
-            super(container, slots);
-        }
-
-        public void setExpression(String expression) {
-            if (getStackTag().getString(EXPRESSION).equals(expression))
-                return;
-
-            getStackTag().setString(EXPRESSION, expression);
-            recompile();
-            markDirty();
-        }
-
-        public String getExpression() {
-            return getStackTag().getString(EXPRESSION);
-        }
-
-        public void setCaseSensitive(boolean caseSensitive) {
-            if (isCaseSensitive() == caseSensitive)
-                return;
-
-            if (!caseSensitive)
-                getStackTag().setBoolean(CASE_SENSITIVE, false);
-            else
-                getStackTag().removeTag(CASE_SENSITIVE);
-            markDirty();
-        }
-
-        public boolean isCaseSensitive() {
-            return !getStackTag().hasKey(CASE_SENSITIVE);
-        }
-
-        public void setMatchAll(boolean matchAll) {
-            if (shouldMatchAll() == matchAll)
-                return;
-
-            if (!matchAll)
-                getStackTag().setBoolean(MATCH_ALL, false);
-            else
-                getStackTag().removeTag(MATCH_ALL);
-
-            markDirty();
-        }
-
-        /**
-         * {@code false} requires any of the entry to be match in order for the match to be success, {@code true}
-         * requires
-         * all entries to match
-         */
-        public boolean shouldMatchAll() {
-            return !getStackTag().hasKey(MATCH_ALL);
-        }
-
-        @Override
-        public void readFromNBT(NBTTagCompound tagCompound) {
-            super.readFromNBT(tagCompound);
-            this.setExpression(tagCompound.getString(EXPRESSION));
-            this.setCaseSensitive(tagCompound.getBoolean(CASE_SENSITIVE));
-            this.setMatchAll(tagCompound.getBoolean(MATCH_ALL));
-        }
     }
 }
