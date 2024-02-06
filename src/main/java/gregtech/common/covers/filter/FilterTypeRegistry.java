@@ -10,17 +10,22 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public class FilterTypeRegistry {
 
-    private static final Map<ItemStack, Integer> filterIdByStack = new Object2IntOpenCustomHashMap<>(
+    private static final Map<ItemStack, Integer> itemFilterIdByStack = new Object2IntOpenCustomHashMap<>(
             ItemStackHashStrategy.builder()
                     .compareItem(true)
                     .compareDamage(true)
                     .build());
-
+    private static final Map<ItemStack, Integer> fluidFilterIdByStack = new Object2IntOpenCustomHashMap<>(
+            ItemStackHashStrategy.builder()
+                    .compareItem(true)
+                    .compareDamage(true)
+                    .build());
     private static final Map<Integer, FilterFactory<ItemStack>> itemFilterById = new Int2ObjectOpenHashMap<>();
     private static final Map<Integer, FilterFactory<FluidStack>> fluidFilterById = new Int2ObjectOpenHashMap<>();
 
@@ -35,7 +40,7 @@ public class FilterTypeRegistry {
         if (fluidFilterById.containsKey(id)) {
             throw new IllegalArgumentException("Id is already occupied: " + id);
         }
-        filterIdByStack.put(itemStack, id);
+        fluidFilterIdByStack.put(itemStack, id);
         fluidFilterById.put(id, filterFactory);
     }
 
@@ -43,7 +48,7 @@ public class FilterTypeRegistry {
         if (itemFilterById.containsKey(id)) {
             throw new IllegalArgumentException("Id is already occupied: " + id);
         }
-        filterIdByStack.put(itemStack, id);
+        itemFilterIdByStack.put(itemStack, id);
         itemFilterById.put(id, filterFactory);
     }
 
@@ -111,12 +116,18 @@ public class FilterTypeRegistry {
         return (FluidFilter) createNewFilterInstance(fluidFilterById.get(filterId), itemStack);
     }
 
-    public static int getIdForFilter(Filter<?> filter) {
-        return getFilterIdForStack(filter.getContainerStack());
+    public static int getIdForFilter(@Nullable Filter<?> filter) {
+        return getFilterIdForStack(filter == null ? ItemStack.EMPTY : filter.getContainerStack());
     }
 
     public static int getFilterIdForStack(ItemStack stack) {
-        return filterIdByStack.getOrDefault(stack, -1);
+        if (stack.isEmpty()) return -1;
+
+        int filterId = fluidFilterIdByStack.getOrDefault(stack, -1);
+        if (filterId == -1)
+            filterId = itemFilterIdByStack.getOrDefault(stack, -1);
+
+        return filterId;
     }
 
     private static <T> @NotNull Filter<T> createNewFilterInstance(FilterFactory<T> filterFactory, ItemStack stack) {
@@ -143,11 +154,11 @@ public class FilterTypeRegistry {
     }
 
     public static boolean isItemFilter(ItemStack stack) {
-        return filterIdByStack.containsKey(stack);
+        return itemFilterIdByStack.containsKey(stack);
     }
 
     public static boolean isFluidFilter(ItemStack stack) {
-        return filterIdByStack.containsKey(stack);
+        return fluidFilterIdByStack.containsKey(stack);
     }
 
     @FunctionalInterface
