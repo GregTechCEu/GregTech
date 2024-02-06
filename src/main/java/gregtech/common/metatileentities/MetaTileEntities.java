@@ -48,6 +48,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityDataBank;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityDistillationTower;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFermentationVat;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityFixedBedReactor
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
@@ -367,7 +368,7 @@ public class MetaTileEntities {
     public static MetaTileEntityLargeCircuitAssembler LARGE_CIRCUIT_ASSEMBLER;
     public static MetaTileEntityFermentationVat FERMENTATION_VAT;
     public static MetaTileEntityArcFurnace ARC_FURNACE;
-    public static MetaTileEntityArcFurnace FIXED_BED_REACTOR;
+    public static MetaTileEntityFixedBedReactor FIXED_BED_REACTOR;
     public static MetaTileEntityIndustrialRefrigerator INDUSTRIAL_REFRIGERATOR;
 
     // STORAGE SECTION
@@ -805,7 +806,7 @@ public class MetaTileEntities {
                 new MetaTileEntityArcFurnace(gregtechId("arc_furnace")));
 
         FIXED_BED_REACTOR = registerMetaTileEntity(1069,
-                new MetaTileEntityArcFurnace(gregtechId("fixed_bed_reactor")));
+                new MetaTileEntityFixedBedReactor(gregtechId("fixed_bed_reactor")));
 
         INDUSTRIAL_REFRIGERATOR = registerMetaTileEntity(1070,
                 new MetaTileEntityIndustrialRefrigerator(gregtechId("industrial_refrigerator")));
