@@ -2689,6 +2689,7 @@ tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
 tile.transparent_casing.laminated_glass.name=Laminated Glass
 tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
+tile.transparent_casing.uv_resistant_glass.name=UV-Resistant Glass
 
 # Battery blocks
 tile.battery_block.empty_tier_i.name=Empty Tier I Capacitor

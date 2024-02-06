@@ -15,6 +15,20 @@
         "all": "gregtech:blocks/casings/transparent/tempered_glass"
       }
     },
+    "active=false,variant=uv_resistant_glass": {
+      "model": "minecraft:cube_all",
+      "ambientocclusion": false,
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/uv_resistant_glass"
+      }
+    },
+    "active=true,variant=uv_resistant_glass": {
+      "model": "minecraft:cube_all",
+      "ambientocclusion": false,
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/uv_resistant_glass"
+      }
+    },
     "active=false,variant=laminated_glass": {
       "model": "minecraft:cube_all",
       "ambientocclusion": false,
