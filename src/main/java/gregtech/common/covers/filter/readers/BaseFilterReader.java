@@ -42,22 +42,18 @@ public abstract class BaseFilterReader implements FilterReader, INBTSerializable
     public void onTransferRateChange() {}
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
-        setWhitelist(!blacklistFilter);
+        if (getStackTag().getBoolean(BLACKLIST) != blacklistFilter) {
+            if (blacklistFilter)
+                getStackTag().setBoolean(BLACKLIST, true);
+            else
+                getStackTag().removeTag(BLACKLIST);
+            onTransferRateChange();
+            markDirty();
+        }
     }
 
     public final boolean isBlacklistFilter() {
         return getStackTag().getBoolean(BLACKLIST);
-    }
-
-    private void setWhitelist(boolean whitelist) {
-        if (getStackTag().getBoolean(BLACKLIST) == whitelist) {
-            if (whitelist)
-                getStackTag().removeTag(BLACKLIST);
-            else
-                getStackTag().setBoolean(BLACKLIST, true);
-            onTransferRateChange();
-            markDirty();
-        }
     }
 
     public void setMaxTransferRate(int transferRate) {
