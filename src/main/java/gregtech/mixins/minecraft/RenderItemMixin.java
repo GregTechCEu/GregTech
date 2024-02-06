@@ -1,12 +1,11 @@
 package gregtech.mixins.minecraft;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 import gregtech.asm.hooks.RenderItemHooks;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,7 +31,7 @@ public class RenderItemMixin {
                      ordinal = 0))
     public void showDurabilityBarMixin(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text,
                                        CallbackInfo ci) {
-        if (!Loader.isModLoaded(GTValues.MODID_ECORE)) {
+        if (!Mods.EnderCore.isModLoaded()) {
             RenderItemHooks.renderElectricBar(stack, xPosition, yPosition);
         }
     }
