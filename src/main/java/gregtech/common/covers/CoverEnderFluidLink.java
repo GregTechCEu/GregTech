@@ -127,7 +127,7 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
 
     @Override
     public void onRemoval() {
-        dropInventoryContents(fluidFilter.getFilterInventory());
+        dropInventoryContents(fluidFilter);
     }
 
     @Override

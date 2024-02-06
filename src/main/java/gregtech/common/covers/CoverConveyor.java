@@ -455,7 +455,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public void onRemoval() {
-        dropInventoryContents(itemFilterContainer.getFilterInventory());
+        dropInventoryContents(itemFilterContainer);
     }
 
     @Override

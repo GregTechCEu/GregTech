@@ -334,7 +334,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     @Override
     public void onRemoval() {
-        dropInventoryContents(fluidFilterContainer.getFilterInventory());
+        dropInventoryContents(fluidFilterContainer);
     }
 
     @Override
