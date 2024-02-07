@@ -85,7 +85,7 @@ public class WorldConfigUtils {
         return provider -> allPredicates.stream().anyMatch(p -> p.test(provider));
     }
 
-    public static Map<ItemStack, Integer> createWeightedOreMap(JsonElement element) {
+    public static Map<ItemStack, Integer> createWeightedOreMap(JsonElement element, StoneType stoneType) {
         if (!element.isJsonObject())
             throw new IllegalArgumentException("Weighted ore map should be object!");
         JsonObject object = element.getAsJsonObject();
@@ -104,7 +104,7 @@ public class WorldConfigUtils {
                 throw new IllegalArgumentException("Invalid string ore declaration: " + oreEntry.getKey());
             }
 
-            backedMap.put(OreConfigUtils.getMaterialStoneOre(material, StoneTypes.STONE), oreEntry.getValue().getAsInt());
+            backedMap.put(OreConfigUtils.getMaterialStoneOre(material, stoneType), oreEntry.getValue().getAsInt());
         }
 
         return backedMap;

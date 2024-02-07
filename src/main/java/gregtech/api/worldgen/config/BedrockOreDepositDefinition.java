@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 
 import crafttweaker.api.item.IItemStack;
 
+import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -35,6 +37,8 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
     private String assignedName; // vein name for JEI display
     private String description; // vein description for JEI display
 
+    private StoneType stoneType;
+
     private Map<ItemStack, Integer> storedOres;
 
     private Function<Biome, Integer> biomeWeightModifier = OreDepositDefinition.NO_BIOME_INFLUENCE; // weighting of
@@ -61,9 +65,17 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
         this.depletionChance = Math.max(0,
                 Math.min(100, configRoot.get("depletion").getAsJsonObject().get("chance").getAsInt()));
 
+        if (configRoot.has("stone_type")) {
+            this.stoneType = StoneType.STONE_TYPE_REGISTRY.registryObjects.get(
+                    configRoot.get("stone_type").getAsJsonObject().get("amount").getAsString());
+        }
+        if (stoneType == null) {
+            this.stoneType = StoneTypes.STONE;
+        }
+
         // the ores which the vein contain
         if (configRoot.has("ores")) {
-            this.storedOres = WorldConfigUtils.createWeightedOreMap(configRoot.get("ores"));
+            this.storedOres = WorldConfigUtils.createWeightedOreMap(configRoot.get("ores"), this.stoneType);
         }
 
         // vein name for JEI display
