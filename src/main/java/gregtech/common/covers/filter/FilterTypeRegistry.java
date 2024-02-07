@@ -53,11 +53,11 @@ public class FilterTypeRegistry {
     }
 
     /**
-     * @deprecated use {@link FilterTypeRegistry#getIdForFilter(Filter)}
+     * @deprecated use {@link FilterTypeRegistry#getIdForFilter(IFilter)}
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public static int getIdForItemFilter(ItemFilter itemFilter) {
+    public static int getIdForItemFilter(IItemFilter itemFilter) {
         int filterId = getIdForFilter(itemFilter);
         if (filterId == -1) {
             throw new IllegalArgumentException("Unknown filter type " + itemFilter.getClass());
@@ -66,11 +66,11 @@ public class FilterTypeRegistry {
     }
 
     /**
-     * @deprecated use {@link FilterTypeRegistry#getIdForFilter(Filter)}
+     * @deprecated use {@link FilterTypeRegistry#getIdForFilter(IFilter)}
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public static int getIdForFluidFilter(FluidFilter fluidFilter) {
+    public static int getIdForFluidFilter(IFluidFilter fluidFilter) {
         int filterId = getIdForFilter(fluidFilter);
         if (filterId == -1) {
             throw new IllegalArgumentException("Unknown filter type " + fluidFilter.getClass());
@@ -83,9 +83,9 @@ public class FilterTypeRegistry {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public static ItemFilter createItemFilterById(int filterId) {
+    public static IItemFilter createItemFilterById(int filterId) {
         var factory = itemFilterById.get(filterId);
-        return (ItemFilter) createNewFilterInstance(factory);
+        return (IItemFilter) createNewFilterInstance(factory);
     }
 
     /**
@@ -93,31 +93,32 @@ public class FilterTypeRegistry {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public static FluidFilter createFluidFilterById(int filterId) {
+    public static IFluidFilter createFluidFilterById(int filterId) {
         var factory = fluidFilterById.get(filterId);
-        return (FluidFilter) createNewFilterInstance(factory);
+        return (IFluidFilter) createNewFilterInstance(factory);
     }
 
-    public static @NotNull ItemFilter getItemFilterForStack(ItemStack itemStack) {
+    public static @NotNull IItemFilter getItemFilterForStack(ItemStack itemStack) {
         int filterId = getFilterIdForStack(itemStack);
         if (filterId == -1) {
             throw new IllegalArgumentException(
                     String.format("Failed to create filter instance for stack %s", itemStack));
         }
-        return (ItemFilter) createNewFilterInstance(itemFilterById.get(filterId), itemStack);
+        return (IItemFilter) createNewFilterInstance(itemFilterById.get(filterId), itemStack);
     }
 
-    public static @NotNull FluidFilter getFluidFilterForStack(ItemStack itemStack) {
+    public static @NotNull IFluidFilter getFluidFilterForStack(ItemStack itemStack) {
         int filterId = getFilterIdForStack(itemStack);
         if (filterId == -1) {
             throw new IllegalArgumentException(
                     String.format("Failed to create filter instance for stack %s", itemStack));
         }
-        return (FluidFilter) createNewFilterInstance(fluidFilterById.get(filterId), itemStack);
+        return (IFluidFilter) createNewFilterInstance(fluidFilterById.get(filterId), itemStack);
     }
 
-    public static int getIdForFilter(@Nullable Filter<?> filter) {
-        return getFilterIdForStack(filter == null ? ItemStack.EMPTY : filter.getContainerStack());
+    public static int getIdForFilter(@Nullable IFilter filter) {
+        if (filter == null) return -1;
+        return getFilterIdForStack(filter.getContainerStack());
     }
 
     public static int getFilterIdForStack(ItemStack stack) {
@@ -130,11 +131,11 @@ public class FilterTypeRegistry {
         return filterId;
     }
 
-    private static <T> @NotNull Filter<T> createNewFilterInstance(FilterFactory<T> filterFactory, ItemStack stack) {
+    private static <T> @NotNull IFilter createNewFilterInstance(FilterFactory<T> filterFactory, ItemStack stack) {
         return filterFactory.create(stack);
     }
 
-    private static <T> @NotNull Filter<T> createNewFilterInstance(FilterFactory<T> filterFactory) {
+    private static <T> @NotNull IFilter createNewFilterInstance(FilterFactory<T> filterFactory) {
         return createNewFilterInstance(filterFactory, ItemStack.EMPTY);
     }
 
@@ -164,6 +165,6 @@ public class FilterTypeRegistry {
     @FunctionalInterface
     public interface FilterFactory<T> {
 
-        Filter<T> create(ItemStack stack);
+        IFilter create(ItemStack stack);
     }
 }

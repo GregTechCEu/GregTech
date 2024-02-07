@@ -17,11 +17,11 @@ import java.util.function.Supplier;
 @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class WidgetGroupItemFilter extends AbstractWidgetGroup {
 
-    private final Supplier<ItemFilter> itemFilterSupplier;
-    private ItemFilter itemFilter;
+    private final Supplier<IItemFilter> itemFilterSupplier;
+    private IItemFilter itemFilter;
     private int maxStackSize = 1;
 
-    public WidgetGroupItemFilter(int yPosition, Supplier<ItemFilter> itemFilterSupplier) {
+    public WidgetGroupItemFilter(int yPosition, Supplier<IItemFilter> itemFilterSupplier) {
         super(new Position(0, yPosition));
         this.itemFilterSupplier = itemFilterSupplier;
     }
@@ -29,7 +29,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        ItemFilter newItemFilter = itemFilterSupplier.get();
+        IItemFilter newItemFilter = itemFilterSupplier.get();
         if (itemFilter != newItemFilter) {
             clearAllWidgets();
             this.itemFilter = newItemFilter;

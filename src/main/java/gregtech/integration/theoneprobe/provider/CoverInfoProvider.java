@@ -76,7 +76,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
             transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit,
                     filter.getTransferSize(), filter.getFilter() != null);
         }
-        itemFilterText(probeInfo, filter.getItemFilter());
+        itemFilterText(probeInfo, filter.getFilter());
     }
 
     /**
@@ -127,7 +127,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
             transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator
                     .getFluidFilterContainer().getTransferSize(), filter.hasFilter() && !filter.isBlacklistFilter());
         }
-        fluidFilterText(probeInfo, filter.getFluidFilter());
+        fluidFilterText(probeInfo, filter.getFilter());
     }
 
     /**
@@ -183,7 +183,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void enderFluidLinkInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverEnderFluidLink enderFluidLink) {
         transferRateText(probeInfo, enderFluidLink.getPumpMode(), " " + lang("cover.bucket.mode.milli_bucket_rate"),
                 enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
-        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFluidFilter());
+        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
             probeInfo.text(
@@ -252,12 +252,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     }
 
     /**
-     * Displays text for {@link ItemFilter} covers
+     * Displays text for {@link IItemFilter} covers
      *
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void itemFilterText(@NotNull IProbeInfo probeInfo, @Nullable ItemFilter filter) {
+    private static void itemFilterText(@NotNull IProbeInfo probeInfo, @Nullable IItemFilter filter) {
         String label = TextStyleClass.INFO + lang("gregtech.top.filter.label");
         if (filter instanceof OreDictionaryItemFilter) {
             String expression = ((OreDictionaryItemFilter) filter).getExpression();
@@ -268,12 +268,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     }
 
     /**
-     * Displays text for {@link FluidFilter} covers
+     * Displays text for {@link BaseFilter} covers
      *
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void fluidFilterText(@NotNull IProbeInfo probeInfo, @Nullable FluidFilter filter) {
+    private static void fluidFilterText(@NotNull IProbeInfo probeInfo, @Nullable IFluidFilter filter) {
         // TODO If more unique fluid filtration is added, providers for it go here
     }
 

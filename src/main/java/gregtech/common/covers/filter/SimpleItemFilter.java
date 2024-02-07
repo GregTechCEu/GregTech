@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class SimpleItemFilter extends ItemFilter {
+public class SimpleItemFilter extends BaseFilter implements IItemFilter {
 
     private static final int MAX_MATCH_SLOTS = 9;
     private final SimpleItemFilterReader filterReader;
@@ -57,11 +57,6 @@ public class SimpleItemFilter extends ItemFilter {
     public int getTransferLimit(int matchSlot, int globalTransferLimit) {
         ItemStack stackInFilterSlot = filterReader.getStackInSlot(matchSlot);
         return Math.min(stackInFilterSlot.getCount(), globalTransferLimit);
-    }
-
-    @Override
-    public boolean showGlobalTransferLimitSlider() {
-        return false;
     }
 
     @Override
@@ -126,7 +121,7 @@ public class SimpleItemFilter extends ItemFilter {
                                         })))
                         .build().marginRight(4))
                 .child(new Column().width(18).coverChildren()
-                        .child(super.createWidgets(syncManager))
+                        .child(createBlacklistUI())
                         .child(new CycleButtonWidget()
                                 .value(ignoreDamage)
                                 .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_DAMAGE[state])

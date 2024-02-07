@@ -8,7 +8,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.covers.filter.ItemFilter;
+import gregtech.common.covers.filter.IItemFilter;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,10 +100,9 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    // this cover always has a filter
-    public @NotNull ItemFilter getItemFilter() {
-        return this.itemFilterContainer.getItemFilter();
+    @SuppressWarnings("DataFlowIssue") // this cover always has a filter
+    public @NotNull IItemFilter getItemFilter() {
+        return this.itemFilterContainer.getFilter();
     }
 
     @Override

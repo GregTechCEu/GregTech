@@ -14,7 +14,6 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
     protected static final String CAPACITY = "Capacity";
 
     protected static final String KEY_FLUIDS = "FluidFilter";
-    protected static final String BUCKET_ONLY = "BucketOnly";
 
     public SimpleFluidFilterReader(ItemStack container, int slots) {
         super(container, slots);
@@ -28,10 +27,6 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
     @Override
     public String getKey() {
         return KEY_FLUIDS;
-    }
-
-    public final void setBucketOnly(boolean bucketOnly) {
-        getStackTag().setBoolean(BUCKET_ONLY, bucketOnly);
     }
 
     public final boolean shouldShowAmount() {
@@ -135,7 +130,7 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
         }
 
         public boolean showAmount() {
-            return filterReader.shouldShowAmount();
+            return this.filterReader.shouldShowAmount();
         }
 
         @Override

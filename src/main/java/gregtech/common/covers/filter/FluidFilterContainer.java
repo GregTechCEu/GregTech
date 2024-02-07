@@ -22,12 +22,13 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
-                                  implements INBTSerializable<NBTTagCompound> {
+public class FluidFilterContainer extends BaseFilterContainer
+        implements INBTSerializable<NBTTagCompound> {
 
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
@@ -41,11 +42,26 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
         boolean result = true;
         if (hasFilter()) {
             result = getFilter().test(fluidStack);
-            if (!whitelist) {
-                result = !result;
-            }
         }
-        return result;
+        return whitelist != result;
+    }
+
+    public boolean test(FluidStack toTest) {
+        return !hasFilter() || getFilter().test(toTest);
+    }
+
+    public MatchResult<FluidStack> match(FluidStack toMatch) {
+        if (!hasFilter())
+            return MatchResult.create(true, toMatch, -1);
+
+        return getFilter().match(toMatch);
+    }
+
+    public int getTransferLimit(FluidStack stack) {
+        if (isBlacklistFilter()) {
+            return getTransferSize();
+        }
+        return getFilter().getTransferLimit(stack, getTransferSize());
     }
 
     /** @deprecated uses old builtin MUI */
@@ -65,11 +81,12 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter, this::showGlobalTransferLimitSlider));
+        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFilter, this::showGlobalTransferLimitSlider));
     }
 
-    public FluidFilter getFluidFilter() {
-        return (FluidFilter) getFilter();
+    @Override
+    public @Nullable IFluidFilter getFilter() {
+        return (IFluidFilter) super.getFilter();
     }
 
     /** @deprecated uses old builtin MUI */
@@ -174,7 +191,7 @@ public class FluidFilterContainer extends BaseFilterContainer<FluidStack>
         var stack = getFilterStack();
         if (FilterTypeRegistry.isFluidFilter(stack)) {
             setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
-            getFluidFilter().readFromNBT(tagCompound);
+            getFilter().readFromNBT(tagCompound);
         }
     }
 }

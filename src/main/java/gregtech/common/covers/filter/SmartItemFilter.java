@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class SmartItemFilter extends ItemFilter {
+public class SmartItemFilter extends BaseFilter implements IItemFilter {
 
     private final SmartItemFilterReader filterReader;
 
@@ -110,7 +110,7 @@ public class SmartItemFilter extends ItemFilter {
                         .child(createFilterModeButton(filterMode, SmartFilteringMode.ELECTROLYZER))
                         .child(createFilterModeButton(filterMode, SmartFilteringMode.CENTRIFUGE))
                         .child(createFilterModeButton(filterMode, SmartFilteringMode.SIFTER)))
-                .child(super.createWidgets(syncManager));
+                .child(createBlacklistUI());
     }
 
     private Widget<ToggleButton> createFilterModeButton(EnumSyncValue<SmartFilteringMode> value,

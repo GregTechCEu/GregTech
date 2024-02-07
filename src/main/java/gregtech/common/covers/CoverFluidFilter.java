@@ -8,7 +8,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.covers.filter.FluidFilter;
+import gregtech.common.covers.filter.IFluidFilter;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -102,9 +102,9 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
-    // this cover always has a filter
-    public @NotNull FluidFilter getFluidFilter() {
-        return this.fluidFilterContainer.getFluidFilter();
+    @SuppressWarnings("DataFlowIssue") // this cover always has a filter
+    public @NotNull IFluidFilter getFluidFilter() {
+        return this.fluidFilterContainer.getFilter();
     }
 
     @Override

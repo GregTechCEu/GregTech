@@ -16,11 +16,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public abstract class BaseFilterContainer<R> extends ItemStackHandler {
+public abstract class BaseFilterContainer extends ItemStackHandler {
 
     private int maxTransferSize = 1;
     private int transferSize;
-    private @Nullable Filter<R> currentFilter;
+    private @Nullable IFilter currentFilter;
     private @Nullable Runnable onFilterInstanceChange;
     private final IDirtyNotifiable dirtyNotifiable;
 
@@ -63,13 +63,12 @@ public abstract class BaseFilterContainer<R> extends ItemStackHandler {
         return this.getStackInSlot(0);
     }
 
-    @SuppressWarnings("unchecked") // really need to stop doing this
     public final void setFilterStack(ItemStack stack) {
         this.setStackInSlot(0, stack);
         if (FilterTypeRegistry.isItemFilter(stack)) {
-            setFilter((Filter<R>) FilterTypeRegistry.getItemFilterForStack(stack));
+            setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
         } else {
-            setFilter((Filter<R>) FilterTypeRegistry.getFluidFilterForStack(stack));
+            setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
         }
     }
 
@@ -87,11 +86,11 @@ public abstract class BaseFilterContainer<R> extends ItemStackHandler {
         return currentFilter != null;
     }
 
-    public final @Nullable Filter<R> getFilter() {
+    public @Nullable IFilter getFilter() {
         return currentFilter;
     }
 
-    public final void setFilter(@Nullable Filter<R> newFilter) {
+    public final void setFilter(@Nullable IFilter newFilter) {
         this.currentFilter = newFilter;
         if (hasFilter()) {
             this.currentFilter.setDirtyNotifiable(dirtyNotifiable);
@@ -99,17 +98,6 @@ public abstract class BaseFilterContainer<R> extends ItemStackHandler {
         if (onFilterInstanceChange != null) {
             this.onFilterInstanceChange.run();
         }
-    }
-
-    public boolean test(R toTest) {
-        return !hasFilter() || getFilter().test(toTest);
-    }
-
-    public MatchResult<R> match(R toMatch) {
-        if (!hasFilter())
-            return MatchResult.create(true, toMatch, -1);
-
-        return getFilter().match(toMatch);
     }
 
     public boolean showGlobalTransferLimitSlider() {
@@ -138,13 +126,6 @@ public abstract class BaseFilterContainer<R> extends ItemStackHandler {
             return getTransferSize();
         }
         return this.currentFilter.getTransferLimit(slotIndex, getTransferSize());
-    }
-
-    public int getTransferLimit(R stack) {
-        if (isBlacklistFilter()) {
-            return getTransferSize();
-        }
-        return this.currentFilter.getTransferLimit(stack, getTransferSize());
     }
 
     public void setTransferSize(int transferSize) {

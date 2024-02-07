@@ -24,17 +24,42 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
-                                 implements INBTSerializable<NBTTagCompound> {
+public class ItemFilterContainer extends BaseFilterContainer
+        implements INBTSerializable<NBTTagCompound> {
 
     public ItemFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
+    }
+
+    public boolean test(ItemStack toTest) {
+        return !hasFilter() || getFilter().test(toTest);
+    }
+
+    public MatchResult<ItemStack> match(ItemStack toMatch) {
+        if (!hasFilter())
+            return MatchResult.create(true, toMatch, -1);
+
+        return getFilter().match(toMatch);
+    }
+
+    public int getTransferLimit(ItemStack stack) {
+        if (isBlacklistFilter()) {
+            return getTransferSize();
+        }
+        return getFilter().getTransferLimit(stack, getTransferSize());
+    }
+
+    @Override
+    public @Nullable IItemFilter getFilter() {
+        return (IItemFilter) super.getFilter();
     }
 
     /** @deprecated uses old builtin MUI */
@@ -52,12 +77,7 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
-    }
-
-    // todo remove when usages of old mui with filters are gone
-    public ItemFilter getItemFilter() {
-        return (ItemFilter) getFilter();
+        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getFilter));
     }
 
     /** @deprecated uses old builtin MUI */
@@ -160,7 +180,7 @@ public class ItemFilterContainer extends BaseFilterContainer<ItemStack>
         var stack = getFilterStack();
         if (FilterTypeRegistry.isItemFilter(stack)) {
             setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
-            getItemFilter().readFromNBT(tagCompound); // try to read old data
+            getFilter().readFromNBT(tagCompound); // try to read old data
         }
     }
 }

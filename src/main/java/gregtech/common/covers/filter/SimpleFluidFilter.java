@@ -3,10 +3,10 @@ package gregtech.common.covers.filter;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.FixedFluidSlotSH;
+import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.readers.SimpleFluidFilterReader;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class SimpleFluidFilter extends FluidFilter {
+public class SimpleFluidFilter extends BaseFilter implements IFluidFilter {
 
     private static final int MAX_FLUID_SLOTS = 9;
 
@@ -31,15 +31,9 @@ public class SimpleFluidFilter extends FluidFilter {
     }
 
     @Override
-    @Deprecated
     public void configureFilterTanks(int amount) {
         this.filterReader.setFluidAmounts(amount);
         this.markDirty();
-    }
-
-    @Override
-    public ItemStack getContainerStack() {
-        return this.filterReader.getContainer();
     }
 
     @Override
@@ -65,7 +59,7 @@ public class SimpleFluidFilter extends FluidFilter {
                         .key('F', i -> new FluidSlot()
                                 .syncHandler(new FixedFluidSlotSH(filterReader.getFluidTank(i)).phantom(true)))
                         .build().marginRight(4))
-                .child(super.createWidgets(syncManager));
+                .child(createBlacklistUI());
     }
 
     @Override
@@ -106,11 +100,6 @@ public class SimpleFluidFilter extends FluidFilter {
     @Override
     public boolean showGlobalTransferLimitSlider() {
         return isBlacklistFilter() && getMaxTransferSize() > 0;
-    }
-
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        this.filterReader.deserializeNBT(tagCompound);
-        markDirty();
     }
 
     @Override

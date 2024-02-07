@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class OreDictionaryItemFilter extends ItemFilter {
+public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
 
     private final Map<Item, ItemVariantMap.Mutable<Boolean>> matchCache = new Object2ObjectOpenHashMap<>();
     private final SingleItemVariantMap<Boolean> noOreDictMatch = new SingleItemVariantMap<>();
@@ -145,7 +145,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                                 .selectedBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                                 .marginRight(2))
-                        .child(super.createWidgets(syncManager)));
+                        .child(createBlacklistUI()));
     }
 
     protected void getStatusIcon(Widget<?> widget) {

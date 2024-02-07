@@ -16,11 +16,11 @@ import java.util.function.Supplier;
 @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
 
-    private final Supplier<FluidFilter> fluidFilterSupplier;
+    private final Supplier<IFluidFilter> fluidFilterSupplier;
     private final Supplier<Boolean> showTipSupplier;
-    private FluidFilter fluidFilter;
+    private IFluidFilter fluidFilter;
 
-    public WidgetGroupFluidFilter(int yPosition, Supplier<FluidFilter> fluidFilterSupplier,
+    public WidgetGroupFluidFilter(int yPosition, Supplier<IFluidFilter> fluidFilterSupplier,
                                   Supplier<Boolean> showTipSupplier) {
         super(new Position(18 + 5, yPosition));
         this.fluidFilterSupplier = fluidFilterSupplier;
@@ -30,7 +30,7 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        FluidFilter newFluidFilter = fluidFilterSupplier.get();
+        IFluidFilter newFluidFilter = fluidFilterSupplier.get();
         if (fluidFilter != newFluidFilter) {
             clearAllWidgets();
             this.fluidFilter = newFluidFilter;
