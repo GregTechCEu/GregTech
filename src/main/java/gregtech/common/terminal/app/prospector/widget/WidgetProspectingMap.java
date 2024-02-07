@@ -8,6 +8,7 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.*;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
+import gregtech.api.worldgen.bedrockOres.BedrockOreVeinHandler;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.api.worldgen.filler.FillerEntry;
@@ -173,13 +174,29 @@ public class WidgetProspectingMap extends Widget {
                         packet.addBlock(0, 3, 0,
                                 TextFormattingUtil.formatNumbers(Math.round(100.0 *
                                         BedrockFluidVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z) /
-                                        BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS)) + "% Capacity");
+                                        BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS)));
                         packet.addBlock(0, 2, 0,
-                                String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)) + " Liters/Second");
+                                String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)));
                         Fluid fluid = BedrockFluidVeinHandler.getFluidInChunk(world, chunk.x, chunk.z);
                         if (fluid != null) {
                             packet.addBlock(0, 1, 0, fluid.getName());
                         }
+                    }
+                    break;
+                case BEDROCK:
+                    BedrockOreVeinHandler.OreVeinWorldEntry oStack = BedrockOreVeinHandler
+                            .getOreVeinWorldEntry(world, chunk.x, chunk.z);
+                    if (oStack != null && oStack.getDefinition() != null) {
+                        packet.addBlock(0, 3, 0,
+                                TextFormattingUtil.formatNumbers(Math.round(100.0 *
+                                        BedrockOreVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z) /
+                                        BedrockOreVeinHandler.MAXIMUM_VEIN_OPERATIONS)));
+                        packet.addBlock(0, 2, 0,
+                                String.valueOf(BedrockOreVeinHandler.getOreDensity(world, chunk.x, chunk.z)));
+                        //ItemStack fluid = BedrockOreVeinHandler.getOresInChunk(world, chunk.x, chunk.z);
+                        //if (fluid != null) {
+                        //    packet.addBlock(0, 1, 0, fluid.getName());
+                        //}
                     }
                     break;
                 default:

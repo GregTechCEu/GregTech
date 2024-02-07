@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -40,7 +42,7 @@ public class ProspectingTexture extends AbstractTexture {
         this.darkMode = darkMode;
         this.radius = radius;
         this.mode = mode;
-        if (this.mode == ProspectorMode.FLUID) {
+        if (this.mode == ProspectorMode.FLUID || this.mode == ProspectorMode.BEDROCK) {
             // noinspection unchecked
             map = new HashMap[(radius * 2 - 1)][(radius * 2 - 1)];
         } else {
@@ -81,7 +83,7 @@ public class ProspectingTexture extends AbstractTexture {
             return;
         }
 
-        if (this.mode == ProspectorMode.FLUID) {
+        if (this.mode == ProspectorMode.FLUID || this.mode == ProspectorMode.BEDROCK) {
             map[currentColumn][currentRow] = packet.map[0][0] == null ?
                     emptyTag : packet.map[0][0];
         } else {

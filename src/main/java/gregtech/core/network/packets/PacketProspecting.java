@@ -35,7 +35,7 @@ public class PacketProspecting {
         this.posX = posX;
         this.posZ = posZ;
         this.mode = mode;
-        if (mode == ProspectorMode.FLUID) {
+        if (mode == ProspectorMode.FLUID || mode == ProspectorMode.BEDROCK) {
             // noinspection unchecked
             map = new HashMap[1][1];
         } else {
@@ -52,7 +52,7 @@ public class PacketProspecting {
         int aSize = 0;
         if (packet.mode == ProspectorMode.ORE)
             aSize = 16;
-        else if (packet.mode == ProspectorMode.FLUID)
+        else if (packet.mode == ProspectorMode.FLUID || packet.mode == ProspectorMode.BEDROCK)
             aSize = 1;
         int checkOut = 0;
         for (int i = 0; i < aSize; i++)
@@ -104,7 +104,7 @@ public class PacketProspecting {
         int aSize = 0;
         if (this.mode == ProspectorMode.ORE)
             aSize = 16;
-        else if (this.mode == ProspectorMode.FLUID)
+        else if (this.mode == ProspectorMode.FLUID || this.mode == ProspectorMode.BEDROCK)
             aSize = 1;
         int checkOut = 0;
         for (int i = 0; i < aSize; i++)
@@ -129,7 +129,7 @@ public class PacketProspecting {
                 map[x][z] = new HashMap<>();
             map[x][z].put((byte) y, orePrefix);
             ores.add(orePrefix);
-        } else if (this.mode == ProspectorMode.FLUID) {
+        } else if (this.mode == ProspectorMode.FLUID || this.mode == ProspectorMode.BEDROCK) {
             if (map[x][z] == null)
                 map[x][z] = new HashMap<>();
             map[x][z].put((byte) y, orePrefix);
