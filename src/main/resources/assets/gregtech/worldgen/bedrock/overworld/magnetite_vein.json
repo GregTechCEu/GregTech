@@ -1,0 +1,15 @@
+{
+  "name": "gregtech.veins.bedrock.magnetite",
+  "weight": 20,
+  "densities": {
+    "min": 40,
+    "max": 60
+  },
+  "depletion": {
+    "amount": 1,
+    "chance": 100
+  },
+  "ores": {
+    "ore:magnetite": 100
+  }
+}

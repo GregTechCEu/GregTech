@@ -64,10 +64,13 @@ public class WorldGenRegistry {
 
     private final List<OreDepositDefinition> registeredVeinDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> registeredBedrockVeinDefinitions = new ArrayList<>();
+    private final List<BedrockOreDepositDefinition> registeredBedrockOreDefinitions = new ArrayList<>();
     private final List<OreDepositDefinition> addonRegisteredDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> addonRegisteredBedrockVeinDefinitions = new ArrayList<>();
+    private final List<BedrockOreDepositDefinition> addonRegisteredBedrockOreDefinitions = new ArrayList<>();
     private final List<OreDepositDefinition> removedVeinDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> removedBedrockVeinDefinitions = new ArrayList<>();
+    private final List<BedrockOreDepositDefinition> removedBedrockOreDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
 
     private class WorldOreVeinCache {
@@ -177,6 +180,10 @@ public class WorldGenRegistry {
         if (!Files.exists(bedrockVeinPath))
             Files.createDirectories(bedrockVeinPath);
 
+        Path bedrockOrePath = worldgenRootPath.resolve("bedrock");
+        if (!Files.exists(bedrockOrePath))
+            Files.createDirectories(bedrockOrePath);
+
         // Checks if the dimension file exists. If not, creates the file and extracts the defaults from the mod jar
         if (!Files.exists(dimensionsFile)) {
             Files.createFile(dimensionsFile);
@@ -229,6 +236,13 @@ public class WorldGenRegistry {
             extractJarVeinDefinitions(configPath, bedrockVeinPath);
         }
 
+        try (Stream<Path> stream = Files.list(worldgenRootPath.resolve(bedrockOrePath))) {
+            shouldExtract = !stream.findFirst().isPresent();
+        }
+        if (shouldExtract) {
+            extractJarVeinDefinitions(configPath, bedrockOrePath);
+        }
+
         // Read the dimensions name from the dimensions file
         gatherNamedDimensions(dimensionsFile);
 
@@ -239,6 +253,9 @@ public class WorldGenRegistry {
         }
         if (!removedBedrockVeinDefinitions.isEmpty()) {
             removeExistingFiles(bedrockVeinPath, removedBedrockVeinDefinitions);
+        }
+        if (!removedBedrockOreDefinitions.isEmpty()) {
+            removeExistingFiles(bedrockVeinPath, removedBedrockOreDefinitions);
         }
 
         // Gather the worldgen vein files from the various folders in the config
@@ -308,15 +325,51 @@ public class WorldGenRegistry {
             }
         }
 
+        // Gather the worldgen vein files from the various folders in the config
+        List<Path> bedrockOreVeinFiles;
+        try (Stream<Path> stream = Files.walk(bedrockOrePath)) {
+            bedrockOreVeinFiles = stream.filter(path -> path.toString().endsWith(".json"))
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+        }
+
+        for (Path worldgenDefinition : bedrockOreVeinFiles) {
+
+            // Tries to extract the json worldgen definition from the file
+            JsonObject element = FileUtility.tryExtractFromFile(worldgenDefinition);
+            if (element == null) {
+                break;
+            }
+
+            // Finds the file name to create the Definition with, using a consistent separator character
+            String depositName = FileUtility
+                    .nativeSepToSlash(bedrockOrePath.relativize(worldgenDefinition).toString());
+
+            try {
+                // Creates the deposit definition and initializes various components based on the json entries in the
+                // file
+                BedrockOreDepositDefinition deposit = new BedrockOreDepositDefinition(depositName);
+                // Adds the registered definition to the list of all registered definitions
+                if (deposit.initializeFromConfig(element)) {
+                    registeredBedrockOreDefinitions.add(deposit);
+                }
+            } catch (RuntimeException exception) {
+                GTLog.logger.error("Failed to parse worldgen definition {} on path {}", depositName, worldgenDefinition,
+                        exception);
+            }
+        }
+
         addAddonFiles(worldgenRootPath, addonRegisteredDefinitions, registeredVeinDefinitions);
         addAddonFiles(worldgenRootPath, addonRegisteredBedrockVeinDefinitions, registeredBedrockVeinDefinitions);
+        addAddonFiles(worldgenRootPath, addonRegisteredBedrockOreDefinitions, registeredBedrockOreDefinitions);
 
-        GTLog.logger.info("Loaded {} bedrock worldgen definitions", registeredBedrockVeinDefinitions.size());
+        GTLog.logger.info("Loaded {} bedrock ore worldgen definitions", registeredBedrockOreDefinitions.size());
+        GTLog.logger.info("Loaded {} bedrock fluid worldgen definitions", registeredBedrockVeinDefinitions.size());
         GTLog.logger.info("Loaded {} worldgen definitions from addon mods", addonRegisteredDefinitions.size());
         GTLog.logger.info("Loaded {} bedrock worldgen definitions from addon mods",
-                addonRegisteredBedrockVeinDefinitions.size());
+                addonRegisteredBedrockVeinDefinitions.size() + registeredBedrockOreDefinitions.size());
         GTLog.logger.info("Loaded {} total worldgen definitions",
-                registeredVeinDefinitions.size() + registeredBedrockVeinDefinitions.size());
+                registeredVeinDefinitions.size() + registeredBedrockVeinDefinitions.size() + registeredBedrockOreDefinitions.size());
     }
 
     /**
@@ -333,6 +386,8 @@ public class WorldGenRegistry {
         Path oreVeinRootPath = worldgenRootPath.resolve("vein");
         // The path of the bedrock fluid vein folder in the config folder
         Path bedrockFluidVeinRootPath = worldgenRootPath.resolve("fluid");
+        // The path of the bedrock ore vein folder in the config folder
+        Path bedrockFluidOreRootPath = worldgenRootPath.resolve("bedrock");
         // The path of the named dimensions file in the config folder
         Path dimensionsRootPath = configPath.resolve("dimensions.json");
         // THe path of the lock file in the config folder
@@ -351,11 +406,15 @@ public class WorldGenRegistry {
             // The Path for representing the fluid folder in the vein folder in the assets folder in the Gregtech
             // resources folder in the jar
             Path bedrockFluidJarRootPath;
+            // The Path for representing the bedrock ore folder in the vein folder in the assets folder in the Gregtech
+            // resources folder in the jar
+            Path bedrockOreJarRootPath;
             if (sampleUri.getScheme().equals("jar") || sampleUri.getScheme().equals("zip")) {
                 zipFileSystem = FileSystems.newFileSystem(sampleUri, Collections.emptyMap());
                 worldgenJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen");
                 oreVeinJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/vein");
                 bedrockFluidJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/fluid");
+                bedrockOreJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/bedrock");
             } else if (sampleUri.getScheme().equals("file")) {
                 URL url = WorldGenRegistry.class.getResource("/assets/gregtech/worldgen");
                 if (url == null) throw new FileNotFoundException("Could not find /assets/gregtech/worldgen");

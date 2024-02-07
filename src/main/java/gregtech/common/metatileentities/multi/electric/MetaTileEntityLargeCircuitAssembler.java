@@ -97,6 +97,6 @@ public class MetaTileEntityLargeCircuitAssembler extends GCYMRecipeMapMultiblock
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gcym.tooltip.max_energy_hatches", 1));
+        tooltip.add(I18n.format("gregtech.tooltip.max_energy_hatches", 1));
     }
 }

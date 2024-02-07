@@ -57,9 +57,9 @@ public class CircuitRecipes {
                 .duration(300).EUt(VA[LV]).buildAndRegister();
 
         PROGRAMMER_RECIPES .recipeBuilder()
-                .input(INTEGRATED_CIRCUIT_MV, 1)
+                .input(PROCESSOR_ASSEMBLY_HV, 1)
                 .input(PROGRAMMABLE_LOGIC_CONTROLLER_HV, 8)
-                .output(PROCESSOR_ASSEMBLY_HV, 8)
+                .output(LOGIC_CONTROLLER_HV, 8)
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         PROGRAMMER_RECIPES .recipeBuilder()

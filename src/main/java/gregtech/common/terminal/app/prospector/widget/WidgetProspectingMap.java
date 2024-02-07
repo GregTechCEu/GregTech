@@ -171,11 +171,11 @@ public class WidgetProspectingMap extends Widget {
                             .getFluidVeinWorldEntry(world, chunk.x, chunk.z);
                     if (fStack != null && fStack.getDefinition() != null) {
                         packet.addBlock(0, 3, 0,
-                                TextFormattingUtil.formatNumbers(100.0 *
+                                TextFormattingUtil.formatNumbers(Math.round(100.0 *
                                         BedrockFluidVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z) /
-                                        BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS));
+                                        BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS)) + "% Capacity");
                         packet.addBlock(0, 2, 0,
-                                String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)));
+                                String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)) + " Liters/Second");
                         Fluid fluid = BedrockFluidVeinHandler.getFluidInChunk(world, chunk.x, chunk.z);
                         if (fluid != null) {
                             packet.addBlock(0, 1, 0, fluid.getName());

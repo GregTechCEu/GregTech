@@ -1,7 +1,13 @@
 package gregtech.api.worldgen.config;
 
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTUtility;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -17,6 +23,7 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -76,6 +83,31 @@ public class WorldConfigUtils {
         }
 
         return provider -> allPredicates.stream().anyMatch(p -> p.test(provider));
+    }
+
+    public static Map<ItemStack, Integer> createWeightedOreMap(JsonElement element) {
+        if (!element.isJsonObject())
+            throw new IllegalArgumentException("Weighted ore map should be object!");
+        JsonObject object = element.getAsJsonObject();
+
+        Map<ItemStack, Integer> backedMap = new HashMap<>();
+
+        for (Entry<String, JsonElement> oreEntry : object.entrySet()) {
+            String materialName;
+            Material material;
+
+            if (oreEntry.getKey().startsWith("ore:")) {
+                materialName = oreEntry.getKey().substring(4);
+                material = OreConfigUtils.getMaterialByName(materialName);
+
+            } else {
+                throw new IllegalArgumentException("Invalid string ore declaration: " + oreEntry.getKey());
+            }
+
+            backedMap.put(OreConfigUtils.getMaterialStoneOre(material, StoneTypes.STONE), oreEntry.getValue().getAsInt());
+        }
+
+        return backedMap;
     }
 
     public static Function<Biome, Integer> createBiomeWeightModifier(JsonElement element) {

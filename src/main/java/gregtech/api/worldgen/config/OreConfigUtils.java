@@ -5,6 +5,8 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.ore.StoneTypes;
+import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockOre;
 import gregtech.common.blocks.MetaBlocks;
 
@@ -73,6 +75,21 @@ public class OreConfigUtils {
             throw new IllegalArgumentException("There is no ore generated for material " + material);
         }
         return stoneTypeMap;
+    }
+
+    public static ItemStack getMaterialStoneOre(Material material, StoneType stoneType) {
+        List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
+                .filter(ore -> ore.material == material)
+                .collect(Collectors.toList());
+
+        if (oreBlocks.size() == 0) {
+            return null;
+        }
+
+        //Use first result
+        BlockOre oreBlock = oreBlocks.get(0);
+
+        return GTUtility.toItem(oreBlock.getDefaultState().withProperty(oreBlock.STONE_TYPE, stoneType));
     }
 
     public static Material getMaterialByName(String name) {

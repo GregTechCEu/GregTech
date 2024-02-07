@@ -42,9 +42,9 @@ public abstract class GCYMRecipeMapMultiblockController extends MultiMapMultiblo
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         if (isParallel())
-            tooltip.add(I18n.format("gcym.tooltip.parallel_enabled"));
+            tooltip.add(I18n.format("gregtech.tooltip.parallel_enabled"));
         if (ConfigHolder.recipes.enableTieredCasings && isTiered())
-            tooltip.add(I18n.format("gcym.tooltip.tiered_hatch_enabled"));
+            tooltip.add(I18n.format("gregtech.tooltip.tiered_hatch_enabled"));
     }
 
     @Override
