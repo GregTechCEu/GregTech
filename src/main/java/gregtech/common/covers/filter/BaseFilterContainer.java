@@ -65,6 +65,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     public final void setFilterStack(ItemStack stack) {
         this.setStackInSlot(0, stack);
+        if (stack.isEmpty()) return;
+
         if (FilterTypeRegistry.isItemFilter(stack)) {
             setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
         } else {
