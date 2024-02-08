@@ -4,8 +4,12 @@ import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCompound> {
 
@@ -14,6 +18,7 @@ public abstract class BaseFilterReader implements FilterReader, INBTSerializable
     private final int size;
     protected int maxTransferRate = 1;
     protected static final String BLACKLIST = "IsBlacklist";
+    protected static final String FILTER_CONTENTS = "FilterSlots";
 
     public BaseFilterReader(ItemStack container, int slots) {
         this.container = container;
@@ -22,6 +27,27 @@ public abstract class BaseFilterReader implements FilterReader, INBTSerializable
 
     public ItemStack getContainer() {
         return this.container;
+    }
+
+    public @NotNull NBTTagList getInventoryNbt() {
+        var nbt = getStackTag();
+        if (!nbt.hasKey(FILTER_CONTENTS)) {
+            NBTTagList list = new NBTTagList();
+            for (int i = 0; i < getSize(); i++) {
+                list.appendTag(new NBTTagCompound());
+            }
+            nbt.setTag(FILTER_CONTENTS, list);
+        }
+        return nbt.getTagList(FILTER_CONTENTS, Constants.NBT.TAG_COMPOUND);
+    }
+
+    public @NotNull NBTTagCompound getStackTag() {
+        NBTTagCompound nbt = this.container.getTagCompound();
+        if (nbt == null) {
+            nbt = new NBTTagCompound();
+            this.container.setTagCompound(nbt);
+        }
+        return nbt;
     }
 
     @Override

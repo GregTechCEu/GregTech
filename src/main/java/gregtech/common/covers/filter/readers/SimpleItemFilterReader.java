@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class SimpleItemFilterReader extends BaseFilterReader implements IItemHandlerModifiable {
 
     public static final String COUNT = "Count";
-    protected static final String KEY_ITEMS = "ItemFilter";
+    protected static final String LEGACY_ITEM_KEY = "ItemFilter";
     public static final String RESPECT_NBT = "IgnoreNBT";
     public static final String RESPECT_DAMAGE = "IgnoreDamage";
 
@@ -36,11 +36,6 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
     @Override
     public int getSlots() {
         return getSize();
-    }
-
-    @Override
-    public String getKey() {
-        return KEY_ITEMS;
     }
 
     public void setIgnoreNBT(boolean ignoreNBT) {
@@ -167,9 +162,9 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
         if (nbt.hasKey(RESPECT_NBT))
             this.setIgnoreNBT(nbt.getBoolean(RESPECT_NBT));
 
-        if (nbt.hasKey(KEY_ITEMS)) {
+        if (nbt.hasKey(LEGACY_ITEM_KEY)) {
             var temp = new ItemStackHandler();
-            temp.deserializeNBT(nbt.getCompoundTag(KEY_ITEMS));
+            temp.deserializeNBT(nbt.getCompoundTag(LEGACY_ITEM_KEY));
             for (int i = 0; i < temp.getSlots(); i++) {
                 var stack = temp.getStackInSlot(i);
                 if (stack.isEmpty()) continue;

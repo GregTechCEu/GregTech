@@ -13,7 +13,7 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
     protected WritableFluidTank[] fluidTanks;
     protected static final String CAPACITY = "Capacity";
 
-    protected static final String KEY_FLUIDS = "FluidFilter";
+    protected static final String LEGACY_FILTER_KEY = "FluidFilter";
 
     public SimpleFluidFilterReader(ItemStack container, int slots) {
         super(container, slots);
@@ -22,11 +22,6 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
             fluidTanks[i] = new WritableFluidTank(this, getInventoryNbt().getCompoundTagAt(i));
         }
         setCapacity(getStackTag().hasKey(CAPACITY) ? getCapacity() : 1000);
-    }
-
-    @Override
-    public String getKey() {
-        return KEY_FLUIDS;
     }
 
     public final boolean shouldShowAmount() {
@@ -70,7 +65,7 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
-        NBTTagList filterSlots = nbt.getTagList(KEY_FLUIDS, 10);
+        NBTTagList filterSlots = nbt.getTagList(LEGACY_FILTER_KEY, 10);
         for (int i = 0; i < filterSlots.tagCount(); i++) {
             NBTTagCompound stackTag = filterSlots.getCompoundTagAt(i);
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(stackTag);
