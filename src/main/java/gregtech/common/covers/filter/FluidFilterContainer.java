@@ -123,11 +123,6 @@ public class FluidFilterContainer extends BaseFilterContainer
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(this, 0)
                                 .filter(FilterTypeRegistry::isFluidFilter)
-                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    if (newItem.isEmpty() || FilterTypeRegistry.isFluidFilter(newItem)) {
-                                        onFilterSlotChange(true);
-                                    }
-                                })
                                 .singletonSlotGroup(101))
                         .onUpdateListener(w -> {
                             if (!hasFilter() && panel.isPanelOpen()) {
@@ -155,43 +150,5 @@ public class FluidFilterContainer extends BaseFilterContainer
                         IKey.lang("metaitem.fluid_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
-    }
-
-    @Override
-    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        super.readInitialSyncData(packetBuffer);
-        var stack = getFilterStack();
-
-        if (FilterTypeRegistry.isFluidFilter(stack))
-            setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
-    }
-
-    protected void onFilterSlotChange(boolean notify) {
-        ItemStack filterStack = getFilterStack();
-        int newId = FilterTypeRegistry.getFilterIdForStack(filterStack);
-        int currentId = FilterTypeRegistry.getIdForFilter(getFilter());
-
-        if (!FilterTypeRegistry.isFluidFilter(filterStack)) {
-            if (hasFilter()) {
-                setFilter(null);
-                setBlacklistFilter(false);
-                if (notify)
-                    onFilterInstanceChange();
-            }
-        } else if (currentId == -1 || newId != currentId) {
-            setFilter(FilterTypeRegistry.getFluidFilterForStack(filterStack));
-            if (notify)
-                onFilterInstanceChange();
-        }
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound tagCompound) {
-        super.deserializeNBT(tagCompound);
-        var stack = getFilterStack();
-        if (FilterTypeRegistry.isFluidFilter(stack)) {
-            setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
-            getFilter().readFromNBT(tagCompound);
-        }
     }
 }

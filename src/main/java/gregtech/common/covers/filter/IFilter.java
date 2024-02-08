@@ -74,4 +74,10 @@ public interface IFilter {
 
     /** Read legacy NBT here */
     void readFromNBT(NBTTagCompound tagCompound);
+
+    FilterType getType();
+
+    enum FilterType {
+        ITEM, FLUID
+    }
 }

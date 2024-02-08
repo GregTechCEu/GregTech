@@ -112,11 +112,6 @@ public class ItemFilterContainer extends BaseFilterContainer
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(this, 0)
                                 .filter(FilterTypeRegistry::isItemFilter)
-                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    if (newItem.isEmpty() || FilterTypeRegistry.isItemFilter(newItem)) {
-                                        onFilterSlotChange(true);
-                                    }
-                                })
                                 .singletonSlotGroup(101))
                         .onUpdateListener(w -> {
                             if (!hasFilter() && panel.isPanelOpen()) {
@@ -144,43 +139,5 @@ public class ItemFilterContainer extends BaseFilterContainer
                         IKey.lang("metaitem.item_filter.name").get())
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
-    }
-
-    protected void onFilterSlotChange(boolean notify) {
-        ItemStack filterStack = getFilterStack();
-        int newId = FilterTypeRegistry.getFilterIdForStack(filterStack);
-        int currentId = FilterTypeRegistry.getIdForFilter(getFilter());
-
-        if (!FilterTypeRegistry.isItemFilter(filterStack)) {
-            if (hasFilter()) {
-                setFilter(null);
-                setBlacklistFilter(false);
-                if (notify)
-                    onFilterInstanceChange();
-            }
-        } else if (currentId == -1 || newId != currentId) {
-            setFilter(FilterTypeRegistry.getItemFilterForStack(filterStack));
-            if (notify)
-                onFilterInstanceChange();
-        }
-    }
-
-    @Override
-    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        super.readInitialSyncData(packetBuffer);
-        var stack = getFilterStack();
-
-        if (FilterTypeRegistry.isItemFilter(stack))
-            setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound tagCompound) {
-        super.deserializeNBT(tagCompound);
-        var stack = getFilterStack();
-        if (FilterTypeRegistry.isItemFilter(stack)) {
-            setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
-            getFilter().readFromNBT(tagCompound); // try to read old data
-        }
     }
 }

@@ -34,16 +34,6 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         return 1;
     }
 
-    @Override
-    protected void onLoad() {
-        onFilterSlotChange(false);
-    }
-
-    @Override
-    protected void onContentsChanged(int slot) {
-        onFilterSlotChange(true);
-    }
-
     public void onFilterInstanceChange() {
         dirtyNotifiable.markAsDirty();
     }
@@ -52,26 +42,37 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         this.onFilterInstanceChange = onFilterInstanceChange;
     }
 
-    /**
-     * Called when the filter slot has changed to a different filter or has been removed
-     *
-     * @param notify if true, call {@code onFilterInstanceChange()}
-     */
-    protected abstract void onFilterSlotChange(boolean notify);
-
     public final @NotNull ItemStack getFilterStack() {
         return this.getStackInSlot(0);
     }
 
-    public final void setFilterStack(ItemStack stack) {
-        this.setStackInSlot(0, stack);
-        if (stack.isEmpty()) return;
+    @Override
+    public void setStackInSlot(int slot, ItemStack stack) {
+        if (ItemStack.areItemStacksEqual(stack, getFilterStack()))
+            return;
 
-        if (FilterTypeRegistry.isItemFilter(stack)) {
-            setFilter(FilterTypeRegistry.getItemFilterForStack(stack));
-        } else {
-            setFilter(FilterTypeRegistry.getFluidFilterForStack(stack));
+        if (stack.isEmpty()) {
+            setFilter(null);
+        } else if (FilterTypeRegistry.isFilter(stack)) {
+            setFilter(FilterTypeRegistry.getFilterForStack(stack));
         }
+
+        super.setStackInSlot(slot, stack);
+    }
+
+    // todo update stack for insert and extract, though that shouldn't be called normally
+    @Override
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        return stack;
+    }
+
+    @Override
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        return ItemStack.EMPTY;
+    }
+
+    public final void setFilterStack(ItemStack stack) {
+        setStackInSlot(0, stack);
     }
 
     public int getMaxTransferSize() {
@@ -147,6 +148,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt.getCompoundTag("FilterInventory"));
+        setFilter(getFilterStack().isEmpty() ? null : FilterTypeRegistry.getFilterForStack(getFilterStack()));
+        if (hasFilter()) getFilter().readFromNBT(nbt);
         this.maxTransferSize = nbt.getInteger("MaxStackSize");
         this.transferSize = nbt.getInteger("TransferStackSize");
     }

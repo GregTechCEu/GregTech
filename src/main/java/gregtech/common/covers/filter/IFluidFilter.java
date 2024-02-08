@@ -17,4 +17,9 @@ public interface IFluidFilter extends IFilter {
     default MatchResult<FluidStack> createResult(boolean matched, FluidStack fluidStack, int index) {
         return MatchResult.create(matched, fluidStack, index);
     }
+
+    @Override
+    default FilterType getType() {
+        return FilterType.FLUID;
+    }
 }

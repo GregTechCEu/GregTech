@@ -15,4 +15,9 @@ public interface IItemFilter extends IFilter {
     default MatchResult<ItemStack> createResult(boolean matched, ItemStack fluidStack, int index) {
         return MatchResult.create(matched, fluidStack, index);
     }
+
+    @Override
+    default FilterType getType() {
+        return FilterType.ITEM;
+    }
 }
