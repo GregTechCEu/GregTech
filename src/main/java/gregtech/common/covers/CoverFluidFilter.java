@@ -11,6 +11,7 @@ import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.covers.filter.IFluidFilter;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -75,6 +76,9 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull ItemStack getPickItem() {
+        if (GuiScreen.isCtrlKeyDown())
+            return getCoverableView().getStackForm();
+
         return this.fluidFilterContainer.getFilterStack();
     }
 

@@ -11,6 +11,7 @@ import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.IItemFilter;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -68,6 +69,9 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull ItemStack getPickItem() {
+        if (GuiScreen.isCtrlKeyDown())
+            return getCoverableView().getStackForm();
+
         return this.itemFilterContainer.getFilterStack();
     }
 
