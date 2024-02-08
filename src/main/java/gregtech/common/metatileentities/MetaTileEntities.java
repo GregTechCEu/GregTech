@@ -42,6 +42,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTrans
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAlloyBlastSmelter;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityArcFurnace;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityBedrockDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityCleanroom;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityCrackingUnit;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityDataBank;
@@ -370,6 +371,7 @@ public class MetaTileEntities {
     public static MetaTileEntityArcFurnace ARC_FURNACE;
     public static MetaTileEntityFixedBedReactor FIXED_BED_REACTOR;
     public static MetaTileEntityIndustrialRefrigerator INDUSTRIAL_REFRIGERATOR;
+    public static MetaTileEntityBedrockDrill BEDROCK_DRILL;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -810,6 +812,9 @@ public class MetaTileEntities {
 
         INDUSTRIAL_REFRIGERATOR = registerMetaTileEntity(1070,
                 new MetaTileEntityIndustrialRefrigerator(gregtechId("industrial_refrigerator")));
+
+        BEDROCK_DRILL = registerMetaTileEntity(1071,
+                new MetaTileEntityBedrockDrill(gregtechId("bedrock_drill"), 2, Materials.Steel, 10));
 
         // MISC MTE's START: IDs 1150-2000
 

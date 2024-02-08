@@ -17,6 +17,18 @@
         "bottom": "#side"
       }
     },
+    "active=false,variant=drill": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/unique/drill"
+      }
+    },
+    "active=true,variant=drill": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/unique/drill_on"
+      }
+    },
     "active=false,variant=slicing_blades": {
       "model": "minecraft:cube_bottom_top",
       "textures": {

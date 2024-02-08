@@ -96,10 +96,10 @@ public class MetaTileEntityArcFurnace extends RecipeMapMultiblockController {
                 }
 
                 if (facing == EnumFacing.WEST || facing == EnumFacing.EAST) {
-                    getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + facing.getZOffset() * 0.5f, yPos, zPos + 1f, xSpd, ySpd, zSpd);
-                    getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + facing.getZOffset() * 0.5f, yPos, zPos - 1f, xSpd, ySpd, zSpd);
-                    getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + facing.getZOffset() * 3.5f, yPos, zPos + 1f, xSpd, ySpd, zSpd);
-                    getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + facing.getZOffset() * 3.5f, yPos, zPos - 1f, xSpd, ySpd, zSpd);
+                    getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + facing.getXOffset() * 0.5f, yPos, zPos + 1f, xSpd, ySpd, zSpd);
+                    getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + facing.getXOffset() * 0.5f, yPos, zPos - 1f, xSpd, ySpd, zSpd);
+                    getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + facing.getXOffset() * 3.5f, yPos, zPos + 1f, xSpd, ySpd, zSpd);
+                    getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + facing.getXOffset() * 3.5f, yPos, zPos - 1f, xSpd, ySpd, zSpd);
                 }
             }
         }

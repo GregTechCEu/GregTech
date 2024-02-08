@@ -7,10 +7,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.XSTR;
-import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
-import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.api.worldgen.bedrockFluids.ChunkPosDimension;
-import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.BedrockOreDepositDefinition;
 
 import gregtech.core.network.packets.PacketOreVeinList;
@@ -167,8 +164,22 @@ public class BedrockOreVeinHandler {
     @Nullable
     public static Map<ItemStack, Integer> getOresInChunk(World world, int chunkX, int chunkZ) {
         OreVeinWorldEntry info = getOreVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null || info.getDefinition() == null) return null;
+        if (info == null || info.getDefinition() == null) {
+            return null;
+        }
         return info.getDefinition().getStoredOres();
+    }
+
+    public static int getTotalWeightInChunk(World world, int chunkX, int chunkZ) {
+        OreVeinWorldEntry info = getOreVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null || info.getDefinition() == null) return 0;
+        return info.getDefinition().getTotalOreWeight();
+    }
+
+    public static ItemStack getStoneInChunk(World world, int chunkX, int chunkZ) {
+        OreVeinWorldEntry info = getOreVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null || info.getDefinition() == null) return null;
+        return info.getDefinition().getDefaultDrop();
     }
 
     public static void depleteVein(World world, int chunkX, int chunkZ, int amount, boolean ignoreVeinStats) {

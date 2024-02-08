@@ -9,6 +9,16 @@
       }
     ]
   },
+  "tick.large_miner": {
+    "subtitle" : "gregtech.subtitle.tick.miner",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:large_miner",
+        "stream": false
+      }
+    ]
+  },
   "tick.macerator": {
     "subtitle" : "gregtech.subtitle.tick.macerator",
     "category": "block",

@@ -5494,6 +5494,8 @@ gregtech.veins.fluid.oil=Overworld Oil Deposit
 gregtech.veins.fluid.raw_oil=Overworld Raw Oil Deposit
 gregtech.veins.fluid.salt_water=Overworld Salt Water Deposit
 
+gregtech.veins.bedrock.magnetite=Greisen Blah Blah Maagnetite Extrusion
+
 gregtech.item_filter.empty_item=Empty (No Item)
 gregtech.item_filter.footer=§eClick with item to override
 
@@ -5631,9 +5633,9 @@ gregtech.multiblock.miner.chunk_mode=Chunk Mode: §aEnabled§r/nSilk Touch Mode:
 gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 
-gregtech.multiblock.fluid_rig.drilled_fluid=Fluid: %s
+gregtech.multiblock.fluid_rig.drilled_fluid=Ore Vein: %s
 gregtech.multiblock.fluid_rig.no_fluid_in_area=None in Area.
-gregtech.multiblock.fluid_rig.fluid_amount=Pumping Rate: %s
+gregtech.multiblock.fluid_rig.fluid_amount=Drilling Rate: %s
 gregtech.multiblock.fluid_rig.vein_depletion=Vein Size: %s
 gregtech.multiblock.fluid_rig.vein_depleted=Vein Depleted.
 gregtech.multiblock.miner.drilling=Drilling.
@@ -6268,6 +6270,7 @@ gregtech.machine.fermentation_vat.name=Fermentation Vat
 gregtech.machine.arc_furnace.name=Arc Furnace
 gregtech.machine.fixed_bed_reactor.name=Fixed Bed Reactor
 gregtech.machine.industrial_refrigerator.name=Industrial Refrigerator
+gregtech.machine.bedrock_drill.name=Deep Bedrock Drill
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
@@ -6345,6 +6348,7 @@ tile.unique_casing.electrolytic_cell.name=Electrolytic Cell
 tile.unique_casing.heat_vent.name=Heat Vent
 tile.unique_casing.molybdenum_disilicide_coil.name=Molybdenum Disilicide Coil Block
 tile.unique_casing.graphite_electrode.name=Graphite Electrode
+tile.unique_casing.drill.name=Drill Head
 
 # large multiblock casing
 tile.large_multiblock_casing.macerator_casing.name=Secure Maceration Casing

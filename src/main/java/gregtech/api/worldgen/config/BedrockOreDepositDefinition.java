@@ -71,7 +71,7 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
 
         if (configRoot.has("stone_type")) {
             this.stoneType = StoneType.STONE_TYPE_REGISTRY.registryObjects.get(
-                    configRoot.get("stone_type").getAsJsonObject().get("amount").getAsString());
+                    configRoot.get("stone_type").getAsString());
 
             this.defaultDrop = GTUtility.toItem(stoneType.stone.get());
         }

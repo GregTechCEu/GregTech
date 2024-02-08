@@ -13,6 +13,9 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -41,7 +44,7 @@ public class BedrockDrillLogic {
 
     public BedrockDrillLogic(MetaTileEntityBedrockDrill metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
-        this.veinFluid = null;
+        this.veinOres = null;
     }
 
     /**
@@ -52,9 +55,10 @@ public class BedrockDrillLogic {
         if (metaTileEntity.getWorld().isRemote) return;
 
         // if we have no ore, try to get a new one
-        if (veinFluid == null)
-            if (!acquireNewFluid())
-                return; // stop if we still have no fluid
+        if (veinOres == null) {
+            if (!acquireNewOres())
+                return; // stop if we still have no ore
+        }
 
         // drills that cannot work do nothing
         if (!this.isWorkingEnabled)
@@ -86,11 +90,32 @@ public class BedrockDrillLogic {
             return;
         progressTime = 0;
 
-        int amount = getFluidToProduce();
-
-        if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
-            GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
+        if (GTTransferUtils.addItemToItemHandler(metaTileEntity.getExportItems(), true, getNextOreToProduce())) {
+            GTTransferUtils.addItemToItemHandler(metaTileEntity.getExportItems(), false, getNextOreToProduce());
             depleteVein();
+
+            if (this.isActive()) {
+                if (metaTileEntity.getWorld().isRemote) {
+                    BlockPos pos = metaTileEntity.getPos();
+                    EnumFacing facing = metaTileEntity.getFrontFacing().getOpposite();
+
+                    float yPos = pos.getY();
+                    float xPos = pos.getX();
+                    float zPos = pos.getZ();
+
+                    float xSpd = (GTValues.RNG.nextFloat() - 0.5f);
+                    float ySpd = 0.3F + 0.3F * GTValues.RNG.nextFloat();
+                    float zSpd = (GTValues.RNG.nextFloat() - 0.5f);
+
+                    if (facing == EnumFacing.NORTH || facing == EnumFacing.WEST) {
+                        metaTileEntity.getWorld().spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, xPos + 0.5f, yPos - 3f, zPos + facing.getZOffset() * 1.5f, xSpd, ySpd, zSpd);
+                    }
+
+                    if (facing == EnumFacing.WEST || facing == EnumFacing.EAST) {
+                        metaTileEntity.getWorld().spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, xPos + facing.getXOffset() * 1.5f, yPos - 3f, zPos + 0.5f, xSpd, ySpd, zSpd);
+                    }
+                }
+            }
         } else {
             // the ore block was not able to fit, so the inventory is considered full
             isInventoryFull = true;
@@ -122,18 +147,38 @@ public class BedrockDrillLogic {
 
     public ItemStack getNextOreToProduce() {
         int regularYield = BedrockOreVeinHandler.getOreDensity(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
-        int remainingOperations = BedrockFluidVeinHandler.getOperationsRemaining(metaTileEntity.getWorld(), getChunkX(),
+        int remainingOperations = BedrockOreVeinHandler.getOperationsRemaining(metaTileEntity.getWorld(), getChunkX(),
                 getChunkZ());
 
-        int currentDensity = regularYield * remainingOperations / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
-        int oreAmount = (currentDensity * metaTileEntity.getRigMultiplier()) / 100;
+        int currentDensity = regularYield * remainingOperations / BedrockOreVeinHandler.MAXIMUM_VEIN_OPERATIONS;
+        int oreAmount = metaTileEntity.getRigMultiplier();
+        var possibleOres = BedrockOreVeinHandler.getOresInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()).entrySet();
 
         // Overclocks produce 50% more fluid
         if (isOverclocked()) {
             oreAmount = oreAmount * 3 / 2;
         }
 
+        ItemStack produced = BedrockOreVeinHandler.getStoneInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()).copy();
+
+        if (GTValues.RNG.nextDouble() > currentDensity) {
+            int i = GTValues.RNG.nextInt(BedrockOreVeinHandler.getTotalWeightInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()));
+            int j = 0;
+
+            for (var ore : possibleOres) {
+                if (i < j + ore.getValue()) {
+                    produced = ore.getKey().copy();
+                }
+                j += ore.getValue();
+            }
+        }
+
+        produced.setCount(oreAmount);
         return produced;
+    }
+
+    public String getVeinDisplayName() {
+        return BedrockOreVeinHandler.getOreVeinWorldEntry(metaTileEntity.getWorld(), getChunkX(), getChunkZ()).getDefinition().getAssignedName();
     }
 
     /**
