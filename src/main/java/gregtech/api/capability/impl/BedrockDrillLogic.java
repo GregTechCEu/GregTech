@@ -15,12 +15,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -90,8 +92,11 @@ public class BedrockDrillLogic {
             return;
         progressTime = 0;
 
-        if (GTTransferUtils.addItemToItemHandler(metaTileEntity.getExportItems(), true, getNextOreToProduce())) {
-            GTTransferUtils.addItemToItemHandler(metaTileEntity.getExportItems(), false, getNextOreToProduce());
+        ArrayList<ItemStack> output = new ArrayList<>();
+        output.add(getNextOreToProduce());
+
+        if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, output)) {
+            GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), false, output);
             depleteVein();
 
             if (this.isActive()) {
@@ -203,7 +208,10 @@ public class BedrockDrillLogic {
             this.hasNotEnoughEnergy = false;
         }
 
-        if (GTTransferUtils.addItemToItemHandler(metaTileEntity.getExportItems(), true, getNextOreToProduce())) {
+        ArrayList<ItemStack> output = new ArrayList<>();
+        output.add(getNextOreToProduce());
+
+        if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, output)) {
             this.isInventoryFull = false;
             return true;
         }

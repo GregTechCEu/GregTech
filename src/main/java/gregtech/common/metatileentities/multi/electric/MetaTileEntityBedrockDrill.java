@@ -233,8 +233,8 @@ public class MetaTileEntityBedrockDrill extends MultiblockWithDisplayBase
                             ITextComponent amountInfo = TextComponentUtil.stringWithColor(
                                     TextFormatting.BLUE,
                                     TextFormattingUtil.formatNumbers(
-                                            minerLogic.getNextOreToProduce().getCount()) +
-                                            " L/t");
+                                            getRigMultiplier()) +
+                                            " Blocks/s");
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.fluid_rig.fluid_amount",
@@ -293,13 +293,20 @@ public class MetaTileEntityBedrockDrill extends MultiblockWithDisplayBase
     }
 
     public int getRigMultiplier() {
+        int multiplier = 1;
+
         if (this.tier == GTValues.MV)
-            return 4;
+            multiplier = 4;
         if (this.tier == GTValues.HV)
-            return 16;
+            multiplier = 16;
         if (this.tier == GTValues.EV)
-            return 64;
-        return 1;
+            multiplier = 64;
+
+        if (getEnergyTier() > getTier()) {
+            multiplier = multiplier * 3 / 2;
+        }
+
+        return multiplier;
     }
 
     public int getDepletionChance() {
