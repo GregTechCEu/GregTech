@@ -3,8 +3,12 @@ package gregtech.common.metatileentities;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.PseudoMultiMachineMetaTileEntity;
+import gregtech.api.metatileentity.PseudoMultiSteamMachineMetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
+import gregtech.api.metatileentity.SteamProgressIndicator;
+import gregtech.api.metatileentity.SteamProgressIndicators;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -416,10 +420,10 @@ public class MetaTileEntities {
 
     public static MetaTileEntityParallelHatch[] PARALLEL_HATCH = new MetaTileEntityParallelHatch[4];
     public static MetaTileEntityTieredHatch[] TIERED_HATCH = new MetaTileEntityTieredHatch[GTValues.V.length];
-
-    // Custom multiblocks
     public static MetaTileEntityHeatExchanger HEAT_EXCHANGER;
     public static MetaTileEntityFrothFlotationTank FROTH_FLOTATION_TANK;
+    public static PseudoMultiMachineMetaTileEntity[] LATEX_COLLECTOR;
+    public static PseudoMultiSteamMachineMetaTileEntity[] STEAM_LATEX_COLLECTOR;
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -1233,9 +1237,13 @@ public class MetaTileEntities {
                     new MetaTileEntityTieredHatch(gregtechId(String.format("tiered_hatch.%s", GTValues.VN[i])), i));
         }
 
-        // Custom multiblocks
         HEAT_EXCHANGER = registerMetaTileEntity(15044, new MetaTileEntityHeatExchanger(gregtechId("heat_exchanger")));
         FROTH_FLOTATION_TANK = registerMetaTileEntity(17008, new MetaTileEntityFrothFlotationTank(gregtechId("froth_flotation_tank")));
+
+        STEAM_LATEX_COLLECTOR = new PseudoMultiSteamMachineMetaTileEntity[2];
+        LATEX_COLLECTOR = new PseudoMultiMachineMetaTileEntity[GTValues.EV];
+        registerPseudoMultiSteamMTE(STEAM_LATEX_COLLECTOR, 14510, "latex_collector", RecipeMaps.LATEX_COLLECTOR_RECIPES, SteamProgressIndicators.EXTRACTION_STEAM, Textures.LATEX_COLLECTOR_OVERLAY, false);
+        registerPseudoMultiMTE(LATEX_COLLECTOR, 3, 14502, "latex_collector", RecipeMaps.LATEX_COLLECTOR_RECIPES, Textures.LATEX_COLLECTOR_OVERLAY, true, GTUtility.collectorTankSizeFunction);
 
         /*
          * FOR ADDON DEVELOPERS:
@@ -1258,6 +1266,17 @@ public class MetaTileEntities {
          * - CT(MBT) 32000 - ~
          * - FREE RANGE 11000-32767
          */
+    }
+
+    private static void registerPseudoMultiMTE(PseudoMultiMachineMetaTileEntity[] machines, int maxTier, int startId, String name, RecipeMap<?> map, ICubeRenderer texture, boolean hasFrontFacing, Function<Integer, Integer> tankScalingFunction) {
+        for (int i = 0; i <= maxTier; i++) {
+            machines[i] = registerMetaTileEntity(startId + i, new PseudoMultiMachineMetaTileEntity(gregtechId(String.format("%s.%s", name, GTValues.VN[i + 1].toLowerCase())), map, texture, i + 1, hasFrontFacing, tankScalingFunction));
+        }
+    }
+
+    private static void registerPseudoMultiSteamMTE(PseudoMultiSteamMachineMetaTileEntity[] machines, int startId, String name, RecipeMap<?> recipeMap, SteamProgressIndicator progressIndicator, ICubeRenderer texture, boolean isBricked) {
+        machines[0] = registerMetaTileEntity(startId, new PseudoMultiSteamMachineMetaTileEntity(gregtechId(String.format("%s.bronze", name)), recipeMap, progressIndicator, texture, isBricked, false));
+        machines[1] = registerMetaTileEntity(startId + 1, new PseudoMultiSteamMachineMetaTileEntity(gregtechId(String.format("%s.steel", name)), recipeMap, progressIndicator, texture, isBricked, true));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

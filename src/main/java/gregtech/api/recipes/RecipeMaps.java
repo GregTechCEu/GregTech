@@ -14,6 +14,7 @@ import gregtech.api.recipes.builders.FusionRecipeBuilder;
 import gregtech.api.recipes.builders.GasCollectorRecipeBuilder;
 import gregtech.api.recipes.builders.NoEnergyRecipeBuilder;
 import gregtech.api.recipes.builders.PrimitiveRecipeBuilder;
+import gregtech.api.recipes.builders.PseudoMultiRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.RecipeMapAssemblyLine;
@@ -1452,6 +1453,14 @@ public final class RecipeMaps {
             .itemInputs(3).itemOutputs(2).fluidInputs(4).fluidOutputs(2)
             .progressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
             .sound(GTSoundEvents.BATH)
+            .build();
+
+    @ZenProperty
+    public static final RecipeMap<PseudoMultiRecipeBuilder> LATEX_COLLECTOR_RECIPES = new RecipeMapBuilder<>(
+            "froth_flotation", new PseudoMultiRecipeBuilder())
+            .itemInputs(0).itemOutputs(2).fluidInputs(1).fluidOutputs(2)
+            .progressBar(GuiTextures.PROGRESS_BAR_EXTRACTION, MoveType.VERTICAL_DOWNWARDS)
+            .sound(GTSoundEvents.DRILL_TOOL)
             .build();
 
     private RecipeMaps() {}

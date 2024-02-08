@@ -6387,3 +6387,12 @@ gregtech.material.hsla_steel=HSLA Steel
 gregtech.material.titanium_tungsten_carbide=Titanium Tungsten Carbide
 gregtech.material.incoloy_ma_956=Incoloy-MA956
 
+# Latex Collector
+gregtech.machine.latex_collector.steam=Needs Steam!
+gregtech.machine.latex_collector.tooltip=Collects latex from adjacent rubber tree log. Yields %d mL of latex per tick.
+gregtech.machine.latex_collector.bronze.name=Steam Latex Collector
+gregtech.machine.latex_collector.steel.name=High Pressure Steam Latex Collector
+gregtech.machine.latex_collector.lv.name=Basic Latex Collector
+gregtech.machine.latex_collector.mv.name=Advanced Latex Collector
+gregtech.machine.latex_collector.hv.name=Advanced Latex Collector II
+gregtech.machine.latex_collector.ev.name=Advanced Latex Collector III

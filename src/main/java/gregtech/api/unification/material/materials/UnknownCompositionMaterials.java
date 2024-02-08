@@ -16,6 +16,11 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class UnknownCompositionMaterials {
 
     public static void register() {
+        Latex = new Material.Builder(27050, gregtechId("latex"))
+                .dust().fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(293))
+                .color(0xFFFADA)
+                .build();
+
         WoodGas = new Material.Builder(1500, gregtechId("wood_gas"))
                 .gas().color(0xDECD87).build();
 

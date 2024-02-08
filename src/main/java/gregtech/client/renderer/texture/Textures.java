@@ -207,6 +207,8 @@ public class Textures {
     public static final OrientedOverlayRenderer POWER_SUBSTATION_OVERLAY = new OrientedOverlayRenderer(
             "multiblock/power_substation");
 
+    public static final OrientedOverlayRenderer LATEX_COLLECTOR_OVERLAY = new OrientedOverlayRenderer(
+            "machines/latex_collector");
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer(
             "machines/alloy_smelter");
     public static final OrientedOverlayRenderer FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/furnace");
