@@ -134,26 +134,6 @@ public class GTTransferUtils {
         return true;
     }
 
-    public static boolean addItemToItemHandler(final IItemHandler handler,
-                                                final boolean simulate,
-                                                final ItemStack item) {
-        // determine if there is sufficient room to insert all items into the target inventory
-        if (simulate) {
-            OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-
-            int amountToInsert = item.getCount();
-            int amount = overlayedItemHandler.insertStackedItemStack(item, amountToInsert);
-            if (amount > 0) {
-                return false;
-            }
-            return true;
-        }
-
-        // perform the merge.
-        insertItem(handler, item, false);
-        return true;
-    }
-
     /**
      * Simulates the insertion of fluid into a target fluid handler, then optionally performs the insertion.
      * <br />

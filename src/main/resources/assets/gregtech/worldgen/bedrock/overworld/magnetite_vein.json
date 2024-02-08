@@ -9,6 +9,7 @@
     "amount": 1,
     "chance": 100
   },
+  "stone_type": "basalt",
   "ores": {
     "ore:magnetite": 100
   }
