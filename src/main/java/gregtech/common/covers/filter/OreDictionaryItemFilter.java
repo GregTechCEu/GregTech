@@ -49,7 +49,6 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
     public OreDictionaryItemFilter(ItemStack stack) {
         this.filterReader = new OreDictFilterReader(stack);
         setFilterReader(this.filterReader);
-        recompile();
     }
 
     @NotNull
