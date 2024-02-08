@@ -134,6 +134,8 @@ public class Textures {
             "generators/boiler/lava");
     public static final OrientedOverlayRenderer SOLAR_BOILER_OVERLAY = new OrientedOverlayRenderer(
             "generators/boiler/solar");
+    public static final OrientedOverlayRenderer HEAT_EXCHANGER_OVERLAY = new OrientedOverlayRenderer(
+            "multiblock/heat_exchanger");
     public static final OrientedOverlayRenderer PRIMITIVE_PUMP_OVERLAY = new OrientedOverlayRenderer(
             "multiblock/primitive_pump");
     public static final OrientedOverlayRenderer PRIMITIVE_BLAST_FURNACE_OVERLAY = new OrientedOverlayRenderer(

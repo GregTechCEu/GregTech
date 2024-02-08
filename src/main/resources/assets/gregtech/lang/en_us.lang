@@ -6271,12 +6271,11 @@ gregtech.machine.arc_furnace.name=Arc Furnace
 gregtech.machine.fixed_bed_reactor.name=Fixed Bed Reactor
 gregtech.machine.industrial_refrigerator.name=Industrial Refrigerator
 gregtech.machine.bedrock_drill.name=Deep Bedrock Drill
+gregtech.machine.heat_exchanger.name=Heat Exchanger
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
 gregtech.multiblock.tiered_hatch.tooltip=Max Tiered EU/t: §a%s (%s§r)
-
-
 
 # multiblock descriptions
 gregtech.multiblock.large_macerator.description=A multiblock Macerator for grinding.
@@ -6368,6 +6367,7 @@ tile.large_multiblock_casing.steam_casing.name=Industrial Steam Casing
 # RecipeMaps
 recipemap.alloy_blast_smelter.name=Alloy Blast Smelting
 recipemap.fixed_bed_reactor.name=Fixed Bed Reactor
+recipemap.heat_exchanger.name=Heat Exchanging
 recipemap.programmer.name=Programmer
 
 # Materials

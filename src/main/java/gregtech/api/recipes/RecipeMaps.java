@@ -12,6 +12,7 @@ import gregtech.api.recipes.builders.ComputationRecipeBuilder;
 import gregtech.api.recipes.builders.FuelRecipeBuilder;
 import gregtech.api.recipes.builders.FusionRecipeBuilder;
 import gregtech.api.recipes.builders.GasCollectorRecipeBuilder;
+import gregtech.api.recipes.builders.NoEnergyRecipeBuilder;
 import gregtech.api.recipes.builders.PrimitiveRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -1436,6 +1437,14 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.COMBUSTION)
                     .allowEmptyOutputs()
                     .build();
+
+    @ZenProperty
+    public static final RecipeMap<NoEnergyRecipeBuilder> HEAT_EXCHANGER_RECIPES = new RecipeMapBuilder<>(
+            "heat_exchanger", new NoEnergyRecipeBuilder())
+            .fluidInputs(2).fluidOutputs(2).itemInputs(1)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
+            .sound(GTSoundEvents.COOLING)
+            .build();
 
     private RecipeMaps() {}
 }

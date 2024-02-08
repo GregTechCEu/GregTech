@@ -53,6 +53,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityFixedBedRea
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityHeatExchanger;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeAssembler;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeAutoclave;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeBender;
@@ -415,7 +416,8 @@ public class MetaTileEntities {
     public static MetaTileEntityParallelHatch[] PARALLEL_HATCH = new MetaTileEntityParallelHatch[4];
     public static MetaTileEntityTieredHatch[] TIERED_HATCH = new MetaTileEntityTieredHatch[GTValues.V.length];
 
-    //spotless:on
+    // Custom multiblocks
+    public static MetaTileEntityHeatExchanger HEAT_EXCHANGER;
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -1228,6 +1230,9 @@ public class MetaTileEntities {
             TIERED_HATCH[i] = registerMetaTileEntity(1825 + i,
                     new MetaTileEntityTieredHatch(gregtechId(String.format("tiered_hatch.%s", GTValues.VN[i])), i));
         }
+
+        // Custom multiblocks
+        HEAT_EXCHANGER = registerMetaTileEntity(15044, new MetaTileEntityHeatExchanger(gregtechId("heat_exchanger")));
 
         /*
          * FOR ADDON DEVELOPERS:
