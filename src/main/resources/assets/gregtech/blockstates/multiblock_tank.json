@@ -1,0 +1,21 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "active=false,variant=flotation": {
+      "model": "minecraft:cube_bottom_top",
+      "textures": {
+        "top": "gregtech:blocks/casings/multiblock_tank/flotation",
+        "side": "gregtech:blocks/casings/solid/machine_casing_clean_stainless_steel",
+        "bottom": "#side"
+      }
+    },
+    "active=true,variant=flotation": {
+      "model": "minecraft:cube_bottom_top",
+      "textures": {
+        "top": "gregtech:blocks/casings/multiblock_tank/flotation_on",
+        "side": "gregtech:blocks/casings/solid/machine_casing_clean_stainless_steel",
+        "bottom": "#side"
+      }
+    }
+  }
+}

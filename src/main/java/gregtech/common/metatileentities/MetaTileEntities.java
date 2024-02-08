@@ -51,6 +51,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBla
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFermentationVat;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFixedBedReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityFrothFlotationTank;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHeatExchanger;
@@ -418,6 +419,7 @@ public class MetaTileEntities {
 
     // Custom multiblocks
     public static MetaTileEntityHeatExchanger HEAT_EXCHANGER;
+    public static MetaTileEntityFrothFlotationTank FROTH_FLOTATION_TANK;
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -1233,6 +1235,7 @@ public class MetaTileEntities {
 
         // Custom multiblocks
         HEAT_EXCHANGER = registerMetaTileEntity(15044, new MetaTileEntityHeatExchanger(gregtechId("heat_exchanger")));
+        FROTH_FLOTATION_TANK = registerMetaTileEntity(17008, new MetaTileEntityFrothFlotationTank(gregtechId("froth_flotation_tank")));
 
         /*
          * FOR ADDON DEVELOPERS:
