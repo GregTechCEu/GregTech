@@ -7,6 +7,7 @@ import crafttweaker.api.item.IItemStack;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 
@@ -39,7 +40,10 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
 
     private StoneType stoneType;
 
+    private ItemStack defaultDrop;
     private Map<ItemStack, Integer> storedOres;
+
+    private int totalOreWeight;
 
     private Function<Biome, Integer> biomeWeightModifier = OreDepositDefinition.NO_BIOME_INFLUENCE; // weighting of
     // biomes
@@ -68,7 +72,10 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
         if (configRoot.has("stone_type")) {
             this.stoneType = StoneType.STONE_TYPE_REGISTRY.registryObjects.get(
                     configRoot.get("stone_type").getAsJsonObject().get("amount").getAsString());
+
+            this.defaultDrop = GTUtility.toItem(stoneType.stone.get());
         }
+
         if (stoneType == null) {
             this.stoneType = StoneTypes.STONE;
         }
@@ -76,6 +83,10 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
         // the ores which the vein contain
         if (configRoot.has("ores")) {
             this.storedOres = WorldConfigUtils.createWeightedOreMap(configRoot.get("ores"), this.stoneType);
+
+            for (var entry : storedOres.entrySet()) {
+                this.totalOreWeight += entry.getValue();
+            }
         }
 
         // vein name for JEI display
@@ -134,6 +145,14 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
 
     public Map<ItemStack, Integer> getStoredOres() {
         return storedOres;
+    }
+
+    public int getTotalOreWeight() {
+        return totalOreWeight;
+    }
+
+    public ItemStack getDefaultDrop() {
+        return defaultDrop;
     }
 
     public Function<Biome, Integer> getBiomeWeightModifier() {

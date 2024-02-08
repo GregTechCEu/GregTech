@@ -80,9 +80,9 @@ public class OreConfigUtils {
     public static ItemStack getMaterialStoneOre(Material material, StoneType stoneType) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
                 .filter(ore -> ore.material == material)
-                .collect(Collectors.toList());
+                .toList();
 
-        if (oreBlocks.size() == 0) {
+        if (oreBlocks.isEmpty()) {
             return null;
         }
 
