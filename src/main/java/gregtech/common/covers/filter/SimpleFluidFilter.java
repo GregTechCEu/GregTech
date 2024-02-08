@@ -3,7 +3,6 @@ package gregtech.common.covers.filter;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.FixedFluidSlotSH;
-import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.readers.SimpleFluidFilterReader;
 
 import net.minecraft.item.ItemStack;

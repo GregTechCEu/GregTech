@@ -8,8 +8,8 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.common.covers.filter.IFluidFilter;
 import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.filter.IFluidFilter;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

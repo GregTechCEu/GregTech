@@ -3,12 +3,11 @@ package gregtech.common.covers.filter;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.items.MetaItems;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-
 import net.minecraft.item.ItemStack;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +42,7 @@ public class FilterTypeRegistry {
     private static final Map<Integer, FilterFactory> fluidFilterById = new Int2ObjectOpenHashMap<>();
 
     public static void init() {
-        //todo call this in MetaItems as a component or something
+        // todo call this in MetaItems as a component or something
         registerFilter(SimpleFluidFilter::new, MetaItems.FLUID_FILTER.getStackForm());
         registerFilter(SimpleItemFilter::new, MetaItems.ITEM_FILTER.getStackForm());
         registerFilter(OreDictionaryItemFilter::new, MetaItems.ORE_DICTIONARY_FILTER.getStackForm());
@@ -78,7 +77,6 @@ public class FilterTypeRegistry {
         }
         itemFilterIdByStack.put(itemStack, id);
         itemFilterById.put(id, filterFactory);
-
     }
 
     public static void registerFilter(FilterFactory factory, ItemStack stack) {

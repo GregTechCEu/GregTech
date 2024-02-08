@@ -3,9 +3,7 @@ package gregtech.common.covers.filter;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -21,14 +19,13 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class FluidFilterContainer extends BaseFilterContainer
-        implements INBTSerializable<NBTTagCompound> {
+                                  implements INBTSerializable<NBTTagCompound> {
 
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
