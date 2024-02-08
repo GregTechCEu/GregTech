@@ -43,7 +43,8 @@ public class SimpleItemFilter extends BaseFilter implements IItemFilter {
     public MatchResult<ItemStack> match(ItemStack itemStack) {
         int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
                 itemStack);
-        return createResult(matchedSlot != -1 && !isBlacklistFilter(), filterReader.getStackInSlot(matchedSlot), matchedSlot);
+        return createResult(matchedSlot != -1 && !isBlacklistFilter(), filterReader.getStackInSlot(matchedSlot),
+                matchedSlot);
     }
 
     @Override

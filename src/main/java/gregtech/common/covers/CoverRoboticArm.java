@@ -81,7 +81,8 @@ public class CoverRoboticArm extends CoverConveyor {
             int itemToMoveAmount = itemFilterContainer.getTransferLimit(sourceInfo.itemStack);
 
             // if smart item filter and whitelist
-            if (itemFilterContainer.getFilter() instanceof SmartItemFilter && !itemFilterContainer.isBlacklistFilter()) {
+            if (itemFilterContainer.getFilter() instanceof SmartItemFilter &&
+                    !itemFilterContainer.isBlacklistFilter()) {
                 if (itemFilterContainer.getTransferSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
                     // get the max we can extract from the item filter variable
                     int maxMultiplier = Math.floorDiv(maxTransferAmount, itemToMoveAmount);
