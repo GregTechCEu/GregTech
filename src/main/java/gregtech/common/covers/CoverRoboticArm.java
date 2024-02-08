@@ -78,10 +78,10 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             TypeItemInfo sourceInfo = sourceItemAmount.get(iterator.next());
             int itemAmount = sourceInfo.totalCount;
-            int itemToMoveAmount = itemFilterContainer.getTransferLimit(sourceInfo.itemStack);
+            int itemToMoveAmount = itemFilterContainer.getTransferLimit(sourceInfo.filterSlot);
 
             // if smart item filter
-            if (itemFilterContainer.getFilter() instanceof SmartItemFilter) {
+            if (itemFilterContainer.getItemFilter() instanceof SmartItemFilter) {
                 if (itemFilterContainer.getTransferSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
                     // get the max we can extract from the item filter variable
                     int maxMultiplier = Math.floorDiv(maxTransferAmount, itemToMoveAmount);
@@ -132,7 +132,7 @@ public class CoverRoboticArm extends CoverConveyor {
             int itemToKeepAmount = itemFilterContainer.getTransferLimit(sourceInfo.filterSlot);
 
             // only run multiplier for smart item
-            if (itemFilterContainer.getFilter() instanceof SmartItemFilter) {
+            if (itemFilterContainer.getItemFilter() instanceof SmartItemFilter) {
                 if (itemFilterContainer.getTransferSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
                     // get the max we can keep from the item filter variable
                     int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);

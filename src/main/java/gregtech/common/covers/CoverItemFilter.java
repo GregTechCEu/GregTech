@@ -106,7 +106,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @SuppressWarnings("DataFlowIssue") // this cover always has a filter
     public @NotNull IItemFilter getItemFilter() {
-        return this.itemFilterContainer.getFilter();
+        return this.itemFilterContainer.getItemFilter();
     }
 
     @Override

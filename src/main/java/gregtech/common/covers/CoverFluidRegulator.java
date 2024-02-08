@@ -78,7 +78,7 @@ public class CoverFluidRegulator extends CoverPump {
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilterContainer.hasFilter()) {
-                supplyAmount = this.fluidFilterContainer.getFilter().getTransferLimit(sourceFluid, supplyAmount);
+                supplyAmount = this.fluidFilterContainer.getFluidFilter().getTransferLimit(sourceFluid, supplyAmount);
             }
             if (fluidLeftToTransfer < supplyAmount)
                 break;
@@ -121,7 +121,7 @@ public class CoverFluidRegulator extends CoverPump {
                 break;
 
             if (this.fluidFilterContainer.hasFilter()) {
-                keepAmount = this.fluidFilterContainer.getFilter().getTransferLimit(fluidStack, keepAmount);
+                keepAmount = this.fluidFilterContainer.getFluidFilter().getTransferLimit(fluidStack, keepAmount);
             }
 
             // if fluid needs to be moved to meet the Keep Exact value
@@ -310,7 +310,7 @@ public class CoverFluidRegulator extends CoverPump {
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
             if (this.fluidFilterContainer.hasFilter()) {
-                this.fluidFilterContainer.getFilter()
+                this.fluidFilterContainer.getFluidFilter()
                         .configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
         }

@@ -37,25 +37,24 @@ public class ItemFilterContainer extends BaseFilterContainer
     }
 
     public boolean test(ItemStack toTest) {
-        return !hasFilter() || getFilter().test(toTest);
+        return !hasFilter() || getItemFilter().test(toTest);
     }
 
     public MatchResult<ItemStack> match(ItemStack toMatch) {
         if (!hasFilter())
             return MatchResult.create(true, toMatch, -1);
 
-        return getFilter().match(toMatch);
+        return getItemFilter().match(toMatch);
     }
 
     public int getTransferLimit(ItemStack stack) {
-        if (isBlacklistFilter()) {
+        if (!hasFilter() || isBlacklistFilter()) {
             return getTransferSize();
         }
-        return getFilter().getTransferLimit(stack, getTransferSize());
+        return getItemFilter().getTransferLimit(stack, getTransferSize());
     }
 
-    @Override
-    public @Nullable IItemFilter getFilter() {
+    public @Nullable IItemFilter getItemFilter() {
         return (IItemFilter) super.getFilter();
     }
 
@@ -74,7 +73,7 @@ public class ItemFilterContainer extends BaseFilterContainer
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
-        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getFilter));
+        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
     }
 
     /** @deprecated uses old builtin MUI */
@@ -96,8 +95,8 @@ public class ItemFilterContainer extends BaseFilterContainer
             @SuppressWarnings("DataFlowIssue")
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                getFilter().setMaxTransferSize(getMaxTransferSize());
-                return getFilter().createPopupPanel(syncManager);
+                getItemFilter().setMaxTransferSize(getMaxTransferSize());
+                return getItemFilter().createPopupPanel(syncManager);
             }
         };
         manager.syncValue("filter_panel", panel);

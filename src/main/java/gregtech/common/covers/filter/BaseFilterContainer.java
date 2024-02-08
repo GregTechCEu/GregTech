@@ -53,22 +53,38 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
         if (stack.isEmpty()) {
             setFilter(null);
-        } else if (FilterTypeRegistry.isFilter(stack)) {
+        } else if (isItemValid(stack)) {
             setFilter(FilterTypeRegistry.getFilterForStack(stack));
         }
 
         super.setStackInSlot(slot, stack);
     }
 
+    @Override
+    public boolean isItemValid(int slot, ItemStack stack) {
+        return FilterTypeRegistry.isFilter(stack);
+    }
+
+    public boolean isItemValid(ItemStack stack) {
+        return isItemValid(0, stack);
+    }
+
     // todo update stack for insert and extract, though that shouldn't be called normally
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-        return stack;
+        if (!isItemValid(stack)) return stack;
+        var remainder = super.insertItem(slot, stack, simulate);
+        setFilter(FilterTypeRegistry.getFilterForStack(stack));
+        return remainder;
     }
 
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        return ItemStack.EMPTY;
+        var extracted = super.extractItem(slot, amount, simulate);
+        if (!extracted.isEmpty()) {
+            setFilter(null);
+        }
+        return extracted;
     }
 
     public final void setFilterStack(ItemStack stack) {
@@ -89,7 +105,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         return currentFilter != null;
     }
 
-    public @Nullable IFilter getFilter() {
+    public final @Nullable IFilter getFilter() {
         return currentFilter;
     }
 

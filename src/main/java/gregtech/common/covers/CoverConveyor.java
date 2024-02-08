@@ -314,7 +314,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     itemInfo.totalCount -= extractedStack.getCount();
 
                     if (itemInfo.totalCount == 0) {
-                        itemInfos.remove(matchResult);
+                        itemInfos.remove(matchSlotIndex);
                         if (itemInfos.isEmpty()) {
                             break;
                         }

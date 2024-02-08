@@ -38,27 +38,31 @@ public class FluidFilterContainer extends BaseFilterContainer
     public boolean testFluidStack(FluidStack fluidStack, boolean whitelist) {
         boolean result = true;
         if (hasFilter()) {
-            result = getFilter().test(fluidStack);
+            result = getFluidFilter().test(fluidStack);
         }
         return whitelist != result;
     }
 
     public boolean test(FluidStack toTest) {
-        return !hasFilter() || getFilter().test(toTest);
+        return !hasFilter() || getFluidFilter().test(toTest);
     }
 
     public MatchResult<FluidStack> match(FluidStack toMatch) {
         if (!hasFilter())
             return MatchResult.create(true, toMatch, -1);
 
-        return getFilter().match(toMatch);
+        return getFluidFilter().match(toMatch);
     }
 
     public int getTransferLimit(FluidStack stack) {
-        if (isBlacklistFilter()) {
+        if (!hasFilter() || isBlacklistFilter()) {
             return getTransferSize();
         }
-        return getFilter().getTransferLimit(stack, getTransferSize());
+        return getFluidFilter().getTransferLimit(stack, getTransferSize());
+    }
+
+    public final @Nullable IFluidFilter getFluidFilter() {
+        return (IFluidFilter) getFilter();
     }
 
     /** @deprecated uses old builtin MUI */
@@ -79,11 +83,6 @@ public class FluidFilterContainer extends BaseFilterContainer
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void initFilterUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFilter, this::showGlobalTransferLimitSlider));
-    }
-
-    @Override
-    public @Nullable IFluidFilter getFilter() {
-        return (IFluidFilter) super.getFilter();
     }
 
     /** @deprecated uses old builtin MUI */

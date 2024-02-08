@@ -74,7 +74,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilterContainer.hasFilter() &&
                     voidingMode == VoidingMode.VOID_OVERFLOW) {
-                keepAmount = this.fluidFilterContainer.getFilter()
+                keepAmount = this.fluidFilterContainer.getFluidFilter()
                         .getTransferLimit(sourceFluid, getMaxTransferRate());
             }
             if (sourceFluid == null || sourceFluid.amount == 0 ||
