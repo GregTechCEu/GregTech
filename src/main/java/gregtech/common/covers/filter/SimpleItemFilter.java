@@ -43,7 +43,7 @@ public class SimpleItemFilter extends BaseFilter implements IItemFilter {
     public MatchResult<ItemStack> match(ItemStack itemStack) {
         int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
                 itemStack);
-        return createResult(matchedSlot != -1, filterReader.getStackInSlot(matchedSlot), matchedSlot);
+        return createResult(matchedSlot != -1 && !isBlacklistFilter(), filterReader.getStackInSlot(matchedSlot), matchedSlot);
     }
 
     @Override
@@ -54,9 +54,16 @@ public class SimpleItemFilter extends BaseFilter implements IItemFilter {
     }
 
     @Override
-    public int getTransferLimit(int matchSlot, int globalTransferLimit) {
+    public int getTransferLimit(int matchSlot, int transferSize) {
         ItemStack stackInFilterSlot = filterReader.getStackInSlot(matchSlot);
-        return Math.min(stackInFilterSlot.getCount(), globalTransferLimit);
+        return Math.min(stackInFilterSlot.getCount(), transferSize);
+    }
+
+    @Override
+    public int getTransferLimit(ItemStack stack, int transferSize) {
+        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
+                stack);
+        return getTransferLimit(matchedSlot, transferSize);
     }
 
     @Override

@@ -97,11 +97,6 @@ public class SimpleFluidFilter extends BaseFilter implements IFluidFilter {
     }
 
     @Override
-    public boolean showGlobalTransferLimitSlider() {
-        return isBlacklistFilter() && getMaxTransferSize() > 0;
-    }
-
-    @Override
     public int getTransferLimit(FluidStack fluidStack, int transferSize) {
         int limit = 0;
 

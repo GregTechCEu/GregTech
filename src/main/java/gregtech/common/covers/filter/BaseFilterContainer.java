@@ -92,7 +92,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public int getMaxTransferSize() {
-        return hasFilter() ? currentFilter.getMaxTransferSize() : this.maxTransferSize;
+        return !showGlobalTransferLimitSlider() ? currentFilter.getMaxTransferSize() : this.maxTransferSize;
     }
 
     public void setMaxTransferSize(int maxTransferSize) {
@@ -112,7 +112,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     public final void setFilter(@Nullable IFilter newFilter) {
         this.currentFilter = newFilter;
         if (hasFilter()) {
-            this.currentFilter.setDirtyNotifiable(dirtyNotifiable);
+            this.currentFilter.setDirtyNotifiable(this.dirtyNotifiable);
+            this.currentFilter.setMaxTransferSize(this.maxTransferSize);
         }
         if (onFilterInstanceChange != null) {
             this.onFilterInstanceChange.run();
@@ -120,7 +121,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return getMaxTransferSize() > 0 &&
+        return this.maxTransferSize > 0 &&
                 (isBlacklistFilter() || !hasFilter() || getFilter().showGlobalTransferLimitSlider());
     }
 

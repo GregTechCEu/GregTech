@@ -9,7 +9,7 @@ public interface IItemFilter extends IFilter {
     boolean test(ItemStack toTest);
 
     default int getTransferLimit(ItemStack stack, int transferSize) {
-        return 0;
+        return transferSize;
     }
 
     default MatchResult<ItemStack> createResult(boolean matched, ItemStack fluidStack, int index) {

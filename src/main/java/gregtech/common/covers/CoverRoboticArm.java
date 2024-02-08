@@ -78,10 +78,10 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             TypeItemInfo sourceInfo = sourceItemAmount.get(iterator.next());
             int itemAmount = sourceInfo.totalCount;
-            int itemToMoveAmount = itemFilterContainer.getTransferLimit(sourceInfo.filterSlot);
+            int itemToMoveAmount = itemFilterContainer.getTransferLimit(sourceInfo.itemStack);
 
-            // if smart item filter
-            if (itemFilterContainer.getItemFilter() instanceof SmartItemFilter) {
+            // if smart item filter and whitelist
+            if (itemFilterContainer.getFilter() instanceof SmartItemFilter && !itemFilterContainer.isBlacklistFilter()) {
                 if (itemFilterContainer.getTransferSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
                     // get the max we can extract from the item filter variable
                     int maxMultiplier = Math.floorDiv(maxTransferAmount, itemToMoveAmount);
@@ -232,6 +232,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.transferMode = TransferMode.VALUES[packetBuffer.readByte()];
+        this.itemFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
     }
 
     @Override
@@ -244,5 +245,6 @@ public class CoverRoboticArm extends CoverConveyor {
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
+        this.itemFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
     }
 }

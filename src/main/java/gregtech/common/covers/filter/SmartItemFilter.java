@@ -72,7 +72,7 @@ public class SmartItemFilter extends BaseFilter implements IItemFilter {
     public MatchResult<ItemStack> match(ItemStack itemStack) {
         var stack = itemStack.copy();
         stack.setCount(getTransferLimit(itemStack, Integer.MAX_VALUE));
-        return createResult(stack.getCount() > 0, stack, this.getFilteringMode().ordinal());
+        return createResult(stack.getCount() > 0 != isBlacklistFilter(), stack, this.getFilteringMode().ordinal());
     }
 
     @Override

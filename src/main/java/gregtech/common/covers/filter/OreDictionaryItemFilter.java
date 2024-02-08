@@ -243,7 +243,7 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
         // "wtf is this system?? i can put any non null object here and it i will work??? $arch"
         // not anymore :thanosdaddy: -ghzdude
         var match = matchesItemStack(itemStack);
-        return createResult(match, match ? itemStack.copy() : ItemStack.EMPTY, -1);
+        return createResult(match != isBlacklistFilter(), match ? itemStack.copy() : ItemStack.EMPTY, -1);
     }
 
     @Override
@@ -295,11 +295,6 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                 this.filterReader.getGlob().matchesAny(itemStack);
         cacheEntry.put(itemStack, matches);
         return matches;
-    }
-
-    @Override
-    public int getTransferLimit(int matchSlot, int globalTransferLimit) {
-        return globalTransferLimit;
     }
 
     @Override

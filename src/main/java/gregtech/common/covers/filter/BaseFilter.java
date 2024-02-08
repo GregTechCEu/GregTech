@@ -36,6 +36,10 @@ public abstract class BaseFilter implements IFilter {
         this.filterReader.setMaxTransferRate(maxStackSize);
     }
 
+    public boolean showGlobalTransferLimitSlider() {
+        return isBlacklistFilter();
+    }
+
     public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
         this.filterReader.setDirtyNotifiable(dirtyNotifiable);

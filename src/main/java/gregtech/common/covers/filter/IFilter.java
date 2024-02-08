@@ -47,12 +47,10 @@ public interface IFilter {
 
     void setMaxTransferSize(int maxTransferSize);
 
-    default boolean showGlobalTransferLimitSlider() {
-        return false;
-    }
+    boolean showGlobalTransferLimitSlider();
 
     default int getTransferLimit(int slot, int transferSize) {
-        return 0;
+        return transferSize;
     }
 
     boolean isBlacklistFilter();
