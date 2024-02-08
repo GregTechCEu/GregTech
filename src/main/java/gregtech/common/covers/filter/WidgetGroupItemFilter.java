@@ -60,7 +60,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
             if (buffer.readBoolean()) {
                 // int filterId = buffer.readVarInt();
                 try {
-                    this.itemFilter = FilterTypeRegistry.getItemFilterForStack(buffer.readItemStack());
+                    this.itemFilter = (IItemFilter) FilterTypeRegistry.getFilterForStack(buffer.readItemStack());
                     this.itemFilter.initUI(this::addWidget);
                     this.itemFilter.setMaxTransferSize(maxStackSize);
                 } catch (IOException e) {
