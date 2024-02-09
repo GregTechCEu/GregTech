@@ -264,15 +264,6 @@ public final class MetaItems {
 
     public static final Map<MarkerMaterial, MetaValueItem> GLASS_LENSES = new HashMap<>();
 
-    public static MetaItem<?>.MetaValueItem SILICON_BOULE;
-    public static MetaItem<?>.MetaValueItem PHOSPHORUS_BOULE;
-    public static MetaItem<?>.MetaValueItem NAQUADAH_BOULE;
-    public static MetaItem<?>.MetaValueItem NEUTRONIUM_BOULE;
-    public static MetaItem<?>.MetaValueItem SILICON_WAFER;
-    public static MetaItem<?>.MetaValueItem PHOSPHORUS_WAFER;
-    public static MetaItem<?>.MetaValueItem NAQUADAH_WAFER;
-    public static MetaItem<?>.MetaValueItem NEUTRONIUM_WAFER;
-
     public static MetaItem<?>.MetaValueItem HIGHLY_ADVANCED_SOC_WAFER;
     public static MetaItem<?>.MetaValueItem ADVANCED_SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem INTEGRATED_LOGIC_CIRCUIT_WAFER;
@@ -519,6 +510,10 @@ public final class MetaItems {
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_LEGGINGS;
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_BOOTS;
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_HELMET;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem CLEANROOM_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem CLEANROOM_LEGGINGS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem CLEANROOM_BOOTS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem CLEANROOM_HELMET;
 
     public static ArmorMetaItem<?>.ArmorMetaValueItem SEMIFLUID_JETPACK;
     public static ArmorMetaItem<?>.ArmorMetaValueItem ELECTRIC_JETPACK;

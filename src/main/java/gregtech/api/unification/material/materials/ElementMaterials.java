@@ -735,7 +735,7 @@ public class ElementMaterials {
                 .build();
 
         Silicon = new Material.Builder(99, gregtechId("silicon"))
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x3C3C50).iconSet(METALLIC)
                 .flags(GENERATE_FOIL)
                 .element(Elements.Si)

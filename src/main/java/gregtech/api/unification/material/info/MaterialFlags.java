@@ -239,6 +239,18 @@ public class MaterialFlags {
             .build();
 
     /////////////////
+    // BOULE //
+    /////////////////
+
+    public static final MaterialFlag GENERATE_BOULE = new MaterialFlag.Builder("generate_boule")
+            .requireProps(PropertyKey.DUST)
+            .build();
+
+    public static final MaterialFlag GENERATE_WAFER = new MaterialFlag.Builder("generate_wafer")
+            .requireProps(PropertyKey.DUST)
+            .build();
+
+    /////////////////
     // ORE //
     /////////////////
 
