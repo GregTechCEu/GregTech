@@ -202,7 +202,8 @@ public class Textures {
             "multiblock/network_switch");
     public static final OrientedOverlayRenderer POWER_SUBSTATION_OVERLAY = new OrientedOverlayRenderer(
             "multiblock/power_substation");
-
+    public static final OrientedOverlayRenderer INDUSTRIAL_REFRIGERATOR_OVERLAY = new OrientedOverlayRenderer(
+            "multiblock/industrial_refrigerator");
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer(
             "machines/alloy_smelter");
     public static final OrientedOverlayRenderer FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/furnace");
@@ -268,8 +269,6 @@ public class Textures {
             "machines/world_accelerator");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer(
             "machines/world_accelerator_te");
-    public static final OrientedOverlayRenderer INDUSTRIAL_REFRIGERATOR_OVERLAY = new OrientedOverlayRenderer(
-            "machines/industrial_refrigerator");
 
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");
