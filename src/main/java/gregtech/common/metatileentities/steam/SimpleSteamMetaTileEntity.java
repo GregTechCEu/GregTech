@@ -100,7 +100,7 @@ public class SimpleSteamMetaTileEntity extends SteamMetaTileEntity implements IG
     @Override
     public FluidTankList createImportFluidHandler() {
         super.createImportFluidHandler();
-        if (workableHandler == null) return new FluidTankList(false, new IFluidTank[]{this.steamFluidTank});
+        if (workableHandler == null) return new FluidTankList(false, this.steamFluidTank);
         IFluidTank[] fluidImports = new IFluidTank[workableHandler.getRecipeMap().getMaxFluidInputs() + 1];
         fluidImports[0] = this.steamFluidTank;
         for (int i = 1; i < fluidImports.length; i++) fluidImports[i] = new NotifiableFluidTank(8000, this, false);

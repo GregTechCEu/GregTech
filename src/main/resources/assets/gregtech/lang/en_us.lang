@@ -1889,6 +1889,7 @@ gregtech.material.pcb_coolant=Dielectric PCB Coolant
 
 
 # Unknown Composition Materials
+gregtech.material.latex=Latex
 gregtech.material.wood_gas=Wood Gas
 gregtech.material.wood_vinegar=Wood Vinegar
 gregtech.material.wood_tar=Wood Tar
@@ -6390,8 +6391,8 @@ gregtech.material.incoloy_ma_956=Incoloy-MA956
 # Latex Collector
 gregtech.machine.latex_collector.steam=Needs Steam!
 gregtech.machine.latex_collector.tooltip=Collects latex from adjacent rubber tree log. Yields %d mL of latex per tick.
-gregtech.machine.latex_collector.bronze.name=Steam Latex Collector
-gregtech.machine.latex_collector.steel.name=High Pressure Steam Latex Collector
+gregtech.machine.latex_collector_bronze.name=Steam Latex Collector
+gregtech.machine.latex_collector_steel.name=High Pressure Steam Latex Collector
 gregtech.machine.latex_collector.lv.name=Basic Latex Collector
 gregtech.machine.latex_collector.mv.name=Advanced Latex Collector
 gregtech.machine.latex_collector.hv.name=Advanced Latex Collector II

@@ -34,11 +34,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+
 public class MetaTileEntityLatexCollector extends TieredMetaTileEntity {
     private final int tankSize;
     private final long latexCollectionAmount;
@@ -59,7 +59,7 @@ public class MetaTileEntityLatexCollector extends TieredMetaTileEntity {
     }
 
     protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, new IFluidTank[]{new FluidTank(this.tankSize)});
+        return new FluidTankList(false, new FluidTank(this.tankSize));
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
@@ -213,9 +213,8 @@ public class MetaTileEntityLatexCollector extends TieredMetaTileEntity {
 
     public void addInformation(ItemStack stack, World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.latex_collector.tooltip", this.latexCollectionAmount));
-
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", new Object[]{this.energyContainer.getInputVoltage(), GTValues.VNF[this.getTier()]}));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", new Object[]{this.energyContainer.getEnergyCapacity()}));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", this.energyContainer.getInputVoltage(), GTValues.VNF[this.getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", this.energyContainer.getEnergyCapacity()));
     }
 
     public boolean needsSneakToRotate() {

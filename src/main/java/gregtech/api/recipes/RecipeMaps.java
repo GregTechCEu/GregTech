@@ -1457,7 +1457,7 @@ public final class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<PseudoMultiRecipeBuilder> LATEX_COLLECTOR_RECIPES = new RecipeMapBuilder<>(
-            "froth_flotation", new PseudoMultiRecipeBuilder())
+            "latex_collector", new PseudoMultiRecipeBuilder())
             .itemInputs(0).itemOutputs(2).fluidInputs(1).fluidOutputs(2)
             .progressBar(GuiTextures.PROGRESS_BAR_EXTRACTION, MoveType.VERTICAL_DOWNWARDS)
             .sound(GTSoundEvents.DRILL_TOOL)
