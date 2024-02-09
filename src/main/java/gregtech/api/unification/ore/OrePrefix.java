@@ -173,11 +173,11 @@ public class OrePrefix {
 
     //Made of 8 dust
     public static final OrePrefix boule = new OrePrefix("boule", M * 8, null, MaterialIconType.boule,
-            ENABLE_UNIFICATION, hasDustProperty);
+            ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_BOULE));
 
     //Made of 1/4 dust
     public static final OrePrefix wafer = new OrePrefix("wafer", M / 4, null, MaterialIconType.wafer,
-            ENABLE_UNIFICATION, hasDustProperty);
+            ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_WAFER));
 
     // made of 4 Ingots.
     public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null,

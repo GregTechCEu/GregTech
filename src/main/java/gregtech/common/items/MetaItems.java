@@ -564,6 +564,8 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.wireFine);
         orePrefixes.add(OrePrefix.rotor);
         orePrefixes.add(OrePrefix.lens);
+        orePrefixes.add(OrePrefix.wafer);
+        orePrefixes.add(OrePrefix.boule);
         orePrefixes.add(OrePrefix.turbineBlade);
         orePrefixes.add(OrePrefix.toolHeadDrill);
         orePrefixes.add(OrePrefix.toolHeadChainsaw);

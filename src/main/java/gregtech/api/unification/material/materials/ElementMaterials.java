@@ -737,9 +737,8 @@ public class ElementMaterials {
         Silicon = new Material.Builder(99, gregtechId("silicon"))
                 .dust().fluid()
                 .color(0x3C3C50).iconSet(METALLIC)
-                .flags(GENERATE_FOIL)
+                .flags(GENERATE_BOULE, GENERATE_WAFER)
                 .element(Elements.Si)
-                .blast(2273) // no gas tier for silicon
                 .build();
 
         Silver = new Material.Builder(100, gregtechId("silver"))

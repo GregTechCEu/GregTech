@@ -22,7 +22,7 @@
         "primary": "ore:chalcopyrite"
       },
       {
-        "secondary": "ore:zeolite"
+        "secondary": "ore:chalcopyrite"
       },
       {
         "between": "ore:cassiterite"
