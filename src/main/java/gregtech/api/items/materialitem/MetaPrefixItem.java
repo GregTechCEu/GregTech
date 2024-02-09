@@ -26,9 +26,14 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -224,7 +229,12 @@ public class MetaPrefixItem extends StandardMetaItem {
                          boolean isSelected) {
         super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
 
-        if (entityIn instanceof EntityLivingBase entity) {
+        if (entityIn instanceof EntityPlayer entity) {
+            //Do not contaminate in creative mode
+            if (entity.isCreative()) {
+                return;
+            }
+
             if (entityIn.ticksExisted % 20 == 0) {
                 //"Contaminate" silicon boules and silicon wafers
                 Material material = getMaterial(itemStack);
@@ -279,7 +289,9 @@ public class MetaPrefixItem extends StandardMetaItem {
                 }
 
                 if (chanceToDestroy > 0 && GTValues.RNG.nextInt(100) < chanceToDestroy) {
-                    entity.replaceItemInInventory(itemSlot, ItemStack.EMPTY);
+                    entity.inventory.deleteStack(itemStack);
+                    entity.getEntityWorld().playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ITEM_BREAK,
+                            SoundCategory.PLAYERS, 1F, 1F);
                 }
             }
         }
