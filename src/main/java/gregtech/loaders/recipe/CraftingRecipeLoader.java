@@ -138,18 +138,18 @@ public class CraftingRecipeLoader {
                 new UnificationEntry(OrePrefix.circuit, Tier.EV), 'E', ENERGIUM_CRYSTAL.getStackForm());
 
         ModHandler.addShapedRecipe("solar_panel_basic", COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W',
-                SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV),
+                OreDictUnifier.get(OrePrefix.wafer, Silicon), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV),
                 'P', CARBON_FIBER_PLATE.getStackForm());
         ModHandler.addShapedRecipe("solar_panel_ulv", COVER_SOLAR_PANEL_ULV.getStackForm(), "WGW", "CAC", "P P", 'W',
-                PHOSPHORUS_WAFER.getStackForm(), 'G', "paneGlass", 'C',
+                OreDictUnifier.get(OrePrefix.wafer, Silicon), 'G', "paneGlass", 'C',
                 new UnificationEntry(OrePrefix.circuit, Tier.HV), 'P',
-                SILICON_WAFER.getStackForm(), 'A',
+                OreDictUnifier.get(OrePrefix.wafer, Silicon), 'A',
                 OreDictUnifier.get(OrePrefix.wireGtQuadruple, Graphene));
         ModHandler.addShapedRecipe("solar_panel_lv", COVER_SOLAR_PANEL_LV.getStackForm(), "WGW", "CAC", "P P", 'W',
-                NAQUADAH_WAFER.getStackForm(), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                OreDictUnifier.get(OrePrefix.wafer, Silicon), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS),
                 'C', new UnificationEntry(OrePrefix.circuit, Tier.LuV), 'P',
-                SILICON_WAFER.getStackForm(), 'A',
+                OreDictUnifier.get(OrePrefix.wafer, Silicon), 'A',
                 OreDictUnifier.get(OrePrefix.wireGtHex, Graphene));
 
         ModHandler.addShapedRecipe("universal_fluid_cell", FLUID_CELL_UNIVERSAL.getStackForm(), "C ", "  ", 'C',

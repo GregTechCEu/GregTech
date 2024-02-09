@@ -662,18 +662,6 @@ public class MetaItem1 extends StandardMetaItem {
         if (!ConfigHolder.recipes.harderBrickRecipes)
             COMPRESSED_CLAY.setInvisible();
 
-        // Boules: ID 361-370
-        SILICON_BOULE = addItem(361, "boule.silicon");
-        PHOSPHORUS_BOULE = addItem(362, "boule.phosphorus");
-        NAQUADAH_BOULE = addItem(363, "boule.naquadah");
-        NEUTRONIUM_BOULE = addItem(364, "boule.neutronium");
-
-        // Boule-Direct Wafers: ID 371-380
-        SILICON_WAFER = addItem(371, "wafer.silicon");
-        PHOSPHORUS_WAFER = addItem(372, "wafer.phosphorus");
-        NAQUADAH_WAFER = addItem(373, "wafer.naquadah");
-        NEUTRONIUM_WAFER = addItem(374, "wafer.neutronium");
-
         // Unfinished Circuit Boards: ID 381-400
         COATED_BOARD = addItem(381, "board.coated");
         PHENOLIC_BOARD = addItem(382, "board.phenolic");
