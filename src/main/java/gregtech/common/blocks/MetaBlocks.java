@@ -178,6 +178,7 @@ public class MetaBlocks {
     public static BlockColored METAL_SHEET;
     public static BlockColored LARGE_METAL_SHEET;
     public static BlockColored STUDS;
+    public static BlockMultiblockTank MULTIBLOCK_TANK;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new Object2ObjectOpenHashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new Object2ObjectOpenHashMap<>();
@@ -376,6 +377,8 @@ public class MetaBlocks {
         UNIQUE_CASING.setRegistryName("unique_casing");
         LARGE_MULTIBLOCK_CASING = new BlockLargeMultiblockCasing();
         LARGE_MULTIBLOCK_CASING.setRegistryName("large_multiblock_casing");
+        MULTIBLOCK_TANK = new BlockMultiblockTank();
+        MULTIBLOCK_TANK.setRegistryName("multiblock_tank");
     }
 
     /**

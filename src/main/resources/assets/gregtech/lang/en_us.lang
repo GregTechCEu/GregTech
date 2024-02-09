@@ -1891,6 +1891,7 @@ gregtech.material.pcb_coolant=Dielectric PCB Coolant
 
 
 # Unknown Composition Materials
+gregtech.material.latex=Latex
 gregtech.material.wood_gas=Wood Gas
 gregtech.material.wood_vinegar=Wood Vinegar
 gregtech.material.wood_tar=Wood Tar
@@ -6273,12 +6274,12 @@ gregtech.machine.arc_furnace.name=Arc Furnace
 gregtech.machine.fixed_bed_reactor.name=Fixed Bed Reactor
 gregtech.machine.industrial_refrigerator.name=Industrial Refrigerator
 gregtech.machine.bedrock_drill.name=Deep Bedrock Drill
+gregtech.machine.heat_exchanger.name=Heat Exchanger
+gregtech.machine.froth_flotation_tank.name=Froth Flotation Vat
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
 gregtech.multiblock.tiered_hatch.tooltip=Max Tiered EU/t: §a%s (%s§r)
-
-
 
 # multiblock descriptions
 gregtech.multiblock.large_macerator.description=A multiblock Macerator for grinding.
@@ -6370,6 +6371,7 @@ tile.large_multiblock_casing.steam_casing.name=Industrial Steam Casing
 # RecipeMaps
 recipemap.alloy_blast_smelter.name=Alloy Blast Smelting
 recipemap.fixed_bed_reactor.name=Fixed Bed Reactor
+recipemap.heat_exchanger.name=Heat Exchanging
 recipemap.programmer.name=Programmer
 
 # Materials
@@ -6387,3 +6389,13 @@ gregtech.material.molybdenum_disilicide=Molybdenum Disilicide
 gregtech.material.hsla_steel=HSLA Steel
 gregtech.material.titanium_tungsten_carbide=Titanium Tungsten Carbide
 gregtech.material.incoloy_ma_956=Incoloy-MA956
+
+# Latex Collector
+gregtech.machine.latex_collector.steam=Needs Steam!
+gregtech.machine.latex_collector.tooltip=Collects latex from adjacent rubber tree log. Yields %d mL of latex per tick.
+gregtech.machine.latex_collector_bronze.name=Steam Latex Collector
+gregtech.machine.latex_collector_steel.name=High Pressure Steam Latex Collector
+gregtech.machine.latex_collector.lv.name=Basic Latex Collector
+gregtech.machine.latex_collector.mv.name=Advanced Latex Collector
+gregtech.machine.latex_collector.hv.name=Advanced Latex Collector II
+gregtech.machine.latex_collector.ev.name=Advanced Latex Collector III
