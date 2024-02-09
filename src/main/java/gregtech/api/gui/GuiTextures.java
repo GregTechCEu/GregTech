@@ -50,6 +50,18 @@ public class GuiTextures {
     public static final TextureArea SLOT = AdoptableTextureArea.fullImage("textures/gui/base/slot.png", 18, 18, 1, 1);
     public static final TextureArea SLOT_DARKENED = TextureArea.fullImage("textures/gui/base/darkened_slot.png");
     public static final SteamTexture SLOT_STEAM = SteamTexture.fullImage("textures/gui/base/slot_%s.png");
+
+    public static final SteamTexture INT_CIRCUIT_OVERLAY_STEAM = SteamTexture.fullImage(
+            "textures/gui/progress_bar/int_circuit_overlay_%s.png");
+    public static final SteamTexture FLUID_SLOT_STEAM = SteamTexture.fullImage(
+            "textures/gui/base/fluid_slot_%s.png");
+    public static final SteamTexture PROGRESS_BAR_MIXER_STEAM = SteamTexture.fullImage(
+            "textures/gui/progress_bar/progress_bar_mixer_%s.png");
+    public static final SteamTexture PROGRESS_BAR_EXTRACTION_STEAM = SteamTexture.fullImage(
+            "textures/gui/progress_bar/progress_bar_extraction_%s.png");
+    public static final TextureArea PROGRESS_BAR_EXTRACTION = TextureArea.fullImage(
+            "textures/gui/progress_bar/progress_bar_extraction.png");
+
     public static final TextureArea TOGGLE_BUTTON_BACK = TextureArea
             .fullImage("textures/gui/widget/toggle_button_background.png");
 
