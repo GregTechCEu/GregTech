@@ -54,8 +54,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -104,13 +106,13 @@ public class MetaTileEntityBedrockDrill extends MultiblockWithDisplayBase
 
     protected void initializeAbilities() {
         this.inputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
-        this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
+        this.exportItems = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
     }
 
     private void resetTileAbilities() {
         this.inputFluidInventory = new FluidTankList(true);
-        this.outputInventory = new GTItemStackHandler(this, 0);
+        this.exportItems = new GTItemStackHandler(this, 0);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
     }
 

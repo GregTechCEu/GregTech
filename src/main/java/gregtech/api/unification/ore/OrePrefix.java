@@ -171,6 +171,14 @@ public class OrePrefix {
     public static final OrePrefix lens = new OrePrefix("lens", (M * 3) / 4, null, MaterialIconType.lens,
             ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_LENS));
 
+    //Made of 8 dust
+    public static final OrePrefix boule = new OrePrefix("boule", M * 8, null, MaterialIconType.boule,
+            ENABLE_UNIFICATION, hasDustProperty);
+
+    //Made of 1/4 dust
+    public static final OrePrefix wafer = new OrePrefix("wafer", M / 4, null, MaterialIconType.wafer,
+            ENABLE_UNIFICATION, hasDustProperty);
+
     // made of 4 Ingots.
     public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null,
             MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION,

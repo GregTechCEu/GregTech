@@ -88,7 +88,7 @@ public class MetaTileEntityArcFurnace extends RecipeMapMultiblockController {
                 float ySpd = 0.3F + 0.3F * GTValues.RNG.nextFloat();
                 float zSpd = (GTValues.RNG.nextFloat() - 0.5f) / 3;
 
-                if (facing == EnumFacing.NORTH || facing == EnumFacing.WEST) {
+                if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH) {
                     getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + 1f, yPos, zPos + facing.getZOffset() * 0.5f, xSpd, ySpd, zSpd);
                     getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos - 1f, yPos, zPos + facing.getZOffset() * 0.5f, xSpd, ySpd, zSpd);
                     getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos + 1f, yPos, zPos + facing.getZOffset() * 3.5f, xSpd, ySpd, zSpd);

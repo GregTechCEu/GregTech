@@ -16,6 +16,8 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.creativetab.GTCreativeTabs;
 
+import gregtech.common.items.MetaItems;
+
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -215,6 +217,72 @@ public class MetaPrefixItem extends StandardMetaItem {
             return property != null && property.getToolHarvestLevel() >= 2;
         }
         return false;
+    }
+
+    @Override
+    public void onUpdate(@NotNull ItemStack itemStack, @NotNull World worldIn, @NotNull Entity entityIn, int itemSlot,
+                         boolean isSelected) {
+        super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
+
+        if (entityIn instanceof EntityLivingBase entity) {
+            if (entityIn.ticksExisted % 20 == 0) {
+                //"Contaminate" silicon boules and silicon wafers
+                Material material = getMaterial(itemStack);
+                if (material == null) return;
+                if (material != Materials.Silicon) return;
+                if (prefix == OrePrefix.boule || prefix == OrePrefix.wafer) {
+
+                }
+
+                //Base chance of contamination is 12% per second
+                int chanceToDestroy = 12;
+
+                //Decrease chance of contamination for each cleanroom set worn
+                ItemStack helmet = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                if (!helmet.isEmpty() && helmet.getItem() instanceof ArmorMetaItem<?>) {
+                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) helmet.getItem())
+                            .getItem(helmet);
+
+                    if (metaValueItem != null && metaValueItem == MetaItems.CLEANROOM_HELMET) {
+                        chanceToDestroy -= 3;
+                    }
+                }
+
+                ItemStack chestplate = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+                if (!chestplate.isEmpty() && chestplate.getItem() instanceof ArmorMetaItem<?>) {
+                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) chestplate.getItem())
+                            .getItem(chestplate);
+
+                    if (metaValueItem != null && metaValueItem == MetaItems.CLEANROOM_CHESTPLATE) {
+                        chanceToDestroy -= 3;
+                    }
+                }
+
+                ItemStack leggings = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS);
+                if (!leggings.isEmpty() && leggings.getItem() instanceof ArmorMetaItem<?>) {
+                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) leggings.getItem())
+                            .getItem(leggings);
+
+                    if (metaValueItem != null && metaValueItem == MetaItems.CLEANROOM_LEGGINGS) {
+                        chanceToDestroy -= 3;
+                    }
+                }
+
+                ItemStack boots = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+                if (!boots.isEmpty() && boots.getItem() instanceof ArmorMetaItem<?>) {
+                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) boots.getItem())
+                            .getItem(boots);
+
+                    if (metaValueItem != null && metaValueItem == MetaItems.CLEANROOM_BOOTS) {
+                        chanceToDestroy -= 3;
+                    }
+                }
+
+                if (chanceToDestroy > 0 && GTValues.RNG.nextInt(100) < chanceToDestroy) {
+                    entity.replaceItemInInventory(itemSlot, ItemStack.EMPTY);
+                }
+            }
+        }
     }
 
     @Override
