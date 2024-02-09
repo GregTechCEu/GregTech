@@ -3,6 +3,7 @@ package gregtech.loaders.recipe.chemistry;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.catalyst_bed;
 import static gregtech.api.unification.ore.OrePrefix.dust;
 
 public class AcidRecipes {
@@ -31,10 +32,17 @@ public class AcidRecipes {
                 .duration(120).EUt(VA[LV]).buildAndRegister();
 
         FURNACE_RECIPES.recipeBuilder()
+                .input(dust, Sulfur)
+                .fluidInputs(Oxygen.getFluid(2000))
+                .fluidOutputs(SulfurDioxide.getFluid(1000))
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
+
+        FIXED_BED_REACTOR_RECIPES.recipeBuilder()
                 .fluidInputs(SulfurDioxide.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(1000))
+                .notConsumable(catalyst_bed, VanadiumPentoxide)
                 .fluidOutputs(SulfurTrioxide.getFluid(1000))
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
+                .duration(240).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(2)

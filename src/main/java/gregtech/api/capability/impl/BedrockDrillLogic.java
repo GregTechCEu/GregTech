@@ -92,11 +92,8 @@ public class BedrockDrillLogic {
             return;
         progressTime = 0;
 
-        ArrayList<ItemStack> output = new ArrayList<>();
-        output.add(getNextOreToProduce());
-
-        if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, output)) {
-            GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), false, output);
+        if (GTTransferUtils.addItemToItemHandler(metaTileEntity.getExportItems(), true, getDefaultDrop())) {
+            GTTransferUtils.addItemToItemHandler(metaTileEntity.getExportItems(), false, getNextOreToProduce());
             depleteVein();
         } else {
             // the ore block was not able to fit, so the inventory is considered full
@@ -125,6 +122,12 @@ public class BedrockDrillLogic {
         // chance to deplete based on the rig
         if (chance == 1 || GTValues.RNG.nextInt(chance) == 0)
             BedrockOreVeinHandler.depleteVein(metaTileEntity.getWorld(), getChunkX(), getChunkZ(), 0, false);
+    }
+
+    public ItemStack getDefaultDrop() {
+        ItemStack produced = BedrockOreVeinHandler.getStoneInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()).copy();
+        produced.setCount(metaTileEntity.getRigMultiplier());
+        return produced;
     }
 
     public ItemStack getNextOreToProduce() {
@@ -183,7 +186,7 @@ public class BedrockDrillLogic {
         ArrayList<ItemStack> output = new ArrayList<>();
         output.add(getNextOreToProduce());
 
-        if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, output)) {
+        if (GTTransferUtils.addItemToItemHandler(metaTileEntity.getExportItems(), true, getDefaultDrop())) {
             this.isInventoryFull = false;
             return true;
         }

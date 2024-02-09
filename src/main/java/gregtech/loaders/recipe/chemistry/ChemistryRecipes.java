@@ -40,13 +40,6 @@ public class ChemistryRecipes {
                 .output(MetaItems.CATALYST_BED)
                 .duration(240).EUt(VA[LV]).buildAndRegister();
 
-        FIXED_BED_REACTOR_RECIPES.recipeBuilder()
-                .fluidInputs(SulfurDioxide.getFluid(1000))
-                .fluidInputs(Oxygen.getFluid(1000))
-                .notConsumable(catalyst_bed, VanadiumPentoxide)
-                .fluidOutputs(SulfurTrioxide.getFluid(1000))
-                .duration(240).EUt(VA[LV]).buildAndRegister();
-
         DISTILLERY_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(Acetone.getFluid(100))
