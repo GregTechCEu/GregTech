@@ -47,9 +47,10 @@ public class PartsRecipeHandler {
         OrePrefix.lens.addProcessingHandler(PropertyKey.GEM, PartsRecipeHandler::processLens);
 
         OrePrefix.gear.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear);
+        OrePrefix.wafer.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processWafer);
         OrePrefix.ring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRing);
         OrePrefix.spring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpring);
-        OrePrefix.round.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRound);
+        OrePrefix.round.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processRound);
     }
 
     public static void processBolt(OrePrefix boltPrefix, Material material, DustProperty property) {
@@ -61,6 +62,22 @@ public class PartsRecipeHandler {
                 .duration(20)
                 .EUt(24)
                 .buildAndRegister();
+    }
+
+    public static void processWafer(OrePrefix waferPrefix, Material material, DustProperty property) {
+        if (!material.hasFlag(GENERATE_BOULE)) {
+            RecipeMaps.CUTTER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.boule, material)
+                    .output(waferPrefix, material, 16)
+                    .duration(20)
+                    .EUt(24)
+                    .buildAndRegister();
+        } else {
+            RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder().EUt(8 * getVoltageMultiplier(material)).duration(600)
+                    .input(dust, material)
+                    .outputs(OreDictUnifier.get(wafer, material, 4))
+                    .buildAndRegister();
+        }
     }
 
     public static void processScrew(OrePrefix screwPrefix, Material material, DustProperty property) {
@@ -410,22 +427,43 @@ public class PartsRecipeHandler {
                 .buildAndRegister();
     }
 
-    public static void processRound(OrePrefix roundPrefix, Material material, IngotProperty property) {
-        if (!material.hasFlag(NO_SMASHING)) {
+    public static void processRound(OrePrefix roundPrefix, Material material, DustProperty property) {
+        if (material.hasProperty(PropertyKey.INGOT)) {
+            RecipeMaps.LATHE_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+                    .input(nugget, material)
+                    .output(round, material)
+                    .buildAndRegister();
 
-            ModHandler.addShapedRecipe(String.format("round_%s", material),
-                    OreDictUnifier.get(round, material),
-                    "fN", "Nh", 'N', new UnificationEntry(nugget, material));
+            if (!material.hasFlag(NO_SMASHING)) {
 
-            ModHandler.addShapedRecipe(String.format("round_from_ingot_%s", material),
-                    OreDictUnifier.get(round, material, 4),
-                    "fIh", 'I', new UnificationEntry(ingot, material));
+                ModHandler.addShapedRecipe(String.format("round_%s", material),
+                        OreDictUnifier.get(round, material),
+                        "fN", "Nh", 'N', new UnificationEntry(nugget, material));
+
+                ModHandler.addShapedRecipe(String.format("round_from_ingot_%s", material),
+                        OreDictUnifier.get(round, material, 4),
+                        "fIh", 'I', new UnificationEntry(ingot, material));
+            }
+        } else {
+            RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder().EUt(8 * getVoltageMultiplier(material)).duration(400)
+                    .input(dust, material)
+                    .notConsumable(MetaItems.SHAPE_MOLD_ROUND)
+                    .outputs(OreDictUnifier.get(round, material, 9))
+                    .buildAndRegister();
         }
 
-        RecipeMaps.LATHE_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
-                .input(nugget, material)
-                .output(round, material)
-                .buildAndRegister();
+        if (material.hasFlag(GENERATE_CATALYST_BED)) {
+            RecipeMaps.CANNER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(200)
+                    .input(MetaItems.CATALYST_BED)
+                    .input(roundPrefix, material, 63)
+                    .output(catalyst_bed, material)
+                    .buildAndRegister();
+
+            RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(200)
+                    .input(catalyst_bed, material)
+                    .output(MetaItems.CATALYST_BED)
+                    .buildAndRegister();
+        }
     }
 
     private static int getVoltageMultiplier(Material material) {

@@ -179,6 +179,10 @@ public class OrePrefix {
     public static final OrePrefix wafer = new OrePrefix("wafer", M / 4, null, MaterialIconType.wafer,
             ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_WAFER));
 
+    //Made of 63 rounds
+    public static final OrePrefix catalyst_bed = new OrePrefix("catalyst_bed", M * 7, null, MaterialIconType.catalyst_bed,
+            ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_CATALYST_BED));
+
     // made of 4 Ingots.
     public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null,
             MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION,

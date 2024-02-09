@@ -2,6 +2,7 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.fluids.store.FluidStorageKeys;
 
+import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.ManualABSRecipes;
 
 import net.minecraft.init.Items;
@@ -9,8 +10,7 @@ import net.minecraft.init.Items;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.dust;
-import static gregtech.api.unification.ore.OrePrefix.ingot;
+import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class ChemistryRecipes {
 
@@ -34,6 +34,19 @@ public class ChemistryRecipes {
         AcidRecipes.init();
 
         // A Few Random Recipes
+        WELDING_RECIPES.recipeBuilder()
+                .circuitMeta(1)
+                .input(pipeFluid, Steel, 8)
+                .output(MetaItems.CATALYST_BED)
+                .duration(240).EUt(VA[LV]).buildAndRegister();
+
+        FIXED_BED_REACTOR_RECIPES.recipeBuilder()
+                .fluidInputs(SulfurDioxide.getFluid(1000))
+                .fluidInputs(Oxygen.getFluid(1000))
+                .notConsumable(catalyst_bed, VanadiumPentoxide)
+                .fluidOutputs(SulfurTrioxide.getFluid(1000))
+                .duration(240).EUt(VA[LV]).buildAndRegister();
+
         DISTILLERY_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(Acetone.getFluid(100))

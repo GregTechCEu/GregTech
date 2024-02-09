@@ -125,6 +125,8 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[12] = SHAPE_MOLD_ROTOR = addItem(24, "shape.mold.rotor")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
+        SHAPE_MOLDS[13] = SHAPE_MOLD_ROUND = addItem(25, "shape.mold.round")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
         // Extruder Shapes: ID 31-59
         SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate")
@@ -1091,5 +1093,7 @@ public class MetaItem1 extends StandardMetaItem {
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);
+
+        CATALYST_BED = addItem(1005, "catalyst_bed");
     }
 }

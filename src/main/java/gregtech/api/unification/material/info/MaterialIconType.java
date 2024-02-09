@@ -56,6 +56,7 @@ public class MaterialIconType {
     public static final MaterialIconType foil = new MaterialIconType("foil");
     public static final MaterialIconType boule = new MaterialIconType("boule");
     public static final MaterialIconType wafer = new MaterialIconType("wafer");
+    public static final MaterialIconType catalyst_bed = new MaterialIconType("catalyst_bed");
 
     public static final MaterialIconType toolHeadSword = new MaterialIconType("toolHeadSword");
     public static final MaterialIconType toolHeadPickaxe = new MaterialIconType("toolHeadPickaxe");

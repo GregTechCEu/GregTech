@@ -1565,5 +1565,12 @@ public class FirstDegreeMaterials {
                 .components(Molybdenum, 1, Silicon, 2)
                 .blast(b -> b.temp(2300, GasTier.MID).blastStats(VA[EV], 800).createAlloyBlast())
                 .build();
+
+        VanadiumPentoxide = new Material.Builder(462, gregtechId("vanadium_pentoxide"))
+                .dust()
+                .colorAverage().iconSet(MaterialIconSet.METALLIC)
+                .flags(GENERATE_ROUND, GENERATE_CATALYST_BED)
+                .components(Vanadium, 2, Oxygen, 5)
+                .build();
     }
 }

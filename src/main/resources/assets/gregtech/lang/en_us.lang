@@ -218,6 +218,8 @@ metaitem.shape.mold.gear.small.name=Mold (Small Gear)
 metaitem.shape.mold.gear.small.tooltip=Mold for making small Gears
 metaitem.shape.mold.rotor.name=Mold (Rotor)
 metaitem.shape.mold.rotor.tooltip=Mold for making Rotors
+metaitem.shape.mold.round.name=Mold (Rounds)
+metaitem.shape.mold.round.tooltip=Mold for making Rounds
 
 metaitem.shape.extruder.plate.name=Extruder Shape (Plate)
 metaitem.shape.extruder.plate.tooltip=Extruder Shape for making Plates
@@ -480,6 +482,8 @@ metaitem.robot.arm.uxv.name=UXV Robot Arm
 metaitem.robot.arm.opv.name=OpV Robot Arm
 
 metaitem.robot.arm.tooltip=Limits §fItems§7 to specific quantities as §fCover§7.
+
+metaitem.catalyst_bed.name=Empty Catalyst Bed
 
 metaitem.electric.logic_controller.mv.name=MV Logic Controller
 metaitem.electric.logic_controller.hv.name=HV Logic Controller
@@ -1436,6 +1440,7 @@ item.material.oreprefix.turbineBlade=%s Turbine Blade
 item.material.oreprefix.block=Block of %s
 item.material.oreprefix.wafer=%s Wafer
 item.material.oreprefix.boule=%s Boule
+item.material.oreprefix.catalyst_bed=%s Catalyst Bed
 item.material.oreprefix.frameGt=%s Frame Box
 item.material.oreprefix.pipeFluid=%s Fluid Pipe
 item.material.oreprefix.pipeQuadrupleFluid=Quadruple %s Fluid Pipe
@@ -6389,6 +6394,8 @@ gregtech.material.molybdenum_disilicide=Molybdenum Disilicide
 gregtech.material.hsla_steel=HSLA Steel
 gregtech.material.titanium_tungsten_carbide=Titanium Tungsten Carbide
 gregtech.material.incoloy_ma_956=Incoloy-MA956
+
+gregtech.material.vanadium_pentoxide=Vanadium Pentoxide
 
 # Latex Collector
 gregtech.machine.latex_collector.steam=Needs Steam!

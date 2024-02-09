@@ -1,8 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import static gregtech.api.GTValues.*;
-import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
 
@@ -31,17 +30,11 @@ public class AcidRecipes {
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
                 .duration(120).EUt(VA[LV]).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder()
+        FURNACE_RECIPES.recipeBuilder()
                 .fluidInputs(SulfurDioxide.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(1000))
                 .fluidOutputs(SulfurTrioxide.getFluid(1000))
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .fluidInputs(SulfurTrioxide.getFluid(1000))
-                .fluidInputs(Water.getFluid(1000))
-                .fluidOutputs(SulfuricAcid.getFluid(1000))
-                .duration(160).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(2)

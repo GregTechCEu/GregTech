@@ -233,6 +233,8 @@ public class CraftingRecipeLoader {
                 SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape_mold_plate", SHAPE_MOLD_PLATE.getStackForm(), " h ", " S ", "   ", 'S',
                 SHAPE_EMPTY.getStackForm());
+        ModHandler.addShapedRecipe("shape_mold_round", SHAPE_MOLD_ROUND.getStackForm(), "S  ", "  h", "   ", 'S',
+                SHAPE_EMPTY.getStackForm());
 
         ///////////////////////////////////////////////////
         // Credits //

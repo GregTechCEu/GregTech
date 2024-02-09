@@ -212,7 +212,7 @@ public class MaterialFlags {
             .build();
 
     public static final MaterialFlag GENERATE_ROUND = new MaterialFlag.Builder("generate_round")
-            .requireProps(PropertyKey.INGOT)
+            .requireProps(PropertyKey.DUST)
             .build();
 
     /**
@@ -247,6 +247,14 @@ public class MaterialFlags {
             .build();
 
     public static final MaterialFlag GENERATE_WAFER = new MaterialFlag.Builder("generate_wafer")
+            .requireProps(PropertyKey.DUST)
+            .build();
+
+    /////////////////
+    // CATALYST //
+    /////////////////
+
+    public static final MaterialFlag GENERATE_CATALYST_BED = new MaterialFlag.Builder("generate_catalyst_bed")
             .requireProps(PropertyKey.DUST)
             .build();
 

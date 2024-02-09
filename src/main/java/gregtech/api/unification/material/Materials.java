@@ -478,6 +478,8 @@ public class Materials {
     public static Material TantalumCarbide;
     public static Material MolybdenumDisilicide;
 
+    public static Material VanadiumPentoxide;
+
     /**
      * Organic chemistry
      */

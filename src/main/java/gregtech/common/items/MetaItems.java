@@ -57,7 +57,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem SHAPE_EMPTY;
 
-    public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[13];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[14];
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_RING;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR;
@@ -71,6 +71,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ANVIL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_NAME;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
+    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROUND;
 
     public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[27];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
@@ -536,6 +537,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem MULTIBLOCK_BUILDER;
 
+    public static MetaItem<?>.MetaValueItem CATALYST_BED;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
 
     static {
@@ -566,6 +569,7 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.lens);
         orePrefixes.add(OrePrefix.wafer);
         orePrefixes.add(OrePrefix.boule);
+        orePrefixes.add(OrePrefix.catalyst_bed);
         orePrefixes.add(OrePrefix.turbineBlade);
         orePrefixes.add(OrePrefix.toolHeadDrill);
         orePrefixes.add(OrePrefix.toolHeadChainsaw);
