@@ -65,7 +65,7 @@ public class PartsRecipeHandler {
     }
 
     public static void processWafer(OrePrefix waferPrefix, Material material, DustProperty property) {
-        if (!material.hasFlag(GENERATE_BOULE)) {
+        if (material.hasFlag(GENERATE_BOULE)) {
             RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                     .input(OrePrefix.boule, material)
                     .output(waferPrefix, material, 16)
@@ -75,7 +75,8 @@ public class PartsRecipeHandler {
         } else {
             RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder().EUt(8 * getVoltageMultiplier(material)).duration(600)
                     .input(dust, material)
-                    .outputs(OreDictUnifier.get(wafer, material, 4))
+                    .notConsumable(MetaItems.SHAPE_MOLD_CYLINDER)
+                    .outputs(OreDictUnifier.get(wafer, material))
                     .buildAndRegister();
         }
     }
