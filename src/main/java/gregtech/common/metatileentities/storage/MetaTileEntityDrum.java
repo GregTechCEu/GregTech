@@ -44,6 +44,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -97,7 +98,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         IPropertyFluidFilter filter = this.material.getProperty(PropertyKey.FLUID_PIPE);
         if (filter == null) {
             throw new IllegalArgumentException(
-                    String.format("Material %s requires FluidPipePropety for Drums", material));
+                    String.format("Material %s requires FluidPipeProperty for Drums", material));
         }
         this.fluidInventory = this.fluidTank = new FilteredFluidHandler(tankSize).setFilter(filter);
     }
@@ -129,7 +130,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         FluidStack fluidStack = fluidTank.getFluid();
         buf.writeBoolean(fluidStack != null);
@@ -142,7 +143,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         FluidStack fluidStack = null;
         if (buf.readBoolean()) {
@@ -156,7 +157,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_AUTO_OUTPUT) {
             this.isAutoOutput = buf.readBoolean();
@@ -266,7 +267,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(tagCompound.getCompoundTag("Fluid"));
             if (fluidStack == null) return;
             tooltip.add(I18n.format("gregtech.machine.fluid_tank.fluid", fluidStack.amount,
-                    I18n.format(fluidStack.getUnlocalizedName())));
+                    fluidStack.getFluid().getLocalizedName(fluidStack)));
         }
     }
 

@@ -5,6 +5,7 @@ import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import static gregtech.common.covers.filter.oreglob.impl.OreGlobParser.TokenType
 
 /**
  * Top-down parser for oreGlob expression.
- * 
+ *
  * <pre>
  * oreGlob = [ FLAG ], [ or ], EOF
  *
@@ -47,8 +48,7 @@ public final class OreGlobParser {
 
     private boolean error;
 
-    private boolean caseSensitive;
-
+    private boolean ignoreCase;
     private int inputIndex;
 
     private TokenType tokenType;
@@ -56,8 +56,9 @@ public final class OreGlobParser {
     @Nullable
     private String tokenLiteralValue;
 
-    public OreGlobParser(String input) {
+    public OreGlobParser(String input, boolean ignoreCase) {
         this.input = input;
+        this.ignoreCase = ignoreCase;
     }
 
     // Get codepoint at current position and incr index
@@ -68,6 +69,7 @@ public final class OreGlobParser {
         return input.codePointAt(i);
     }
 
+    @SuppressWarnings("deprecation")
     private void advance() {
         boolean first = this.inputIndex == 0;
         while (true) {
@@ -84,7 +86,7 @@ public final class OreGlobParser {
                 case '^' -> setCurrentToken(XOR, start, 1);
                 case '*' -> setCurrentToken(ANY, start, 1);
                 case '?' -> setCurrentToken(ANY_CHAR, start, 1);
-                case '$' -> {
+                case '$' -> { // TODO: remove this switch case in 2.9
                     if (!first) {
                         error(OreGlobMessages.compileErrorUnexpectedCompilationFlag(), start, 1);
                     }
@@ -145,8 +147,10 @@ public final class OreGlobParser {
         }
     }
 
+    @Deprecated
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     private void gatherFlags(boolean add) {
-        boolean flagsAdded = false;
         while (true) {
             int i = this.inputIndex;
             int c = readNextChar();
@@ -156,39 +160,27 @@ public final class OreGlobParser {
                     if (c == CHAR_EOF) {
                         error(OreGlobMessages.compileErrorEOFAfterEscape(), i, 1);
                     } else if (add) {
-                        addFlag(c, i);
-                        flagsAdded = true;
+                        addFlag(c);
                         continue;
                     }
                 }
                 case ' ', '\t', '\n', '\r', CHAR_EOF -> {}
                 default -> {
                     if (add) {
-                        addFlag(c, i);
-                        flagsAdded = true;
+                        addFlag(c);
                     }
                     continue;
                 }
             }
-            if (!flagsAdded && add) {
-                error(OreGlobMessages.compileErrorEmptyCompilationFlag(), i, 1);
-            }
+            warn("Compilation flags ('$') are scheduled to be removed in future releases.");
             return;
         }
     }
 
-    private void addFlag(int flag, int index) {
-        switch (flag) {
-            case 'c', 'C' -> {
-                if (this.caseSensitive) {
-                    warn(OreGlobMessages.compileErrorRedundantCompilationFlag("c"), index, 1);
-                } else {
-                    this.caseSensitive = true;
-                }
-            }
-            default -> warn(OreGlobMessages.compileErrorUnknownCompilationFlag(
-                    new StringBuilder().appendCodePoint(flag).toString()), index, 1);
-        }
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    private void addFlag(int flag) {
+        if (flag == 'c' || flag == 'C') this.ignoreCase = false;
     }
 
     private boolean advanceIf(TokenType type) {
@@ -296,7 +288,7 @@ public final class OreGlobParser {
         return switch (tokenType) {
             case LITERAL -> {
                 if (tokenLiteralValue != null) {
-                    OreGlobNode result = OreGlobNodes.match(tokenLiteralValue, !this.caseSensitive);
+                    OreGlobNode result = OreGlobNodes.match(tokenLiteralValue, this.ignoreCase);
                     advance();
                     yield result;
                 } else { // likely caused by program error, not user issue

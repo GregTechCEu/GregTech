@@ -163,4 +163,33 @@ public enum RelativeDirection {
             return upwardsFacing.getOpposite();
         }
     }
+
+    /**
+     * Offset a BlockPos relatively in any direction by any amount. Pass negative values to offset down, right or
+     * backwards.
+     */
+    public static BlockPos offsetPos(BlockPos pos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped,
+                                     int upOffset, int leftOffset, int forwardOffset) {
+        if (upOffset == 0 && leftOffset == 0 && forwardOffset == 0) {
+            return pos;
+        }
+
+        int oX = 0, oY = 0, oZ = 0;
+        final EnumFacing relUp = UP.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+        oX += relUp.getXOffset() * upOffset;
+        oY += relUp.getYOffset() * upOffset;
+        oZ += relUp.getZOffset() * upOffset;
+
+        final EnumFacing relLeft = LEFT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+        oX += relLeft.getXOffset() * leftOffset;
+        oY += relLeft.getYOffset() * leftOffset;
+        oZ += relLeft.getZOffset() * leftOffset;
+
+        final EnumFacing relForward = FRONT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+        oX += relForward.getXOffset() * forwardOffset;
+        oY += relForward.getYOffset() * forwardOffset;
+        oZ += relForward.getZOffset() * forwardOffset;
+
+        return pos.add(oX, oY, oZ);
+    }
 }

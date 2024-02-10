@@ -1,14 +1,13 @@
 package gregtech.api.gui.widgets;
 
+import gregtech.api.util.Mods;
+
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.fml.common.Loader;
 
 import java.util.function.Consumer;
 
 public class SortingButtonWidget extends ClickButtonWidget {
 
-    private static boolean inventoryTweaksChecked;
-    private static boolean inventoryTweaksPresent;
     private static KeyBinding sortKeyBinding;
 
     public SortingButtonWidget(int xPosition, int yPosition, int width, int height, String displayText,
@@ -43,13 +42,10 @@ public class SortingButtonWidget extends ClickButtonWidget {
     }
 
     private static int getInvTweaksSortCode() {
-        if (!inventoryTweaksChecked) {
-            inventoryTweaksChecked = true;
-            inventoryTweaksPresent = Loader.isModLoaded("inventorytweaks");
-        }
-        if (!inventoryTweaksPresent) {
+        if (!Mods.InventoryTweaks.isModLoaded()) {
             return 0;
         }
+
         try {
             if (sortKeyBinding == null) {
                 Class<?> proxyClass = Class.forName("invtweaks.forge.ClientProxy");

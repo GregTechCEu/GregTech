@@ -153,6 +153,8 @@ public class CommonProxy {
         registry.register(RUBBER_WOOD_DOOR);
         registry.register(TREATED_WOOD_DOOR);
         registry.register(BRITTLE_CHARCOAL);
+        registry.register(POWDERBARREL);
+        registry.register(ITNT);
         registry.register(METAL_SHEET);
         registry.register(LARGE_METAL_SHEET);
         registry.register(STUDS);
@@ -273,6 +275,8 @@ public class CommonProxy {
         registry.register(createItemBlock(RUBBER_LOG, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
+        registry.register(createItemBlock(POWDERBARREL, ItemBlock::new));
+        registry.register(createItemBlock(ITNT, ItemBlock::new));
 
         for (BlockCompressed block : COMPRESSED_BLOCKS) {
             registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.block)));
@@ -297,9 +301,9 @@ public class CommonProxy {
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         // Registers Fusion tiers for the FusionEUToStartProperty
-        FusionEUToStartProperty.registerFusionTier(6, "(MK1)");
-        FusionEUToStartProperty.registerFusionTier(7, "(MK2)");
-        FusionEUToStartProperty.registerFusionTier(8, "(MK3)");
+        FusionEUToStartProperty.registerFusionTier(GTValues.LuV, "(MK1)");
+        FusionEUToStartProperty.registerFusionTier(GTValues.ZPM, "(MK2)");
+        FusionEUToStartProperty.registerFusionTier(GTValues.UV, "(MK3)");
 
         // Register data stick copying custom scanner logic
         AssemblyLineManager.registerScannerLogic();

@@ -378,8 +378,6 @@ public class GuiTextures {
             .fullImage("textures/gui/progress_bar/progress_bar_slice.png");
     public static final SteamTexture PROGRESS_BAR_SOLAR_STEAM = SteamTexture
             .fullImage("textures/gui/progress_bar/progress_bar_solar_%s.png");
-    public static final TextureArea PROGRESS_BAR_UNLOCK = TextureArea
-            .fullImage("textures/gui/progress_bar/progress_bar_unlock.png");
     public static final TextureArea PROGRESS_BAR_UNPACKER = TextureArea
             .fullImage("textures/gui/progress_bar/progress_bar_unpacker.png");
     public static final TextureArea PROGRESS_BAR_WIREMILL = TextureArea
@@ -437,6 +435,10 @@ public class GuiTextures {
             .fullImage("textures/items/metaitems/cover.controller.png");
 
     // Ore Filter
+    public static final TextureArea ORE_FILTER_BUTTON_CASE_SENSITIVE = TextureArea
+            .fullImage("textures/gui/widget/ore_filter/button_case_sensitive.png");
+    public static final TextureArea ORE_FILTER_BUTTON_MATCH_ALL = TextureArea
+            .fullImage("textures/gui/widget/ore_filter/button_match_all.png");
     public static final TextureArea ORE_FILTER_INFO = TextureArea.fullImage("textures/gui/widget/ore_filter/info.png");
     public static final TextureArea ORE_FILTER_SUCCESS = TextureArea
             .fullImage("textures/gui/widget/ore_filter/success.png");

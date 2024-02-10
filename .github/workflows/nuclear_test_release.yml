@@ -1,0 +1,49 @@
+name: Nuclear Test Release
+
+on:
+  push:
+    branches:
+      - nuclear-fission
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # needed to create GitHub releases
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "::set-output name=sha_short::$(git rev-parse --short $GITHUB_SHA)"
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Build Project
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: 'build --build-cache --daemon' # use the daemon here so the rest of the process is faster
+          generate-job-summary: false
+          gradle-home-cache-includes: |
+            caches
+            jdks
+            notifications
+            wrapper
+
+      - name: Publish to GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "build/libs/*.jar"
+          fail_on_unmatched_files: true
+          prerelease: true
+          tag_name: "nuclear-testing"
+          name: "Nuclear Testing ${{ steps.vars.outputs.sha_short }}"
+          body: "Testing Pre-release for GTCEu Nuclear Update"

@@ -22,6 +22,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.groovy.GroovyScriptModule;
@@ -607,12 +608,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public R inputs(IIngredient ingredient) {
         return input(ofGroovyIngredient(ingredient));
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public R inputs(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             inputs(ingredient);
@@ -620,7 +621,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public R inputs(Collection<IIngredient> ingredients) {
         for (IIngredient ingredient : ingredients) {
             inputs(ingredient);
@@ -628,12 +629,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public R notConsumable(IIngredient ingredient) {
         return notConsumable(ofGroovyIngredient(ingredient));
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     private static GTRecipeInput ofGroovyIngredient(IIngredient ingredient) {
         if (ingredient instanceof OreDictIngredient) {
             return new GTRecipeOreInput(((OreDictIngredient) ingredient).getOreDict(), ingredient.getAmount());
@@ -857,7 +858,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return recipeStatus;
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     protected void validateGroovy(GroovyLog.Msg errorMsg) {
         errorMsg.add(EUt == 0, () -> "EU/t must not be to 0");
         errorMsg.add(duration <= 0, () -> "Duration must not be less or equal to 0");

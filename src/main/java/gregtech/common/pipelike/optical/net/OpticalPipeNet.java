@@ -48,6 +48,11 @@ public class OpticalPipeNet extends PipeNet<OpticalPipeProperties> {
     }
 
     @Override
+    public void onChunkUnload() {
+        NET_DATA.clear();
+    }
+
+    @Override
     protected void transferNodeData(Map<BlockPos, Node<OpticalPipeProperties>> transferredNodes,
                                     PipeNet<OpticalPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);

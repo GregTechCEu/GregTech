@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.*;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -449,7 +450,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @ZenMethod("addWallBlock")
-    @Optional.Method(modid = GTValues.MODID_CT)
+    @Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     @SuppressWarnings("unused")
     public static void addWallBlockCT(@NotNull IBlock block) {
         WALL_BLOCKS.add(CraftTweakerMC.getBlock(block));

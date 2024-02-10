@@ -190,11 +190,7 @@ public class OreGlobTest {
         assertMatch(expr, "anyDoubleSomething", false);
         assertMatch(expr, "shouldn't match!", false);
 
-        expr = compile("$c caseSensitiveMatch");
-        assertMatch(expr, "casesensitivematch", false);
-        assertMatch(expr, "caseSensitiveMatch", true);
-
-        expr = compile("$\\c caseSensitiveMatch");
+        expr = compile("caseSensitiveMatch", true);
         assertMatch(expr, "casesensitivematch", false);
         assertMatch(expr, "caseSensitiveMatch", true);
 
@@ -249,8 +245,6 @@ public class OreGlobTest {
     @Test
     public void errorTest() {
         assertReport("End of file after escape character ('\\'): \\", true);
-        assertReport("$asdf Tags at middle of expression $12345", true);
-        assertReport("End of file after escape character ('\\'): $123\\", true);
         assertReport(")", true);
         assertReport("a | b | c | ", true);
         assertReport(")))))))", true);
@@ -262,12 +256,15 @@ public class OreGlobTest {
 
         assertReport("dust !impure !iron", false);
         assertReport("dust !(impure) !(iron)", false);
-        assertReport("$cc 1", false);
     }
 
     private static OreGlob compile(String expression) {
+        return compile(expression, false);
+    }
+
+    private static OreGlob compile(String expression, boolean caseSensitive) {
         long t = System.nanoTime();
-        OreGlobCompileResult result = new OreGlobParser(expression).compile();
+        OreGlobCompileResult result = new OreGlobParser(expression, !caseSensitive).compile();
         assertThat(result.hasError(), is(false));
 
         if (LOG) {
@@ -333,7 +330,7 @@ public class OreGlobTest {
     }
 
     private static void assertReport(String expression, boolean error) {
-        OreGlobCompileResult result = new OreGlobParser(expression).compile();
+        OreGlobCompileResult result = new OreGlobParser(expression, true).compile();
         assertThat(result, new TypeSafeMatcher<>(OreGlobCompileResult.class) {
 
             @Override

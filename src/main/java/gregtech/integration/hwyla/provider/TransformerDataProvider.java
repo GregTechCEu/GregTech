@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
 
 import net.minecraft.client.resources.I18n;
@@ -82,7 +83,7 @@ public class TransformerDataProvider extends ElectricContainerDataProvider {
                     .append(GTValues.VNF[GTUtility.getTierByVoltage(inputVoltage)])
                     .append(TextFormatting.RESET)
                     .append(" (")
-                    .append(inputAmperage)
+                    .append(TextFormattingUtil.formatNumbers(inputAmperage))
                     .append("A)");
 
             StringBuilder output = new StringBuilder()
@@ -90,7 +91,7 @@ public class TransformerDataProvider extends ElectricContainerDataProvider {
                     .append(GTValues.VNF[GTUtility.getTierByVoltage(outputVoltage)])
                     .append(TextFormatting.RESET)
                     .append(" (")
-                    .append(outputAmperage)
+                    .append(TextFormattingUtil.formatNumbers(outputAmperage))
                     .append("A)");
 
             // Step Up/Step Down line

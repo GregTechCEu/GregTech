@@ -1,4 +1,4 @@
-//version: 1701739812
+//version: 1705076830
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -24,7 +24,7 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.25'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.28'
     id 'net.darkhax.curseforgegradle' version '1.1.17' apply false
     id 'com.modrinth.minotaur' version '2.8.6' apply false
     id 'com.diffplug.spotless' version '6.13.0' apply false
@@ -62,6 +62,7 @@ propertyDefaultIfUnset("generateGradleTokenClass", "")
 propertyDefaultIfUnset("gradleTokenModId", "")
 propertyDefaultIfUnset("gradleTokenModName", "")
 propertyDefaultIfUnset("gradleTokenVersion", "")
+propertyDefaultIfUnset("useSrcApiPath", false)
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
@@ -72,6 +73,7 @@ propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
 propertyDefaultIfUnset("separateRunDirectories", false)
+propertyDefaultIfUnset("versionDisplayFormat", '$MOD_NAME \u2212 $VERSION')
 propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
 propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
@@ -79,6 +81,7 @@ propertyDefaultIfUnset("curseForgeRelations", "")
 propertyDefaultIfUnsetWithEnvVar("releaseType", "release", "RELEASE_TYPE")
 propertyDefaultIfUnset("generateDefaultChangelog", false)
 propertyDefaultIfUnset("customMavenPublishUrl", "")
+propertyDefaultIfUnset("mavenArtifactGroup", getDefaultArtifactGroup())
 propertyDefaultIfUnset("enableModernJavaSyntax", false)
 propertyDefaultIfUnset("enableSpotless", false)
 propertyDefaultIfUnset("enableJUnit", false)
@@ -103,9 +106,16 @@ if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists(
 }
 
 if (apiPackage) {
-    targetPackageJava = javaSourceDir + modGroupPath + '/' + apiPackagePath
-    targetPackageScala = scalaSourceDir + modGroupPath + '/' + apiPackagePath
-    targetPackageKotlin = kotlinSourceDir + modGroupPath + '/' + apiPackagePath
+    final String endApiPath = modGroupPath + '/' + apiPackagePath
+    if (useSrcApiPath) {
+        targetPackageJava = 'src/api/java/' + endApiPath
+        targetPackageScala = 'src/api/scala/' + endApiPath
+        targetPackageKotlin = 'src/api/kotlin/' + endApiPath
+    } else {
+        targetPackageJava = javaSourceDir + endApiPath
+        targetPackageScala = scalaSourceDir + endApiPath
+        targetPackageKotlin = kotlinSourceDir + endApiPath
+    }
     if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists() && !getFile(targetPackageKotlin).exists()) {
         throw new GradleException("Could not resolve \"apiPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala} or ${targetPackageKotlin}")
     }
@@ -434,8 +444,7 @@ repositories {
         }
         maven {
             name 'GTNH Maven'
-            url 'http://jenkins.usrv.eu:8081/nexus/content/groups/public'
-            allowInsecureProtocol = true
+            url 'https://nexus.gtnewhorizons.com/repository/public/'
         }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
@@ -529,6 +538,12 @@ pluginManager.withPlugin('org.jetbrains.kotlin.kapt') {
         dependencies {
             kapt(mixinProviderSpec)
         }
+    }
+}
+
+configurations.configureEach {
+    resolutionStrategy.dependencySubstitution {
+        substitute module('org.scala-lang:scala-library:2.11.1') using module('org.scala-lang:scala-library:2.11.5') because('To allow mixing with Java 8 targets')
     }
 }
 
@@ -673,6 +688,19 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
+
+    if (useSrcApiPath && apiPackage) {
+        from sourceSets.api.output
+        dependsOn apiClasses
+
+        include "${modGroupPath}/**"
+        include "assets/**"
+        include "mcmod.info"
+        include "pack.mcmeta"
+        if (accessTransformersFile) {
+            include "META-INF/${accessTransformersFile}"
+        }
+    }
 }
 
 // Configure default run tasks
@@ -689,12 +717,21 @@ if (separateRunDirectories.toBoolean()) {
 // Create API library jar
 tasks.register('apiJar', Jar) {
     archiveClassifier.set 'api'
-    from(sourceSets.main.java) {
-        include "${modGroupPath}/${apiPackagePath}/**"
-    }
+    if (useSrcApiPath) {
+        from(sourceSets.api.java) {
+            include "${modGroupPath}/${apiPackagePath}/**"
+        }
+        from(sourceSets.api.output) {
+            include "${modGroupPath}/${apiPackagePath}/**"
+        }
+    } else {
+        from(sourceSets.main.java) {
+            include "${modGroupPath}/${apiPackagePath}/**"
+        }
 
-    from(sourceSets.main.output) {
-        include "${modGroupPath}/${apiPackagePath}/**"
+        from(sourceSets.main.output) {
+            include "${modGroupPath}/${apiPackagePath}/**"
+        }
     }
 }
 
@@ -888,7 +925,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
             def changelogFile = getChangelog()
             def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
 
-            mainFile.displayName = "${modName}: ${modVersion}"
+            mainFile.displayName = versionDisplayFormat.replace('$MOD_NAME', modName).replace('$VERSION', modVersion)
             mainFile.releaseType = getReleaseType()
             mainFile.changelog = changelogRaw
             mainFile.changelogType = 'markdown'
@@ -904,6 +941,12 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
                     }
                     String[] parts = dep.split(':')
                     String type = parts[0], slug = parts[1]
+                    def types = [
+                            'req'   : 'requiredDependency', 'required': 'requiredDependency',
+                            'opt'   : 'optionalDependency', 'optional': 'optionalDependency',
+                            'embed' : 'embeddedLibrary',    'embedded': 'embeddedLibrary',
+                            'incomp': 'incompatible',       'fail'    : 'incompatible']
+                    if (types.containsKey(type)) type = types[type]
                     if (!(type in ['requiredDependency', 'embeddedLibrary', 'optionalDependency', 'tool', 'incompatible'])) {
                         throw new Exception('Invalid Curseforge dependency type: ' + type)
                     }
@@ -928,6 +971,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
     modrinth {
         token = modrinthApiKey.getOrElse('debug_token')
         projectId = modrinthProjectId
+        versionName = versionDisplayFormat.replace('$MOD_NAME', modName).replace('$VERSION', modVersion)
         changelog = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
         versionType = getReleaseType()
         versionNumber = modVersion
@@ -945,7 +989,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
             }
             String[] parts = dep.split(':')
             String[] qual = parts[0].split('-')
-            addModrinthDep(qual[0], qual[1], parts[1])
+            addModrinthDep(qual[0], qual.length > 1 ? qual[1] : 'project', parts[1])
         }
     }
     tasks.modrinth.dependsOn(build)
@@ -954,9 +998,17 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
 
 def addModrinthDep(String scope, String type, String name) {
     com.modrinth.minotaur.dependencies.Dependency dep
+    def types = [
+            'req'   : 'required',
+            'opt'   : 'optional',
+            'embed' : 'embedded',
+            'incomp': 'incompatible', 'fail': 'incompatible']
+    if (types.containsKey(scope)) scope = types[scope]
     if (!(scope in ['required', 'optional', 'incompatible', 'embedded'])) {
         throw new Exception('Invalid modrinth dependency scope: ' + scope)
     }
+    types = ['proj': 'project', '': 'project', 'p': 'project', 'ver': 'version', 'v': 'version']
+    if (types.containsKey(type)) type = types[type]
     switch (type) {
         case 'project':
             dep = new ModDependency(name, scope)
@@ -984,8 +1036,8 @@ if (customMavenPublishUrl) {
                 }
 
                 // providers is not available here, use System for getting env vars
-                groupId = System.getenv('ARTIFACT_GROUP_ID') ?: project.group
-                artifactId = System.getenv('ARTIFACT_ID') ?: project.name
+                groupId = System.getenv('ARTIFACT_GROUP_ID') ?: project.mavenArtifactGroup
+                artifactId = System.getenv('ARTIFACT_ID') ?: project.modArchivesBaseName
                 version = System.getenv('RELEASE_VERSION') ?: publishedVersion
             }
         }
@@ -1129,6 +1181,11 @@ tasks.register('faq') {
 
 
 // Helpers
+
+def getDefaultArtifactGroup() {
+    def lastIndex = project.modGroup.lastIndexOf('.')
+    return lastIndex < 0 ? project.modGroup : project.modGroup.substring(0, lastIndex)
+}
 
 def getFile(String relativePath) {
     return new File(projectDir, relativePath)
