@@ -261,6 +261,12 @@ public class Textures {
     public static final OrientedOverlayRenderer THERMAL_CENTRIFUGE_OVERLAY = new OrientedOverlayRenderer(
             "machines/thermal_centrifuge");
     public static final OrientedOverlayRenderer WIREMILL_OVERLAY = new OrientedOverlayRenderer("machines/wiremill");
+    public static final OrientedOverlayRenderer CVD_OVERLAY = new OrientedOverlayRenderer("machines/cvd");
+    public static final OrientedOverlayRenderer ION_EXCHANGER_OVERLAY = new OrientedOverlayRenderer("machines/ion_exchanger");
+    public static final OrientedOverlayRenderer CRYSTALLIZER_OVERLAY = new OrientedOverlayRenderer("machines/crystallizer_overlay");
+    public static final OrientedOverlayRenderer VACUUM_CHAMBER_OVERLAY = new OrientedOverlayRenderer("machines/vacuum_chamber_overlay");
+    public static final OrientedOverlayRenderer ION_IMPLANTER_OVERLAY = new OrientedOverlayRenderer("machines/ion_implanter");
+    public static final OrientedOverlayRenderer UV_LIGHT_BOX_OVERLAY = new OrientedOverlayRenderer("machines/uv_light_box");
     public static final OrientedOverlayRenderer MASS_FABRICATOR_OVERLAY = new OrientedOverlayRenderer(
             "machines/mass_fabricator");
     public static final OrientedOverlayRenderer REPLICATOR_OVERLAY = new OrientedOverlayRenderer("machines/replicator");

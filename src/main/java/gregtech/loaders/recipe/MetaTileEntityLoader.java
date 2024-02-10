@@ -424,6 +424,10 @@ public class MetaTileEntityLoader {
                 "PPP", "PhP", "BBB", 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'B',
                 new ItemStack(Blocks.BRICK_BLOCK));
 
+        ModHandler.addShapedRecipe(true, "vacuum_chamber_bronze",
+                MetaTileEntities.STEAM_VACUUM_CHAMBER_BRONZE.getStackForm(), "AGA", "PHP", "APA", 'A',
+                new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'P', new UnificationEntry(OrePrefix.pipeFluid, Materials.TinAlloy), 'G',
+                new ItemStack(Blocks.GLASS));
         ModHandler.addShapedRecipe(true, "steam_boiler_coal_bronze",
                 MetaTileEntities.STEAM_BOILER_COAL_BRONZE.getStackForm(), "PPP", "PwP", "BFB", 'F',
                 OreDictNames.craftingFurnace, 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'B',
@@ -824,6 +828,18 @@ public class MetaTileEntityLoader {
         // BETTER_CIRCUIT, 'F', FIELD_GENERATOR, 'E', EMITTER);
         registerMachineRecipe(MetaTileEntities.SCANNER, "CEC", "WHW", "CSC", 'C', CIRCUIT, 'E', MetaItems.EMITTER_XRAY.getStackForm(), 'W',
                 CABLE, 'H', HULL, 'S', MetaItems.SENSOR_LIGHT.getStackForm());
+        registerMachineRecipe(MetaTileEntities.UV_LIGHT_BOX, "CUC", "LHL", "PPP", 'C', CABLE, 'U', MetaItems.CARBON_ARC_LAMP.getStackForm(), 'L',
+                LOGIC_CONTROLLER, 'H', HULL, 'P', PLATE);
+        registerMachineRecipe(MetaTileEntities.ION_IMPLANTER, "LGL", "MHM", "CSC", 'C', CABLE, 'M', STICK_MAGNETIC, 'L',
+                LOGIC_CONTROLLER, 'H', HULL, 'G', GLASS, 'S', SPRING);
+        registerMachineRecipe(MetaTileEntities.ION_EXCHANGER, " P ", "GHG", "SLS", 'S', PIPE, 'L',
+                LOGIC_CONTROLLER, 'H', HULL, 'G', GLASS, 'P', PUMP);
+        registerMachineRecipe(MetaTileEntities.CVD, "PGG", "SHI", "CLC", 'S', SPRING, 'L',
+                LOGIC_CONTROLLER, 'H', HULL, 'G', GLASS, 'P', PUMP, 'I', PIPE, 'C', CABLE);
+        registerMachineRecipe(MetaTileEntities.VACUUM_CHAMBER, "AGA", "PHP", "CLC", 'A', PLATE, 'L',
+                LOGIC_CONTROLLER, 'H', HULL, 'G', GLASS, 'P', PUMP, 'C', CABLE);
+        registerMachineRecipe(MetaTileEntities.CRYSTALLIZER, "ASA", "PHP", "LCL", 'A', PLATE, 'S',
+                STICK_DISTILLATION, 'H', HULL, 'P', PUMP, 'C', CABLE, 'L', LOGIC_CONTROLLER);
         registerMachineRecipe(MetaTileEntities.GAS_COLLECTOR, "WFW", "PHP", "WCW", 'W', Blocks.IRON_BARS, 'F',
                 MetaItems.FLUID_FILTER, 'P', PUMP, 'H', HULL, 'C', CIRCUIT);
         registerMachineRecipe(MetaTileEntities.PUMP, "WGW", "GMG", "TGT", 'M', HULL, 'W', LOGIC_CONTROLLER, 'G', PUMP, 'T',

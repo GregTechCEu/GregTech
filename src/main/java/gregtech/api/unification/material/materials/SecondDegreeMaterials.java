@@ -208,7 +208,7 @@ public class SecondDegreeMaterials {
         // Free ID 2025
 
         Bentonite = new Material.Builder(2026, gregtechId("bentonite"))
-                .dust().ore(3, 1)
+                .dust()
                 .color(0xF5D7D2).iconSet(ROUGH)
                 .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Water, 5, Oxygen, 36)
                 .build();

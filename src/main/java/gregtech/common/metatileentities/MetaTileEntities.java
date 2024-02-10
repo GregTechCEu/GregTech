@@ -55,6 +55,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBla
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFermentationVat;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFixedBedReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidizedBedReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFrothFlotationTank;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
@@ -85,10 +86,12 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeWiremi
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMegaBlastFurnace;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityNetworkSwitch;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityPolymerizationTank;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPyrolyseOven;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityResearchStation;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityIndustrialRefrigerator;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityRotaryKiln;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
@@ -215,6 +218,12 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] SIFTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] THERMAL_CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] WIREMILL = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ION_IMPLANTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CVD = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] UV_LIGHT_BOX = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CRYSTALLIZER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ION_EXCHANGER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] VACUUM_CHAMBER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] CIRCUIT_ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     // public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1]; // TODO Replication
     // public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1]; // TODO Replication
@@ -306,6 +315,8 @@ public class MetaTileEntities {
     public static SteamMiner STEAM_MINER;
     public static PseudoMultiSteamMachineMetaTileEntity STEAM_LATEX_COLLECTOR_BRONZE;
     public static PseudoMultiSteamMachineMetaTileEntity STEAM_LATEX_COLLECTOR_STEEL;
+
+    public static PseudoMultiSteamMachineMetaTileEntity STEAM_VACUUM_CHAMBER_BRONZE;
     public static MetaTileEntityPumpHatch PUMP_OUTPUT_HATCH;
     public static MetaTileEntityPrimitiveWaterPump PRIMITIVE_WATER_PUMP;
     public static MetaTileEntityMagicEnergyAbsorber MAGIC_ENERGY_ABSORBER;
@@ -381,6 +392,9 @@ public class MetaTileEntities {
     public static MetaTileEntityFixedBedReactor FIXED_BED_REACTOR;
     public static MetaTileEntityIndustrialRefrigerator INDUSTRIAL_REFRIGERATOR;
     public static MetaTileEntityBedrockDrill BEDROCK_DRILL;
+    public static MetaTileEntityRotaryKiln ROTARY_KILN;
+    public static MetaTileEntityPolymerizationTank POLYMERIZATION_TANK;
+    public static MetaTileEntityFluidizedBedReactor FLUIDIZED_BED_REACTOR;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -476,6 +490,9 @@ public class MetaTileEntities {
                 RecipeMaps.LATEX_COLLECTOR_RECIPES, SteamProgressIndicators.EXTRACTION_STEAM, Textures.LATEX_COLLECTOR_OVERLAY, false, false));
         STEAM_LATEX_COLLECTOR_STEEL = registerMetaTileEntity(23, new PseudoMultiSteamMachineMetaTileEntity(gregtechId("latex_collector_steel"),
                 RecipeMaps.LATEX_COLLECTOR_RECIPES, SteamProgressIndicators.EXTRACTION_STEAM, Textures.LATEX_COLLECTOR_OVERLAY, false, true));
+
+        STEAM_VACUUM_CHAMBER_BRONZE = registerMetaTileEntity(24, new PseudoMultiSteamMachineMetaTileEntity(gregtechId("vacuum_chamber_bronze"),
+                RecipeMaps.VACUUM_CHAMBER_RECIPES, SteamProgressIndicators.ARROW, Textures.VACUUM_CHAMBER_OVERLAY, false, false));
 
         // Electric Furnace, IDs 50-64
         registerSimpleMetaTileEntity(ELECTRIC_FURNACE, 50, "electric_furnace", RecipeMaps.FURNACE_RECIPES,
@@ -630,9 +647,33 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(WIREMILL, 620, "wiremill", RecipeMaps.WIREMILL_RECIPES, Textures.WIREMILL_OVERLAY,
                 true);
 
-        // Circuit Assembler, IDs 650-664
+        // Circuit Assembler, IDs 635-649
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 635, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES,
                 Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+
+        // CVD, IDs 650-664
+        registerSimpleMetaTileEntity(CVD, 650, "cvd_chamber", RecipeMaps.CVD_RECIPES,
+                Textures.CVD_OVERLAY, true);
+
+        // Ion Implanter, IDs 665-679
+        registerSimpleMetaTileEntity(ION_IMPLANTER, 665, "ion_implanter", RecipeMaps.ION_IMPLANTATION_RECIPES,
+                Textures.ION_IMPLANTER_OVERLAY, true);
+
+        // Vacuum Chamber, IDs 680-694
+        registerSimpleMetaTileEntity(VACUUM_CHAMBER, 680, "vacuum_chamber", RecipeMaps.VACUUM_CHAMBER_RECIPES,
+                Textures.VACUUM_CHAMBER_OVERLAY, true);
+
+        // Ion Exchanger, IDs 695-709
+        registerSimpleMetaTileEntity(ION_EXCHANGER, 695, "ion_exchanger", RecipeMaps.ION_EXCHANGE_RECIPES,
+                Textures.ION_EXCHANGER_OVERLAY, true);
+
+        // UV Light Box, IDs 710-724
+        registerSimpleMetaTileEntity(UV_LIGHT_BOX, 710, "uv_light_box", RecipeMaps.UV_RECIPES,
+                Textures.UV_LIGHT_BOX_OVERLAY, true);
+
+        // Crystallizer, IDs 725-739
+        registerSimpleMetaTileEntity(CRYSTALLIZER, 725, "crystallizer", RecipeMaps.CRYSTALLIZER_RECIPES,
+                Textures.CRYSTALLIZER_OVERLAY, true);
 
         // Some space here for more SimpleMachines
 
@@ -840,6 +881,15 @@ public class MetaTileEntities {
 
         FROTH_FLOTATION_TANK = registerMetaTileEntity(1073,
                 new MetaTileEntityFrothFlotationTank(gregtechId("froth_flotation_tank")));
+
+        ROTARY_KILN = registerMetaTileEntity(1074,
+                new MetaTileEntityRotaryKiln(gregtechId("rotary_kiln")));
+
+        POLYMERIZATION_TANK = registerMetaTileEntity(1075,
+                new MetaTileEntityPolymerizationTank(gregtechId("polymerization_tank")));
+
+        FLUIDIZED_BED_REACTOR = registerMetaTileEntity(1076,
+                new MetaTileEntityFluidizedBedReactor(gregtechId("fluidized_bed_reactor")));
 
         // MISC MTE's START: IDs 1150-2000
 

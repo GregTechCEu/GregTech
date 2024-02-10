@@ -695,6 +695,9 @@ public class Materials {
     public static Material Lapotron;
     public static Material UUMatter;
     public static Material PCBCoolant;
+    public static Material Mash;
+    public static Material Alcohol;
+    public static Material Vinegar;
 
     /**
      * Second Degree Compounds

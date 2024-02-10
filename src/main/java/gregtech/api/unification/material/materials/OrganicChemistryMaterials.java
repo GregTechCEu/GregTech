@@ -115,7 +115,8 @@ public class OrganicChemistryMaterials {
                 .flags(GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 4)
                 .fluidPipeProperties(370, 60, true)
-                .build();
+                .build()
+                .setFormula("(C2H4)_n", true);
 
         Epoxy = new Material.Builder(1013, gregtechId("epoxy"))
                 .polymer(1)

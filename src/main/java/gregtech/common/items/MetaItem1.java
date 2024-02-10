@@ -480,6 +480,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         LASER_ND_YAG = addItem(220, "laser.ndyag");
 
+        CARBON_ARC_LAMP = addItem(245, "carbon_arc_lamp");
+
         // Fluid Regulators: ID 246-260
         FLUID_REGULATOR_LV = addItem(247, "fluid.regulator.lv").addComponents(new TooltipBehavior(lines -> {
             lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));

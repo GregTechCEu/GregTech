@@ -645,5 +645,14 @@ public class UnknownCompositionMaterials {
 
         PCBCoolant = new Material.Builder(1650, gregtechId("pcb_coolant"))
                 .fluid().color(0xD5D69C).build();
+
+        Mash = new Material.Builder(1651, gregtechId("mash"))
+                .fluid().color(0xd4c7a3).build();
+
+        Alcohol = new Material.Builder(1652, gregtechId("alcohol"))
+                .fluid().color(0xd66140).build();
+
+        Vinegar = new Material.Builder(1653, gregtechId("vinegar"))
+                .fluid().color(0xdedcce).build();
     }
 }

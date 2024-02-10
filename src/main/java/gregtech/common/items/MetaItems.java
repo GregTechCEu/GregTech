@@ -242,7 +242,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_LuV;
     public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_ZPM;
     public static MetaItem<?>.MetaValueItem PROGRAMMABLE_LOGIC_CONTROLLER_UV;
-
+    public static MetaItem<?>.MetaValueItem CARBON_ARC_LAMP;
     public static MetaItem<?>.MetaValueItem EMITTER_RADIO;
     public static MetaItem<?>.MetaValueItem EMITTER_MICROWAVE;
     public static MetaItem<?>.MetaValueItem EMITTER_XRAY;

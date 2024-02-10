@@ -20,6 +20,7 @@ public class ChemistryRecipes {
         SeparationRecipes.init();
         MixerRecipes.init();
         BrewingRecipes.init();
+        FermentingRecipes.init();
         ChemicalBathRecipes.init();
         ReactorRecipes.init();
         PolymerRecipes.init();

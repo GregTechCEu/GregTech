@@ -793,10 +793,10 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FERMENTING_RECIPES = new RecipeMapBuilder<>("fermenter",
             new SimpleRecipeBuilder().EUt(2))
-                    .itemInputs(1)
-                    .itemOutputs(1)
-                    .fluidInputs(1)
-                    .fluidOutputs(1)
+                    .itemInputs(3)
+                    .itemOutputs(3)
+                    .fluidInputs(3)
+                    .fluidOutputs(3)
                     .itemSlotOverlay(GuiTextures.DUST_OVERLAY, false, true)
                     .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true, true)
                     .sound(GTSoundEvents.CHEMICAL_REACTOR)
@@ -1389,6 +1389,100 @@ public final class RecipeMaps {
             .itemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false, true)
             .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
             .sound(GTSoundEvents.COMPUTATION)
+            .build();
+
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> ROTARY_KILN_RECIPES = new RecipeMapBuilder<>("rotary_kiln", new SimpleRecipeBuilder())
+            .itemInputs(3)
+            .itemOutputs(3)
+            .fluidInputs(3)
+            .fluidOutputs(3)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, ProgressWidget.MoveType.HORIZONTAL)
+            .itemSlotOverlay(GuiTextures.DUST_OVERLAY, false, false)
+            .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true, false)
+            .sound(GTSoundEvents.FURNACE)
+            .build();
+
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> UV_RECIPES = new RecipeMapBuilder<>("uv_light_box", new SimpleRecipeBuilder())
+            .itemInputs(2)
+            .itemOutputs(2)
+            .fluidInputs(2)
+            .fluidOutputs(2)
+            .progressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER, ProgressWidget.MoveType.HORIZONTAL)
+            .itemSlotOverlay(GuiTextures.LENS_OVERLAY, false, true)
+            .sound(GTSoundEvents.ARC)
+            .build();
+
+    public static final RecipeMap<SimpleRecipeBuilder> ION_IMPLANTATION_RECIPES = new RecipeMapBuilder<>("ion_implanter", new SimpleRecipeBuilder())
+            .itemInputs(3)
+            .itemOutputs(1)
+            .progressBar(GuiTextures.PROGRESS_BAR_FUSION, ProgressWidget.MoveType.HORIZONTAL)
+            .itemSlotOverlay(GuiTextures.LENS_OVERLAY, false, true)
+            .sound(GTSoundEvents.ARC)
+            .build();
+
+    public static final RecipeMap<SimpleRecipeBuilder> CVD_RECIPES = new RecipeMapBuilder<>("chemical_vapor_depositor", new SimpleRecipeBuilder())
+            .itemInputs(1)
+            .itemOutputs(1)
+            .fluidInputs(2)
+            .progressBar(GuiTextures.PROGRESS_BAR_FUSION, ProgressWidget.MoveType.HORIZONTAL)
+            .itemSlotOverlay(GuiTextures.LENS_OVERLAY, false, false)
+            .sound(GTSoundEvents.ARC)
+            .build();
+
+    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_CHAMBER_RECIPES = new RecipeMapBuilder<>("vacuum_chamber", new SimpleRecipeBuilder())
+            .itemInputs(2)
+            .itemOutputs(2)
+            .fluidInputs(2)
+            .fluidOutputs(2)
+            .progressBar(GuiTextures.PROGRESS_BAR_COMPRESS, ProgressWidget.MoveType.HORIZONTAL)
+            .sound(GTSoundEvents.COMPRESSOR)
+            .build();
+
+    public static final RecipeMap<SimpleRecipeBuilder> CRYSTALLIZER_RECIPES = new RecipeMapBuilder<>("crystallizer", new SimpleRecipeBuilder())
+            .itemInputs(3)
+            .itemOutputs(1)
+            .fluidInputs(3)
+            .progressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION, ProgressWidget.MoveType.HORIZONTAL)
+            .sound(GTSoundEvents.FURNACE)
+            .build();
+
+    public static final RecipeMap<SimpleRecipeBuilder> ION_EXCHANGE_RECIPES = new RecipeMapBuilder<>("ion_exchanger", new SimpleRecipeBuilder())
+            .itemInputs(2)
+            .itemOutputs(2)
+            .fluidInputs(2)
+            .fluidOutputs(2)
+            .progressBar(GuiTextures.PROGRESS_BAR_SIFT, ProgressWidget.MoveType.VERTICAL)
+            .fluidSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_4, false, false)
+            .fluidSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_4, true, false)
+            .itemSlotOverlay(GuiTextures.DUST_OVERLAY, false, false)
+            .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true, false)
+            .sound(GTSoundEvents.BATH)
+            .build();
+
+    public static final RecipeMap<SimpleRecipeBuilder> POLYMERIZATION_RECIPES = new RecipeMapBuilder<>("polymerization_tank", new SimpleRecipeBuilder())
+            .itemInputs(3)
+            .itemOutputs(3)
+            .fluidInputs(3)
+            .fluidOutputs(3)
+            .fluidSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_3, false, false)
+            .fluidSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_3, true, false)
+            .itemSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_1, false, false)
+            .itemSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_1, true, false)
+            .sound(GTSoundEvents.CHEMICAL_REACTOR)
+            .build();
+
+    public static final RecipeMap<SimpleRecipeBuilder> FLUIDIZED_BED_REACTOR_RECIPES = new RecipeMapBuilder<>("fluidized_bed_reactor", new SimpleRecipeBuilder())
+            .itemInputs(3)
+            .itemOutputs(3)
+            .fluidInputs(3)
+            .fluidOutputs(3)
+            .fluidSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_3, false, false)
+            .fluidSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_3, true, false)
+            .itemSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_1, false, false)
+            .itemSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_1, true, false)
+            .sound(GTSoundEvents.CHEMICAL_REACTOR)
             .build();
 
     //////////////////////////////////////

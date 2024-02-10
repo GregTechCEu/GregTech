@@ -33,6 +33,12 @@ public class AcidRecipes {
 
         FURNACE_RECIPES.recipeBuilder()
                 .input(dust, Sulfur)
+                .fluidInputs(Air.getFluid(10000))
+                .fluidOutputs(SulfurDioxide.getFluid(1000))
+                .duration(240).EUt(VA[ULV]).buildAndRegister();
+
+        FURNACE_RECIPES.recipeBuilder()
+                .input(dust, Sulfur)
                 .fluidInputs(Oxygen.getFluid(2000))
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
                 .duration(200).EUt(VA[ULV]).buildAndRegister();

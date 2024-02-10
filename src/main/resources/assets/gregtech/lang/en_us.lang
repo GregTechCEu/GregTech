@@ -501,6 +501,8 @@ metaitem.electric.programmable_logic_controller.luv.name=Programmable LuV Logic 
 metaitem.electric.programmable_logic_controller.zpm.name=Programmable ZPM Logic Controller
 metaitem.electric.programmable_logic_controller.uv.name=Programmable UV Logic Controller
 
+metaitem.carbon_arc_lamp.name=Carbon Arc Lamp
+
 metaitem.field.generator.lv.name=LV Field Generator
 metaitem.field.generator.mv.name=MV Field Generator
 metaitem.field.generator.hv.name=HV Field Generator
@@ -1893,7 +1895,9 @@ gregtech.material.polyvinyl_butyral=Polyvinyl Butyral
 gregtech.material.biphenyl=Biphenyl
 gregtech.material.polychlorinated_biphenyl=Polychlorinated Biphenyl (PCB)
 gregtech.material.pcb_coolant=Dielectric PCB Coolant
-
+gregtech.material.mash=Mash
+gregtech.material.alcohol=Alcohol
+gregtech.material.vinegar=Vinegar
 
 # Unknown Composition Materials
 gregtech.material.latex=Latex
@@ -2327,6 +2331,15 @@ recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.research_station.name=Research Station
 recipemap.industrial_refrigerator.name=Industrial Refrigerator
+recipemap.rotary_kiln.name=Rotary Kiln
+recipemap.uv_light_box.name=UV Light Box
+recipemap.ion_implanter.name=Ion Impanter
+recipemap.chemical_vapor_depositor.name=Chemical Vapor Deposition
+recipemap.vacuum_chamber.name=Vacuum Chamber
+recipemap.crystallizer.name=Crystallizer
+recipemap.ion_exchanger.name=Ion Exchange Column
+recipemap.polymerization_tank.name=Polymerization Tank
+recipemap.fluidized_bed_reactor.name=Fluidized Bed Reactor
 
 gregtech.recipe.category.arc_furnace_recycling=Smelt Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -2945,6 +2958,8 @@ gregtech.machine.steam_macerator_bronze.name=Steam Macerator
 gregtech.machine.steam_macerator_bronze.tooltip=Macerating your Ores
 gregtech.machine.steam_macerator_steel.name=High Pressure Steam Macerator
 gregtech.machine.steam_macerator_steel.tooltip=Macerating your Ores
+gregtech.machine.vacuum_chamber_bronze.name=Steam Vacuum Chamber
+gregtech.machine.vacuum_chamber_bronze.tooltip=A handy vacuum whenever you need it
 gregtech.machine.steam_compressor_bronze.name=Steam Compressor
 gregtech.machine.steam_compressor_bronze.tooltip=Compressing Items
 gregtech.machine.steam_compressor_steel.name=High Pressure Steam Compressor
@@ -3981,6 +3996,114 @@ gregtech.machine.replicator.uxv.name=Epic Replicator IV
 gregtech.machine.replicator.uxv.tooltip=Elemental Composer
 gregtech.machine.replicator.opv.name=Legendary Replicator
 gregtech.machine.replicator.opv.tooltip=Elemental Composer
+
+# UV Light Box
+gregtech.machine.uv_light_box.lv.name=Basic UV Light Box
+gregtech.machine.uv_light_box.lv.tooltip=Exposes Materials to UV Light
+gregtech.machine.uv_light_box.mv.name=Advanced UV Light Box
+gregtech.machine.uv_light_box.mv.tooltip=Exposes Materials to UV Light
+gregtech.machine.uv_light_box.hv.name=Advanced UV Light Box II
+gregtech.machine.uv_light_box.hv.tooltip=Exposes Materials to UV Light
+gregtech.machine.uv_light_box.ev.name=Advanced UV Light Box III
+gregtech.machine.uv_light_box.ev.tooltip=Exposes Materials to UV Light
+gregtech.machine.uv_light_box.iv.name=Elite UV Light Box
+gregtech.machine.uv_light_box.iv.tooltip=Putting the Ultra in Ultraviolet
+gregtech.machine.uv_light_box.luv.name=Elite UV Light Box II
+gregtech.machine.uv_light_box.luv.tooltip=Putting the Ultra in Ultraviolet
+gregtech.machine.uv_light_box.zpm.name=Elite UV Light Box III
+gregtech.machine.uv_light_box.zpm.tooltip=Putting the Ultra in Ultraviolet
+gregtech.machine.uv_light_box.uv.name=Ultimate UV Light Box
+gregtech.machine.uv_light_box.uv.tooltip=Light Bender
+
+# Ion Exchanger
+gregtech.machine.ion_exchanger.lv.name=Basic Ion Exchanger
+gregtech.machine.ion_exchanger.lv.tooltip=For when Centrifuges aren't enough
+gregtech.machine.ion_exchanger.mv.name=Advanced Ion Exchanger
+gregtech.machine.ion_exchanger.mv.tooltip=For when Centrifuges aren't enough
+gregtech.machine.ion_exchanger.hv.name=Advanced Ion Exchanger II
+gregtech.machine.ion_exchanger.hv.tooltip=For when Centrifuges aren't enough
+gregtech.machine.ion_exchanger.ev.name=Advanced Ion Exchanger III
+gregtech.machine.ion_exchanger.ev.tooltip=For when Centrifuges aren't enough
+gregtech.machine.ion_exchanger.iv.name=Elite Ion Exchanger
+gregtech.machine.ion_exchanger.iv.tooltip=For when basic ion exchangers aren't enough
+gregtech.machine.ion_exchanger.luv.name=Elite Ion Exchanger II
+gregtech.machine.ion_exchanger.luv.tooltip=For when basic ion exchangers aren't enough
+gregtech.machine.ion_exchanger.zpm.name=Elite Ion Exchanger III
+gregtech.machine.ion_exchanger.zpm.tooltip=For when basic ion exchangers aren't enough
+gregtech.machine.ion_exchanger.uv.name=Ultimate Ion Exchanger
+gregtech.machine.ion_exchanger.uv.tooltip=For when elite ion exchangers aren't enough
+
+# Vacuum Chamber
+gregtech.machine.vacuum_chamber.lv.name=Basic Vacuum Chamber
+gregtech.machine.vacuum_chamber.lv.tooltip=A handy vacuum whenever you need it
+gregtech.machine.vacuum_chamber.mv.name=Advanced Vacuum Chamber
+gregtech.machine.vacuum_chamber.mv.tooltip=A handy vacuum whenever you need it
+gregtech.machine.vacuum_chamber.hv.name=Advanced Vacuum Chamber II
+gregtech.machine.vacuum_chamber.hv.tooltip=A handy vacuum whenever you need it
+gregtech.machine.vacuum_chamber.ev.name=Advanced Vacuum Chamber III
+gregtech.machine.vacuum_chamber.ev.tooltip=A handy vacuum whenever you need it
+gregtech.machine.vacuum_chamber.iv.name=Elite Vacuum Chamber
+gregtech.machine.vacuum_chamber.iv.tooltip=Nature's worst enemy
+gregtech.machine.vacuum_chamber.luv.name=Elite Vacuum Chamber II
+gregtech.machine.vacuum_chamber.luv.tooltip=Nature's worst enemy
+gregtech.machine.vacuum_chamber.zpm.name=Elite Vacuum Chamber III
+gregtech.machine.vacuum_chamber.zpm.tooltip=Nature's worst enemy
+gregtech.machine.vacuum_chamber.uv.name=Ultimate Vacuum Chamber
+gregtech.machine.vacuum_chamber.uv.tooltip=The perfect vacuum
+
+# CVD
+gregtech.machine.cvd_chamber.lv.name=Basic CVD Chamber
+gregtech.machine.cvd_chamber.lv.tooltip=Chemical Vapor Deposition
+gregtech.machine.cvd_chamber.mv.name=Advanced CVD Chamber
+gregtech.machine.cvd_chamber.mv.tooltip=Chemical Vapor Deposition
+gregtech.machine.cvd_chamber.hv.name=Advanced CVD Chamber II
+gregtech.machine.cvd_chamber.hv.tooltip=Chemical Vapor Deposition
+gregtech.machine.cvd_chamber.ev.name=Advanced CVD Chamber III
+gregtech.machine.cvd_chamber.ev.tooltip=Chemical Vapor Deposition
+gregtech.machine.cvd_chamber.iv.name=Elite CVD Chamber
+gregtech.machine.cvd_chamber.iv.tooltip=Chemical Stacker
+gregtech.machine.cvd_chamber.luv.name=Elite CVD Chamber II
+gregtech.machine.cvd_chamber.luv.tooltip=Chemical Stacker
+gregtech.machine.cvd_chamber.zpm.name=Elite CVD Chamber III
+gregtech.machine.cvd_chamber.zpm.tooltip=Chemical Stacker
+gregtech.machine.cvd_chamber.uv.name=Ultimate CVD Chamber
+gregtech.machine.cvd_chamber.uv.tooltip=Absolute CVD Unit
+
+# Crystallizer
+gregtech.machine.crystallizer.lv.name=Basic Crystallizer
+gregtech.machine.crystallizer.lv.tooltip=Pulling crystals out of fluids
+gregtech.machine.crystallizer.mv.name=Advanced Crystallizer
+gregtech.machine.crystallizer.mv.tooltip=Pulling crystals out of fluids
+gregtech.machine.crystallizer.hv.name=Advanced Crystallizer II
+gregtech.machine.crystallizer.hv.tooltip=Pulling crystals out of fluids
+gregtech.machine.crystallizer.ev.name=Advanced Crystallizer III
+gregtech.machine.crystallizer.ev.tooltip=Pulling crystals out of fluids
+gregtech.machine.crystallizer.iv.name=Elite Crystallizer
+gregtech.machine.crystallizer.iv.tooltip=Crystal Clear
+gregtech.machine.crystallizer.luv.name=Elite Crystallizer II
+gregtech.machine.crystallizer.luv.tooltip=Crystal Clear
+gregtech.machine.crystallizer.zpm.name=Elite Crystallizer III
+gregtech.machine.crystallizer.zpm.tooltip=Crystal Clear
+gregtech.machine.crystallizer.uv.name=Ultimate Crystallizer
+gregtech.machine.crystallizer.uv.tooltip=The Final Boule-ification
+
+# Ion Implanter
+gregtech.machine.ion_implanter.lv.name=Basic Ion Implanter
+gregtech.machine.ion_implanter.lv.tooltip=Shooting atoms at stuff
+gregtech.machine.ion_implanter.mv.name=Advanced Ion Implanter
+gregtech.machine.ion_implanter.mv.tooltip=Shooting atoms at stuff
+gregtech.machine.ion_implanter.hv.name=Advanced Ion Implanter II
+gregtech.machine.ion_implanter.hv.tooltip=Shooting atoms at stuff
+gregtech.machine.ion_implanter.ev.name=Advanced Ion Implanter III
+gregtech.machine.ion_implanter.ev.tooltip=Shooting atoms at stuff
+gregtech.machine.ion_implanter.iv.name=Elite Ion Implanter
+gregtech.machine.ion_implanter.iv.tooltip=Fancy matter blaster
+gregtech.machine.ion_implanter.luv.name=Elite Ion Implanter II
+gregtech.machine.ion_implanter.luv.tooltip=Fancy matter blaster
+gregtech.machine.ion_implanter.zpm.name=Elite Ion Implanter III
+gregtech.machine.ion_implanter.zpm.tooltip=Fancy matter blaster
+gregtech.machine.ion_implanter.uv.name=Ultimate Ion Implanter
+gregtech.machine.ion_implanter.uv.tooltip=Has science gone too far?
 
 # Scanner
 gregtech.machine.scanner.lv.name=Basic Scanner
@@ -6281,6 +6404,9 @@ gregtech.machine.industrial_refrigerator.name=Industrial Refrigerator
 gregtech.machine.bedrock_drill.name=Deep Bedrock Drill
 gregtech.machine.heat_exchanger.name=Heat Exchanger
 gregtech.machine.froth_flotation_tank.name=Froth Flotation Vat
+gregtech.machine.rotary_kiln.name=Rotary Kiln
+gregtech.machine.polymerization_tank.name=Polymerization Tank
+gregtech.machine.fluidized_bed_reactor.name=Fluidized Bed Reactor
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.

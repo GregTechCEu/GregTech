@@ -47,7 +47,7 @@ public class FirstDegreeMaterials {
         Copper.getProperty(PropertyKey.INGOT).setArcSmeltingInto(AnnealedCopper);
 
         Asbestos = new Material.Builder(253, gregtechId("asbestos"))
-                .dust(1).ore(3, 1)
+                .dust(1)
                 .color(0xE6E6E6)
                 .components(Magnesium, 3, Silicon, 2, Hydrogen, 4, Oxygen, 9)
                 .build();
@@ -202,7 +202,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Diamond = new Material.Builder(276, gregtechId("diamond"))
-                .gem(3).ore()
+                .gem(3)
                 .color(0xC8FFFF).iconSet(DIAMOND)
                 .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING,
                         HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
@@ -222,7 +222,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Emerald = new Material.Builder(278, gregtechId("emerald"))
-                .gem().ore(2, 1)
+                .gem()
                 .color(0x50FF50).iconSet(EMERALD)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         GENERATE_LENS)
@@ -243,14 +243,14 @@ public class FirstDegreeMaterials {
                 .build();
 
         GreenSapphire = new Material.Builder(281, gregtechId("green_sapphire"))
-                .gem().ore()
+                .gem()
                 .color(0x64C882).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .build();
 
         Grossular = new Material.Builder(282, gregtechId("grossular"))
-                .gem(1).ore(3, 1)
+                .gem(1)
                 .color(0xC86400).iconSet(RUBY)
                 .components(Calcium, 3, Aluminium, 2, Silicon, 3, Oxygen, 12)
                 .build();
@@ -308,7 +308,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Lazurite = new Material.Builder(289, gregtechId("lazurite"))
-                .gem(1).ore(6, 4)
+                .gem(1)
                 .color(0x6478FF).iconSet(LAPIS)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_ROD)
                 .components(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8)
@@ -325,7 +325,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Magnesite = new Material.Builder(291, gregtechId("magnesite"))
-                .dust().ore()
+                .dust()
                 .color(0xFAFAB4).iconSet(METALLIC)
                 .components(Magnesium, 1, Carbon, 1, Oxygen, 3)
                 .build();
@@ -497,7 +497,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Ruby = new Material.Builder(311, gregtechId("ruby"))
-                .gem().ore()
+                .gem()
                 .color(0xFF6464).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
@@ -518,7 +518,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Sapphire = new Material.Builder(314, gregtechId("sapphire"))
-                .gem().ore()
+                .gem()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
@@ -565,7 +565,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Spessartine = new Material.Builder(321, gregtechId("spessartine"))
-                .gem().ore(3, 1)
+                .gem()
                 .color(0xFF6464).iconSet(RUBY)
                 .components(Aluminium, 2, Manganese, 3, Silicon, 3, Oxygen, 12)
                 .build();
@@ -627,7 +627,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Topaz = new Material.Builder(329, gregtechId("topaz"))
-                .gem(3).ore()
+                .gem(3)
                 .color(0xFF8000).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
@@ -741,7 +741,6 @@ public class FirstDegreeMaterials {
                 .build();
 
         Graphite = new Material.Builder(341, gregtechId("graphite"))
-                .ore()
                 .color(0x808080)
                 .flags(NO_SMELTING, FLAMMABLE)
                 .components(Carbon, 1)
