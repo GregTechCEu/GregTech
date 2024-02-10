@@ -6,6 +6,8 @@ import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.pipenet.INodeData;
 
+import gregtech.api.pipenet.flow.FlowChannelTicker;
+
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -143,6 +145,11 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
     @Override
     public int getChannelMaxCount() {
         return this.tanks;
+    }
+
+    @Override
+    public double getWeightFactor() {
+        return this.getThroughput();
     }
 
     @Override

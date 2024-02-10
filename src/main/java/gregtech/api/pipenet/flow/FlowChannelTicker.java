@@ -1,4 +1,4 @@
-package gregtech.api.pipenet;
+package gregtech.api.pipenet.flow;
 
 import gregtech.api.GTValues;
 
@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +20,8 @@ import java.util.Set;
 // To get true 'flow' behavior, all sources and all destinations must be defined, then a single evaluation performed.
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public final class FlowChannelTicker {
+
+    public static final int FLOWNET_TICKRATE = 10;
 
     private final static Map<World, Set<WeakReference<FlowChannelManager<?, ?>>>> MANAGERS = new Object2ObjectOpenHashMap<>();
     private final static Map<World, Integer> TICK_COUNTS = new Object2ObjectOpenHashMap<>();
@@ -30,24 +33,26 @@ public final class FlowChannelTicker {
         if (event.world.isRemote) return;
         TICK_COUNTS.compute(event.world, (k, v) -> {
             if (v == null) v = 0;
-            return v % 10 + 1;
+            return (v % FLOWNET_TICKRATE) + 1;
         });
-        if (TICK_COUNTS.get(event.world) != 10) return;
+        if (TICK_COUNTS.get(event.world) != FLOWNET_TICKRATE) return;
 
-        for (WeakReference<FlowChannelManager<?, ?>> ref : MANAGERS.getOrDefault(event.world, EMPTY)) {
+        Iterator<WeakReference<FlowChannelManager<?, ?>>> iter = MANAGERS.getOrDefault(event.world, EMPTY).iterator();
+        while (iter.hasNext()) {
+            WeakReference<FlowChannelManager<?, ?>> ref = iter.next();
             FlowChannelManager<?, ?> manager = ref.get();
             if (manager != null) {
                 manager.tick();
             } else {
-                MANAGERS.get(event.world).remove(ref);
+                iter.remove();
             }
         }
     }
 
-    public static void addManager(World world, FlowChannelManager<?, ?> manager) {
+    public static void addManager(World world, WeakReference<FlowChannelManager<?, ?>> ref) {
         if (!MANAGERS.containsKey(world)) {
             MANAGERS.put(world, new ObjectOpenHashSet<>());
         }
-        MANAGERS.get(world).add(new WeakReference<>(manager));
+        MANAGERS.get(world).add(ref);
     }
 }

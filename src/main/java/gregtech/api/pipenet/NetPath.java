@@ -118,7 +118,6 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     public boolean checkPredicate(Object o) {
         for (NetEdge edge : this.edgeList) {
-            if (edge.getPredicate() == null) continue;
             if (!edge.getPredicate().test(o)) return false;
         }
         return true;

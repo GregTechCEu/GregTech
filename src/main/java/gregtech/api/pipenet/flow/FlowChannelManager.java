@@ -1,11 +1,15 @@
-package gregtech.api.pipenet;
+package gregtech.api.pipenet.flow;
 
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.NodeG;
 import gregtech.api.pipenet.block.IPipeType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,11 +24,23 @@ public class FlowChannelManager<PipeType extends Enum<PipeType> & IPipeType<Node
 
     public FlowChannelManager(WorldPipeFlowNetG<NodeDataType, PipeType> net) {
         this.net = net;
-        FlowChannelTicker.addManager(net.getWorld(), this);
+        WeakReference<FlowChannelManager<?, ?>> ref = new WeakReference<>(this);
+        FlowChannelTicker.addManager(net.getWorld(), ref);
+        this.net.addManager(ref);
+    }
+
+    void clearAlgs() {
+        this.channels.values().forEach(FlowChannel::clearAlg);
     }
 
     public void tick() {
-        channels.forEach((k, v) -> v.evaluate());
+        if (this.activeSinks.size() == 0) return;
+        this.channels.forEach((k, v) -> v.evaluate());
+        if (this.net.unhandledOldNodes.size() != 0) {
+            for (NodeG<PipeType, NodeDataType> node : this.net.unhandledOldNodes) {
+                node.getGroupSafe().connectionChange(node);
+            }
+        }
     }
 
     /**
@@ -81,8 +97,30 @@ public class FlowChannelManager<PipeType extends Enum<PipeType> & IPipeType<Node
         return activeSinks;
     }
 
+    public void addSink(NodeG<PipeType, NodeDataType> sink) {
+        if (this.activeSinks.add(sink)) this.net.getPipeGraph().addEdge(sink, this.net.getSuperSink());
+    }
+
+    public void removeSink(NodeG<PipeType, NodeDataType> sink) {
+        if (this.activeSinks.remove(sink)) this.net.getPipeGraph().removeEdge(sink, this.net.getSuperSink());
+    }
+
     public void setChannel(Object key, FlowChannel<PipeType, NodeDataType> channel) {
         this.channels.put(key, channel.setManager(this));
+    }
+
+    public void disconnectSuperNodes() {
+        this.channels.forEach((key, value) -> value.disconnectSuperNodes());
+        for (NodeG<PipeType, NodeDataType> node : activeSinks) {
+            this.net.getPipeGraph().removeEdge(node, getSuperSink());
+        }
+    }
+
+    public void reconnectSuperNodes() {
+        this.channels.forEach((key, value) -> value.reconnectSuperNodes());
+        for (NodeG<PipeType, NodeDataType> node : activeSinks) {
+            this.net.getPipeGraph().addEdge(node, getSuperSink());
+        }
     }
 
     @Nullable

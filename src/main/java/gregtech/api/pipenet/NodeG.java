@@ -1,6 +1,7 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.flow.FlowChannel;
 import gregtech.api.pipenet.tile.IPipeTile;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -143,7 +144,15 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return false;
     }
 
+    /**
+     * Returns null if we cannot get a valid mte for our location; this happens during world load.
+     */
     public Map<EnumFacing, TileEntity> getConnecteds() {
+        try {
+            getHeldMTE();
+        } catch (Exception e) {
+            return null;
+        }
         Map<EnumFacing, TileEntity> map = new Object2ObjectOpenHashMap<>(6);
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (!isConnected(facing)) continue;
@@ -284,21 +293,22 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @return {@code true} if the provided channel can be supported by the node.
      */
     public boolean canSupportChannel(FlowChannel<PipeType, NodeDataType> channel) {
+        if (this.data == null) return true;
         return this.channels.size() < this.data.getChannelMaxCount() || this.channels.contains(channel);
     }
 
     /**
-     * Adds a channel to a node's collection. Cannot go over the node's chnnael limit.
+     * Adds a channel to a node's collection. Cannot go over the node's channel limit.
      * 
      * @param channel the channel to add.
-     * @return {@code true} if the channel was added.
+     * @return {@code true} if the channel was added or was already present.
      */
     public boolean addChannel(FlowChannel<PipeType, NodeDataType> channel) {
         if (this.channels.size() < this.data.getChannelMaxCount()) {
             this.channels.add(channel);
             return true;
         }
-        return false;
+        return this.channels.contains(channel);
     }
 
     /**
@@ -335,7 +345,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NodeG<?, ?> nodeG = (NodeG<?, ?>) o;
-        return Objects.equals(nodePos, nodeG.nodePos);
+        return nodePos != null && Objects.equals(nodePos, nodeG.nodePos);
     }
 
     @Override

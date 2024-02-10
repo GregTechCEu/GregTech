@@ -1,5 +1,12 @@
-package gregtech.api.pipenet;
+package gregtech.api.pipenet.flow;
 
+import gregtech.api.pipenet.AbstractEdgePredicate;
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.NetEdge;
+import gregtech.api.pipenet.NetGroup;
+import gregtech.api.pipenet.NetPath;
+import gregtech.api.pipenet.NodeG;
+import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 
@@ -7,11 +14,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
+import net.minecraftforge.common.capabilities.Capability;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Set;
 
@@ -21,18 +33,68 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
     private final NodeG<PipeType, NodeDataType> superSource = new NodeG<>();
     private final NodeG<PipeType, NodeDataType> superSink = new NodeG<>();
 
+    protected final Set<NodeG<PipeType, NodeDataType>> unhandledOldNodes = new ObjectOpenHashSet<>();
+
+    protected final Set<WeakReference<FlowChannelManager<?, ?>>> managers = new ObjectOpenHashSet<>();
+
     /**
      * @param isDirected Determines whether this net needs directed graph handling.
      *                   Used to respect filter directions in the item net and fluid net, for example.
      *                   If the graph is not directed, pipes should not support blocked connections.
      */
     public WorldPipeFlowNetG(String name, boolean isDirected) {
-        super(isDirected, false, name);
-        if (isDirected())
-            this.pipeGraph = new FlowDirected<>();
-        else this.pipeGraph = new FlowUndirected<>();
+        super(name, isDirected, false, isDirected ? new FlowDirected<>() : new FlowUndirected<>());
         this.pipeGraph.addVertex(superSource);
         this.pipeGraph.addVertex(superSink);
+    }
+
+    @Override
+    public void markNodeAsOldData(NodeG<PipeType, NodeDataType> node) {
+        this.unhandledOldNodes.add(node);
+    }
+
+    Graph<NodeG<PipeType, NodeDataType>, NetEdge> getPipeGraph() {
+        return this.pipeGraph;
+    }
+
+    protected abstract Capability<?> getSinkCapability();
+
+    @Override
+    public void addNodeSilent(NodeG<PipeType, NodeDataType> node) {
+        super.addNodeSilent(node);
+        // Flow algorithms will throw an out of index if the number of nodes increases
+        this.markAlgInvalid();
+    }
+
+    @Override
+    public void removeNode(@Nullable NodeG<PipeType, NodeDataType> node) {
+        super.removeNode(node);
+        // Flow algorithms will become mis-indexed if the number of nodes decreases
+        this.markAlgInvalid();
+    }
+
+    @Override
+    public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
+                        @Nullable AbstractEdgePredicate<?> predicate) {
+        addEdge(source, target, Math.min(source.getData().getWeightFactor(), target.getData().getWeightFactor())
+                * FlowChannelTicker.FLOWNET_TICKRATE, predicate);
+        this.markAlgInvalid();
+    }
+
+    @Override
+    protected void onWorldSet() {}
+
+    @Override
+    protected void markAlgInvalid() {
+        for (WeakReference<FlowChannelManager<?, ?>> ref : this.managers) {
+            FlowChannelManager<?, ?> manager = ref.get();
+            if (manager != null) manager.clearAlgs();
+            else this.managers.remove(ref);
+        }
+    }
+
+    public void addManager(WeakReference<FlowChannelManager<?, ?>> ref) {
+        this.managers.add(ref);
     }
 
     @Override

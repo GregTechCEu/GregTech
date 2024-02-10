@@ -2,7 +2,14 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 
+import gregtech.api.pipenet.flow.FlowChannel;
+import gregtech.api.pipenet.flow.FlowChannelManager;
+
+import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
+
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -74,11 +81,13 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     public void connectionChange(NodeG<PipeType, NodeDataType> node) {
         if (!this.net.isFlow()) return;
-        // if it has non-pipe TE connections, we need to treat it as an active sink. Very wide definition.
-        if (node.getConnecteds().size() != 0) {
-            this.getChannelManager().getActiveSinks().add(node);
+        Map<EnumFacing, TileEntity> map = node.getConnecteds();
+        // if map is null, then we're in world data load phase - do nothing
+        if (map == null) return;
+        if (map.size() != 0) {
+            this.getChannelManager().addSink(node);
         } else {
-            this.getChannelManager().getActiveSinks().remove(node);
+            this.getChannelManager().removeSink(node);
         }
     }
 
@@ -127,7 +136,8 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @return Whether the node existed in the graph
      */
     public boolean splitNode(NodeG<PipeType, NodeDataType> source) {
-        if (graph.containsVertex(source)) {
+        if (this.graph.containsVertex(source)) {
+            this.prepSplit();
             this.clearCaches();
             List<NodeG<?, ?>> targets = graph.outgoingEdgesOf(source).stream().map(a -> {
                 // handling so undirected graphs don't throw an error
@@ -135,7 +145,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                 if (a.getTarget().getNodePos() != source.getNodePos()) return a.getTarget();
                 return a.getSource();
             }).collect(Collectors.toList());
-            graph.removeVertex(source);
+            this.graph.removeVertex(source);
             this.nodes.remove(source);
             if (this.net.isFlow()) {
                 this.getChannelManager().removeNode(source);
@@ -159,14 +169,17 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                 if (targetGroup.size() != 0) {
                     if (this.net.isFlow()) {
                         // remove our owned nodes from their manager, and remove their nodes from our manager.
+                        // also make sure to finish split from their perspective.
                         new NetGroup<>(this.graph, this.net, targetGroup)
-                                .setChannelManager(this.getChannelManager().subManager(this.nodes));
+                                .setChannelManager(this.getChannelManager().subManager(this.nodes))
+                                .finishSplit();
                         this.getChannelManager().removeNodes(targetGroup);
                     } else {
                         new NetGroup<>(this.graph, this.net, targetGroup);
                     }
                 }
             }
+            this.finishSplit();
             return true;
         }
         return false;
@@ -181,6 +194,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      */
     public boolean splitEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
         if (graph.removeEdge(source, target) != null) {
+            this.prepSplit();
             this.clearCaches();
             Set<NodeG<PipeType, NodeDataType>> targetGroup = new ObjectOpenHashSet<>();
             BreadthFirstIterator<NodeG<PipeType, NodeDataType>, NetEdge> i = new BreadthFirstIterator<>(graph, target);
@@ -188,23 +202,41 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             while (i.hasNext()) {
                 temp = i.next();
                 // if there's a another complete path to the source node from the target node, there's no need to split
-                if (source == temp) return true;
+                if (source == temp) {
+                    this.finishSplit();
+                    return true;
+                }
                 targetGroup.add(temp);
             }
             this.nodes.removeAll(targetGroup);
             if (targetGroup.size() != 0) {
                 if (this.net.isFlow()) {
                     // remove our owned nodes from their manager, and remove their nodes from our manager.
+                    // also make sure to finish split from their perspective.
                     new NetGroup<>(this.graph, this.net, targetGroup)
-                            .setChannelManager(this.getChannelManager().subManager(this.nodes));
+                            .setChannelManager(this.getChannelManager().subManager(this.nodes))
+                            .finishSplit();
                     this.getChannelManager().removeNodes(targetGroup);
                 } else {
                     new NetGroup<>(this.graph, this.net, targetGroup);
                 }
             }
+            this.finishSplit();
             return true;
         }
         return false;
+    }
+
+    private void prepSplit() {
+        if (this.net.isFlow()) {
+            this.getChannelManager().disconnectSuperNodes();
+        }
+    }
+
+    private void finishSplit() {
+        if (this.net.isFlow()) {
+            this.getChannelManager().reconnectSuperNodes();
+        }
     }
 
     /**
@@ -235,8 +267,9 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return this.getChannelManager().getChannel(key);
     }
 
-    private void setChannelManager(FlowChannelManager<PipeType, NodeDataType> manager) {
+    private NetGroup<PipeType, NodeDataType> setChannelManager(FlowChannelManager<PipeType, NodeDataType> manager) {
         this.channelManager = manager;
+        return this;
     }
 
     private FlowChannelManager<PipeType, NodeDataType> getChannelManager() {
@@ -252,6 +285,10 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         int i = 0;
         for (NodeG<PipeType, NodeDataType> node : this.nodes) {
             tag.setLong(String.valueOf(i), node.getLongPos());
+            if (this.net.isFlow()) {
+                // should I do some weird, bit-based encoding with an adaptable number of longs instead of booleans?
+                tag.setBoolean("F" + i, node.hasConnecteds());
+            }
             i++;
         }
         tag.setInteger("NodeCount", i);
@@ -265,20 +302,41 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     @Deprecated
     public void deserializeNBT(NBTTagCompound nbt) {}
 
+    private void addSinks(Set<NodeG<PipeType, NodeDataType>> sinks) {
+        for (NodeG<PipeType, NodeDataType> sink : sinks) {
+            this.getChannelManager().addSink(sink);
+        }
+    }
+
     static final class NBTBuilder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-            NodeDataType extends INodeData<NodeDataType>> {
+            NodeDataType extends INodeData<NodeDataType>> implements INBTBuilder {
 
         private final Set<NodeG<PipeType, NodeDataType>> nodes;
+        private final Set<NodeG<PipeType, NodeDataType>> sinks;
 
-        NBTBuilder(Map<Long, NodeG<PipeType, NodeDataType>> longPosMap, NBTTagCompound tag) {
+        private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph;
+        private final WorldPipeNetG<NodeDataType, PipeType> net;
+
+        NBTBuilder(Map<Long, NodeG<PipeType, NodeDataType>> longPosMap, NBTTagCompound tag, boolean isFlow,
+                   Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetG<NodeDataType, PipeType> net) {
             nodes = new ObjectOpenHashSet<>();
+            if (isFlow) sinks = new ObjectOpenHashSet<>();
+            else sinks = null;
             for (int i = 0; i < tag.getInteger("NodeCount"); i++) {
-                nodes.add(longPosMap.get(tag.getLong(String.valueOf(i))));
+                NodeG<PipeType, NodeDataType> node = longPosMap.get(tag.getLong(String.valueOf(i)));
+                nodes.add(node);
+                if (isFlow && tag.getBoolean("F" + i)) {
+                    sinks.add(node);
+                }
             }
+            this.graph = graph;
+            this.net = net;
         }
 
-        void build(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetG<NodeDataType, PipeType> net) {
+        @Override
+        public void build() {
             NetGroup<PipeType, NodeDataType> g = new NetGroup<>(graph, net, nodes);
+            if (net.isFlow()) g.addSinks(sinks);
         }
     }
 }

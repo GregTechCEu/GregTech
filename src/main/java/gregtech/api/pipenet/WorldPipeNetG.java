@@ -5,6 +5,7 @@ import gregtech.api.pipenet.alg.NetAlgorithm;
 import gregtech.api.pipenet.alg.ShortestPathsAlgorithm;
 import gregtech.api.pipenet.alg.SinglePathAlgorithm;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.common.covers.CoverShutter;
@@ -41,14 +42,16 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     private final boolean isSinglePath;
     private final boolean isFlow;
 
+    private Set<INBTBuilder> builders = null;
+
     private WeakReference<World> worldRef = new WeakReference<>(null);
     // TODO move graph & algorithm into NetGroup to reduce unnecessary algorithm cost
-    Graph<NodeG<PipeType, NodeDataType>, NetEdge> pipeGraph;
+    protected final Graph<NodeG<PipeType, NodeDataType>, NetEdge> pipeGraph;
     final Map<BlockPos, NodeG<PipeType, NodeDataType>> pipeMap = new Object2ObjectOpenHashMap<>();
 
     final NetAlgorithm.NetAlgorithmWrapper<PipeType, NodeDataType> netAlgorithm;
 
-    boolean validAlgorithmInstance = false;
+    private boolean validAlgorithmInstance = false;
 
     /**
      * @param isDirected   Determines whether this net needs directed graph handling.
@@ -69,13 +72,11 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     }
 
     /**
-     * Override ONLY for use by {@link WorldPipeFlowNetG}
+     * Override only for use by {@link WorldPipeFlowNetG}
      */
-    WorldPipeNetG(boolean isDirected, boolean isSinglePath, String name) {
+    protected WorldPipeNetG(String name, boolean isDirected, boolean isSinglePath, Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph) {
         super(name);
-        if (isDirected())
-            this.pipeGraph = new SimpleDirectedWeightedGraph<>(NetEdge.class);
-        else this.pipeGraph = new SimpleWeightedGraph<>(NetEdge.class);
+        this.pipeGraph = graph;
         this.netAlgorithm = null;
         this.isDirected = isDirected;
         this.isSinglePath = isSinglePath;
@@ -94,6 +95,18 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         return isFlow;
     }
 
+    protected void markAlgInvalid() {
+        this.validAlgorithmInstance = false;
+    }
+
+    protected void markAlgValid() {
+        this.validAlgorithmInstance = true;
+    }
+
+    protected boolean hasValidAlg() {
+        return this.validAlgorithmInstance;
+    }
+
     public World getWorld() {
         return this.worldRef.get();
     }
@@ -102,6 +115,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         if (world != this.worldRef.get()) {
             this.worldRef = new WeakReference<>(world);
             onWorldSet();
+            // some builders have to wait for world set, so we wait until then to build them.
+            if (this.builders != null) this.builders.forEach(INBTBuilder::build);
         }
     }
 
@@ -142,7 +157,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
         node.setHeldMTE(tile);
 
-        if (!this.validAlgorithmInstance) this.rebuildNetAlgorithm();
+        if (!this.hasValidAlg()) this.rebuildNetAlgorithm();
 
         List<NetPath<PipeType, NodeDataType>> cache = node.getPathCache();
         if (cache != null) {
@@ -179,6 +194,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         }
         return null;
     }
+
+    public void markNodeAsOldData(NodeG<PipeType, NodeDataType> node) {}
 
     protected abstract Class<? extends IPipeTile<PipeType, NodeDataType>> getBasePipeClass();
 
@@ -319,7 +336,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
                         @Nullable AbstractEdgePredicate<?> predicate) {
         addEdge(source, target, source.getData().getWeightFactor() + target.getData().getWeightFactor(), predicate);
-        this.validAlgorithmInstance = false;
+        this.markAlgInvalid();
     }
 
     public void addUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
@@ -336,7 +353,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
             if (predicate != null) {
                 pipeGraph.getEdge(source, target).setPredicate(predicate);
             }
-            this.validAlgorithmInstance = false;
+            this.markAlgInvalid();
             this.markDirty();
         }
     }
@@ -398,7 +415,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     public void removeEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
         if (source.getGroupSafe() != null && source.getGroupSafe().splitEdge(source, target)) {
-            this.validAlgorithmInstance = false;
+            this.markAlgInvalid();
             this.markDirty();
         }
     }
@@ -409,9 +426,9 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     public void removeNode(@Nullable NodeG<PipeType, NodeDataType> node) {
         if (node != null) {
-            if (this.pipeGraph.edgesOf(node).size() != 0) this.validAlgorithmInstance = false;
-            if (node.getGroupSafe() != null) {
-                node.getGroupSafe().splitNode(node);
+            if (this.pipeGraph.edgesOf(node).size() != 0) this.markAlgInvalid();
+            if (node.getGroupUnsafe() != null) {
+                node.getGroupUnsafe().splitNode(node);
             } else this.pipeGraph.removeVertex(node);
             this.pipeMap.remove(node.getNodePos());
             this.markDirty();
@@ -441,7 +458,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         } else {
             this.netAlgorithm.setAlg(new SinglePathAlgorithm<>(pipeGraph, isDirected()));
         }
-        this.validAlgorithmInstance = true;
+        this.markAlgValid();
     }
 
     @Override
@@ -449,6 +466,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         if (!nbt.hasKey("NetEdges")) {
             return;
         }
+        this.builders = new ObjectOpenHashSet<>();
         NBTTagList allPipeNodes = nbt.getTagList("PipeNodes", Constants.NBT.TAG_COMPOUND);
         Map<Long, NodeG<PipeType, NodeDataType>> longPosMap = new Long2ObjectOpenHashMap<>();
         for (int i = 0; i < allPipeNodes.tagCount(); i++) {
@@ -460,12 +478,12 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         NBTTagList allNetEdges = nbt.getTagList("NetEdges", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < allNetEdges.tagCount(); i++) {
             NBTTagCompound gEdgeTag = allNetEdges.getCompoundTagAt(i);
-            new NetEdge.NBTBuilder<>(longPosMap, gEdgeTag, this::addEdge).addIfBuildable();
+            this.builders.add(new NetEdge.NBTBuilder<>(longPosMap, gEdgeTag, this::addEdge));
         }
         NBTTagList allNetGroups = nbt.getTagList("NetGroups", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < allNetGroups.tagCount(); i++) {
             NBTTagCompound gTag = allNetGroups.getCompoundTagAt(i);
-            new NetGroup.NBTBuilder<>(longPosMap, gTag).build(this.pipeGraph, this);
+            this.builders.add(new NetGroup.NBTBuilder<>(longPosMap, gTag, this.isFlow(), this.pipeGraph, this));
         }
     }
 

@@ -10,6 +10,7 @@ import gregtech.api.pipenet.NodeG;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.unification.material.Material;
 
 import net.minecraft.block.Block;
@@ -456,8 +457,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     protected void doOldNetSetup() {
+        WorldPipeNetG<NodeDataType, PipeType> net = this.getPipeBlock().getWorldPipeNet(this.getPipeWorld());
+        net.markNodeAsOldData(this.getNode());
         for (EnumFacing facing : EnumFacing.VALUES) {
-            WorldPipeNetG<NodeDataType, PipeType> net = this.getPipeBlock().getWorldPipeNet(this.getPipeWorld());
             NodeG<PipeType, NodeDataType> nodeOffset = net.getNode(this.getPipePos().offset(facing));
             if (nodeOffset == null) continue;
             if (net.isDirected()) {

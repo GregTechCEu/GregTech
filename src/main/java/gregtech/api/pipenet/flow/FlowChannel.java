@@ -1,8 +1,11 @@
-package gregtech.api.pipenet;
+package gregtech.api.pipenet.flow;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.NetEdge;
+import gregtech.api.pipenet.NodeG;
 import gregtech.api.pipenet.block.IPipeType;
 
 import net.minecraft.tileentity.TileEntity;
@@ -35,6 +38,8 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
         return this;
     }
 
+    public abstract void clearAlg();
+
     public abstract void evaluate();
 
     /**
@@ -61,6 +66,18 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
         }
         for (NodeG<PT, NDT> sink : this.manager.getActiveSinks()) {
             network.setEdgeWeight(sink, this.manager.getSuperSink(), 0);
+        }
+    }
+
+    void disconnectSuperNodes() {
+        for (NodeG<PT, NDT> source : activeSources) {
+            network.removeEdge(this.manager.getSuperSource(), source);
+        }
+    }
+
+    void reconnectSuperNodes() {
+        for (NodeG<PT, NDT> source : activeSources) {
+            network.addEdge(this.manager.getSuperSource(), source);
         }
     }
 
@@ -122,6 +139,4 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
         this.activeSources.remove(node);
         this.receiveSidesMap.remove(node);
     }
-
-    protected abstract FlowChannel<PT, NDT> getNew();
 }

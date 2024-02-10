@@ -9,6 +9,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
 public final class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound> {
 
@@ -20,7 +21,9 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
         this.invertedPredicate = predicate.sourcePos != this.getSource().getNodePos();
     }
 
-    public AbstractEdgePredicate<?> getPredicate() {
+    public Predicate<Object> getPredicate() {
+        // if we don't have a predicate, just assume that we're good.
+        if (predicate == null) return (a) -> true;
         return predicate;
     }
 
@@ -57,7 +60,7 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
     public void deserializeNBT(NBTTagCompound nbt) {}
 
     static final class NBTBuilder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-            NodeDataType extends INodeData<NodeDataType>> {
+            NodeDataType extends INodeData<NodeDataType>> implements INBTBuilder {
 
         private final NodeG<PipeType, NodeDataType> node1;
         private final NodeG<PipeType, NodeDataType> node2;
@@ -82,7 +85,8 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
             this.buildable = node1 != null && node2 != null;
         }
 
-        void addIfBuildable() {
+        @Override
+        public void build() {
             if (buildable) {
                 edgeProducer.accept(node1, node2, weight, predicate);
             }

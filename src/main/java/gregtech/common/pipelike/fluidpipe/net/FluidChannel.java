@@ -1,11 +1,11 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.pipenet.FlowChannel;
+import gregtech.api.pipenet.flow.FlowChannel;
 import gregtech.api.pipenet.NetEdge;
 import gregtech.api.pipenet.NetGroup;
 import gregtech.api.pipenet.NodeG;
-import gregtech.api.pipenet.WorldPipeFlowNetG;
+import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.pipenet.alg.MaximumFlowAlgorithm;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverPump;
@@ -34,7 +34,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
 
     private MaximumFlowAlgorithm<FluidPipeType, FluidPipeProperties> alg = null;
 
-    private Set<NodeG<FluidPipeType, FluidPipeProperties>> oldNodes = null;
+    private Set<NodeG<FluidPipeType, FluidPipeProperties>> oldNodes = new ObjectOpenHashSet<>(0);
 
     public FluidChannel(Graph<NodeG<FluidPipeType, FluidPipeProperties>, NetEdge> network, Fluid fluid) {
         super(network);
@@ -46,9 +46,15 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
     }
 
     @Override
+    public void clearAlg() {
+        this.alg = null;
+    }
+
+    @Override
     public void evaluate() {
         // Kill this channel if we have no more active sources
         if (this.activeSources.size() == 0) {
+            // should I put the channel in a 'recycling queue' to be reused instead?
             this.manager.removeChannel(this.fluid.getFluid());
             return;
         }
@@ -86,7 +92,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
                 // destroyethify
                 if (node.getHeldMTE() instanceof TileEntityFluidPipe f) {
                     f.checkAndDestroy(fluid);
-                    // TODO implement fluid leakage?
+                    // TODO fix fluid leakage?
                 }
             }
         }
@@ -193,10 +199,5 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
             group.setChannel(key, channel);
         }
         return channel;
-    }
-
-    @Override
-    protected FlowChannel<FluidPipeType, FluidPipeProperties> getNew() {
-        return new FluidChannel(this.network, this.fluid.getFluid());
     }
 }

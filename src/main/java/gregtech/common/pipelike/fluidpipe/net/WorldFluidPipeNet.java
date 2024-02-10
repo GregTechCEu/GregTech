@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.WorldPipeFlowNetG;
+import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
@@ -8,6 +8,8 @@ import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class WorldFluidPipeNet extends WorldPipeFlowNetG<FluidPipeProperties, FluidPipeType> {
 
@@ -31,6 +33,11 @@ public class WorldFluidPipeNet extends WorldPipeFlowNetG<FluidPipeProperties, Fl
     @Override
     protected Class<? extends IPipeTile<FluidPipeType, FluidPipeProperties>> getBasePipeClass() {
         return TileEntityFluidPipe.class;
+    }
+
+    @Override
+    protected Capability<?> getSinkCapability() {
+        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
     }
 
     @Override
