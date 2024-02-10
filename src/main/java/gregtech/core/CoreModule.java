@@ -32,7 +32,7 @@ import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
-import gregtech.common.EventHandlers;
+import gregtech.common.DimensionBreathabilityHandler;
 import gregtech.common.MetaEntities;
 import gregtech.common.blocks.BlockBatteryPart;
 import gregtech.common.blocks.BlockWireCoil;
@@ -298,7 +298,7 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.commandManager.addCommand(new CommandShaders());
         CapesRegistry.load();
 
-        EventHandlers.DimensionBreathabilityHandler.loadConfig();
+        DimensionBreathabilityHandler.loadConfig();
     }
 
     @Override
