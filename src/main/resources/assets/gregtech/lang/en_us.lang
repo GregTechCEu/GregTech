@@ -484,6 +484,7 @@ metaitem.robot.arm.opv.name=OpV Robot Arm
 metaitem.robot.arm.tooltip=Limits §fItems§7 to specific quantities as §fCover§7.
 
 metaitem.catalyst_bed.name=Empty Catalyst Bed
+metaitem.graphite_electrode.name=Graphite Electrode
 
 metaitem.electric.logic_controller.mv.name=MV Logic Controller
 metaitem.electric.logic_controller.hv.name=HV Logic Controller

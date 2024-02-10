@@ -693,7 +693,7 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ELECTROLYZER_RECIPES = new RecipeMapBuilder<>("electrolyzer",
             new SimpleRecipeBuilder())
-                    .itemInputs(2)
+                    .itemInputs(4)
                     .itemOutputs(6)
                     .fluidInputs(1)
                     .fluidOutputs(6)

@@ -539,6 +539,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem CATALYST_BED;
 
+    public static MetaItem<?>.MetaValueItem GRAPHITE_ELECTRODE;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
 
     static {

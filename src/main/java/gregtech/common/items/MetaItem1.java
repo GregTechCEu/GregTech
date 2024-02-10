@@ -1097,5 +1097,7 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1);
 
         CATALYST_BED = addItem(1005, "catalyst_bed");
+
+        GRAPHITE_ELECTRODE = addItem(1006, "graphite_electrode");
     }
 }

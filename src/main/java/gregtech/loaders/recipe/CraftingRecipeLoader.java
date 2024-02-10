@@ -45,34 +45,18 @@ public class CraftingRecipeLoader {
         ModHandler.addShapelessRecipe("integrated_circuit", IntCircuitIngredient.getIntegratedCircuit(0),
                 new UnificationEntry(OrePrefix.circuit, Tier.LV));
 
-        ModHandler.addShapedRecipe("item_filter", ITEM_FILTER.getStackForm(), "XXX", "XYX", "XXX", 'X',
-                new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'Y',
-                new UnificationEntry(OrePrefix.plate, Materials.Steel));
-        ModHandler.addShapedRecipe("fluid_filter_lapis", FLUID_FILTER.getStackForm(), "XXX", "XYX", "XXX", 'X',
-                new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'Y',
-                new UnificationEntry(OrePrefix.plate, Materials.Lapis));
-        ModHandler.addShapedRecipe("fluid_filter_lazurite", FLUID_FILTER.getStackForm(), "XXX", "XYX", "XXX", 'X',
-                new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'Y',
-                new UnificationEntry(OrePrefix.plate, Materials.Lazurite));
-        ModHandler.addShapedRecipe("fluid_filter_sodalite", FLUID_FILTER.getStackForm(), "XXX", "XYX", "XXX", 'X',
-                new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'Y',
-                new UnificationEntry(OrePrefix.plate, Materials.Sodalite));
-
-        ModHandler.addShapedRecipe("ore_dictionary_filter_olivine", ORE_DICTIONARY_FILTER.getStackForm(), "XXX", "XYX",
-                "XXX", 'X', new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'Y',
-                new UnificationEntry(OrePrefix.plate, Materials.Olivine));
-        ModHandler.addShapedRecipe("ore_dictionary_filter_emerald", ORE_DICTIONARY_FILTER.getStackForm(), "XXX", "XYX",
-                "XXX", 'X', new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'Y',
-                new UnificationEntry(OrePrefix.plate, Materials.Emerald));
-
-        ModHandler.addShapedRecipe("smart_item_filter_olivine", SMART_FILTER.getStackForm(), "XEX", "XCX", "XEX", 'X',
-                new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'C',
-                new UnificationEntry(OrePrefix.circuit, Tier.LV), 'E',
-                new UnificationEntry(OrePrefix.plate, Materials.Olivine));
-        ModHandler.addShapedRecipe("smart_item_filter_emerald", SMART_FILTER.getStackForm(), "XEX", "XCX", "XEX", 'X',
-                new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'C',
-                new UnificationEntry(OrePrefix.circuit, Tier.LV), 'E',
-                new UnificationEntry(OrePrefix.plate, Materials.Emerald));
+        ModHandler.addShapedRecipe("item_filter", ITEM_FILTER.getStackForm(), " I ", " P ", " C ", 'I', ELECTRIC_PISTON_LV.getStackForm() ,'P',
+                new UnificationEntry(OrePrefix.pipeItem, Tin), 'C',
+                new UnificationEntry(OrePrefix.circuit, Tier.LV));
+        ModHandler.addShapedRecipe("fluid_filter", FLUID_FILTER.getStackForm(), " I ", " P ", " C ", 'I', ELECTRIC_PISTON_LV.getStackForm() ,'P',
+                new UnificationEntry(OrePrefix.pipeFluid, Steel), 'C',
+                new UnificationEntry(OrePrefix.circuit, Tier.LV));
+        ModHandler.addShapedRecipe("ore_dictionary_filter", ORE_DICTIONARY_FILTER.getStackForm(), " I ", " P ", " C ", 'I', ROBOT_ARM_LV.getStackForm() ,'P',
+                new UnificationEntry(OrePrefix.pipeItem, Nickel), 'C',
+                new UnificationEntry(OrePrefix.circuit, Tier.LV));
+        ModHandler.addShapedRecipe("smart_item_filter", SMART_FILTER.getStackForm(), " I ", " P ", " C ", 'I', ROBOT_ARM_LV.getStackForm() ,'P',
+                new UnificationEntry(OrePrefix.pipeFluid, Silver), 'C',
+                new UnificationEntry(OrePrefix.circuit, Tier.MV));
 
         ModHandler.addShapedRecipe("plank_to_wooden_shape", WOODEN_FORM_EMPTY.getStackForm(), "   ", " X ", "s  ", 'X',
                 new UnificationEntry(OrePrefix.plank, Materials.Wood));

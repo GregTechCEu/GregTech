@@ -92,14 +92,6 @@ public class PlatGroupMetalsRecipes {
                 .output(dust, PlatinumSludgeResidue, 2)
                 .buildAndRegister();
 
-        // PLATINUM
-
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
-                .input(dust, PlatinumRaw, 3)
-                .output(dust, Platinum)
-                .fluidOutputs(Chlorine.getFluid(800))
-                .buildAndRegister();
-
         // PALLADIUM
 
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[MV])
@@ -117,13 +109,6 @@ public class PlatGroupMetalsRecipes {
                 .fluidOutputs(RhodiumSulfate.getFluid(500))
                 .output(dust, RutheniumTetroxide, 5)
                 .fluidOutputs(Hydrogen.getFluid(3000))
-                .buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
-                .fluidInputs(RhodiumSulfate.getFluid(1000))
-                .output(dust, Rhodium, 2)
-                .fluidOutputs(SulfurTrioxide.getFluid(3000))
-                .fluidOutputs(Oxygen.getFluid(3000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[MV])

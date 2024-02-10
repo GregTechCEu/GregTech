@@ -34,6 +34,7 @@ public class ChemistryRecipes {
         AcidRecipes.init();
 
         AluminiumRecipes.init();
+        GalliumRecipes.init();
 
         // A Few Random Recipes
         WELDING_RECIPES.recipeBuilder()

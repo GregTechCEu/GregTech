@@ -1585,6 +1585,7 @@ public class FirstDegreeMaterials {
         Alumina = new Material.Builder(467, gregtechId("alumina"))
                 .dust()
                 .color(0xc9cff0).iconSet(MaterialIconSet.SHINY)
+                .flags(GENERATE_WAFER)
                 .components(Aluminium, 2, Oxygen, 3)
                 .build();
 

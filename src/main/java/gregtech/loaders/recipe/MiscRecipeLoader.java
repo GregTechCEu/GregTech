@@ -377,13 +377,6 @@ public class MiscRecipeLoader {
         CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, DarkAsh)
                 .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(FERTILIZER)
-                .output(dust, Calcite)
-                .output(dust, Carbon)
-                .fluidOutputs(Water.getFluid(1000))
-                .duration(100).EUt(VA[LV]).buildAndRegister();
-
         FORMING_PRESS_RECIPES.recipeBuilder()
                 .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.TEMPERED_GLASS, 2))
                 .input(plate, PolyvinylButyral)
