@@ -1,5 +1,12 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
 
@@ -26,6 +33,17 @@ public abstract class BaseFilter implements IFilter {
 
     public final boolean isBlacklistFilter() {
         return filterReader.isBlacklistFilter();
+    }
+
+    public IWidget createBlacklistUI() {
+        return new ParentWidget<>().coverChildren()
+                .child(new CycleButtonWidget()
+                        .value(new BooleanSyncValue(
+                                this::isBlacklistFilter,
+                                this::setBlacklistFilter))
+                        .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
+                        .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
+                        .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
     }
 
     public final int getMaxTransferSize() {

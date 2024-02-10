@@ -57,16 +57,7 @@ public interface IFilter {
 
     void setBlacklistFilter(boolean blacklistFilter);
 
-    default IWidget createBlacklistUI() {
-        return new ParentWidget<>().coverChildren()
-                .child(new CycleButtonWidget()
-                        .value(new BooleanSyncValue(
-                                this::isBlacklistFilter,
-                                this::setBlacklistFilter))
-                        .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
-                        .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
-                        .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
-    }
+    IWidget createBlacklistUI();
 
     /** Read legacy NBT here */
     void readFromNBT(NBTTagCompound tagCompound);
