@@ -1567,13 +1567,49 @@ public class FirstDegreeMaterials {
         HydrogenChloride = new Material.Builder(464, gregtechId("hydrogen_chloride"))
                 .gas(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xBCBCB5)
-                .components(Hydrogen, Chlorine)
+                .components(Hydrogen, 1, Chlorine, 1)
                 .build();
 
         HydrogenFluoride = new Material.Builder(465, gregtechId("hydrogen_fluoride"))
                 .gas(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0x0088AA)
-                .components(Hydrogen, Fluorine)
+                .components(Hydrogen, 1, Fluorine, 1)
                 .build();
+
+        AluminiumHydroxide = new Material.Builder(466, gregtechId("aluminium_hydroxide"))
+                .dust()
+                .color(0xFFFFFF).iconSet(MaterialIconSet.SHINY)
+                .components(Aluminium, 1, Oxygen, 3, Hydrogen, 3)
+                .build().setFormula("Al(OH)3", true);
+
+        Alumina = new Material.Builder(467, gregtechId("alumina"))
+                .dust()
+                .color(0xc9cff0).iconSet(MaterialIconSet.SHINY)
+                .components(Aluminium, 2, Oxygen, 3)
+                .build();
+
+        AluminiumTrifluoride = new Material.Builder(468, gregtechId("aluminium_trifluoride"))
+                .dust()
+                .color(0xBBBBBB).iconSet(MaterialIconSet.DULL)
+                .components(Aluminium, 1, Fluorine, 3)
+                .build();
+
+        SodiumFluoride = new Material.Builder(469, gregtechId("sodium_fluoride"))
+                .dust()
+                .color(0xadab95).iconSet(MaterialIconSet.DULL)
+                .components(Sodium, 1, Fluorine, 1)
+                .build();
+
+        Cryolite = new Material.Builder(470, gregtechId("cryolite"))
+                .dust().fluid()
+                .color(0xdbc7a2).iconSet(MaterialIconSet.SHINY)
+                .components(Sodium, 3, Aluminium, 1, Fluorine, 6)
+                .build();
+
+        AluminiumSulfate = new Material.Builder(471, gregtechId("aluminium_sulfate"))
+                .dust()
+                .color(0xedbca4).iconSet(MaterialIconSet.SHINY)
+                .components(Aluminium, 2, Sulfur, 4, Oxygen, 12)
+                .build().setFormula("Al2(SO4)3", true);
     }
 }

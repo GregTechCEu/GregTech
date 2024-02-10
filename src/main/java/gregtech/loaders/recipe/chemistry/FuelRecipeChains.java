@@ -55,7 +55,7 @@ public class FuelRecipeChains {
                 .fluidInputs(NitrationMixture.getFluid(2000))
                 .fluidInputs(DistilledWater.getFluid(2000))
                 .fluidOutputs(Nitrobenzene.getFluid(8000))
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .buildAndRegister();
     }
 }

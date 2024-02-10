@@ -539,15 +539,6 @@ public class UnknownCompositionMaterials {
                 .flags(STICKY, FLAMMABLE)
                 .build();
 
-        RubySlurry = new Material.Builder(1620, gregtechId("ruby_slurry"))
-                .fluid().color(0xff6464).build();
-
-        SapphireSlurry = new Material.Builder(1621, gregtechId("sapphire_slurry"))
-                .fluid().color(0x6464c8).build();
-
-        GreenSapphireSlurry = new Material.Builder(1622, gregtechId("green_sapphire_slurry"))
-                .fluid().color(0x64c882).build();
-
         // These colors are much nicer looking than those in MC's EnumDyeColor
         DyeBlack = new Material.Builder(1623, gregtechId("dye_black"))
                 .fluid().color(0x202020).build();
@@ -657,5 +648,11 @@ public class UnknownCompositionMaterials {
 
         RedMud = new Material.Builder(1654, gregtechId("red_mud"))
                 .fluid().color(0x632f26).build().setFormula("?", true);
+
+        GalliumLiquor = new Material.Builder(1655, gregtechId("gallium_liquor"))
+                .fluid().color(0x494c5c).build();
+
+        AcidicREESolution = new Material.Builder(1656, gregtechId("acidic_ree_solution"))
+                .fluid().color(0xc2aea9).build();
     }
 }

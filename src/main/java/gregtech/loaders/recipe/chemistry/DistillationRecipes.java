@@ -4,6 +4,7 @@ import gregtech.common.items.MetaItems;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.DISTILLATION_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.DISTILLERY_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
 
@@ -15,17 +16,29 @@ public class DistillationRecipes {
                 .fluidOutputs(Lubricant.getFluid(12))
                 .duration(16).EUt(96).buildAndRegister();
 
-        DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(DilutedHydrochloricAcid.getFluid(2000))
-                .fluidOutputs(Water.getFluid(1000))
-                .fluidOutputs(HydrochloricAcid.getFluid(1000))
-                .duration(600).EUt(64).buildAndRegister();
+        DISTILLERY_RECIPES.recipeBuilder()
+                .circuitMeta(1)
+                .fluidInputs(HydrochloricAcid.getFluid(1000))
+                .fluidOutputs(HydrogenChloride.getFluid(1000))
+                .duration(300).EUt(16).buildAndRegister();
 
-        DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(DilutedSulfuricAcid.getFluid(3000))
-                .fluidOutputs(SulfuricAcid.getFluid(2000))
+        DISTILLERY_RECIPES.recipeBuilder()
+                .circuitMeta(1)
+                .fluidInputs(HydrofluoricAcid.getFluid(1000))
+                .fluidOutputs(HydrogenFluoride.getFluid(1000))
+                .duration(300).EUt(16).buildAndRegister();
+
+        DISTILLERY_RECIPES.recipeBuilder()
+                .circuitMeta(2)
+                .fluidInputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
-                .duration(600).EUt(VA[MV]).buildAndRegister();
+                .duration(300).EUt(16).buildAndRegister();
+
+        DISTILLERY_RECIPES.recipeBuilder()
+                .circuitMeta(2)
+                .fluidInputs(HydrofluoricAcid.getFluid(1000))
+                .fluidOutputs(Water.getFluid(1000))
+                .duration(300).EUt(16).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(CharcoalByproducts.getFluid(1000))

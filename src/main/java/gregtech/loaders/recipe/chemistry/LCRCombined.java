@@ -46,7 +46,7 @@ public class LCRCombined {
                 .fluidInputs(Water.getFluid(1000))
                 .fluidOutputs(Phenol.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
+                .fluidOutputs(HydrogenChloride.getFluid(1000))
                 .duration(560).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()

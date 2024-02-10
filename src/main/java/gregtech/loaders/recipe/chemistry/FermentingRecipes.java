@@ -42,7 +42,7 @@ public class FermentingRecipes {
                 .input(Items.WHEAT_SEEDS, 4)
                 .fluidInputs(Water.getFluid(1000))
                 .fluidOutputs(Mash.getFluid(1000))
-                .duration(200)
+                .duration(100)
                 .EUt(30)
                 .buildAndRegister();
 
@@ -50,12 +50,12 @@ public class FermentingRecipes {
                 .input(dust, Wheat, 4)
                 .fluidInputs(Water.getFluid(1000))
                 .fluidOutputs(Mash.getFluid(1000))
-                .duration(200)
+                .duration(100)
                 .EUt(30)
                 .buildAndRegister();
 
         FERMENTING_RECIPES.recipeBuilder()
-                .fluidOutputs(Mash.getFluid(16000))
+                .fluidInputs(Mash.getFluid(16000))
                 .fluidOutputs(Alcohol.getFluid(16000))
                 .duration(2400)
                 .EUt(16)
@@ -63,7 +63,7 @@ public class FermentingRecipes {
 
         FERMENTING_RECIPES.recipeBuilder()
                 .input(Items.SUGAR, 24)
-                .fluidOutputs(Water.getFluid(16000))
+                .fluidInputs(Water.getFluid(16000))
                 .fluidOutputs(Alcohol.getFluid(16000))
                 .circuitMeta(3)
                 .duration(1600)

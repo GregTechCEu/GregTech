@@ -52,6 +52,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityCrackingUni
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityDataBank;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityDistillationTower;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectrolyticCell;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFermentationVat;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFixedBedReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
@@ -395,6 +396,7 @@ public class MetaTileEntities {
     public static MetaTileEntityRotaryKiln ROTARY_KILN;
     public static MetaTileEntityPolymerizationTank POLYMERIZATION_TANK;
     public static MetaTileEntityFluidizedBedReactor FLUIDIZED_BED_REACTOR;
+    public static MetaTileEntityElectrolyticCell ELECTROLYTIC_CELL;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -890,6 +892,9 @@ public class MetaTileEntities {
 
         FLUIDIZED_BED_REACTOR = registerMetaTileEntity(1076,
                 new MetaTileEntityFluidizedBedReactor(gregtechId("fluidized_bed_reactor")));
+
+        ELECTROLYTIC_CELL = registerMetaTileEntity(1077,
+                new MetaTileEntityElectrolyticCell(gregtechId("electrolytic_cell")));
 
         // MISC MTE's START: IDs 1150-2000
 

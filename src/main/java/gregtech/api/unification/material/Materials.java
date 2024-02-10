@@ -477,6 +477,12 @@ public class Materials {
     public static Material MolybdenumDisilicide;
     public static Material VanadiumPentoxide;
     public static Material SodiumAluminate;
+    public static Material AluminiumHydroxide;
+    public static Material Alumina;
+    public static Material AluminiumTrifluoride;
+    public static Material SodiumFluoride;
+    public static Material Cryolite;
+    public static Material AluminiumSulfate;
 
     /**
      * Organic chemistry
@@ -554,7 +560,6 @@ public class Materials {
     public static Material PalladiumRaw;
     public static Material RarestMetalMixture;
     public static Material AmmoniumChloride;
-    public static Material AcidicOsmiumSolution;
     public static Material RhodiumPlatedPalladium;
     public static Material Butyraldehyde;
     public static Material PolyvinylButyral;
@@ -664,9 +669,6 @@ public class Materials {
     public static Material TreatedWood;
     public static Material Paper;
     public static Material FishOil;
-    public static Material RubySlurry;
-    public static Material SapphireSlurry;
-    public static Material GreenSapphireSlurry;
     public static Material DyeBlack;
     public static Material DyeRed;
     public static Material DyeGreen;
@@ -699,6 +701,8 @@ public class Materials {
     public static Material Alcohol;
     public static Material Vinegar;
     public static Material RedMud;
+    public static Material GalliumLiquor;
+    public static Material AcidicREESolution;
 
     /**
      * Second Degree Compounds
@@ -766,6 +770,7 @@ public class Materials {
     /**
      * Third Degree Materials
      */
+    public static Material AcidicOsmiumSolution;
     public static Material Electrotine;
     public static Material EnderEye;
     public static Material Diatomite;

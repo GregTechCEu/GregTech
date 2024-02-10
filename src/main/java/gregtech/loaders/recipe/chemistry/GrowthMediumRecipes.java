@@ -49,18 +49,16 @@ public class GrowthMediumRecipes {
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(800)
                 .input(dust, Meat)
                 .inputs(new ItemStack(Items.DYE, 1, 15))
-                .fluidInputs(SulfuricAcid.getFluid(500))
+                .fluidInputs(SulfuricAcid.getFluid(250))
                 .output(dust, Collagen)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(500))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(1600)
                 .input(dust, Meat, 2)
                 .inputs(new ItemStack(Items.BONE))
-                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(dust, Collagen, 2)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 

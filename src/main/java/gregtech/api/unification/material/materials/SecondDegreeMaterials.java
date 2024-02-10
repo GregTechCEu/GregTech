@@ -409,7 +409,7 @@ public class SecondDegreeMaterials {
         AquaRegia = new Material.Builder(2056, gregtechId("aqua_regia"))
                 .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xFFB132)
-                .components(NitricAcid, 1, HydrochloricAcid, 2)
+                .components(NitricAcid, 1, HydrogenChloride, 2)
                 .build();
 
         PlatinumSludgeResidue = new Material.Builder(2057, gregtechId("platinum_sludge_residue"))
@@ -433,14 +433,7 @@ public class SecondDegreeMaterials {
         AmmoniumChloride = new Material.Builder(2060, gregtechId("ammonium_chloride"))
                 .dust()
                 .color(0x9711A6)
-                .components(Ammonia, 1, HydrochloricAcid, 1)
-                .build()
-                .setFormula("NH4Cl", true);
-
-        AcidicOsmiumSolution = new Material.Builder(2061, gregtechId("acidic_osmium_solution"))
-                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
-                .color(0xA3AA8A)
-                .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
+                .components(Nitrogen, 1, Hydrogen, 4, Chlorine, 1)
                 .build();
 
         RhodiumPlatedPalladium = new Material.Builder(2062, gregtechId("rhodium_plated_palladium"))
@@ -495,19 +488,19 @@ public class SecondDegreeMaterials {
                 .blast(b -> b.temp(3625, GasTier.MID).blastStats(VA[EV], 800).createAlloyBlast())
                 .build();
 
-        SodiumAluminateSolution = new Material.Builder(2067, gregtechId("sodium_aluminate_solution"))
+        SodiumAluminateSolution = new Material.Builder(2068, gregtechId("sodium_aluminate_solution"))
                 .fluid()
                 .components(SodiumAluminate, 1, Water, 1)
                 .colorAverage()
                 .build();
 
-        HydrofluoricAcid = new Material.Builder(2068, gregtechId("hydrofluoric_acid"))
+        HydrofluoricAcid = new Material.Builder(2069, gregtechId("hydrofluoric_acid"))
                 .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
                 .colorAverage()
                 .components(HydrogenFluoride, 1, Water, 1)
                 .build();
 
-        HydrochloricAcid = new Material.Builder(2069, gregtechId("hydrochloric_acid"))
+        HydrochloricAcid = new Material.Builder(2070, gregtechId("hydrochloric_acid"))
                 .liquid(new FluidBuilder()
                         .attribute(FluidAttributes.ACID)
                         .customStill())
@@ -515,7 +508,7 @@ public class SecondDegreeMaterials {
                 .components(HydrogenChloride, 1, Water, 1)
                 .build();
 
-        SodiumHydroxideSolution = new Material.Builder(2070, gregtechId("sodium_hydroxide_solution"))
+        SodiumHydroxideSolution = new Material.Builder(2071, gregtechId("sodium_hydroxide_solution"))
                 .liquid()
                 .colorAverage()
                 .components(SodiumHydroxide, 1, Water, 1)

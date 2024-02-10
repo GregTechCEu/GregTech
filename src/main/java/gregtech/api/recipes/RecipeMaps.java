@@ -333,7 +333,7 @@ public final class RecipeMaps {
             new SimpleRecipeBuilder().EUt(5))
                     .itemInputs(2)
                     .itemOutputs(6)
-                    .fluidInputs(1)
+                    .fluidInputs(2)
                     .fluidOutputs(6)
                     .itemSlotOverlay(GuiTextures.EXTRACTOR_OVERLAY, false, false)
                     .itemSlotOverlay(GuiTextures.CANISTER_OVERLAY, false, true)
@@ -722,7 +722,9 @@ public final class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> ELECTROMAGNETIC_SEPARATOR_RECIPES = new RecipeMapBuilder<>(
             "electromagnetic_separator", new SimpleRecipeBuilder())
                     .itemInputs(1)
+                    .fluidInputs(2)
                     .itemOutputs(3)
+                    .fluidOutputs(2)
                     .itemSlotOverlay(GuiTextures.CRUSHED_ORE_OVERLAY, false)
                     .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_MAGNET)
@@ -1444,6 +1446,7 @@ public final class RecipeMaps {
             .itemInputs(3)
             .itemOutputs(1)
             .fluidInputs(3)
+            .fluidOutputs(1)
             .progressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION, ProgressWidget.MoveType.HORIZONTAL)
             .sound(GTSoundEvents.FURNACE)
             .build();
@@ -1483,6 +1486,20 @@ public final class RecipeMaps {
             .itemSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_1, false, false)
             .itemSlotOverlay(GuiTextures.MOLECULAR_OVERLAY_1, true, false)
             .sound(GTSoundEvents.CHEMICAL_REACTOR)
+            .build();
+
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> ELECTROLYTIC_CELL_RECIPES = new RecipeMapBuilder<>("electrolytic_cell",
+            new SimpleRecipeBuilder())
+            .itemInputs(3)
+            .itemOutputs(3)
+            .fluidInputs(3)
+            .fluidOutputs(3)
+            .itemSlotOverlay(GuiTextures.LIGHTNING_OVERLAY_1, false, false)
+            .itemSlotOverlay(GuiTextures.CANISTER_OVERLAY, false, true)
+            .fluidSlotOverlay(GuiTextures.LIGHTNING_OVERLAY_2, false)
+            .progressBar(GuiTextures.PROGRESS_BAR_EXTRACT)
+            .sound(GTSoundEvents.ELECTROLYZER)
             .build();
 
     //////////////////////////////////////

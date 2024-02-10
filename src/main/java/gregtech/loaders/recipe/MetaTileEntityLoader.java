@@ -425,7 +425,7 @@ public class MetaTileEntityLoader {
                 new ItemStack(Blocks.BRICK_BLOCK));
 
         ModHandler.addShapedRecipe(true, "vacuum_chamber_bronze",
-                MetaTileEntities.STEAM_VACUUM_CHAMBER_BRONZE.getStackForm(), "AGA", "PHP", "APA", 'A',
+                MetaTileEntities.STEAM_VACUUM_CHAMBER_BRONZE.getStackForm(), "AGA", "PwP", "APA", 'A',
                 new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'P', new UnificationEntry(OrePrefix.pipeFluid, Materials.TinAlloy), 'G',
                 new ItemStack(Blocks.GLASS));
         ModHandler.addShapedRecipe(true, "steam_boiler_coal_bronze",

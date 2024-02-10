@@ -196,7 +196,7 @@ public class OrganicChemistryMaterials {
         AllylChloride = new Material.Builder(1025, gregtechId("allyl_chloride"))
                 .fluid()
                 .color(0x87DEAA)
-                .components(Carbon, 2, Methane, 1, HydrochloricAcid, 1)
+                .components(Carbon, 3, Hydrogen, 5, Chlorine, 1)
                 .build()
                 .setFormula("C3H5Cl", true);
 

@@ -28,7 +28,6 @@ public class ChemistryRecipes {
         GrowthMediumRecipes.init();
         NuclearRecipes.init();
         FuelRecipeChains.init();
-        GemSlurryRecipes.init();
         PlatGroupMetalsRecipes.init();
         NaquadahRecipes.init();
         ManualABSRecipes.init();

@@ -6407,6 +6407,7 @@ gregtech.machine.froth_flotation_tank.name=Froth Flotation Vat
 gregtech.machine.rotary_kiln.name=Rotary Kiln
 gregtech.machine.polymerization_tank.name=Polymerization Tank
 gregtech.machine.fluidized_bed_reactor.name=Fluidized Bed Reactor
+gregtech.machine.electrolytic_cell.name=Electrolytic Cell
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
@@ -6504,6 +6505,7 @@ recipemap.alloy_blast_smelter.name=Alloy Blast Smelting
 recipemap.fixed_bed_reactor.name=Fixed Bed Reactor
 recipemap.heat_exchanger.name=Heat Exchanging
 recipemap.programmer.name=Programmer
+recipemap.electrolytic_cell.name=Electrolytic Cell
 
 # Materials
 gregtech.material.stellite_100=Stellite-100
@@ -6528,6 +6530,14 @@ gregtech.material.red_mud=Red Mud
 gregtech.material.hydrogen_chloride=Hydrogen Chloride
 gregtech.material.hydrogen_fluoride=Hydrogen Fluoride
 gregtech.material.sodium_hydroxide_solution=Sodium Hydroxide Solution
+gregtech.material.gallium_liquor=Gallium Liquor
+gregtech.material.aluminium_hydroxide=Aluminium Hydroxide
+gregtech.material.alumina=Alumina
+gregtech.material.aluminium_trifluoride=Aluminium Trifluoride
+gregtech.material.sodium_fluoride=Sodium Fluoride
+gregtech.material.aluminium_sulfate=Aluminium Sulfate
+gregtech.material.acidic_ree_solution=Acidic Rare Earth Solution
+gregtech.material.cryolite=Cryolite
 
 # Latex Collector
 gregtech.machine.latex_collector.steam=Needs Steam!

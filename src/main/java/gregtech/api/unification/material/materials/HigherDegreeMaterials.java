@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -15,6 +16,12 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class HigherDegreeMaterials {
 
     public static void register() {
+        AcidicOsmiumSolution = new Material.Builder(2506, gregtechId("acidic_osmium_solution"))
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
+                .color(0xA3AA8A)
+                .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
+                .build();
+
         Electrotine = new Material.Builder(2507, gregtechId("electrotine"))
                 .dust().ore(5, 1, true)
                 .color(0x3CB4C8).iconSet(SHINY)
