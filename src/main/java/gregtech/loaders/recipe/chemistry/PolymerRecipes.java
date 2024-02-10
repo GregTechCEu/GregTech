@@ -129,14 +129,14 @@ public class PolymerRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Chloroform.getFluid(2000))
-                .fluidInputs(HydrofluoricAcid.getFluid(4000))
+                .fluidInputs(HydrogenFluoride.getFluid(4000))
                 .fluidOutputs(HydrochloricAcid.getFluid(6000))
                 .fluidOutputs(Tetrafluoroethylene.getFluid(1000))
                 .duration(480).EUt(240).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(24)
-                .fluidInputs(HydrofluoricAcid.getFluid(4000))
+                .fluidInputs(HydrogenFluoride.getFluid(4000))
                 .fluidInputs(Methane.getFluid(2000))
                 .fluidInputs(Chlorine.getFluid(12000))
                 .fluidOutputs(Tetrafluoroethylene.getFluid(1000))
@@ -293,7 +293,7 @@ public class PolymerRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
-                .fluidInputs(HydrochloricAcid.getFluid(1000))
+                .fluidInputs(Hydrog.getFluid(1000))
                 .fluidInputs(Acetone.getFluid(1000))
                 .fluidInputs(Phenol.getFluid(2000))
                 .fluidOutputs(BisphenolA.getFluid(1000))

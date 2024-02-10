@@ -13,5 +13,9 @@ public final class FluidAttributes {
             list -> list.add(I18n.format("gregtech.fluid.type_acid.tooltip")),
             list -> list.add(I18n.format("gregtech.fluid_pipe.acid_proof")));
 
+    public static final FluidAttribute CAUSTIC = new FluidAttribute(gregtechId("caustic"),
+            list -> list.add(I18n.format("gregtech.fluid.type_caustic.tooltip")),
+            list -> list.add(I18n.format("gregtech.fluid_pipe.caustic_proof")));
+
     private FluidAttributes() {}
 }

@@ -34,6 +34,8 @@ public class ChemistryRecipes {
         ManualABSRecipes.init();
         AcidRecipes.init();
 
+        AluminiumRecipes.init();
+
         // A Few Random Recipes
         WELDING_RECIPES.recipeBuilder()
                 .circuitMeta(1)

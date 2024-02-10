@@ -1155,12 +1155,6 @@ public class FirstDegreeMaterials {
                 .components(Nitrogen, 1, Hydrogen, 3)
                 .build();
 
-        HydrofluoricAcid = new Material.Builder(409, gregtechId("hydrofluoric_acid"))
-                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
-                .color(0x0088AA)
-                .components(Hydrogen, 1, Fluorine, 1)
-                .build();
-
         NitricOxide = new Material.Builder(410, gregtechId("nitric_oxide"))
                 .gas()
                 .color(0x7DC8F0)
@@ -1223,14 +1217,6 @@ public class FirstDegreeMaterials {
                 .macerateInto(Neodymium)
                 .build();
         Neodymium.getProperty(PropertyKey.INGOT).setMagneticMaterial(NeodymiumMagnetic);
-
-        HydrochloricAcid = new Material.Builder(419, gregtechId("hydrochloric_acid"))
-                .liquid(new FluidBuilder()
-                        .attribute(FluidAttributes.ACID)
-                        .customStill())
-                .color(0xBCBCB5)
-                .components(Hydrogen, 1, Chlorine, 1)
-                .build();
 
         Steam = new Material.Builder(420, gregtechId("steam"))
                 .gas(new FluidBuilder()
@@ -1570,6 +1556,24 @@ public class FirstDegreeMaterials {
                 .colorAverage().iconSet(MaterialIconSet.METALLIC)
                 .flags(GENERATE_ROUND, GENERATE_CATALYST_BED)
                 .components(Vanadium, 2, Oxygen, 5)
+                .build();
+
+        SodiumAluminate = new Material.Builder(463, gregtechId("sodium_aluminate"))
+                .dust()
+                .color(0xEEEEEE).iconSet(MaterialIconSet.FINE)
+                .components(Sodium, 1, Aluminium, 1, Oxygen, 2)
+                .build();
+
+        HydrogenChloride = new Material.Builder(464, gregtechId("hydrogen_chloride"))
+                .gas(new FluidBuilder().attribute(FluidAttributes.ACID))
+                .color(0xBCBCB5)
+                .components(Hydrogen, Chlorine)
+                .build();
+
+        HydrogenFluoride = new Material.Builder(465, gregtechId("hydrogen_fluoride"))
+                .gas(new FluidBuilder().attribute(FluidAttributes.ACID))
+                .color(0x0088AA)
+                .components(Hydrogen, Fluorine)
                 .build();
     }
 }

@@ -356,18 +356,6 @@ public class SecondDegreeMaterials {
                 .components(NitricAcid, 1, SulfuricAcid, 1)
                 .build();
 
-        DilutedSulfuricAcid = new Material.Builder(2047, gregtechId("diluted_sulfuric_acid"))
-                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
-                .color(0xC07820)
-                .components(SulfuricAcid, 2, Water, 1)
-                .build();
-
-        DilutedHydrochloricAcid = new Material.Builder(2048, gregtechId("diluted_hydrochloric_acid"))
-                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
-                .color(0x99A7A3)
-                .components(HydrochloricAcid, 1, Water, 1)
-                .build();
-
         Flint = new Material.Builder(2049, gregtechId("flint"))
                 .gem(1)
                 .color(0x002040).iconSet(FLINT)
@@ -505,6 +493,32 @@ public class SecondDegreeMaterials {
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
                 .components(VanadiumSteel, 4, Manganese, 2, Aluminium, 5, Yttrium, 2)
                 .blast(b -> b.temp(3625, GasTier.MID).blastStats(VA[EV], 800).createAlloyBlast())
+                .build();
+
+        SodiumAluminateSolution = new Material.Builder(2067, gregtechId("sodium_aluminate_solution"))
+                .fluid()
+                .components(SodiumAluminate, 1, Water, 1)
+                .colorAverage()
+                .build();
+
+        HydrofluoricAcid = new Material.Builder(2068, gregtechId("hydrofluoric_acid"))
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
+                .colorAverage()
+                .components(HydrogenFluoride, 1, Water, 1)
+                .build();
+
+        HydrochloricAcid = new Material.Builder(2069, gregtechId("hydrochloric_acid"))
+                .liquid(new FluidBuilder()
+                        .attribute(FluidAttributes.ACID)
+                        .customStill())
+                .colorAverage()
+                .components(HydrogenChloride, 1, Water, 1)
+                .build();
+
+        SodiumHydroxideSolution = new Material.Builder(2070, gregtechId("sodium_hydroxide_solution"))
+                .liquid()
+                .colorAverage()
+                .components(SodiumHydroxide, 1, Water, 1)
                 .build();
     }
 }

@@ -32,14 +32,14 @@ public class NaquadahRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(60)
                 .input(dust, AntimonyTrioxide, 5)
-                .fluidInputs(HydrofluoricAcid.getFluid(6000))
+                .fluidInputs(HydrogenFluoride.getFluid(6000))
                 .output(dust, AntimonyTrifluoride, 8)
                 .fluidOutputs(Water.getFluid(3000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(300)
                 .input(dust, AntimonyTrifluoride, 4)
-                .fluidInputs(HydrofluoricAcid.getFluid(4000))
+                .fluidInputs(HydrogenFluoride.getFluid(4000))
                 .fluidOutputs(FluoroantimonicAcid.getFluid(1000))
                 .fluidOutputs(Hydrogen.getFluid(2000))
                 .buildAndRegister();
@@ -144,7 +144,7 @@ public class NaquadahRecipes {
                 .input(dust, TitaniumTrifluoride, 4)
                 .fluidInputs(Hydrogen.getFluid(3000))
                 .output(dust, Titanium)
-                .fluidOutputs(HydrofluoricAcid.getFluid(3000))
+                .fluidOutputs(HydrogenFluoride.getFluid(3000))
                 .buildAndRegister();
 
         // Indium Phosphide

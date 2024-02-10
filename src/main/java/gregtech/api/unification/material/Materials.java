@@ -424,7 +424,6 @@ public class Materials {
     public static Material CarbonMonoxide;
     public static Material HypochlorousAcid;
     public static Material Ammonia;
-    public static Material HydrofluoricAcid;
     public static Material NitricOxide;
     public static Material Iron3Chloride;
     public static Material UraniumHexafluoride;
@@ -434,7 +433,6 @@ public class Materials {
     public static Material EnderPearl;
     public static Material PotassiumFeldspar;
     public static Material NeodymiumMagnetic;
-    public static Material HydrochloricAcid;
     public static Material Steam;
     public static Material DistilledWater;
     public static Material SodiumPotassium;
@@ -477,8 +475,8 @@ public class Materials {
     public static Material TitaniumCarbide;
     public static Material TantalumCarbide;
     public static Material MolybdenumDisilicide;
-
     public static Material VanadiumPentoxide;
+    public static Material SodiumAluminate;
 
     /**
      * Organic chemistry
@@ -562,6 +560,8 @@ public class Materials {
     public static Material PolyvinylButyral;
     public static Material Biphenyl;
     public static Material PolychlorinatedBiphenyl;
+    public static Material HydrogenChloride;
+    public static Material HydrogenFluoride;
 
     /**
      * Not possible to determine exact Components
@@ -698,6 +698,7 @@ public class Materials {
     public static Material Mash;
     public static Material Alcohol;
     public static Material Vinegar;
+    public static Material RedMud;
 
     /**
      * Second Degree Compounds
@@ -742,8 +743,6 @@ public class Materials {
     public static Material SulfuricCopperSolution;
     public static Material LeadZincSolution;
     public static Material NitrationMixture;
-    public static Material DilutedSulfuricAcid;
-    public static Material DilutedHydrochloricAcid;
     public static Material Flint;
     public static Material Air;
     public static Material LiquidAir;
@@ -759,6 +758,10 @@ public class Materials {
     public static Material HSLASteel;
     public static Material TitaniumTungstenCarbide;
     public static Material IncoloyMA956;
+    public static Material SodiumAluminateSolution;
+    public static Material SodiumHydroxideSolution;
+    public static Material HydrofluoricAcid;
+    public static Material HydrochloricAcid;
 
     /**
      * Third Degree Materials

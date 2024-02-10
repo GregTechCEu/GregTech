@@ -6522,6 +6522,12 @@ gregtech.material.titanium_tungsten_carbide=Titanium Tungsten Carbide
 gregtech.material.incoloy_ma_956=Incoloy-MA956
 
 gregtech.material.vanadium_pentoxide=Vanadium Pentoxide
+gregtech.material.sodium_aluminate=Sodium Aluminate
+gregtech.material.sodium_aluminate_solution=Sodium Aluminate Solution
+gregtech.material.red_mud=Red Mud
+gregtech.material.hydrogen_chloride=Hydrogen Chloride
+gregtech.material.hydrogen_fluoride=Hydrogen Fluoride
+gregtech.material.sodium_hydroxide_solution=Sodium Hydroxide Solution
 
 # Latex Collector
 gregtech.machine.latex_collector.steam=Needs Steam!

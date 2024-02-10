@@ -10,7 +10,7 @@ public class NuclearRecipes {
     public static void init() {
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dust, Uraninite, 3)
-                .fluidInputs(HydrofluoricAcid.getFluid(4000))
+                .fluidInputs(HydrogenFluoride.getFluid(4000))
                 .fluidInputs(Fluorine.getFluid(2000))
                 .fluidOutputs(UraniumHexafluoride.getFluid(1000))
                 .fluidOutputs(Water.getFluid(2000))

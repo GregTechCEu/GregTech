@@ -416,7 +416,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_FINE_WIRE)
                 .element(Elements.Pb)
                 .cableProperties(V[LV], 2, 2, true)
-                .fluidPipeProperties(1200, 32, true)
+                .fluidPipeProperties(1200, 32, true, true, false, false)
                 .build();
 
         Lithium = new Material.Builder(56, gregtechId("lithium"))

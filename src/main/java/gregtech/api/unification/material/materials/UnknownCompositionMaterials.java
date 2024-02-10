@@ -654,5 +654,8 @@ public class UnknownCompositionMaterials {
 
         Vinegar = new Material.Builder(1653, gregtechId("vinegar"))
                 .fluid().color(0xdedcce).build();
+
+        RedMud = new Material.Builder(1654, gregtechId("red_mud"))
+                .fluid().color(0x632f26).build().setFormula("?", true);
     }
 }
