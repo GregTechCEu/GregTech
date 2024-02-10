@@ -115,7 +115,7 @@ public class SimpleItemFilter extends BaseFilter implements IItemFilter {
                                     tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
                                     int count = this.filterReader.getTagAt(index)
                                             .getInteger(SimpleItemFilterReader.COUNT);
-                                    if (count > 64)
+                                    if (count > 0)
                                         tooltip.addLine(
                                                 IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                 })
