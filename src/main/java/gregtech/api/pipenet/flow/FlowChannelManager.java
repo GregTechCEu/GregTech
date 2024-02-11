@@ -6,7 +6,6 @@ import gregtech.api.pipenet.block.IPipeType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;

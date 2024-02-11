@@ -1,10 +1,8 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
-
 import gregtech.api.pipenet.flow.FlowChannel;
 import gregtech.api.pipenet.flow.FlowChannelManager;
-
 import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 
 import net.minecraft.nbt.NBTTagCompound;

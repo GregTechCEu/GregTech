@@ -12,11 +12,9 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraftforge.common.capabilities.Capability;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
@@ -24,6 +22,7 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -76,8 +75,8 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
     @Override
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
                         @Nullable AbstractEdgePredicate<?> predicate) {
-        addEdge(source, target, Math.min(source.getData().getWeightFactor(), target.getData().getWeightFactor())
-                * FlowChannelTicker.FLOWNET_TICKRATE, predicate);
+        addEdge(source, target, Math.min(source.getData().getWeightFactor(), target.getData().getWeightFactor()) *
+                FlowChannelTicker.FLOWNET_TICKRATE, predicate);
         this.markAlgInvalid();
     }
 
@@ -86,10 +85,12 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
 
     @Override
     protected void markAlgInvalid() {
-        for (WeakReference<FlowChannelManager<?, ?>> ref : this.managers) {
+        Iterator<WeakReference<FlowChannelManager<?, ?>>> iterator = this.managers.iterator();
+        while (iterator.hasNext()) {
+            WeakReference<FlowChannelManager<?, ?>> ref = iterator.next();
             FlowChannelManager<?, ?> manager = ref.get();
             if (manager != null) manager.clearAlgs();
-            else this.managers.remove(ref);
+            else iterator.remove();
         }
     }
 

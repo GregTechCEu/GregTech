@@ -32,11 +32,11 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     private NodeDataType data;
     /**
-     * Specifies bitmask of active connections.
-     * Active connections determine visual connections and graph edges.
-     * An active connection does not always mean an edge is present.
+     * Specifies bitmask of open connections.
+     * Open connections determine visual connections and graph edges.
+     * An open connection does not always mean an edge is present.
      */
-    private int activeConnections;
+    private int openConnections;
     /**
      * Specifies bitmask of blocked connections.
      * Blocked connections allow flow out, but not flow in.
@@ -67,7 +67,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     public NodeG(NodeDataType data, IPipeTile<PipeType, NodeDataType> heldMTE,
                  WorldPipeNetG<NodeDataType, PipeType> net) {
         this.data = data;
-        this.activeConnections = 0;
+        this.openConnections = 0;
         this.blockedConnections = 0;
         this.mark = 0;
         this.isActive = false;
@@ -86,7 +86,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.net = null;
         this.data = null;
         this.heldMTE = new WeakReference<>(heldMTE);
-        this.activeConnections = 0;
+        this.openConnections = 0;
         this.blockedConnections = 0;
     }
 
@@ -99,7 +99,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.net = null;
         this.data = null;
         this.heldMTE = new WeakReference<>(null);
-        this.activeConnections = 0;
+        this.openConnections = 0;
         this.blockedConnections = 0;
     }
 
@@ -167,28 +167,28 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     }
 
     public boolean isConnected(EnumFacing facing) {
-        return (activeConnections & 1 << facing.getIndex()) != 0;
+        return (openConnections & 1 << facing.getIndex()) != 0;
     }
 
     /**
      * Should only be used with dummy nodes, otherwise go through the net.
      */
-    public void setActiveConnections(int activeConnections) {
-        this.activeConnections = activeConnections;
+    public void setOpenConnections(int openConnections) {
+        this.openConnections = openConnections;
     }
 
     void setConnected(EnumFacing facing, boolean connect) {
         if (connect) {
-            this.activeConnections |= 1 << facing.getIndex();
+            this.openConnections |= 1 << facing.getIndex();
         } else {
-            this.activeConnections &= ~(1 << facing.getIndex());
+            this.openConnections &= ~(1 << facing.getIndex());
         }
-        this.getHeldMTE().onConnectionChange();
+        this.getHeldMTESafe().onConnectionChange();
         this.getGroupSafe().connectionChange(this);
     }
 
-    public int getActiveConnections() {
-        return activeConnections;
+    public int getOpenConnections() {
+        return openConnections;
     }
 
     public boolean isBlocked(EnumFacing facing) {
@@ -208,7 +208,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         } else {
             this.blockedConnections &= ~(1 << facing.getIndex());
         }
-        this.getHeldMTE().onBlockedChange();
+        this.getHeldMTESafe().onBlockedChange();
     }
 
     public int getBlockedConnections() {
@@ -249,15 +249,15 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     }
 
     /**
-     * Ensures that the returned tile is not null nor invalid.
+     * Ensures that the returned tile is the correct one for this position.
      */
     public IPipeTile<PipeType, NodeDataType> getHeldMTESafe() {
         IPipeTile<PipeType, NodeDataType> te = getHeldMTEUnsafe();
-        if (te == null || !te.isValidTile()) {
-            te = net.castTE(net.getWorld().getTileEntity(this.nodePos));
-            setHeldMTE(te);
+        IPipeTile<PipeType, NodeDataType> properTE = net.castTE(net.getWorld().getTileEntity(this.nodePos));
+        if (te != properTE) {
+            setHeldMTE(properTE);
         }
-        return te;
+        return properTE;
     }
 
     public void setData(NodeDataType data) {
@@ -326,7 +326,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NBTTagCompound tag = new NBTTagCompound();
         tag.setLong("Pos", this.nodePos.toLong());
         tag.setInteger("Mark", this.mark);
-        tag.setInteger("OpenConnections", this.activeConnections);
+        tag.setInteger("OpenConnections", this.openConnections);
         tag.setInteger("BlockedConnections", this.blockedConnections);
         tag.setBoolean("IsActive", this.isActive);
         return tag;
@@ -335,7 +335,7 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         this.mark = nbt.getInteger("Mark");
-        this.activeConnections = nbt.getInteger("OpenConnections");
+        this.openConnections = nbt.getInteger("OpenConnections");
         this.blockedConnections = nbt.getInteger("BlockedConnections");
         this.isActive = nbt.getBoolean("IsActive");
     }

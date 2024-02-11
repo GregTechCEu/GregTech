@@ -1,12 +1,13 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.pipenet.flow.FlowChannel;
 import gregtech.api.pipenet.NetEdge;
 import gregtech.api.pipenet.NetGroup;
 import gregtech.api.pipenet.NodeG;
-import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.pipenet.alg.MaximumFlowAlgorithm;
+import gregtech.api.pipenet.flow.FlowChannel;
+import gregtech.api.pipenet.flow.FlowChannelTicker;
+import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.CoverShutter;
@@ -77,22 +78,28 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
 
         for (Map.Entry<NetEdge, Double> flow : flows.entrySet()) {
             if (flow.getValue() == 0) continue;
-            inMap.merge(flow.getKey().getTarget(), flow.getValue(), Double::sum);
-            outMap.merge(flow.getKey().getSource(), flow.getValue(), Double::sum);
-            nodes.add((NodeG<FluidPipeType, FluidPipeProperties>) flow.getKey().getSource());
-            nodes.add((NodeG<FluidPipeType, FluidPipeProperties>) flow.getKey().getTarget());
+            NetEdge edge = flow.getKey();
+            // we only care about a flow if it involves a super node, and we only care about non-super node nodes.
+            if (edge.getSource() == this.manager.getSuperSource()) {
+                inMap.merge(edge.getTarget(), flow.getValue(), Double::sum);
+                nodes.add((NodeG<FluidPipeType, FluidPipeProperties>) edge.getTarget());
+            } else if (edge.getTarget() == this.manager.getSuperSink()) {
+                outMap.merge(flow.getKey().getSource(), flow.getValue(), Double::sum);
+                nodes.add((NodeG<FluidPipeType, FluidPipeProperties>) edge.getSource());
+            } else {
+                nodes.add((NodeG<FluidPipeType, FluidPipeProperties>) edge.getSource());
+                nodes.add((NodeG<FluidPipeType, FluidPipeProperties>) edge.getTarget());
+            }
         }
 
         for (NodeG<FluidPipeType, FluidPipeProperties> node : nodes) {
-            // dataless nodes are only the superSource and superSink
-            if (node.getData() == null) continue;
             if (!node.addChannel(this))
                 throw new IllegalStateException("Node rejected channel despite approving it earlier!");
             if (!node.getData().test(fluid)) {
                 // destroyethify
                 if (node.getHeldMTE() instanceof TileEntityFluidPipe f) {
                     f.checkAndDestroy(fluid);
-                    // TODO fix fluid leakage?
+                    // TODO fix fluid leakage
                 }
             }
         }
@@ -141,7 +148,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
         return pushToNode(sink, Integer.MAX_VALUE, false);
     }
 
-    private double pushToNode(NodeG<FluidPipeType, FluidPipeProperties> sink, int amount, boolean doFill) {
+    private int pushToNode(NodeG<FluidPipeType, FluidPipeProperties> sink, int amount, boolean doFill) {
         int flow = 0;
         if (sink.getHeldMTE() instanceof TileEntityFluidPipe f) {
             int fill;
@@ -160,7 +167,9 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
                 }
                 Cover thisCover = f.getCoverableImplementation().getCoverAtSide(connected.getKey());
                 Cover themCover = getCoverOnNeighbour(sink, connected.getKey().getOpposite());
-                int transferMax = evaluateCover(themCover, evaluateCover(thisCover, amount));
+                int transferMax = Math.min(evaluateCover(themCover, evaluateCover(thisCover, amount)),
+                        // max flow per side cannot exceed throughput
+                        sink.getData().getThroughput() * FlowChannelTicker.FLOWNET_TICKRATE);
                 IFluidHandler handler = connected.getValue().getCapability(
                         CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, connected.getKey().getOpposite());
                 if (handler != null) {

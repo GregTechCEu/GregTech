@@ -74,7 +74,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     /**
      * Override only for use by {@link WorldPipeFlowNetG}
      */
-    protected WorldPipeNetG(String name, boolean isDirected, boolean isSinglePath, Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph) {
+    protected WorldPipeNetG(String name, boolean isDirected, boolean isSinglePath,
+                            Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph) {
         super(name);
         this.pipeGraph = graph;
         this.netAlgorithm = null;

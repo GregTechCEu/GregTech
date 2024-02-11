@@ -52,6 +52,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     private final EnumMap<EnumFacing, PipeTankList> tankLists = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
     private final int offset = GTValues.RNG.nextInt(20);
+    private long lastSoundTime = 0;
 
     public long getOffsetTimer() {
         return FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter() + offset;
@@ -107,8 +108,9 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public void destroyPipe(FluidStack stack, boolean isBurning, boolean isLeaking, boolean isCorroding,
                             boolean isShattering, boolean isMelting) {
         // prevent the sound from spamming when filled from anything not a pipe
-        if (getOffsetTimer() % 10 == 0) {
+        if (getOffsetTimer() >= lastSoundTime + 10) {
             world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            lastSoundTime = getOffsetTimer() + 10;
         }
 
         if (isLeaking) {

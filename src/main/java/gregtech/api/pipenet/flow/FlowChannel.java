@@ -48,6 +48,7 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
     protected void activate() {
         for (NodeG<PT, NDT> source : activeSources) {
             double v = getSourceValue(source);
+            // TODO find source of random NPE crash where a source edge doesn't exist after world load (pls help)
             network.setEdgeWeight(this.manager.getSuperSource(), source, v);
             if (v == 0) removeSource(source);
         }
@@ -85,11 +86,6 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
 
     protected abstract double getSinkValue(NodeG<PT, NDT> sink);
 
-    public void addSource(NodeG<PT, NDT> source) {
-        this.activeSources.add(source);
-        this.network.addEdge(this.manager.getSuperSource(), source);
-    }
-
     public void addReceiveSide(NodeG<PT, NDT> node, EnumFacing side) {
         this.receiveSidesMap.compute(node, (k, v) -> {
             if (v == null) {
@@ -103,9 +99,12 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
         });
     }
 
+    public void addSource(NodeG<PT, NDT> source) {
+        if (this.activeSources.add(source)) this.network.addEdge(this.manager.getSuperSource(), source);
+    }
+
     public void removeSource(NodeG<PT, NDT> source) {
-        this.activeSources.remove(source);
-        this.network.removeEdge(this.manager.getSuperSource(), source);
+        if (this.activeSources.remove(source)) this.network.removeEdge(this.manager.getSuperSource(), source);
     }
 
     @Nullable

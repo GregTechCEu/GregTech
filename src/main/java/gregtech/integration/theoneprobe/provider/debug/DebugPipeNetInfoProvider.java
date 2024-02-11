@@ -56,7 +56,7 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     builder.append("{")
                             .append("active: ").append(node.isActive)
                             .append(", mark: ").append(node.mark)
-                            .append(", open: ").append(node.getActiveConnections())
+                            .append(", open: ").append(node.getOpenConnections())
                             .append(", blocked: ").append(node.getBlockedConnections())
                             .append("}");
                     probeInfo.text(builder.toString());

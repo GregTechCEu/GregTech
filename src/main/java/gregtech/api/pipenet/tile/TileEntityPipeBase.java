@@ -10,7 +10,6 @@ import gregtech.api.pipenet.NodeG;
 import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.unification.material.Material;
 
 import net.minecraft.block.Block;
@@ -214,7 +213,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public int getConnections() {
-        return this.getNode().getActiveConnections();
+        return this.getNode().getOpenConnections();
     }
 
     @Override
@@ -399,7 +398,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         compound.setInteger("PipeNetVersion", 2);
         compound.setInteger("PipeType", pipeType.ordinal());
-        compound.setInteger("Connections", getNode().getActiveConnections());
+        compound.setInteger("Connections", getNode().getOpenConnections());
         compound.setInteger("BlockedConnections", getNode().getBlockedConnections());
         if (isPainted()) {
             compound.setInteger("InsulationColor", paintingColor);
@@ -426,7 +425,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
         this.nbtLoad = true;
         if (compound.hasKey("Connections")) {
-            this.getNode().setActiveConnections(compound.getInteger("Connections"));
+            this.getNode().setOpenConnections(compound.getInteger("Connections"));
         } else if (compound.hasKey("BlockedConnectionsMap")) {
             int connections = 0;
             NBTTagCompound blockedConnectionsTag = compound.getCompoundTag("BlockedConnectionsMap");
@@ -434,7 +433,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                 int blockedConnections = blockedConnectionsTag.getInteger(attachmentTypeKey);
                 connections |= blockedConnections;
             }
-            this.getNode().setActiveConnections(connections);
+            this.getNode().setOpenConnections(connections);
         }
         this.getNode().setBlockedConnections(compound.getInteger("BlockedConnections"));
 
@@ -492,7 +491,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         writePipeProperties(buf);
-        buf.writeVarInt(this.getNode().getActiveConnections());
+        buf.writeVarInt(this.getNode().getOpenConnections());
         buf.writeVarInt(this.getNode().getBlockedConnections());
         buf.writeInt(paintingColor);
         buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getRegistry().getNetworkId());
@@ -507,7 +506,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             return;
         }
         readPipeProperties(buf);
-        this.getNode().setActiveConnections(buf.readVarInt());
+        this.getNode().setOpenConnections(buf.readVarInt());
         this.getNode().setBlockedConnections(buf.readVarInt());
         this.paintingColor = buf.readInt();
         int registryId = buf.readVarInt();
@@ -533,7 +532,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (discriminator == UPDATE_INSULATION_COLOR) {
             this.paintingColor = buf.readInt();
         } else if (discriminator == UPDATE_CONNECTIONS) {
-            this.getNode().setActiveConnections(buf.readVarInt());
+            this.getNode().setOpenConnections(buf.readVarInt());
         } else if (discriminator == SYNC_COVER_IMPLEMENTATION) {
             this.coverableImplementation.readCustomData(buf.readVarInt(), buf);
         } else if (discriminator == UPDATE_PIPE_TYPE) {
