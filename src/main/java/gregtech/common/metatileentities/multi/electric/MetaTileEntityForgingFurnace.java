@@ -145,7 +145,8 @@ public class MetaTileEntityForgingFurnace extends MultiMapMultiblockController i
     }
 
     public IBlockState getIntakeState() {
-        return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.EXTREME_ENGINE_INTAKE_CASING);
+        return MetaBlocks.MULTIBLOCK_CASING
+                .getState(BlockMultiblockCasing.MultiblockCasingType.EXTREME_ENGINE_INTAKE_CASING);
     }
 
     @Override
@@ -226,7 +227,8 @@ public class MetaTileEntityForgingFurnace extends MultiMapMultiblockController i
                 .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.EAST)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.NORTH)
                 .where('D', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.LV], EnumFacing.EAST)
-                .where('A', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : getCasingState(), EnumFacing.SOUTH);
+                .where('A', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
+                        getCasingState(), EnumFacing.SOUTH);
         for (int j = 1; j <= 4; j++) {
             MultiblockShapeInfo.Builder builder = builderBase.shallowCopy();
             String i = StringUtils.repeat('I', j + 2);
@@ -235,9 +237,9 @@ public class MetaTileEntityForgingFurnace extends MultiMapMultiblockController i
             String p = StringUtils.repeat('P', j);
             String f = StringUtils.repeat('F', j + 2);
             builder.aisle(t + "#CHCHC#CCC",
-                            "T" + e + "T#CHYHC#CCC",
-                            "T" + e + "T#CHYHC#CCC",
-                            f + "#CHCHC#CCC")
+                    "T" + e + "T#CHYHC#CCC",
+                    "T" + e + "T#CHYHC#CCC",
+                    f + "#CHCHC#CCC")
                     .aisle("T" + e + "T#CHCHC#CCC",
                             "T" + p + "PPP###PPP#C",
                             "T" + p + "PPP###PPP#D",

@@ -14,15 +14,12 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-
 import gregtech.loaders.recipe.CraftingComponent;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -158,8 +155,8 @@ public class ForgingFurnaceRecipeHandler {
                 coolerDuration = (int) (material.getMass() * 3);
             }
             coolerDuration *= inputAmount
-                    // inefficiency - square root of temp/1000
-                    // aka, increasing temp by x4 increases cooling time by x2; perfect efficiency at 1000K
+            // inefficiency - square root of temp/1000
+            // aka, increasing temp by x4 increases cooling time by x2; perfect efficiency at 1000K
                     * Math.max(1, Math.pow(material.getBlastTemperature() / 1000.0, 1 / 2.0))
                     // overclocking; do not allow underclocks.
                     / Math.pow(OverclockingLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR, Math.max(0, coolingOverclock));
