@@ -27,8 +27,8 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -129,26 +129,22 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                                     return slot;
                                 })
                                 .build().marginRight(2))
-                        .child(new ToggleButton()
+                        .child(new CycleButtonWidget()
                                 .size(18).value(caseSensitive)
-                                .background(GTGuiTextures.BUTTON_CASE_SENSITIVE[1])
-                                .hoverBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[1])
-                                .selectedBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
-                                .selectedHoverBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
                                 .marginRight(2)
-                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.case_sensitive",
-                                        caseSensitive.getStringValue()))
-                                .tooltip(tooltip -> tooltip.setAutoUpdate(true)))
-                        .child(new ToggleButton()
+                                .textureGetter(state -> GTGuiTextures.BUTTON_CASE_SENSITIVE[state])
+                                .addTooltip(0,
+                                        IKey.lang("cover.ore_dictionary_filter.button.case_sensitive.disabled"))
+                                .addTooltip(1,
+                                        IKey.lang("cover.ore_dictionary_filter.button.case_sensitive.enabled")))
+                        .child(new CycleButtonWidget()
                                 .size(18).value(matchAll)
-                                .background(GTGuiTextures.BUTTON_MATCH_ALL[1])
-                                .hoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[1])
-                                .selectedHoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
-                                .selectedBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
-                                .addTooltipLine(
-                                        IKey.lang("cover.ore_dictionary_filter.match_all", matchAll.getStringValue()))
-                                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                                .marginRight(2))
+                                .marginRight(2)
+                                .textureGetter(state -> GTGuiTextures.BUTTON_MATCH_ALL[state])
+                                .addTooltip(0,
+                                        IKey.lang("cover.ore_dictionary_filter.button.match_all.disabled"))
+                                .addTooltip(1,
+                                        IKey.lang("cover.ore_dictionary_filter.button.match_all.enabled")))
                         .child(createBlacklistUI()));
     }
 
