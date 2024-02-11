@@ -11,7 +11,7 @@ import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.readers.OreDictFilterReader;
 import gregtech.common.gui.widget.HighlightedTextField;
-import gregtech.common.gui.widget.orefilter.OreFilterTestSlot;
+import gregtech.common.mui.widget.orefilter.OreFilterTestSlot;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
@@ -136,6 +136,7 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                                 .selectedBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
                                 .selectedHoverBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
                                 .marginRight(2)
+                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.case_sensitive", caseSensitive.getStringValue()))
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true)))
                         .child(new ToggleButton()
                                 .size(18).value(matchAll)
@@ -143,6 +144,7 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                                 .hoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[1])
                                 .selectedHoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
                                 .selectedBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
+                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.match_all", matchAll.getStringValue()))
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                                 .marginRight(2))
                         .child(createBlacklistUI()));

@@ -36,6 +36,9 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     public void onFilterInstanceChange() {
         dirtyNotifiable.markAsDirty();
+        if (onFilterInstanceChange != null) {
+            onFilterInstanceChange.run();
+        }
     }
 
     public void setOnFilterInstanceChange(@Nullable Runnable onFilterInstanceChange) {
@@ -47,7 +50,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack) {
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (ItemStack.areItemStacksEqual(stack, getFilterStack()))
             return;
 
@@ -61,7 +64,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     @Override
-    public boolean isItemValid(int slot, ItemStack stack) {
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
         return FilterTypeRegistry.isFilter(stack);
     }
 
@@ -71,15 +74,15 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     // todo update stack for insert and extract, though that shouldn't be called normally
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+    public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (!isItemValid(stack)) return stack;
         var remainder = super.insertItem(slot, stack, simulate);
-        setFilter(FilterTypeRegistry.getFilterForStack(stack));
+        if (!simulate) setFilter(FilterTypeRegistry.getFilterForStack(stack));
         return remainder;
     }
 
     @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+    public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
         var extracted = super.extractItem(slot, amount, simulate);
         if (!extracted.isEmpty()) {
             setFilter(null);
@@ -92,7 +95,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public int getMaxTransferSize() {
-        return !showGlobalTransferLimitSlider() ? currentFilter.getMaxTransferSize() : this.maxTransferSize;
+        return !showGlobalTransferLimitSlider() && hasFilter() ? currentFilter.getMaxTransferSize() : this.maxTransferSize;
     }
 
     public void setMaxTransferSize(int maxTransferSize) {
@@ -122,7 +125,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     public boolean showGlobalTransferLimitSlider() {
         return this.maxTransferSize > 0 &&
-                (isBlacklistFilter() || !hasFilter() || getFilter().showGlobalTransferLimitSlider());
+                (isBlacklistFilter() || (hasFilter() && getFilter().showGlobalTransferLimitSlider()));
     }
 
     public void setBlacklistFilter(boolean blacklistFilter) {
@@ -142,7 +145,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public int getTransferLimit(int slotIndex) {
-        if (isBlacklistFilter()) {
+        if (isBlacklistFilter() || !hasFilter()) {
             return getTransferSize();
         }
         return this.currentFilter.getTransferLimit(slotIndex, getTransferSize());

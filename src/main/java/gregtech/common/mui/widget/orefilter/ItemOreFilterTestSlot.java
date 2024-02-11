@@ -1,4 +1,4 @@
-package gregtech.common.gui.widget.orefilter;
+package gregtech.common.mui.widget.orefilter;
 
 import gregtech.api.util.oreglob.OreGlob;
 
@@ -37,5 +37,10 @@ public class ItemOreFilterTestSlot extends ModularSlot {
             super.putStack(stack);
             this.parent.updatePreview();
         }
+    }
+
+    @Override
+    public int getSlotStackLimit() {
+        return 1;
     }
 }

@@ -815,13 +815,14 @@ metaitem.gravistar.name=Gravi Star
 metaitem.gravistar.tooltip=Ultimate Nether Star
 
 metaitem.item_filter.name=Item Filter
-metaitem.item_filter.tooltip=Filters §fItem§7 I/O as §fCover§7./n§fRight-Click§7 to configure, §fShift Right-Click§7 to clear configuration/nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
+metaitem.item_filter.tooltip=Filters §fItem§7 I/O as §fCover§7./nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
 metaitem.ore_dictionary_filter.name=Ore Dictionary Filter
-metaitem.ore_dictionary_filter.tooltip=Filters §fItem§7 I/O with §fOre Dictionary§7 as §fCover§7./n§fRight-Click§7 to configure, §fShift Right-Click§7 to clear configuration/nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
+metaitem.ore_dictionary_filter.tooltip=Filters §fItem§7 I/O with §fOre Dictionary§7 as §fCover§7./nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
 metaitem.fluid_filter.name=Fluid Filter
-metaitem.fluid_filter.tooltip=Filters §fFluid§7 I/O as §fCover§7./n§fRight-Click§7 to configure, §fShift Right-Click§7 to clear configuration/nCan be used as an §fElectric Pump§7 and §fFluid Regulator§7 upgrade.
+metaitem.fluid_filter.tooltip=Filters §fFluid§7 I/O as §fCover§7./nCan be used as an §fElectric Pump§7 and §fFluid Regulator§7 upgrade.
 metaitem.smart_item_filter.name=Smart Item Filter
-metaitem.smart_item_filter.tooltip=Filters §fItem§7 I/O with §fMachine Recipes§7 as §fCover§7./n§fRight-Click§7 to configure, §fShift Right-Click§7 to clear configuration/nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
+metaitem.smart_item_filter.tooltip=Filters §fItem§7 I/O with §fMachine Recipes§7 as §fCover§7./nCan be used as a §fConveyor Module§7 and §fRobotic Arm§7 upgrade.
+behaviour.filter_ui_manager=§fRight-Click§7 to configure, §fShift Right-Click§7 to clear configuration
 
 metaitem.cover.controller.name=Machine Controller
 metaitem.cover.controller.tooltip=Turns Machines §fON/OFF§7 as §fCover§7.

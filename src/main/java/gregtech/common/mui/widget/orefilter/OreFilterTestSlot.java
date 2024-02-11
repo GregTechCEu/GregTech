@@ -1,4 +1,4 @@
-package gregtech.common.gui.widget.orefilter;
+package gregtech.common.mui.widget.orefilter;
 
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.function.BooleanConsumer;
