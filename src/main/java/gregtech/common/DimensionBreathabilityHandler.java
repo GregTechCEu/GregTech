@@ -2,7 +2,6 @@ package gregtech.common;
 
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.unification.material.Materials;
-import gregtech.common.items.MetaItems;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -24,28 +23,9 @@ public final class DimensionBreathabilityHandler {
     private static FluidStack oxyStack;
     private static final Map<Integer, BreathabilityInfo> dimensionBreathabilityMap = new HashMap<>();
     private static BreathabilityInfo defaultDimensionBreathability;
-    private static final Map<BreathabilityItemMapKey, BreathabilityInfo> itemBreathabilityMap = new HashMap<>() {
+    private static final Map<BreathabilityItemMapKey, BreathabilityInfo> itemBreathabilityMap = new HashMap<>();
 
-        {
-            this.put(MetaItems.SIMPLE_GAS_MASK.getStackForm(), new BreathabilityInfo(true, false, 10));
-            this.put(MetaItems.GAS_MASK.getStackForm(), new BreathabilityInfo(true, true, 0));
-            this.put(MetaItems.NANO_HELMET.getStackForm(), new BreathabilityInfo(true, true, 0, 5));
-            this.put(MetaItems.NANO_CHESTPLATE.getStackForm(), new BreathabilityInfo(5));
-            this.put(MetaItems.NANO_CHESTPLATE_ADVANCED.getStackForm(), new BreathabilityInfo(10));
-            this.put(MetaItems.NANO_LEGGINGS.getStackForm(), new BreathabilityInfo(5));
-            this.put(MetaItems.NANO_BOOTS.getStackForm(), new BreathabilityInfo(5));
-            this.put(MetaItems.QUANTUM_HELMET.getStackForm(), new BreathabilityInfo(true, true, 0, 25));
-            this.put(MetaItems.QUANTUM_CHESTPLATE.getStackForm(), new BreathabilityInfo(25));
-            this.put(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm(), new BreathabilityInfo(35));
-            this.put(MetaItems.QUANTUM_LEGGINGS.getStackForm(), new BreathabilityInfo(25));
-            this.put(MetaItems.QUANTUM_BOOTS.getStackForm(), new BreathabilityInfo(25));
-        }
-
-        private void put(ItemStack stack, BreathabilityInfo info) {
-            this.put(new BreathabilityItemMapKey(stack), info);
-        }
-    };
-
+    private static boolean hasDrainedOxy = false;
     private static boolean hasSuffocated = false;
 
     private DimensionBreathabilityHandler() {}
@@ -54,20 +34,68 @@ public final class DimensionBreathabilityHandler {
         oxyStack = Materials.Oxygen.getFluid(1);
 
         dimensionBreathabilityMap.clear();
-        defaultDimensionBreathability = new BreathabilityInfo(false, false, false);
+        defaultDimensionBreathability = new BreathabilityInfo(false, false, -1, -1);
         String[] configData = ConfigHolder.misc.dimensionAirHazards;
         for (String dim : configData) {
             try {
-                String[] d = dim.concat(" ").split(":");
+                String[] d = dim.concat(" ").split("\\|");
                 if (d.length != 2) throw new Exception();
-                BreathabilityInfo info = new BreathabilityInfo(d[1].contains("s"), d[1].contains("t"),
-                        d[1].contains("r"));
+                // lookahead to split into 's' 't93' 'r3' units
+                String[] breaths = d[1].split("(?=[str])");
+                boolean s = false;
+                int t = -1;
+                int r = -1;
+                for (String breath : breaths) {
+                    switch (breath.charAt(0)) {
+                        case 's' -> s = true;
+                        case 't' -> t = Integer.parseInt(breath.substring(1).trim());
+                        case 'r' -> r = Integer.parseInt(breath.substring(1).trim());
+                    }
+                }
+                BreathabilityInfo info = new BreathabilityInfo(s, false, t, r);
 
                 if (Objects.equals(d[0], "default")) defaultDimensionBreathability = info;
                 else dimensionBreathabilityMap.put(Integer.parseInt(d[0]), info);
 
             } catch (Exception e) {
+                // Should I instead throw a soft error and ignore the dimension?
                 throw new IllegalArgumentException("Unparsable dim breathability data: " + dim);
+            }
+        }
+
+        itemBreathabilityMap.clear();
+        configData = ConfigHolder.misc.itemHazardProtection;
+
+        for (String item : configData) {
+            try {
+                String[] d = item.concat(" ").split("\\|");
+                if (d.length != 2) throw new Exception();
+                // lookahead to split into 's' 't93' 'r3' units
+                String[] breaths = d[1].split("(?=[str])");
+                boolean s = false;
+                boolean sealed = false;
+                int t = -1;
+                int r = -1;
+                for (String breath : breaths) {
+                    final int i = Integer.parseInt(breath.substring(1).trim());
+                    switch (breath.charAt(0)) {
+                        case 's' -> {
+                            s = true;
+                            sealed = i == 1;
+                        }
+                        case 't' -> t = i;
+                        case 'r' -> r = i;
+                    }
+                }
+                BreathabilityInfo info = new BreathabilityInfo(s, sealed, t, r);
+
+                String[] e = d[0].split(":");
+                itemBreathabilityMap.put(new BreathabilityItemMapKey(
+                        Item.getByNameOrId(e[0] + ":" + e[1]), e.length == 3 ? Integer.parseInt(e[2]) : 0), info);
+
+            } catch (Exception e) {
+                // Should I instead throw a soft error and ignore the item?
+                throw new IllegalArgumentException("Unparsable item breathability data: " + item);
             }
         }
     }
@@ -79,8 +107,8 @@ public final class DimensionBreathabilityHandler {
         }
         if (ConfigHolder.misc.enableDimSuffocation && dimInfo.suffocation) suffocationCheck(player);
         if (ConfigHolder.misc.enableDimToxicity && dimInfo.toxic) toxicityCheck(player, dimInfo.toxicityRating);
-        if (ConfigHolder.misc.enableDimRadiation && dimInfo.radiation)
-            radiationCheck(player, dimInfo.radiationRating);
+        if (ConfigHolder.misc.enableDimRadiation && dimInfo.radiation) radiationCheck(player, dimInfo.radiationRating);
+        hasDrainedOxy = false;
         hasSuffocated = false;
     }
 
@@ -91,10 +119,9 @@ public final class DimensionBreathabilityHandler {
     }
 
     private static void suffocate(EntityPlayer player) {
-        if (!hasSuffocated) {
-            hasSuffocated = true;
-            player.attackEntityFrom(DamageSources.getSuffocationDamage(), 2);
-        }
+        if (hasSuffocated) return;
+        player.attackEntityFrom(DamageSources.getSuffocationDamage(), 2);
+        hasSuffocated = true;
     }
 
     private static void toxicityCheck(EntityPlayer player, int dimRating) {
@@ -117,8 +144,8 @@ public final class DimensionBreathabilityHandler {
     }
 
     private static void radiationCheck(EntityPlayer player, int dimRating) {
-        // natural radiation protection of 30
-        int ratingSum = 30;
+        // natural radiation protection of 20
+        int ratingSum = 20;
 
         BreathabilityInfo itemInfo = itemBreathabilityMap.get(getItemKey(player, HEAD));
         if (itemInfo != null && itemInfo.radiation) ratingSum += itemInfo.radiationRating;
@@ -150,7 +177,11 @@ public final class DimensionBreathabilityHandler {
                     FluidStack drain = a.drain(oxyStack, false);
                     return drain != null && drain.amount > 0;
                 }).findFirst();
-        tank.ifPresent(a -> a.drain(oxyStack, true));
+        // don't drain if we've already drained
+        if (!hasDrainedOxy) {
+            tank.ifPresent(a -> a.drain(oxyStack, true));
+            hasDrainedOxy = true;
+        }
         return tank.isPresent();
     }
 
@@ -170,6 +201,11 @@ public final class DimensionBreathabilityHandler {
         BreathabilityItemMapKey(ItemStack stack) {
             this.item = stack.getItem();
             this.meta = stack.getMetadata();
+        }
+
+        BreathabilityItemMapKey(Item item, int meta) {
+            this.item = item;
+            this.meta = meta;
         }
 
         @Override
@@ -192,65 +228,18 @@ public final class DimensionBreathabilityHandler {
         public final boolean toxic;
         public final boolean radiation;
 
-        private int toxicityRating;
-        private int radiationRating;
+        private final int toxicityRating;
+        private final int radiationRating;
 
         public final boolean isSealed;
 
-        /**
-         * Default constructor for dimensions only
-         */
-        public BreathabilityInfo(boolean suffocation, boolean toxic, boolean radiation) {
+        public BreathabilityInfo(boolean suffocation, boolean isSealed, int toxic, int radiation) {
             this.suffocation = suffocation;
-            this.toxic = toxic;
-            this.radiation = radiation;
-            this.radiationRating = 100;
-            this.toxicityRating = 100;
-            this.isSealed = false;
-        }
-
-        public BreathabilityInfo(boolean suffocation) {
-            this.suffocation = suffocation;
-            this.toxic = false;
-            this.radiation = false;
-            this.isSealed = false;
-        }
-
-        public BreathabilityInfo(boolean suffocation, boolean isSealed, int toxicityRating) {
-            this.suffocation = suffocation;
-            this.toxic = true;
-            this.radiation = false;
+            this.toxic = toxic != -1;
+            this.radiation = toxic != -1;
+            this.radiationRating = radiation;
+            this.toxicityRating = toxic;
             this.isSealed = isSealed;
-            this.toxicityRating = toxicityRating;
-        }
-
-        public BreathabilityInfo(boolean suffocation, int radiationRating) {
-            this.suffocation = suffocation;
-            this.toxic = false;
-            this.radiation = true;
-            this.isSealed = false;
-            this.radiationRating = radiationRating;
-        }
-
-        public BreathabilityInfo(boolean suffocation, boolean isSealed, int toxicityRating, int radiationRating) {
-            this.suffocation = suffocation;
-            this.toxic = true;
-            this.radiation = true;
-            this.isSealed = isSealed;
-            this.toxicityRating = toxicityRating;
-            this.radiationRating = radiationRating;
-        }
-
-        /**
-         * For non-helmet items
-         */
-        public BreathabilityInfo(int radiationRating) {
-            this.suffocation = false;
-            this.toxic = false;
-            this.radiation = true;
-            this.isSealed = false;
-            this.toxicityRating = 0;
-            this.radiationRating = radiationRating;
         }
     }
 }
