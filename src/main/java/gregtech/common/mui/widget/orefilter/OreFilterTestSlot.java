@@ -30,7 +30,6 @@ public class OreFilterTestSlot extends ItemSlot {
     private Object2BooleanMap<String> testResult;
     private MatchType matchType = MatchType.INVALID;
     private boolean matchSuccess;
-
     private boolean matchAll;
 
     public OreFilterTestSlot() {

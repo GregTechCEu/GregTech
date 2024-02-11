@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.Tooltip;
@@ -140,6 +141,12 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                         .child(new CycleButtonWidget()
                                 .size(18).value(matchAll)
                                 .marginRight(2)
+                                .listenGuiAction((IGuiAction.MousePressed) i -> {
+                                    for (var slot : oreSlots) {
+                                        slot.setMatchAll(matchAll.getBoolValue());
+                                    }
+                                    return true;
+                                })
                                 .textureGetter(state -> GTGuiTextures.BUTTON_MATCH_ALL[state])
                                 .addTooltip(0,
                                         IKey.lang("cover.ore_dictionary_filter.button.match_all.disabled"))
