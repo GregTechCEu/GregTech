@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemOreFilterTestSlot extends ModularSlot {
@@ -41,6 +42,11 @@ public class ItemOreFilterTestSlot extends ModularSlot {
 
     @Override
     public int getSlotStackLimit() {
+        return 1;
+    }
+
+    @Override
+    public int getItemStackLimit(@NotNull ItemStack stack) {
         return 1;
     }
 }
