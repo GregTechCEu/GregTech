@@ -14,6 +14,7 @@ import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockOres.BedrockOreVeinHandler;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldProvider;
@@ -41,7 +42,8 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
     private StoneType stoneType;
 
     private ItemStack defaultDrop;
-    private Map<ItemStack, Integer> storedOres;
+    private IBlockState firstOre; // for use in prospecting GUIs
+    private Map<IBlockState, Integer> storedOres;
 
     private int totalOreWeight;
 
@@ -83,6 +85,8 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
         // the ores which the vein contain
         if (configRoot.has("ores")) {
             this.storedOres = WorldConfigUtils.createWeightedOreMap(configRoot.get("ores"), this.stoneType);
+
+            this.firstOre = storedOres.entrySet().stream().findFirst().get().getKey();
 
             for (var entry : storedOres.entrySet()) {
                 this.totalOreWeight += entry.getValue();
@@ -139,11 +143,13 @@ public class BedrockOreDepositDefinition implements IWorldgenDefinition {
         return depletionChance;
     }
 
+    public IBlockState getFirstOre() {return firstOre;}
+
     public int getWeight() {
         return weight;
     }
 
-    public Map<ItemStack, Integer> getStoredOres() {
+    public Map<IBlockState, Integer> getStoredOres() {
         return storedOres;
     }
 

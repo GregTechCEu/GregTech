@@ -2,6 +2,11 @@ package gregtech.client.utils;
 
 import gregtech.api.gui.resources.TextureArea;
 
+import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.info.MaterialIconType;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockOre;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -13,6 +18,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -568,6 +574,56 @@ public class RenderUtil {
                     int maskRight = 16 - width;
 
                     drawFluidTexture(x, y, fluidStillSprite, maskTop, maskRight, 0.0);
+                }
+            }
+        }
+        GlStateManager.disableBlend();
+    }
+
+    public static void drawBlockForGui(ResourceLocation resourceLocation, int startX, int startY, int widthT,
+                                       int heightT) {
+        widthT--;
+        heightT--;
+
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks()
+                .getAtlasSprite(resourceLocation.toString());
+
+        GlStateManager.enableBlend();
+        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/blocks/stone.png"));
+        // fluid is RGBA for GT guis, despite MC's fluids being ARGB
+
+        final int xTileCount = widthT / 16;
+        final int xRemainder = widthT - xTileCount * 16;
+        final int yTileCount = heightT / 16;
+        final int yRemainder = heightT - yTileCount * 16;
+
+        final int yStart = startY + heightT;
+
+        for (int xTile = 0; xTile <= xTileCount; xTile++) {
+            for (int yTile = 0; yTile <= yTileCount; yTile++) {
+                int width = xTile == xTileCount ? xRemainder : 16;
+                int height = yTile == yTileCount ? yRemainder : 16;
+                int x = startX + xTile * 16;
+                int y = yStart - (yTile + 1) * 16;
+                if (width > 0 && height > 0) {
+                    int maskTop = 16 - height;
+                    int maskRight = 16 - width;
+
+                    double uMin = sprite.getMinU();
+                    double uMax = sprite.getMaxU();
+                    double vMin = sprite.getMinV();
+                    double vMax = sprite.getMaxV();
+                    uMax = uMax - maskRight / 16.0 * (uMax - uMin);
+                    vMax = vMax - maskTop / 16.0 * (vMax - vMin);
+
+                    Tessellator tessellator = Tessellator.getInstance();
+                    BufferBuilder buffer = tessellator.getBuffer();
+                    buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+                    buffer.pos(x, y + 16, 0.0).tex(uMin, vMax).endVertex();
+                    buffer.pos(x + 16 - maskRight, y + 16, 0.0).tex(uMax, vMax).endVertex();
+                    buffer.pos(x + 16 - maskRight, y + maskTop, 0.0).tex(uMax, vMin).endVertex();
+                    buffer.pos(x, y + maskTop, 0.0).tex(uMin, vMin).endVertex();
+                    tessellator.draw();
                 }
             }
         }

@@ -77,7 +77,7 @@ public class OreConfigUtils {
         return stoneTypeMap;
     }
 
-    public static ItemStack getMaterialStoneOre(Material material, StoneType stoneType) {
+    public static IBlockState getMaterialStoneOre(Material material, StoneType stoneType) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
                 .filter(ore -> ore.material == material)
                 .collect(Collectors.toList());
@@ -89,22 +89,7 @@ public class OreConfigUtils {
         //Use first result
         BlockOre oreBlock = oreBlocks.get(0);
 
-        return GTUtility.toItem(oreBlock.getDefaultState().withProperty(oreBlock.STONE_TYPE, stoneType));
-    }
-
-    public static Block getMaterialStoneOreAsBlock(Material material, StoneType stoneType) {
-        List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
-                .filter(ore -> ore.material == material)
-                .collect(Collectors.toList());
-
-        if (oreBlocks.isEmpty()) {
-            return null;
-        }
-
-        //Use first result
-        BlockOre oreBlock = oreBlocks.get(0);
-
-        return oreBlock.getDefaultState().withProperty(oreBlock.STONE_TYPE, stoneType).getBlock();
+        return oreBlock.getDefaultState().withProperty(oreBlock.STONE_TYPE, stoneType);
     }
 
     public static Material getMaterialByName(String name) {

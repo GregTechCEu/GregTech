@@ -7,6 +7,7 @@ import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
@@ -85,12 +86,12 @@ public class WorldConfigUtils {
         return provider -> allPredicates.stream().anyMatch(p -> p.test(provider));
     }
 
-    public static Map<ItemStack, Integer> createWeightedOreMap(JsonElement element, StoneType stoneType) {
+    public static Map<IBlockState, Integer> createWeightedOreMap(JsonElement element, StoneType stoneType) {
         if (!element.isJsonObject())
             throw new IllegalArgumentException("Weighted ore map should be object!");
         JsonObject object = element.getAsJsonObject();
 
-        Map<ItemStack, Integer> backedMap = new HashMap<>();
+        Map<IBlockState, Integer> backedMap = new HashMap<>();
 
         for (Entry<String, JsonElement> oreEntry : object.entrySet()) {
             String materialName;

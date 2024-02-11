@@ -2,9 +2,11 @@ package gregtech.common.terminal.app.prospector;
 
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.worldgen.config.OreConfigUtils;
 import gregtech.client.utils.RenderUtil;
 import gregtech.core.network.packets.PacketProspecting;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -12,6 +14,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -169,8 +172,14 @@ public class ProspectingTexture extends AbstractTexture {
                                         16, 16);
                             }
                         }
-                        if (this.mode == ProspectorMode.BEDROCK) {
 
+                        if (this.mode == ProspectorMode.BEDROCK) {
+                            ResourceLocation resourceLocation = new ResourceLocation(this.map[cx][cz].get((byte) 2));
+                            if (selected.equals(SELECTED_ALL)) {
+                                RenderUtil.drawBlockForGui(resourceLocation, x + cx * 16 + 1,
+                                        y + cz * 16 + 1,
+                                        16, 16);
+                            }
                         }
                     }
                 }

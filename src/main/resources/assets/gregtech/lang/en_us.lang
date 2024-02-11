@@ -5549,6 +5549,7 @@ gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§
 gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
 gregtech.gui.alarm.radius=Radius:
 
+bedrock_ore.spawnlocation.name=Bedrock Ore Spawn Information
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
@@ -6022,9 +6023,10 @@ terminal.recipe_chart.tier.3=cache of 8 pages
 terminal.prospector.vis_mode=Switch color mode
 terminal.prospector.list=All Resources
 terminal.prospector.ore=Ore Data
-terminal.prospector.bedrock=Bedrock Ore Data
 terminal.prospector.fluid=Fluid Deposit Data
 terminal.prospector.fluid.info=%s - %s Liters/Second - %s%% Capacity
+terminal.prospector.bedrock=Bedrock Ore Data
+terminal.prospector.bedrock.info=%s - %s%% Density
 terminal.prospector.waypoint.add=[Double §7Left click§r] to add waypoint
 
 terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.

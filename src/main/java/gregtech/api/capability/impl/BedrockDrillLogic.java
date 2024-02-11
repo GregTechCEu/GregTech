@@ -4,12 +4,14 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockOres.BedrockOreVeinHandler;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityBedrockDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -42,7 +44,7 @@ public class BedrockDrillLogic {
 
     private boolean hasNotEnoughEnergy;
 
-    private Map<ItemStack, Integer> veinOres;
+    private Map<IBlockState, Integer> veinOres;
 
     public BedrockDrillLogic(MetaTileEntityBedrockDrill metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
@@ -112,7 +114,7 @@ public class BedrockDrillLogic {
         return this.veinOres != null;
     }
 
-    public Map<ItemStack, Integer> getDrilledOres() {
+    public Map<IBlockState, Integer> getDrilledOres() {
         return veinOres;
     }
 
@@ -147,7 +149,7 @@ public class BedrockDrillLogic {
 
             for (var ore : possibleOres) {
                 if (i < j + ore.getValue()) {
-                    produced = ore.getKey().copy();
+                    produced = GTUtility.toItem(ore.getKey());
                 }
                 j += ore.getValue();
             }

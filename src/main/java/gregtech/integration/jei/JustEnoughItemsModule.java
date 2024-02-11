@@ -29,6 +29,7 @@ import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
+import gregtech.integration.jei.basic.GTBedrockVeinCategory;
 import gregtech.integration.jei.basic.GTFluidVeinCategory;
 import gregtech.integration.jei.basic.GTFluidVeinInfo;
 import gregtech.integration.jei.basic.GTOreCategory;
@@ -133,7 +134,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTFluidVeinCategory(registry.getJeiHelpers().getGuiHelper()));
-        registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
     @Override

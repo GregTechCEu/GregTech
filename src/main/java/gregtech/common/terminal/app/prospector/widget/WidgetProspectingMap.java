@@ -187,13 +187,14 @@ public class WidgetProspectingMap extends Widget {
                     break;
                 case BEDROCK:
                     BedrockOreVeinHandler.OreVeinWorldEntry oStack = BedrockOreVeinHandler.getOreVeinWorldEntry(world, chunk.x, chunk.z);
-                    Block h = Blocks.DIRT;
 
                     if (oStack != null && oStack.getDefinition() != null) {
-                        packet.addBlock(0, 4, 0,
+                        packet.addBlock(0, 3, 0,
                                 TextFormattingUtil.formatNumbers(Math.round((float) BedrockOreVeinHandler.getOreDensity(world, chunk.x, chunk.z) *
                                         BedrockOreVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z) /
                                         BedrockOreVeinHandler.MAXIMUM_VEIN_OPERATIONS)));
+                        packet.addBlock(0, 2, 0,
+                                oStack.getDefinition().getFirstOre().getBlock().getRegistryName().toString());
                         packet.addBlock(0, 1, 0,
                                 String.valueOf(oStack.getDefinition().getAssignedName()));
                     }
@@ -327,18 +328,12 @@ public class WidgetProspectingMap extends Widget {
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
                     if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) ||
                             texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
-                        FluidStack fluidStack = FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1), 1);
-                        if (fluidStack != null) {
-                            tooltips.add(I18n.format("terminal.prospector.fluid.info",
-                                    fluidStack.getLocalizedName(),
-                                    texture.map[cX][cZ].get((byte) 2),
+                        String veinName = texture.map[cX][cZ].get((byte) 1);
+                        if (veinName != null) {
+                            tooltips.add(I18n.format("terminal.prospector.bedrock.info",
+                                    veinName,
                                     texture.map[cX][cZ].get((byte) 3)));
-                            hoveredNames.add(fluidStack.getLocalizedName());
-                            int amount = Integer.parseInt(texture.map[cX][cZ].get((byte) 2));
-                            if (amount > maxAmount[0]) {
-                                maxAmount[0] = amount;
-                                color = fluidStack.getFluid().getColor(fluidStack);
-                            }
+                            hoveredNames.add(veinName);
                         }
                     }
                 }

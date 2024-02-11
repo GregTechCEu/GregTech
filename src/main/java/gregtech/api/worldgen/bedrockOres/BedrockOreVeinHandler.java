@@ -13,6 +13,7 @@ import gregtech.api.worldgen.config.BedrockOreDepositDefinition;
 import gregtech.core.network.packets.PacketOreVeinList;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -162,7 +163,7 @@ public class BedrockOreVeinHandler {
     }
 
     @Nullable
-    public static Map<ItemStack, Integer> getOresInChunk(World world, int chunkX, int chunkZ) {
+    public static Map<IBlockState, Integer> getOresInChunk(World world, int chunkX, int chunkZ) {
         OreVeinWorldEntry info = getOreVeinWorldEntry(world, chunkX, chunkZ);
         if (info == null || info.getDefinition() == null) {
             return null;
