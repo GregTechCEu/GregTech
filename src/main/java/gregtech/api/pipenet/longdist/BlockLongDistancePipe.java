@@ -1,7 +1,7 @@
 package gregtech.api.pipenet.longdist;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -33,8 +33,10 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
         super(Material.IRON);
         this.pipeType = pipeType;
         setTranslationKey("long_distance_" + pipeType.getName() + "_pipeline");
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH);
         setHarvestLevel(ToolClasses.WRENCH, 1);
+        setHardness(2f);
+        setResistance(10f);
     }
 
     @Override
@@ -101,7 +103,7 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
 
     @Override
     public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
-        if (itemIn == GregTechAPI.TAB_GREGTECH) {
+        if (itemIn == GTCreativeTabs.TAB_GREGTECH) {
             items.add(new ItemStack(this));
         }
     }

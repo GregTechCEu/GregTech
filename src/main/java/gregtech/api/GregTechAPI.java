@@ -12,23 +12,14 @@ import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
 import gregtech.api.sound.ISoundManager;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
-import gregtech.api.util.BaseCreativeTab;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockWarningSign;
-import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.items.MetaItems;
-import gregtech.common.items.ToolItems;
-import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -77,23 +68,6 @@ public class GregTechAPI {
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
     public static final Object2ObjectMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
     public static final Object2ObjectMap<IBlockState, IBatteryData> PSS_BATTERIES = new Object2ObjectOpenHashMap<>();
-
-    public static final BaseCreativeTab TAB_GREGTECH = new BaseCreativeTab(GTValues.MODID + ".main",
-            () -> MetaItems.LOGO.getStackForm(), true);
-    public static final BaseCreativeTab TAB_GREGTECH_MACHINES = new BaseCreativeTab(GTValues.MODID + ".machines",
-            () -> MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(), true);
-    public static final BaseCreativeTab TAB_GREGTECH_CABLES = new BaseCreativeTab(GTValues.MODID + ".cables",
-            () -> OreDictUnifier.get(OrePrefix.cableGtDouble, Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_PIPES = new BaseCreativeTab(GTValues.MODID + ".pipes",
-            () -> OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_TOOLS = new BaseCreativeTab(GTValues.MODID + ".tools",
-            () -> ToolItems.HARD_HAMMER.get(Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_MATERIALS = new BaseCreativeTab(GTValues.MODID + ".materials",
-            () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_ORES = new BaseCreativeTab(GTValues.MODID + ".ores",
-            () -> OreDictUnifier.get(OrePrefix.ore, Materials.Aluminium), true);
-    public static final BaseCreativeTab TAB_GREGTECH_DECORATIONS = new BaseCreativeTab(GTValues.MODID + ".decorations",
-            () -> MetaBlocks.WARNING_SIGN.getItemVariant(BlockWarningSign.SignType.YELLOW_STRIPES), true);
 
     /** Will be available at the Pre-Initialization stage */
     public static boolean isHighTier() {

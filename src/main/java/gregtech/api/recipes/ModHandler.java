@@ -16,6 +16,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.Mods;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
 import gregtech.common.crafting.FluidReplaceRecipe;
@@ -679,8 +680,6 @@ public final class ModHandler {
      * disable the config and remove the recipes manually
      */
     public static void removeSmeltingEBFMetals() {
-        boolean isCTLoaded = Loader.isModLoaded(GTValues.MODID_CT);
-
         Field actionAddFurnaceRecipe$output = null;
 
         Map<ItemStack, ItemStack> furnaceList = FurnaceRecipes.instance().getSmeltingList();
@@ -702,7 +701,7 @@ public final class ModHandler {
                     ItemStack ingot = OreDictUnifier.get(OrePrefix.ingot, material);
                     // Check if the inputs are actually dust -> ingot
                     if (ingot.isItemEqual(output) && dust.isItemEqual(input)) {
-                        if (isCTLoaded) {
+                        if (Mods.CraftTweaker.isModLoaded()) {
                             if (actionAddFurnaceRecipe$output == null) {
                                 try {
                                     actionAddFurnaceRecipe$output = ActionAddFurnaceRecipe.class

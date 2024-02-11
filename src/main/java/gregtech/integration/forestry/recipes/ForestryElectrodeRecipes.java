@@ -1,14 +1,13 @@
 package gregtech.integration.forestry.recipes;
 
-import gregtech.api.GTValues;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.Mods;
 import gregtech.integration.forestry.ForestryModule;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 
 import forestry.api.recipes.RecipeManagers;
 import forestry.core.ModuleCore;
@@ -137,7 +136,7 @@ public class ForestryElectrodeRecipes {
                 .output(ForestryModule.ELECTRODE_GOLD, 2)
                 .buildAndRegister();
 
-        if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+        if (Mods.IndustrialCraft2.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
                     .input(ForestryModule.ELECTRODE_IRON)
                     .fluidInputs(Glass.getFluid(100))
@@ -176,7 +175,7 @@ public class ForestryElectrodeRecipes {
                 .output(ForestryModule.ELECTRODE_OBSIDIAN, 4)
                 .buildAndRegister();
 
-        if (Loader.isModLoaded(GTValues.MODID_XU2)) {
+        if (Mods.ExtraUtilities2.isModLoaded()) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
                     .input(ForestryModule.ELECTRODE_ORCHID)
                     .fluidInputs(Glass.getFluid(100))
@@ -191,8 +190,7 @@ public class ForestryElectrodeRecipes {
         }
 
         // todo mixin forestry to allow this tube always, since we have rubber (once mixin port is done)
-        if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) ||
-                Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+        if (Mods.IndustrialCraft2.isModLoaded() || Mods.TechReborn.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
                     .input(ForestryModule.ELECTRODE_RUBBER)
                     .fluidInputs(Glass.getFluid(100))
@@ -248,7 +246,7 @@ public class ForestryElectrodeRecipes {
                 '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
                 'X', new UnificationEntry(plate, Bronze).toString());
 
-        if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+        if (Mods.IndustrialCraft2.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
             addFabricatorRecipe(EnumElectronTube.IRON,
                     "SXS", "#X#", "XXX",
                     'S', new UnificationEntry(screw, Iron).toString(),
@@ -301,7 +299,7 @@ public class ForestryElectrodeRecipes {
                 '#', new UnificationEntry(plate, EnderEye).toString(),
                 'X', new ItemStack(Blocks.END_STONE));
 
-        if (Loader.isModLoaded(GTValues.MODID_XU2)) {
+        if (Mods.ExtraUtilities2.isModLoaded()) {
             addFabricatorRecipe(EnumElectronTube.ORCHID,
                     " X ", "#X#", "XXX",
                     '#', new ItemStack(Items.REPEATER),

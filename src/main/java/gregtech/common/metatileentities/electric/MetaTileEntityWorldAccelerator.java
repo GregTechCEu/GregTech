@@ -29,7 +29,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -57,7 +56,6 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     private boolean tileMode = false;
     private boolean isActive = false;
     private boolean isPaused = false;
-    private int lastTick;
 
     // Variables for Random Tick mode optimization
     // limit = ((tier - min) / (max - min)) * 2^tier
@@ -67,7 +65,6 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
 
     public MetaTileEntityWorldAccelerator(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
-        this.lastTick = 0;
         this.speed = (int) Math.pow(2, tier);
         this.successLimit = SUCCESS_LIMITS[tier - 1];
         initializeInventory();
@@ -125,21 +122,22 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
+    public boolean allowTickAcceleration() {
+        return false;
+    }
+
+    @Override
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
             if (isPaused && isActive) {
                 setActive(false);
             } else if (!isPaused) {
-                int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-                if (currentTick != lastTick) { // Prevent other tick accelerators from accelerating us
-                    lastTick = currentTick;
-                    boolean wasSuccessful = isTEMode() ? handleTEMode() : handleRandomTickMode();
-                    if (!wasSuccessful) {
-                        setActive(false);
-                    } else if (!isActive) {
-                        setActive(true);
-                    }
+                boolean wasSuccessful = isTEMode() ? handleTEMode() : handleRandomTickMode();
+                if (!wasSuccessful) {
+                    setActive(false);
+                } else if (!isActive) {
+                    setActive(true);
                 }
             }
         }

@@ -7,8 +7,16 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.impl.*;
-import gregtech.api.cover.*;
+import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
+import gregtech.api.cover.CoverRayTracer;
+import gregtech.api.cover.CoverSaveHandler;
+import gregtech.api.cover.CoverUtil;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -22,9 +30,11 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
@@ -40,7 +50,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -51,6 +67,7 @@ import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -84,7 +101,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -132,6 +153,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     protected boolean muffled = false;
 
     private int playSoundCooldown = 0;
+    private int lastTick = 0;
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -328,7 +350,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        return creativeTab == CreativeTabs.SEARCH || creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES;
+        return creativeTab == CreativeTabs.SEARCH || creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES;
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -789,6 +811,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
+        if (!allowTickAcceleration()) {
+            int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+            if (currentTick == lastTick) {
+                return;
+            }
+            lastTick = currentTick;
+        }
         for (MTETrait mteTrait : this.mteTraits.values()) {
             if (shouldUpdate(mteTrait)) {
                 mteTrait.update();
@@ -802,6 +831,15 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (getOffsetTimer() % 5 == 0L) {
             updateLightValue();
         }
+    }
+
+    /**
+     * @return Whether this machine is allowed to be tick accelerated by external means. This does NOT
+     *         apply to World Accelerators from GT, those will never work on machines. This refers to effects
+     *         like Time in a Bottle, or Torcherino, or similar.
+     */
+    public boolean allowTickAcceleration() {
+        return ConfigHolder.machines.allowTickAcceleration;
     }
 
     protected boolean shouldUpdate(MTETrait trait) {
@@ -834,7 +872,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
     }
 
-    public final ItemStack getStackForm() {
+    @Override
+    public final @NotNull ItemStack getStackForm() {
         return getStackForm(1);
     }
 
@@ -1527,17 +1566,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @NotNull
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return AECableType.NONE;
     }
 
     @Nullable
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AENetworkProxy getProxy() {
         return null;
     }
 
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void gridChanged() {}
 }

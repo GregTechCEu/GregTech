@@ -63,9 +63,19 @@ public class DriverPowerSubstation extends DriverSidedTileEntity {
             return new Object[] { tileEntity.getPassiveDrain() };
         }
 
-        @Callback(doc = "function():number -- Returns the average net EU/t in or out over the last second.")
-        public Object[] getAverageIOLastSec(final Context context, final Arguments args) {
-            return new Object[] { tileEntity.getAverageIOLastSec() };
+        @Callback(doc = "function():number -- Returns the average EU/t in over the last second.")
+        public Object[] getAverageInLastSec(final Context context, final Arguments args) {
+            return new Object[] { tileEntity.getAverageInLastSec() };
+        }
+
+        @Callback(doc = "function():number -- Returns the average EU/t out over the last second.")
+        public Object[] getAverageOutLastSec(final Context context, final Arguments args) {
+            return new Object[] { tileEntity.getAverageOutLastSec() };
+        }
+
+        @Callback(doc = "function():number -- Gets the number of maintenance problems.")
+        public Object[] getMaintenanceProblems(final Context context, final Arguments args) {
+            return new Object[] { tileEntity.getNumMaintenanceProblems() };
         }
     }
 }
