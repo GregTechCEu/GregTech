@@ -29,7 +29,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class that represent machine recipe.
@@ -185,8 +191,54 @@ public class Recipe {
 
     public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs,
                                  IMultipleTankHandler fluidInputs) {
-        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs),
-                GTUtility.fluidHandlerToList(fluidInputs));
+        Pair<Boolean, int[]> fluids = null;
+        Pair<Boolean, int[]> items = null;
+
+        if (fluidInputs.getFluidTanks().size() > 0) {
+            fluids = matchesFluid(GTUtility.fluidHandlerToList(fluidInputs));
+            if (!fluids.getKey()) {
+                return false;
+            }
+        }
+
+        if (inputs.getSlots() > 0) {
+            items = matchesItems(GTUtility.itemHandlerToList(inputs));
+            if (!items.getKey()) {
+                return false;
+            }
+        }
+
+        if (consumeIfSuccessful) {
+            if (fluids != null) {
+                int[] fluidAmountInTank = fluids.getValue();
+                var backedList = fluidInputs.getFluidTanks();
+
+                for (int i = 0; i < fluidAmountInTank.length; i++) {
+                    var tank = backedList.get(i);
+                    FluidStack fluidStack = tank.getFluid();
+                    int fluidAmount = fluidAmountInTank[i];
+
+                    if (fluidStack == null || fluidStack.amount == fluidAmount) {
+                        continue;
+                    }
+                    tank.drain(Math.abs(fluidAmount - fluidStack.amount), true);
+                }
+            }
+            if (items != null) {
+                int[] itemAmountInSlot = items.getValue();
+                for (int i = 0; i < itemAmountInSlot.length; i++) {
+                    ItemStack itemInSlot = inputs.getStackInSlot(i);
+                    int itemAmount = itemAmountInSlot[i];
+
+                    if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount) {
+                        continue;
+                    }
+                    inputs.extractItem(i, Math.abs(itemAmount - itemInSlot.getCount()), false);
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -673,8 +725,9 @@ public class Recipe {
                         .anyMatch(s -> !s.isEmpty())) {
                     return true;
                 }
+            } else if (Arrays.stream(ingredient.getInputStacks()).anyMatch(s -> !s.isEmpty())) {
+                return true;
             }
-            return Arrays.stream(ingredient.getInputStacks()).anyMatch(s -> !s.isEmpty());
         }
         for (GTRecipeInput fluidInput : fluidInputs) {
             FluidStack fluidIngredient = fluidInput.getInputFluidStack();

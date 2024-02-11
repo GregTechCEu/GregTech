@@ -2,9 +2,9 @@ package gregtech.client.renderer.handler;
 
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.ICCLBlockRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.ItemRenderCompat;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -60,10 +60,10 @@ public class CCLBlockRenderer implements ICCBlockRenderer, IItemRenderer {
 
     @Override
     public void renderItem(ItemStack rawStack, ItemCameraTransforms.TransformType transformType) {
-        ItemStack stack = ModCompatibility.getRealItemStack(rawStack);
-        if (stack.getItem() instanceof ItemBlock &&
-                ((ItemBlock) stack.getItem()).getBlock() instanceof ICCLBlockRenderer) {
-            ((ICCLBlockRenderer) ((ItemBlock) stack.getItem()).getBlock()).renderItem(stack, transformType);
+        ItemStack stack = ItemRenderCompat.getRepresentedStack(rawStack);
+        if (stack.getItem() instanceof ItemBlock itemBlock &&
+                itemBlock.getBlock() instanceof ICCLBlockRenderer renderer) {
+            renderer.renderItem(stack, transformType);
         }
     }
 

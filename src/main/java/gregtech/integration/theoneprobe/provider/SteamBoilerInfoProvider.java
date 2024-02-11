@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.steam.boiler.SteamBoiler;
 
 import net.minecraft.block.state.IBlockState;
@@ -36,7 +37,8 @@ public class SteamBoilerInfoProvider implements IProbeInfoProvider {
                         // Creating steam
                         if (steamOutput > 0 && boiler.hasWater()) {
                             probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " +
-                                    TextFormatting.AQUA + (steamOutput / 10) + TextStyleClass.INFO + " L/t" + " {*" +
+                                    TextFormatting.AQUA + TextFormattingUtil.formatNumbers(steamOutput / 10) +
+                                    TextStyleClass.INFO + " L/t" + " {*" +
                                     Materials.Steam.getUnlocalizedName() + "*}");
                         }
 

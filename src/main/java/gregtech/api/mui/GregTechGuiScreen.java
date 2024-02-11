@@ -2,9 +2,13 @@ package gregtech.api.mui;
 
 import gregtech.api.GTValues;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 
+@SideOnly(Side.CLIENT)
 public class GregTechGuiScreen extends ModularScreen {
 
     public GregTechGuiScreen(ModularPanel mainPanel) {

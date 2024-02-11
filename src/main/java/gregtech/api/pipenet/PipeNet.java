@@ -15,8 +15,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCompound> {
 
@@ -62,6 +67,11 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     public void onPipeConnectionsUpdate() {}
 
     public void onNeighbourUpdate(BlockPos fromPos) {}
+
+    /**
+     * Is called when any Pipe TE in the PipeNet is unloaded
+     */
+    public void onChunkUnload() {}
 
     public Map<BlockPos, Node<NodeDataType>> getAllNodes() {
         return unmodifiableNodeByBlockPos;

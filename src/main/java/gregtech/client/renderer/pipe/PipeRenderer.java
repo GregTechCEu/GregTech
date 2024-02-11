@@ -11,9 +11,9 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.ItemRenderCompat;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -100,7 +100,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     static {
         FACE_BORDER_MAP.put(EnumFacing.DOWN,
-                borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.WEST));
+                borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST));
         FACE_BORDER_MAP.put(EnumFacing.UP,
                 borderMap(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST));
         FACE_BORDER_MAP.put(EnumFacing.NORTH,
@@ -150,7 +150,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     @Override
     public void renderItem(ItemStack rawItemStack, TransformType transformType) {
-        ItemStack stack = ModCompatibility.getRealItemStack(rawItemStack);
+        ItemStack stack = ItemRenderCompat.getRepresentedStack(rawItemStack);
         if (!(stack.getItem() instanceof ItemBlockPipe)) {
             return;
         }
@@ -218,7 +218,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             CoverHolder coverHolder = pipeTile.getCoverableImplementation();
             coverHolder.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()),
                     renderLayer);
-            Textures.RENDER_STATE.set(null);
+            Textures.RENDER_STATE.remove();
         }
         return true;
     }

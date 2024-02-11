@@ -1,9 +1,9 @@
 package gregtech.api.items.armor;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
 import gregtech.api.items.metaitem.stats.IItemComponent;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
@@ -33,7 +33,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
 
     public ArmorMetaItem() {
         super((short) 0);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_TOOLS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_TOOLS);
     }
 
     @SuppressWarnings("unchecked")

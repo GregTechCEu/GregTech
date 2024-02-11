@@ -6,15 +6,17 @@ import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
-import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import org.jetbrains.annotations.ApiStatus;
 
-public interface ItemUIFactory extends IItemComponent, IGuiHolder {
+public interface ItemUIFactory extends IItemComponent, IGuiHolder<HandGuiData> {
 
     /**
      * Creates new UI basing on given holder. Holder contains information
@@ -26,8 +28,9 @@ public interface ItemUIFactory extends IItemComponent, IGuiHolder {
     }
 
     @ApiStatus.NonExtendable
+    @SideOnly(Side.CLIENT)
     @Override
-    default ModularScreen createScreen(GuiCreationContext creationContext, ModularPanel mainPanel) {
+    default ModularScreen createScreen(HandGuiData creationContext, ModularPanel mainPanel) {
         return new GregTechGuiScreen(mainPanel, getUITheme());
     }
 
@@ -36,8 +39,7 @@ public interface ItemUIFactory extends IItemComponent, IGuiHolder {
     }
 
     @Override
-    default ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager,
-                                 boolean isClient) {
+    default ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
         return null;
     }
 }

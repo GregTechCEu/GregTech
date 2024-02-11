@@ -106,7 +106,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     protected long getMaxVoltage() {
         long maxProduction = recipeMapWorkable.getMaxVoltage();
         long currentProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).boostProduction((int) maxProduction);
-        if (isActive() && currentProduction < maxProduction) {
+        if (isActive() && currentProduction <= maxProduction) {
             return recipeMapWorkable.getMaxVoltage();
         } else {
             return 0L;

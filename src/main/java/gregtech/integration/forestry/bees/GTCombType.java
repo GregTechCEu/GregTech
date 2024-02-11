@@ -1,8 +1,6 @@
 package gregtech.integration.forestry.bees;
 
-import gregtech.api.GTValues;
-
-import net.minecraftforge.fml.common.Loader;
+import gregtech.api.util.Mods;
 
 public enum GTCombType {
 
@@ -27,7 +25,7 @@ public enum GTCombType {
     // Gem
     STONE("stone", 0x808080, 0x999999),
     CERTUS("certus", 0x57CFFB, 0xBBEEFF),
-    FLUIX("fluix", 0xA375FF, 0xB591FF, Loader.isModLoaded(GTValues.MODID_APPENG)),
+    FLUIX("fluix", 0xA375FF, 0xB591FF, Mods.AppliedEnergistics2.isModLoaded()),
     REDSTONE("redstone", 0x7D0F0F, 0xD11919),
     RAREEARTH("rareearth", 0x555643, 0x343428),
     LAPIS("lapis", 0x1947D1, 0x476CDA),
@@ -38,7 +36,7 @@ public enum GTCombType {
     EMERALD("emerald", 0x248F24, 0x2EB82E),
     PYROPE("pyrope", 0x763162, 0x8B8B8B),
     GROSSULAR("grossular", 0x9B4E00, 0x8B8B8B),
-    SPARKLING("sparkling", 0x7A007A, 0xFFFFFF, Loader.isModLoaded(GTValues.MODID_MB)),
+    SPARKLING("sparkling", 0x7A007A, 0xFFFFFF, Mods.MagicBees.isModLoaded()),
 
     // Metal
     SLAG("slag", 0xD4D4D4, 0x58300B),

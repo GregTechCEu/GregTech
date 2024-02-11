@@ -47,8 +47,8 @@ gregtech.multiblock.steam.low_steam=Not enough Steam to run!
 gregtech.multiblock.steam.steam_stored=Steam: %s
 gregtech.machine.steam_hatch.name=Steam Hatch
 gregtech.machine.steam.steam_hatch.tooltip=§eAccepted Fluid: §fSteam
-gregtech.machine.steam_import_bus.name=Input Bus (Steam)
-gregtech.machine.steam_export_bus.name=Output Bus (Steam)
+gregtech.machine.steam_import_bus.name=Steam Input Bus
+gregtech.machine.steam_export_bus.name=Steam Output Bus
 gregtech.machine.steam_bus.tooltip=Does not work with non-steam multiblocks
 gregtech.machine.steam_oven.name=Steam Oven
 gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Requires at least 6 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch. Steam Hatch must be on the bottom layer, no more than one.
@@ -533,7 +533,7 @@ metaitem.tool.datamodule.name=Data Module
 metaitem.tool.datamodule.tooltip=Storage for Incredibly Complex Data/n§cCan only be read by a Data Bank
 metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
-metaitem.circuit.integrated.gui=Programmed Circuit Configuration
+metaitem.circuit.integrated.gui=Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
 item.glass.lens=Glass Lens (White)
@@ -1181,7 +1181,7 @@ cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
 
 cover.ore_dictionary_filter.title=Ore Dictionary Filter
-cover.ore_dictionary_filter.info=§bAccepts complex expressions/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r for grouping/n§6*§r for wildcard (i.e. 0 or more characters)/n§6?§r for any 1 character/n§6()§r for matching empty entry (including items with no ore dictionary)/n§6$c§r at the start of expression for case-sensitive match/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
+cover.ore_dictionary_filter.info=§bAccepts complex expressions/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r for grouping/n§6*§r for wildcard (i.e. 0 or more characters)/n§6?§r for any 1 character/n§6()§r for matching empty entry (including items with no ore dictionary)/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
 cover.ore_dictionary_filter.test_slot.info=Insert a item to test if it matches the filter expression
 cover.ore_dictionary_filter.test_slot.matches=§a* %s
 cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
@@ -1192,6 +1192,10 @@ cover.ore_dictionary_filter.status.err_warn=§c%s error(s) and %s warning(s)
 cover.ore_dictionary_filter.status.warn=§7%s warning(s)
 cover.ore_dictionary_filter.status.no_issues=§aNo issues
 cover.ore_dictionary_filter.status.explain=Ore filter explanation:
+cover.ore_dictionary_filter.button.case_sensitive.disabled=Case insensitive match
+cover.ore_dictionary_filter.button.case_sensitive.enabled=Case sensitive match
+cover.ore_dictionary_filter.button.match_all.disabled=Match any one of ore dictionary entries
+cover.ore_dictionary_filter.button.match_all.enabled=Match all ore dictionary entries
 
 cover.ore_dictionary_filter.preview.next=<text>... followed by </text>
 cover.ore_dictionary_filter.preview.match=<node>'<value>%s</value>'</node>
@@ -1306,11 +1310,6 @@ cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mod
 cover.fluid_regulator.supply_exact=Supply Exact: %s
 cover.fluid_regulator.keep_exact=Keep Exact: %s
 
-cover.machine_controller.title=Machine Controller Settings
-cover.machine_controller.normal=Normal
-cover.machine_controller.inverted=Inverted
-cover.machine_controller.inverted.description=§eNormal§r - in this mode, the cover will require a signal weaker than the set redstone level to run/n§eInverted§r - in this mode, the cover will require a signal stronger than the set redstone level to run
-cover.machine_controller.redstone=Min Redstone Strength: %,d
 cover.machine_controller.mode.machine=Control Machine
 cover.machine_controller.mode.cover_up=Control Cover (Top)
 cover.machine_controller.mode.cover_down=Control Cover (Bottom)
@@ -1318,6 +1317,12 @@ cover.machine_controller.mode.cover_south=Control Cover (South)
 cover.machine_controller.mode.cover_north=Control Cover (North)
 cover.machine_controller.mode.cover_east=Control Cover (East)
 cover.machine_controller.mode.cover_west=Control Cover (West)
+cover.machine_controller.this_cover=§cThis cover
+cover.machine_controller.cover_not_controllable=§cNo controllable cover
+cover.machine_controller.machine_not_controllable=§cMachine not controllable
+cover.machine_controller.control=Control:
+cover.machine_controller.enable_with_redstone=Enable with Redstone
+cover.machine_controller.disable_with_redstone=Disable with Redstone
 
 cover.ender_fluid_link.title=Ender Fluid Link
 cover.ender_fluid_link.iomode.enabled=I/O Enabled
@@ -2349,6 +2354,17 @@ tile.treated_wood_fence.name=Treated Wood Fence
 tile.rubber_wood_fence_gate.name=Rubber Wood Fence Gate
 tile.treated_wood_fence_gate.name=Treated Wood Fence Gate
 
+tile.gt_explosive.breaking_tooltip=Primes explosion when mined, sneak mine to pick back up
+tile.gt_explosive.lighting_tooltip=Cannot be lit with Redstone
+
+tile.powderbarrel.name=Powderbarrel
+tile.powderbarrel.drops_tooltip=Slightly larger than TNT, drops all destroyed Blocks as Items
+entity.Powderbarrel.name=Powderbarrel
+
+tile.itnt.name=Industrial TNT
+tile.itnt.drops_tooltip=Much larger than TNT, drops all destroyed Blocks as Items
+entity.ITNT.name=Industrial TNT
+
 tile.brittle_charcoal.name=Brittle Charcoal
 tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
 tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
@@ -2723,11 +2739,6 @@ gregtech.machine.crate.stainless_steel.name=Stainless Steel Crate
 gregtech.machine.crate.titanium.name=Titanium Crate
 gregtech.machine.crate.tungstensteel.name=Tungstensteel Crate
 gregtech.crate.tooltip.taped_movement=Can be Taped to keep inventory contents when broken
-
-# Safe
-gregtech.machine.locked_safe.name=Locked Safe
-gregtech.machine.locked_safe.malfunctioning=§cMalfunctioning!
-gregtech.machine.locked_safe.requirements=§7Replacements required:
 
 # Workbench
 gregtech.machine.workbench.name=Crafting Station
@@ -4944,7 +4955,6 @@ gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
 gregtech.bus.collapse_true=Bus will collapse Items
 gregtech.bus.collapse_false=Bus will not collapse Items
-gregtech.bus.collapse.error=Bus must be attached to multiblock first
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -5377,9 +5387,12 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.item_auto_collapse.tooltip.enabled=Item Auto-Collapse Enabled
+gregtech.gui.item_auto_collapse.tooltip.disabled=Item Auto-Collapse Disabled
 gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s batteries§r/n§7Charges %s tools and batteries
-gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r/n§aConfigured Value: §f%d§7/n/n§7LMB/RMB/Scroll to cycle through the list/n§7Shift-right-click to clear
+gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r\n§aConfigured Value: §f%d§7\n\n§7LMB/RMB/Scroll to cycle through the list\n§7Shift-left-click to open selector\n§7Shift-right-click to clear
 gregtech.gui.configurator_slot.no_value=None
+gregtech.gui.configurator_slot.unavailable.tooltip=Programmed Circuit slot unavailable
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
@@ -5566,7 +5579,7 @@ gregtech.multiblock.pattern.error.batteries=§cMust have at least one non-empty 
 gregtech.multiblock.pattern.error.filters=§cAll filters must be the same§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
-gregtech.multiblock.pattern.single=§6Only this block can be used§r
+gregtech.multiblock.pattern.single=§6Only this block type can be used§r
 gregtech.multiblock.pattern.location_end=§cVery End§r
 gregtech.multiblock.pattern.replaceable_air=Replaceable by Air
 
@@ -5651,8 +5664,10 @@ gregtech.multiblock.computation.not_enough_computation=Machine needs more comput
 gregtech.multiblock.power_substation.stored=Stored: %s
 gregtech.multiblock.power_substation.capacity=Capacity: %s
 gregtech.multiblock.power_substation.passive_drain=Passive Drain: %s
-gregtech.multiblock.power_substation.average_io=Avg. I/O: %s
-gregtech.multiblock.power_substation.average_io_hover=The average change in energy of the Power Substation's internal energy bank
+gregtech.multiblock.power_substation.average_in=Avg. EU IN: %s
+gregtech.multiblock.power_substation.average_out=Avg. EU OUT: %s
+gregtech.multiblock.power_substation.average_in_hover=The average EU/t input into the Power Substation's internal energy bank
+gregtech.multiblock.power_substation.average_out_hover=The average EU/t output from the Power Substation's internal energy bank, both passive loss and outputs
 gregtech.multiblock.power_substation.time_to_fill=Time to fill: %s
 gregtech.multiblock.power_substation.time_to_drain=Time to drain: %s
 gregtech.multiblock.power_substation.time_seconds=%s Seconds

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,9 +19,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Deprecated
 public class IntegrationUtil {
 
-    /** Should only be called after {@link net.minecraftforge.fml.common.event.FMLPreInitializationEvent} */
+    /**
+     * Should only be called after {@link net.minecraftforge.fml.common.event.FMLPreInitializationEvent}
+     *
+     * @deprecated Use {@link gregtech.api.util.Mods} instead for these features.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static void throwIncompatibilityIfLoaded(String modID, String... customMessages) {
         if (Loader.isModLoaded(modID)) {
             String modName = TextFormatting.BOLD + modID + TextFormatting.RESET;
@@ -31,7 +39,13 @@ public class IntegrationUtil {
         }
     }
 
-    /** Should only be called after {@link net.minecraftforge.fml.common.event.FMLPreInitializationEvent} */
+    /**
+     * Should only be called after {@link net.minecraftforge.fml.common.event.FMLPreInitializationEvent}
+     *
+     * @deprecated Use {@link gregtech.api.util.Mods} instead for these features.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static void throwIncompatibility(List<String> messages) {
         if (FMLLaunchHandler.side() == Side.SERVER) {
             throw new RuntimeException(String.join(",", messages));
@@ -40,16 +54,31 @@ public class IntegrationUtil {
         }
     }
 
+    /**
+     * @deprecated Use {@link gregtech.api.util.Mods} instead for these features.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @NotNull
     public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta) {
         return getModItem(modid, name, meta, 1, null);
     }
 
+    /**
+     * @deprecated Use {@link gregtech.api.util.Mods} instead for these features.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @NotNull
     public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta, int amount) {
         return getModItem(modid, name, meta, amount, null);
     }
 
+    /**
+     * @deprecated Use {@link gregtech.api.util.Mods} instead for these features.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @NotNull
     public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta, int amount,
                                        @Nullable String nbt) {

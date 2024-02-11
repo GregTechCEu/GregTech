@@ -291,6 +291,13 @@ public class FuelRecipes {
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Iron.getPlasma(1))
                 .fluidOutputs(Iron.getFluid(1))
+                .duration(112)
+                .EUt((int) V[EV])
+                .buildAndRegister();
+
+        RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
+                .fluidInputs(Tin.getPlasma(1))
+                .fluidOutputs(Tin.getFluid(1))
                 .duration(128)
                 .EUt((int) V[EV])
                 .buildAndRegister();
@@ -299,6 +306,13 @@ public class FuelRecipes {
                 .fluidInputs(Nickel.getPlasma(1))
                 .fluidOutputs(Nickel.getFluid(1))
                 .duration(192)
+                .EUt((int) V[EV])
+                .buildAndRegister();
+
+        RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
+                .fluidInputs(Americium.getPlasma(1))
+                .fluidOutputs(Americium.getFluid(1))
+                .duration(320)
                 .EUt((int) V[EV])
                 .buildAndRegister();
     }

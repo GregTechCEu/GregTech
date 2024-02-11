@@ -3,23 +3,28 @@ package gregtech.api.recipes.machines;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.ui.RecipeMapUIFunction;
+import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ApiStatus.Internal
 public class RecipeMapScanner extends RecipeMap<SimpleRecipeBuilder> implements IScannerRecipeMap {
 
     private static final List<ICustomScannerLogic> CUSTOM_SCANNER_LOGICS = new ArrayList<>();
 
-    public RecipeMapScanner(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs,
-                            int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapScanner(@NotNull String unlocalizedName, @NotNull SimpleRecipeBuilder defaultRecipeBuilder,
+                            @NotNull RecipeMapUIFunction recipeMapUI) {
+        super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 2, 1, 1, 0);
+        setSound(GTSoundEvents.ELECTROLYZER);
     }
 
     @Override

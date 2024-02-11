@@ -1,6 +1,5 @@
 package gregtech.common.terminal.app.prospector.widget;
 
-import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.unification.OreDictUnifier;
@@ -33,7 +32,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -308,8 +306,7 @@ public class WidgetProspectingMap extends Widget {
                 }
             }
 
-            if (Loader.isModLoaded(GTValues.MODID_JOURNEYMAP) || Loader.isModLoaded(GTValues.MODID_VOXELMAP) ||
-                    Loader.isModLoaded(GTValues.MODID_XAERO_MINIMAP)) {
+            if (Mods.JourneyMap.isModLoaded() || Mods.VoxelMap.isModLoaded() || Mods.XaerosMinimap.isModLoaded()) {
                 tooltips.add(I18n.format("terminal.prospector.waypoint.add"));
             }
             this.drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
@@ -336,11 +333,11 @@ public class WidgetProspectingMap extends Widget {
             boolean added = false;
             trimHoveredNames();
 
-            if (Loader.isModLoaded(GTValues.MODID_JOURNEYMAP)) {
+            if (Mods.JourneyMap.isModLoaded()) {
                 added = addJourneymapWaypoint(b);
-            } else if (Loader.isModLoaded(GTValues.MODID_VOXELMAP)) {
+            } else if (Mods.VoxelMap.isModLoaded()) {
                 added = addVoxelMapWaypoint(b);
-            } else if (Loader.isModLoaded(GTValues.MODID_XAERO_MINIMAP)) {
+            } else if (Mods.XaerosMinimap.isModLoaded()) {
                 added = addXaeroMapWaypoint(b);
             }
             if (added) {
@@ -382,7 +379,7 @@ public class WidgetProspectingMap extends Widget {
         return s.substring(1, s.length() - 1);
     }
 
-    @Optional.Method(modid = GTValues.MODID_JOURNEYMAP)
+    @Optional.Method(modid = Mods.Names.JOURNEY_MAP)
     private boolean addJourneymapWaypoint(BlockPos b) {
         journeymap.client.model.Waypoint journeyMapWaypoint = new journeymap.client.model.Waypoint(createVeinName(),
                 b,
@@ -396,7 +393,7 @@ public class WidgetProspectingMap extends Widget {
         return false;
     }
 
-    @Optional.Method(modid = GTValues.MODID_VOXELMAP)
+    @Optional.Method(modid = Mods.Names.VOXEL_MAP)
     private boolean addVoxelMapWaypoint(@NotNull BlockPos b) {
         Color c = new Color(color);
         TreeSet<Integer> world = new TreeSet<>();
@@ -425,7 +422,7 @@ public class WidgetProspectingMap extends Widget {
         return false;
     }
 
-    @Optional.Method(modid = GTValues.MODID_XAERO_MINIMAP)
+    @Optional.Method(modid = Mods.Names.XAEROS_MINIMAP)
     private boolean addXaeroMapWaypoint(@NotNull BlockPos b) {
         int red = clampColor(color >> 16 & 0xFF);
         int green = clampColor(color >> 8 & 0xFF);

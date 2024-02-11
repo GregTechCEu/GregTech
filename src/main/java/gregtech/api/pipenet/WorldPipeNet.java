@@ -1,5 +1,7 @@
 package gregtech.api.pipenet;
 
+import gregtech.api.util.GTLog;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -12,7 +14,11 @@ import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>> extends WorldSavedData {
 
@@ -35,9 +41,16 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
         }
     }
 
-    public static String getDataID(final String baseID, final World world) {
-        if (world == null || world.isRemote)
-            throw new RuntimeException("WorldPipeNet should only be created on the server!");
+    public static @NotNull String getDataID(@NotNull final String baseID, @NotNull final World world) {
+        // noinspection ConstantValue
+        if (world == null || world.isRemote) {
+            GTLog.logger.error("WorldPipeNet should only be created on the server!", new Throwable());
+            // noinspection ConstantValue
+            if (world == null) {
+                return baseID;
+            }
+        }
+
         int dimension = world.provider.getDimension();
         return dimension == 0 ? baseID : baseID + '.' + dimension;
     }
