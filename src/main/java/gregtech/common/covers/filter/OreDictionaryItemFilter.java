@@ -136,7 +136,8 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                                 .selectedBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
                                 .selectedHoverBackground(GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
                                 .marginRight(2)
-                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.case_sensitive", caseSensitive.getStringValue()))
+                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.case_sensitive",
+                                        caseSensitive.getStringValue()))
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true)))
                         .child(new ToggleButton()
                                 .size(18).value(matchAll)
@@ -144,7 +145,8 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                                 .hoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[1])
                                 .selectedHoverBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
                                 .selectedBackground(GTGuiTextures.BUTTON_MATCH_ALL[0])
-                                .addTooltipLine(IKey.lang("cover.ore_dictionary_filter.match_all", matchAll.getStringValue()))
+                                .addTooltipLine(
+                                        IKey.lang("cover.ore_dictionary_filter.match_all", matchAll.getStringValue()))
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                                 .marginRight(2))
                         .child(createBlacklistUI()));

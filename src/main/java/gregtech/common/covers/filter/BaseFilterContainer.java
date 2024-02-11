@@ -95,7 +95,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public int getMaxTransferSize() {
-        return !showGlobalTransferLimitSlider() && hasFilter() ? currentFilter.getMaxTransferSize() : this.maxTransferSize;
+        return !showGlobalTransferLimitSlider() && hasFilter() ? currentFilter.getMaxTransferSize() :
+                this.maxTransferSize;
     }
 
     public void setMaxTransferSize(int maxTransferSize) {
