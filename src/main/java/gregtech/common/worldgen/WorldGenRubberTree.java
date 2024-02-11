@@ -52,6 +52,7 @@ public class WorldGenRubberTree extends WorldGenerator {
         }
         IBlockState woodBlock = MetaBlocks.RUBBER_LOG.getDefaultState().withProperty(NATURAL, true);
         IBlockState leaves = MetaBlocks.RUBBER_LEAVES.getDefaultState();
+        int tappingSpotChance = 25;
         int height = getGrowHeight(world, pos);
         if (height < 2)
             return false;
@@ -60,7 +61,14 @@ public class WorldGenRubberTree extends WorldGenerator {
         BlockPos.MutableBlockPos tmpPos = new BlockPos.MutableBlockPos();
         for (int cHeight = 0; cHeight < height; cHeight++) {
             BlockPos cPos = pos.up(cHeight);
-            setBlockAndNotifyAdequately(world, cPos, woodBlock);
+            IBlockState placedState = woodBlock;
+            if (random.nextInt(100) <= tappingSpotChance) {
+                tappingSpotChance -= 10;
+                placedState = MetaBlocks.RUBBER_LOG.setTreeTapSide(
+                        MetaBlocks.RUBBER_LOG.getDefaultState(),
+                        EnumFacing.HORIZONTALS[random.nextInt(4)]);
+            }
+            setBlockAndNotifyAdequately(world, cPos, placedState);
             if ((height < 7 && cHeight > 1) || cHeight > 2) {
                 for (int cx = pos.getX() - 2; cx <= pos.getX() + 2; cx++) {
                     for (int cz = pos.getZ() - 2; cz <= pos.getZ() + 2; cz++) {

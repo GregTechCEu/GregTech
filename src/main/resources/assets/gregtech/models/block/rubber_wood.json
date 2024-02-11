@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "side": "gregtech:blocks/wood/rubber/log_rubber_side",
+    "end": "gregtech:blocks/wood/rubber/log_rubber_top"
+  }
+}

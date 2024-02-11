@@ -1,33 +1,78 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "transform": "forge:default-block",
-    "model": "minecraft:cube_column",
-    "textures": {
-      "end": "gregtech:blocks/wood/rubber/log_rubber_top",
-      "side": "gregtech:blocks/wood/rubber/log_rubber_side"
-    }
+    "transform": "forge:default-block"
   },
   "variants": {
-    "axis": {
-      "none": {
-        "textures": {
-          "end": "#side"
-        }
-      },
-      "x": {
-        "x": 90,
-        "y": 90
-      },
-      "y": {},
-      "z": {
-        "x": 90
+    "axis=x,natural=true,tappable=false": {
+      "model": "gregtech:rubber_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y,natural=true,tappable=false": {
+      "model": "gregtech:rubber_wood"
+    },
+    "axis=z,natural=true,tappable=false": {
+      "model": "gregtech:rubber_wood",
+      "x": 90
+    },
+    "axis=none,natural=true,tappable=false": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/wood/rubber/log_rubber_side"
       }
     },
-    "natural": {
-      "true": {},
-      "false": {}
+    "axis=x,natural=false,tappable=false": {
+      "model": "gregtech:rubber_wood",
+      "x": 90,
+      "y": 90
     },
-    "inventory": [{}]
+    "axis=y,natural=false,tappable=false": {
+      "model": "gregtech:rubber_wood"
+    },
+    "axis=z,natural=false,tappable=false": {
+      "model": "gregtech:rubber_wood",
+      "x": 90
+    },
+    "axis=none,natural=false,tappable=false": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/wood/rubber/log_rubber_side"
+      }
+    },
+
+
+    "axis=x,natural=true,tappable=true": {
+      "model": "gregtech:rubber_wood_filled"
+    },
+    "axis=y,natural=true,tappable=true": {
+      "model": "gregtech:rubber_wood_filled",
+      "y": 90
+    },
+    "axis=z,natural=true,tappable=true": {
+      "model": "gregtech:rubber_wood_filled",
+      "y": 180
+    },
+    "axis=none,natural=true,tappable=true": {
+      "model": "gregtech:rubber_wood_filled",
+      "y": 270
+    },
+
+
+    "axis=x,natural=false,tappable=true": {
+      "model": "gregtech:rubber_wood_empty"
+    },
+    "axis=y,natural=false,tappable=true": {
+      "model": "gregtech:rubber_wood_empty",
+      "y": 90
+    },
+    "axis=z,natural=false,tappable=true": {
+      "model": "gregtech:rubber_wood_empty",
+      "y": 180
+    },
+    "axis=none,natural=false,tappable=true": {
+      "model": "gregtech:rubber_wood_empty",
+      "y": 270
+    }
   }
 }

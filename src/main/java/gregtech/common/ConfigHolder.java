@@ -197,6 +197,10 @@ public class ConfigHolder {
         @Config.Comment({ "Should all Stone Types drop unique Ore Item Blocks?",
                 "Default: false (meaning only Stone, Netherrack, and Endstone" })
         public boolean allUniqueStoneTypes = false;
+
+        @Config.Comment({ "Whether Rubber Trees require a tree tap for optimal Sticky Resin yield.",
+                "Significantly lowers the drop chance of Sticky Resin from Rubber Logs.", "Default: false" })
+        public boolean requireTreeTapForRubberTrees = false;
     }
 
     public static class RecipeOptions {
