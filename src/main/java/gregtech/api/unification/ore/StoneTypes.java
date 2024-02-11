@@ -26,12 +26,12 @@ public class StoneTypes {
     public static StoneType NETHERRACK = new StoneType(1, "netherrack", SoundType.STONE, OrePrefix.oreNetherrack,
             Materials.Netherrack,
             Blocks.NETHERRACK::getDefaultState,
-            state -> state.getBlock() == Blocks.NETHERRACK, true);
+            state -> state.getBlock() == Blocks.NETHERRACK, false);
 
     public static StoneType ENDSTONE = new StoneType(2, "endstone", SoundType.STONE, OrePrefix.oreEndstone,
             Materials.Endstone,
             Blocks.END_STONE::getDefaultState,
-            state -> state.getBlock() == Blocks.END_STONE, true);
+            state -> state.getBlock() == Blocks.END_STONE, false);
 
     // Dummy Types used for better world generation
 
@@ -68,21 +68,17 @@ public class StoneTypes {
             state -> state.getBlock() instanceof BlockStone && state.getValue(BlockStone.VARIANT) == EnumType.ANDESITE,
             false);
 
-    public static StoneType BLACK_GRANITE = new StoneType(8, "black_granite", SoundType.STONE,
-            OrePrefix.oreBlackgranite, Materials.GraniteBlack,
-            () -> gtStoneState(StoneVariantBlock.StoneType.BLACK_GRANITE),
-            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.BLACK_GRANITE), false);
+    public static StoneType LIMESTONE = new StoneType(8, "limestone", SoundType.STONE, OrePrefix.oreLimestone,
+            Materials.Limestone,
+            () -> gtStoneState(StoneVariantBlock.StoneType.LIMESTONE),
+            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.LIMESTONE),
+            false);
 
-    public static StoneType RED_GRANITE = new StoneType(9, "red_granite", SoundType.STONE, OrePrefix.oreRedgranite,
-            Materials.GraniteRed,
-            () -> gtStoneState(StoneVariantBlock.StoneType.RED_GRANITE),
-            state -> gtStonePredicate(state, StoneVariantBlock.StoneType.RED_GRANITE), false);
-
-    public static StoneType MARBLE = new StoneType(10, "marble", SoundType.STONE, OrePrefix.oreMarble, Materials.Marble,
+    public static StoneType MARBLE = new StoneType(9, "marble", SoundType.STONE, OrePrefix.oreMarble, Materials.Marble,
             () -> gtStoneState(StoneVariantBlock.StoneType.MARBLE),
             state -> gtStonePredicate(state, StoneVariantBlock.StoneType.MARBLE), false);
 
-    public static StoneType BASALT = new StoneType(11, "basalt", SoundType.STONE, OrePrefix.oreBasalt, Materials.Basalt,
+    public static StoneType BASALT = new StoneType(10, "basalt", SoundType.STONE, OrePrefix.oreBasalt, Materials.Basalt,
             () -> gtStoneState(StoneVariantBlock.StoneType.BASALT),
             state -> gtStonePredicate(state, StoneVariantBlock.StoneType.BASALT), false);
 

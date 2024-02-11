@@ -58,9 +58,7 @@ public class OrePrefix {
             ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix oreAndesite = new OrePrefix("oreAndesite", -1, null, MaterialIconType.ore,
             ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreBlackgranite = new OrePrefix("oreBlackgranite", -1, null, MaterialIconType.ore,
-            ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreRedgranite = new OrePrefix("oreRedgranite", -1, null, MaterialIconType.ore,
+    public static final OrePrefix oreLimestone = new OrePrefix("oreLimestone", -1, null, MaterialIconType.ore,
             ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix oreMarble = new OrePrefix("oreMarble", -1, null, MaterialIconType.ore,
             ENABLE_UNIFICATION, hasOreProperty);
@@ -374,12 +372,10 @@ public class OrePrefix {
         block.setIgnored(Materials.Gold);
         block.setIgnored(Materials.Lapis);
         block.setIgnored(Materials.Emerald);
-        block.setIgnored(Materials.Redstone);
         block.setIgnored(Materials.Diamond);
         block.setIgnored(Materials.Coal);
         block.setIgnored(Materials.Glass);
         block.setIgnored(Materials.Marble);
-        block.setIgnored(Materials.GraniteRed);
         block.setIgnored(Materials.Stone);
         block.setIgnored(Materials.Glowstone);
         block.setIgnored(Materials.Endstone);
@@ -401,16 +397,12 @@ public class OrePrefix {
         ore.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
         oreNetherrack.addSecondaryMaterial(new MaterialStack(Materials.Netherrack, dust.materialAmount));
         oreEndstone.addSecondaryMaterial(new MaterialStack(Materials.Endstone, dust.materialAmount));
-
-        if (ConfigHolder.worldgen.allUniqueStoneTypes) {
-            oreGranite.addSecondaryMaterial(new MaterialStack(Materials.Granite, dust.materialAmount));
-            oreDiorite.addSecondaryMaterial(new MaterialStack(Materials.Diorite, dust.materialAmount));
-            oreAndesite.addSecondaryMaterial(new MaterialStack(Materials.Andesite, dust.materialAmount));
-            oreRedgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteRed, dust.materialAmount));
-            oreBlackgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteBlack, dust.materialAmount));
-            oreBasalt.addSecondaryMaterial(new MaterialStack(Materials.Basalt, dust.materialAmount));
-            oreMarble.addSecondaryMaterial(new MaterialStack(Materials.Marble, dust.materialAmount));
-        }
+        oreGranite.addSecondaryMaterial(new MaterialStack(Materials.Granite, dust.materialAmount));
+        oreDiorite.addSecondaryMaterial(new MaterialStack(Materials.Diorite, dust.materialAmount));
+        oreAndesite.addSecondaryMaterial(new MaterialStack(Materials.Andesite, dust.materialAmount));
+        oreLimestone.addSecondaryMaterial(new MaterialStack(Materials.Limestone, dust.materialAmount));
+        oreBasalt.addSecondaryMaterial(new MaterialStack(Materials.Basalt, dust.materialAmount));
+        oreMarble.addSecondaryMaterial(new MaterialStack(Materials.Marble, dust.materialAmount));
 
         crushed.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
 

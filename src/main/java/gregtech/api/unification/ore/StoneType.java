@@ -32,12 +32,12 @@ public class StoneType implements Comparable<StoneType> {
     // we are using guava predicate because isReplaceableOreGen uses it
     @SuppressWarnings("Guava")
     private final com.google.common.base.Predicate<IBlockState> predicate;
-    public final boolean shouldBeDroppedAsItem;
+    public final boolean showInJEI;
 
     public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
 
     public StoneType(int id, String name, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial,
-                     Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
+                     Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean showInJEI) {
         Preconditions.checkArgument(
                 stoneMaterial.hasProperty(PropertyKey.DUST),
                 "Stone type must be made with a Material with the Dust Property!");
@@ -47,9 +47,9 @@ public class StoneType implements Comparable<StoneType> {
         this.stoneMaterial = stoneMaterial;
         this.stone = stone;
         this.predicate = predicate::test;
-        this.shouldBeDroppedAsItem = shouldBeDroppedAsItem || ConfigHolder.worldgen.allUniqueStoneTypes;
+        this.showInJEI = showInJEI;
         STONE_TYPE_REGISTRY.register(id, name, this);
-        if (Mods.JustEnoughItems.isModLoaded() && this.shouldBeDroppedAsItem) {
+        if (Mods.JustEnoughItems.isModLoaded() && this.showInJEI) {
             OreByProduct.addOreByProductPrefix(this.processingPrefix);
         }
     }
@@ -105,7 +105,7 @@ public class StoneType implements Comparable<StoneType> {
 
         StoneType stoneType = (StoneType) o;
 
-        if (shouldBeDroppedAsItem != stoneType.shouldBeDroppedAsItem) return false;
+        if (showInJEI != stoneType.showInJEI) return false;
         if (!name.equals(stoneType.name)) return false;
         if (!processingPrefix.equals(stoneType.processingPrefix)) return false;
         if (!stoneMaterial.equals(stoneType.stoneMaterial)) return false;
@@ -122,7 +122,7 @@ public class StoneType implements Comparable<StoneType> {
         result = 31 * result + stone.hashCode();
         result = 31 * result + soundType.hashCode();
         result = 31 * result + predicate.hashCode();
-        result = 31 * result + (shouldBeDroppedAsItem ? 1 : 0);
+        result = 31 * result + (showInJEI ? 1 : 0);
         return result;
     }
 }

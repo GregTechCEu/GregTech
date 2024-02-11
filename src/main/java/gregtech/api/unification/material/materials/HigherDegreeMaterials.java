@@ -22,12 +22,6 @@ public class HigherDegreeMaterials {
                 .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
                 .build();
 
-        Electrotine = new Material.Builder(2507, gregtechId("electrotine"))
-                .dust().ore(5, 1, true)
-                .color(0x3CB4C8).iconSet(SHINY)
-                .components(Redstone, 1, Electrum, 1)
-                .build();
-
         EnderEye = new Material.Builder(2508, gregtechId("ender_eye"))
                 .gem(1)
                 .color(0x66FF66)
@@ -65,13 +59,6 @@ public class HigherDegreeMaterials {
                 .color(0x3C3232).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4)
-                .build();
-
-        GraniticMineralSand = new Material.Builder(2513, gregtechId("granitic_mineral_sand"))
-                .dust(1).ore()
-                .color(0x283C3C).iconSet(SAND)
-                .components(Magnetite, 1, GraniteBlack, 1)
-                .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .build();
 
         Redrock = new Material.Builder(2514, gregtechId("redrock"))
@@ -176,15 +163,6 @@ public class HigherDegreeMaterials {
                 .dust()
                 .iconSet(ROUGH)
                 .components(Mirabilite, 2, Clay, 7)
-                .build();
-
-        BlueAlloy = new Material.Builder(2527, gregtechId("blue_alloy"))
-                .ingot()
-                .liquid(new FluidBuilder().temperature(1400))
-                .color(0x64B4FF).iconSet(DULL)
-                .flags(GENERATE_PLATE, GENERATE_BOLT_SCREW)
-                .components(Electrotine, 4, Silver, 1)
-                .cableProperties(GTValues.V[GTValues.HV], 2, 1)
                 .build();
     }
 }

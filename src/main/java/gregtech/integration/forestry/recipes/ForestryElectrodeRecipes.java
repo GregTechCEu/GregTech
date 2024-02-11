@@ -231,67 +231,67 @@ public class ForestryElectrodeRecipes {
         addFabricatorRecipe(EnumElectronTube.COPPER,
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Copper).toString(),
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Copper).toString());
 
         addFabricatorRecipe(EnumElectronTube.TIN,
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Tin).toString(),
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Tin).toString());
 
         addFabricatorRecipe(EnumElectronTube.BRONZE,
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Bronze).toString(),
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Bronze).toString());
 
         if (Mods.IndustrialCraft2.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
             addFabricatorRecipe(EnumElectronTube.IRON,
                     "SXS", "#X#", "XXX",
                     'S', new UnificationEntry(screw, Iron).toString(),
-                    '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                    '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                     'X', new UnificationEntry(plate, Iron).toString());
         }
 
         addFabricatorRecipe(EnumElectronTube.GOLD,
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Gold).toString(),
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Gold).toString());
 
         addFabricatorRecipe(EnumElectronTube.DIAMOND,
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Diamond).toString(),
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Gold).toString());
 
         addFabricatorRecipe(EnumElectronTube.OBSIDIAN,
                 " X ", "#X#", "XXX",
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Obsidian).toString());
 
         addFabricatorRecipe(EnumElectronTube.BLAZE,
                 " X ", "#X#", "XXX",
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new ItemStack(Items.BLAZE_POWDER));
 
         addFabricatorRecipe(EnumElectronTube.EMERALD,
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Emerald).toString(),
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Emerald).toString());
 
         addFabricatorRecipe(EnumElectronTube.APATITE,
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Apatite).toString(),
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Apatite).toString());
 
         addFabricatorRecipe(EnumElectronTube.LAPIS,
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Lapis).toString(),
-                '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
+                '#', new UnificationEntry(wireGtSingle, Lead).toString(),
                 'X', new UnificationEntry(plate, Lapis).toString());
 
         addFabricatorRecipe(EnumElectronTube.ENDER,

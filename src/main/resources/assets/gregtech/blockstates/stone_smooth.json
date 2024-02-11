@@ -5,14 +5,9 @@
   },
   "variants": {
     "variant": {
-      "black_granite": {
+      "limestone": {
         "textures": {
-          "all": "gregtech:blocks/stones/black_granite/black_granite_smooth"
-        }
-      },
-      "red_granite": {
-        "textures": {
-          "all": "gregtech:blocks/stones/red_granite/red_granite_smooth"
+          "all": "gregtech:blocks/stones/limestone/limestone_smooth"
         }
       },
       "marble": {

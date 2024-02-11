@@ -30,15 +30,6 @@ public class BlockOreDataProvider implements IWailaDataProvider {
             return tooltip;
         }
 
-        if (accessor.getBlock() instanceof BlockOre ore) {
-            StoneType type = accessor.getBlockState().getValue(ore.STONE_TYPE);
-            if (accessor.getPlayer().isSneaking() && !type.shouldBeDroppedAsItem) {
-                tooltip.add(I18n.format("gregtech.top.block_drops") + ":");
-                ItemStack itemDropped = ore.getItem(accessor.getWorld(), accessor.getPosition(),
-                        accessor.getBlockState());
-                tooltip.add(HWYLAModule.wailaStackWithName(itemDropped));
-            }
-        }
         return tooltip;
     }
 }

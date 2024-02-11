@@ -171,20 +171,6 @@ public class SecondDegreeMaterials {
                 .components(Magnesium, 1, Calcite, 7)
                 .build();
 
-        GraniteBlack = new Material.Builder(2019, gregtechId("granite_black"))
-                .dust()
-                .color(0x0A0A0A).iconSet(ROUGH)
-                .flags(NO_SMASHING)
-                .components(SiliconDioxide, 4, Biotite, 1)
-                .build();
-
-        GraniteRed = new Material.Builder(2020, gregtechId("granite_red"))
-                .dust()
-                .color(0xFF0080).iconSet(ROUGH)
-                .flags(NO_SMASHING)
-                .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
-                .build();
-
         // Free ID 2021
 
         VanadiumMagnetite = new Material.Builder(2022, gregtechId("vanadium_magnetite"))

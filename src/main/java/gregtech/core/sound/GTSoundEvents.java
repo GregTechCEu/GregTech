@@ -29,6 +29,7 @@ public class GTSoundEvents {
     public static SoundEvent COOLING;
     public static SoundEvent MINER;
     public static SoundEvent LARGE_MINER;
+    public static SoundEvent FLUID_DRILL;
     public static SoundEvent COMPUTATION;
     public static SoundEvent ELECTRODES;
 
@@ -82,6 +83,7 @@ public class GTSoundEvents {
         COMBUSTION = soundManager.registerSound("tick.combustion");
         MINER = soundManager.registerSound("tick.miner");
         LARGE_MINER = soundManager.registerSound("tick.large_miner");
+        FLUID_DRILL = soundManager.registerSound("tick.fluid_drill");
         SCIENCE = soundManager.registerSound("tick.science");
         COMPUTATION = soundManager.registerSound("tick.computation");
         ELECTRODES = soundManager.registerSound("tick.electrodes");

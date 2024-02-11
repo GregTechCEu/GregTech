@@ -139,6 +139,8 @@ public class MaterialRecipeHandler {
                         duration = Math.max(1, (int) (mat.getMass() * blastProperty.getBlastTemperature() / 100L));
                     builder.duration(duration);
 
+                    builder.blastFurnaceTemp(blastProperty.getBlastTemperature());
+
                     // apply the EUt override
                     int EUt = blastProperty.getEUtOverride();
                     if (EUt < 0) EUt = GTValues.VA[GTValues.MV];

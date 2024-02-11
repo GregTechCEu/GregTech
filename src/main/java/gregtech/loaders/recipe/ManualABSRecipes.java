@@ -41,8 +41,6 @@ public final class ManualABSRecipes {
                 Materials.Electrum, 2, 200);
         registerBinaryAlloy(Materials.Magnesium, 1, Materials.Aluminium, 2,
                 Materials.Magnalium, 3, 150);
-        registerBinaryAlloy(Materials.Silver, 1, Materials.Electrotine, 4,
-                Materials.BlueAlloy, 1, 100);
         registerBinaryAlloy(Materials.Glass, 7, Materials.Boron, 1,
                 Materials.BorosilicateGlass, 8, 200);
 

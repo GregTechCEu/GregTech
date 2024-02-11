@@ -141,7 +141,7 @@ public class WidgetProspectingMap extends Widget {
                                     OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
                                     if (prefix != null) {
                                         for (StoneType type : StoneType.STONE_TYPE_REGISTRY) {
-                                            if (type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
+                                            if (type.processingPrefix == prefix && type.showInJEI) {
                                                 packet.addBlock(x, y, z, oreDictString);
                                                 added = true;
                                                 break;

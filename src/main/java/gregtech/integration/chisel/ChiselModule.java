@@ -58,8 +58,7 @@ public class ChiselModule extends IntegrationSubmodule {
         // Chisel shared groups
         addVariations("marble", StoneType.MARBLE, false);
         addVariations("basalt", StoneType.BASALT, false);
-        addVariations("black_granite", StoneType.BLACK_GRANITE, false);
-        addVariations("red_granite", StoneType.RED_GRANITE, false);
+        addVariations("limestone", StoneType.LIMESTONE, false);
         addVariations("light_concrete", StoneType.CONCRETE_LIGHT, true);
         addVariations("dark_concrete", StoneType.CONCRETE_DARK, true);
 

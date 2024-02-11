@@ -309,7 +309,6 @@ public class ForestryModule extends IntegrationSubmodule {
                 // Blocks for Bee Breeding
                 Materials.Arsenic.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
                 Materials.Lithium.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
-                Materials.Electrotine.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
                 Materials.Lutetium.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
                 Materials.TricalciumPhosphate.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
 

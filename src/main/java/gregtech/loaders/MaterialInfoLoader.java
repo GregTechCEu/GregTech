@@ -66,7 +66,7 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[0].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.WroughtIron, M * 8), // plate
-                new MaterialStack(Materials.RedAlloy, M), // single cable
+                new MaterialStack(Materials.Lead, M), // single cable
                 new MaterialStack(Materials.Rubber, M * 2))); // plate
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[1].getStackForm(), new ItemMaterialInfo(
@@ -395,7 +395,7 @@ public class MaterialInfoLoader {
 
             OreDictUnifier.registerOre(new ItemStack(Items.COMPASS, 1, W), new ItemMaterialInfo(
                     new MaterialStack(Materials.Iron, (4 * M) / 3), // M + 3*screw
-                    new MaterialStack(Materials.RedAlloy, M / 8), // bolt
+                    new MaterialStack(Materials.Copper, M / 8), // bolt
                     new MaterialStack(Materials.Zinc, M / 4))); // ring
         } else {
             OreDictUnifier.registerOre(new ItemStack(Items.CLOCK, 1, W), new ItemMaterialInfo(
@@ -452,11 +452,11 @@ public class MaterialInfoLoader {
 
         if (ConfigHolder.recipes.hardMiscRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Blocks.NOTEBLOCK, 1, W), new ItemMaterialInfo(
-                    new MaterialStack(Materials.Wood, M * 8), new MaterialStack(Materials.RedAlloy, M / 2))); // rod
+                    new MaterialStack(Materials.Wood, M * 8), new MaterialStack(Materials.Copper, M / 2))); // rod
             OreDictUnifier.registerOre(new ItemStack(Blocks.JUKEBOX, 1, W), new ItemMaterialInfo(
                     new MaterialStack(Materials.Diamond, M / 8), // bolt
                     new MaterialStack(Materials.Iron, (17 * M) / 4), // gear + ring
-                    new MaterialStack(Materials.RedAlloy, M)));
+                    new MaterialStack(Materials.Copper, M)));
         } else {
             OreDictUnifier.registerOre(new ItemStack(Blocks.NOTEBLOCK, 1, W), new ItemMaterialInfo(
                     new MaterialStack(Materials.Wood, M * 8), new MaterialStack(Materials.Redstone, M)));
@@ -474,11 +474,11 @@ public class MaterialInfoLoader {
         if (ConfigHolder.recipes.hardRedstoneRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Blocks.DISPENSER, 1, W),
                     new ItemMaterialInfo(new MaterialStack(Materials.Stone, M * 2),
-                            new MaterialStack(Materials.RedAlloy, M / 2),
+                            new MaterialStack(Materials.Copper, M / 2),
                             new MaterialStack(Materials.Iron, M * 4 + M / 4)));
             OreDictUnifier.registerOre(new ItemStack(Blocks.DROPPER, 1, W),
                     new ItemMaterialInfo(new MaterialStack(Materials.Stone, M * 2),
-                            new MaterialStack(Materials.RedAlloy, M / 2),
+                            new MaterialStack(Materials.Copper, M / 2),
                             new MaterialStack(Materials.Iron, M * 2 + M * 3 / 4)));
         } else {
             OreDictUnifier.registerOre(new ItemStack(Blocks.DISPENSER, 1, W), new ItemMaterialInfo(

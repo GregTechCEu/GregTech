@@ -858,9 +858,7 @@ public class MachineRecipeLoader {
             { new MaterialStack(Materials.Gold, 1), new MaterialStack(Materials.Silver, 1),
                     new MaterialStack(Materials.Electrum, 2L) },
             { new MaterialStack(Materials.Magnesium, 1), new MaterialStack(Materials.Aluminium, 2L),
-                    new MaterialStack(Materials.Magnalium, 3L) },
-            { new MaterialStack(Materials.Silver, 1), new MaterialStack(Materials.Electrotine, 4),
-                    new MaterialStack(Materials.BlueAlloy, 1) } };
+                    new MaterialStack(Materials.Magnalium, 3L) } };
 
     private static void registerAlloyRecipes() {
         for (MaterialStack[] stack : alloySmelterList) {
@@ -1648,15 +1646,9 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-                .input(stone, GraniteBlack)
-                .output(dust, GraniteBlack)
-                .chancedOutput(dust, Thorium, 100, 40)
-                .buildAndRegister();
-
-        MACERATOR_RECIPES.recipeBuilder()
-                .input(stone, GraniteRed)
-                .output(dust, GraniteRed)
-                .chancedOutput(dust, Uranium238, 10, 5)
+                .input(stone, Limestone)
+                .output(dust, Limestone)
+                .chancedOutput(dust, Limestone, 1000, 380)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()

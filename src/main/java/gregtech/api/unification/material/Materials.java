@@ -483,6 +483,7 @@ public class Materials {
     public static Material SodiumFluoride;
     public static Material Cryolite;
     public static Material AluminiumSulfate;
+    public static Material Limestone;
 
     /**
      * Organic chemistry
@@ -724,8 +725,6 @@ public class Materials {
     public static Material GarnetRed;
     public static Material GarnetYellow;
     public static Material Marble;
-    public static Material GraniteBlack;
-    public static Material GraniteRed;
     public static Material VanadiumMagnetite;
     public static Material QuartzSand;
     public static Material Pollucite;
@@ -771,7 +770,6 @@ public class Materials {
      * Third Degree Materials
      */
     public static Material AcidicOsmiumSolution;
-    public static Material Electrotine;
     public static Material EnderEye;
     public static Material Diatomite;
     public static Material RedSteel;
@@ -791,7 +789,6 @@ public class Materials {
      * Fourth Degree Materials
      */
     public static Material RedAlloy;
-    public static Material BlueAlloy;
     public static Material BasalticMineralSand;
     public static Material HSSE;
     public static Material HSSS;

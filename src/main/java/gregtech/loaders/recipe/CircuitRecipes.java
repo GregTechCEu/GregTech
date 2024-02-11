@@ -165,7 +165,7 @@ public class CircuitRecipes {
                 .input(GLASS_TUBE)
                 .input(bolt, Steel, 2)
                 .input(wireGtSingle, Copper, 2)
-                .fluidInputs(RedAlloy.getFluid(18))
+                .fluidInputs(Tin.getFluid(18))
                 .output(VACUUM_TUBE, 3)
                 .duration(160).EUt(VA[ULV]).buildAndRegister();
 
@@ -173,7 +173,7 @@ public class CircuitRecipes {
                 .input(GLASS_TUBE)
                 .input(bolt, Steel, 2)
                 .input(wireGtSingle, AnnealedCopper, 2)
-                .fluidInputs(RedAlloy.getFluid(18))
+                .fluidInputs(Tin.getFluid(18))
                 .output(VACUUM_TUBE, 4)
                 .duration(160).EUt(VA[ULV]).buildAndRegister();
 
@@ -834,12 +834,12 @@ public class CircuitRecipes {
                 'P', new UnificationEntry(plate, Steel),
                 'V', VACUUM_TUBE.getStackForm(),
                 'B', BASIC_CIRCUIT_BOARD.getStackForm(),
-                'C', new UnificationEntry(cableGtSingle, RedAlloy));
+                'C', new UnificationEntry(cableGtSingle, Copper));
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(200)
                 .input(BASIC_CIRCUIT_BOARD)
                 .input(component, Component.Resistor, 2)
-                .input(wireGtSingle, RedAlloy, 2)
+                .input(wireGtSingle, Copper, 2)
                 .input(circuit, Tier.ULV, 2)
                 .output(ELECTRONIC_CIRCUIT_LV, outputAmount)
                 .buildAndRegister();
@@ -903,7 +903,7 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(300)
                 .input(GOOD_CIRCUIT_BOARD)
                 .input(SIMPLE_SYSTEM_ON_CHIP)
-                .input(bolt, RedAlloy, 2)
+                .input(bolt, Copper, 2)
                 .input(wireFine, Tin, 2)
                 .output(NAND_CHIP_ULV, outputAmount * 4)
                 .buildAndRegister();
@@ -911,7 +911,7 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(300)
                 .input(PLASTIC_CIRCUIT_BOARD)
                 .input(SIMPLE_SYSTEM_ON_CHIP)
-                .input(bolt, RedAlloy, 2)
+                .input(bolt, Copper, 2)
                 .input(wireFine, Tin, 2)
                 .output(NAND_CHIP_ULV, outputAmount * 6)
                 .buildAndRegister();
@@ -946,7 +946,7 @@ public class CircuitRecipes {
                 .input(component, Component.Resistor, 4)
                 .input(component, Component.Capacitor, 4)
                 .input(component, Component.Transistor, 4)
-                .input(wireFine, RedAlloy, 4)
+                .input(wireFine, Copper, 4)
                 .output(PROCESSOR_MV, outputAmount)
                 .buildAndRegister();
 
@@ -954,7 +954,7 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(50)
                 .input(PLASTIC_CIRCUIT_BOARD)
                 .input(SYSTEM_ON_CHIP)
-                .input(wireFine, RedAlloy, 4)
+                .input(wireFine, Copper, 4)
                 .input(bolt, AnnealedCopper, 4)
                 .output(PROCESSOR_MV, outputAmount * 2)
                 .cleanroom(CleanroomType.CLEANROOM)
@@ -967,7 +967,7 @@ public class CircuitRecipes {
                 .input(component, Component.Inductor, 4)
                 .input(component, Component.Capacitor, 8)
                 .input(RANDOM_ACCESS_MEMORY, 4)
-                .input(wireFine, RedAlloy, 8)
+                .input(wireFine, Copper, 8)
                 .output(PROCESSOR_ASSEMBLY_HV)
                 .solderMultiplier(2)
                 .buildAndRegister();
@@ -979,7 +979,6 @@ public class CircuitRecipes {
                 .input(component, Component.Diode, 4)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, Electrum, 16)
-                .input(bolt, BlueAlloy, 16)
                 .output(WORKSTATION_EV)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)

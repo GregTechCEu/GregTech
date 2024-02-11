@@ -86,7 +86,7 @@ public class BlockOre extends Block implements IBlockOre {
         StoneType stoneType = state.getValue(STONE_TYPE);
         // if the stone type should be dropped as an item, or if it is within the first 16 block states
         // don't do any special handling
-        if (stoneType.shouldBeDroppedAsItem || StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType) < 16) {
+        if (StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType) < 16) {
             return super.getItemDropped(state, rand, fortune);
         }
 
@@ -100,11 +100,7 @@ public class BlockOre extends Block implements IBlockOre {
     @Override
     public int damageDropped(@NotNull IBlockState state) {
         StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            return getMetaFromState(state);
-        } else {
-            return 0;
-        }
+        return getMetaFromState(state);
     }
 
     @NotNull
@@ -127,16 +123,6 @@ public class BlockOre extends Block implements IBlockOre {
         // this is save because ore blocks and stone types only generate for materials with dust property
         return Math.max(state.getValue(STONE_TYPE).stoneMaterial.getBlockHarvestLevel(),
                 material.getBlockHarvestLevel());
-    }
-
-    @NotNull
-    @Override
-    protected ItemStack getSilkTouchDrop(IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            return super.getSilkTouchDrop(state);
-        }
-        return super.getSilkTouchDrop(this.getDefaultState());
     }
 
     @NotNull
@@ -175,7 +161,7 @@ public class BlockOre extends Block implements IBlockOre {
     public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         if (tab == CreativeTabs.SEARCH || tab == GTCreativeTabs.TAB_GREGTECH_ORES) {
             blockState.getValidStates().stream()
-                    .filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem)
+                    .filter(state -> state.getValue(STONE_TYPE).showInJEI)
                     .forEach(blockState -> list.add(GTUtility.toItem(blockState)));
         }
     }

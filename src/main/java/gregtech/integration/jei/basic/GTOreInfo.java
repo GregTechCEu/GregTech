@@ -160,14 +160,7 @@ public class GTOreInfo implements IRecipeWrapper {
     }
 
     private static Collection<IBlockState> getPossibleStates(FillerEntry entry, Collection<IBlockState> collection) {
-        for (IBlockState state : entry.getPossibleResults()) {
-            if (state.getBlock() instanceof BlockOre) {
-                if (!state.getValue(((BlockOre) state.getBlock()).STONE_TYPE).shouldBeDroppedAsItem) {
-                    continue;
-                }
-            }
-            collection.add(state);
-        }
+        collection.addAll(entry.getPossibleResults());
         return collection;
     }
 

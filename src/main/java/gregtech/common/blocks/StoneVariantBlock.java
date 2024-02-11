@@ -39,7 +39,7 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
         setResistance(stoneVariant.resistance);
         setSoundType(SoundType.STONE);
         setHarvestLevel(ToolClasses.PICKAXE, 0);
-        setDefaultState(getState(StoneType.BLACK_GRANITE));
+        setDefaultState(getState(StoneType.MARBLE));
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_DECORATIONS);
     }
 
@@ -71,9 +71,8 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
 
     public enum StoneType implements IStringSerializable {
 
-        BLACK_GRANITE("black_granite", MapColor.BLACK),
-        RED_GRANITE("red_granite", MapColor.RED),
         MARBLE("marble", MapColor.QUARTZ),
+        LIMESTONE("limestone", MapColor.GRAY),
         BASALT("basalt", MapColor.BLACK_STAINED_HARDENED_CLAY),
         CONCRETE_LIGHT("concrete_light", MapColor.STONE),
         CONCRETE_DARK("concrete_dark", MapColor.STONE);
@@ -94,15 +93,14 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
 
         public OrePrefix getOrePrefix() {
             return switch (this) {
-                case BLACK_GRANITE, RED_GRANITE, MARBLE, BASALT -> OrePrefix.stone;
+                case MARBLE, BASALT, LIMESTONE -> OrePrefix.stone;
                 case CONCRETE_LIGHT, CONCRETE_DARK -> OrePrefix.block;
             };
         }
 
         public Material getMaterial() {
             return switch (this) {
-                case BLACK_GRANITE -> Materials.GraniteBlack;
-                case RED_GRANITE -> Materials.GraniteRed;
+                case LIMESTONE -> Materials.Limestone;
                 case MARBLE -> Materials.Marble;
                 case BASALT -> Materials.Basalt;
                 case CONCRETE_LIGHT, CONCRETE_DARK -> Materials.Concrete;

@@ -153,27 +153,6 @@ public class MixerRecipes {
                 new UnificationEntry(dust, Copper),
                 new UnificationEntry(dust, Tin));
 
-        MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
-                .input(dust, Copper)
-                .input(dust, Redstone, 4)
-                .circuitMeta(2)
-                .output(dust, RedAlloy)
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
-                .input(dust, Silver)
-                .input(dust, Electrotine, 4)
-                .circuitMeta(2)
-                .output(dust, BlueAlloy)
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])
-                .input(dust, Redstone)
-                .input(dust, Electrum)
-                .circuitMeta(1)
-                .output(dust, Electrotine)
-                .buildAndRegister();
-
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])
                 .input(dust, Tin, 6)
                 .input(dust, Lead, 3)

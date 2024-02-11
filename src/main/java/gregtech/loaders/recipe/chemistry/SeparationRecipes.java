@@ -245,15 +245,10 @@ public class SeparationRecipes {
                 .fluidOutputs(Deuterium.getFluid(1000))
                 .buildAndRegister();
 
-        // Stone Dust
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(480).EUt(VA[MV])
-                .input(dust, Stone)
-                .chancedOutput(dust, Quartzite, 2500, 0)
-                .chancedOutput(dust, PotassiumFeldspar, 2500, 0)
-                .chancedOutput(dust, Marble, 2222, 0)
-                .chancedOutput(dust, Biotite, 1111, 0)
-                .chancedOutput(dust, MetalMixture, 825, 80)
-                .chancedOutput(dust, Sodalite, 550, 55)
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(900).EUt(VA[LV])
+                .input(dust, RedAlloy)
+                .output(dust, Redstone, 4)
+                .output(dust, Copper)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1000).EUt(900)
@@ -272,42 +267,11 @@ public class SeparationRecipes {
                 .chancedOutput(dust, CertusQuartz, 2000, 200)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(900).EUt(VA[LV])
-                .input(dust, RedAlloy)
-                .output(dust, Redstone, 4)
-                .output(dust, Copper)
-                .buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(1200).EUt(VA[LV])
-                .input(dust, BlueAlloy)
-                .output(dust, Electrotine, 4)
-                .output(dust, Silver)
-                .buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(VA[LV])
-                .input(dust, Electrotine, 8)
-                .output(dust, Redstone)
-                .output(dust, Electrum)
-                .buildAndRegister();
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(51).EUt(VA[LV])
                 .fluidInputs(SaltWater.getFluid(1000))
                 .output(dust, Salt, 2)
                 .fluidOutputs(Water.getFluid(1000))
                 .buildAndRegister();
-
-        // Thermal Centrifuge
-        THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
-                .output(dust, Stone)
-                .duration(500).EUt(48).buildAndRegister();
-
-        // Extractor
-        EXTRACTOR_RECIPES.recipeBuilder()
-                .input(dust, Monazite)
-                .chancedOutput(dust, RareEarth, 2500, 200)
-                .fluidOutputs(Helium.getFluid(200))
-                .duration(64).EUt(64).buildAndRegister();
 
         for (ItemStack seed : getGrassSeedItems()) {
             EXTRACTOR_RECIPES.recipeBuilder()

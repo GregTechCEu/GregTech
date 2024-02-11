@@ -106,12 +106,8 @@ public class CombRecipes {
                 new int[] { 100 * 100, 40 * 100 }, Voltage.HV, 196);
 
         // Alloy
-        addProcessGT(GTCombType.REDALLOY, new Material[] { Materials.RedAlloy, Materials.Redstone, Materials.Copper },
-                Voltage.LV);
         addProcessGT(GTCombType.STAINLESSSTEEL, new Material[] { Materials.StainlessSteel, Materials.Iron,
                 Materials.Chrome, Materials.Manganese, Materials.Nickel }, Voltage.HV);
-        addCentrifugeToMaterial(GTCombType.REDALLOY, new Material[] { Materials.RedAlloy }, new int[] { 100 * 100 },
-                new int[] { 9 }, Voltage.ULV, ModuleCore.getItems().refractoryWax.getItemStack(), 50 * 100);
         addCentrifugeToMaterial(GTCombType.STAINLESSSTEEL, new Material[] { Materials.StainlessSteel },
                 new int[] { 50 * 100 }, new int[] { 9 }, Voltage.HV, ModuleCore.getItems().refractoryWax.getItemStack(),
                 50 * 100);
@@ -121,13 +117,11 @@ public class CombRecipes {
                 Materials.Phosphate, Materials.TricalciumPhosphate }, Voltage.LV);
         addProcessGT(GTCombType.CERTUS,
                 new Material[] { Materials.CertusQuartz, Materials.Quartzite, Materials.Barite }, Voltage.LV);
-        addProcessGT(GTCombType.REDSTONE, new Material[] { Materials.Redstone, Materials.Cinnabar }, Voltage.LV);
         addCentrifugeToMaterial(GTCombType.RAREEARTH, new Material[] { Materials.RareEarth }, new int[] { 100 * 100 },
                 new int[] { 9 }, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         addProcessGT(GTCombType.LAPIS,
                 new Material[] { Materials.Lapis, Materials.Sodalite, Materials.Lazurite, Materials.Calcite },
                 Voltage.LV);
-        addProcessGT(GTCombType.RUBY, new Material[] { Materials.Ruby, Materials.Redstone }, Voltage.LV);
         addProcessGT(GTCombType.SAPPHIRE,
                 new Material[] { Materials.Sapphire, Materials.GreenSapphire, Materials.Almandine, Materials.Pyrope },
                 Voltage.LV);
@@ -142,7 +136,7 @@ public class CombRecipes {
         addProcessGT(GTCombType.GROSSULAR,
                 new Material[] { Materials.Grossular, Materials.Aluminium, Materials.Silicon }, Voltage.LV);
         addCentrifugeToMaterial(GTCombType.STONE,
-                new Material[] { Materials.Stone, Materials.GraniteBlack, Materials.GraniteRed, Materials.Basalt,
+                new Material[] { Materials.Stone, Materials.Limestone, Materials.Basalt,
                         Materials.Marble },
                 new int[] { 70 * 100, 50 * 100, 50 * 100, 50 * 100, 50 * 100 }, new int[] { 9, 9, 9, 9, 9 },
                 Voltage.ULV, ItemStack.EMPTY, 50 * 100);
@@ -169,7 +163,7 @@ public class CombRecipes {
                 Voltage.LV);
 
         addCentrifugeToMaterial(GTCombType.SLAG,
-                new Material[] { Materials.Stone, Materials.GraniteBlack, Materials.GraniteRed },
+                new Material[] { Materials.Stone, Materials.Limestone},
                 new int[] { 50 * 100, 20 * 100, 20 * 100 }, new int[] { 9, 9, 9 }, Voltage.ULV, ItemStack.EMPTY,
                 30 * 100);
         addCentrifugeToMaterial(GTCombType.COPPER, new Material[] { Materials.Copper }, new int[] { 70 * 100 },
@@ -195,7 +189,7 @@ public class CombRecipes {
                 Voltage.EV);
         addProcessGT(GTCombType.MAGNESIUM, new Material[] { Materials.Magnesium, Materials.Magnesite }, Voltage.LV);
         addProcessGT(GTCombType.CHROME, new Material[] { Materials.Chrome, Materials.Ruby, Materials.Chromite,
-                Materials.Redstone, Materials.Neodymium, Materials.Bastnasite }, Voltage.HV);
+                Materials.Neodymium, Materials.Bastnasite }, Voltage.HV);
         addProcessGT(GTCombType.TUNGSTEN,
                 new Material[] { Materials.Tungsten, Materials.Tungstate, Materials.Scheelite, Materials.Lithium },
                 Voltage.IV);
@@ -207,8 +201,6 @@ public class CombRecipes {
                 new Material[] { Materials.Lithium, Materials.Lepidolite, Materials.Spodumene }, Voltage.MV);
         addProcessGT(GTCombType.SALT, new Material[] { Materials.Salt, Materials.RockSalt, Materials.Saltpeter },
                 Voltage.MV);
-        addProcessGT(GTCombType.ELECTROTINE,
-                new Material[] { Materials.Electrotine, Materials.Electrum, Materials.Redstone }, Voltage.MV);
         addCentrifugeToMaterial(GTCombType.SALT,
                 new Material[] { Materials.Salt, Materials.RockSalt, Materials.Saltpeter },
                 new int[] { 100 * 100, 100 * 100, 25 * 100 }, new int[] { 9 * 6, 9 * 6, 9 * 6 }, Voltage.MV, 160,

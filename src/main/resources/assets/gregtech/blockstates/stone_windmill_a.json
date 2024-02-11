@@ -5,14 +5,9 @@
   },
   "variants": {
     "variant": {
-      "black_granite": {
+      "limestone": {
         "textures": {
-          "all": "gregtech:blocks/stones/black_granite/black_granite_windmill_a"
-        }
-      },
-      "red_granite": {
-        "textures": {
-          "all": "gregtech:blocks/stones/red_granite/red_granite_windmill_a"
+          "all": "gregtech:blocks/stones/limestone/limestone_windmill_a"
         }
       },
       "marble": {

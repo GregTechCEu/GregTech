@@ -466,7 +466,11 @@ public class MetaTileEntityBedrockDrill extends MultiblockWithDisplayBase
 
     @Override
     public SoundEvent getSound() {
-        return GTSoundEvents.LARGE_MINER;
+        if (minerLogic.isActive()) {
+            return GTSoundEvents.LARGE_MINER;
+        } else {
+            return super.getSound();
+        }
     }
 
     public boolean allowsExtendedFacing() {

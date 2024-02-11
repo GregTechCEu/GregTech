@@ -1612,5 +1612,12 @@ public class FirstDegreeMaterials {
                 .color(0xedbca4).iconSet(MaterialIconSet.SHINY)
                 .components(Aluminium, 2, Sulfur, 4, Oxygen, 12)
                 .build().setFormula("Al2(SO4)3", true);
+
+        Limestone = new Material.Builder(472, gregtechId("limestone"))
+                .dust()
+                .color(0xccc3a3).iconSet(ROUGH)
+                .flags(NO_SMASHING)
+                .components(Calcium, 1, Carbon, 1, Oxygen, 3)
+                .build();
     }
 }
