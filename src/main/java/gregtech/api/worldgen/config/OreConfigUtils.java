@@ -92,6 +92,21 @@ public class OreConfigUtils {
         return GTUtility.toItem(oreBlock.getDefaultState().withProperty(oreBlock.STONE_TYPE, stoneType));
     }
 
+    public static Block getMaterialStoneOreAsBlock(Material material, StoneType stoneType) {
+        List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
+                .filter(ore -> ore.material == material)
+                .collect(Collectors.toList());
+
+        if (oreBlocks.isEmpty()) {
+            return null;
+        }
+
+        //Use first result
+        BlockOre oreBlock = oreBlocks.get(0);
+
+        return oreBlock.getDefaultState().withProperty(oreBlock.STONE_TYPE, stoneType).getBlock();
+    }
+
     public static Material getMaterialByName(String name) {
         Material material = GregTechAPI.materialManager.getMaterial(name);
         if (material == null || !material.hasProperty(PropertyKey.ORE))

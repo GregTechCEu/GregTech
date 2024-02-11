@@ -17,12 +17,14 @@ import gregtech.common.terminal.app.prospector.ProspectorMode;
 import gregtech.core.network.packets.PacketProspecting;
 import gregtech.integration.xaero.ColorUtility;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -184,19 +186,16 @@ public class WidgetProspectingMap extends Widget {
                     }
                     break;
                 case BEDROCK:
-                    BedrockOreVeinHandler.OreVeinWorldEntry oStack = BedrockOreVeinHandler
-                            .getOreVeinWorldEntry(world, chunk.x, chunk.z);
+                    BedrockOreVeinHandler.OreVeinWorldEntry oStack = BedrockOreVeinHandler.getOreVeinWorldEntry(world, chunk.x, chunk.z);
+                    Block h = Blocks.DIRT;
+
                     if (oStack != null && oStack.getDefinition() != null) {
-                        packet.addBlock(0, 3, 0,
-                                TextFormattingUtil.formatNumbers(Math.round(100.0 *
+                        packet.addBlock(0, 4, 0,
+                                TextFormattingUtil.formatNumbers(Math.round((float) BedrockOreVeinHandler.getOreDensity(world, chunk.x, chunk.z) *
                                         BedrockOreVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z) /
                                         BedrockOreVeinHandler.MAXIMUM_VEIN_OPERATIONS)));
-                        packet.addBlock(0, 2, 0,
-                                String.valueOf(BedrockOreVeinHandler.getOreDensity(world, chunk.x, chunk.z)));
-                        //ItemStack fluid = BedrockOreVeinHandler.getOresInChunk(world, chunk.x, chunk.z);
-                        //if (fluid != null) {
-                        //    packet.addBlock(0, 1, 0, fluid.getName());
-                        //}
+                        packet.addBlock(0, 1, 0,
+                                String.valueOf(oStack.getDefinition().getAssignedName()));
                     }
                     break;
                 default:
@@ -301,8 +300,30 @@ public class WidgetProspectingMap extends Widget {
                     tooltips.add(name + " --- " + count);
                     hoveredNames.add(name);
                 });
-            } else if (this.mode == ProspectorMode.FLUID) {
+            }
+            if (this.mode == ProspectorMode.FLUID) {
                 tooltips.add(I18n.format("terminal.prospector.fluid"));
+                if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
+                    if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) ||
+                            texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
+                        FluidStack fluidStack = FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1), 1);
+                        if (fluidStack != null) {
+                            tooltips.add(I18n.format("terminal.prospector.fluid.info",
+                                    fluidStack.getLocalizedName(),
+                                    texture.map[cX][cZ].get((byte) 2),
+                                    texture.map[cX][cZ].get((byte) 3)));
+                            hoveredNames.add(fluidStack.getLocalizedName());
+                            int amount = Integer.parseInt(texture.map[cX][cZ].get((byte) 2));
+                            if (amount > maxAmount[0]) {
+                                maxAmount[0] = amount;
+                                color = fluidStack.getFluid().getColor(fluidStack);
+                            }
+                        }
+                    }
+                }
+            }
+            if (this.mode == ProspectorMode.BEDROCK) {
+                tooltips.add(I18n.format("terminal.prospector.bedrock"));
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
                     if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) ||
                             texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {

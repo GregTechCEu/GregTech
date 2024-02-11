@@ -24,17 +24,6 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class FirstDegreeMaterials {
 
     public static void register() {
-        Almandine = new Material.Builder(250, gregtechId("almandine"))
-                .gem(1).ore(3, 1)
-                .color(0xFF0000)
-                .components(Aluminium, 2, Iron, 3, Silicon, 3, Oxygen, 12)
-                .build();
-
-        Andradite = new Material.Builder(251, gregtechId("andradite"))
-                .gem(1)
-                .color(0x967800).iconSet(RUBY)
-                .components(Calcium, 3, Iron, 2, Silicon, 3, Oxygen, 12)
-                .build();
 
         AnnealedCopper = new Material.Builder(252, gregtechId("annealed_copper"))
                 .ingot()
@@ -70,13 +59,6 @@ public class FirstDegreeMaterials {
                 .color(0x9C7CA0)
                 .flags(EXT_METAL)
                 .components(Lead, 4, Antimony, 1)
-                .build();
-
-        BlueTopaz = new Material.Builder(257, gregtechId("blue_topaz"))
-                .gem(3).ore(2, 1)
-                .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6)
                 .build();
 
         Bone = new Material.Builder(258, gregtechId("bone"))
@@ -127,12 +109,6 @@ public class FirstDegreeMaterials {
                 .components(Tin, 1, Oxygen, 2)
                 .build();
 
-        CassiteriteSand = new Material.Builder(264, gregtechId("cassiterite_sand"))
-                .dust(1).ore(2, 1)
-                .color(0xDCDCDC).iconSet(SAND)
-                .components(Tin, 1, Oxygen, 2)
-                .build();
-
         Chalcopyrite = new Material.Builder(265, gregtechId("chalcopyrite"))
                 .dust(1).ore()
                 .color(0xA07828)
@@ -167,7 +143,7 @@ public class FirstDegreeMaterials {
         // FREE ID 270
 
         Coal = new Material.Builder(271, gregtechId("coal"))
-                .gem(1, 1600).ore(2, 1) // default coal burn time in vanilla
+                .gem(1, 1600)
                 .color(0x464646).iconSet(LIGNITE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Carbon, 1)
@@ -1000,12 +976,6 @@ public class FirstDegreeMaterials {
                 .build();
 
         // Free ID 383
-
-        GlauconiteSand = new Material.Builder(384, gregtechId("glauconite_sand"))
-                .dust().ore(3, 1)
-                .color(0x82B43C).iconSet(SAND)
-                .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
-                .build();
 
         Malachite = new Material.Builder(385, gregtechId("malachite"))
                 .gem().ore()

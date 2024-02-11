@@ -122,12 +122,7 @@ public class CombRecipes {
         addProcessGT(GTCombType.LAPIS,
                 new Material[] { Materials.Lapis, Materials.Sodalite, Materials.Lazurite, Materials.Calcite },
                 Voltage.LV);
-        addProcessGT(GTCombType.SAPPHIRE,
-                new Material[] { Materials.Sapphire, Materials.GreenSapphire, Materials.Almandine, Materials.Pyrope },
-                Voltage.LV);
         addProcessGT(GTCombType.DIAMOND, new Material[] { Materials.Diamond, Materials.Graphite }, Voltage.LV);
-        addProcessGT(GTCombType.OLIVINE, new Material[] { Materials.Olivine, Materials.Bentonite, Materials.Magnesite,
-                Materials.GlauconiteSand }, Voltage.LV);
         addProcessGT(GTCombType.EMERALD, new Material[] { Materials.Emerald, Materials.Beryllium, Materials.Thorium },
                 Voltage.LV);
         addProcessGT(GTCombType.PYROPE,
@@ -144,8 +139,6 @@ public class CombRecipes {
         // Metals
         addProcessGT(GTCombType.COPPER, new Material[] { Materials.Copper, Materials.Tetrahedrite,
                 Materials.Chalcopyrite, Materials.Malachite, Materials.Pyrite, Materials.Stibnite }, Voltage.LV);
-        addProcessGT(GTCombType.TIN, new Material[] { Materials.Tin, Materials.Cassiterite, Materials.CassiteriteSand },
-                Voltage.LV);
         addProcessGT(GTCombType.LEAD, new Material[] { Materials.Lead, Materials.Galena }, Voltage.LV);
         addProcessGT(GTCombType.NICKEL, new Material[] { Materials.Nickel, Materials.Garnierite, Materials.Pentlandite,
                 Materials.Cobaltite, Materials.Wulfenite, Materials.Powellite }, Voltage.LV);
@@ -237,9 +230,6 @@ public class CombRecipes {
                 .duration(50).EUt(600).buildAndRegister();
 
         // Radioactive
-        addProcessGT(GTCombType.ALMANDINE,
-                new Material[] { Materials.Almandine, Materials.Pyrope, Materials.Sapphire, Materials.GreenSapphire },
-                Voltage.LV);
         addProcessGT(GTCombType.URANIUM, new Material[] { Materials.Uranium238, Materials.Pitchblende,
                 Materials.Uraninite, Materials.Uranium235 }, Voltage.EV);
         addProcessGT(GTCombType.PLUTONIUM, new Material[] { Materials.Plutonium239, Materials.Uranium235 }, Voltage.EV);

@@ -19,16 +19,16 @@
     "type": "layered",
     "values": [
       {
-        "primary": "ore:grossular"
+        "primary": "ore:pyrolusite"
       },
       {
-        "secondary": "ore:spessartine"
+        "secondary": "ore:pyrolusite"
       },
       {
         "between": "ore:pyrolusite"
       },
       {
-        "sporadic": "ore:tantalite"
+        "sporadic": "ore:pyrolusite"
       }
     ]
   }

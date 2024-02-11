@@ -270,21 +270,18 @@ public class Materials {
     /**
      * First Degree Compounds
      */
-    public static Material Almandine;
     public static Material Andradite;
     public static Material AnnealedCopper;
     public static Material Asbestos;
     public static Material Ash;
     public static Material BandedIron;
     public static Material BatteryAlloy;
-    public static Material BlueTopaz;
     public static Material Bone;
     public static Material Brass;
     public static Material Bronze;
     public static Material BrownLimonite;
     public static Material Calcite;
     public static Material Cassiterite;
-    public static Material CassiteriteSand;
     public static Material Chalcopyrite;
     public static Material Charcoal;
     public static Material Chromite;
@@ -402,7 +399,6 @@ public class Materials {
     public static Material Pentlandite;
     public static Material Spodumene;
     public static Material Lepidolite;
-    public static Material GlauconiteSand;
     public static Material Malachite;
     public static Material Mica;
     public static Material Barite;
@@ -711,9 +707,6 @@ public class Materials {
     public static Material Glass;
     public static Material Perlite;
     public static Material Borax;
-    public static Material Olivine;
-    public static Material Opal;
-    public static Material Amethyst;
     public static Material Lapis;
     public static Material Blaze;
     public static Material Apatite;
@@ -722,8 +715,6 @@ public class Materials {
     public static Material TungstenSteel;
     public static Material CobaltBrass;
     public static Material TricalciumPhosphate;
-    public static Material GarnetRed;
-    public static Material GarnetYellow;
     public static Material Marble;
     public static Material VanadiumMagnetite;
     public static Material QuartzSand;
@@ -771,13 +762,10 @@ public class Materials {
      */
     public static Material AcidicOsmiumSolution;
     public static Material EnderEye;
-    public static Material Diatomite;
     public static Material RedSteel;
     public static Material BlueSteel;
     public static Material Basalt;
-    public static Material GraniticMineralSand;
     public static Material Redrock;
-    public static Material GarnetSand;
     public static Material HSSG;
     public static Material IridiumMetalResidue;
     public static Material Granite;
@@ -789,7 +777,6 @@ public class Materials {
      * Fourth Degree Materials
      */
     public static Material RedAlloy;
-    public static Material BasalticMineralSand;
     public static Material HSSE;
     public static Material HSSS;
 }

@@ -25,10 +25,10 @@
         "secondary": "ore:apatite"
       },
       {
-        "between": "ore:tricalcium_phosphate"
+        "between": "ore:apatite"
       },
       {
-        "sporadic": "ore:pyrochlore"
+        "sporadic": "ore:apatite"
       }
     ]
   }

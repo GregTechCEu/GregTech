@@ -1,7 +1,7 @@
 {
   "name": "gregtech.veins.ore.coal",
   "weight": 80,
-  "density": 0.25,
+  "density": 1,
   "max_height": 80,
   "min_height": 30,
   "vein_populator": {
@@ -11,24 +11,24 @@
   "generator": {
     "type": "layered",
     "radius": [
-      20,
-      32
+      10,
+      16
     ]
   },
   "filler": {
     "type": "layered",
     "values": [
       {
-        "primary": "ore:coal"
+        "primary": "block:coal_block"
       },
       {
-        "secondary": "ore:coal"
+        "secondary": "block:coal_block"
       },
       {
-        "between": "ore:coal"
+        "between": "block:coal_block"
       },
       {
-        "sporadic": "ore:coal"
+        "sporadic": "block:coal_block"
       }
     ]
   }

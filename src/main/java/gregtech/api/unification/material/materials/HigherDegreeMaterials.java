@@ -28,12 +28,6 @@ public class HigherDegreeMaterials {
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING)
                 .build();
 
-        Diatomite = new Material.Builder(2509, gregtechId("diatomite"))
-                .dust(1).ore()
-                .color(0xE1E1E1)
-                .components(Flint, 8, BandedIron, 1, Sapphire, 1)
-                .build();
-
         RedSteel = new Material.Builder(2510, gregtechId("red_steel"))
                 .ingot(3).fluid()
                 .color(0x8C6464).iconSet(METALLIC)
@@ -58,7 +52,7 @@ public class HigherDegreeMaterials {
                 .dust(1)
                 .color(0x3C3232).iconSet(ROUGH)
                 .flags(NO_SMASHING)
-                .components(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4)
+                .components(Calcite, 3, Flint, 8, DarkAsh, 4)
                 .build();
 
         Redrock = new Material.Builder(2514, gregtechId("redrock"))
@@ -66,12 +60,6 @@ public class HigherDegreeMaterials {
                 .color(0xFF5032).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Calcite, 2, Flint, 1)
-                .build();
-
-        GarnetSand = new Material.Builder(2515, gregtechId("garnet_sand"))
-                .dust(1).ore()
-                .color(0xC86400).iconSet(SAND)
-                .components(Almandine, 1, Andradite, 1, Grossular, 1, Pyrope, 1, Spessartine, 1, Uvarovite, 1)
                 .build();
 
         HSSG = new Material.Builder(2516, gregtechId("hssg"))
@@ -95,13 +83,6 @@ public class HigherDegreeMaterials {
                 .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
                 .components(Copper, 1, Redstone, 4)
                 .cableProperties(V[LV], 1, 1)
-                .build();
-
-        BasalticMineralSand = new Material.Builder(2518, gregtechId("basaltic_mineral_sand"))
-                .dust(1).ore()
-                .color(0x283228).iconSet(SAND)
-                .components(Magnetite, 1, Basalt, 1)
-                .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .build();
 
         HSSE = new Material.Builder(2519, gregtechId("hsse"))

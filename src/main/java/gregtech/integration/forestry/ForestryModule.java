@@ -315,10 +315,8 @@ public class ForestryModule extends IntegrationSubmodule {
                 // Ores for Comb Processing, does not generate Ore Blocks
                 createOreProperty(Materials.Chrome, Materials.Iron, Materials.Magnesium);
                 createOreProperty(Materials.Manganese, Materials.Chrome, Materials.Iron);
-                createOreProperty(Materials.Magnesium, Materials.Olivine);
                 createOreProperty(Materials.Silicon, Materials.SiliconDioxide);
                 createOreProperty(Materials.Tungsten, Materials.Manganese, Materials.Molybdenum);
-                createOreProperty(Materials.Titanium, Materials.Almandine);
                 createOreProperty(Materials.Osmium, Materials.Iridium);
                 createOreProperty(Materials.Iridium, Materials.Platinum, Materials.Osmium);
                 createOreProperty(Materials.Electrum, Materials.Gold, Materials.Silver);

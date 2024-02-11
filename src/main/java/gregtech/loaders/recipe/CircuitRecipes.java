@@ -537,13 +537,6 @@ public class CircuitRecipes {
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(12000).EUt(320).buildAndRegister();
 
-        AUTOCLAVE_RECIPES.recipeBuilder()
-                .input(gemExquisite, Olivine)
-                .fluidInputs(Europium.getFluid(L / 9))
-                .chancedOutput(RAW_CRYSTAL_CHIP, 1000, 2000)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(12000).EUt(320).buildAndRegister();
-
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .input(RAW_CRYSTAL_CHIP)
                 .output(RAW_CRYSTAL_CHIP_PART, 9)

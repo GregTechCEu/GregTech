@@ -366,16 +366,6 @@ public class MiscRecipeLoader {
                 .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
         CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, DarkAsh).fluidInputs(Water.getFluid(1000))
                 .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Sulfur)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, TricalciumPhosphate)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Phosphate)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Ash, 3)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, DarkAsh)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder()
                 .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.TEMPERED_GLASS, 2))

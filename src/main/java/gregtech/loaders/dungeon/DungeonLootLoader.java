@@ -45,12 +45,6 @@ public class DungeonLootLoader {
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON,
                     OreDictUnifier.get(OrePrefix.gem, Materials.GreenSapphire), 1, 6, 20);
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.Olivine), 1, 6, 20);
-            ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.GarnetRed), 1, 6, 40);
-            ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.GarnetYellow), 1, 6, 40);
-            ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON,
                     OreDictUnifier.get(OrePrefix.dust, Materials.Neodymium), 1, 6, 40);
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON,
                     OreDictUnifier.get(OrePrefix.dust, Materials.Chrome), 1, 3, 40);
@@ -65,12 +59,6 @@ public class DungeonLootLoader {
                     OreDictUnifier.get(OrePrefix.gem, Materials.Sapphire), 2, 8, 2);
             ChestGenHooks.addItem(LootTableList.CHESTS_DESERT_PYRAMID,
                     OreDictUnifier.get(OrePrefix.gem, Materials.GreenSapphire), 2, 8, 2);
-            ChestGenHooks.addItem(LootTableList.CHESTS_DESERT_PYRAMID,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.Olivine), 2, 8, 2);
-            ChestGenHooks.addItem(LootTableList.CHESTS_DESERT_PYRAMID,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.GarnetRed), 2, 8, 4);
-            ChestGenHooks.addItem(LootTableList.CHESTS_DESERT_PYRAMID,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.GarnetYellow), 2, 8, 4);
 
             ChestGenHooks.addItem(LootTableList.CHESTS_JUNGLE_TEMPLE, MetaItems.COIN_GOLD_ANCIENT.getStackForm(), 16,
                     64, 10);
@@ -84,12 +72,6 @@ public class DungeonLootLoader {
                     OreDictUnifier.get(OrePrefix.gem, Materials.Sapphire), 2, 8, 2);
             ChestGenHooks.addItem(LootTableList.CHESTS_JUNGLE_TEMPLE,
                     OreDictUnifier.get(OrePrefix.gem, Materials.GreenSapphire), 2, 8, 2);
-            ChestGenHooks.addItem(LootTableList.CHESTS_JUNGLE_TEMPLE,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.Olivine), 2, 8, 2);
-            ChestGenHooks.addItem(LootTableList.CHESTS_JUNGLE_TEMPLE,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.GarnetRed), 2, 8, 4);
-            ChestGenHooks.addItem(LootTableList.CHESTS_JUNGLE_TEMPLE,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.GarnetYellow), 2, 8, 4);
 
             ChestGenHooks.addItem(LootTableList.CHESTS_JUNGLE_TEMPLE_DISPENSER, new ItemStack(Items.FIRE_CHARGE, 1), 2,
                     8, 30);
@@ -106,12 +88,6 @@ public class DungeonLootLoader {
                     OreDictUnifier.get(OrePrefix.gem, Materials.Sapphire), 1, 4, 2);
             ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT,
                     OreDictUnifier.get(OrePrefix.gem, Materials.GreenSapphire), 1, 4, 2);
-            ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.Olivine), 1, 4, 2);
-            ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.GarnetRed), 1, 4, 4);
-            ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT,
-                    OreDictUnifier.get(OrePrefix.gem, Materials.GarnetYellow), 1, 4, 4);
             ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT,
                     OreDictUnifier.get(OrePrefix.gem, Materials.Ruby), 1, 4, 2);
             ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT,

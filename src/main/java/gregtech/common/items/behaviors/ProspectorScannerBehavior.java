@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory, SearchComponent.IWidgetSearch<String> {
 
     private static final long VOLTAGE_FACTOR = 16L;
-    private static final int FLUID_PROSPECTION_THRESHOLD = GTValues.HV;
+    private static final int FLUID_PROSPECTION_THRESHOLD = GTValues.LV;
 
     private final int radius;
     private final int tier;
@@ -63,9 +63,14 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
                         setMode(stack, nextMode);
                         player.sendStatusMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"), true);
                     }
-                } else {
+                }
+                if (nextMode == ProspectorMode.ORE) {
                     setMode(stack, nextMode);
                     player.sendStatusMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"), true);
+                }
+                if (nextMode == ProspectorMode.BEDROCK) {
+                    setMode(stack, nextMode);
+                    player.sendStatusMessage(new TextComponentTranslation("metaitem.prospector.mode.bedrock"), true);
                 }
             } else if (checkCanUseScanner(heldItem, player, true)) {
                 new PlayerInventoryHolder(player, hand).openUI();

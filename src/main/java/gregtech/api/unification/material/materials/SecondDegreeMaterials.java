@@ -47,27 +47,6 @@ public class SecondDegreeMaterials {
                 .components(Salt, 1, Water, 1)
                 .build();
 
-        Olivine = new Material.Builder(2004, gregtechId("olivine"))
-                .gem().ore(2, 1)
-                .color(0x96FF96).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
-                .build();
-
-        Opal = new Material.Builder(2005, gregtechId("opal"))
-                .gem().ore()
-                .color(0x0000FF).iconSet(OPAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(SiliconDioxide, 1)
-                .build();
-
-        Amethyst = new Material.Builder(2006, gregtechId("amethyst"))
-                .gem(3).ore()
-                .color(0xD232D2).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(SiliconDioxide, 4, Iron, 1)
-                .build();
-
         Lapis = new Material.Builder(2007, gregtechId("lapis"))
                 .gem(1).ore(6, 4)
                 .color(0x4646DC).iconSet(LAPIS)
@@ -148,20 +127,6 @@ public class SecondDegreeMaterials {
                 .color(0xFFFF00).iconSet(FLINT)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
                 .components(Calcium, 3, Phosphate, 2)
-                .build();
-
-        GarnetRed = new Material.Builder(2016, gregtechId("garnet_red"))
-                .gem().ore(4, 1)
-                .color(0xC85050).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
-                .build();
-
-        GarnetYellow = new Material.Builder(2017, gregtechId("garnet_yellow"))
-                .gem().ore(4, 1)
-                .color(0xC8C850).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .build();
 
         Marble = new Material.Builder(2018, gregtechId("marble"))

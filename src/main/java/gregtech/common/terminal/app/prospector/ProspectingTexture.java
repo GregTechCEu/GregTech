@@ -157,19 +157,24 @@ public class ProspectingTexture extends AbstractTexture {
         if (this.glTextureId < 0) return;
         GlStateManager.bindTexture(this.getGlTextureId());
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-        if (this.mode == ProspectorMode.FLUID) { // draw fluids in grid
+         // draw fluids in grid
             for (int cx = 0; cx < this.radius * 2 - 1; cx++) {
                 for (int cz = 0; cz < this.radius * 2 - 1; cz++) {
                     if (this.map[cx][cz] != null && !this.map[cx][cz].isEmpty()) {
-                        Fluid fluid = FluidRegistry.getFluid(this.map[cx][cz].get((byte) 1));
-                        if (selected.equals(SELECTED_ALL) || selected.equals(fluid.getName())) {
-                            RenderUtil.drawFluidForGui(new FluidStack(fluid, 1), 1, x + cx * 16 + 1, y + cz * 16 + 1,
-                                    16, 16);
+                        if (this.mode == ProspectorMode.FLUID) {
+                            Fluid fluid = FluidRegistry.getFluid(this.map[cx][cz].get((byte) 1));
+                            if (selected.equals(SELECTED_ALL) || selected.equals(fluid.getName())) {
+                                RenderUtil.drawFluidForGui(new FluidStack(fluid, 1), 1, x + cx * 16 + 1,
+                                        y + cz * 16 + 1,
+                                        16, 16);
+                            }
+                        }
+                        if (this.mode == ProspectorMode.BEDROCK) {
+
                         }
                     }
                 }
             }
-        }
         // draw red vertical line
         if (playerXGui % 16 > 7 || playerXGui % 16 == 0) {
             Gui.drawRect(x + playerXGui - 1, y, x + playerXGui, y + imageHeight, Color.RED.getRGB());
