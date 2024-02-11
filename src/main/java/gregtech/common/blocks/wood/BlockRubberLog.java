@@ -7,12 +7,14 @@ import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -22,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+@SuppressWarnings("deprecation")
 public class BlockRubberLog extends BlockLog {
 
     public static final PropertyBool NATURAL = PropertyBool.create("natural");
@@ -50,20 +53,17 @@ public class BlockRubberLog extends BlockLog {
      * Format:
      * - The left-most bit represents whether this log is tree-tappable or not, and will not change.
      *
-     * - If the left-most bit is set (is tree-tappable):
-     *     - The middle two bits represent the side the tree-tapping spot is on.
-     *     - The right-most bit represents if this spot is filled or empty (currently able to be tapped or not).
+     * If the left-most bit is set (is tree-tappable):
+     * - The middle two bits represent the side the tree-tapping spot is on.
+     * - The right-most bit represents if this spot is filled or empty (currently able to be tapped or not).
      *
-     * - If the left-most bit is not set (not tree-tappable):
-     *     - The middle two bits represent the axis of the log.
-     *     - The right-most bit represents if this log was naturally placed by worldgen.
+     * If the left-most bit is not set (not tree-tappable):
+     * - The middle two bits represent the axis of the log.
+     * - The right-most bit represents if this log was naturally placed by worldgen.
      *
      * In order to properly test if a log was placed by worldgen, you must test both the right-most and the
      * left-most bits. If either are set, then it is a natural log.
      */
-
-    // todo update the blockstate json
-    // todo rotation handling when natural? test to see how it feels
 
     @NotNull
     @Override
@@ -76,9 +76,8 @@ public class BlockRubberLog extends BlockLog {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return (state.getValue(NATURAL) ? 1 : 0)
-                | (state.getValue(LOG_AXIS).ordinal() << 1)
-                | (state.getValue(TAPPABLE) ? 0b1000 : 0);
+        return (state.getValue(NATURAL) ? 1 : 0) | (state.getValue(LOG_AXIS).ordinal() << 1) |
+                (state.getValue(TAPPABLE) ? 0b1000 : 0);
     }
 
     /**
@@ -128,10 +127,10 @@ public class BlockRubberLog extends BlockLog {
         return state.withProperty(NATURAL, true)
                 .withProperty(TAPPABLE, true)
                 .withProperty(LOG_AXIS, switch (side) {
-                    case NORTH -> EnumAxis.X;
-                    case EAST  -> EnumAxis.Y;
-                    case SOUTH -> EnumAxis.Z;
-                    default    -> EnumAxis.NONE; // WEST
+                case NORTH -> EnumAxis.X;
+                case EAST -> EnumAxis.Y;
+                case SOUTH -> EnumAxis.Z;
+                default -> EnumAxis.NONE; // WEST
                 });
     }
 
@@ -168,12 +167,35 @@ public class BlockRubberLog extends BlockLog {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public @NotNull EnumPushReaction getPushReaction(@NotNull IBlockState state) {
         if (state.getValue(TAPPABLE)) {
             return EnumPushReaction.BLOCK;
         }
         return EnumPushReaction.NORMAL;
+    }
+
+    @Override
+    public @NotNull IBlockState withRotation(@NotNull IBlockState state, @NotNull Rotation rot) {
+        if (state.getValue(TAPPABLE)) {
+            return state;
+        }
+        return super.withRotation(state, rot);
+    }
+
+    @Override
+    public boolean rotateBlock(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing axis) {
+        IBlockState state = world.getBlockState(pos);
+        // state is not passed, so we can't guarantee this property
+        // is present, and if it isn't, checking directly will crash.
+        for (IProperty<?> prop : state.getProperties().keySet()) {
+            if (prop.equals(TAPPABLE)) {
+                if (state.getValue(TAPPABLE)) {
+                    return false;
+                }
+                break;
+            }
+        }
+        return super.rotateBlock(world, pos, axis);
     }
 }
