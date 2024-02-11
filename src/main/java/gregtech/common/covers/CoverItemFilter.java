@@ -150,7 +150,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(ItemFilterMode.class)
                                 .value(filteringMode)
-                                .lang("Filter Mode")
+                                .lang("cover.filter.mode.title")
                                 .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
                                 .build())
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()

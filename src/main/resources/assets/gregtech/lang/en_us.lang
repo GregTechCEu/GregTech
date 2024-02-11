@@ -1245,6 +1245,7 @@ cover.fluid_filter.mode.filter_drain=Filter Drain
 cover.fluid_filter.mode.filter_both=Filter Fill & Drain
 
 cover.item_filter.title=Item Filter
+cover.filter.mode.title=Filter Mode
 cover.filter.mode.filter_insert=Filter Insert
 cover.filter.mode.filter_extract=Filter Extract
 cover.filter.mode.filter_both=Filter Insert/Extract
