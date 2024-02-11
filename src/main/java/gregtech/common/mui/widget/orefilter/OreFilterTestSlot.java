@@ -36,7 +36,6 @@ public class OreFilterTestSlot extends ItemSlot {
     public OreFilterTestSlot() {
         this.slot = new ItemOreFilterTestSlot();
         this.slot.setParent(this);
-        this.slot.setGlob(globSupplier.get());
         slot(this.slot);
         tooltipBuilder(tooltip -> {
             if (!isEnabled()) return;
@@ -94,7 +93,6 @@ public class OreFilterTestSlot extends ItemSlot {
         Set<String> oreDicts = getTestCandidates();
         if (oreDicts != null) {
             OreGlob glob = this.globSupplier.get();
-            this.slot.setGlob(glob);
             if (oreDicts.isEmpty()) {
                 // no oredict entries
                 this.testResult = Object2BooleanMaps.singleton("", glob != null && glob.matches(""));

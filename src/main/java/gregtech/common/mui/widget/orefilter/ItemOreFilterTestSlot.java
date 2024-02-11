@@ -1,19 +1,14 @@
 package gregtech.common.mui.widget.orefilter;
 
-import gregtech.api.util.oreglob.OreGlob;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ItemOreFilterTestSlot extends ModularSlot {
 
     OreFilterTestSlot parent;
-
-    OreGlob glob;
 
     public ItemOreFilterTestSlot() {
         super(new ItemStackHandler(1), 0, true);
@@ -21,11 +16,6 @@ public class ItemOreFilterTestSlot extends ModularSlot {
 
     void setParent(OreFilterTestSlot parent) {
         this.parent = parent;
-    }
-
-    public void setGlob(@Nullable OreGlob glob) {
-        if (this.glob == glob) return;
-        this.glob = glob;
     }
 
     @Override
