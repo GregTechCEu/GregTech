@@ -196,6 +196,10 @@ public class GTGuiTextures {
             "textures/gui/overlay/voiding_mode_overlay.png",
             16, 32, 16, 16, true);
 
+    public static final UITexture[] FILTER_MODE_OVERLAY = slice(
+            "textures/gui/overlay/filter_mode_overlay.png",
+            16, 48, 16, 16, true);
+
     // todo bronze/steel/primitive fluid slots?
 
     // SLOT OVERLAYS

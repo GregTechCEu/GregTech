@@ -5,6 +5,7 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -148,7 +149,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                         .child(new EnumRowBuilder<>(FluidFilterMode.class)
                                 .value(filteringMode)
                                 .lang("Filter Mode")
-                                // .overlay() todo fluid filter overlays
+                                .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
                                 .build())
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
