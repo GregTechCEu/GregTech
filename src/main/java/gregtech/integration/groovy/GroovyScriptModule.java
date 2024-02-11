@@ -10,6 +10,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.Mods;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
@@ -46,13 +47,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-@Optional.Interface(modid = GTValues.MODID_GROOVYSCRIPT,
+@Optional.Interface(modid = Mods.Names.GROOVY_SCRIPT,
                     iface = "com.cleanroommc.groovyscript.api.GroovyPlugin",
                     striprefs = true)
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_GRS,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_GROOVYSCRIPT,
+                modDependencies = Mods.Names.GROOVY_SCRIPT,
                 name = "GregTech GroovyScript Integration",
                 description = "GroovyScript Integration Module")
 public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPlugin {

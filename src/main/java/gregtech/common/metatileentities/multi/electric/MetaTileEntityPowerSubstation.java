@@ -81,8 +81,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     private boolean isActive, isWorkingEnabled = true;
 
     // Stats tracked for UI display
-    private long netIOLastSec;
-    private long averageIOLastSec;
+    private long netInLastSec;
+    private long averageInLastSec;
+    private long netOutLastSec;
+    private long averageOutLastSec;
 
     public MetaTileEntityPowerSubstation(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -138,8 +140,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         inputHatches = null;
         outputHatches = null;
         passiveDrain = 0;
-        netIOLastSec = 0;
-        averageIOLastSec = 0;
+        netInLastSec = 0;
+        averageInLastSec = 0;
+        netOutLastSec = 0;
+        averageOutLastSec = 0;
         super.invalidateStructure();
     }
 
@@ -149,25 +153,27 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             if (getOffsetTimer() % 20 == 0) {
                 // active here is just used for rendering
                 setActive(energyBank.hasEnergy());
-                averageIOLastSec = netIOLastSec / 20;
-                netIOLastSec = 0;
+                averageInLastSec = netInLastSec / 20;
+                averageOutLastSec = netOutLastSec / 20;
+                netInLastSec = 0;
+                netOutLastSec = 0;
             }
 
             if (isWorkingEnabled()) {
                 // Bank from Energy Input Hatches
                 long energyBanked = energyBank.fill(inputHatches.getEnergyStored());
                 inputHatches.changeEnergy(-energyBanked);
-                netIOLastSec += energyBanked;
+                netInLastSec += energyBanked;
 
                 // Passive drain
                 long energyPassiveDrained = energyBank.drain(getPassiveDrain());
-                netIOLastSec -= energyPassiveDrained;
+                netOutLastSec += energyPassiveDrained;
 
                 // Debank to Dynamo Hatches
                 long energyDebanked = energyBank
                         .drain(outputHatches.getEnergyCapacity() - outputHatches.getEnergyStored());
                 outputHatches.changeEnergy(energyDebanked);
-                netIOLastSec -= energyDebanked;
+                netOutLastSec += energyDebanked;
             }
         }
     }
@@ -359,44 +365,45 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                                 "gregtech.multiblock.power_substation.passive_drain",
                                 passiveDrain));
 
-                        // Average I/O line
-                        TextFormatting averageIOColor = TextFormatting.GRAY;
-                        if (isActive() && isWorkingEnabled() && averageIOLastSec == 0) {
-                            // only set to yellow on zero if the machine is on, avoids a yellow "warning"
-                            // color when the machine is first formed and not yet plugged in.
-                            averageIOColor = TextFormatting.YELLOW;
-                        } else if (averageIOLastSec > 0) {
-                            averageIOColor = TextFormatting.GREEN;
-                        } else if (averageIOLastSec < 0) {
-                            averageIOColor = TextFormatting.RED;
-                        }
-
-                        ITextComponent averageIO = TextComponentUtil.stringWithColor(
-                                averageIOColor,
-                                TextFormattingUtil.formatNumbers(averageIOLastSec) + " EU/t");
-
+                        // Average EU IN line
+                        ITextComponent avgValue = TextComponentUtil.stringWithColor(
+                                TextFormatting.GREEN,
+                                TextFormattingUtil.formatNumbers(averageInLastSec) + " EU/t");
                         ITextComponent base = TextComponentUtil.translationWithColor(
                                 TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_io",
-                                averageIO);
-
+                                "gregtech.multiblock.power_substation.average_in",
+                                avgValue);
                         ITextComponent hover = TextComponentUtil.translationWithColor(
                                 TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_io_hover");
+                                "gregtech.multiblock.power_substation.average_in_hover");
+                        tl.add(TextComponentUtil.setHover(base, hover));
+
+                        // Average EU OUT line
+                        avgValue = TextComponentUtil.stringWithColor(
+                                TextFormatting.RED,
+                                TextFormattingUtil.formatNumbers(averageOutLastSec) + " EU/t");
+                        base = TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.power_substation.average_out",
+                                avgValue);
+                        hover = TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.power_substation.average_out_hover");
                         tl.add(TextComponentUtil.setHover(base, hover));
 
                         // Time to fill/drain line
-                        if (averageIOLastSec > 0) {
+                        if (averageInLastSec > averageOutLastSec) {
                             ITextComponent timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored)
-                                    .divide(BigInteger.valueOf(averageIOLastSec * 20)));
+                                    .divide(BigInteger.valueOf((averageInLastSec - averageOutLastSec) * 20)));
                             TextComponentUtil.setColor(timeToFill, TextFormatting.GREEN);
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.power_substation.time_to_fill",
                                     timeToFill));
-                        } else if (averageIOLastSec < 0) {
+                        } else if (averageInLastSec < averageOutLastSec) {
                             ITextComponent timeToDrain = getTimeToFillDrainText(
-                                    energyStored.divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20)));
+                                    energyStored.divide(BigInteger.valueOf(
+                                            (averageOutLastSec - averageInLastSec) * 20)));
                             TextComponentUtil.setColor(timeToDrain, TextFormatting.RED);
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
@@ -412,9 +419,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     protected void addWarningText(List<ITextComponent> textList) {
         super.addWarningText(textList);
         if (isStructureFormed()) {
-            if (averageIOLastSec < 0) { // decreasing
+            if (averageInLastSec < averageOutLastSec) { // decreasing
                 BigInteger timeToDrainSeconds = energyBank.getStored()
-                        .divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
+                        .divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20));
                 if (timeToDrainSeconds.compareTo(BigInteger.valueOf(60 * 60)) < 0) { // less than 1 hour left
                     textList.add(TextComponentUtil.translationWithColor(
                             TextFormatting.YELLOW,
@@ -550,8 +557,12 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         return TextFormattingUtil.formatNumbers(energyBank.getCapacity());
     }
 
-    public long getAverageIOLastSec() {
-        return averageIOLastSec;
+    public long getAverageInLastSec() {
+        return averageInLastSec;
+    }
+
+    public long getAverageOutLastSec() {
+        return averageOutLastSec;
     }
 
     @Override
