@@ -3,6 +3,9 @@ package gregtech.loaders.recipe;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.Mods;
 
@@ -18,7 +21,6 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.MetaBlocks.LD_FLUID_PIPE;
 import static gregtech.common.blocks.MetaBlocks.LD_ITEM_PIPE;
 import static gregtech.common.items.MetaItems.*;
-import static gregtech.common.items.MetaItems.SENSOR_UV;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
 public class MetaTileEntityMachineRecipeLoader {
@@ -242,8 +244,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(300).EUt(VA[EV]).buildAndRegister();
 
         // Item Buses
-        registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], new ItemStack(Blocks.CHEST));
-        registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], new ItemStack(Blocks.CHEST));
+        registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], new GTRecipeOreInput("chestWood"));
+        registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], new GTRecipeOreInput("chestWood"));
         registerHatchBusRecipe(MV, ITEM_IMPORT_BUS[MV], ITEM_EXPORT_BUS[MV], BRONZE_CRATE.getStackForm());
         registerHatchBusRecipe(HV, ITEM_IMPORT_BUS[HV], ITEM_EXPORT_BUS[HV], STEEL_CRATE.getStackForm());
         registerHatchBusRecipe(EV, ITEM_IMPORT_BUS[EV], ITEM_EXPORT_BUS[EV], ALUMINIUM_CRATE.getStackForm());
@@ -1025,7 +1027,16 @@ public class MetaTileEntityMachineRecipeLoader {
     }
 
     private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus,
-                                               ItemStack extra) {
+                                               Object extraInput) {
+        GTRecipeInput extra;
+        if (extraInput instanceof ItemStack stack) {
+            extra = new GTRecipeItemInput(stack);
+        } else if (extraInput instanceof GTRecipeInput input) {
+            extra = input;
+        } else {
+            throw new IllegalArgumentException("extraInput must be ItemStack or GTRecipeInput");
+        }
+
         // Glue recipe for ULV and LV
         // 250L for ULV, 500L for LV
         if (tier <= GTValues.LV) {
