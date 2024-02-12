@@ -16,8 +16,8 @@ public class GalliumRecipes {
                 .notConsumable(OrePrefix.stick, Steel, 1)
                 .notConsumable(MetaItems.GRAPHITE_ELECTRODE)
                 .fluidOutputs(SodiumHydroxideSolution.getFluid(1000))
-                .chancedOutput(dust, Gallium, 1, 500, 0)
-                .duration(200)
+                .chancedOutput(dust, Gallium, 1, 1000, 0)
+                .duration(150)
                 .EUt(24)
                 .buildAndRegister();
 
