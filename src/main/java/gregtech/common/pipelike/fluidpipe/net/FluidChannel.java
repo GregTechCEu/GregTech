@@ -57,6 +57,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
         if (this.activeSources.size() == 0) {
             // should I put the channel in a 'recycling queue' to be reused instead?
             this.manager.removeChannel(this.fluid.getFluid());
+            oldNodes.forEach(oldNode -> oldNode.removeChannel(this));
             return;
         }
 
@@ -105,9 +106,7 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
         }
 
         oldNodes.removeAll(nodes);
-        for (NodeG<FluidPipeType, FluidPipeProperties> oldNode : oldNodes) {
-            oldNode.removeChannel(this);
-        }
+        oldNodes.forEach(oldNode -> oldNode.removeChannel(this));
         oldNodes = nodes;
 
         // Everything should be properly balanced at this point due to earlier operations.
