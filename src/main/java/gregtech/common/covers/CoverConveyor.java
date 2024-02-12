@@ -577,7 +577,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         if (createConveyorModeRow())
             column.child(new EnumRowBuilder<>(ConveyorMode.class)
                     .value(conveyorMode)
-                    .lang("cover.conveyor.mode")
+                    .lang("cover.generic.io")
                     .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
                     .build());
 
