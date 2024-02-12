@@ -189,7 +189,7 @@ public class ElementMaterials {
                 .build();
 
         Copper = new Material.Builder(25, gregtechId("copper"))
-                .ingot(1)
+                .ingot(1).ore()
                 .liquid(new FluidBuilder().temperature(1358))
                 .color(0xFF6400).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)

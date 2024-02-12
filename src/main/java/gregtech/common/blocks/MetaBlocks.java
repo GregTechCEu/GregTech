@@ -122,6 +122,7 @@ public class MetaBlocks {
     public static BlockLongDistancePipe LD_ITEM_PIPE;
     public static BlockLongDistancePipe LD_FLUID_PIPE;
 
+    public static BlockPrimitiveCasing PRIMITIVE_CASING;
     public static BlockBoilerCasing BOILER_CASING;
     public static BlockFireboxCasing BOILER_FIREBOX_CASING;
     public static BlockMetalCasing METAL_CASING;
@@ -269,6 +270,14 @@ public class MetaBlocks {
         BATTERY_BLOCK.setRegistryName("battery_block");
         REFRACTORY_BRICK = new BlockRefractoryBrick();
         REFRACTORY_BRICK.setRegistryName("refractory_brick");
+        UNIQUE_CASING = new BlockUniqueCasing();
+        UNIQUE_CASING.setRegistryName("unique_casing");
+        LARGE_MULTIBLOCK_CASING = new BlockLargeMultiblockCasing();
+        LARGE_MULTIBLOCK_CASING.setRegistryName("large_multiblock_casing");
+        MULTIBLOCK_TANK = new BlockMultiblockTank();
+        MULTIBLOCK_TANK.setRegistryName("multiblock_tank");
+        PRIMITIVE_CASING = new BlockPrimitiveCasing();
+        PRIMITIVE_CASING.setRegistryName("primitive_casing");
 
         for (EnumDyeColor color : EnumDyeColor.values()) {
             BlockLamp block = new BlockLamp(color);
@@ -372,13 +381,6 @@ public class MetaBlocks {
         Blocks.FIRE.setFireInfo(RUBBER_WOOD_DOOR, 5, 20);
         Blocks.FIRE.setFireInfo(TREATED_WOOD_DOOR, 5, 20);
         Blocks.FIRE.setFireInfo(BRITTLE_CHARCOAL, 5, 5);
-
-        UNIQUE_CASING = new BlockUniqueCasing();
-        UNIQUE_CASING.setRegistryName("unique_casing");
-        LARGE_MULTIBLOCK_CASING = new BlockLargeMultiblockCasing();
-        LARGE_MULTIBLOCK_CASING.setRegistryName("large_multiblock_casing");
-        MULTIBLOCK_TANK = new BlockMultiblockTank();
-        MULTIBLOCK_TANK.setRegistryName("multiblock_tank");
     }
 
     /**
@@ -527,6 +529,8 @@ public class MetaBlocks {
         for (BlockOre block : ORES) block.onModelRegister();
 
         UNIQUE_CASING.onModelRegister();
+        registerItemModel(PRIMITIVE_CASING);
+        registerItemModel(MULTIBLOCK_TANK);
         registerItemModel(LARGE_MULTIBLOCK_CASING);
     }
 

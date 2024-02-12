@@ -34,11 +34,13 @@ import gregtech.common.metatileentities.electric.MetaTileEntityFisher;
 import gregtech.common.metatileentities.electric.MetaTileEntityGasCollector;
 import gregtech.common.metatileentities.electric.MetaTileEntityHull;
 import gregtech.common.metatileentities.electric.MetaTileEntityItemCollector;
+import gregtech.common.metatileentities.electric.MetaTileEntityLatexCollector;
 import gregtech.common.metatileentities.electric.MetaTileEntityMagicEnergyAbsorber;
 import gregtech.common.metatileentities.electric.MetaTileEntityMiner;
 import gregtech.common.metatileentities.electric.MetaTileEntityPump;
 import gregtech.common.metatileentities.electric.MetaTileEntitySingleCombustion;
 import gregtech.common.metatileentities.electric.MetaTileEntitySingleTurbine;
+import gregtech.common.metatileentities.electric.MetaTileEntitySteamLatexCollector;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
 import gregtech.common.metatileentities.electric.MetaTileEntityWorldAccelerator;
 import gregtech.common.metatileentities.electric.SimpleMachineMetaTileEntityResizable;
@@ -139,6 +141,7 @@ import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.multi.primitive.MetaTileEntityLargeBoiler;
 import gregtech.common.metatileentities.primitive.MetaTileEntityCharcoalPileIgniter;
+import gregtech.common.metatileentities.primitive.MetaTileEntityCoagulationTank;
 import gregtech.common.metatileentities.steam.SteamAlloySmelter;
 import gregtech.common.metatileentities.steam.SteamCompressor;
 import gregtech.common.metatileentities.steam.SteamExtractor;
@@ -212,7 +215,6 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] MIXER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] ORE_WASHER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] PACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final PseudoMultiMachineMetaTileEntity[] LATEX_COLLECTOR = new PseudoMultiMachineMetaTileEntity[5];
     public static final SimpleMachineMetaTileEntity[] UNPACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] POLARIZER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] LASER_ENGRAVER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -231,6 +233,7 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
     public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
+    public static final MetaTileEntityLatexCollector[] LATEX_COLLECTOR = new MetaTileEntityLatexCollector[4];
 
     // GENERATORS SECTION
     public static final SimpleGeneratorMetaTileEntity[] COMBUSTION_GENERATOR = new SimpleGeneratorMetaTileEntity[4];
@@ -314,8 +317,7 @@ public class MetaTileEntities {
     public static SteamAlloySmelter STEAM_ALLOY_SMELTER_BRONZE;
     public static SteamAlloySmelter STEAM_ALLOY_SMELTER_STEEL;
     public static SteamMiner STEAM_MINER;
-    public static PseudoMultiSteamMachineMetaTileEntity STEAM_LATEX_COLLECTOR_BRONZE;
-    public static PseudoMultiSteamMachineMetaTileEntity STEAM_LATEX_COLLECTOR_STEEL;
+    public static MetaTileEntitySteamLatexCollector STEAM_LATEX_COLLECTOR_BRONZE;
 
     public static PseudoMultiSteamMachineMetaTileEntity STEAM_VACUUM_CHAMBER_BRONZE;
     public static MetaTileEntityPumpHatch PUMP_OUTPUT_HATCH;
@@ -397,6 +399,7 @@ public class MetaTileEntities {
     public static MetaTileEntityPolymerizationTank POLYMERIZATION_TANK;
     public static MetaTileEntityFluidizedBedReactor FLUIDIZED_BED_REACTOR;
     public static MetaTileEntityElectrolyticCell ELECTROLYTIC_CELL;
+    public static MetaTileEntityCoagulationTank COAGULATION_TANK;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -488,13 +491,12 @@ public class MetaTileEntities {
 
         STEAM_MINER = registerMetaTileEntity(21, new SteamMiner(gregtechId("steam_miner"), 320, 4, 0));
 
-        STEAM_LATEX_COLLECTOR_BRONZE = registerMetaTileEntity(22, new PseudoMultiSteamMachineMetaTileEntity(gregtechId("latex_collector_bronze"),
-                RecipeMaps.LATEX_COLLECTOR_RECIPES, SteamProgressIndicators.EXTRACTION_STEAM, Textures.LATEX_COLLECTOR_OVERLAY, false, false));
-        STEAM_LATEX_COLLECTOR_STEEL = registerMetaTileEntity(23, new PseudoMultiSteamMachineMetaTileEntity(gregtechId("latex_collector_steel"),
-                RecipeMaps.LATEX_COLLECTOR_RECIPES, SteamProgressIndicators.EXTRACTION_STEAM, Textures.LATEX_COLLECTOR_OVERLAY, false, true));
+        STEAM_LATEX_COLLECTOR_BRONZE = registerMetaTileEntity(22, new MetaTileEntitySteamLatexCollector(gregtechId("latex_collector.bronze")));
+
+        COAGULATION_TANK = registerMetaTileEntity(23, new MetaTileEntityCoagulationTank(gregtechId("coagulation_tank")));
 
         STEAM_VACUUM_CHAMBER_BRONZE = registerMetaTileEntity(24, new PseudoMultiSteamMachineMetaTileEntity(gregtechId("vacuum_chamber_bronze"),
-                RecipeMaps.VACUUM_CHAMBER_RECIPES, SteamProgressIndicators.ARROW, Textures.VACUUM_CHAMBER_OVERLAY, false, false));
+                RecipeMaps.VACUUM_CHAMBER_RECIPES, SteamProgressIndicators.ARROW, Textures.GAS_COLLECTOR_OVERLAY, false, false));
 
         // Electric Furnace, IDs 50-64
         registerSimpleMetaTileEntity(ELECTRIC_FURNACE, 50, "electric_furnace", RecipeMaps.FURNACE_RECIPES,
@@ -615,10 +617,6 @@ public class MetaTileEntities {
         // Packer, IDs 500-514
         registerSimpleMetaTileEntity(PACKER, 500, "packer", RecipeMaps.PACKER_RECIPES, Textures.PACKER_OVERLAY, true);
 
-        // Latex Collector, IDs 515-518
-        registerPseudoMultiMTE(LATEX_COLLECTOR, 3, 515, "latex_collector", RecipeMaps.LATEX_COLLECTOR_RECIPES,
-                Textures.LATEX_COLLECTOR_OVERLAY, true, GTUtility.collectorTankSizeFunction);
-
         // FREE, IDs 519-529
 
         // Gas Collectors, IDs 530-544
@@ -663,7 +661,7 @@ public class MetaTileEntities {
 
         // Vacuum Chamber, IDs 680-694
         registerSimpleMetaTileEntity(VACUUM_CHAMBER, 680, "vacuum_chamber", RecipeMaps.VACUUM_CHAMBER_RECIPES,
-                Textures.VACUUM_CHAMBER_OVERLAY, true);
+                Textures.GAS_COLLECTOR_OVERLAY, true);
 
         // Ion Exchanger, IDs 695-709
         registerSimpleMetaTileEntity(ION_EXCHANGER, 695, "ion_exchanger", RecipeMaps.ION_EXCHANGE_RECIPES,
@@ -676,6 +674,11 @@ public class MetaTileEntities {
         // Crystallizer, IDs 725-739
         registerSimpleMetaTileEntity(CRYSTALLIZER, 725, "crystallizer", RecipeMaps.CRYSTALLIZER_RECIPES,
                 Textures.CRYSTALLIZER_OVERLAY, true);
+
+        LATEX_COLLECTOR[0] = registerMetaTileEntity(740, new MetaTileEntityLatexCollector(gregtechId("latex_collector.lv"), 1));
+        LATEX_COLLECTOR[1] = registerMetaTileEntity(741, new MetaTileEntityLatexCollector(gregtechId("latex_collector.mv"), 2));
+        LATEX_COLLECTOR[2] = registerMetaTileEntity(742, new MetaTileEntityLatexCollector(gregtechId("latex_collector.hv"), 3));
+        LATEX_COLLECTOR[3] = registerMetaTileEntity(743, new MetaTileEntityLatexCollector(gregtechId("latex_collector.ev"), 4));
 
         // Some space here for more SimpleMachines
 

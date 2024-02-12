@@ -16,11 +16,6 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class UnknownCompositionMaterials {
 
     public static void register() {
-        Latex = new Material.Builder(27050, gregtechId("latex"))
-                .dust().fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(293))
-                .color(0xFFFADA)
-                .build();
-
         WoodGas = new Material.Builder(1500, gregtechId("wood_gas"))
                 .gas().color(0xDECD87).build();
 
@@ -654,5 +649,11 @@ public class UnknownCompositionMaterials {
 
         AcidicREESolution = new Material.Builder(1656, gregtechId("acidic_ree_solution"))
                 .fluid().color(0xc2aea9).build();
+
+        Latex = new Material.Builder(1657, gregtechId("latex"))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(293))
+                .flags(FLAMMABLE)
+                .color(0xFFFADA)
+                .build();
     }
 }

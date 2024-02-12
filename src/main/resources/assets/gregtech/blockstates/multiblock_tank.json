@@ -16,6 +16,22 @@
         "side": "gregtech:blocks/casings/solid/machine_casing_clean_stainless_steel",
         "bottom": "#side"
       }
+    },
+    "active=false,variant=clarifier": {
+      "model": "minecraft:cube_bottom_top",
+      "textures": {
+        "top": "gregtech:blocks/casings/multiblock_tank/clarifier",
+        "side": "gregtech:blocks/casings/solid/machine_casing_clean_stainless_steel",
+        "bottom": "#side"
+      }
+    },
+    "active=true,variant=clarifier": {
+      "model": "minecraft:cube_bottom_top",
+      "textures": {
+        "top": "gregtech:blocks/casings/multiblock_tank/clarifier_on",
+        "side": "gregtech:blocks/casings/solid/machine_casing_clean_stainless_steel",
+        "bottom": "#side"
+      }
     }
   }
 }

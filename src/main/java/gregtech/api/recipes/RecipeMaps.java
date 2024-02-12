@@ -1502,6 +1502,16 @@ public final class RecipeMaps {
             .sound(GTSoundEvents.ELECTROLYZER)
             .build();
 
+    public static final RecipeMap<PrimitiveRecipeBuilder> COAGULATION_RECIPES = new RecipeMapBuilder<>("coagulation_tank",
+            new PrimitiveRecipeBuilder())
+            .itemInputs(2)
+            .itemOutputs(1)
+            .fluidInputs(2)
+            .fluidOutputs(0)
+            .progressBar(GuiTextures.PROGRESS_BAR_EXTRACT)
+            .sound(GTSoundEvents.BATH)
+            .build();
+
     //////////////////////////////////////
     // Fuel Recipe Maps //
     //////////////////////////////////////

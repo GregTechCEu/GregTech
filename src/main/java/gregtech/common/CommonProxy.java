@@ -165,6 +165,9 @@ public class CommonProxy {
         registry.register(REFRACTORY_BRICK);
         registry.register(UNIQUE_CASING);
         registry.register(LARGE_MULTIBLOCK_CASING);
+        registry.register(MULTIBLOCK_TANK);
+        registry.register(PRIMITIVE_CASING);
+
         for (BlockLamp block : LAMPS.values()) registry.register(block);
         for (BlockLamp block : BORDERLESS_LAMPS.values()) registry.register(block);
 
@@ -286,6 +289,8 @@ public class CommonProxy {
         registry.register(createItemBlock(REFRACTORY_BRICK, VariantItemBlock::new));
         registry.register(createItemBlock(UNIQUE_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(LARGE_MULTIBLOCK_CASING, VariantItemBlock::new));
+        registry.register(createItemBlock(MULTIBLOCK_TANK, VariantItemBlock::new));
+        registry.register(createItemBlock(PRIMITIVE_CASING, VariantItemBlock::new));
         for (BlockCompressed block : COMPRESSED_BLOCKS) {
             registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.block)));
         }

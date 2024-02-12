@@ -2342,6 +2342,7 @@ recipemap.crystallizer.name=Crystallizer
 recipemap.ion_exchanger.name=Ion Exchange Column
 recipemap.polymerization_tank.name=Polymerization Tank
 recipemap.fluidized_bed_reactor.name=Fluidized Bed Reactor
+recipemap.coagulation_tank.name=Coagulation Tank
 
 gregtech.recipe.category.arc_furnace_recycling=Smelt Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -4475,6 +4476,10 @@ tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
 tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
 tile.hermetic_casing.hermetic_casing_uhv.name=Hermetic Casing IX
 
+tile.multiblock_tank.clarifier.name=Clarifier Tank
+tile.multiblock_tank.flotation.name=Froth Flotation Tank
+tile.primitive_casing.coagulation_tank_wall.name=Coagulation Tank Wall
+
 #Gas Collectors
 gregtech.machine.gas_collector.lv.name=Basic Gas Collector
 gregtech.machine.gas_collector.lv.tooltip=Collects Gas from the air depending on the dimension
@@ -6428,6 +6433,7 @@ gregtech.machine.rotary_kiln.name=Rotary Kiln
 gregtech.machine.polymerization_tank.name=Polymerization Tank
 gregtech.machine.fluidized_bed_reactor.name=Fluidized Bed Reactor
 gregtech.machine.electrolytic_cell.name=Electrolytic Cell
+gregtech.machine.coagulation_tank.name=Coagulation Tank
 
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
@@ -6560,11 +6566,13 @@ gregtech.material.acidic_ree_solution=Acidic Rare Earth Solution
 gregtech.material.cryolite=Cryolite
 
 # Latex Collector
-gregtech.machine.latex_collector.steam=Needs Steam!
-gregtech.machine.latex_collector.tooltip=Collects latex from adjacent rubber tree log. Yields %d mL of latex per tick.
-gregtech.machine.latex_collector_bronze.name=Steam Latex Collector
-gregtech.machine.latex_collector_steel.name=High Pressure Steam Latex Collector
+gregtech.machine.latex_collector.bronze.name=Steam Latex Collector
 gregtech.machine.latex_collector.lv.name=Basic Latex Collector
 gregtech.machine.latex_collector.mv.name=Advanced Latex Collector
 gregtech.machine.latex_collector.hv.name=Advanced Latex Collector II
 gregtech.machine.latex_collector.ev.name=Advanced Latex Collector III
+gregtech.machine.latex_collector.lv.tooltip=Extracts latex from living trees
+gregtech.machine.latex_collector.mv.tooltip=Extracts latex from living trees
+gregtech.machine.latex_collector.hv.tooltip=Extracts latex from living trees
+gregtech.machine.latex_collector.ev.tooltip=Extracts latex from living trees
+gregtech.machine.latex_collector.bronze.tooltip=Extracts latex from living trees

@@ -1560,32 +1560,6 @@ public class MachineRecipeLoader {
     }
 
     private static void registerDecompositionRecipes() {
-        EXTRACTOR_RECIPES.recipeBuilder()
-                .inputs(STICKY_RESIN.getStackForm())
-                .output(dust, RawRubber, 3)
-                .duration(150).EUt(2)
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(new ItemStack(MetaBlocks.RUBBER_LEAVES, 16))
-                .output(dust, RawRubber)
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(new ItemStack(MetaBlocks.RUBBER_LOG))
-                .output(dust, RawRubber)
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(new ItemStack(MetaBlocks.RUBBER_SAPLING))
-                .output(dust, RawRubber)
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(150).EUt(2)
-                .inputs(new ItemStack(Items.SLIME_BALL))
-                .output(dust, RawRubber, 2)
-                .buildAndRegister();
-
         COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).input("treeSapling", 8).output(PLANT_BALL)
                 .buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Items.WHEAT, 8)).output(PLANT_BALL)

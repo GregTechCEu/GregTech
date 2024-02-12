@@ -37,6 +37,11 @@ public class ChemistryRecipes {
         GalliumRecipes.init();
 
         // A Few Random Recipes
+        COAGULATION_RECIPES.recipeBuilder()
+                .fluidInputs(Latex.getFluid(1000))
+                .output(dust, RawRubber, 2)
+                .duration(200).buildAndRegister();
+
         WELDING_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .input(pipeFluid, Steel, 8)

@@ -126,6 +126,7 @@ public class Textures {
             "casings/crafting_table");
     public static final SimpleOrientedCubeRenderer GRATE_CASING_STEEL_FRONT = new SimpleOrientedCubeRenderer(
             "casings/pipe/grate_steel_front");
+    public static final SimpleOverlayRenderer WOODEN_COAGULATION_TANK_WALL = new SimpleOverlayRenderer("casings/primitive/coagulation_tank_wall_side");
 
     // Oriented Overlay Renderers
     public static final OrientedOverlayRenderer COAL_BOILER_OVERLAY = new OrientedOverlayRenderer(
@@ -264,7 +265,6 @@ public class Textures {
     public static final OrientedOverlayRenderer CVD_OVERLAY = new OrientedOverlayRenderer("machines/cvd");
     public static final OrientedOverlayRenderer ION_EXCHANGER_OVERLAY = new OrientedOverlayRenderer("machines/ion_exchanger");
     public static final OrientedOverlayRenderer CRYSTALLIZER_OVERLAY = new OrientedOverlayRenderer("machines/crystallizer_overlay");
-    public static final OrientedOverlayRenderer VACUUM_CHAMBER_OVERLAY = new OrientedOverlayRenderer("machines/vacuum_chamber_overlay");
     public static final OrientedOverlayRenderer ION_IMPLANTER_OVERLAY = new OrientedOverlayRenderer("machines/ion_implanter");
     public static final OrientedOverlayRenderer UV_LIGHT_BOX_OVERLAY = new OrientedOverlayRenderer("machines/uv_light_box");
     public static final OrientedOverlayRenderer MASS_FABRICATOR_OVERLAY = new OrientedOverlayRenderer(

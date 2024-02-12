@@ -1,0 +1,18 @@
+{
+  "forge_marker" : 1,
+  "defaults": {
+    "model": "minecraft:cube_all"
+  },
+  "variants" : {
+    "variant" : {
+      "coagulation_tank_wall": {
+        "model": "minecraft:cube_bottom_top",
+        "textures": {
+          "bottom": "gregtech:blocks/casings/primitive/coagulation_tank_wall_bottom",
+          "top": "gregtech:blocks/casings/primitive/coagulation_tank_wall_top",
+          "side": "gregtech:blocks/casings/primitive/coagulation_tank_wall_side"
+        }
+      }
+    }
+  }
+}
