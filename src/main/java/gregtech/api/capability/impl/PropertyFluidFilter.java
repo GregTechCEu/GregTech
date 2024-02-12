@@ -18,6 +18,7 @@ public class PropertyFluidFilter implements IPropertyFluidFilter {
 
     private final int maxFluidTemperature;
     private final boolean gasProof;
+    private final boolean acidProof;
     private final boolean cryoProof;
     private final boolean plasmaProof;
 
@@ -29,6 +30,7 @@ public class PropertyFluidFilter implements IPropertyFluidFilter {
         this.maxFluidTemperature = maxFluidTemperature;
         this.gasProof = gasProof;
         if (acidProof) setCanContain(FluidAttributes.ACID, true);
+        this.acidProof = acidProof;
         this.cryoProof = cryoProof;
         this.plasmaProof = plasmaProof;
     }
@@ -65,6 +67,10 @@ public class PropertyFluidFilter implements IPropertyFluidFilter {
     @Override
     public boolean isGasProof() {
         return this.gasProof;
+    }
+
+    public boolean isAcidProof() {
+        return this.acidProof;
     }
 
     @Override

@@ -1900,6 +1900,7 @@ gregtech.material.pcb_coolant=Dielectric PCB Coolant
 gregtech.material.mash=Mash
 gregtech.material.alcohol=Alcohol
 gregtech.material.vinegar=Vinegar
+gregtech.material.fracturing_fluid=Fracturing Fluid
 
 # Unknown Composition Materials
 gregtech.material.latex=Latex
@@ -2799,8 +2800,17 @@ gregtech.machine.tank_valve.wood.name=Wooden Tank Valve
 gregtech.machine.tank.wood.name=Wooden Multiblock Tank
 gregtech.machine.tank_valve.steel.name=Steel Tank Valve
 gregtech.machine.tank.steel.name=Steel Multiblock Tank
+gregtech.machine.tank_valve.aluminium.name=Aluminium Tank Valve
+gregtech.machine.tank.aluminium.name=Aluminium Multiblock Tank
+gregtech.machine.tank_valve.stainless_steel.name=Stainless Steel Tank Valve
+gregtech.machine.tank.stainless_steel.name=Stainless Steel Multiblock Tank
+gregtech.machine.tank_valve.titanium.name=Titanium Tank Valve
+gregtech.machine.tank.titanium.name=Titanium Multiblock Tank
+gregtech.machine.tank_valve.tungstensteel.name=Tungstensteel Tank Valve
+gregtech.machine.tank.tungstensteel.name=Tungstensteel Multiblock Tank
 
 gregtech.multiblock.tank.tooltip=Fill and drain through the controller or tank valves.
+gregtech.multiblock.tank.tooltip_1=Maximum size: 15x15x15 blocks.
 gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs when facing down.
 
 gregtech.machine.clipboard.name=Clipboard
@@ -5432,6 +5442,7 @@ gregtech.universal.tooltip.item_stored=§dItem Stored: §f%s, %,d + %,d items
 gregtech.universal.tooltip.item_transfer_rate=§bTransfer Rate: §f%,d items/s
 gregtech.universal.tooltip.item_transfer_rate_stacks=§bTransfer Rate: §f%,d stacks/s
 gregtech.universal.tooltip.fluid_storage_capacity=§9Fluid Capacity: §f%,d L
+gregtech.universal.tooltip.fluid_per_block_storage_capacity=§9Fluid Capacity: §f%,d L per Inside Block
 gregtech.universal.tooltip.fluid_storage_capacity_mult=§9Fluid Capacity: §f%,d §7Tanks, §f%,d L §7each
 gregtech.universal.tooltip.fluid_stored=§dFluid Stored: §f%s, %,d L
 gregtech.universal.tooltip.fluid_transfer_rate=§bTransfer Rate: §f%,d L/t
@@ -6438,6 +6449,9 @@ gregtech.machine.coagulation_tank.name=Coagulation Tank
 gregtech.tooltip.parallel_enabled=Can parallelize with §bParallel Control Hatches
 gregtech.tooltip.tiered_hatch_enabled=Requires §bVoltage Control Units§7 to run.
 gregtech.multiblock.tiered_hatch.tooltip=Max Tiered EU/t: §a%s (%s§r)
+
+gregtech.machine.fracker.name=Hydraulic Fracker
+gregtech.multiblock.fracker.tooltip.1=Uses Fracturing Fluid to replenish veins under bedrock.
 
 # multiblock descriptions
 gregtech.multiblock.large_macerator.description=A multiblock Macerator for grinding.

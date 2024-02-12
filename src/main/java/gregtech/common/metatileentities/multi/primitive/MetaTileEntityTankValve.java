@@ -34,16 +34,16 @@ import java.util.List;
 public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart
                                      implements IMultiblockAbilityPart<IFluidHandler> {
 
-    private final boolean isMetal;
+    private final int tier;
 
-    public MetaTileEntityTankValve(ResourceLocation metaTileEntityId, boolean isMetal) {
+    public MetaTileEntityTankValve(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, 0);
-        this.isMetal = isMetal;
+        this.tier = tier;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityTankValve(metaTileEntityId, isMetal);
+        return new MetaTileEntityTankValve(metaTileEntityId, tier);
     }
 
     @Override
@@ -55,9 +55,12 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart
     @Override
     public ICubeRenderer getBaseTexture() {
         if (getController() == null) {
-            if (isMetal)
-                return Textures.SOLID_STEEL_CASING;
-            return Textures.WOOD_WALL;
+            if (tier == 0) return Textures.WOOD_WALL;
+            if (tier == 1) return Textures.SOLID_STEEL_CASING;
+            if (tier == 2) return Textures.FROST_PROOF_CASING;
+            if (tier == 3) return Textures.CLEAN_STAINLESS_STEEL_CASING;
+            if (tier == 4) return Textures.STABLE_TITANIUM_CASING;
+            if (tier == 5) return Textures.ROBUST_TUNGSTENSTEEL_CASING;
         }
         return super.getBaseTexture();
     }

@@ -356,12 +356,6 @@ public class UnknownCompositionMaterials {
                 .flags(STICKY, FLAMMABLE)
                 .build();
 
-        RawOil = new Material.Builder(1581, gregtechId("oil_medium"))
-                .liquid(new FluidBuilder().block().customStill())
-                .color(0x0A0A0A)
-                .flags(STICKY, FLAMMABLE)
-                .build();
-
         OilLight = new Material.Builder(1582, gregtechId("oil_light"))
                 .liquid(new FluidBuilder().block().customStill())
                 .color(0x0A0A0A)
@@ -652,8 +646,12 @@ public class UnknownCompositionMaterials {
 
         Latex = new Material.Builder(1657, gregtechId("latex"))
                 .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(293))
-                .flags(FLAMMABLE)
                 .color(0xFFFADA)
+                .build();
+
+        FracturingFluid = new Material.Builder(1658, gregtechId("fracturing_fluid"))
+                .fluid()
+                .color(0xc79267)
                 .build();
     }
 }

@@ -589,7 +589,6 @@ public class Materials {
 
     public static Material Oil;
     public static Material OilHeavy;
-    public static Material RawOil;
     public static Material OilLight;
     public static Material NaturalGas;
     public static Material SulfuricHeavyFuel;
@@ -700,6 +699,7 @@ public class Materials {
     public static Material RedMud;
     public static Material GalliumLiquor;
     public static Material AcidicREESolution;
+    public static Material FracturingFluid;
 
     /**
      * Second Degree Compounds

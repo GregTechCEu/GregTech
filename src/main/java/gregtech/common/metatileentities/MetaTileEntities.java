@@ -59,6 +59,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityFermentatio
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFixedBedReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidizedBedReactor;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityFracker;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFrothFlotationTank;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
@@ -400,12 +401,21 @@ public class MetaTileEntities {
     public static MetaTileEntityFluidizedBedReactor FLUIDIZED_BED_REACTOR;
     public static MetaTileEntityElectrolyticCell ELECTROLYTIC_CELL;
     public static MetaTileEntityCoagulationTank COAGULATION_TANK;
+    public static MetaTileEntityFracker FRACKER;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
     public static MetaTileEntityTankValve STEEL_TANK_VALVE;
+    public static MetaTileEntityTankValve ALUMINIUM_TANK_VALVE;
+    public static MetaTileEntityTankValve STAINLESS_STEEL_TANK_VALVE;
+    public static MetaTileEntityTankValve TITANIUM_TANK_VALVE;
+    public static MetaTileEntityTankValve TUNGSTENSTEEL_TANK_VALVE;
     public static MetaTileEntityMultiblockTank WOODEN_TANK;
     public static MetaTileEntityMultiblockTank STEEL_TANK;
+    public static MetaTileEntityMultiblockTank ALUMINIUM_TANK;
+    public static MetaTileEntityMultiblockTank STAINLESS_STEEL_TANK;
+    public static MetaTileEntityMultiblockTank TITANIUM_TANK;
+    public static MetaTileEntityMultiblockTank TUNGSTENSTEEL_TANK;
     public static MetaTileEntityDrum WOODEN_DRUM;
     public static MetaTileEntityDrum BRONZE_DRUM;
     public static MetaTileEntityDrum ALUMINIUM_DRUM;
@@ -899,6 +909,9 @@ public class MetaTileEntities {
         ELECTROLYTIC_CELL = registerMetaTileEntity(1077,
                 new MetaTileEntityElectrolyticCell(gregtechId("electrolytic_cell")));
 
+        FRACKER = registerMetaTileEntity(1078,
+                new MetaTileEntityFracker(gregtechId("fracker"), 2));
+
         // MISC MTE's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
@@ -1141,14 +1154,34 @@ public class MetaTileEntities {
 
         // Tanks, IDs 1595-1609
         WOODEN_TANK_VALVE = registerMetaTileEntity(1596,
-                new MetaTileEntityTankValve(gregtechId("tank_valve.wood"), false));
+                new MetaTileEntityTankValve(gregtechId("tank_valve.wood"), 0));
         WOODEN_TANK = registerMetaTileEntity(1597,
-                new MetaTileEntityMultiblockTank(gregtechId("tank.wood"), false, 250 * 1000));
+                new MetaTileEntityMultiblockTank(gregtechId("tank.wood"), 0, 2500));
 
         STEEL_TANK_VALVE = registerMetaTileEntity(1598,
-                new MetaTileEntityTankValve(gregtechId("tank_valve.steel"), true));
+                new MetaTileEntityTankValve(gregtechId("tank_valve.steel"), 1));
         STEEL_TANK = registerMetaTileEntity(1599,
-                new MetaTileEntityMultiblockTank(gregtechId("tank.steel"), true, 1000 * 1000));
+                new MetaTileEntityMultiblockTank(gregtechId("tank.steel"), 1, 10000));
+
+        ALUMINIUM_TANK_VALVE = registerMetaTileEntity(1600,
+                new MetaTileEntityTankValve(gregtechId("tank_valve.aluminium"), 2));
+        ALUMINIUM_TANK = registerMetaTileEntity(1601,
+                new MetaTileEntityMultiblockTank(gregtechId("tank.aluminium"), 2, 20000));
+
+        STAINLESS_STEEL_TANK_VALVE = registerMetaTileEntity(1602,
+                new MetaTileEntityTankValve(gregtechId("tank_valve.stainless_steel"), 3));
+        STAINLESS_STEEL_TANK = registerMetaTileEntity(1603,
+                new MetaTileEntityMultiblockTank(gregtechId("tank.stainless_steel"), 3, 40000));
+
+        TITANIUM_TANK_VALVE = registerMetaTileEntity(1604,
+                new MetaTileEntityTankValve(gregtechId("tank_valve.titanium"), 4));
+        TITANIUM_TANK = registerMetaTileEntity(1605,
+                new MetaTileEntityMultiblockTank(gregtechId("tank.titanium"), 4, 80000));
+
+        TUNGSTENSTEEL_TANK_VALVE = registerMetaTileEntity(1606,
+                new MetaTileEntityTankValve(gregtechId("tank_valve.tungstensteel"), 5));
+        TUNGSTENSTEEL_TANK = registerMetaTileEntity(1607,
+                new MetaTileEntityMultiblockTank(gregtechId("tank.tungstensteel"), 5, 160000));
 
         // Drums, IDs 1610-1624
         WOODEN_DRUM = registerMetaTileEntity(1610,
