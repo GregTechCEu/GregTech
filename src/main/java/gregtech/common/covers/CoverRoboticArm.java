@@ -1,5 +1,6 @@
 package gregtech.common.covers;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
@@ -174,6 +175,8 @@ public class CoverRoboticArm extends CoverConveyor {
             this.transferMode = transferMode;
             this.getCoverableView().markDirty();
             this.itemFilterContainer.setMaxTransferSize(transferMode.maxStackSize);
+            writeCustomData(GregtechDataCodes.UPDATE_TRANSFER_MODE,
+                    buffer -> buffer.writeByte(this.transferMode.ordinal()));
         }
     }
 
@@ -234,6 +237,15 @@ public class CoverRoboticArm extends CoverConveyor {
         super.readInitialSyncData(packetBuffer);
         this.transferMode = TransferMode.VALUES[packetBuffer.readByte()];
         this.itemFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
+    }
+
+    @Override
+    public void readCustomData(int discriminator, @NotNull PacketBuffer buf) {
+        super.readCustomData(discriminator, buf);
+        if (discriminator == GregtechDataCodes.UPDATE_TRANSFER_MODE) {
+            this.transferMode = TransferMode.VALUES[buf.readByte()];
+            this.itemFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
+        }
     }
 
     @Override
