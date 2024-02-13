@@ -2810,7 +2810,7 @@ gregtech.machine.tank_valve.tungstensteel.name=Tungstensteel Tank Valve
 gregtech.machine.tank.tungstensteel.name=Tungstensteel Multiblock Tank
 
 gregtech.multiblock.tank.tooltip=Fill and drain through the controller or tank valves.
-gregtech.multiblock.tank.tooltip_1=Maximum size: 15x15x15 blocks.
+gregtech.multiblock.tank.tooltip_1=§6Maximum size: 15x15x15 blocks.
 gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs when facing down.
 
 gregtech.machine.clipboard.name=Clipboard

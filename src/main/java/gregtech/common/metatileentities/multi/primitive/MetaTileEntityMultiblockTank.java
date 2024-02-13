@@ -77,6 +77,10 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         initializeInventory();
     }
 
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
+
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
@@ -115,6 +119,14 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
      * Scans for blocks around the controller to update the dimensions
      */
     public boolean updateStructureDimensions() {
+        System.out.println("gfggg");
+        System.out.println("gfggg");
+        System.out.println("gfggg");
+        System.out.println("gfggg");
+        System.out.println("gfggg");
+        System.out.println("gfggg");
+        System.out.println("gfggg");
+
         World world = getWorld();
         EnumFacing front = getFrontFacing();
         EnumFacing back = front.getOpposite();
@@ -162,12 +174,18 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         this.bDist = bDist;
         this.hDist = hDist;
 
+        System.out.println(lDist);
+        System.out.println(rDist);
+        System.out.println(bDist);
+        System.out.println(hDist);
+
         writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
             buf.writeInt(this.lDist);
             buf.writeInt(this.rDist);
             buf.writeInt(this.bDist);
             buf.writeInt(this.hDist);
         });
+
         return true;
     }
 
@@ -202,11 +220,11 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         }
 
         // build each row of the structure
-        StringBuilder borderBuilder = new StringBuilder();     // EEEEE
-        StringBuilder controllerBuilder = new StringBuilder(); // EESEE
-        StringBuilder wallBuilder = new StringBuilder();       // EWWWE
-        StringBuilder insideBuilder = new StringBuilder();     // X X
-        StringBuilder roofBuilder = new StringBuilder();       // BFFFB
+        StringBuilder borderBuilder = new StringBuilder();
+        StringBuilder controllerBuilder = new StringBuilder();
+        StringBuilder wallBuilder = new StringBuilder();
+        StringBuilder insideBuilder = new StringBuilder();
+        StringBuilder roofBuilder = new StringBuilder();
 
         // everything to the left of the controller
         for (int i = 0; i < lDist; i++) {
@@ -214,7 +232,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             controllerBuilder.append("E");
             if (i == 0) {
                 wallBuilder.append("E");
-                insideBuilder.append("E");
+                insideBuilder.append("W");
                 roofBuilder.append("E");
             } else {
                 wallBuilder.append("W");
@@ -227,17 +245,17 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         borderBuilder.append("E");
         controllerBuilder.append("S");
 
-        wallBuilder.append("E");
+        wallBuilder.append("W");
         insideBuilder.append(" ");
-        roofBuilder.append("F");
+        roofBuilder.append("E");
 
         // everything to the right of the controller
         for (int i = 0; i < rDist; i++) {
-            borderBuilder.append("B");
+            borderBuilder.append("E");
             controllerBuilder.append("E");
             if (i == rDist - 1) {
                 wallBuilder.append("E");
-                insideBuilder.append("E");
+                insideBuilder.append("W");
                 roofBuilder.append("E");
             } else {
                 wallBuilder.append("W");
@@ -262,14 +280,27 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         slice[0] = wallBuilder.toString();
         slice[slice.length - 1] = roofBuilder.toString();
 
-        TraceabilityPredicate wallPredicate = states(getCasingState(), (IBlockState) getValve(), getGlass());
-        TraceabilityPredicate edgePredicate = states(getCasingState(), (IBlockState) getValve());
+        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlass()).or(metaTileEntities(getValve()));
+        TraceabilityPredicate edgePredicate = states(getCasingState()).or(metaTileEntities(getValve()));
+
+        System.out.println("FrontWall");
+        for (String s : frontWall) {
+            System.out.println(s);
+        }
+        System.out.println("Slice");
+        for (String s : slice) {
+            System.out.println(s);
+        }
+        System.out.println("EndWall");
+        for (String s : backWall) {
+            System.out.println(s);
+        }
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()
-                .aisle(frontWall)
-                .aisle(slice).setRepeatable(bDist - 1)
                 .aisle(backWall)
+                .aisle(slice).setRepeatable(bDist)
+                .aisle(frontWall)
                 .where('S', selfPredicate())
                 .where('W', wallPredicate)
                 .where('E', edgePredicate)
