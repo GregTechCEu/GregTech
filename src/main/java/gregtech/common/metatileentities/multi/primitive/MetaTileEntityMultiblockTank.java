@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.primitive;
 
+import codechicken.lib.vec.Cuboid6;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
@@ -26,6 +28,13 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.BlockGlass;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -86,6 +95,22 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
+    public void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        volume = (lDist + rDist - 1) * bDist * hDist;
+
+        int fluidAmount = getFluidAmount();
+        String fluidName = getFluidName();
+        System.out.println(fluidName);
+
+        initializeInventory();
+
+        if (fluidAmount > 0) {
+            exportFluids.getTankAt(0).fill(FluidRegistry.getFluidStack("water", fluidAmount), true);
+        }
+    }
+
+    @Override
     protected void initializeInventory() {
         super.initializeInventory();
 
@@ -104,6 +129,41 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         this.fluidInventory = tank;
     }
 
+    public void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                                FluidTank tank, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
+        float lastBrightnessX = OpenGlHelper.lastBrightnessX;
+        float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+        if (world != null) {
+            renderState.setBrightness(world, pos);
+        }
+        FluidStack stack = tank.getFluid();
+        if (stack == null || stack.amount == 0)
+            return;
+
+        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0,
+                14.9375 / 16.0, 14.9375 / 16.0);
+
+        double fillFraction = (double) stack.amount / tank.getCapacity();
+        if (tank.getFluid().getFluid().isGaseous()) {
+            partialFluidBox.min.y = Math.max(13.9375 - (11.875 * fillFraction), 2.0) / 16.0;
+        } else {
+            partialFluidBox.max.y = Math.min((11.875 * fillFraction) + 2.0625, 14.0) / 16.0;
+        }
+
+        renderState.setFluidColour(stack);
+        ResourceLocation fluidStill = stack.getFluid().getStill(stack);
+        TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
+                .getAtlasSprite(fluidStill.toString());
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
+                    BlockRenderLayer.CUTOUT_MIPPED);
+        }
+
+        GlStateManager.resetColor();
+
+        renderState.reset();
+    }
+
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityMultiblockTank(metaTileEntityId, tier, volumePerBlock);
@@ -111,22 +171,6 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     @Override
     protected void updateFormedValid() {}
-
-    @Override
-    public void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
-        volume = (lDist + rDist - 1) * bDist * hDist;
-
-        int fluidAmount = getFluidAmount();
-        String fluidName = getFluidName();
-        System.out.println(fluidName);
-
-        initializeInventory();
-
-        if (fluidAmount > 0) {
-            exportFluids.getTankAt(0).fill(FluidRegistry.getFluidStack("water", fluidAmount), true);
-        }
-    }
 
     /**
      * Scans for blocks around the controller to update the dimensions
@@ -379,7 +423,10 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
+
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
+
+        //renderTankFluid(renderState, translation, pipeline, exportFluids.h, );
     }
 
     @SideOnly(Side.CLIENT)
