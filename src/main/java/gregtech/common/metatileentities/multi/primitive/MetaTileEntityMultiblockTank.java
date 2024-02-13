@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.primitive;
 import codechicken.lib.vec.Cuboid6;
 
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.PropertyFluidFilter;
@@ -21,6 +22,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockSteamCasing;
@@ -99,14 +101,13 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         super.formStructure(context);
         volume = (lDist + rDist - 1) * bDist * hDist;
 
-        int fluidAmount = getFluidAmount();
-        String fluidName = getFluidName();
-        System.out.println(fluidName);
+        //Cache fluid and load inventory
+        var fluid = exportFluids.getTankAt(0).getFluid();
 
         initializeInventory();
 
-        if (fluidAmount > 0) {
-            exportFluids.getTankAt(0).fill(FluidRegistry.getFluidStack("water", fluidAmount), true);
+        if (fluid != null) {
+            exportFluids.getTankAt(0).fill(fluid, true);
         }
     }
 
@@ -126,22 +127,25 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         tank.setFilter(filter);
 
         this.exportFluids = this.importFluids = new FluidTankList(true, tank);
+
         this.fluidInventory = tank;
     }
 
-    public void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                                FluidTank tank, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
+    public void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         if (world != null) {
             renderState.setBrightness(world, pos);
         }
+
+        var tank = importFluids.getTankAt(0);
         FluidStack stack = tank.getFluid();
+
         if (stack == null || stack.amount == 0)
             return;
 
-        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0,
-                14.9375 / 16.0, 14.9375 / 16.0);
+        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375,
+                14.9375, 14.9375);
 
         double fillFraction = (double) stack.amount / tank.getCapacity();
         if (tank.getFluid().getFluid().isGaseous()) {
@@ -154,6 +158,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         ResourceLocation fluidStill = stack.getFluid().getStill(stack);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
                 .getAtlasSprite(fluidStill.toString());
+
         for (EnumFacing facing : EnumFacing.VALUES) {
             Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
                     BlockRenderLayer.CUTOUT_MIPPED);
@@ -426,7 +431,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
 
-        //renderTankFluid(renderState, translation, pipeline, exportFluids.h, );
+        renderTankFluid(renderState, translation, pipeline, getWorld(), getPos(), getFrontFacing());
     }
 
     @SideOnly(Side.CLIENT)
@@ -522,25 +527,5 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
                 .where('G', getGlass())
                 .where('S', this, EnumFacing.SOUTH)
                 .where(' ', Blocks.AIR.getDefaultState()).build());
-    }
-
-    private String getFluidName() {
-        var fluid = exportFluids.getTankAt(0).getFluid();
-
-        if (fluid != null) {
-            return fluid.getUnlocalizedName();
-        } else {
-            return "";
-        }
-    }
-
-    private int getFluidAmount() {
-        var fluid = exportFluids.getTankAt(0).getFluid();
-
-        if (fluid != null) {
-            return fluid.amount;
-        } else {
-            return 0;
-        }
     }
 }
