@@ -27,6 +27,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.BlockGlass;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -39,6 +40,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -50,6 +52,8 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,7 +72,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     private int hDist = 0;
 
     public static final int MIN_RADIUS = 1;
-    public static final int MIN_DEPTH = 2;
+    public static final int MIN_HEIGHT = 1;
 
     public MetaTileEntityMultiblockTank(ResourceLocation metaTileEntityId, int tier, int volumePerBlock) {
         super(metaTileEntityId);
@@ -111,32 +115,38 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @Override
     public void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        volume = (lDist + rDist) * bDist + hDist;
+        volume = (lDist + rDist - 1) * bDist * hDist;
+
+        int fluidAmount = getFluidAmount();
+        String fluidName = getFluidName();
+        System.out.println(fluidName);
+
         initializeInventory();
+
+        if (fluidAmount > 0) {
+            exportFluids.getTankAt(0).fill(FluidRegistry.getFluidStack("water", fluidAmount), true);
+        }
     }
 
     /**
      * Scans for blocks around the controller to update the dimensions
      */
     public boolean updateStructureDimensions() {
-        System.out.println("gfggg");
-        System.out.println("gfggg");
-        System.out.println("gfggg");
-        System.out.println("gfggg");
-        System.out.println("gfggg");
-        System.out.println("gfggg");
-        System.out.println("gfggg");
-
         World world = getWorld();
         EnumFacing front = getFrontFacing();
         EnumFacing back = front.getOpposite();
-        EnumFacing left = front.rotateYCCW();
+        EnumFacing left = back.rotateYCCW();
         EnumFacing right = left.getOpposite();
 
-        BlockPos.MutableBlockPos lPos = new BlockPos.MutableBlockPos(getPos());
-        BlockPos.MutableBlockPos rPos = new BlockPos.MutableBlockPos(getPos());
-        BlockPos.MutableBlockPos bPos = new BlockPos.MutableBlockPos(getPos());
-        BlockPos.MutableBlockPos hPos = new BlockPos.MutableBlockPos(getPos());
+        //The distance of the edges is calculated from a position inside the container
+        BlockPos.MutableBlockPos innerPos = new BlockPos.MutableBlockPos(getPos());
+        innerPos.move(back);
+        innerPos.move(EnumFacing.UP);
+
+        BlockPos.MutableBlockPos lPos = new BlockPos.MutableBlockPos(innerPos);
+        BlockPos.MutableBlockPos rPos = new BlockPos.MutableBlockPos(innerPos);
+        BlockPos.MutableBlockPos bPos = new BlockPos.MutableBlockPos(innerPos);
+        BlockPos.MutableBlockPos hPos = new BlockPos.MutableBlockPos(innerPos);
 
         // find the distances from the controller to the plascrete blocks on one horizontal axis and the Y axis
         // repeatable aisles take care of the second horizontal axis
@@ -164,7 +174,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             if (hDist != 0) break;
         }
 
-        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || bDist < MIN_RADIUS || hDist < MIN_DEPTH) {
+        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || bDist < MIN_RADIUS || hDist < MIN_HEIGHT) {
             invalidateStructure();
             return false;
         }
@@ -173,11 +183,6 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         this.rDist = rDist;
         this.bDist = bDist;
         this.hDist = hDist;
-
-        System.out.println(lDist);
-        System.out.println(rDist);
-        System.out.println(bDist);
-        System.out.println(hDist);
 
         writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
             buf.writeInt(this.lDist);
@@ -197,7 +202,8 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
      */
     public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
                                @NotNull EnumFacing direction) {
-        return world.getBlockState(pos.move(direction)) == getCasingState() || world.getBlockState(pos.move(direction)) == getValve();
+        IBlockState blockState = world.getBlockState(pos.move(direction));
+        return blockState == getCasingState() || blockState == getValve() || blockState == getGlass();
     }
 
     @Override
@@ -211,7 +217,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         if (lDist < MIN_RADIUS) lDist = MIN_RADIUS;
         if (rDist < MIN_RADIUS) rDist = MIN_RADIUS;
         if (bDist < MIN_RADIUS) bDist = MIN_RADIUS;
-        if (hDist < MIN_DEPTH) hDist = MIN_DEPTH;
+        if (hDist < MIN_HEIGHT) hDist = MIN_HEIGHT;
 
         if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
             int tmp = lDist;
@@ -247,7 +253,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
         wallBuilder.append("W");
         insideBuilder.append(" ");
-        roofBuilder.append("E");
+        roofBuilder.append("W");
 
         // everything to the right of the controller
         for (int i = 0; i < rDist; i++) {
@@ -265,36 +271,23 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         }
 
         // build each slice of the structure
-        String[] frontWall = new String[hDist + 1]; // "EESEE", "EWWWE", "EWWWE", "EWWWE", "EEEEE"
+        String[] frontWall = new String[hDist + 2]; // "EESEE", "EWWWE", "EWWWE", "EWWWE", "EEEEE"
         Arrays.fill(frontWall, wallBuilder.toString());
         frontWall[0] = controllerBuilder.toString();
         frontWall[frontWall.length - 1] = borderBuilder.toString();
 
-        String[] backWall = new String[hDist + 1]; // "EEEEE", "EWWWE", "EWWWE", "EWWWE", "EEEEE"
+        String[] backWall = new String[hDist + 2]; // "EEEEE", "EWWWE", "EWWWE", "EWWWE", "EEEEE"
         Arrays.fill(backWall, wallBuilder.toString());
         backWall[0] = borderBuilder.toString();
         backWall[backWall.length - 1] = borderBuilder.toString();
 
-        String[] slice = new String[hDist + 1]; // "EEEEE", "W   W", "W   W", "W   W", "EWWWE"
+        String[] slice = new String[hDist + 2]; // "EEEEE", "W   W", "W   W", "W   W", "EWWWE"
         Arrays.fill(slice, insideBuilder.toString());
         slice[0] = wallBuilder.toString();
         slice[slice.length - 1] = roofBuilder.toString();
 
         TraceabilityPredicate wallPredicate = states(getCasingState(), getGlass()).or(metaTileEntities(getValve()));
         TraceabilityPredicate edgePredicate = states(getCasingState()).or(metaTileEntities(getValve()));
-
-        System.out.println("FrontWall");
-        for (String s : frontWall) {
-            System.out.println(s);
-        }
-        System.out.println("Slice");
-        for (String s : slice) {
-            System.out.println(s);
-        }
-        System.out.println("EndWall");
-        for (String s : backWall) {
-            System.out.println(s);
-        }
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()
@@ -331,8 +324,8 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     private IBlockState getGlass() {
-        if (tier == 0) return (IBlockState) Blocks.GLASS;
-        if (tier == 1) return (IBlockState) Blocks.GLASS;
+        if (tier == 0) return MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.WOOD_WALL);
+        if (tier == 1) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
         if (tier == 2) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
         if (tier == 3) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
         if (tier == 4) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS);
@@ -437,8 +430,8 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         super.readFromNBT(data);
         this.lDist = data.hasKey("lDist") ? data.getInteger("lDist") : this.lDist;
         this.rDist = data.hasKey("rDist") ? data.getInteger("rDist") : this.rDist;
-        this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
         this.bDist = data.hasKey("bDist") ? data.getInteger("bDist") : this.bDist;
+        this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
         reinitializeStructurePattern();
     }
 
@@ -482,5 +475,25 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
                 .where('G', getGlass())
                 .where('S', this, EnumFacing.SOUTH)
                 .where(' ', Blocks.AIR.getDefaultState()).build());
+    }
+
+    private String getFluidName() {
+        var fluid = exportFluids.getTankAt(0).getFluid();
+
+        if (fluid != null) {
+            return fluid.getUnlocalizedName();
+        } else {
+            return "";
+        }
+    }
+
+    private int getFluidAmount() {
+        var fluid = exportFluids.getTankAt(0).getFluid();
+
+        if (fluid != null) {
+            return fluid.amount;
+        } else {
+            return 0;
+        }
     }
 }
