@@ -172,7 +172,7 @@ public class SecondDegreeMaterials {
 
         Pitchblende = new Material.Builder(2028, gregtechId("pitchblende"))
                 .dust(3).ore(true)
-                .color(0xC8D200)
+                .color(0xC8D200).iconSet(RADIOACTIVE)
                 .components(Uraninite, 3, Thorium, 1, Lead, 1)
                 .build()
                 .setFormula("(UO2)3ThPb", true);

@@ -1,0 +1,7 @@
+{
+  "parent": "gregtech:item/material_sets/dull/gem_chipped",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/dull/gem_chipped",
+    "layer1": "gregtech:items/material_sets/radioactive/radioactive_overlay"
+  }
+}

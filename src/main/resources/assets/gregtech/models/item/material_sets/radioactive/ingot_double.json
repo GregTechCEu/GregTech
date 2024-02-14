@@ -1,0 +1,6 @@
+{
+  "parent": "gregtech:item/material_sets/metallic/ingot_double",
+  "textures": {
+    "layer1": "gregtech:items/material_sets/radioactive/radioactive_overlay"
+  }
+}

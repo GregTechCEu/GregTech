@@ -1,0 +1,6 @@
+{
+  "parent": "gregtech:item/material_sets/metallic/dust_impure",
+  "textures": {
+    "layer1": "gregtech:items/material_sets/radioactive/dust_impure_overlay"
+  }
+}

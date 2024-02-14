@@ -615,63 +615,70 @@ public class ElementMaterials {
                 .itemPipeProperties(512, 4.0f)
                 .build();
 
-        Plutonium239 = new Material.Builder(81, gregtechId("plutonium"))
+        Plutonium = new Material.Builder(81, gregtechId("plutonium"))
                 .dust()
                 .liquid(new FluidBuilder().temperature(913))
-                .color(0xF03232).iconSet(METALLIC)
+                .color(0xc92a2a).iconSet(RADIOACTIVE)
+                .element(Elements.Pu)
+                .build();
+
+        Plutonium239 = new Material.Builder(82, gregtechId("plutonium_239"))
+                .dust()
+                .liquid(new FluidBuilder().temperature(913))
+                .color(0xF03232).iconSet(RADIOACTIVE)
                 .element(Elements.Pu239)
                 .build();
 
-        Plutonium241 = new Material.Builder(82, gregtechId("plutonium_241"))
+        Plutonium241 = new Material.Builder(83, gregtechId("plutonium_241"))
                 .dust()
                 .liquid(new FluidBuilder().temperature(913))
-                .color(0xFA4646).iconSet(SHINY)
+                .color(0xFA4646).iconSet(RADIOACTIVE)
                 .element(Elements.Pu241)
                 .build();
 
-        Potassium = new Material.Builder(83, gregtechId("potassium"))
+        Potassium = new Material.Builder(84, gregtechId("potassium"))
                 .dust(1)
                 .liquid(new FluidBuilder().temperature(337))
                 .color(0xBEDCFF).iconSet(METALLIC)
                 .element(Elements.K)
                 .build();
 
-        Praseodymium = new Material.Builder(84, gregtechId("praseodymium"))
+        Praseodymium = new Material.Builder(85, gregtechId("praseodymium"))
                 .dust()
                 .color(0xCECECE).iconSet(METALLIC)
                 .element(Elements.Pr)
                 .build();
 
-        Promethium = new Material.Builder(85, gregtechId("promethium"))
+        Promethium = new Material.Builder(86, gregtechId("promethium"))
                 .dust()
                 .iconSet(METALLIC)
                 .element(Elements.Pm)
                 .build();
 
-        Protactinium = new Material.Builder(86, gregtechId("protactinium"))
+        Protactinium = new Material.Builder(87, gregtechId("protactinium"))
                 .dust()
                 .color(0xA78B6D).iconSet(METALLIC)
                 .element(Elements.Pa)
                 .build();
 
-        Radon = new Material.Builder(87, gregtechId("radon"))
+        Radon = new Material.Builder(88, gregtechId("radon"))
                 .gas()
                 .color(0xFF39FF)
                 .element(Elements.Rn)
                 .build();
 
-        Radium = new Material.Builder(88, gregtechId("radium"))
+        Radium = new Material.Builder(89, gregtechId("radium"))
                 .color(0xFFFFCD).iconSet(SHINY)
                 .element(Elements.Ra)
                 .build();
 
-        Rhenium = new Material.Builder(89, gregtechId("rhenium"))
+        Rhenium = new Material.Builder(90, gregtechId("rhenium"))
                 .dust()
                 .color(0xB6BAC3).iconSet(SHINY)
                 .element(Elements.Re)
                 .build();
 
-        Rhodium = new Material.Builder(90, gregtechId("rhodium"))
+        Rhodium = new Material.Builder(91, gregtechId("rhodium"))
                 .ingot().fluid()
                 .color(0xDC0C58).iconSet(BRIGHT)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_FINE_WIRE)
@@ -682,18 +689,18 @@ public class ElementMaterials {
                         .vacuumStats(VA[HV]))
                 .build();
 
-        Roentgenium = new Material.Builder(91, gregtechId("roentgenium"))
+        Roentgenium = new Material.Builder(92, gregtechId("roentgenium"))
                 .color(0xE3FDEC).iconSet(SHINY)
                 .element(Elements.Rg)
                 .build();
 
-        Rubidium = new Material.Builder(92, gregtechId("rubidium"))
+        Rubidium = new Material.Builder(93, gregtechId("rubidium"))
                 .dust()
                 .color(0xF01E1E).iconSet(SHINY)
                 .element(Elements.Rb)
                 .build();
 
-        Ruthenium = new Material.Builder(93, gregtechId("ruthenium"))
+        Ruthenium = new Material.Builder(94, gregtechId("ruthenium"))
                 .ingot().fluid()
                 .color(0x50ACCD).iconSet(SHINY)
                 .flags(GENERATE_FOIL, GENERATE_GEAR)
@@ -704,12 +711,12 @@ public class ElementMaterials {
                         .vacuumStats(VA[HV], 200))
                 .build();
 
-        Rutherfordium = new Material.Builder(94, gregtechId("rutherfordium"))
+        Rutherfordium = new Material.Builder(95, gregtechId("rutherfordium"))
                 .color(0xFFF6A1).iconSet(SHINY)
                 .element(Elements.Rf)
                 .build();
 
-        Samarium = new Material.Builder(95, gregtechId("samarium"))
+        Samarium = new Material.Builder(96, gregtechId("samarium"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1345))
                 .color(0xFFFFCC).iconSet(METALLIC)
@@ -720,31 +727,31 @@ public class ElementMaterials {
                         .vacuumStats(VA[HV], 200))
                 .build();
 
-        Scandium = new Material.Builder(96, gregtechId("scandium"))
+        Scandium = new Material.Builder(97, gregtechId("scandium"))
                 .dust()
                 .iconSet(METALLIC)
                 .element(Elements.Sc)
                 .build();
 
-        Seaborgium = new Material.Builder(97, gregtechId("seaborgium"))
+        Seaborgium = new Material.Builder(98, gregtechId("seaborgium"))
                 .color(0x19C5FF).iconSet(SHINY)
                 .element(Elements.Sg)
                 .build();
 
-        Selenium = new Material.Builder(98, gregtechId("selenium"))
+        Selenium = new Material.Builder(99, gregtechId("selenium"))
                 .dust()
                 .color(0xB6BA6B).iconSet(SHINY)
                 .element(Elements.Se)
                 .build();
 
-        Silicon = new Material.Builder(99, gregtechId("silicon"))
+        Silicon = new Material.Builder(100, gregtechId("silicon"))
                 .dust().fluid()
                 .color(0x3C3C50).iconSet(METALLIC)
                 .flags(GENERATE_BOULE, GENERATE_WAFER)
                 .element(Elements.Si)
                 .build();
 
-        Silver = new Material.Builder(100, gregtechId("silver"))
+        Silver = new Material.Builder(101, gregtechId("silver"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1235))
                 .color(0xDCDCFF).iconSet(SHINY)
@@ -754,26 +761,26 @@ public class ElementMaterials {
                 .cableProperties(V[HV], 1, 1)
                 .build();
 
-        Sodium = new Material.Builder(101, gregtechId("sodium"))
+        Sodium = new Material.Builder(102, gregtechId("sodium"))
                 .dust()
                 .color(0x000096).iconSet(METALLIC)
                 .element(Elements.Na)
                 .build();
 
-        Strontium = new Material.Builder(102, gregtechId("strontium"))
+        Strontium = new Material.Builder(103, gregtechId("strontium"))
                 .dust()
                 .color(0xC8C8C8).iconSet(METALLIC)
                 .element(Elements.Sr)
                 .build();
 
-        Sulfur = new Material.Builder(103, gregtechId("sulfur"))
+        Sulfur = new Material.Builder(104, gregtechId("sulfur"))
                 .dust()
                 .color(0xC8C800)
                 .flags(FLAMMABLE)
                 .element(Elements.S)
                 .build();
 
-        Tantalum = new Material.Builder(104, gregtechId("tantalum"))
+        Tantalum = new Material.Builder(105, gregtechId("tantalum"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(3290))
                 .color(0x69B7FF).iconSet(METALLIC)
@@ -781,49 +788,49 @@ public class ElementMaterials {
                 .element(Elements.Ta)
                 .build();
 
-        Technetium = new Material.Builder(105, gregtechId("technetium"))
+        Technetium = new Material.Builder(106, gregtechId("technetium"))
                 .dust()
                 .color(0x545455).iconSet(SHINY)
                 .element(Elements.Tc)
                 .build();
 
-        Tellurium = new Material.Builder(106, gregtechId("tellurium"))
+        Tellurium = new Material.Builder(107, gregtechId("tellurium"))
                 .dust()
                 .iconSet(METALLIC)
                 .element(Elements.Te)
                 .build();
 
-        Tennessine = new Material.Builder(107, gregtechId("tennessine"))
+        Tennessine = new Material.Builder(108, gregtechId("tennessine"))
                 .color(0x977FD6).iconSet(SHINY)
                 .element(Elements.Ts)
                 .build();
 
-        Terbium = new Material.Builder(108, gregtechId("terbium"))
+        Terbium = new Material.Builder(109, gregtechId("terbium"))
                 .dust()
                 .iconSet(METALLIC)
                 .element(Elements.Tb)
                 .build();
 
-        Thorium = new Material.Builder(109, gregtechId("thorium"))
+        Thorium = new Material.Builder(110, gregtechId("thorium"))
                 .dust()
                 .liquid(new FluidBuilder().temperature(2023))
                 .color(0x001E00).iconSet(SHINY)
                 .element(Elements.Th)
                 .build();
 
-        Thallium = new Material.Builder(110, gregtechId("thallium"))
+        Thallium = new Material.Builder(111, gregtechId("thallium"))
                 .dust()
                 .color(0xC1C1DE).iconSet(SHINY)
                 .element(Elements.Tl)
                 .build();
 
-        Thulium = new Material.Builder(111, gregtechId("thulium"))
+        Thulium = new Material.Builder(112, gregtechId("thulium"))
                 .dust()
                 .iconSet(METALLIC)
                 .element(Elements.Tm)
                 .build();
 
-        Tin = new Material.Builder(112, gregtechId("tin"))
+        Tin = new Material.Builder(113, gregtechId("tin"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(505))
                 .plasma()
@@ -834,7 +841,7 @@ public class ElementMaterials {
                 .itemPipeProperties(4096, 0.5f)
                 .build();
 
-        Titanium = new Material.Builder(113, gregtechId("titanium"))
+        Titanium = new Material.Builder(114, gregtechId("titanium"))
                 .ingot(3).fluid()
                 .color(0xDCA0F0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_GEAR, GENERATE_FRAME)
@@ -849,14 +856,14 @@ public class ElementMaterials {
                         .vacuumStats(VA[HV]))
                 .build();
 
-        Tritium = new Material.Builder(114, gregtechId("tritium"))
+        Tritium = new Material.Builder(115, gregtechId("tritium"))
                 .gas(new FluidBuilder().customStill())
                 .color(0xFC5C5C)
                 .iconSet(METALLIC)
                 .element(Elements.T)
                 .build();
 
-        Tungsten = new Material.Builder(115, gregtechId("tungsten"))
+        Tungsten = new Material.Builder(116, gregtechId("tungsten"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(3695))
                 .color(0x323232).iconSet(METALLIC)
@@ -871,49 +878,57 @@ public class ElementMaterials {
                         .vacuumStats(VA[HV], 300))
                 .build();
 
-        Uranium238 = new Material.Builder(116, gregtechId("uranium"))
+        Uranium = new Material.Builder(117, gregtechId("uranium"))
                 .dust()
                 .liquid(new FluidBuilder().temperature(1405))
-                .color(0x32F032).iconSet(METALLIC)
+                .color(0x2eb82e).iconSet(RADIOACTIVE)
+                .flags(EXT_METAL)
+                .element(Elements.U)
+                .build();
+
+        Uranium238 = new Material.Builder(118, gregtechId("uranium_238"))
+                .dust()
+                .liquid(new FluidBuilder().temperature(1405))
+                .color(0x32F032).iconSet(RADIOACTIVE)
                 .flags(EXT_METAL)
                 .element(Elements.U238)
                 .build();
 
-        Uranium235 = new Material.Builder(117, gregtechId("uranium_235"))
+        Uranium235 = new Material.Builder(119, gregtechId("uranium_235"))
                 .dust()
                 .liquid(new FluidBuilder().temperature(1405))
-                .color(0x46FA46).iconSet(SHINY)
+                .color(0x46FA46).iconSet(RADIOACTIVE)
                 .flags(EXT_METAL)
                 .element(Elements.U235)
                 .build();
 
-        Vanadium = new Material.Builder(118, gregtechId("vanadium"))
+        Vanadium = new Material.Builder(120, gregtechId("vanadium"))
                 .ingot().fluid()
                 .color(0x323232).iconSet(METALLIC)
                 .element(Elements.V)
                 .blast(2183, GasTier.MID)
                 .build();
 
-        Xenon = new Material.Builder(119, gregtechId("xenon"))
+        Xenon = new Material.Builder(121, gregtechId("xenon"))
                 .gas()
                 .color(0x00FFFF)
                 .element(Elements.Xe)
                 .build();
 
-        Ytterbium = new Material.Builder(120, gregtechId("ytterbium"))
+        Ytterbium = new Material.Builder(122, gregtechId("ytterbium"))
                 .dust()
                 .color(0xA7A7A7).iconSet(METALLIC)
                 .element(Elements.Yb)
                 .build();
 
-        Yttrium = new Material.Builder(121, gregtechId("yttrium"))
+        Yttrium = new Material.Builder(123, gregtechId("yttrium"))
                 .ingot().fluid()
                 .color(0x76524C).iconSet(METALLIC)
                 .element(Elements.Y)
                 .blast(1799)
                 .build();
 
-        Zinc = new Material.Builder(122, gregtechId("zinc"))
+        Zinc = new Material.Builder(124, gregtechId("zinc"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(693))
                 .color(0xEBEBFA).iconSet(METALLIC)
@@ -921,13 +936,13 @@ public class ElementMaterials {
                 .element(Elements.Zn)
                 .build();
 
-        Zirconium = new Material.Builder(123, gregtechId("zirconium"))
+        Zirconium = new Material.Builder(125, gregtechId("zirconium"))
                 .dust()
                 .color(0xC8FFFF).iconSet(METALLIC)
                 .element(Elements.Zr)
                 .build();
 
-        Naquadah = new Material.Builder(124, gregtechId("naquadah"))
+        Naquadah = new Material.Builder(126, gregtechId("naquadah"))
                 .ingot(4)
                 .liquid(new FluidBuilder().customStill())
                 .ore()
@@ -943,7 +958,7 @@ public class ElementMaterials {
                         .vacuumStats(VA[EV], 150))
                 .build();
 
-        NaquadahEnriched = new Material.Builder(125, gregtechId("naquadah_enriched"))
+        NaquadahEnriched = new Material.Builder(127, gregtechId("naquadah_enriched"))
                 .ingot(4)
                 .liquid(new FluidBuilder().customStill())
                 .color(0x3C3C3C).iconSet(METALLIC)
@@ -955,7 +970,7 @@ public class ElementMaterials {
                         .vacuumStats(VA[EV], 150))
                 .build();
 
-        Naquadria = new Material.Builder(126, gregtechId("naquadria"))
+        Naquadria = new Material.Builder(128, gregtechId("naquadria"))
                 .ingot(3)
                 .liquid(new FluidBuilder().customStill())
                 .color(0x1E1E1E).iconSet(SHINY)
@@ -968,7 +983,7 @@ public class ElementMaterials {
                         .vacuumStats(VA[LuV], 200))
                 .build();
 
-        Neutronium = new Material.Builder(127, gregtechId("neutronium"))
+        Neutronium = new Material.Builder(129, gregtechId("neutronium"))
                 .ingot(6)
                 .liquid(new FluidBuilder().temperature(100_000))
                 .color(0xFAFAFA)
@@ -980,7 +995,7 @@ public class ElementMaterials {
                 .fluidPipeProperties(100_000, 5000, true, true, true, true)
                 .build();
 
-        Tritanium = new Material.Builder(128, gregtechId("tritanium"))
+        Tritanium = new Material.Builder(130, gregtechId("tritanium"))
                 .ingot(6)
                 .liquid(new FluidBuilder().temperature(25_000))
                 .color(0x600000).iconSet(METALLIC)
@@ -991,7 +1006,7 @@ public class ElementMaterials {
                 .rotorStats(20.0f, 6.0f, 10240)
                 .build();
 
-        Duranium = new Material.Builder(129, gregtechId("duranium"))
+        Duranium = new Material.Builder(131, gregtechId("duranium"))
                 .ingot(5)
                 .liquid(new FluidBuilder().temperature(7500))
                 .color(0x4BAFAF).iconSet(BRIGHT)
@@ -1002,7 +1017,7 @@ public class ElementMaterials {
                 .fluidPipeProperties(9625, 500, true, true, true, true)
                 .build();
 
-        Trinium = new Material.Builder(130, gregtechId("trinium"))
+        Trinium = new Material.Builder(132, gregtechId("trinium"))
                 .ingot(7).fluid()
                 .color(0x9973BD).iconSet(SHINY)
                 .flags(GENERATE_FOIL, GENERATE_BOLT_SCREW, GENERATE_GEAR)

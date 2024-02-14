@@ -1,0 +1,6 @@
+{
+  "parent": "gregtech:item/material_sets/dull/crushed",
+  "textures": {
+    "layer1": "gregtech:items/material_sets/radioactive/crushed_overlay"
+  }
+}

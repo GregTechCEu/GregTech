@@ -631,7 +631,7 @@ public class FirstDegreeMaterials {
 
         Uraninite = new Material.Builder(332, gregtechId("uraninite"))
                 .dust(3).ore(true)
-                .color(0x232323).iconSet(METALLIC)
+                .color(0x232323).iconSet(RADIOACTIVE)
                 .components(Uranium238, 1, Oxygen, 2)
                 .build()
                 .setFormula("UO2", true);
