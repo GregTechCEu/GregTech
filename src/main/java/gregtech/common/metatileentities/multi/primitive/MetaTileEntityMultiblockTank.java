@@ -63,6 +63,7 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Console;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     private final int tier;
     private final int volumePerBlock;
 
+    private FilteredFluidHandler tank;
     private PropertyFluidFilter filter;
     private int volume;
     private int lDist = 0;
@@ -100,22 +102,14 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     public void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         volume = (lDist + rDist - 1) * bDist * hDist;
-
-        //Cache fluid and load inventory
-        var fluid = exportFluids.getTankAt(0).getFluid();
-
-        initializeInventory();
-
-        if (fluid != null) {
-            exportFluids.getTankAt(0).fill(fluid, true);
-        }
+        tank.setCapacity(volume * volumePerBlock);
     }
 
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
 
-        FilteredFluidHandler tank = new FilteredFluidHandler(volumePerBlock * volume);
+        tank = new FilteredFluidHandler(volumePerBlock);
 
         if (tier == 0) filter = new PropertyFluidFilter(340, false, false, false, false);
         if (tier == 1) filter = new PropertyFluidFilter(1855, true, false, false, false);
@@ -131,51 +125,15 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         this.fluidInventory = tank;
     }
 
-    public void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
-        float lastBrightnessX = OpenGlHelper.lastBrightnessX;
-        float lastBrightnessY = OpenGlHelper.lastBrightnessY;
-        if (world != null) {
-            renderState.setBrightness(world, pos);
-        }
-
-        var tank = importFluids.getTankAt(0);
-        FluidStack stack = tank.getFluid();
-
-        if (stack == null || stack.amount == 0)
-            return;
-
-        Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375,
-                14.9375, 14.9375);
-
-        double fillFraction = (double) stack.amount / tank.getCapacity();
-        if (tank.getFluid().getFluid().isGaseous()) {
-            partialFluidBox.min.y = Math.max(13.9375 - (11.875 * fillFraction), 2.0) / 16.0;
-        } else {
-            partialFluidBox.max.y = Math.min((11.875 * fillFraction) + 2.0625, 14.0) / 16.0;
-        }
-
-        renderState.setFluidColour(stack);
-        ResourceLocation fluidStill = stack.getFluid().getStill(stack);
-        TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
-                .getAtlasSprite(fluidStill.toString());
-
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
-                    BlockRenderLayer.CUTOUT_MIPPED);
-        }
-
-        GlStateManager.resetColor();
-
-        renderState.reset();
-    }
-
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityMultiblockTank(metaTileEntityId, tier, volumePerBlock);
     }
 
     @Override
-    protected void updateFormedValid() {}
+    protected void updateFormedValid() {
+
+    }
 
     /**
      * Scans for blocks around the controller to update the dimensions
@@ -431,7 +389,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
 
-        renderTankFluid(renderState, translation, pipeline, getWorld(), getPos(), getFrontFacing());
+        QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, tank, getWorld(), getPos(), getFrontFacing());
     }
 
     @SideOnly(Side.CLIENT)
