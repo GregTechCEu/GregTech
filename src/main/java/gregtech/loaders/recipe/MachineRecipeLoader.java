@@ -1743,6 +1743,7 @@ public class MachineRecipeLoader {
     }
 
     private static void registerNBTRemoval() {
+        /*
         for (MetaTileEntityQuantumChest chest : MetaTileEntities.QUANTUM_CHEST)
             if (chest != null) {
                 ModHandler.addShapelessNBTClearingRecipe("quantum_chest_nbt_" + chest.getTier() + chest.getMetaName(),
@@ -1754,6 +1755,8 @@ public class MachineRecipeLoader {
                 ModHandler.addShapelessNBTClearingRecipe("quantum_tank_nbt_" + tank.getTier() + tank.getMetaName(),
                         tank.getStackForm(), tank.getStackForm());
             }
+
+         */
 
         // Drums
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_wood", MetaTileEntities.WOODEN_DRUM.getStackForm(),

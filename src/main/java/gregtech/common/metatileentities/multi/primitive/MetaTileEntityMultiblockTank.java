@@ -78,6 +78,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     private final int tier;
     private final int volumePerBlock;
+    private final int startingVolume;
 
     private FilteredFluidHandler tank;
     private PropertyFluidFilter filter;
@@ -93,9 +94,10 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @Nullable
     protected FluidStack previousFluid;
 
-    public MetaTileEntityMultiblockTank(ResourceLocation metaTileEntityId, int tier, int volumePerBlock) {
+    public MetaTileEntityMultiblockTank(ResourceLocation metaTileEntityId, int startingVolume, int tier, int volumePerBlock) {
         super(metaTileEntityId);
         this.tier = tier;
+        this.startingVolume = startingVolume;
         this.volumePerBlock = volumePerBlock;
         initializeInventory();
     }
@@ -108,14 +110,14 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     public void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         volume = (lDist + rDist - 1) * bDist * hDist;
-        tank.setCapacity(volume * volumePerBlock);
+        tank.setCapacity(startingVolume + volume * volumePerBlock);
     }
 
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
 
-        tank = new FilteredFluidHandler(volumePerBlock);
+        tank = new FilteredFluidHandler(startingVolume);
 
         if (tier == 0) filter = new PropertyFluidFilter(340, false, false, false, false);
         if (tier == 1) filter = new PropertyFluidFilter(1855, true, false, false, false);
@@ -133,7 +135,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityMultiblockTank(metaTileEntityId, tier, volumePerBlock);
+        return new MetaTileEntityMultiblockTank(metaTileEntityId, startingVolume, tier, volumePerBlock);
     }
 
     @Override
@@ -457,7 +459,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.tank.tooltip"));
         tooltip.add(I18n.format("gregtech.multiblock.tank.tooltip_1"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_per_block_storage_capacity", volumePerBlock));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_per_block_storage_capacity", startingVolume, volumePerBlock));
         tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", filter.getMaxFluidTemperature()));
         if (filter.isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
         else tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
