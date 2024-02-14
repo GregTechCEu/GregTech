@@ -1115,6 +1115,7 @@ public class MetaTileEntities {
         PUMP[2] = registerMetaTileEntity(1532, new MetaTileEntityPump(gregtechId("pump.hv"), 3));
         PUMP[3] = registerMetaTileEntity(1533, new MetaTileEntityPump(gregtechId("pump.ev"), 4));
 
+        /*
         // Super / Quantum Chests, IDs 1560-1574
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
@@ -1144,6 +1145,8 @@ public class MetaTileEntities {
             QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank." + voltageName), i, capacity);
             registerMetaTileEntity(1580 + i, QUANTUM_TANK[i]);
         }
+        
+         */
 
         // Block Breakers, IDs 1590-1594
         for (int i = 0; i < BLOCK_BREAKER.length; i++) {
