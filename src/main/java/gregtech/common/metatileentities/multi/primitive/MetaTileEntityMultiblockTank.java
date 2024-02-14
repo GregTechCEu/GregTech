@@ -497,18 +497,21 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     public void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                                        FluidTank tank, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
-        float lastBrightnessX = OpenGlHelper.lastBrightnessX;
-        float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+
         if (world != null) {
             renderState.setBrightness(world, pos);
         }
+
+        //Get fluid
         FluidStack stack = tank.getFluid();
         if (stack == null || stack.amount == 0)
             return;
 
+        //Create a box with slight margins since going from exactly 0 to exactly 1 causes some faces to not render properly
         Cuboid6 partialFluidBox = new Cuboid6(0.01, 0.01, 0.01, 0.98,
                 0.98, 0.98);
 
+        //Get percentage of the tank that is full
         double fillFraction = (double) stack.amount / tank.getCapacity();
 
         //Gases will appear to occupy the entire multiblock
@@ -516,6 +519,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             fillFraction = 1;
         }
 
+        //Set our box to the percentage of the tank that is full
         partialFluidBox.max.y = Math.min((16 * fillFraction) + 0, 15.99) / 16.0;
 
         //Translate fluid to correct location
@@ -532,13 +536,15 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             translation.translate(-bDist, 1, -(rDist - 1));
         }
 
-        //"Rotate" the fluid
+        //Scale up the box to match the inner dimensions of the tank
+        //back distance and length are switched in the case of WEST and EAST as a form of "rotation" since translation.rotate is broken :image:
         if (frontFacing == EnumFacing.WEST || frontFacing == EnumFacing.EAST) {
             translation.scale(bDist, hDist, lDist + rDist - 1);
         } else {
             translation.scale(lDist + rDist - 1, hDist, bDist);
         }
 
+        //Get textures, colors, and actually render the thing
         renderState.setFluidColour(stack);
         ResourceLocation fluidStill = stack.getFluid().getStill(stack);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
@@ -547,6 +553,8 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
                     BlockRenderLayer.CUTOUT_MIPPED);
         }
+
+        //Go back to normal for the next rendering call
         GlStateManager.resetColor();
 
         renderState.reset();
