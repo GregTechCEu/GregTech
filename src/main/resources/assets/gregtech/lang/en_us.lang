@@ -2498,6 +2498,11 @@ tile.casing.hv=HV Machine Casing
 tile.casing.ev=EV Machine Casing
 tile.casing.iv=IV Machine Casing
 
+# Turbine coil blocks
+tile.turbine_coil.energy_multiplier=§cTurbine Power Multiplier: §f%s%%
+
+tile.turbine_coil.copper.name=Copper Turbine Coil Block
+
 # Wire coil blocks
 tile.wire_coil.tooltip_extended_info=Hold SHIFT to show Coil Bonus Info
 tile.wire_coil.tooltip_heat=§cBase Heat Capacity: §f%,d K

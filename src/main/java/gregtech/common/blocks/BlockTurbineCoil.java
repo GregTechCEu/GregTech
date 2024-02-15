@@ -1,10 +1,15 @@
 package gregtech.common.blocks;
 
-import gregtech.api.block.IRefractoryBrickBlockStats;
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.VariantActiveBlock;
+import gregtech.api.block.VariantBlock;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -25,16 +30,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BlockRefractoryBrick extends VariantActiveBlock<BlockRefractoryBrick.RefractoryBrickType> {
+public class BlockTurbineCoil extends VariantBlock<BlockTurbineCoil.CoilType> {
 
-    public BlockRefractoryBrick() {
+    public BlockTurbineCoil() {
         super(net.minecraft.block.material.Material.IRON);
-        setTranslationKey("refractory_brick");
+        setTranslationKey("turbine_coil");
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel(ToolClasses.WRENCH, 2);
-        setDefaultState(getState(RefractoryBrickType.TIER1));
+        setDefaultState(getState(CoilType.COPPER));
     }
 
     @NotNull
@@ -50,11 +55,11 @@ public class BlockRefractoryBrick extends VariantActiveBlock<BlockRefractoryBric
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
 
         // noinspection rawtypes, unchecked
-        VariantItemBlock itemBlock = (VariantItemBlock<RefractoryBrickType, BlockRefractoryBrick>) itemStack.getItem();
+        VariantItemBlock itemBlock = (VariantItemBlock<CoilType, BlockTurbineCoil>) itemStack.getItem();
         IBlockState stackState = itemBlock.getBlockState(itemStack);
-        RefractoryBrickType refractorybrickType = getState(stackState);
+        CoilType coilType = getState(stackState);
 
-        lines.add(I18n.format("tile.refractory_brick.tooltip_heat", refractorybrickType.refractorybrickTemperature));
+        lines.add(I18n.format("tile.turbine_coil.energy_multiplier", coilType.energyMultiplierPercentage));
     }
 
     @Override
@@ -63,29 +68,17 @@ public class BlockRefractoryBrick extends VariantActiveBlock<BlockRefractoryBric
         return false;
     }
 
-    @Override
-    protected boolean isBloomEnabled(RefractoryBrickType value) {
-        return ConfigHolder.client.coilsActiveEmissiveTextures;
-    }
+    public enum CoilType implements IStringSerializable {
 
-    public enum RefractoryBrickType implements IStringSerializable, IRefractoryBrickBlockStats {
-
-        TIER1("tier_1", 1800, 1, 1, 1),
-        TIER2("tier_2", 2700, 2, 1, 2),
-        TIER3("tier_3", 3600, 2, 2, 3);
+        COPPER("copper", 75);
 
         private final String name;
-        private final int refractorybrickTemperature;
-        private final int level;
-        private final int energyDiscount;
-        private final int tier;
+        // turbine properties
+        private final int energyMultiplierPercentage;
 
-        RefractoryBrickType(String name, int refractorybrickTemperature, int level, int energyDiscount, int tier) {
+        CoilType(String name, int energyMultiplierPercentage) {
             this.name = name;
-            this.refractorybrickTemperature = refractorybrickTemperature;
-            this.level = level;
-            this.energyDiscount = energyDiscount;
-            this.tier = tier;
+            this.energyMultiplierPercentage = energyMultiplierPercentage;
         }
 
         @NotNull
@@ -94,31 +87,9 @@ public class BlockRefractoryBrick extends VariantActiveBlock<BlockRefractoryBric
             return this.name;
         }
 
-        @Override
-        public int getRefractoryBrickTemperature() {
-            return refractorybrickTemperature;
+        public int getEnergyMultiplier() {
+            return energyMultiplierPercentage;
         }
-
-        @Override
-        public int getLevel() {
-            return level;
-        }
-
-        @Override
-        public int getEnergyDiscount() {
-            return energyDiscount;
-        }
-
-        @Override
-        public int getTier() {
-            return tier;
-        }
-
-        /*@Nullable
-        @Override
-        public Material getTier() {
-            return tier;
-        }*/
 
         @NotNull
         @Override

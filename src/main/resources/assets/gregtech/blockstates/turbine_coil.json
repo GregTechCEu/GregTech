@@ -1,0 +1,11 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "variant=copper": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/coils/turbine_coil_copper"
+      }
+    }
+  }
+}

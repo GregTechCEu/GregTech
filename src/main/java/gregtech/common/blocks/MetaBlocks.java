@@ -132,6 +132,7 @@ public class MetaBlocks {
     public static BlockMultiblockCasing MULTIBLOCK_CASING;
     public static BlockGlassCasing TRANSPARENT_CASING;
     public static BlockWireCoil WIRE_COIL;
+    public static BlockTurbineCoil TURBINE_COIL;
     public static BlockFusionCasing FUSION_CASING;
     public static BlockWarningSign WARNING_SIGN;
     public static BlockWarningSign1 WARNING_SIGN_1;
@@ -254,6 +255,8 @@ public class MetaBlocks {
         TRANSPARENT_CASING.setRegistryName("transparent_casing");
         WIRE_COIL = new BlockWireCoil();
         WIRE_COIL.setRegistryName("wire_coil");
+        TURBINE_COIL = new BlockTurbineCoil();
+        TURBINE_COIL.setRegistryName("turbine_coil");
         FUSION_CASING = new BlockFusionCasing();
         FUSION_CASING.setRegistryName("fusion_casing");
         WARNING_SIGN = new BlockWarningSign();
@@ -510,6 +513,7 @@ public class MetaBlocks {
         registerItemModel(POWDERBARREL);
         registerItemModel(ITNT);
 
+        registerItemModel(TURBINE_COIL);
         registerItemModel(METAL_SHEET);
         registerItemModel(LARGE_METAL_SHEET);
         registerItemModel(STUDS);
