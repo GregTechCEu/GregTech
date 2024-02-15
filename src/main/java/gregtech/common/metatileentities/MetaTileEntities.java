@@ -236,6 +236,8 @@ public class MetaTileEntities {
     public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
     public static final MetaTileEntityLatexCollector[] LATEX_COLLECTOR = new MetaTileEntityLatexCollector[4];
 
+    public static final SimpleMachineMetaTileEntity[] WELDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+
     // GENERATORS SECTION
     //public static final SimpleGeneratorMetaTileEntity[] COMBUSTION_GENERATOR = new SimpleGeneratorMetaTileEntity[4];
     //public static final SimpleGeneratorMetaTileEntity[] STEAM_TURBINE = new SimpleGeneratorMetaTileEntity[4];
@@ -689,6 +691,10 @@ public class MetaTileEntities {
         LATEX_COLLECTOR[1] = registerMetaTileEntity(741, new MetaTileEntityLatexCollector(gregtechId("latex_collector.mv"), 2));
         LATEX_COLLECTOR[2] = registerMetaTileEntity(742, new MetaTileEntityLatexCollector(gregtechId("latex_collector.hv"), 3));
         LATEX_COLLECTOR[3] = registerMetaTileEntity(743, new MetaTileEntityLatexCollector(gregtechId("latex_collector.ev"), 4));
+
+        // Welder, IDs 744-758
+        registerSimpleMetaTileEntity(WELDER, 744, "welder", RecipeMaps.WELDING_RECIPES,
+                Textures.WELDER_OVERLAY, true);
 
         // Some space here for more SimpleMachines
 
