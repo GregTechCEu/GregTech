@@ -393,12 +393,12 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     private IBlockState getGlass() {
-        if (tier == 0) return MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.WOOD_WALL);
+        if (tier == 0) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
         if (tier == 1) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
         if (tier == 2) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
         if (tier == 3) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
-        if (tier == 4) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS);
-        if (tier == 5) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS);
+        if (tier == 4) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
+        if (tier == 5) return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS);
 
         return (IBlockState) Blocks.GLASS;
     }
@@ -533,7 +533,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         }
 
         //Set our box to the percentage of the tank that is full
-        partialFluidBox.max.y = Math.min((16 * fillFraction) + 0, 15.99) / 16.0;
+        partialFluidBox.max.y = Math.min((16 * fillFraction) + 0.01, 15.989) / 16.0;
 
         //Translate fluid to correct location
         if (frontFacing == EnumFacing.NORTH) {
