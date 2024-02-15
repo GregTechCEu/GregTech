@@ -19,6 +19,16 @@
       }
     ]
   },
+  "tick.energy": {
+    "subtitle" : "gregtech.subtitle.tick.energy",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:energy",
+        "stream": false
+      }
+    ]
+  },
   "tick.fluid_drill": {
     "subtitle" : "gregtech.subtitle.tick.fluid_drill",
     "category": "block",

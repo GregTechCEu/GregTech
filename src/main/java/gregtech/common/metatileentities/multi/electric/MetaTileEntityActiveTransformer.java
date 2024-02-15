@@ -22,6 +22,8 @@ import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.MetaBlocks;
 
+import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -70,6 +72,14 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
             long totalDrained = powerOutput.changeEnergy(canDrain);
             powerInput.removeEnergy(totalDrained);
         }
+    }
+
+    @Override
+    public SoundEvent getSound() {
+        if (isWorkingEnabled()) {
+            return GTSoundEvents.ENERGY;
+        }
+        return super.getSound();
     }
 
     @Override

@@ -6161,6 +6161,7 @@ gregtech.key.armor_charging=Armor Charging to Inventory Toggle
 gregtech.key.tool_aoe_change=Tool AoE Mode Switch
 
 gregtech.subtitle.tick.forge_hammer=Hammer smashes
+gregtech.subtitle.tick.energy=Energy pulsating
 gregtech.subtitle.tick.macerator=Items macerating
 gregtech.subtitle.tick.chemical_reactor=Chemicals reacting
 gregtech.subtitle.tick.assembler=Items assembling
