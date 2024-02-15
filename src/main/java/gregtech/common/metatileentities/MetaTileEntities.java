@@ -692,7 +692,7 @@ public class MetaTileEntities {
         LATEX_COLLECTOR[2] = registerMetaTileEntity(742, new MetaTileEntityLatexCollector(gregtechId("latex_collector.hv"), 3));
         LATEX_COLLECTOR[3] = registerMetaTileEntity(743, new MetaTileEntityLatexCollector(gregtechId("latex_collector.ev"), 4));
 
-        // welder, IDs 744-762
+        // Welder, IDs 744-758
         registerSimpleMetaTileEntity(WELDER, 744, "welder", RecipeMaps.WELDING_RECIPES,
                 Textures.WELDER_OVERLAY, true);
 
