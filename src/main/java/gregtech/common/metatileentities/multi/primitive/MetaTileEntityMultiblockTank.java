@@ -144,6 +144,14 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+
+        //Ensure that fluids stop getting rendered if structure is broken
+        scheduleRenderUpdate();
+    }
+
+    @Override
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
@@ -477,7 +485,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             this.bDist = buf.readInt();
             this.hDist = buf.readInt();
             this.volume = (lDist + rDist - 1) * bDist * hDist;
-            this.tank.setCapacity(volume * volumePerBlock);
+            this.tank.setCapacity(startingVolume + volume * volumePerBlock);
         } else if (dataId == GregtechDataCodes.UPDATE_FLUID) {
             try {
                 this.tank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
@@ -502,14 +510,19 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
             renderState.setBrightness(world, pos);
         }
 
+        //Do not render fluids if structure is broken
+        if (!isStructureFormed()) {
+            return;
+        }
+
         //Get fluid
         FluidStack stack = tank.getFluid();
         if (stack == null || stack.amount == 0)
             return;
 
         //Create a box with slight margins since going from exactly 0 to exactly 1 causes some faces to not render properly
-        Cuboid6 partialFluidBox = new Cuboid6(0.01, 0.01, 0.01, 0.98,
-                0.98, 0.98);
+        Cuboid6 partialFluidBox = new Cuboid6(0.001, 0.001, 0.001, 0.999,
+                0.999, 0.999);
 
         //Get percentage of the tank that is full
         double fillFraction = (double) stack.amount / tank.getCapacity();
