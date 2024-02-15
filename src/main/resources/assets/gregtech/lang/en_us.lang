@@ -4124,21 +4124,13 @@ gregtech.machine.crystallizer.uv.tooltip=The Final Boule-ification
 
 # Welder
 gregtech.machine.welder.lv.name=Basic Welder
-gregtech.machine.welder.lv.tooltip=Machine that fuses materials together
 gregtech.machine.welder.mv.name=Advanced Welder
-gregtech.machine.welder.mv.tooltip=Machine that fuses materials together
 gregtech.machine.welder.hv.name=Advanced Welder II
-gregtech.machine.welder.hv.tooltip=Machine that fuses materials together
 gregtech.machine.welder.ev.name=Advanced Welder III
-gregtech.machine.welder.ev.tooltip=Machine that fuses materials together
 gregtech.machine.welder.iv.name=Elite Welder
-gregtech.machine.welder.iv.tooltip=Machine that fuses materials together
 gregtech.machine.welder.luv.name=Elite Welder II
-gregtech.machine.welder.luv.tooltip=Machine that fuses materials together
 gregtech.machine.welder.zpm.name=Elite Welder III
-gregtech.machine.welder.zpm.tooltip=Machine that fuses materials together
 gregtech.machine.welder.uv.name=Ultimate Welder
-gregtech.machine.welder.uv.tooltip=Machine that fuses materials together
 
 # Ion Implanter
 gregtech.machine.ion_implanter.lv.name=Basic Ion Implanter
