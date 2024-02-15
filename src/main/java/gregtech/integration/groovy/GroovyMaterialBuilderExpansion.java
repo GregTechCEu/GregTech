@@ -1,5 +1,9 @@
 package gregtech.integration.groovy;
 
+import com.cleanroommc.groovyscript.GroovyScript;
+
+import com.cleanroommc.groovyscript.api.GroovyLog;
+
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.Element;
@@ -8,8 +12,12 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.stack.MaterialStack;
 
 import net.minecraft.util.ResourceLocation;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,5 +110,19 @@ public class GroovyMaterialBuilderExpansion {
                     .vacuumStats(vacuumEUtOverride, vacuumDurationOverride));
         }
         return builder;
+    }
+
+    public static Material.Builder components(Material.Builder builder, Object... objects) {
+        ObjectArrayList<MaterialStack> materialStacks = new ObjectArrayList<>();
+        for (Object o : objects) {
+            if (o instanceof MaterialStack materialStack) {
+                materialStacks.add(materialStack);
+            } else if(o instanceof Material material) {
+                materialStacks.add(new MaterialStack(material, 1));
+            } else {
+                GroovyLog.get().error("Material components must be of type Material or MaterialStack, but was of type {}");
+            }
+        }
+        return builder.components(materialStacks.toArray(new MaterialStack[0]));
     }
 }
