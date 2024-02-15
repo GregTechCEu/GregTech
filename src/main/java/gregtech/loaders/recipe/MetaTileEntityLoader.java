@@ -536,6 +536,7 @@ public class MetaTileEntityLoader {
                 "WCP", 'M', MetaTileEntities.HULL[GTValues.MV].getStackForm(), 'W', MetaItems.ELECTRIC_PISTON_MV, 'P',
                 new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Cupronickel), 'E',
                 new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.MV), 'C', MetaItems.ELECTRIC_PUMP_MV);
+        /*
         ModHandler.addShapedRecipe(true, "large_combustion_engine",
                 MetaTileEntities.LARGE_COMBUSTION_ENGINE.getStackForm(), "PCP", "EME", "GWG", 'M',
                 MetaTileEntities.HULL[GTValues.EV].getStackForm(), 'P', MetaItems.ELECTRIC_PISTON_EV.getStackForm(),
@@ -548,6 +549,8 @@ public class MetaTileEntityLoader {
                 'E', MetaItems.ELECTRIC_MOTOR_IV.getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.LuV),
                 'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.HSSG), 'G',
                 new UnificationEntry(OrePrefix.gear, Materials.TungstenSteel));
+
+         */
         ModHandler.addShapedRecipe(true, "engine_intake_casing",
                 MetaBlocks.MULTIBLOCK_CASING.getItemVariant(MultiblockCasingType.ENGINE_INTAKE_CASING,
                         ConfigHolder.recipes.casingsPerCraft),
@@ -651,6 +654,8 @@ public class MetaTileEntityLoader {
         }
 
         // GENERATORS
+
+        /*
         ModHandler.addShapedRecipe(true, "diesel_generator_lv", MetaTileEntities.COMBUSTION_GENERATOR[0].getStackForm(),
                 "PCP", "EME", "GWG", 'M', MetaTileEntities.HULL[GTValues.LV].getStackForm(), 'P',
                 MetaItems.ELECTRIC_PISTON_LV, 'E', MetaItems.ELECTRIC_MOTOR_LV, 'C',
@@ -704,6 +709,8 @@ public class MetaTileEntityLoader {
                 new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV), 'W',
                 new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'P',
                 new UnificationEntry(OrePrefix.pipeFluid, Materials.StainlessSteel));
+
+         */
 
         ModHandler.addShapedRecipe(true, "workbench_bronze", MetaTileEntities.WORKBENCH.getStackForm(), "CSC", "PWP",
                 "PsP", 'C', OreDictNames.chestWood, 'W', new ItemStack(Blocks.CRAFTING_TABLE), 'S',
