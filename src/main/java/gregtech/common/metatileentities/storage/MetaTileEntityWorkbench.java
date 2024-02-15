@@ -354,7 +354,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                         .alignment(Alignment.Center)
                                                         .asWidget().widthRel(1f)))
                                         // recipe memory
-                                        .child(createRecipeMemory(guiSyncManager)))
+                                        .child(SlotGroupWidget.builder()
+                                                .matrix("XXX",
+                                                        "XXX",
+                                                        "XXX")
+                                                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
+                                                .build().right(0)))
                                 // tool inventory
                                 .child(SlotGroupWidget.builder()
                                         .row(nineSlot)
@@ -390,6 +395,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         var connected = new SlotGroup("connected_inventory", 9, true);
         syncManager.registerSlotGroup(connected);
 
+        //todo this needs to handle when inventories are removed/added
         List<IWidget> list = new ArrayList<>(this.connectedInventory.getSlots());
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
             if (i < this.connectedInventory.getSlots()) {
@@ -407,15 +413,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .scrollable(new VerticalScrollData(), null)
                 .minElementMargin(0, 0)
                 .mapTo(8, list, (index, value) -> value);
-    }
-
-    public IWidget createRecipeMemory(GuiSyncManager syncManager) {
-        return SlotGroupWidget.builder()
-                .matrix("XXX",
-                        "XXX",
-                        "XXX")
-                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
-                .build().right(0);
     }
 
     @Override
@@ -446,7 +443,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         private final CraftingRecipeMemory memory;
         private final int index;
-        private static final TextRenderer textRenderer = new TextRenderer();
+
         public RecipeMemorySlot(CraftingRecipeMemory memory, int index) {
             this.memory = memory;
             this.index = index;
@@ -460,7 +457,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         @Override
         public void draw(GuiContext context, WidgetTheme widgetTheme) {
-            super.draw(context, widgetTheme);
             drawStack();
         }
 
