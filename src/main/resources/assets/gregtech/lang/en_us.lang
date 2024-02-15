@@ -6219,7 +6219,7 @@ gregtech.subtitle.use.spray_can=Paint sprays
 gregtech.subtitle.use.tricorder=Beep beep
 gregtech.subtitle.use.mortar=Grinding
 gregtech.subtitle.record.sus=Sus
-gregtech.subtitle.tick.fluid_drill.Rigs drilling
+gregtech.subtitle.tick.fluid_drill=Rigs drilling
 gregtech.subtitle.entity.portal_opening=Portal opens
 gregtech.subtitle.entity.portal_closing=Portal closes
 gregtech.subtitle.maintenance.electrical=Electrical breakdown
