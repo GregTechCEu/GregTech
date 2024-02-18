@@ -595,7 +595,7 @@ public class MetaTileEntities {
 
         // Circuit Assembler, IDs 650-664
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 635, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES,
-                Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+                Textures.C_ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
         // Rock Breaker, IDs 665-679
         registerMetaTileEntities(ROCK_BREAKER, 665, "rock_breaker",
