@@ -119,27 +119,24 @@ public class FluidFilterContainer extends BaseFilterContainer
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(this, 0)
                                 .filter(FilterTypeRegistry::isFluidFilter)
-                                .singletonSlotGroup(101))
-                        .onUpdateListener(w -> {
-                            if (!hasFilter() && panel.isPanelOpen()) {
-                                panel.closePanel();
-                            }
-                        }, true)
+                                .singletonSlotGroup(101)
+                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                    if (!FilterTypeRegistry.isFilter(newItem) && panel.isPanelOpen()) {
+                                        panel.closePanel();
+                                    }
+                                }))
                         .size(18).marginRight(2)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
                 .child(filterButton
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
-                            boolean success = false;
                             if (!panel.isPanelOpen()) {
                                 panel.openPanel();
-                                success = true;
-                            } else if (panel.isValid()) {
+                            } else {
                                 panel.closePanel();
-                                success = true;
                             }
                             Interactable.playButtonClickSound();
-                            return success;
+                            return true;
                         }))
                 .child(IKey.dynamic(() -> hasFilter() ?
                         getFilterStack().getDisplayName() :
