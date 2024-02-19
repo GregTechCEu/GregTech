@@ -44,7 +44,7 @@ jobs:
       - name: Publish to Maven
         env:
           MAVEN_USER: "${{ secrets.MAVEN_USER }}"
-          MAVEN:PASSWORD: "${{ secrets.MAVEN_PASSWORD }}"
+          MAVEN_PASSWORD: "${{ secrets.MAVEN_PASSWORD }}"
         run: ./gradlew publish
 
       - name: Publish to Curseforge
