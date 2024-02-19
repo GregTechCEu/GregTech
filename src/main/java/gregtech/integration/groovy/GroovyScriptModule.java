@@ -1,5 +1,7 @@
 package gregtech.integration.groovy;
 
+import com.cleanroommc.groovyscript.helper.EnumHelper;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -47,6 +49,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -80,6 +83,18 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     public static boolean isCurrentlyRunning() {
         return GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS) &&
                 GroovyScript.getSandbox().isRunning();
+    }
+
+    public static <T extends Enum<T>> T parseAndValidateEnumValue(Class<T> clazz, String raw, String type) {
+        T t = EnumHelper.valueOfNullable(clazz, raw, false);
+        if (t == null) {
+            GroovyLog.get().error("Can't find {} for {} in material builder. Valid values are {};",
+                    type,
+                    raw,
+                    Arrays.toString(clazz.getEnumConstants()));
+            return null;
+        }
+        return t;
     }
 
     public static GroovyContainer<?> getInstance() {

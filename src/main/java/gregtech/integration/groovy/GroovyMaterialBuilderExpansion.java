@@ -1,9 +1,5 @@
 package gregtech.integration.groovy;
 
-import com.cleanroommc.groovyscript.GroovyScript;
-
-import com.cleanroommc.groovyscript.api.GroovyLog;
-
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.Element;
@@ -16,8 +12,8 @@ import gregtech.api.unification.stack.MaterialStack;
 
 import net.minecraft.util.ResourceLocation;
 
+import com.cleanroommc.groovyscript.api.GroovyLog;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,19 +89,11 @@ public class GroovyMaterialBuilderExpansion {
 
     public static Material.Builder blastTemp(Material.Builder builder, int temp, String raw, int eutOverride,
                                              int durationOverride, int vacuumEUtOverride, int vacuumDurationOverride) {
-        BlastProperty.GasTier gasTier = null;
-        String name = raw.toUpperCase();
-        for (BlastProperty.GasTier gasTier1 : BlastProperty.GasTier.VALUES) {
-            if (gasTier1.name().equals(name)) {
-                gasTier = gasTier1;
-                break;
-            }
-        }
-        final BlastProperty.GasTier finalGasTier = gasTier;
-        if (GroovyScriptModule.validateNonNull(gasTier, () -> "Can't find gas tier for " + name +
-                " in material builder. Valid values are 'low', 'mid', 'high', 'higher', 'highest'!")) {
+        BlastProperty.GasTier gasTier = GroovyScriptModule.parseAndValidateEnumValue(BlastProperty.GasTier.class, raw,
+                "gas tier");
+        if (gasTier != null) {
             return builder.blast(b -> b
-                    .temp(temp, finalGasTier)
+                    .temp(temp, gasTier)
                     .blastStats(eutOverride, durationOverride)
                     .vacuumStats(vacuumEUtOverride, vacuumDurationOverride));
         }
@@ -117,10 +105,11 @@ public class GroovyMaterialBuilderExpansion {
         for (Object o : objects) {
             if (o instanceof MaterialStack materialStack) {
                 materialStacks.add(materialStack);
-            } else if(o instanceof Material material) {
+            } else if (o instanceof Material material) {
                 materialStacks.add(new MaterialStack(material, 1));
             } else {
-                GroovyLog.get().error("Material components must be of type Material or MaterialStack, but was of type {}");
+                GroovyLog.get()
+                        .error("Material components must be of type Material or MaterialStack, but was of type {}");
             }
         }
         return builder.components(materialStacks.toArray(new MaterialStack[0]));
