@@ -41,6 +41,12 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
 
+      - name: Publish to Maven
+        env:
+          MAVEN_USER: "${{ secrets.MAVEN_USER }}"
+          MAVEN:PASSWORD: "${{ secrets.MAVEN_PASSWORD }}"
+        run: ./gradlew publish
+
       - name: Publish to Curseforge
         env:
           CURSEFORGE_API_KEY: "${{ secrets.CURSEFORGE_API_KEY }}"
