@@ -1,4 +1,4 @@
-//version: 1705076830
+//version: 1707682661
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -24,9 +24,9 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.28'
-    id 'net.darkhax.curseforgegradle' version '1.1.17' apply false
-    id 'com.modrinth.minotaur' version '2.8.6' apply false
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.33'
+    id 'net.darkhax.curseforgegradle' version '1.1.18' apply false
+    id 'com.modrinth.minotaur' version '2.8.7' apply false
     id 'com.diffplug.spotless' version '6.13.0' apply false
     id 'com.palantir.git-version' version '3.0.0' apply false
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
@@ -446,6 +446,10 @@ repositories {
             name 'GTNH Maven'
             url 'https://nexus.gtnewhorizons.com/repository/public/'
         }
+        maven {
+            name 'GTCEu Maven'
+            url 'https://maven.gtceu.com'
+        }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
         // need to add this here even if we did not above
@@ -473,9 +477,25 @@ configurations {
             config.extendsFrom(shadowCompile)
         }
     }
+
+    create("runtimeOnlyNonPublishable") {
+        description = "Runtime only dependencies that are not published alongside the jar"
+        canBeConsumed = false
+        canBeResolved = false
+    }
+    create("devOnlyNonPublishable") {
+        description = "Runtime and compiletime dependencies that are not published alongside the jar (compileOnly + runtimeOnlyNonPublishable)"
+        canBeConsumed = false
+        canBeResolved = false
+    }
+
+    compileOnly.extendsFrom(devOnlyNonPublishable)
+    runtimeOnlyNonPublishable.extendsFrom(devOnlyNonPublishable)
+    runtimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
+    testRuntimeClasspath.extendsFrom(runtimeOnlyNonPublishable)
 }
 
-String mixinProviderSpec = 'zone.rong:mixinbooter:8.9'
+String mixinProviderSpec = 'zone.rong:mixinbooter:9.1'
 dependencies {
     if (usesMixins.toBoolean()) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
@@ -493,7 +513,7 @@ dependencies {
             transitive = false
         }
     } else if (forceEnableMixins.toBoolean()) {
-        runtimeOnly(mixinProviderSpec)
+        runtimeOnlyNonPublishable(mixinProviderSpec)
     }
 
     if (enableJUnit.toBoolean()) {
@@ -503,8 +523,8 @@ dependencies {
     }
 
     if (enableModernJavaSyntax.toBoolean()) {
-        annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:1.0.0'
-        compileOnly('com.github.bsideup.jabel:jabel-javac-plugin:1.0.0') {
+        annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:1.0.1'
+        compileOnly('com.github.bsideup.jabel:jabel-javac-plugin:1.0.1') {
             transitive = false
         }
         // workaround for https://github.com/bsideup/jabel/issues/174
@@ -513,8 +533,8 @@ dependencies {
         patchedMinecraft 'me.eigenraven.java8unsupported:java-8-unsupported-shim:1.0.0'
 
         // allow Jabel to work in tests
-        testAnnotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:1.0.0"
-        testCompileOnly("com.github.bsideup.jabel:jabel-javac-plugin:1.0.0") {
+        testAnnotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:1.0.1"
+        testCompileOnly("com.github.bsideup.jabel:jabel-javac-plugin:1.0.1") {
             transitive = false // We only care about the 1 annotation class
         }
         testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:1.0.0"
@@ -527,9 +547,13 @@ dependencies {
     }
 
     if (includeCommonDevEnvMods.toBoolean()) {
-        implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
-        //noinspection DependencyNotationArgument
-        implementation rfg.deobf('curse.maven:top-245211:2667280') // TOP 1.4.28
+        if (!(modId.equals('jei'))) {
+            implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
+        }
+        if (!(modId.equals('theoneprobe'))) {
+            //noinspection DependencyNotationArgument
+            implementation rfg.deobf('curse.maven:top-245211:2667280') // TOP 1.4.28
+        }
     }
 }
 
