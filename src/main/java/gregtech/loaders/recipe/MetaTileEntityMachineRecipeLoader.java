@@ -245,8 +245,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(300).EUt(VA[EV]).buildAndRegister();
 
         // Item Buses
-        registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], new GTRecipeOreInput(OreDictNames.chestWood.toString()));
-        registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], new GTRecipeOreInput(OreDictNames.chestWood.toString()));
+        registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], OreDictNames.chestWood.toString());
+        registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], OreDictNames.chestWood.toString());
         registerHatchBusRecipe(MV, ITEM_IMPORT_BUS[MV], ITEM_EXPORT_BUS[MV], BRONZE_CRATE.getStackForm());
         registerHatchBusRecipe(HV, ITEM_IMPORT_BUS[HV], ITEM_EXPORT_BUS[HV], STEEL_CRATE.getStackForm());
         registerHatchBusRecipe(EV, ITEM_IMPORT_BUS[EV], ITEM_EXPORT_BUS[EV], ALUMINIUM_CRATE.getStackForm());
@@ -1032,8 +1032,8 @@ public class MetaTileEntityMachineRecipeLoader {
         GTRecipeInput extra;
         if (extraInput instanceof ItemStack stack) {
             extra = new GTRecipeItemInput(stack);
-        } else if (extraInput instanceof GTRecipeInput input) {
-            extra = input;
+        } else if (extraInput instanceof String oreName) {
+            extra = new GTRecipeOreInput(oreName);
         } else {
             throw new IllegalArgumentException("extraInput must be ItemStack or GTRecipeInput");
         }
@@ -1126,29 +1126,18 @@ public class MetaTileEntityMachineRecipeLoader {
     }
 
     private static int getFluidAmount(int offsetTier) {
-        switch (offsetTier) {
-            case 0:
-                return 4;
-            case 1:
-                return 9;
-            case 2:
-                return 18;
-            case 3:
-                return 36;
-            case 4:
-                return 72;
-            case 5:
-                return 144;
-            case 6:
-                return 288;
-            case 7:
-                return 432;
-            case 8:
-                return 576;
-            case 9:
-            default:
-                return 720;
-        }
+        return switch (offsetTier) {
+            case 0 -> 4;
+            case 1 -> 9;
+            case 2 -> 18;
+            case 3 -> 36;
+            case 4 -> 72;
+            case 5 -> 144;
+            case 6 -> 288;
+            case 7 -> 432;
+            case 8 -> 576;
+            default -> 720;
+        };
     }
 
     // TODO clean this up with a CraftingComponent rework
