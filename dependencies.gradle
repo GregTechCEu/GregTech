@@ -32,8 +32,7 @@ dependencies {
 
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.684"
     implementation rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
-    //implementation("com.cleanroommc:groovyscript:0.7.1") { transitive = false }
-    implementation files('etc/groovyscript-0.7.3-dev.jar')
+    implementation("com.cleanroommc:groovyscript:0.8.0") { transitive = false }
     implementation rfg.deobf("curse.maven:ae2-extended-life-570458:4402048") // AE2UEL 0.55.6
 
     compileOnlyApi rfg.deobf("curse.maven:opencomputers-223008:4526246") // OpenComputers 1.8.0+9833087
