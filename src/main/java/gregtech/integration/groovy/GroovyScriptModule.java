@@ -1,7 +1,5 @@
 package gregtech.integration.groovy;
 
-import com.cleanroommc.groovyscript.helper.EnumHelper;
-
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -11,6 +9,7 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.Mods;
@@ -42,6 +41,7 @@ import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import com.cleanroommc.groovyscript.event.EventBusType;
 import com.cleanroommc.groovyscript.event.GroovyEventManager;
 import com.cleanroommc.groovyscript.gameobjects.GameObjectHandlerManager;
+import com.cleanroommc.groovyscript.helper.EnumHelper;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import com.google.common.collect.ImmutableList;
 import groovy.lang.Closure;
@@ -211,7 +211,7 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     }
 
     @Override
-    public @NotNull String getModName() {
+    public @NotNull String getContainerName() {
         return "GregTech";
     }
 
@@ -219,10 +219,25 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     public @Nullable ModPropertyContainer createModPropertyContainer() {
         return new ModPropertyContainer() {
 
-            public void materialEvent(Closure<?> eventListener) {
-                GroovyEventManager.INSTANCE.listen(EventPriority.NORMAL, EventBusType.FORGE, MaterialEvent.class,
+            public void materialEvent(EventPriority priority, Closure<?> eventListener) {
+                GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, MaterialEvent.class,
                         eventListener);
             }
+
+            public void materialEvent(Closure<?> eventListener) {
+                materialEvent(EventPriority.NORMAL, eventListener);
+            }
+
+            public void lateMaterialEvent(EventPriority priority, Closure<?> eventListener) {
+                GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, PostMaterialEvent.class,
+                        eventListener);
+            }
+
+            public void lateMaterialEvent(Closure<?> eventListener) {
+                materialEvent(EventPriority.NORMAL, eventListener);
+            }
+
+            ;
         };
     }
 
@@ -246,6 +261,5 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         ExpansionHelper.mixinClass(Material.Builder.class, GroovyMaterialBuilderExpansion.class);
         ExpansionHelper.mixinMethod(RecipeBuilder.class, GroovyExpansions.class, "property");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "materialBuilder");
-        //GroovyScript.getSandbox().getImportCustomizer().addImports(MaterialEvent.class.getName());
     }
 }
