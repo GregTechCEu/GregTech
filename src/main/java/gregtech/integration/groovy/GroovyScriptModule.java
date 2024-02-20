@@ -59,11 +59,11 @@ import java.util.function.Supplier;
                     iface = "com.cleanroommc.groovyscript.api.GroovyPlugin",
                     striprefs = true)
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_GRS,
-        containerID = GTValues.MODID,
-        modDependencies = Mods.Names.GROOVY_SCRIPT,
-        name = "GregTech GroovyScript Integration",
-        description = "GroovyScript Integration Module")
+                moduleID = GregTechModules.MODULE_GRS,
+                containerID = GTValues.MODID,
+                modDependencies = Mods.Names.GROOVY_SCRIPT,
+                name = "GregTech GroovyScript Integration",
+                description = "GroovyScript Integration Module")
 public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPlugin {
 
     private static GroovyContainer<?> modSupportContainer;
@@ -236,8 +236,6 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
             public void lateMaterialEvent(Closure<?> eventListener) {
                 materialEvent(EventPriority.NORMAL, eventListener);
             }
-
-            ;
         };
     }
 
