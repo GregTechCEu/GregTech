@@ -42,6 +42,7 @@ import com.cleanroommc.groovyscript.event.EventBusType;
 import com.cleanroommc.groovyscript.event.GroovyEventManager;
 import com.cleanroommc.groovyscript.gameobjects.GameObjectHandlerManager;
 import com.cleanroommc.groovyscript.helper.EnumHelper;
+import com.cleanroommc.groovyscript.sandbox.LoadStage;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import com.google.common.collect.ImmutableList;
 import groovy.lang.Closure;
@@ -59,11 +60,11 @@ import java.util.function.Supplier;
                     iface = "com.cleanroommc.groovyscript.api.GroovyPlugin",
                     striprefs = true)
 @GregTechModule(
-                moduleID = GregTechModules.MODULE_GRS,
-                containerID = GTValues.MODID,
-                modDependencies = Mods.Names.GROOVY_SCRIPT,
-                name = "GregTech GroovyScript Integration",
-                description = "GroovyScript Integration Module")
+        moduleID = GregTechModules.MODULE_GRS,
+        containerID = GTValues.MODID,
+        modDependencies = Mods.Names.GROOVY_SCRIPT,
+        name = "GregTech GroovyScript Integration",
+        description = "GroovyScript Integration Module")
 public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPlugin {
 
     private static GroovyContainer<?> modSupportContainer;
@@ -220,6 +221,10 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         return new ModPropertyContainer() {
 
             public void materialEvent(EventPriority priority, Closure<?> eventListener) {
+                if (isCurrentlyRunning() && GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
+                    GroovyLog.get().error("GregTech's material event can only be used in pre init!");
+                    return;
+                }
                 GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, MaterialEvent.class,
                         eventListener);
             }
@@ -229,6 +234,10 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
             }
 
             public void lateMaterialEvent(EventPriority priority, Closure<?> eventListener) {
+                if (isCurrentlyRunning() && GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
+                    GroovyLog.get().error("GregTech's material event can only be used in pre init!");
+                    return;
+                }
                 GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, PostMaterialEvent.class,
                         eventListener);
             }
