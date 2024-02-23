@@ -21,6 +21,6 @@ public class RegionRenderCacheBuilderMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void initBloom(CallbackInfo ci) {
-        worldRenderers[BloomEffectUtil.BLOOM.ordinal()] = new BufferBuilder(131072);
+        worldRenderers[BloomEffectUtil.getBloomLayer().ordinal()] = new BufferBuilder(131072);
     }
 }

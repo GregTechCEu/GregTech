@@ -12,10 +12,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,59 +24,67 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class RecipeRepairItemMixin {
 
     @Inject(method = "matches(Lnet/minecraft/inventory/InventoryCrafting;Lnet/minecraft/world/World;)Z",
-            at = @At(value = "INVOKE_ASSIGN", target = "Ljava/util/List;get(I)Ljava/lang/Object;"),
+            at = @At(value = "INVOKE",
+                     target = "Ljava/util/List;get(I)Ljava/lang/Object;",
+                     shift = At.Shift.BY,
+                     by = 3),
             cancellable = true)
     public void gregtechCEu$matches(InventoryCrafting inv, World worldIn, CallbackInfoReturnable<Boolean> cir,
-                                    @Local LocalRef<ItemStack> itemstack, @Local LocalRef<ItemStack> itemstack1) {
-        if (itemstack.get().getItem() instanceof IGTTool first &&
-                itemstack1.get().getItem() instanceof IGTTool second) {
+                                    @Local ItemStack itemstack, @Local(ordinal = 1) ItemStack itemstack1) {
+        if (itemstack.getItem() instanceof IGTTool first &&
+                itemstack1.getItem() instanceof IGTTool second) {
             if (first.isElectric() || second.isElectric()) {
                 cir.setReturnValue(false);
             } else {
-                cir.setReturnValue(first.getToolMaterial(itemstack.get()) == second.getToolMaterial(itemstack1.get()));
+                cir.setReturnValue(first.getToolMaterial(itemstack) == second.getToolMaterial(itemstack1));
             }
         }
     }
 
     @Inject(method = "getCraftingResult(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;",
-            at = @At(value = "INVOKE_ASSIGN", target = "Ljava/util/List;get(I)Ljava/lang/Object;", ordinal = 0),
+            at = @At(value = "INVOKE",
+                     target = "Ljava/util/List;get(I)Ljava/lang/Object;",
+                     ordinal = 0,
+                     shift = At.Shift.AFTER),
             cancellable = true)
     public void gregtechCEu$getCraftingResultFirst(InventoryCrafting inv, CallbackInfoReturnable<ItemStack> cir,
-                                                   @Local(ordinal = 0) LocalRef<ItemStack> itemstack,
-                                                   @Local(ordinal = 1) LocalRef<ItemStack> itemstack1) {
-        if (itemstack.get().getItem() instanceof IGTTool tool && tool.isElectric()) {
+                                                   @Local(ordinal = 0) ItemStack itemstack,
+                                                   @Local(ordinal = 1) ItemStack itemstack1) {
+        if (itemstack.getItem() instanceof IGTTool tool && tool.isElectric()) {
             cir.setReturnValue(ItemStack.EMPTY);
-        } else if (itemstack1.get().getItem() instanceof IGTTool tool && tool.isElectric()) {
+        } else if (itemstack1.getItem() instanceof IGTTool tool && tool.isElectric()) {
             cir.setReturnValue(ItemStack.EMPTY);
         }
     }
 
-    @Inject(method = "getCraftingResult(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;",
+    /*@Inject(method = "getCraftingResult(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;",
             at = @At(value = "RETURN", ordinal = 1),
-            cancellable = true)
-    public void gregtechCEu$getCraftingResultSecond(InventoryCrafting inv, CallbackInfoReturnable<ItemStack> cir,
-                                                    @Local(ordinal = 4) LocalIntRef i1,
-                                                    @Local(ordinal = 2) LocalRef<ItemStack> itemstack2,
-                                                    @Local(ordinal = 3) LocalRef<ItemStack> itemstack3) {
-        if (itemstack2.get().getItem() instanceof IGTTool first && itemstack3.get().getItem() instanceof IGTTool) {
+            cancellable = true)*/
+    @ModifyReturnValue(method = "getCraftingResult", at = @At(value = "RETURN", ordinal = 1))
+    public ItemStack gregtechCEu$getCraftingResultSecond(ItemStack originalResult, InventoryCrafting inv,
+                                                         @Local(ordinal = 4) int itemDamage,
+                                                         @Local(ordinal = 2) ItemStack itemstack2,
+                                                         @Local(ordinal = 3) ItemStack itemstack3) {
+        if (itemstack2.getItem() instanceof IGTTool first && itemstack3.getItem() instanceof IGTTool) {
             // do not allow repairing tools if both are full durability
-            if (itemstack2.get().getItemDamage() == 0 && itemstack3.get().getItemDamage() == 0) {
-                cir.setReturnValue(ItemStack.EMPTY);
+            if (itemstack2.getItemDamage() == 0 && itemstack3.getItemDamage() == 0) {
+                return ItemStack.EMPTY;
             } else {
-                ItemStack output = first.get(first.getToolMaterial(itemstack2.get()));
+                ItemStack output = first.get(first.getToolMaterial(itemstack2));
                 NBTTagCompound outputTag = ToolHelper.getToolTag(output);
-                outputTag.setInteger(ToolHelper.DURABILITY_KEY, i1.get());
-                cir.setReturnValue(output);
+                outputTag.setInteger(ToolHelper.DURABILITY_KEY, itemDamage);
+                return output;
             }
         }
-    }
 
-    // Can't use @Share, since ItemStack is not on the LocalRef group
+        return originalResult;
+    }
 
     @Inject(method = "getRemainingItems",
             at = @At(value = "INVOKE",
                      target = "Lnet/minecraft/inventory/InventoryCrafting;getStackInSlot(I)Lnet/minecraft/item/ItemStack;",
-                     shift = At.Shift.AFTER))
+                     shift = At.Shift.BY,
+                     by = 2))
     public void gregtechCEu$getRemainingItemsInject(InventoryCrafting inv,
                                                     CallbackInfoReturnable<NonNullList<ItemStack>> cir,
                                                     @Local ItemStack itemStack) {
