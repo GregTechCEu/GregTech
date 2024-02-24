@@ -434,6 +434,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         }
     }
 
+    @Override
+    protected long getMaxParallelVoltage() {
+        return getMaximumOverclockVoltage();
+    }
+
     @Nullable
     @Override
     public RecipeMap<?> getRecipeMap() {
