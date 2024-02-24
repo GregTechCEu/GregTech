@@ -67,6 +67,7 @@ import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -152,6 +153,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     protected boolean muffled = false;
 
     private int playSoundCooldown = 0;
+    private int lastTick = 0;
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -809,6 +811,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
+        if (!allowTickAcceleration()) {
+            int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+            if (currentTick == lastTick) {
+                return;
+            }
+            lastTick = currentTick;
+        }
         for (MTETrait mteTrait : this.mteTraits.values()) {
             if (shouldUpdate(mteTrait)) {
                 mteTrait.update();
@@ -822,6 +831,15 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (getOffsetTimer() % 5 == 0L) {
             updateLightValue();
         }
+    }
+
+    /**
+     * @return Whether this machine is allowed to be tick accelerated by external means. This does NOT
+     *         apply to World Accelerators from GT, those will never work on machines. This refers to effects
+     *         like Time in a Bottle, or Torcherino, or similar.
+     */
+    public boolean allowTickAcceleration() {
+        return ConfigHolder.machines.allowTickAcceleration;
     }
 
     protected boolean shouldUpdate(MTETrait trait) {

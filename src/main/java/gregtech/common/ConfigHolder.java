@@ -156,6 +156,11 @@ public class ConfigHolder {
                 "Default: false" })
         @Config.RequiresMcRestart
         public boolean highTierContent = false;
+
+        @Config.Comment({ "Whether tick acceleration effects are allowed to affect GT machines.",
+                "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
+                "Default: true" })
+        public boolean allowTickAcceleration = true;
     }
 
     public static class WorldGenOptions {
