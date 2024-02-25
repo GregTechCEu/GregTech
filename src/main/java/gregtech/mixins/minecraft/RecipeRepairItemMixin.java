@@ -44,15 +44,15 @@ public class RecipeRepairItemMixin {
     }
 
     @Inject(method = "getCraftingResult(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;",
-            at = @At(value = "INVOKE",
+            at = @At(value = "INVOKE_ASSIGN",
                      target = "Ljava/util/List;get(I)Ljava/lang/Object;",
                      ordinal = 0,
-                     shift = At.Shift.AFTER),
+                     shift = At.Shift.BY,
+                     by = 2),
             cancellable = true)
     public void gregtechCEu$getCraftingResultFirst(InventoryCrafting inv, CallbackInfoReturnable<ItemStack> cir,
-                                                   @Local(ordinal = 0, print = true) ItemStack itemstack,
-                                                   @Local(ordinal = 0) List<ItemStack> list) {
-        ItemStack itemstack1 = list.get(0);
+                                                   @Local(ordinal = 0) ItemStack itemstack,
+                                                   @Local(ordinal = 1) ItemStack itemstack1) {
         if (itemstack.getItem() instanceof IGTTool tool && tool.isElectric()) {
             cir.setReturnValue(ItemStack.EMPTY);
         } else if (itemstack1.getItem() instanceof IGTTool tool && tool.isElectric()) {
@@ -67,8 +67,8 @@ public class RecipeRepairItemMixin {
      */
     @ModifyReturnValue(method = "getCraftingResult", at = @At(value = "RETURN", ordinal = 1))
     public ItemStack gregtechCEu$getCraftingResultSecond(ItemStack originalResult, InventoryCrafting inv,
-                                                         @Local(ordinal = 3, print = true) int itemDamage,
-                                                         @Local(ordinal = 0, print = true) ItemStack itemstack2,
+                                                         @Local(ordinal = 3) int itemDamage,
+                                                         @Local(ordinal = 0) ItemStack itemstack2,
                                                          @Local(ordinal = 1) ItemStack itemstack3) {
         if (itemstack2.getItem() instanceof IGTTool first && itemstack3.getItem() instanceof IGTTool) {
             // do not allow repairing tools if both are full durability
