@@ -257,7 +257,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             }
             return null;
         } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            IItemHandler itemHandler = (side == getOutputFacingItems() && !isAllowInputFromOutputSideFluids()) ?
+            IItemHandler itemHandler = (side == getOutputFacingItems() && !isAllowInputFromOutputSideItems()) ?
                     outputItemInventory : itemInventory;
             if (itemHandler.getSlots() > 0) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
