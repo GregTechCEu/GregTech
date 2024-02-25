@@ -6,16 +6,6 @@ import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.FluidContainerSlotWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.PhantomTankWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -37,8 +27,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -52,6 +40,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
@@ -59,9 +48,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +55,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT;
 
@@ -219,7 +204,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             }
             playerIn.sendStatusMessage(new TextComponentTranslation(
                     "gregtech.machine.drum." + (isAutoOutput ? "disable" : "enable") +
-                            "_output"), true);
+                            "_output"),
+                    true);
             toggleOutput(!isAutoOutput);
             return true;
         }
@@ -232,7 +218,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         if (!playerIn.isSneaking()) {
             if (!getWorld().isRemote) {
                 playerIn.sendStatusMessage(new TextComponentTranslation(
-                        "gregtech.machine.basic.input_from_output_side." + (allowInputfromOutput ? "allow" : "disallow")), true);
+                        "gregtech.machine.basic.input_from_output_side." +
+                                (allowInputfromOutput ? "allow" : "disallow")),
+                        true);
                 toggleInputFromOutput();
                 return true;
             }
@@ -245,7 +233,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     private void toggleOutput(boolean output) {
-        if(isAutoOutput == output) return;
+        if (isAutoOutput == output) return;
         isAutoOutput = output;
         if (!getWorld().isRemote) {
             notifyBlockUpdate();
@@ -348,9 +336,10 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidHandler fluidHandler = (side == EnumFacing.DOWN && allowInputfromOutput) ? outputFluidInventory : fluidInventory;
-            if(fluidHandler.getTankProperties().length > 0) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            IFluidHandler fluidHandler = (side == EnumFacing.DOWN && allowInputfromOutput) ? outputFluidInventory :
+                    fluidInventory;
+            if (fluidHandler.getTankProperties().length > 0) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler);
             }
             return null;
@@ -373,5 +362,4 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     protected IItemHandlerModifiable createExportItemHandler() {
         return new GTItemStackHandler(this, 1);
     }
-
 }
