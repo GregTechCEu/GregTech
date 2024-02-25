@@ -20,17 +20,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+
 @Mixin(RecipeRepairItem.class)
 public class RecipeRepairItemMixin {
 
     @Inject(method = "matches(Lnet/minecraft/inventory/InventoryCrafting;Lnet/minecraft/world/World;)Z",
             at = @At(value = "INVOKE",
                      target = "Ljava/util/List;get(I)Ljava/lang/Object;",
-                     shift = At.Shift.BY,
-                     by = 3),
+                     shift = At.Shift.AFTER),
             cancellable = true)
     public void gregtechCEu$matches(InventoryCrafting inv, World worldIn, CallbackInfoReturnable<Boolean> cir,
-                                    @Local ItemStack itemstack, @Local(ordinal = 1) ItemStack itemstack1) {
+                                    @Local(ordinal = 0) ItemStack itemstack, @Local(ordinal = 0) List<ItemStack> list) {
+        ItemStack itemstack1 = list.get(0);
         if (itemstack.getItem() instanceof IGTTool first &&
                 itemstack1.getItem() instanceof IGTTool second) {
             if (first.isElectric() || second.isElectric()) {
@@ -48,8 +50,9 @@ public class RecipeRepairItemMixin {
                      shift = At.Shift.AFTER),
             cancellable = true)
     public void gregtechCEu$getCraftingResultFirst(InventoryCrafting inv, CallbackInfoReturnable<ItemStack> cir,
-                                                   @Local(ordinal = 0) ItemStack itemstack,
-                                                   @Local(ordinal = 1) ItemStack itemstack1) {
+                                                   @Local(ordinal = 0, print = true) ItemStack itemstack,
+                                                   @Local(ordinal = 0) List<ItemStack> list) {
+        ItemStack itemstack1 = list.get(0);
         if (itemstack.getItem() instanceof IGTTool tool && tool.isElectric()) {
             cir.setReturnValue(ItemStack.EMPTY);
         } else if (itemstack1.getItem() instanceof IGTTool tool && tool.isElectric()) {
@@ -57,14 +60,16 @@ public class RecipeRepairItemMixin {
         }
     }
 
-    /*@Inject(method = "getCraftingResult(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;",
-            at = @At(value = "RETURN", ordinal = 1),
-            cancellable = true)*/
+    /*
+     * @Inject(method = "getCraftingResult(Lnet/minecraft/inventory/InventoryCrafting;)Lnet/minecraft/item/ItemStack;",
+     * at = @At(value = "RETURN", ordinal = 1),
+     * cancellable = true)
+     */
     @ModifyReturnValue(method = "getCraftingResult", at = @At(value = "RETURN", ordinal = 1))
     public ItemStack gregtechCEu$getCraftingResultSecond(ItemStack originalResult, InventoryCrafting inv,
-                                                         @Local(ordinal = 4) int itemDamage,
-                                                         @Local(ordinal = 2) ItemStack itemstack2,
-                                                         @Local(ordinal = 3) ItemStack itemstack3) {
+                                                         @Local(ordinal = 3, print = true) int itemDamage,
+                                                         @Local(ordinal = 0, print = true) ItemStack itemstack2,
+                                                         @Local(ordinal = 1) ItemStack itemstack3) {
         if (itemstack2.getItem() instanceof IGTTool first && itemstack3.getItem() instanceof IGTTool) {
             // do not allow repairing tools if both are full durability
             if (itemstack2.getItemDamage() == 0 && itemstack3.getItemDamage() == 0) {
@@ -87,7 +92,7 @@ public class RecipeRepairItemMixin {
                      by = 2))
     public void gregtechCEu$getRemainingItemsInject(InventoryCrafting inv,
                                                     CallbackInfoReturnable<NonNullList<ItemStack>> cir,
-                                                    @Local ItemStack itemStack) {
+                                                    @Local(ordinal = 0) ItemStack itemStack) {
         ForgeEventFactory.onPlayerDestroyItem(ForgeHooks.getCraftingPlayer(), itemStack, null);
     }
 
@@ -95,7 +100,7 @@ public class RecipeRepairItemMixin {
                        at = @At(value = "INVOKE",
                                 target = "Lnet/minecraft/util/NonNullList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
     public boolean gregtechCEU$getRemainingItemsWrap(NonNullList<Object> instance, int index, Object newValue,
-                                                     @Local ItemStack itemstack) {
+                                                     @Local(ordinal = 0) ItemStack itemstack) {
         return itemstack.getItem() instanceof IGTTool;
     }
 }
