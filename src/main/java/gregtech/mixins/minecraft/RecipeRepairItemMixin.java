@@ -13,7 +13,8 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -85,22 +86,16 @@ public class RecipeRepairItemMixin {
         return originalResult;
     }
 
-    @Inject(method = "getRemainingItems",
-            at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/inventory/InventoryCrafting;getStackInSlot(I)Lnet/minecraft/item/ItemStack;",
-                     shift = At.Shift.BY,
-                     by = 2))
-    public void gregtechCEu$getRemainingItemsInject(InventoryCrafting inv,
-                                                    CallbackInfoReturnable<NonNullList<ItemStack>> cir,
-                                                    @Local(ordinal = 0) ItemStack itemStack) {
-        ForgeEventFactory.onPlayerDestroyItem(ForgeHooks.getCraftingPlayer(), itemStack, null);
-    }
-
-    @WrapWithCondition(method = "getRemainingItems",
-                       at = @At(value = "INVOKE",
-                                target = "Lnet/minecraft/util/NonNullList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
-    public boolean gregtechCEU$getRemainingItemsWrap(NonNullList<Object> instance, int index, Object newValue,
-                                                     @Local(ordinal = 0) ItemStack itemstack) {
-        return itemstack.getItem() instanceof IGTTool;
+    @WrapOperation(method = "getRemainingItems",
+                   at = @At(value = "INVOKE",
+                            target = "Lnet/minecraft/util/NonNullList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
+    public Object gregtechCEU$getRemainingItemsWrap(NonNullList<Object> instance, int index, Object newValue, Operation<Object> original,
+                       @Local(ordinal = 0) ItemStack itemStack) {
+        if (itemStack.getItem() instanceof IGTTool) {
+            ForgeEventFactory.onPlayerDestroyItem(ForgeHooks.getCraftingPlayer(), itemStack, null);
+            return instance.get(index);
+        } else {
+            return instance.set(index, newValue);
+        }
     }
 }
