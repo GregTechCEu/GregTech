@@ -20,8 +20,9 @@ import java.util.List;
 public class AbstractCTMBakedModelMixin {
 
     @ModifyReturnValue(method = "getQuads", at = @At(value = "RETURN", ordinal = 1))
-    private List<BakedQuad> getQuadsWithOptifine(List<BakedQuad> original, @Local BlockRenderLayer layer,
-                                                 @Local IBlockState state, @Local EnumFacing side, @Local long rand) {
+    private List<BakedQuad> getQuadsWithOptifine(List<BakedQuad> original, @Local(ordinal = 0) BlockRenderLayer layer,
+                                                 @Local(ordinal = 0) IBlockState state,
+                                                 @Local(ordinal = 0) EnumFacing side, @Local(ordinal = 0) long rand) {
         return CTMHooks.getQuadsWithOptiFine(original, layer, (IBakedModel) this, state, side, rand);
     }
 }

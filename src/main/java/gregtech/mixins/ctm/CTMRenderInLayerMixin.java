@@ -22,7 +22,7 @@ public class CTMRenderInLayerMixin {
                                     target = "Lteam/chisel/ctm/api/model/IModelCTM;canRenderInLayer(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/BlockRenderLayer;)Z"),
                            remap = false)
     private static Boolean checkRenderInLayer(Boolean originalResult, @NotNull IBlockState state,
-                                              @NotNull BlockRenderLayer layer, @Local IBakedModel model) {
+                                              @NotNull BlockRenderLayer layer, @Local(ordinal = 0) IBakedModel model) {
         return CTMModHooks.canRenderInLayer(((AbstractCTMBakedModel) model).getModel(), state, layer);
     }
 }
