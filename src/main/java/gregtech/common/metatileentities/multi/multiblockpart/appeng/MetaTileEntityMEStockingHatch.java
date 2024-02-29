@@ -27,11 +27,11 @@ import net.minecraftforge.fluids.FluidStack;
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IItemList;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -160,24 +160,43 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
 
     private void refreshList() {
         IMEMonitor<IAEFluidStack> monitor = getMonitor();
-        if (monitor == null) return;
-
-        Iterator<IAEFluidStack> iterator = monitor.getStorageList().iterator();
-        int index = 0;
-        while (iterator.hasNext() && index < CONFIG_SIZE) {
-            IAEFluidStack stack = iterator.next();
-            if (stack.getStackSize() > 0) {
-                FluidStack fluidStack = stack.getFluidStack();
-                if (fluidStack == null) continue;
-                if (autoPullTest != null && !autoPullTest.apply(fluidStack)) continue;
-                IAEFluidStack selectedStack = WrappedFluidStack.fromFluidStack(fluidStack);
-                selectedStack.setStackSize(1);
-                this.getAEFluidHandler().getInventory()[index].setConfig(selectedStack);
-                index++;
-            }
+        if (monitor == null) {
+            clearInventory(0);
+            return;
         }
-        for (int i = index; i < CONFIG_SIZE; i++) {
-            this.getAEFluidHandler().getInventory()[i].setConfig(null);
+
+        IItemList<IAEFluidStack> storageList = monitor.getStorageList();
+        if (storageList == null) {
+            clearInventory(0);
+            return;
+        }
+
+        int index = 0;
+        for (IAEFluidStack stack : storageList) {
+            if (index >= CONFIG_SIZE) break;
+            if (stack.getStackSize() == 0) continue;
+            stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
+            if (stack == null || stack.getStackSize() == 0) continue;
+
+            FluidStack fluidStack = stack.getFluidStack();
+            if (fluidStack == null) continue;
+            if (autoPullTest != null && !autoPullTest.apply(fluidStack)) continue;
+            IAEFluidStack selectedStack = WrappedFluidStack.fromFluidStack(fluidStack);
+            IAEFluidStack configStack = selectedStack.copy().setStackSize(1);
+            var slot = this.getAEFluidHandler().getInventory()[index];
+            slot.setConfig(configStack);
+            slot.setStock(selectedStack);
+            index++;
+        }
+
+        clearInventory(index);
+    }
+
+    private void clearInventory(int startIndex) {
+        for (int i = startIndex; i < CONFIG_SIZE; i++) {
+            var slot = this.getAEFluidHandler().getInventory()[i];
+            slot.setConfig(null);
+            slot.setStock(null);
         }
     }
 

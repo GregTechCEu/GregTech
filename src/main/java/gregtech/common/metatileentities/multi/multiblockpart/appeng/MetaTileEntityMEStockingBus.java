@@ -27,11 +27,11 @@ import net.minecraft.world.World;
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IItemList;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -193,26 +193,45 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
      */
     private void refreshList() {
         IMEMonitor<IAEItemStack> monitor = getMonitor();
-        if (monitor == null) return;
-
-        Iterator<IAEItemStack> iterator = monitor.getStorageList().iterator();
-        int index = 0;
-        while (iterator.hasNext() && index < CONFIG_SIZE) {
-            IAEItemStack stack = iterator.next();
-            if (stack.getStackSize() > 0) {
-                ItemStack itemStack = stack.createItemStack();
-                if (itemStack == null || itemStack.isEmpty()) continue;
-                // Ensure that it is valid to configure with this stack
-                if (autoPullTest != null && !autoPullTest.apply(itemStack)) continue;
-                IAEItemStack selectedStack = WrappedItemStack.fromItemStack(itemStack);
-                if (selectedStack == null) continue;
-                selectedStack.setStackSize(1);
-                this.getAEItemHandler().getInventory()[index].setConfig(selectedStack);
-                index++;
-            }
+        if (monitor == null) {
+            clearInventory(0);
+            return;
         }
-        for (int i = index; i < CONFIG_SIZE; i++) {
-            this.getAEItemHandler().getInventory()[i].setConfig(null);
+
+        IItemList<IAEItemStack> storageList = monitor.getStorageList();
+        if (storageList == null) {
+            clearInventory(0);
+            return;
+        }
+
+        int index = 0;
+        for (IAEItemStack stack : storageList) {
+            if (index >= CONFIG_SIZE) break;
+            if (stack.getStackSize() == 0) continue;
+            stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
+            if (stack == null || stack.getStackSize() == 0) continue;
+
+            ItemStack itemStack = stack.createItemStack();
+            if (itemStack == null || itemStack.isEmpty()) continue;
+            // Ensure that it is valid to configure with this stack
+            if (autoPullTest != null && !autoPullTest.apply(itemStack)) continue;
+            IAEItemStack selectedStack = WrappedItemStack.fromItemStack(itemStack);
+            if (selectedStack == null) continue;
+            IAEItemStack configStack = selectedStack.copy().setStackSize(1);
+            var slot = this.getAEItemHandler().getInventory()[index];
+            slot.setConfig(configStack);
+            slot.setStock(selectedStack);
+            index++;
+        }
+
+        clearInventory(index);
+    }
+
+    private void clearInventory(int startIndex) {
+        for (int i = startIndex; i < CONFIG_SIZE; i++) {
+            var slot = this.getAEItemHandler().getInventory()[i];
+            slot.setConfig(null);
+            slot.setStock(null);
         }
     }
 
