@@ -185,7 +185,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             IAEFluidStack configStack = selectedStack.copy().setStackSize(1);
             var slot = this.getAEFluidHandler().getInventory()[index];
             slot.setConfig(configStack);
-            slot.setStock(selectedStack);
+            slot.setStack(selectedStack);
             index++;
         }
 
@@ -196,7 +196,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         for (int i = startIndex; i < CONFIG_SIZE; i++) {
             var slot = this.getAEFluidHandler().getInventory()[i];
             slot.setConfig(null);
-            slot.setStock(null);
+            slot.setStack(null);
         }
     }
 

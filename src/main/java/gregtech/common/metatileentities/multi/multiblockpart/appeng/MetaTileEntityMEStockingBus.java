@@ -220,7 +220,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             IAEItemStack configStack = selectedStack.copy().setStackSize(1);
             var slot = this.getAEItemHandler().getInventory()[index];
             slot.setConfig(configStack);
-            slot.setStock(selectedStack);
+            slot.setStack(selectedStack);
             index++;
         }
 
@@ -231,7 +231,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         for (int i = startIndex; i < CONFIG_SIZE; i++) {
             var slot = this.getAEItemHandler().getInventory()[i];
             slot.setConfig(null);
-            slot.setStock(null);
+            slot.setStack(null);
         }
     }
 
