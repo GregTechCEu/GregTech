@@ -72,15 +72,13 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot<IAEFluidStack>
     public void setStack(IAEFluidStack stack) {
         if (this.stock == null && stack == null) {
             return;
-        } else if (this.stock == null) {
-            this.stock = WrappedFluidStack.fromFluidStack(stack.getFluidStack());
         } else if (stack == null) {
             this.stock = null;
+        } else if (this.stock == null || this.stock.getFluid() != stack.getFluid()) {
+            this.stock = WrappedFluidStack.fromFluidStack(stack.getFluidStack());
         } else if (this.stock.getStackSize() != stack.getStackSize()) {
             this.stock.setStackSize(stack.getStackSize());
-        } else {
-            return;
-        }
+        } else return;
         trigger();
     }
 

@@ -122,14 +122,11 @@ public class ExportOnlyAEItemSlot extends ExportOnlyAESlot<IAEItemStack> impleme
     public void setStack(IAEItemStack stack) {
         if (this.stock == null && stack == null) {
             return;
-        } else if (this.stock == null) {
-            this.stock = WrappedItemStack.fromItemStack(stack.createItemStack());
         } else if (stack == null) {
             this.stock = null;
-        } else if (this.stock.getStackSize() != stack.getStackSize()) {
-            this.stock.setStackSize(stack.getStackSize());
         } else {
-            return;
+            // todo this could maybe be improved with better comparison check
+            this.stock = WrappedItemStack.fromItemStack(stack.createItemStack());
         }
         this.trigger.accept(0);
     }
