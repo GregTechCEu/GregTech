@@ -1008,6 +1008,9 @@ item.gt.tool.screwdriver_lv.name=%s Screwdriver (LV)
 item.gt.tool.screwdriver_lv.tooltip=§8Adjusts Covers and Machines
 item.gt.tool.plunger.name=%s Plunger
 item.gt.tool.plunger.tooltip=§8Removes Fluids from Machines
+item.gt.tool.wire_cutter_lv.name=%s Wire Cutter (LV)
+item.gt.tool.wire_cutter_hv.name=%s Wire Cutter (HV)
+item.gt.tool.wire_cutter_iv.name=%s Wire Cutter (IV)
 
 
 item.gt.tool.tooltip.crafting_uses=§a%s Crafting Uses

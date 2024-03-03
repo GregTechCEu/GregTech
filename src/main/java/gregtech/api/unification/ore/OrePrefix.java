@@ -217,8 +217,6 @@ public class OrePrefix {
     public static final OrePrefix toolHeadWrench = new OrePrefix("toolHeadWrench", M * 4, null,
             MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION,
             hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
-    // made of 4 Ingots.
-    public static final OrePrefix toolHeadWirecutter = new OrePrefix("toolHeadWirecutter", M * 4, null, MaterialIconType.toolHeadWirecutter, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 5 Ingots.
     public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null,
             MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasRotorProperty

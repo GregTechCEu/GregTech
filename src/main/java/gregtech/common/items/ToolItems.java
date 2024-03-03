@@ -59,7 +59,6 @@ public final class ToolItems {
     public static IGTTool WIRECUTTER_HV;
     public static IGTTool WIRECUTTER_IV;
 
-
     private ToolItems() {/**/}
 
     public static List<IGTTool> getAllTools() {

@@ -93,9 +93,6 @@ public class ToolRecipeHandler {
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWrench, ToolItems.WRENCH_IV);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadBuzzSaw, ToolItems.BUZZSAW);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadScrewdriver, ToolItems.SCREWDRIVER_LV);
-        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWirecutter, ToolItems.WIRECUTTER_LV);
-        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWirecutter, ToolItems.WIRECUTTER_HV);
-        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWirecutter, ToolItems.WIRECUTTER_IV);
 
         ForgeRegistries.RECIPES
                 .register(new ToolHeadReplaceRecipe().setRegistryName(new ResourceLocation(MODID, "replacetoolhead")));
@@ -292,12 +289,8 @@ public class ToolRecipeHandler {
             }
 
             // wirecutter
-            toolPrefix = OrePrefix.toolHeadWirecutter;
-            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.WIRECUTTER_LV, ToolItems.WIRECUTTER_HV, ToolItems.WIRECUTTER_IV});
-
-            //ModHandler.addShapedRecipe(String.format("wirecutter_head_%s", material),
-            //        OreDictUnifier.get(toolPrefix, material),
-            //        "   ", "   ", "   ");
+            addElectricWirecutterRecipe(material,
+                    new IGTTool[] { ToolItems.WIRECUTTER_LV, ToolItems.WIRECUTTER_HV, ToolItems.WIRECUTTER_IV });
         }
 
         // screwdriver
@@ -324,6 +317,21 @@ public class ToolRecipeHandler {
                     "wHd", " U ",
                     'H', new UnificationEntry(toolHead, material),
                     'U', powerUnitStack);
+        }
+    }
+
+    public static void addElectricWirecutterRecipe(Material material, IGTTool[] toolItems) {
+        for (IGTTool toolItem : toolItems) {
+            int tier = toolItem.getElectricTier();
+            ItemStack powerUnitStack = powerUnitItems.get(tier).getStackForm();
+            IElectricItem powerUnit = powerUnitStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            ItemStack tool = toolItem.get(material, 0, powerUnit.getMaxCharge());
+            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getToolId(), material), tool,
+                    Ingredient.fromStacks(powerUnitStack), true, true,
+                    "PfP", "hPd", "RUR",
+                    'P', new UnificationEntry(OrePrefix.plate, material),
+                    'U', powerUnitStack,
+                    'R', new UnificationEntry(OrePrefix.stick, material));
         }
     }
 
