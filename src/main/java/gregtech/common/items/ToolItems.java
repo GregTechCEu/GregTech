@@ -55,6 +55,9 @@ public final class ToolItems {
     public static IGTTool BUZZSAW;
     public static IGTTool SCREWDRIVER_LV;
     public static IGTTool PLUNGER;
+    public static IGTTool WIRECUTTER_LV;
+    public static IGTTool WIRECUTTER_HV;
+    public static IGTTool WIRECUTTER_IV;
 
     private ToolItems() {/**/}
 
@@ -319,6 +322,36 @@ public final class ToolItems {
                 .oreDict(ToolOreDict.toolPlunger)
                 .toolClasses(ToolClasses.PLUNGER)
                 .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 255, 1, 4F, 0F)));
+        WIRECUTTER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter_lv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(4)
+                        .efficiencyMultiplier(2.0F)
+                        .attackDamage(-1.0F).attackSpeed(-2.4F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
+                .sound(GTSoundEvents.WIRECUTTER_TOOL, true)
+                .oreDict(ToolOreDict.toolWireCutter)
+                .secondaryOreDicts("craftingToolWireCutter")
+                .toolClasses(ToolClasses.WIRE_CUTTER)
+                .electric(GTValues.LV));
+        WIRECUTTER_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter_hv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(4)
+                        .efficiencyMultiplier(3.0F)
+                        .attackDamage(-1.0F).attackSpeed(-2.4F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
+                .sound(GTSoundEvents.WIRECUTTER_TOOL, true)
+                .oreDict(ToolOreDict.toolWireCutter)
+                .secondaryOreDicts("craftingToolWireCutter")
+                .toolClasses(ToolClasses.WIRE_CUTTER)
+                .electric(GTValues.HV));
+        WIRECUTTER_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter_iv")
+                .toolStats(b -> b.blockBreaking().crafting().damagePerCraftingAction(4)
+                        .efficiencyMultiplier(4.0F)
+                        .attackDamage(-1.0F).attackSpeed(-2.4F)
+                        .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV))
+                .sound(GTSoundEvents.WIRECUTTER_TOOL, true)
+                .oreDict(ToolOreDict.toolWireCutter)
+                .secondaryOreDicts("craftingToolWireCutter")
+                .toolClasses(ToolClasses.WIRE_CUTTER)
+                .electric(GTValues.IV));
     }
 
     public static IGTTool register(@NotNull ToolBuilder<?> builder) {
