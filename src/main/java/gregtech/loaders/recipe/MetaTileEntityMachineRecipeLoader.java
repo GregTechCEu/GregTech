@@ -1023,27 +1023,23 @@ public class MetaTileEntityMachineRecipeLoader {
                     .output(ITEM_IMPORT_BUS_ME)
                     .duration(300).EUt(VA[HV]).buildAndRegister();
 
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(ITEM_IMPORT_BUS[LuV])
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ITEM_IMPORT_BUS[IV])
                     .inputs(normalInterface.copy())
                     .input(CONVEYOR_MODULE_IV)
+                    .input(SENSOR_IV)
                     .inputs(GTUtility.copy(4, accelerationCard))
-                    .fluidInputs(SolderingAlloy.getFluid(L * 2))
-                    .fluidInputs(Lubricant.getFluid(500))
-                    .scannerResearch(ITEM_IMPORT_BUS_ME.getStackForm())
                     .output(STOCKING_BUS_ME)
-                    .duration(300).EUt(VA[LuV]).buildAndRegister();
+                    .duration(300).EUt(VA[IV]).buildAndRegister();
 
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(FLUID_IMPORT_HATCH[LuV])
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(FLUID_IMPORT_HATCH[IV])
                     .inputs(fluidInterface.copy())
                     .input(ELECTRIC_PUMP_IV)
+                    .input(SENSOR_IV)
                     .inputs(GTUtility.copy(4, accelerationCard))
-                    .fluidInputs(SolderingAlloy.getFluid(L * 2))
-                    .fluidInputs(Lubricant.getFluid(500))
-                    .scannerResearch(FLUID_IMPORT_HATCH_ME.getStackForm())
                     .output(STOCKING_HATCH_ME)
-                    .duration(300).EUt(VA[LuV]).buildAndRegister();
+                    .duration(300).EUt(VA[IV]).buildAndRegister();
         }
     }
 
