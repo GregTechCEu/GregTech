@@ -230,6 +230,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     protected ImageWidget createConnectedGui(int y) {
         // todo do something for rendering a highlight at the controller
+        // todo look into BlockPosHighlightRenderer
         connectedIcon = new ImageWidget(151, y, 18, 18,
                 isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
 
