@@ -1,4 +1,4 @@
-package gregtech.common.gui.widget;
+package gregtech.common.mui.widget;
 
 import com.cleanroommc.modularui.api.value.IStringValue;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;

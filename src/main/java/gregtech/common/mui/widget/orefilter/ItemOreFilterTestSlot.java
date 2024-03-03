@@ -25,7 +25,7 @@ public class ItemOreFilterTestSlot extends ModularSlot {
                 !ItemStack.areItemStackTagsEqual(testStack, stack)) {
             ItemStack copy = stack.copy();
             copy.setCount(1);
-            super.putStack(stack);
+            super.putStack(copy);
             this.parent.updatePreview();
         }
     }

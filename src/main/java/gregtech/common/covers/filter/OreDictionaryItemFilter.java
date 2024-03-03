@@ -10,7 +10,7 @@ import gregtech.api.unification.stack.SingleItemVariantMap;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.readers.OreDictFilterReader;
-import gregtech.common.gui.widget.HighlightedTextField;
+import gregtech.common.mui.widget.HighlightedTextField;
 import gregtech.common.mui.widget.orefilter.OreFilterTestSlot;
 
 import net.minecraft.client.resources.I18n;

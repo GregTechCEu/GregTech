@@ -78,17 +78,17 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        packetBuffer.writeByte(this.filterMode.ordinal());
         packetBuffer.writeBoolean(itemFilterContainer.hasFilter());
         if (itemFilterContainer.hasFilter()) {
+            packetBuffer.writeByte(this.filterMode.ordinal());
             packetBuffer.writeItemStack(this.itemFilterContainer.getFilterStack());
         }
     }
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
-        this.filterMode = ItemFilterMode.VALUES[packetBuffer.readByte()];
         if (!packetBuffer.readBoolean()) return;
+        this.filterMode = ItemFilterMode.VALUES[packetBuffer.readByte()];
         try {
             this.itemFilterContainer.setFilterStack(packetBuffer.readItemStack());
         } catch (IOException e) {
