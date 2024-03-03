@@ -477,6 +477,8 @@ public class ToolEventHandlers {
 
     @SideOnly(Side.CLIENT)
     private static void drawGridOverlays(EnumFacing facing, AxisAlignedBB box, Predicate<EnumFacing> test) {
+        if (facing == null) return;
+
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
