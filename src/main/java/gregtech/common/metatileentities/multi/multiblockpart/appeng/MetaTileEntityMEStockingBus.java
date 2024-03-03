@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_PULL;
 
@@ -41,7 +41,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     private static final int CONFIG_SIZE = 16;
     private boolean autoPull;
-    private Function<ItemStack, Boolean> autoPullTest;
+    private Predicate<ItemStack> autoPullTest;
 
     public MetaTileEntityMEStockingBus(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.LuV);
@@ -214,7 +214,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             ItemStack itemStack = stack.createItemStack();
             if (itemStack == null || itemStack.isEmpty()) continue;
             // Ensure that it is valid to configure with this stack
-            if (autoPullTest != null && !autoPullTest.apply(itemStack)) continue;
+            if (autoPullTest != null && !autoPullTest.test(itemStack)) continue;
             IAEItemStack selectedStack = WrappedItemStack.fromItemStack(itemStack);
             if (selectedStack == null) continue;
             IAEItemStack configStack = selectedStack.copy().setStackSize(1);

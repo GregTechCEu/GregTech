@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_PULL;
 
@@ -41,7 +41,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
 
     private static final int CONFIG_SIZE = 16;
     private boolean autoPull;
-    private Function<FluidStack, Boolean> autoPullTest;
+    private Predicate<FluidStack> autoPullTest;
 
     public MetaTileEntityMEStockingHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.LuV);
@@ -180,7 +180,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
 
             FluidStack fluidStack = stack.getFluidStack();
             if (fluidStack == null) continue;
-            if (autoPullTest != null && !autoPullTest.apply(fluidStack)) continue;
+            if (autoPullTest != null && !autoPullTest.test(fluidStack)) continue;
             IAEFluidStack selectedStack = WrappedFluidStack.fromFluidStack(fluidStack);
             IAEFluidStack configStack = selectedStack.copy().setStackSize(1);
             var slot = this.getAEFluidHandler().getInventory()[index];
