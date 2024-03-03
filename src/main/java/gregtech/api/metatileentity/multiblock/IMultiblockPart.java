@@ -11,4 +11,7 @@ public interface IMultiblockPart {
     default boolean canPartShare() {
         return true;
     }
+
+    /** Called when distinct mode is toggled on the controller that this part is attached to */
+    default void onDistinctChange(boolean newValue) {}
 }

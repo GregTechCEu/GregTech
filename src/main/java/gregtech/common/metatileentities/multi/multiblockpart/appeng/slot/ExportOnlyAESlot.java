@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.multi.multiblockpart.appeng;
+package gregtech.common.metatileentities.multi.multiblockpart.appeng.slot;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -6,11 +6,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import appeng.api.storage.data.IAEStack;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author GlodBlock
- * @Description A export only slot to hold {@link IAEStack}
- * @date 2023/4/22-13:42
- */
 public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
                                       implements IConfigurableSlot<T>, INBTSerializable<NBTTagCompound> {
 
@@ -64,7 +59,9 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>>
         return null;
     }
 
-    abstract void addStack(T stack);
+    public abstract void addStack(T stack);
+
+    public abstract void setStack(T stack);
 
     @Override
     public NBTTagCompound serializeNBT() {

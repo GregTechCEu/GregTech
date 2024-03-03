@@ -33,6 +33,8 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEnti
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCABridge;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAComputation;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCACooler;
@@ -286,6 +288,8 @@ public class MetaTileEntities {
     public static MetaTileEntity ITEM_EXPORT_BUS_ME;
     public static MetaTileEntity FLUID_IMPORT_HATCH_ME;
     public static MetaTileEntity ITEM_IMPORT_BUS_ME;
+    public static MetaTileEntity STOCKING_BUS_ME;
+    public static MetaTileEntity STOCKING_HATCH_ME;
     public static MetaTileEntityLDItemEndpoint LONG_DIST_ITEM_ENDPOINT;
     public static MetaTileEntityLDFluidEndpoint LONG_DIST_FLUID_ENDPOINT;
     public static MetaTileEntityAlarm ALARM;
@@ -1047,7 +1051,7 @@ public class MetaTileEntities {
         // IDs 1730-1744 are taken by 4A <-> 16A Transformers. They are grouped with other transformers for
         // organization.
 
-        // ME Hatches, IDs 1745-1748
+        // ME Hatches, IDs 1745-1748, 1752-1756
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1745,
                     new MetaTileEntityMEOutputHatch(gregtechId("me_export_fluid_hatch")));
@@ -1057,6 +1061,13 @@ public class MetaTileEntities {
                     new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
             ITEM_IMPORT_BUS_ME = registerMetaTileEntity(1748,
                     new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
+            STOCKING_BUS_ME = registerMetaTileEntity(1752,
+                    new MetaTileEntityMEStockingBus(gregtechId("me_stocking_item_bus")));
+            STOCKING_HATCH_ME = registerMetaTileEntity(1753,
+                    new MetaTileEntityMEStockingHatch(gregtechId("me_stocking_fluid_hatch")));
+            // 1754: Crafting Input Bus
+            // 1755: Crafting Input Buffer
+            // 1756: Crafting Input Slave
         }
 
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749,
@@ -1066,6 +1077,8 @@ public class MetaTileEntities {
 
         // Alarm, ID 1751
         ALARM = registerMetaTileEntity(1751, new MetaTileEntityAlarm(gregtechId("alarm")));
+
+        // IDs 1752-1756 are taken by AE2 parts
 
         // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
         // EV hatches separate because of old names/IDs

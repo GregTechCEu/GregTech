@@ -487,10 +487,18 @@ public class Textures {
 
     public static final SimpleOverlayRenderer ME_OUTPUT_HATCH = new SimpleOverlayRenderer(
             "overlay/appeng/me_output_hatch");
+    public static final SimpleOverlayRenderer ME_OUTPUT_HATCH_ACTIVE = new SimpleOverlayRenderer(
+            "overlay/appeng/me_output_hatch_active");
     public static final SimpleOverlayRenderer ME_INPUT_HATCH = new SimpleOverlayRenderer(
             "overlay/appeng/me_input_hatch");
+    public static final SimpleOverlayRenderer ME_INPUT_HATCH_ACTIVE = new SimpleOverlayRenderer(
+            "overlay/appeng/me_input_hatch_active");
     public static final SimpleOverlayRenderer ME_OUTPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_output_bus");
+    public static final SimpleOverlayRenderer ME_OUTPUT_BUS_ACTIVE = new SimpleOverlayRenderer(
+            "overlay/appeng/me_output_bus_active");
     public static final SimpleOverlayRenderer ME_INPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_input_bus");
+    public static final SimpleOverlayRenderer ME_INPUT_BUS_ACTIVE = new SimpleOverlayRenderer(
+            "overlay/appeng/me_input_bus_active");
 
     public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
     public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");

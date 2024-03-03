@@ -170,4 +170,8 @@ public class GregtechDataCodes {
     // Alarm
     public static final int UPDATE_SOUND = assignId();
     public static final int UPDATE_RADIUS = assignId();
+
+    // ME Parts
+    public static final int UPDATE_AUTO_PULL = assignId();
+    public static final int UPDATE_ONLINE_STATUS = assignId();
 }
