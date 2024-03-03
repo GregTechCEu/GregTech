@@ -5254,15 +5254,27 @@ gregtech.machine.laser_hatch.tooltip2=§cLaser Cables must be in a straight line
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
-gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
+# ME Parts
+gregtech.machine.me_import_item_bus.name=ME Input Bus
+gregtech.machine.me.item_import.tooltip=Extracts specified items from the ME network
+gregtech.machine.me_stocking_item_bus.name=ME Stocking Input Bus
+gregtech.machine.me.stocking_item.tooltip=Retrieves items directly from the ME network
+gregtech.machine.me.stocking_item.tooltip.2=Auto-Pull from ME mode will automatically stock the first 16 items in the ME system, updated every 5 seconds.
+gregtech.machine.me_import_item_hatch.configs.tooltip=Keeps 16 item types in stock
+gregtech.machine.me_import_fluid_hatch.name=ME Input Hatch
+gregtech.machine.me.fluid_import.tooltip=Extracts specified fluids from ME network
+gregtech.machine.me_stocking_fluid_hatch.name=ME Stocking Input Hatch
+gregtech.machine.me.stocking_fluid.tooltip=Retrieves fluids directly from the ME network
+gregtech.machine.me.stocking_fluid.tooltip.2=Auto-Pull from ME mode will automatically stock the first 16 fluids in the ME system, updated every 5 seconds.
+gregtech.machine.me_import_fluid_hatch.configs.tooltip=Keeps 16 fluid types in stock
 gregtech.machine.me_export_item_bus.name=ME Output Bus
-gregtech.machine.me_import_fluid_hatch.name=ME Stocking Input Hatch
-gregtech.machine.me_import_item_bus.name=ME Stocking Input Bus
-gregtech.machine.me.fluid_export.tooltip=Stores fluid directly into ME network.
-gregtech.machine.me.item_export.tooltip=Stores item directly into ME network.
-gregtech.machine.me.fluid_import.tooltip=Fetch fluids from ME network automatically.
-gregtech.machine.me.item_import.tooltip=Fetch items from ME network automatically.
-gregtech.machine.me.export.tooltip=It has infinite capacity before connecting to ME network.
+gregtech.machine.me.item_export.tooltip=Stores items directly into the ME network
+gregtech.machine.me.item_export.tooltip.2=Can cache an infinite amount of items
+gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
+gregtech.machine.me.fluid_export.tooltip=Stores fluids directly into the ME network
+gregtech.machine.me.fluid_export.tooltip.2=Can cache an infinite amount of fluid
+gregtech.machine.me.stocking_auto_pull_enabled=Auto-Pull Enabled
+gregtech.machine.me.stocking_auto_pull_disabled=Auto-Pull Disabled
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
@@ -5403,8 +5415,12 @@ gregtech.gui.me_network.offline=Network Status: §4Offline§r
 gregtech.gui.waiting_list=Sending Queue:
 gregtech.gui.config_slot=§fConfig Slot§r
 gregtech.gui.config_slot.set=§7Click to §bset/select§7 config slot.§r
+gregtech.gui.config_slot.set_only=§7Click to §bset§7 config slot.§r
 gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§r
 gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
+gregtech.gui.config_slot.auto_pull_managed=§4Disabled:§7 Managed by Auto-Pull
+gregtech.gui.me_bus.extra_slot=Extra Slot/n§7Put extra items for recipes here, like Molds or Lenses
+gregtech.gui.me_bus.auto_pull_button=Click to toggle automatic item pulling from ME
 gregtech.gui.alarm.radius=Radius:
 
 
