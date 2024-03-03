@@ -63,7 +63,7 @@ public class TricorderBehavior implements IItemBehaviour {
 
             List<ITextComponent> info = getScannerInfo(player, world, pos);
             if (player.isCreative() || drainEnergy(player.getHeldItem(hand), energyCost, true)) {
-                if(!player.isCreative() || !player.isSpectator()) {
+                if(!player.isCreative()) {
                     drainEnergy(player.getHeldItem(hand), energyCost, false);
                 }
                 for (ITextComponent line : info) {
