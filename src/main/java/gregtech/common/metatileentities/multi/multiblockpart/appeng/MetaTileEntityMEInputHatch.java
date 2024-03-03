@@ -256,6 +256,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.fluid_import.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me_import_fluid_hatch.configs.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
