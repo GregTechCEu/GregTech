@@ -93,6 +93,9 @@ public class ToolRecipeHandler {
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWrench, ToolItems.WRENCH_IV);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadBuzzSaw, ToolItems.BUZZSAW);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadScrewdriver, ToolItems.SCREWDRIVER_LV);
+        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWirecutter, ToolItems.WIRECUTTER_LV);
+        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWirecutter, ToolItems.WIRECUTTER_HV);
+        ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadWirecutter, ToolItems.WIRECUTTER_IV);
 
         ForgeRegistries.RECIPES
                 .register(new ToolHeadReplaceRecipe().setRegistryName(new ResourceLocation(MODID, "replacetoolhead")));
@@ -287,6 +290,14 @@ public class ToolRecipeHandler {
                         .EUt(8 * voltageMultiplier)
                         .buildAndRegister();
             }
+
+            // wirecutter
+            toolPrefix = OrePrefix.toolHeadWirecutter;
+            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.WIRECUTTER_LV, ToolItems.WIRECUTTER_HV, ToolItems.WIRECUTTER_IV});
+
+            //ModHandler.addShapedRecipe(String.format("wirecutter_head_%s", material),
+            //        OreDictUnifier.get(toolPrefix, material),
+            //        "   ", "   ", "   ");
         }
 
         // screwdriver
