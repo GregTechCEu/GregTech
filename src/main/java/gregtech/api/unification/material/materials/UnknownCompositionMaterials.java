@@ -331,7 +331,13 @@ public class UnknownCompositionMaterials {
                 .flags(FLAMMABLE)
                 .build();
 
-        // Free IDs 1560-1575
+        Corium = new Material.Builder(1560, gregtechId("corium"))
+                .liquid(new FluidBuilder().temperature(2500).block().density(8.0D))
+                .color(0x7A6B50)
+                .flags(NO_UNIFICATION, STICKY, GLOWING)
+                .build();
+
+        // Free IDs 1561-1575
 
         LPG = new Material.Builder(1576, gregtechId("lpg"))
                 .liquid(new FluidBuilder().customStill())

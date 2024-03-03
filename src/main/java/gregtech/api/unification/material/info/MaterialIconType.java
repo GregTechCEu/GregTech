@@ -85,6 +85,10 @@ public class MaterialIconType {
 
     public static final MaterialIconType turbineBlade = new MaterialIconType("turbineBlade");
 
+    public static final MaterialIconType fuelRod = new MaterialIconType("fuelRod");
+    public static final MaterialIconType fuelRodDepleted = new MaterialIconType("fuelRodDepleted");
+    public static final MaterialIconType fuelRodHotDepleted = new MaterialIconType("fuelRodHotDepleted");
+
     // BLOCK TEXTURES
     public static final MaterialIconType liquid = new MaterialIconType("liquid");
     public static final MaterialIconType gas = new MaterialIconType("gas");

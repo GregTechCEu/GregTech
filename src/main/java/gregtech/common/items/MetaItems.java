@@ -606,6 +606,9 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.toolHeadWrench);
         orePrefixes.add(OrePrefix.toolHeadBuzzSaw);
         orePrefixes.add(OrePrefix.toolHeadScrewdriver);
+        orePrefixes.add(OrePrefix.fuelRod);
+        orePrefixes.add(OrePrefix.fuelRodDepleted);
+        orePrefixes.add(OrePrefix.fuelRodHotDepleted);
     }
 
     public static void init() {
