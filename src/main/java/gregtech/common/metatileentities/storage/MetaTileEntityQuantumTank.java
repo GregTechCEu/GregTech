@@ -11,7 +11,14 @@ import gregtech.api.capability.impl.GTFluidHandlerItemStack;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.FluidContainerSlotWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.PhantomTankWidget;
+import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
@@ -443,14 +450,16 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
             try {
                 this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
             } catch (IOException ignored) {
-                GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() +
-                        " on a routine fluid update");
+                GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at {} on a routine fluid update",
+                        this.getPos());
             }
             scheduleRenderUpdate();
         } else if (dataId == UPDATE_FLUID_AMOUNT) {
+            // amount must always be read even if it cannot be used to ensure the reader index advances
+            int amount = buf.readInt();
             FluidStack stack = fluidTank.getFluid();
             if (stack != null) {
-                stack.amount = Math.min(buf.readInt(), fluidTank.getCapacity());
+                stack.amount = Math.min(amount, fluidTank.getCapacity());
                 scheduleRenderUpdate();
             }
         } else if (dataId == UPDATE_IS_VOIDING) {
