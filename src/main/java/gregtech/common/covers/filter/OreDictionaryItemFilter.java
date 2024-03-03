@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.utils.BooleanConsumer;
+
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -58,11 +60,6 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
         return this.filterReader.getExpression();
     }
 
-    @NotNull
-    public OreGlob getGlob() {
-        return this.filterReader.getGlob();
-    }
-
     protected void recompile() {
         clearCache();
         this.filterReader.recompile();
@@ -91,12 +88,28 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
 
     @Override
     public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
-        var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
-        var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive,
-                this.filterReader::setCaseSensitive);
-        var matchAll = new BooleanSyncValue(this.filterReader::shouldMatchAll, this.filterReader::setMatchAll);
-
         List<OreFilterTestSlot> oreSlots = new ArrayList<>();
+        var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
+
+        BooleanConsumer setCaseSensitive = b -> {
+            this.filterReader.setCaseSensitive(b);
+            if (!syncManager.isClient()) return;
+            for (var slot : oreSlots) {
+                slot.updatePreview();
+            }
+        };
+
+        BooleanConsumer setMatchAll = b -> {
+            this.clearCache();
+            this.filterReader.setMatchAll(b);
+            if (!syncManager.isClient()) return;
+            for (var slot : oreSlots) {
+                slot.setMatchAll(b);
+            }
+        };
+
+        var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive, setCaseSensitive);
+        var matchAll = new BooleanSyncValue(this.filterReader::shouldMatchAll, setMatchAll);
 
         return new Column().widthRel(1f).coverChildrenHeight()
                 .child(new HighlightedTextField()
@@ -125,7 +138,8 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                                 .row("XXXXX")
                                 .key('X', i -> {
                                     var slot = new OreFilterTestSlot()
-                                            .setGlobSupplier(this::getGlob);
+                                            .setGlobSupplier(this.filterReader::getGlob);
+                                    slot.setMatchAll(this.filterReader.shouldMatchAll());
                                     oreSlots.add(slot);
                                     return slot;
                                 })
@@ -141,12 +155,6 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                         .child(new CycleButtonWidget()
                                 .size(18).value(matchAll)
                                 .marginRight(2)
-                                .listenGuiAction((IGuiAction.MousePressed) i -> {
-                                    for (var slot : oreSlots) {
-                                        slot.setMatchAll(matchAll.getBoolValue());
-                                    }
-                                    return true;
-                                })
                                 .textureGetter(state -> GTGuiTextures.BUTTON_MATCH_ALL[state])
                                 .addTooltip(0,
                                         IKey.lang("cover.ore_dictionary_filter.button.match_all.disabled"))

@@ -1,15 +1,17 @@
 package gregtech.common.mui.widget.orefilter;
 
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.function.BooleanConsumer;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMaps;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -24,10 +26,9 @@ public class OreFilterTestSlot extends ItemSlot {
 
     private final ItemOreFilterTestSlot slot;
     private Supplier<OreGlob> globSupplier = ImpossibleOreGlob::getInstance;
-    private boolean expectedResult = true;
     @Nullable
     private BooleanConsumer onMatchChange;
-    private Object2BooleanMap<String> testResult;
+    private final Object2BooleanMap<String> testResult = new Object2BooleanAVLTreeMap<>();
     private MatchType matchType = MatchType.INVALID;
     private boolean matchSuccess;
     private boolean matchAll;
@@ -50,11 +51,6 @@ public class OreFilterTestSlot extends ItemSlot {
                 default -> Collections.singletonList(IKey.lang("cover.ore_dictionary_filter.test_slot.info"));
             });
         });
-        // todo add back match and no match overlays
-        // this.match = new ImageWidget(18 - 5, -3, 9, 6, GuiTextures.ORE_FILTER_MATCH);
-        // this.noMatch = new ImageWidget(18 - 5, -3, 7, 7, GuiTextures.ORE_FILTER_NO_MATCH);
-        // child(this.match);
-        // child(this.noMatch);
     }
 
     public OreFilterTestSlot setGlobSupplier(Supplier<OreGlob> supplier) {
@@ -72,11 +68,6 @@ public class OreFilterTestSlot extends ItemSlot {
         return matchSuccess;
     }
 
-    public OreFilterTestSlot setExpectedResult(boolean expectedResult) {
-        this.expectedResult = expectedResult;
-        return getThis();
-    }
-
     public OreFilterTestSlot onMatchChange(@Nullable BooleanConsumer onMatchChange) {
         this.onMatchChange = onMatchChange;
         return getThis();
@@ -90,41 +81,38 @@ public class OreFilterTestSlot extends ItemSlot {
 
     public void updatePreview() {
         Set<String> oreDicts = getTestCandidates();
-        if (oreDicts != null) {
-            OreGlob glob = this.globSupplier.get();
-            if (oreDicts.isEmpty()) {
-                // no oredict entries
-                this.testResult = Object2BooleanMaps.singleton("", glob != null && glob.matches(""));
-                this.matchType = MatchType.NO_ORE_DICT_MATCH;
-            } else {
-                this.testResult = new Object2BooleanAVLTreeMap<>();
-                for (String oreDict : oreDicts) {
-                    boolean matches = glob != null && glob.matches(oreDict);
-                    this.testResult.put(oreDict, matches);
-                }
-                this.matchType = MatchType.ORE_DICT_MATCH;
-            }
-            boolean success = this.matchAll;
-            for (var e : testResult.object2BooleanEntrySet()) {
-                boolean result = e.getBooleanValue();
-                if (result == !this.matchAll) {
-                    success = !this.matchAll;
-                    break;
-                }
-            }
-            updateAndNotifyMatchSuccess(this.expectedResult == success);
-            this.tooltip().markDirty();
-            // todo add back match and no match overlays
-            // this.match.setVisible(this.expectedResult == success);
-            // this.noMatch.setVisible(this.expectedResult != success);
+        this.testResult.clear();
+        if (oreDicts == null) {
+            this.matchType = MatchType.INVALID;
+            updateAndNotifyMatchSuccess(false);
             return;
         }
-        this.testResult = Object2BooleanMaps.emptyMap();
-        this.matchType = MatchType.INVALID;
-        updateAndNotifyMatchSuccess(false);
-        // todo add back match and no match overlays
-        // this.match.setVisible(false);
-        // this.noMatch.setVisible(false);
+        OreGlob glob = this.globSupplier.get();
+        int success = 0;
+        if (oreDicts.isEmpty()) {
+            // no oredict entries
+            this.testResult.put("", glob != null && glob.matches(""));
+            this.matchType = MatchType.NO_ORE_DICT_MATCH;
+        } else {
+            for (String oreDict : oreDicts) {
+                boolean matches = glob != null && glob.matches(oreDict);
+                if (matches) success++;
+                this.testResult.put(oreDict, matches);
+            }
+            this.matchType = MatchType.ORE_DICT_MATCH;
+        }
+        updateAndNotifyMatchSuccess(this.matchAll ? success == testResult.size() : success > 0);
+        this.tooltip().markDirty();
+    }
+
+    @Override
+    public void drawForeground(GuiContext context) {
+        super.drawForeground(context);
+        if (this.matchSuccess) {
+            GTGuiTextures.OREDICT_MATCH.draw(context, this.getArea().x + 12, this.getArea().y - 2, 9, 6, getWidgetTheme(context.getTheme()));
+        } else if (testResult.size() > 0) {
+            GTGuiTextures.OREDICT_NO_MATCH.draw(context, this.getArea().x + 12, this.getArea().y - 3, 7, 7, getWidgetTheme(context.getTheme()));
+        }
     }
 
     private void updateAndNotifyMatchSuccess(boolean newValue) {

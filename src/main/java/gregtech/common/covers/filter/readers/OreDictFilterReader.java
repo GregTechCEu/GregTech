@@ -43,6 +43,7 @@ public class OreDictFilterReader extends SimpleItemFilterReader {
             getStackTag().setBoolean(CASE_SENSITIVE, false);
         else
             getStackTag().removeTag(CASE_SENSITIVE);
+        recompile();
         markDirty();
     }
 
