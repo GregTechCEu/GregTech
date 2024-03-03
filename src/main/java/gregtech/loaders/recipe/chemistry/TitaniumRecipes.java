@@ -13,6 +13,7 @@ public class TitaniumRecipes {
         titaniumProcess();
         solvayProcess();
         bauxiteProcess();
+        ilmeniteProcess();
     }
 
     // Ilmenite and Rutile Processing
@@ -66,7 +67,7 @@ public class TitaniumRecipes {
                 .fluidInputs(CarbonDioxide.getFluid(1000))
                 .fluidInputs(Ammonia.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
-                .output(dust, AmmoniumChloride, 6)
+                .output(dust, AmmoniumChloride, 2)
                 .output(dust, SodiumBicarbonate, 6)
                 .duration(400).EUt(VA[MV]).buildAndRegister();
 
@@ -80,7 +81,7 @@ public class TitaniumRecipes {
 
         // 2NH4Cl + CaO -> CaCl2 + 2NH3 + H2O
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, AmmoniumChloride, 12)
+                .input(dust, AmmoniumChloride, 4)
                 .input(dust, Quicklime, 2)
                 .output(dust, CalciumChloride, 3)
                 .fluidOutputs(Ammonia.getFluid(2000))
@@ -153,5 +154,15 @@ public class TitaniumRecipes {
                 .chancedOutput(dust, Iron, 8000, 250)
                 .fluidOutputs(Water.getFluid(250))
                 .duration(100).EUt(VA[MV]).buildAndRegister();
+    }
+
+    // Byproduct separation for Ilmenite
+    private static void ilmeniteProcess() {
+        ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
+                .input(dust, IlmeniteSlag)
+                .chancedOutput(dust, Iron, 8000, 0)
+                .chancedOutput(dust, Tantalum, 2000, 0)
+                .chancedOutput(dust, Niobium, 500, 0)
+                .duration(50).EUt(VA[MV]).buildAndRegister();
     }
 }
