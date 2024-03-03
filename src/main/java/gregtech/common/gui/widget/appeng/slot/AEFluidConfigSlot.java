@@ -7,10 +7,11 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.gui.widget.appeng.AEConfigWidget;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -34,27 +35,26 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.LOAD_PHANTOM_FLUID_STACK_FROM_NBT;
 import static gregtech.api.util.GTUtility.getFluidFromContainer;
 
-/**
- * @Author GlodBlock
- * @Description A configurable slot for {@link IAEFluidStack}
- * @Date 2023/4/21-0:50
- */
 public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
 
-    public AEFluidConfigSlot(int x, int y, AEConfigWidget<IAEFluidStack> widget, int index) {
-        super(new Position(x, y), new Size(18, 18 * 2), widget, index);
+    public AEFluidConfigSlot(int x, int y, AEFluidConfigWidget widget, int index) {
+        super(new Position(x, y), new Size(18 * 6, 18), widget, index);
+    }
+
+    @Override
+    public AEFluidConfigWidget getParentWidget() {
+        return (AEFluidConfigWidget) super.getParentWidget();
     }
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
+        AEFluidConfigWidget pw = getParentWidget();
         Position position = getPosition();
-        IConfigurableSlot<IAEFluidStack> slot = this.parentWidget.getDisplay(this.index);
+        IConfigurableSlot<IAEFluidStack> slot = pw.getDisplay(this.index);
         IAEFluidStack config = slot.getConfig();
         IAEFluidStack stock = slot.getStock();
-        GuiTextures.FLUID_SLOT.draw(position.x, position.y, 18, 18);
-        GuiTextures.FLUID_SLOT.draw(position.x, position.y + 18, 18, 18);
-        GuiTextures.CONFIG_ARROW.draw(position.x, position.y, 18, 18);
+        drawSlots(pw.isAutoPull(), position.x, position.y);
         if (this.select) {
             GuiTextures.SELECT_BOX.draw(position.x, position.y, 18, 18);
         }
@@ -62,20 +62,33 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         int stackY = position.y + 1;
         if (config != null) {
             RenderUtil.drawFluidForGui(config.getFluidStack(), config.getFluidStack().amount, stackX, stackY, 17, 17);
-            String amountStr = TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4) + "L";
-            drawStringFixedCorner(amountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
+
+            if (!pw.isStocking()) {
+                String amountStr = TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4) + "L";
+                drawStringFixedCorner(amountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
+            }
         }
         if (stock != null) {
-            RenderUtil.drawFluidForGui(stock.getFluidStack(), stock.getFluidStack().amount, stackX, stackY + 18, 17,
-                    17);
+            RenderUtil.drawFluidForGui(stock.getFluidStack(), stock.getFluidStack().amount, stackX + DISPLAY_X_OFFSET,
+                    stackY, 17, 17);
             String amountStr = TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4) + "L";
-            drawStringFixedCorner(amountStr, stackX + 17, stackY + 18 + 17, 16777215, true, 0.5f);
+            drawStringFixedCorner(amountStr, stackX + DISPLAY_X_OFFSET + 17, stackY + 17, 16777215, true, 0.5f);
         }
         if (mouseOverConfig(mouseX, mouseY)) {
             drawSelectionOverlay(stackX, stackY, 16, 16);
         } else if (mouseOverStock(mouseX, mouseY)) {
-            drawSelectionOverlay(stackX, stackY + 18, 16, 16);
+            drawSelectionOverlay(stackX + DISPLAY_X_OFFSET, stackY, 16, 16);
         }
+    }
+
+    private void drawSlots(boolean autoPull, int x, int y) {
+        if (autoPull) {
+            GuiTextures.SLOT_DARK.draw(x, y, 18, 18);
+        } else {
+            GuiTextures.FLUID_SLOT.draw(x, y, 18, 18);
+        }
+        GuiTextures.SLOT_DARK.draw(x + DISPLAY_X_OFFSET, y, 18, 18);
+        GuiTextures.CONFIG_ARROW.draw(x, y, 18, 18);
     }
 
     @Override
@@ -108,12 +121,30 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
     }
 
     @Override
+    protected void addHoverText(List<String> hoverText) {
+        if (getParentWidget().isAutoPull()) {
+            hoverText.add(I18n.format("gregtech.gui.config_slot"));
+            hoverText.add(I18n.format("gregtech.gui.config_slot.auto_pull_managed"));
+        } else {
+            super.addHoverText(hoverText);
+        }
+    }
+
+    @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        AEFluidConfigWidget pw = getParentWidget();
+        if (pw.isAutoPull()) {
+            return false;
+        }
+
         if (mouseOverConfig(mouseX, mouseY)) {
             if (button == 1) {
                 // Right click to clear
-                this.parentWidget.disableAmount();
                 writeClientAction(REMOVE_ID, buf -> {});
+
+                if (!pw.isStocking()) {
+                    this.parentWidget.disableAmount();
+                }
             } else if (button == 0) {
                 // Left click to set/select
                 ItemStack hold = this.gui.entityPlayer.inventory.getItemStack();
@@ -125,8 +156,11 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
                         buf.writeVarInt(fluid.amount);
                     });
                 }
-                this.parentWidget.enableAmount(this.index);
-                this.select = true;
+
+                if (!pw.isStocking()) {
+                    this.parentWidget.enableAmount(this.index);
+                    this.select = true;
+                }
             }
             return true;
         }
@@ -145,6 +179,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         if (id == UPDATE_ID) {
             FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16),
                     buffer.readVarInt());
+            if (!isFluidValidForSlot(fluid)) return;
             slot.setConfig(WrappedFluidStack.fromFluidStack(fluid));
             this.parentWidget.enableAmount(this.index);
             if (fluid != null) {
@@ -198,13 +233,20 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         }
     }
 
+    private boolean isFluidValidForSlot(FluidStack stack) {
+        if (stack == null) return true;
+        AEFluidConfigWidget pw = getParentWidget();
+        if (!pw.isStocking()) return true;
+        return !pw.hasStackInConfig(stack);
+    }
+
     @Override
     public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
         if (getFluidFromContainer(ingredient) == null) {
             return Collections.emptyList();
         }
         Rectangle rectangle = toRectangleBox();
-        rectangle.height /= 2;
+        rectangle.width /= 6;
         return Lists.newArrayList(new IGhostIngredientHandler.Target<>() {
 
             @NotNull
@@ -227,9 +269,10 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
 
     @SideOnly(Side.CLIENT)
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
+        if (parentWidget.isStocking()) return false;
         IConfigurableSlot<IAEFluidStack> slot = this.parentWidget.getDisplay(this.index);
         Rectangle rectangle = toRectangleBox();
-        rectangle.height /= 2;
+        rectangle.width /= 6;
         if (slot.getConfig() == null || wheelDelta == 0 || !rectangle.contains(mouseX, mouseY)) {
             return false;
         }

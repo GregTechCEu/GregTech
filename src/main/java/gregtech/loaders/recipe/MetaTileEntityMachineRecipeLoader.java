@@ -8,6 +8,7 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 
 import net.minecraft.init.Blocks;
@@ -1024,6 +1025,24 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(accelerationCard.copy())
                     .output(ITEM_IMPORT_BUS_ME)
                     .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ITEM_IMPORT_BUS[IV])
+                    .inputs(normalInterface.copy())
+                    .input(CONVEYOR_MODULE_IV)
+                    .input(SENSOR_IV)
+                    .inputs(GTUtility.copy(4, accelerationCard))
+                    .output(STOCKING_BUS_ME)
+                    .duration(300).EUt(VA[IV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(FLUID_IMPORT_HATCH[IV])
+                    .inputs(fluidInterface.copy())
+                    .input(ELECTRIC_PUMP_IV)
+                    .input(SENSOR_IV)
+                    .inputs(GTUtility.copy(4, accelerationCard))
+                    .output(STOCKING_HATCH_ME)
+                    .duration(300).EUt(VA[IV]).buildAndRegister();
         }
     }
 

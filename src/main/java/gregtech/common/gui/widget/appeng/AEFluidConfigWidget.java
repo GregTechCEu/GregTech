@@ -1,37 +1,47 @@
 package gregtech.common.gui.widget.appeng;
 
 import gregtech.common.gui.widget.appeng.slot.AEFluidConfigSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fluids.FluidStack;
 
 import appeng.api.storage.data.IAEFluidStack;
 
-/**
- * @Author GlodBlock
- * @Description Display {@link IAEFluidStack} config
- * @Date 2023/4/21-1:45
- */
 public class AEFluidConfigWidget extends AEConfigWidget<IAEFluidStack> {
 
-    public AEFluidConfigWidget(int x, int y, IConfigurableSlot<IAEFluidStack>[] config) {
-        super(x, y, config);
+    final ExportOnlyAEFluidList fluidList;
+
+    public AEFluidConfigWidget(int x, int y, ExportOnlyAEFluidList fluidList) {
+        super(x, y, fluidList.getInventory(), fluidList.isStocking());
+        this.fluidList = fluidList;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     void init() {
-        int line;
+        final int size = (int) Math.sqrt(this.config.length);
         this.displayList = new IConfigurableSlot[this.config.length];
         this.cached = new IConfigurableSlot[this.config.length];
-        for (int index = 0; index < this.config.length; index++) {
-            this.displayList[index] = new MetaTileEntityMEInputHatch.ExportOnlyAEFluid();
-            this.cached[index] = new MetaTileEntityMEInputHatch.ExportOnlyAEFluid();
-            line = index / 8;
-            this.addWidget(new AEFluidConfigSlot((index - line * 8) * 18, line * (18 * 2 + 2), this, index));
+        for (int h = 0; h < size; h++) {
+            for (int w = 0; w < size; w++) {
+                final int index = h * size + w;
+                this.displayList[index] = new ExportOnlyAEFluidSlot();
+                this.cached[index] = new ExportOnlyAEFluidSlot();
+                this.addWidget(new AEFluidConfigSlot(w * 18, h * 18, this, index));
+            }
         }
+    }
+
+    public boolean hasStackInConfig(FluidStack stack) {
+        return fluidList.hasStackInConfig(stack, true);
+    }
+
+    public boolean isAutoPull() {
+        return fluidList.isAutoPull();
     }
 
     @Override
