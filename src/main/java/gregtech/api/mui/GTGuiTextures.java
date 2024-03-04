@@ -252,7 +252,7 @@ public class GTGuiTextures {
     public static final UITexture EXTRACTOR_OVERLAY_STEEL = fullImage(
             "textures/gui/overlay/extractor_overlay_steel.png");
     public static final UITexture FILTER_SLOT_OVERLAY = fullImage("textures/gui/overlay/filter_slot_overlay.png", true);
-    public static final UITexture FILTER_DARK_OVERLAY = fullImage("textures/gui/overlay/filter_settings_overlay.png",
+    public static final UITexture FILTER_SETTINGS_OVERLAY = fullImage("textures/gui/overlay/filter_settings_overlay.png",
             true);
     public static final UITexture FURNACE_OVERLAY_1 = fullImage("textures/gui/overlay/furnace_overlay_1.png", true);
     public static final UITexture FURNACE_OVERLAY_2 = fullImage("textures/gui/overlay/furnace_overlay_2.png", true);

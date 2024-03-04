@@ -130,9 +130,9 @@ public class FluidFilterContainer extends BaseFilterContainer
                         .size(18).marginRight(2)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon().size(16)))
                 .child(filterButton
-                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_DARK_OVERLAY.asIcon().size(16))
+                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                         .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
-                                GTGuiTextures.FILTER_DARK_OVERLAY.asIcon().size(16))
+                                GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             if (!panel.isPanelOpen()) {
