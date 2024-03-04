@@ -1,6 +1,5 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
@@ -15,6 +14,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
@@ -64,7 +64,8 @@ public class ItemFilterContainer extends BaseFilterContainer
     public void initUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.conveyor.item_filter.title"));
         widgetGroup.accept(new SlotWidget(this, 0, 10, y + 15)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
+                .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT,
+                        gregtech.api.gui.GuiTextures.FILTER_SLOT_OVERLAY));
 
         this.initFilterUI(y + 38, widgetGroup);
     }
@@ -81,7 +82,7 @@ public class ItemFilterContainer extends BaseFilterContainer
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public void blacklistUI(int y, Consumer<gregtech.api.gui.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(this::hasFilter);
-        blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
+        blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton)
                         .setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
@@ -115,8 +116,11 @@ public class ItemFilterContainer extends BaseFilterContainer
                                     }
                                 }))
                         .size(18).marginRight(2)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon().size(16)))
                 .child(filterButton
+                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_DARK_OVERLAY.asIcon().size(16))
+                        .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
+                                GTGuiTextures.FILTER_DARK_OVERLAY.asIcon().size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             if (!panel.isPanelOpen()) {

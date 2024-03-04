@@ -1,7 +1,5 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.utils.BooleanConsumer;
-
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -9,7 +7,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.ItemVariantMap;
 import gregtech.api.unification.stack.MultiItemVariantMap;
 import gregtech.api.unification.stack.SingleItemVariantMap;
-import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.readers.OreDictFilterReader;
 import gregtech.common.mui.widget.HighlightedTextField;
@@ -21,10 +18,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.Tooltip;
+import com.cleanroommc.modularui.utils.BooleanConsumer;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
