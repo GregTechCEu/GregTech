@@ -1,5 +1,7 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.drawable.GuiTextures;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 
@@ -126,8 +128,11 @@ public class FluidFilterContainer extends BaseFilterContainer
                                     }
                                 }))
                         .size(18).marginRight(2)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon().size(16)))
                 .child(filterButton
+                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_DARK_OVERLAY.asIcon().size(16))
+                        .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
+                                GTGuiTextures.FILTER_DARK_OVERLAY.asIcon().size(16))
                         .setEnabledIf(w -> hasFilter())
                         .onMousePressed(i -> {
                             if (!panel.isPanelOpen()) {
