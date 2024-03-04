@@ -1,16 +1,20 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.RenderUtil;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -32,9 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import static gregtech.api.capability.GregtechDataCodes.REMOVE_CONTROLLER;
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONTROLLER_POS;
-
 public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity implements IQuantumStorage<T> {
 
     /** not synced, server only. lazily initialized from pos */
@@ -43,7 +44,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     /** synced, server and client */
     private BlockPos controllerPos;
 
-    private ImageWidget connectedIcon;
+    private ClickButtonWidget connectedIcon;
 
     public MetaTileEntityQuantumStorage(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -71,7 +72,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             this.controller = new WeakReference<>(controller);
             this.controllerPos = controller.getPos();
             if (!getWorld().isRemote) {
-                writeCustomData(UPDATE_CONTROLLER_POS, buf -> buf.writeBlockPos(controllerPos));
+                writeCustomData(GregtechDataCodes.UPDATE_CONTROLLER_POS, buf -> buf.writeBlockPos(controllerPos));
                 scheduleRenderUpdate();
                 markDirty();
             }
@@ -83,7 +84,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         if (!getWorld().isRemote) {
             controller.clear();
             controllerPos = null;
-            writeCustomData(REMOVE_CONTROLLER, buf -> {});
+            writeCustomData(GregtechDataCodes.REMOVE_CONTROLLER, buf -> {});
             scheduleRenderUpdate();
             tryFindNetwork();
             markDirty();
@@ -188,25 +189,29 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == UPDATE_CONTROLLER_POS) {
+        if (dataId == GregtechDataCodes.UPDATE_CONTROLLER_POS) {
             this.controllerPos = buf.readBlockPos();
             this.controller.clear();
 
             if (this.connectedIcon != null) {
-                this.connectedIcon.setImage(GuiTextures.GREGTECH_LOGO);
+                this.connectedIcon.setButtonTexture(GuiTextures.GREGTECH_LOGO);
                 String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(),
                         controllerPos.getY());
-                this.connectedIcon.setTooltip("Connected to Quantum Controller at/n" + pos);
+                this.connectedIcon.setTooltipText("Connected to Quantum Controller at/n" + pos);
             }
             scheduleRenderUpdate();
-        } else if (dataId == REMOVE_CONTROLLER) {
+        } else if (dataId == GregtechDataCodes.REMOVE_CONTROLLER) {
             this.controllerPos = null;
             this.controller.clear();
             if (this.connectedIcon != null) {
-                this.connectedIcon.setImage(GuiTextures.GREGTECH_LOGO_DARK);
-                this.connectedIcon.setTooltip(null);
+                this.connectedIcon.setButtonTexture(GuiTextures.GREGTECH_LOGO_DARK);
+                this.connectedIcon.setTooltipText(null);
             }
             scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.LOCATE_CONTROLLER && buf.readBoolean()) {
+            // tell controller to highlight
+            BlockPosHighlightRenderer.renderBlockBoxHighLight(getControllerPos(), 6000, 1500);
+            Minecraft.getMinecraft().player.closeScreen();
         }
     }
 
@@ -228,16 +233,24 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         }
     }
 
-    protected ImageWidget createConnectedGui(int y) {
+    protected ClickButtonWidget createConnectedGui(int y) {
         // todo do something for rendering a highlight at the controller
         // todo look into BlockPosHighlightRenderer
-        connectedIcon = new ImageWidget(151, y, 18, 18,
-                isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
+        // connectedIcon = new ImageWidget(151, y, 18, 18,
+        // isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
+        connectedIcon = new ClickButtonWidget(151, y, 18, 18,
+                "", clickData -> {
+                    GTLog.logger.warn("click");
+                    writeCustomData(GregtechDataCodes.LOCATE_CONTROLLER, buffer -> {
+                        buffer.writeBoolean(this.isConnected());
+                    });
+                });
+        connectedIcon.setButtonTexture(isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
 
         if (isConnected()) {
             String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(),
                     controllerPos.getY());
-            connectedIcon.setTooltip("Connected to Quantum Controller at/n" + pos);
+            connectedIcon.setTooltipText("Connected to Quantum Controller at/n" + pos);
         }
 
         return connectedIcon;
