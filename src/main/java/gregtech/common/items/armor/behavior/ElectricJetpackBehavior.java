@@ -1,4 +1,4 @@
-package gregtech.common.items.armor;
+package gregtech.common.items.armor.behavior;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
