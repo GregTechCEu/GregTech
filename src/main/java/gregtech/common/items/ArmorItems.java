@@ -14,13 +14,13 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.armor.AdvancedNanoMuscleSuite;
 import gregtech.common.items.armor.AdvancedQuarkTechSuite;
 import gregtech.common.items.armor.ArmorSet;
-import gregtech.common.items.armor.ElectricJetpackBehavior;
-import gregtech.common.items.armor.FallDamageCancelBehavior;
-import gregtech.common.items.armor.FueledJetpackBehavior;
 import gregtech.common.items.armor.JetpackStats;
-import gregtech.common.items.armor.NightvisionBehavior;
 import gregtech.common.items.armor.QuarkTechSuite;
-import gregtech.common.items.armor.StepAssistBehavior;
+import gregtech.common.items.armor.behavior.ElectricJetpackBehavior;
+import gregtech.common.items.armor.behavior.FallDamageCancelBehavior;
+import gregtech.common.items.armor.behavior.FueledJetpackBehavior;
+import gregtech.common.items.armor.behavior.NightvisionBehavior;
+import gregtech.common.items.armor.behavior.StepAssistBehavior;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -82,8 +82,8 @@ public class ArmorItems {
                 .behaviors(NightvisionBehavior.INSTANCE));
 
         FUELED_JETPACK = register(ItemGTArmor.Builder.of(GTValues.MODID, "fueled_jetpack", EntityEquipmentSlot.CHEST)
-                .behaviors(
-                        new FueledJetpackBehavior(JetpackStats.FUELED, 16000, RecipeMaps.COMBUSTION_GENERATOR_FUELS)));
+                .behaviors(new FueledJetpackBehavior(JetpackStats.FUELED, 16000,
+                        FueledJetpackBehavior.COMBUSTION_FUEL_BURN_TIME)));
 
         ELECTRIC_JETPACK = register(ItemGTElectricArmor.Builder
                 .of(GTValues.MODID, "electric_jetpack", EntityEquipmentSlot.CHEST)

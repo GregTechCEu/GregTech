@@ -1,16 +1,20 @@
 package gregtech.api.items.armoritem;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.items.metaitem.ElectricStats;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -86,6 +90,17 @@ public class ItemGTElectricArmor extends ItemGTArmor {
         ElectricStats stats = new ElectricStats(maxCharge, tier, true, canChargeExternally);
         providers.add(stats.createProvider(stack));
         return providers;
+    }
+
+    @Override
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
+        IElectricItem electricItem = getElectricItem(stack);
+        tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip",
+                electricItem.getCharge(),
+                electricItem.getMaxCharge(),
+                GTValues.VNF[electricItem.getTier()]));
+        super.addInformation(stack, world, tooltip, flag);
     }
 
     public static class Builder extends ArmorBuilder<ItemGTElectricArmor, Builder> {

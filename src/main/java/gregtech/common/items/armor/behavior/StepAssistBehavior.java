@@ -1,4 +1,4 @@
-package gregtech.common.items.armor;
+package gregtech.common.items.armor.behavior;
 
 import gregtech.api.items.armoritem.ArmorHelper;
 import gregtech.api.items.armoritem.IArmorBehavior;
