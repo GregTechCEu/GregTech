@@ -100,7 +100,6 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     protected abstract String getFilterName();
 
-    // todo update stack for insert and extract, though that shouldn't be called normally
     @Override
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (!isItemValid(stack)) return stack;
