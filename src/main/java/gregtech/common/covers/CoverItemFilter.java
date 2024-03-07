@@ -10,7 +10,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.common.covers.filter.IItemFilter;
+import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -106,8 +106,8 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     @SuppressWarnings("DataFlowIssue") // this cover always has a filter
-    public @NotNull IItemFilter getItemFilter() {
-        return this.itemFilterContainer.getItemFilter();
+    public @NotNull BaseFilter getFilter() {
+        return this.itemFilterContainer.getFilter();
     }
 
     @Override
@@ -144,7 +144,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
 
-        return getItemFilter().createPanel(guiSyncManager)
+        return getFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()).left(4))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
@@ -155,7 +155,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                 .build())
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
-                        .child(getItemFilter().createWidgets(guiSyncManager).left(0)))
+                        .child(getFilter().createWidgets(guiSyncManager).left(0)))
                 .child(SlotGroupWidget.playerInventory().bottom(7).left(7));
     }
 

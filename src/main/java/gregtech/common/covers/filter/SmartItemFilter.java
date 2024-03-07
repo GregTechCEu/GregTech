@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class SmartItemFilter extends BaseFilter implements IItemFilter {
+public class SmartItemFilter extends BaseFilter {
 
     private final SmartItemFilterReader filterReader;
 
@@ -69,15 +69,21 @@ public class SmartItemFilter extends BaseFilter implements IItemFilter {
     }
 
     @Override
-    public MatchResult<ItemStack> match(ItemStack itemStack) {
+    public MatchResult matchItem(ItemStack itemStack) {
         var stack = itemStack.copy();
         stack.setCount(getTransferLimit(itemStack, Integer.MAX_VALUE));
-        return createResult(stack.getCount() > 0 != isBlacklistFilter(), stack, this.getFilteringMode().ordinal());
+        return MatchResult.create(stack.getCount() > 0 != isBlacklistFilter(), stack,
+                this.getFilteringMode().ordinal());
     }
 
     @Override
-    public boolean test(ItemStack toTest) {
+    public boolean testItem(ItemStack toTest) {
         return getTransferLimit(toTest, Integer.MAX_VALUE) > 0;
+    }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.ITEM;
     }
 
     @Override

@@ -1,69 +1,19 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.drawable.GuiTextures;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
-import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-public class FluidFilterContainer extends BaseFilterContainer
-                                  implements INBTSerializable<NBTTagCompound> {
+public class FluidFilterContainer extends BaseFilterContainer {
 
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super(dirtyNotifiable);
-    }
-
-    public boolean testFluidStack(FluidStack fluidStack) {
-        return testFluidStack(fluidStack, !isBlacklistFilter());
-    }
-
-    public boolean testFluidStack(FluidStack fluidStack, boolean whitelist) {
-        boolean result = true;
-        if (hasFilter()) {
-            result = getFluidFilter().test(fluidStack);
-        }
-        return whitelist != result;
-    }
-
-    public boolean test(FluidStack toTest) {
-        return !hasFilter() || getFluidFilter().test(toTest);
-    }
-
-    public MatchResult<FluidStack> match(FluidStack toMatch) {
-        if (!hasFilter())
-            return MatchResult.create(true, toMatch, -1);
-
-        return getFluidFilter().match(toMatch);
-    }
-
-    public int getTransferLimit(FluidStack stack) {
-        if (!hasFilter() || isBlacklistFilter()) {
-            return getTransferSize();
-        }
-        return getFluidFilter().getTransferLimit(stack, getTransferSize());
-    }
-
-    public final @Nullable IFluidFilter getFluidFilter() {
-        return (IFluidFilter) getFilter();
     }
 
     /** @deprecated uses old builtin MUI */
@@ -99,53 +49,15 @@ public class FluidFilterContainer extends BaseFilterContainer
         widgetGroup.accept(blacklistButton);
     }
 
-    /** Uses Cleanroom MUI */
-    public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
-        var panel = new PanelSyncHandler(main) {
+    @Override
+    protected boolean isItemValid(ItemStack stack) {
+        return FilterTypeRegistry.isFluidFilter(stack);
+    }
 
-            // the panel can't be opened if there's no filter, so `getFilter()` will never be null
-            @SuppressWarnings("DataFlowIssue")
-            @Override
-            public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                getFilter().setMaxTransferSize(getMaxTransferSize());
-                return getFilter().createPopupPanel(syncManager);
-            }
-        };
-        manager.syncValue("filter_panel", panel);
-        var filterButton = new ButtonWidget<>();
-        filterButton.setEnabled(hasFilter());
-
-        return new Row().coverChildrenHeight()
-                .marginBottom(2).widthRel(1f)
-                .child(new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(this, 0)
-                                .filter(FilterTypeRegistry::isFluidFilter)
-                                .singletonSlotGroup(101)
-                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    if (!FilterTypeRegistry.isFilter(newItem) && panel.isPanelOpen()) {
-                                        panel.closePanel();
-                                    }
-                                }))
-                        .size(18).marginRight(2)
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon().size(16)))
-                .child(filterButton
-                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
-                        .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
-                                GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
-                        .setEnabledIf(w -> hasFilter())
-                        .onMousePressed(i -> {
-                            if (!panel.isPanelOpen()) {
-                                panel.openPanel();
-                            } else {
-                                panel.closePanel();
-                            }
-                            Interactable.playButtonClickSound();
-                            return true;
-                        }))
-                .child(IKey.dynamic(() -> hasFilter() ?
-                        getFilterStack().getDisplayName() :
-                        IKey.lang("metaitem.fluid_filter.name").get())
-                        .alignment(Alignment.CenterRight).asWidget()
-                        .left(36).right(0).height(18));
+    @Override
+    protected String getFilterName() {
+        return hasFilter() ?
+                getFilterStack().getDisplayName() :
+                IKey.lang("metaitem.fluid_filter.name").get();
     }
 }

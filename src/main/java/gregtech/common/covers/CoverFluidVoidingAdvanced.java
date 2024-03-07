@@ -51,8 +51,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         }
         switch (voidingMode) {
             case VOID_ANY -> GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE,
-                    fluidFilterContainer::testFluidStack);
-            case VOID_OVERFLOW -> voidOverflow(myFluidHandler, fluidFilterContainer::testFluidStack,
+                    fluidFilterContainer::test);
+            case VOID_OVERFLOW -> voidOverflow(myFluidHandler, fluidFilterContainer::test,
                     this.transferAmount);
         }
     }
@@ -74,7 +74,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilterContainer.hasFilter() &&
                     voidingMode == VoidingMode.VOID_OVERFLOW) {
-                keepAmount = this.fluidFilterContainer.getFluidFilter()
+                keepAmount = this.fluidFilterContainer.getFilter()
                         .getTransferLimit(sourceFluid, getMaxTransferRate());
             }
             if (sourceFluid == null || sourceFluid.amount == 0 ||

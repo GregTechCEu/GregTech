@@ -17,11 +17,11 @@ import java.util.function.Supplier;
 @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class WidgetGroupItemFilter extends AbstractWidgetGroup {
 
-    private final Supplier<IItemFilter> itemFilterSupplier;
-    private IItemFilter itemFilter;
+    private final Supplier<BaseFilter> itemFilterSupplier;
+    private BaseFilter itemFilter;
     private int maxStackSize = 1;
 
-    public WidgetGroupItemFilter(int yPosition, Supplier<IItemFilter> itemFilterSupplier) {
+    public WidgetGroupItemFilter(int yPosition, Supplier<BaseFilter> itemFilterSupplier) {
         super(new Position(0, yPosition));
         this.itemFilterSupplier = itemFilterSupplier;
     }
@@ -29,7 +29,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        IItemFilter newItemFilter = itemFilterSupplier.get();
+        BaseFilter newItemFilter = itemFilterSupplier.get();
         if (itemFilter != newItemFilter) {
             clearAllWidgets();
             this.itemFilter = newItemFilter;
@@ -60,7 +60,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
             if (buffer.readBoolean()) {
                 // int filterId = buffer.readVarInt();
                 try {
-                    this.itemFilter = (IItemFilter) FilterTypeRegistry.getFilterForStack(buffer.readItemStack());
+                    this.itemFilter = FilterTypeRegistry.getFilterForStack(buffer.readItemStack());
                     this.itemFilter.initUI(this::addWidget);
                     this.itemFilter.setMaxTransferSize(maxStackSize);
                 } catch (IOException e) {

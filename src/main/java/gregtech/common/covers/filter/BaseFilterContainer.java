@@ -1,5 +1,6 @@
 package gregtech.common.covers.filter;
 
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
@@ -8,9 +9,18 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +37,24 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     protected BaseFilterContainer(IDirtyNotifiable dirtyNotifiable) {
         super();
         this.dirtyNotifiable = dirtyNotifiable;
+    }
+
+    public boolean test(Object toTest) {
+        return !hasFilter() || getFilter().test(toTest);
+    }
+
+    public MatchResult match(Object toMatch) {
+        if (!hasFilter())
+            return MatchResult.create(true, toMatch, -1);
+
+        return getFilter().match(toMatch);
+    }
+
+    public int getTransferLimit(Object stack) {
+        if (!hasFilter() || isBlacklistFilter()) {
+            return getTransferSize();
+        }
+        return getFilter().getTransferLimit(stack, getTransferSize());
     }
 
     @Override
@@ -65,12 +93,12 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return FilterTypeRegistry.isFilter(stack);
+        return isItemValid(stack);
     }
 
-    public boolean isItemValid(ItemStack stack) {
-        return isItemValid(0, stack);
-    }
+    protected abstract boolean isItemValid(ItemStack stack);
+
+    protected abstract String getFilterName();
 
     // todo update stack for insert and extract, though that shouldn't be called normally
     @Override
@@ -175,7 +203,52 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     /** Uses Cleanroom MUI */
-    public abstract IWidget initUI(ModularPanel main, GuiSyncManager manager);
+    public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
+        var panel = new PanelSyncHandler(main) {
+
+            // the panel can't be opened if there's no filter, so `getFilter()` will never be null
+            @SuppressWarnings("DataFlowIssue")
+            @Override
+            public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+                getFilter().setMaxTransferSize(getMaxTransferSize());
+                return getFilter().createPopupPanel(syncManager);
+            }
+        };
+        manager.syncValue("filter_panel", panel);
+        var filterButton = new ButtonWidget<>();
+        filterButton.setEnabled(hasFilter());
+
+        return new Row().coverChildrenHeight()
+                .marginBottom(2).widthRel(1f)
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(this, 0)
+                                .filter(this::isItemValid)
+                                .singletonSlotGroup(101)
+                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                    if (!isItemValid(newItem) && panel.isPanelOpen()) {
+                                        panel.closePanel();
+                                    }
+                                }))
+                        .size(18).marginRight(2)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon().size(16)))
+                .child(filterButton
+                        .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
+                        .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
+                                GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
+                        .setEnabledIf(w -> hasFilter())
+                        .onMousePressed(i -> {
+                            if (!panel.isPanelOpen()) {
+                                panel.openPanel();
+                            } else {
+                                panel.closePanel();
+                            }
+                            Interactable.playButtonClickSound();
+                            return true;
+                        }))
+                .child(IKey.dynamic(this::getFilterName)
+                        .alignment(Alignment.CenterRight).asWidget()
+                        .left(36).right(0).height(18));
+    }
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         packetBuffer.writeItemStack(this.getFilterStack());

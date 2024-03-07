@@ -90,7 +90,7 @@ public class FilterTypeRegistry {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public static int getIdForItemFilter(IItemFilter itemFilter) {
+    public static int getIdForItemFilter(BaseFilter itemFilter) {
         return 0;
     }
 
@@ -99,7 +99,7 @@ public class FilterTypeRegistry {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public static int getIdForFluidFilter(IFluidFilter fluidFilter) {
+    public static int getIdForFluidFilter(BaseFilter fluidFilter) {
         return 0;
     }
 
@@ -108,9 +108,9 @@ public class FilterTypeRegistry {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public static IItemFilter createItemFilterById(int filterId) {
+    public static BaseFilter createItemFilterById(int filterId) {
         var factory = itemFilterById.get(filterId);
-        return (IItemFilter) createNewFilterInstance(factory);
+        return createNewFilterInstance(factory);
     }
 
     /**
@@ -118,9 +118,9 @@ public class FilterTypeRegistry {
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
-    public static IFluidFilter createFluidFilterById(int filterId) {
+    public static BaseFilter createFluidFilterById(int filterId) {
         var factory = fluidFilterById.get(filterId);
-        return (IFluidFilter) createNewFilterInstance(factory);
+        return createNewFilterInstance(factory);
     }
 
     public static @NotNull BaseFilter getFilterForStack(ItemStack stack) {
@@ -139,7 +139,7 @@ public class FilterTypeRegistry {
         return filterFactory.create(stack);
     }
 
-    private static @NotNull IFilter createNewFilterInstance(FilterFactory filterFactory) {
+    private static @NotNull BaseFilter createNewFilterInstance(FilterFactory filterFactory) {
         return createNewFilterInstance(filterFactory, ItemStack.EMPTY);
     }
 

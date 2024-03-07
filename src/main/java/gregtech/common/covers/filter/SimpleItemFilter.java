@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class SimpleItemFilter extends BaseFilter implements IItemFilter {
+public class SimpleItemFilter extends BaseFilter {
 
     private static final int MAX_MATCH_SLOTS = 9;
     private final SimpleItemFilterReader filterReader;
@@ -44,15 +44,15 @@ public class SimpleItemFilter extends BaseFilter implements IItemFilter {
     }
 
     @Override
-    public MatchResult<ItemStack> match(ItemStack itemStack) {
+    public MatchResult matchItem(ItemStack itemStack) {
         int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
                 itemStack);
-        return createResult(matchedSlot != -1 && !isBlacklistFilter(), filterReader.getStackInSlot(matchedSlot),
-                matchedSlot);
+        return MatchResult.create(matchedSlot != -1 == !isBlacklistFilter(),
+                filterReader.getStackInSlot(matchedSlot), matchedSlot);
     }
 
     @Override
-    public boolean test(ItemStack toTest) {
+    public boolean testItem(ItemStack toTest) {
         int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
                 toTest);
         return matchedSlot != -1;
@@ -62,6 +62,11 @@ public class SimpleItemFilter extends BaseFilter implements IItemFilter {
     public int getTransferLimit(int matchSlot, int transferSize) {
         ItemStack stackInFilterSlot = filterReader.getStackInSlot(matchSlot);
         return Math.min(stackInFilterSlot.getCount(), transferSize);
+    }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.ITEM;
     }
 
     @Override

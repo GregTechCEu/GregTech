@@ -61,7 +61,7 @@ public class CoverFluidVoiding extends CoverPump {
             return;
         }
         GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE,
-                fluidFilterContainer::testFluidStack);
+                fluidFilterContainer::test);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class CoverFluidVoiding extends CoverPump {
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (fluidFilterContainer.testFluidStack(resource)) {
+            if (fluidFilterContainer.test(resource)) {
                 return resource.amount;
             }
             return 0;

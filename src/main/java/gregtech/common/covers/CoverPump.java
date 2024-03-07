@@ -170,16 +170,16 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                            int transferLimit) {
         if (pumpMode == PumpMode.IMPORT) {
             return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit,
-                    fluidFilterContainer::testFluidStack);
+                    fluidFilterContainer::test);
         } else if (pumpMode == PumpMode.EXPORT) {
             return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit,
-                    fluidFilterContainer::testFluidStack);
+                    fluidFilterContainer::test);
         }
         return 0;
     }
 
     protected boolean checkInputFluid(FluidStack fluidStack) {
-        return fluidFilterContainer.testFluidStack(fluidStack);
+        return fluidFilterContainer.test(fluidStack);
     }
 
     @Override

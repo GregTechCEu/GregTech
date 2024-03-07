@@ -65,7 +65,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getTransferSize();
             } else {
                 var result = itemFilterContainer.match(typeItemInfo.itemStack);
-                itemToVoidAmount = result.getMatchedStack().getCount();
+                itemToVoidAmount = result.getItemStack().getCount();
             }
 
             if (itemToVoidAmount <= 0) {

@@ -142,9 +142,9 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
                 getAttachedSide());
         if (fluidHandler == null) return;
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
-            GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
+            GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::test);
         } else if (pumpMode == CoverPump.PumpMode.EXPORT) {
-            GTTransferUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE, fluidFilter::testFluidStack);
+            GTTransferUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE, fluidFilter::test);
         }
     }
 

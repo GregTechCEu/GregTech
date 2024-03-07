@@ -10,8 +10,8 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
+import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.FluidFilterContainer;
-import gregtech.common.covers.filter.IFluidFilter;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -108,8 +108,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     @SuppressWarnings("DataFlowIssue") // this cover always has a filter
-    public @NotNull IFluidFilter getFluidFilter() {
-        return this.fluidFilterContainer.getFluidFilter();
+    public @NotNull BaseFilter getFilter() {
+        return this.fluidFilterContainer.getFilter();
     }
 
     @Override
@@ -142,7 +142,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         guiSyncManager.syncValue("filtering_mode", filteringMode);
         this.fluidFilterContainer.setMaxTransferSize(1);
 
-        return getFluidFilter().createPanel(guiSyncManager)
+        return getFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
@@ -153,7 +153,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                                 .build())
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
-                        .child(getFluidFilter().createWidgets(guiSyncManager)))
+                        .child(getFilter().createWidgets(guiSyncManager)))
                 .child(SlotGroupWidget.playerInventory().bottom(7).left(7));
     }
 
@@ -198,7 +198,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         }
 
         public int fill(FluidStack resource, boolean doFill) {
-            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN || !fluidFilterContainer.testFluidStack(resource)) {
+            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN || !fluidFilterContainer.test(resource)) {
                 return 0;
             }
             return super.fill(resource, doFill);
@@ -206,7 +206,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
         @Nullable
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (getFilterMode() == FluidFilterMode.FILTER_FILL || !fluidFilterContainer.testFluidStack(resource)) {
+            if (getFilterMode() == FluidFilterMode.FILTER_FILL || !fluidFilterContainer.test(resource)) {
                 return null;
             }
             return super.drain(resource, doDrain);
@@ -216,7 +216,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         public FluidStack drain(int maxDrain, boolean doDrain) {
             if (getFilterMode() != FluidFilterMode.FILTER_FILL) {
                 FluidStack result = super.drain(maxDrain, false);
-                if (result == null || result.amount <= 0 || !fluidFilterContainer.testFluidStack(result)) {
+                if (result == null || result.amount <= 0 || !fluidFilterContainer.test(result)) {
                     return null;
                 }
                 return doDrain ? super.drain(maxDrain, true) : result;

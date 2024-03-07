@@ -74,9 +74,9 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
                 rateUnit = lang("cover.robotic_arm.exact");
 
             transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit,
-                    filter.getTransferSize(), filter.getItemFilter() != null);
+                    filter.getTransferSize(), filter.hasFilter());
         }
-        itemFilterText(probeInfo, filter.getItemFilter());
+        itemFilterText(probeInfo, filter.getFilter());
     }
 
     /**
@@ -127,7 +127,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
             transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator
                     .getFluidFilterContainer().getTransferSize(), filter.hasFilter() && !filter.isBlacklistFilter());
         }
-        fluidFilterText(probeInfo, filter.getFluidFilter());
+        fluidFilterText(probeInfo, filter.getFilter());
     }
 
     /**
@@ -160,7 +160,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      */
     private static void itemFilterInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverItemFilter itemFilter) {
         filterModeText(probeInfo, itemFilter.getFilterMode());
-        itemFilterText(probeInfo, itemFilter.getItemFilter());
+        itemFilterText(probeInfo, itemFilter.getFilter());
     }
 
     /**
@@ -171,7 +171,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      */
     private static void fluidFilterInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverFluidFilter fluidFilter) {
         filterModeText(probeInfo, fluidFilter.getFilterMode());
-        fluidFilterText(probeInfo, fluidFilter.getFluidFilter());
+        fluidFilterText(probeInfo, fluidFilter.getFilter());
     }
 
     /**
@@ -183,7 +183,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     private static void enderFluidLinkInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverEnderFluidLink enderFluidLink) {
         transferRateText(probeInfo, enderFluidLink.getPumpMode(), " " + lang("cover.bucket.mode.milli_bucket_rate"),
                 enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
-        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFluidFilter());
+        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
             probeInfo.text(
@@ -252,12 +252,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     }
 
     /**
-     * Displays text for {@link IItemFilter} covers
+     * Displays text for {@link BaseFilter} item covers
      *
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void itemFilterText(@NotNull IProbeInfo probeInfo, @Nullable IItemFilter filter) {
+    private static void itemFilterText(@NotNull IProbeInfo probeInfo, @Nullable BaseFilter filter) {
         String label = TextStyleClass.INFO + lang("gregtech.top.filter.label");
         if (filter instanceof OreDictionaryItemFilter) {
             String expression = ((OreDictionaryItemFilter) filter).getExpression();
@@ -268,12 +268,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     }
 
     /**
-     * Displays text for {@link BaseFilter} covers
+     * Displays text for {@link BaseFilter} fluid covers
      *
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void fluidFilterText(@NotNull IProbeInfo probeInfo, @Nullable IFluidFilter filter) {
+    private static void fluidFilterText(@NotNull IProbeInfo probeInfo, @Nullable BaseFilter filter) {
         // TODO If more unique fluid filtration is added, providers for it go here
     }
 

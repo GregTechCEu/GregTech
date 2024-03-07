@@ -7,6 +7,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.filter.SimpleFluidFilter;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.NBTTagCompound;
@@ -63,12 +64,12 @@ public class CoverFluidRegulator extends CoverPump {
         }
         return switch (transferMode) {
             case TRANSFER_ANY -> GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit,
-                    fluidFilterContainer::testFluidStack);
+                    fluidFilterContainer::test);
             case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::testFluidStack,
+                    fluidFilterContainer::test,
                     this.fluidFilterContainer.getTransferSize());
             case TRANSFER_EXACT -> doTransferExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::testFluidStack, this.fluidFilterContainer.getTransferSize());
+                    fluidFilterContainer::test, this.fluidFilterContainer.getTransferSize());
         };
     }
 
@@ -78,7 +79,7 @@ public class CoverFluidRegulator extends CoverPump {
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
             if (this.fluidFilterContainer.hasFilter()) {
-                supplyAmount = this.fluidFilterContainer.getFluidFilter().getTransferLimit(sourceFluid, supplyAmount);
+                supplyAmount = this.fluidFilterContainer.getFilter().getTransferLimit(sourceFluid, supplyAmount);
             }
             if (fluidLeftToTransfer < supplyAmount)
                 break;
@@ -121,7 +122,7 @@ public class CoverFluidRegulator extends CoverPump {
                 break;
 
             if (this.fluidFilterContainer.hasFilter()) {
-                keepAmount = this.fluidFilterContainer.getFluidFilter().getTransferLimit(fluidStack, keepAmount);
+                keepAmount = this.fluidFilterContainer.getFilter().getTransferLimit(fluidStack, keepAmount);
             }
 
             // if fluid needs to be moved to meet the Keep Exact value
@@ -309,8 +310,8 @@ public class CoverFluidRegulator extends CoverPump {
         this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
-            if (this.fluidFilterContainer.hasFilter()) {
-                this.fluidFilterContainer.getFluidFilter()
+            if (this.fluidFilterContainer.getFilter() instanceof SimpleFluidFilter simpleFluidFilter) {
+                simpleFluidFilter
                         .configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
         }

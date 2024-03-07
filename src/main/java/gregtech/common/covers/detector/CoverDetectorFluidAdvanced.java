@@ -145,7 +145,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         for (IFluidTankProperties properties : tankProperties) {
             FluidStack contents = properties.getContents();
 
-            if (contents != null && fluidFilter.testFluidStack(contents))
+            if (contents != null && fluidFilter.test(contents))
                 storedFluid += contents.amount;
         }
 

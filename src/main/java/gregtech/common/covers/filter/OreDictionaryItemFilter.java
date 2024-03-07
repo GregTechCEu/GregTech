@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
+public class OreDictionaryItemFilter extends BaseFilter {
 
     private final Map<Item, ItemVariantMap.Mutable<Boolean>> matchCache = new Object2ObjectOpenHashMap<>();
     private final SingleItemVariantMap<Boolean> noOreDictMatch = new SingleItemVariantMap<>();
@@ -253,16 +253,21 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
     }
 
     @Override
-    public MatchResult<ItemStack> match(ItemStack itemStack) {
+    public MatchResult matchItem(ItemStack itemStack) {
         // "wtf is this system?? i can put any non null object here and it i will work??? $arch"
         // not anymore :thanosdaddy: -ghzdude
         var match = matchesItemStack(itemStack);
-        return createResult(match != isBlacklistFilter(), match ? itemStack.copy() : ItemStack.EMPTY, -1);
+        return MatchResult.create(match != isBlacklistFilter(), match ? itemStack.copy() : ItemStack.EMPTY, -1);
     }
 
     @Override
-    public boolean test(ItemStack toTest) {
+    public boolean testItem(ItemStack toTest) {
         return matchesItemStack(toTest);
+    }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.ITEM;
     }
 
     public boolean matchesItemStack(@NotNull ItemStack itemStack) {

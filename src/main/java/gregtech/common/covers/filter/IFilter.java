@@ -5,7 +5,6 @@ import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
@@ -43,6 +42,12 @@ public interface IFilter {
     void setMaxTransferSize(int maxTransferSize);
 
     boolean showGlobalTransferLimitSlider();
+
+    MatchResult match(Object toMatch);
+
+    boolean test(Object toTest);
+
+    int getTransferLimit(Object stack, int transferSize);
 
     default int getTransferLimit(int slot, int transferSize) {
         return transferSize;

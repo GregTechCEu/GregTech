@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class SimpleFluidFilter extends BaseFilter implements IFluidFilter {
+public class SimpleFluidFilter extends BaseFilter {
 
     private static final int MAX_FLUID_SLOTS = 9;
 
@@ -29,7 +29,6 @@ public class SimpleFluidFilter extends BaseFilter implements IFluidFilter {
         setFilterReader(this.filterReader);
     }
 
-    @Override
     public void configureFilterTanks(int amount) {
         this.filterReader.setFluidAmounts(amount);
         this.markDirty();
@@ -62,25 +61,25 @@ public class SimpleFluidFilter extends BaseFilter implements IFluidFilter {
     }
 
     @Override
-    public MatchResult<FluidStack> match(FluidStack toMatch) {
+    public MatchResult matchFluid(FluidStack fluidStack) {
         int index = -1;
         FluidStack returnable = null;
         for (int i = 0; i < filterReader.getSize(); i++) {
             var fluid = filterReader.getFluidStack(i);
-            if (fluid != null && fluid.isFluidEqual(toMatch)) {
+            if (fluid != null && fluid.isFluidEqual(fluidStack)) {
                 index = i;
                 returnable = fluid.copy();
                 break;
             }
         }
-        return createResult(index != -1, returnable, index);
+        return MatchResult.create(index != -1, returnable, index);
     }
 
     @Override
-    public boolean test(FluidStack fluidStack) {
+    public boolean testFluid(FluidStack toTest) {
         for (int i = 0; i < filterReader.getSize(); i++) {
             var fluid = filterReader.getFluidStack(i);
-            if (fluid != null && fluid.isFluidEqual(fluidStack)) {
+            if (fluid != null && fluid.isFluidEqual(toTest)) {
                 return true;
             }
         }
@@ -107,5 +106,10 @@ public class SimpleFluidFilter extends BaseFilter implements IFluidFilter {
             }
         }
         return isBlacklistFilter() ? transferSize : limit;
+    }
+
+    @Override
+    public FilterType getType() {
+        return FilterType.FLUID;
     }
 }
