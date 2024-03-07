@@ -170,6 +170,7 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
                 if (stack.isEmpty()) continue;
                 this.setStackInSlot(i, stack);
             }
+            nbt.removeTag(LEGACY_ITEM_KEY);
         }
     }
 }

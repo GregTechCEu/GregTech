@@ -91,19 +91,21 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
         public void setFluidAmount(int amount) {
             if (amount <= 0) {
                 setFluid(null);
-            } else {
-                getFluidTag().setInteger(FLUID_AMOUNT, amount);
+            } else if (this.fluidTank.hasKey(FLUID)) {
+                this.fluidTank
+                        .getCompoundTag(FLUID)
+                        .setInteger(FLUID_AMOUNT, amount);
                 markDirty();
             }
         }
 
         public boolean isEmpty() {
-            return getFluidTag().isEmpty();
+            return !this.fluidTank.hasKey(FLUID);
         }
 
-        protected NBTTagCompound getFluidTag() {
-            if (!this.fluidTank.hasKey(FLUID)) {
-                this.fluidTank.setTag(FLUID, new NBTTagCompound());
+        protected @Nullable NBTTagCompound getFluidTag() {
+            if (isEmpty()) {
+                return null;
             }
 
             return this.fluidTank.getCompoundTag(FLUID);
@@ -117,9 +119,9 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
         @Override
         public void setFluid(@Nullable FluidStack stack) {
             if (stack == null) {
-                this.fluidTank.setTag(FLUID, new NBTTagCompound());
+                this.fluidTank.removeTag(FLUID);
             } else {
-                this.fluidTank.setTag(FLUID, stack.writeToNBT(getFluidTag()));
+                this.fluidTank.setTag(FLUID, stack.writeToNBT(new NBTTagCompound()));
             }
             markDirty();
         }
@@ -130,7 +132,9 @@ public class SimpleFluidFilterReader extends BaseFilterReader {
 
         @Override
         public int getFluidAmount() {
-            return getFluidTag().getInteger(FLUID_AMOUNT);
+            return this.fluidTank
+                    .getCompoundTag(FLUID)
+                    .getInteger(FLUID_AMOUNT);
         }
 
         @Override

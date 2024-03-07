@@ -48,12 +48,6 @@ public interface IFilter {
         return transferSize;
     }
 
-    boolean isBlacklistFilter();
-
-    void setBlacklistFilter(boolean blacklistFilter);
-
-    IWidget createBlacklistUI();
-
     /** Read legacy NBT here */
     void readFromNBT(NBTTagCompound tagCompound);
 

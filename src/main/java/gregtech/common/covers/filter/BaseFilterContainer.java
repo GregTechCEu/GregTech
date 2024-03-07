@@ -20,7 +20,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     private int maxTransferSize = 1;
     private int transferSize;
-    private @Nullable IFilter currentFilter;
+    private @Nullable BaseFilter currentFilter;
     private @Nullable Runnable onFilterInstanceChange;
     private final IDirtyNotifiable dirtyNotifiable;
 
@@ -109,11 +109,11 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         return currentFilter != null;
     }
 
-    public final @Nullable IFilter getFilter() {
+    public final @Nullable BaseFilter getFilter() {
         return currentFilter;
     }
 
-    public final void setFilter(@Nullable IFilter newFilter) {
+    public final void setFilter(@Nullable BaseFilter newFilter) {
         this.currentFilter = newFilter;
         if (hasFilter()) {
             this.currentFilter.setDirtyNotifiable(this.dirtyNotifiable);

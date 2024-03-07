@@ -123,7 +123,7 @@ public class FilterTypeRegistry {
         return (IFluidFilter) createNewFilterInstance(factory);
     }
 
-    public static @NotNull IFilter getFilterForStack(ItemStack stack) {
+    public static @NotNull BaseFilter getFilterForStack(ItemStack stack) {
         if (!filterByStack.containsKey(stack)) {
             throw new IllegalArgumentException(
                     String.format("Failed to create filter instance for stack %s", stack));
@@ -135,7 +135,7 @@ public class FilterTypeRegistry {
         return filterTypeByStack.get(stack);
     }
 
-    private static @NotNull IFilter createNewFilterInstance(FilterFactory filterFactory, ItemStack stack) {
+    private static @NotNull BaseFilter createNewFilterInstance(FilterFactory filterFactory, ItemStack stack) {
         return filterFactory.create(stack);
     }
 
@@ -158,6 +158,6 @@ public class FilterTypeRegistry {
     @FunctionalInterface
     public interface FilterFactory {
 
-        IFilter create(ItemStack stack);
+        BaseFilter create(ItemStack stack);
     }
 }
