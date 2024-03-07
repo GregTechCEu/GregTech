@@ -207,29 +207,30 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
         tooltip.addStringLines(list);
     }
 
-    protected String highlightRule(StringBuilder h) {
-        for (int i = 0; i < h.length(); i++) {
-            switch (h.charAt(i)) {
+    protected String highlightRule(String text) {
+        StringBuilder builder = new StringBuilder(text);
+        for (int i = 0; i < builder.length(); i++) {
+            switch (builder.charAt(i)) {
                 case '|', '&', '^', '(', ')' -> {
-                    h.insert(i, TextFormatting.GOLD);
+                    builder.insert(i, TextFormatting.GOLD);
                     i += 2;
                 }
                 case '*', '?' -> {
-                    h.insert(i, TextFormatting.GREEN);
+                    builder.insert(i, TextFormatting.GREEN);
                     i += 2;
                 }
                 case '!' -> {
-                    h.insert(i, TextFormatting.RED);
+                    builder.insert(i, TextFormatting.RED);
                     i += 2;
                 }
                 case '\\' -> {
-                    h.insert(i++, TextFormatting.YELLOW);
+                    builder.insert(i++, TextFormatting.YELLOW);
                     i += 2;
                 }
                 case '$' -> { // TODO: remove this switch case in 2.9
-                    h.insert(i, TextFormatting.DARK_GREEN);
-                    for (; i < h.length(); i++) {
-                        switch (h.charAt(i)) {
+                    builder.insert(i, TextFormatting.DARK_GREEN);
+                    for (; i < builder.length(); i++) {
+                        switch (builder.charAt(i)) {
                             case ' ', '\t', '\n', '\r' -> {}
                             case '\\' -> {
                                 i++;
@@ -246,9 +247,9 @@ public class OreDictionaryItemFilter extends BaseFilter implements IItemFilter {
                     continue;
                 }
             }
-            h.insert(i + 1, TextFormatting.RESET);
+            builder.insert(i + 1, TextFormatting.RESET);
         }
-        return h.toString();
+        return builder.toString();
     }
 
     @Override

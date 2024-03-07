@@ -6,10 +6,9 @@ import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldHandler;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldRenderer;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-import org.jetbrains.annotations.NotNull;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class HighlightedTextField extends TextFieldWidget {
@@ -25,13 +24,18 @@ public class HighlightedTextField extends TextFieldWidget {
         this.handler.setRenderer(this.renderer);
     }
 
+    @Override
+    public void afterInit() {
+        this.highlighter.runHighlighter(getText());
+    }
+
     /**
      * Text highlighter applied only in rendering text. Only formatting characters can be inserted.
      *
      * @param highlightRule Consumer for text highlighter
      * @return This
      */
-    public HighlightedTextField setHighlightRule(Function<StringBuilder, String> highlightRule) {
+    public HighlightedTextField setHighlightRule(Function<String, String> highlightRule) {
         this.highlighter.setHighlightRule(highlightRule);
         return getThis();
     }
@@ -51,8 +55,9 @@ public class HighlightedTextField extends TextFieldWidget {
     @Override
     public void onRemoveFocus(GuiContext context) {
         super.onRemoveFocus(context);
+        highlighter.runHighlighter(getText());
         if (isSynced())
-            this.stringSyncValue.setStringValue(highlighter.getOriginalText(), true, true);
+            this.stringSyncValue.setStringValue(getText(), true, true);
         onUnfocus.run();
     }
 
@@ -63,31 +68,28 @@ public class HighlightedTextField extends TextFieldWidget {
 
     public static final class TextHighlighter extends TextFieldRenderer {
 
-        private Function<StringBuilder, String> highlightRule = StringBuilder::toString;
-        List<String> formattedLines = new ArrayList<>();
+        private Function<String, String> highlightRule = string -> string;
+
+        private Map<String, String> cacheMap = new Object2ObjectOpenHashMap<>();
 
         public TextHighlighter(TextFieldHandler handler) {
             super(handler);
         }
 
-        public void setHighlightRule(Function<StringBuilder, String> highlightRule) {
+        public void setHighlightRule(Function<String, String> highlightRule) {
             this.highlightRule = highlightRule;
-        }
-
-        public String getOriginalText() {
-            return this.handler.getText().get(0);
         }
 
         @Override
         protected float draw(String text, float x, float y) {
-            return super.draw(runHighlighter(text), x, y);
+            return super.draw(this.cacheMap.getOrDefault(text, text), x, y);
         }
 
-        public @NotNull String runHighlighter(String text) {
+        public void runHighlighter(String text) {
             if (this.highlightRule == null) {
-                return text;
+                return;
             }
-            return this.highlightRule.apply(new StringBuilder(text));
+            this.cacheMap.computeIfAbsent(text, string -> this.highlightRule.apply(string));
         }
     }
 }
