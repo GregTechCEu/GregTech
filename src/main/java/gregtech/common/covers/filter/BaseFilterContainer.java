@@ -125,8 +125,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return this.maxTransferSize > 0 &&
-                (isBlacklistFilter() || (hasFilter() && getFilter().showGlobalTransferLimitSlider()));
+        return this.maxTransferSize > 0 && (!hasFilter() || getFilter().showGlobalTransferLimitSlider());
     }
 
     public void setBlacklistFilter(boolean blacklistFilter) {
