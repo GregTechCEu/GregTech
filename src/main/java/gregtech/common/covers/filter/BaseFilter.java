@@ -15,7 +15,7 @@ import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 
 public abstract class BaseFilter implements IFilter {
 
-    private IDirtyNotifiable dirtyNotifiable;
+    protected IDirtyNotifiable dirtyNotifiable;
     private BaseFilterReader filterReader;
 
     protected final void setFilterReader(BaseFilterReader filterReader) {

@@ -7,6 +7,10 @@ import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.common.covers.CoverItemVoidingAdvanced;
+import gregtech.common.covers.CoverRoboticArm;
+import gregtech.common.covers.TransferMode;
+import gregtech.common.covers.VoidingMode;
 import gregtech.common.covers.filter.readers.SimpleItemFilterReader;
 
 import net.minecraft.item.ItemStack;
@@ -112,12 +116,17 @@ public class SimpleItemFilter extends BaseFilter implements IItemFilter {
                                     tooltip.textColor(Color.GREY.main);
                                 })
                                 .tooltipBuilder(tooltip -> {
-                                    tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
-                                    int count = this.filterReader.getTagAt(index)
-                                            .getInteger(SimpleItemFilterReader.COUNT);
-                                    if (count > 0)
-                                        tooltip.addLine(
-                                                IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
+                                    if (dirtyNotifiable instanceof CoverRoboticArm coverArm &&
+                                            coverArm.getTransferMode() != TransferMode.TRANSFER_ANY ||
+                                            dirtyNotifiable instanceof CoverItemVoidingAdvanced coverItem &&
+                                                    coverItem.getVoidingMode() != VoidingMode.VOID_ANY) {
+                                        tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
+                                        int count = this.filterReader.getTagAt(index)
+                                                .getInteger(SimpleItemFilterReader.COUNT);
+                                        if (count > 0)
+                                            tooltip.addLine(
+                                                    IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
+                                    }
                                 })
                                 .slot(SyncHandlers.phantomItemSlot(this.filterReader, index)
                                         .ignoreMaxStackSize(true)
