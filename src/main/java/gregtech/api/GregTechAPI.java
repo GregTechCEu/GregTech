@@ -3,13 +3,12 @@ package gregtech.api;
 import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IHeatingCoilBlockStats;
-import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
 import gregtech.api.gui.UIFactory;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
+import gregtech.api.metatileentity.registry.MTEManager;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
 import gregtech.api.sound.ISoundManager;
@@ -52,20 +51,19 @@ public class GregTechAPI {
     public static IMaterialRegistryManager materialManager;
     /** Will be available at the Pre-Initialization stage */
     public static MarkerMaterialRegistry markerMaterialRegistry;
+    /** Will be available at the Pre-Initialization stage */
+    public static MTEManager mteManager;
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;
     private static boolean highTierInitialized;
 
-    public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(
-            Short.MAX_VALUE);
     @Deprecated
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(
             Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(
             Integer.MAX_VALUE);
 
-    public static BlockMachine MACHINE;
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
     public static final Object2ObjectMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
     public static final Object2ObjectMap<IBlockState, IBatteryData> PSS_BATTERIES = new Object2ObjectOpenHashMap<>();

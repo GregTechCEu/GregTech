@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -152,7 +153,8 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
 
     @Nullable
     public static ItemStack getMetaTileEntityItem(String[] split) {
-        MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(new ResourceLocation(split[0], split[1]));
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(split[0]);
+        MetaTileEntity metaTileEntity = registry.getObject(new ResourceLocation(split[0], split[1]));
         return metaTileEntity == null ? null : metaTileEntity.getStackForm();
     }
 

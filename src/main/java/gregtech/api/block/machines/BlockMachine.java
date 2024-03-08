@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
@@ -71,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -255,7 +257,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public void onBlockPlacedBy(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                 @NotNull EntityLivingBase placer, ItemStack stack) {
         IGregTechTileEntity holder = (IGregTechTileEntity) worldIn.getTileEntity(pos);
-        MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(
+                Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
+
+        MetaTileEntity sampleMetaTileEntity = registry.getObjectById(stack.getItemDamage());
         if (holder != null && sampleMetaTileEntity != null) {
             // TODO Fix this
             if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
@@ -487,7 +492,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
-        for (MetaTileEntity metaTileEntity : GregTechAPI.MTE_REGISTRY) {
+        MTERegistry registry = GregTechAPI.mteManager
+                .getRegistry(Objects.requireNonNull(getRegistryName()).getNamespace());
+
+        for (MetaTileEntity metaTileEntity : registry) {
             if (metaTileEntity.isInCreativeTab(tab)) {
                 metaTileEntity.getSubItems(tab, items);
             }

@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
@@ -66,6 +67,7 @@ import java.util.AbstractList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
@@ -704,7 +706,9 @@ public class GTUtility {
 
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
         if (!(stack.getItem() instanceof MachineItemBlock)) return null;
-        return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(
+                Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
+        return registry.getObjectById(stack.getItemDamage());
     }
 
     /**
