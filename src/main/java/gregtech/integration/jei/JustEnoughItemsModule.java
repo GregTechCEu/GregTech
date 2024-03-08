@@ -10,6 +10,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -113,8 +114,10 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         for (MetaItem<?> metaItem : MetaItems.ITEMS) {
             subtypeRegistry.registerSubtypeInterpreter(metaItem, subtype);
         }
-        subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(MetaBlocks.MACHINE),
-                new MachineSubtypeHandler());
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(registry.getBlock()),
+                    new MachineSubtypeHandler());
+        }
     }
 
     @Override
@@ -190,20 +193,23 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             }
         }
 
-        for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
-            MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
-            assert metaTileEntity != null;
-            if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
-                IControllable workableCapability = metaTileEntity
-                        .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+        for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
+            for (ResourceLocation metaTileEntityId : mteRegistry.getKeys()) {
+                MetaTileEntity metaTileEntity = mteRegistry.getObject(metaTileEntityId);
+                assert metaTileEntity != null;
+                if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
+                    IControllable workableCapability = metaTileEntity
+                            .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
 
-                if (workableCapability instanceof AbstractRecipeLogic logic) {
-                    if (metaTileEntity instanceof IMultipleRecipeMaps) {
-                        for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
-                            registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                    if (workableCapability instanceof AbstractRecipeLogic logic) {
+                        if (metaTileEntity instanceof IMultipleRecipeMaps) {
+                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity)
+                                    .getAvailableRecipeMaps()) {
+                                registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                            }
+                        } else if (logic.getRecipeMap() != null) {
+                            registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                         }
-                    } else if (logic.getRecipeMap() != null) {
-                        registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                     }
                 }
             }

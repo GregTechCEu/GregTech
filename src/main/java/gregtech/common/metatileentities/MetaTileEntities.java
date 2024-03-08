@@ -1254,15 +1254,16 @@ public class MetaTileEntities {
     }
 
     public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
-        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart abilityPart) {
+        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart<?>abilityPart) {
             MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
         }
-        if (sampleMetaTileEntity instanceof MultiblockControllerBase && Mods.JustEnoughItems.isModLoaded()) {
-            if (((MultiblockControllerBase) sampleMetaTileEntity).shouldShowInJei()) {
-                MultiblockInfoCategory.registerMultiblock((MultiblockControllerBase) sampleMetaTileEntity);
+        if (sampleMetaTileEntity instanceof MultiblockControllerBase controllerBase &&
+                Mods.JustEnoughItems.isModLoaded()) {
+            if (controllerBase.shouldShowInJei()) {
+                MultiblockInfoCategory.registerMultiblock(controllerBase);
             }
         }
-        GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
+        sampleMetaTileEntity.getRegistry().register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
         return sampleMetaTileEntity;
     }
 

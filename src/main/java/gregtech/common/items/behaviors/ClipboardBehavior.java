@@ -1,5 +1,7 @@
 package gregtech.common.items.behaviors;
 
+import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -31,7 +33,6 @@ import codechicken.lib.raytracer.RayTracer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gregtech.common.blocks.MetaBlocks.MACHINE;
 import static gregtech.common.metatileentities.MetaTileEntities.CLIPBOARD_TILE;
 
 public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
@@ -258,7 +259,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                 BlockPos shiftedPos = pos.offset(facing);
                 Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
                 if (shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
-                    IBlockState state = MACHINE.getDefaultState();
+                    IBlockState state = GregTechAPI.mteManager.getRegistry(GTValues.MODID).getBlock().getDefaultState();
                     world.setBlockState(shiftedPos, state);
                     // Get new TE
                     shiftedBlock.createTileEntity(world, state);

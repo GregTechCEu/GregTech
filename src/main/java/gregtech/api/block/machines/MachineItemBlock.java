@@ -1,7 +1,6 @@
 package gregtech.api.block.machines;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -48,7 +47,7 @@ public class MachineItemBlock extends ItemBlock {
 
     /**
      * Adds another creative tab for the machine item. Additional tabs added by this method are checked along with
-     * default tabs ({@link GregTechAPI#MACHINE} and {@link CreativeTabs#SEARCH}) during
+     * default tabs ({@link GTCreativeTabs#TAB_GREGTECH_MACHINES} and {@link CreativeTabs#SEARCH}) during
      * {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList) Item#getSubItems()} operation.<br>
      * Note that, for machines to be properly registered on the creative tab, a matching implementation of
      * {@link MetaTileEntity#isInCreativeTab(CreativeTabs)} should be provided as well.
@@ -202,5 +201,10 @@ public class MachineItemBlock extends ItemBlock {
     public int getItemStackLimit(@NotNull ItemStack stack) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity != null ? metaTileEntity.getItemStackLimit(stack) : super.getItemStackLimit(stack);
+    }
+
+    @Override
+    public @NotNull BlockMachine getBlock() {
+        return (BlockMachine) super.getBlock();
     }
 }
