@@ -89,8 +89,9 @@ public class RecipeRepairItemMixin {
     @WrapOperation(method = "getRemainingItems",
                    at = @At(value = "INVOKE",
                             target = "Lnet/minecraft/util/NonNullList;set(ILjava/lang/Object;)Ljava/lang/Object;"))
-    public Object gregtechCEU$getRemainingItemsWrap(NonNullList<Object> instance, int index, Object newValue, Operation<Object> original,
-                       @Local(ordinal = 0) ItemStack itemStack) {
+    public Object gregtechCEU$getRemainingItemsWrap(NonNullList<Object> instance, int index, Object newValue,
+                                                    Operation<Object> original,
+                                                    @Local(ordinal = 0) ItemStack itemStack) {
         if (itemStack.getItem() instanceof IGTTool) {
             ForgeEventFactory.onPlayerDestroyItem(ForgeHooks.getCraftingPlayer(), itemStack, null);
             return instance.get(index);
