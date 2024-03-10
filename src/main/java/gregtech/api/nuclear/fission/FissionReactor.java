@@ -113,7 +113,8 @@ public class FissionReactor {
     public double accumulatedHydrogen;
 
     public double maxTemperature = Double.MAX_VALUE;
-    public double maxPressure = Double.MAX_VALUE;
+    // Pascals
+    public double maxPressure = 2000000;
     // In MW apparently
     public double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
 
@@ -240,6 +241,9 @@ public class FissionReactor {
                             ((float) t / geometricIntegrationSteps) + fuelRods.get(i).getPos()[1];
                     ReactorComponent component = reactorLayout[(int) Math.floor(pos[0])][(int) Math.floor(pos[1])];
 
+                    if (component == null) {
+                        continue;
+                    }
                     mij += component.getModerationFactor();
 
                     /*
@@ -436,7 +440,7 @@ public class FissionReactor {
                 this.coolantMass += actualFlowRate * coolant.getMass();
 
                 this.heatRemoved += coolant.getProperty(PropertyKey.COOLANT).getCoolingFactor()
-                        * this.reactorDepth * actualFlowRate * (this.coolantBoilingPoint() - coolant.getFluid().getTemperature());
+                        * this.reactorDepth * actualFlowRate * (this.coolantBoilingPoint(coolant) - coolant.getFluid().getTemperature());
             }
         }
         this.coolantMass /= 1000;
@@ -449,6 +453,14 @@ public class FissionReactor {
     protected double coolantBoilingPoint() {
         return 1. / (1. / this.coolantBoilingPointStandardPressure -
                 R * Math.log(this.pressure / standardPressure) / this.coolantHeatOfVaporization);
+    }
+
+    protected double coolantBoilingPoint(Material coolant) {
+        if (coolant.getProperty(PropertyKey.COOLANT).getBoilingPoint() == 0) {
+            return coolantBoilingPoint();
+        }
+        return 1. / (1. / coolant.getProperty(PropertyKey.COOLANT).getBoilingPoint() -
+                R * Math.log(this.pressure / standardPressure) / coolant.getProperty(PropertyKey.COOLANT).getHeatOfVaporization());
     }
 
     public void updateTemperature() {
