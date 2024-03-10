@@ -169,14 +169,14 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isActive);
-        buf.writeResourceLocation(SoundEvent.REGISTRY.getNameForObject(this.selectedSound));
+        buf.writeResourceLocation(getResourceLocationOfSound(this.selectedSound));
         buf.writeInt(this.radius);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setBoolean("isActive", this.isActive);
-        data.setString("selectedSound", SoundEvent.REGISTRY.getNameForObject(this.selectedSound).toString());
+        data.setString("selectedSound", getNameOfSound(this.selectedSound));
         data.setInteger("radius", this.radius);
         return super.writeToNBT(data);
     }
