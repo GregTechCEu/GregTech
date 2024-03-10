@@ -85,7 +85,8 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                             if (this.selectedSound != newSound) {
                                 this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
                                 this.writeCustomData(GregtechDataCodes.UPDATE_SOUND,
-                                        (writer) -> writer.writeResourceLocation(getResourceLocationOfSound(this.selectedSound)));
+                                        (writer) -> writer
+                                                .writeResourceLocation(getResourceLocationOfSound(this.selectedSound)));
                             }
                         }))
                 .widget(new ImageWidget(10, 54, 220, 20, GuiTextures.DISPLAY))
