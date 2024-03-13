@@ -16,6 +16,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.recipeproperties.DimensionProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -33,6 +34,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import it.unimi.dsi.fastutil.ints.IntLists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -407,7 +409,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe is allowed to be used, else false
      */
     public boolean checkRecipe(@NotNull Recipe recipe) {
-        return checkCleanroomRequirement(recipe);
+        return checkCleanroomRequirement(recipe) && checkDimensionRequirement(recipe);
     }
 
     /**
@@ -429,6 +431,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         return false;
+    }
+
+    protected boolean checkDimensionRequirement(@NotNull Recipe recipe) {
+        if (!recipe.hasProperty(DimensionProperty.getInstance())) return true;
+        int currentDimension = this.getMetaTileEntity().getWorld().provider.getDimension();
+        return recipe.getProperty(DimensionProperty.getInstance(), IntLists.EMPTY_LIST).contains(currentDimension);
     }
 
     /**
