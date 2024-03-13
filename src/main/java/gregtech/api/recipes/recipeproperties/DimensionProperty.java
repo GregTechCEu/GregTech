@@ -8,19 +8,19 @@ import net.minecraft.client.resources.I18n;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 
-public class GasCollectorDimensionProperty extends RecipeProperty<IntList> {
+public class DimensionProperty extends RecipeProperty<IntList> {
 
     public static final String KEY = "dimension";
 
-    private static GasCollectorDimensionProperty INSTANCE;
+    private static DimensionProperty INSTANCE;
 
-    private GasCollectorDimensionProperty() {
+    private DimensionProperty() {
         super(KEY, IntList.class);
     }
 
-    public static GasCollectorDimensionProperty getInstance() {
+    public static DimensionProperty getInstance() {
         if (INSTANCE == null)
-            INSTANCE = new GasCollectorDimensionProperty();
+            INSTANCE = new DimensionProperty();
         return INSTANCE;
     }
 
