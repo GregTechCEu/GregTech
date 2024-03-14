@@ -40,7 +40,6 @@ import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -142,41 +141,49 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R dimension(int dimensionID) {
-        IntList dimensionIDs = getDimensionIDs();
-        if (dimensionIDs == IntLists.EMPTY_LIST) {
-            dimensionIDs = new IntArrayList();
+        return dimension(dimensionID, false);
+    }
+
+    public R dimension(int dimensionID, boolean toBlackList) {
+        DimensionProperty.DimensionPropertyList dimensionIDs = getCompleteDimensionIDs();
+        if (dimensionIDs == DimensionProperty.DimensionPropertyList.EMPTY_LIST) {
+            dimensionIDs = new DimensionProperty.DimensionPropertyList();
             this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
         }
-        dimensionIDs.add(dimensionID);
+        dimensionIDs.add(dimensionID, toBlackList);
         return (R) this;
+    }
+
+    public DimensionProperty.DimensionPropertyList getCompleteDimensionIDs() {
+        return this.recipePropertyStorage == null ? DimensionProperty.DimensionPropertyList.EMPTY_LIST :
+                this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
+                        DimensionProperty.DimensionPropertyList.EMPTY_LIST);
     }
 
     public IntList getDimensionIDs() {
         return this.recipePropertyStorage == null ? IntLists.EMPTY_LIST :
                 this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
-                        IntLists.EMPTY_LIST);
+                        DimensionProperty.DimensionPropertyList.EMPTY_LIST).whiteListDimensions;
+    }
+
+    public IntList getBlockedDimensionIDs() {
+        return this.recipePropertyStorage == null ? IntLists.EMPTY_LIST :
+                this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
+                        DimensionProperty.DimensionPropertyList.EMPTY_LIST).whiteListDimensions;
     }
 
     public boolean applyProperty(@NotNull String key, @Nullable Object value) {
         if (key.equals(DimensionProperty.KEY)) {
-            if (value instanceof Integer) {
-                this.dimension((Integer) value);
-            } else if (value instanceof List && !((List<?>) value).isEmpty() &&
-                    ((List<?>) value).get(0) instanceof Integer) {
-                        IntList dimensionIDs = getDimensionIDs();
-                        if (dimensionIDs == IntLists.EMPTY_LIST) {
-                            dimensionIDs = new IntArrayList();
-                            this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
-                        }
-                        dimensionIDs.addAll((List<Integer>) value);
-                    } else {
-                        if (isCTRecipe) {
-                            CraftTweakerAPI.logError("Dimension for Dimension Property needs to be an Integer");
-                            return false;
-                        }
-                        throw new IllegalArgumentException("Invalid Dimension Property Type!");
-                    }
-            return true;
+            if (value instanceof DimensionProperty.DimensionPropertyList list) {
+                DimensionProperty.DimensionPropertyList dimensionIDs = getCompleteDimensionIDs();
+                if (dimensionIDs == DimensionProperty.DimensionPropertyList.EMPTY_LIST) {
+                    dimensionIDs = new DimensionProperty.DimensionPropertyList();
+                    this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
+                }
+                dimensionIDs.merge(list);
+                return true;
+            }
+            return false;
         } else if (key.equals(CleanroomProperty.KEY)) {
             if (value instanceof CleanroomType) {
                 this.cleanroom((CleanroomType) value);
@@ -1015,7 +1022,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("EUt", EUt)
                 .append("hidden", hidden)
                 .append("cleanroom", getCleanroom())
-                .append(DimensionProperty.getInstance().getKey(), getDimensionIDs().toString())
+                .append("dimensions", getDimensionIDs().toString())
+                .append("dimensions_b", getBlockedDimensionIDs().toString())
                 .append("recipeStatus", recipeStatus)
                 .toString();
     }

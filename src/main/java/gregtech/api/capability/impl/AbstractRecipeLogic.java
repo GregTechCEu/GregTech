@@ -435,8 +435,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected boolean checkDimensionRequirement(@NotNull Recipe recipe) {
         if (!recipe.hasProperty(DimensionProperty.getInstance())) return true;
-        int currentDimension = this.getMetaTileEntity().getWorld().provider.getDimension();
-        return recipe.getProperty(DimensionProperty.getInstance(), IntLists.EMPTY_LIST).contains(currentDimension);
+        return recipe.getProperty(DimensionProperty.getInstance(), DimensionProperty.DimensionPropertyList.EMPTY_LIST)
+                .checkDimension(this.getMetaTileEntity().getWorld().provider.getDimension());
     }
 
     /**
