@@ -2,13 +2,11 @@ package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.worldgen.config.WorldGenRegistry;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntLists;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
 public class DimensionProperty extends RecipeProperty<DimensionProperty.DimensionPropertyList> {
@@ -33,10 +31,10 @@ public class DimensionProperty extends RecipeProperty<DimensionProperty.Dimensio
 
         if (list.whiteListDimensions.size() > 0)
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.dimensions",
-                getDimensionsForRecipe(castValue(value).whiteListDimensions)), x, y, color);
+                    getDimensionsForRecipe(castValue(value).whiteListDimensions)), x, y, color);
         if (list.blackListDimensions.size() > 0)
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.dimensions_b",
-                getDimensionsForRecipe(castValue(value).blackListDimensions)), x, y, color);
+                    getDimensionsForRecipe(castValue(value).blackListDimensions)), x, y, color);
     }
 
     private static String getDimensionsForRecipe(IntList value) {
