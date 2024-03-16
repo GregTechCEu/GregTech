@@ -24,6 +24,16 @@ public class FissionReactor {
      */
     public static final double standardPressure = 101325;
 
+    /**
+     * The starting temperature of the reactor in Kelvin
+     */
+    public static final double roomTemperature = 273;
+
+    /**
+     * Boiling point of air at standard pressure in Kelvin
+     */
+    public static final double airBoilingPoint = 78.8;
+
     private ReactorComponent[][] reactorLayout;
     private ArrayList<FuelRod> fuelRods;
     private ArrayList<ControlRod> controlRods;
@@ -71,7 +81,7 @@ public class FissionReactor {
      */
     public int controlRodInsertion = 1;
     public int reactorDepth;
-    public int reactorRadius;
+    public double reactorRadius;
 
     public boolean moderatorTipped; // set by the type of control rod in the reactor(prepInitialConditions)
 
@@ -83,7 +93,7 @@ public class FissionReactor {
     /**
      * Temperature of the reactor
      */
-    public double temperature;
+    public double temperature = roomTemperature;
     public double pressure = standardPressure;
     public double exteriorPressure = standardPressure;
     /**
@@ -109,7 +119,7 @@ public class FissionReactor {
     public double heatRemoved;
     public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
     public double decayProductsAmount;
-    public double envTemperature = 293; // maybe gotten from config per dim
+    public double envTemperature = roomTemperature; // maybe gotten from config per dim
     public double accumulatedHydrogen;
 
     public double maxTemperature = Double.MAX_VALUE;
@@ -118,10 +128,9 @@ public class FissionReactor {
     // In MW apparently
     public double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
 
-    /**
-     *
-     */
-    public double coolingFactor; // same as the other cooling stuff(weighted with the channels)
+    public double surfaceArea;
+    public static double thermalConductivity = 45; // 45 W/(m K), for steel
+    public static double wallThickness = 0.1;
 
     public double coolantMass;
     public double fuelMass;
@@ -138,21 +147,19 @@ public class FissionReactor {
         return value * criticalRate / rate * Math.sqrt(target / value);
     }
 
-    protected double responseFunctionTemperature(double target, double value, double criticalRate, double rate,
+    protected double responseFunctionTemperature(double envTemperature, double currentTemperature, double heatAdded, double heatAbsorbed,
                                                         double equilibrium) {
-        value = Math.max(0.1, value);
-        rate = Math.max(0.1, rate);
+        currentTemperature = Math.max(0.1, currentTemperature);
+        heatAbsorbed = Math.max(0.1, heatAbsorbed);
         //return Math.max(value * criticalRate / rate * Math.sqrt(target / value), equilibrium);
-        // TODO: just use abs of target - value maybe
-        if (target > value)
-            return Math.max(value + (criticalRate - rate) / ((this.coolantMass + this.structuralMass + this.fuelMass) * this.coolingFactor) - this.coolingFactor * Math.sqrt((target - value)/target) , equilibrium);
-        else
-            return Math.max(value + (criticalRate - rate) / ((this.coolantMass + this.structuralMass + this.fuelMass) * this.coolingFactor) - this.coolingFactor * Math.sqrt((value - target)/value) , equilibrium);
+        return Math.max(currentTemperature + (heatAdded - heatAbsorbed) / (this.coolantMass + this.structuralMass + this.fuelMass)
+                - this.surfaceArea * thermalConductivity * wallThickness * Math.abs(envTemperature - currentTemperature), equilibrium);
     }
 
     public FissionReactor(int size, int depth, int controlRodInsertion) {
         reactorLayout = new ReactorComponent[size][size];
         reactorDepth = depth;
+        reactorRadius = (double) size / 2 + 1.5; // Includes the extra block plus the distance from the center of a block to its edge
         this.controlRodInsertion = controlRodInsertion;
         fuelRods = new ArrayList<>();
         controlRods = new ArrayList<>();
@@ -171,10 +178,6 @@ public class FissionReactor {
 
     public double voidFactor() {
         return this.canCoolantBoil() ? (this.temperature - this.envTemperature) / (double) this.pressure : 0.D;
-    }
-
-    public double criticalCoolantFlow() {
-        return this.power / this.coolingFactor;
     }
 
     public void prepareThermalProperties() {
@@ -403,11 +406,20 @@ public class FissionReactor {
                     channel.getWeight();
             coolantHeatOfVaporization += prop.getHeatOfVaporization() *
                     channel.getWeight();
-            coolingFactor += prop.getCoolingFactor() *
-                    channel.getWeight();
         }
 
         temperature = coolantBaseTemperature;
+        if (coolantBaseTemperature == 0) {
+            temperature = envTemperature;
+            coolantBaseTemperature = envTemperature;
+        }
+        if (avgPressure == 0) {
+            avgPressure = standardPressure;
+        }
+        if (coolantBoilingPointStandardPressure == 0) {
+            coolantBoilingPointStandardPressure = airBoilingPoint;
+        }
+        surfaceArea = (reactorRadius * reactorRadius) * Math.PI * 2 + reactorDepth * reactorRadius * Math.PI;
     }
 
     /**
@@ -425,11 +437,13 @@ public class FissionReactor {
 
                 Material coolant = channel.getCoolant();
 
+                CoolantProperty prop = coolant.getProperty(PropertyKey.COOLANT);
+
                 int remainingSpace = channel.getOutputHandler().getFluidTank().getCapacity() -
                         channel.getOutputHandler().getFluidTank().getFluidAmount();
                 int actualFlowRate = Math.min(remainingSpace, drained);
                 FluidStack HPCoolant = new FluidStack(
-                        coolant.getProperty(PropertyKey.COOLANT).getHotHPCoolant().getFluid(), actualFlowRate);
+                        prop.getHotHPCoolant().getFluid(), actualFlowRate);
 
                 channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
 
@@ -439,8 +453,8 @@ public class FissionReactor {
 
                 this.coolantMass += actualFlowRate * coolant.getMass();
 
-                this.heatRemoved += coolant.getProperty(PropertyKey.COOLANT).getCoolingFactor()
-                        * this.reactorDepth * actualFlowRate * (this.coolantBoilingPoint(coolant) - coolant.getFluid().getTemperature());
+                this.heatRemoved += prop.getCoolingFactor()
+                        * this.reactorDepth * actualFlowRate * (prop.getHeatOfVaporization() + this.coolantBoilingPoint(coolant) - coolant.getFluid().getTemperature());
             }
         }
         this.coolantMass /= 1000;
@@ -464,7 +478,7 @@ public class FissionReactor {
     }
 
     public void updateTemperature() {
-        this.temperature = responseFunctionTemperature(this.maxTemperature, this.temperature, this.power * 1000000,
+        this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1000000,
                 this.heatRemoved, this.coolantBaseTemperature);
         this.heatRemoved = 0;
     }
