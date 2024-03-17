@@ -8,6 +8,8 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.Mods;
@@ -35,13 +37,20 @@ import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.GroovyPlugin;
 import com.cleanroommc.groovyscript.api.IGameObjectHandler;
 import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
+import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
+import com.cleanroommc.groovyscript.event.EventBusType;
+import com.cleanroommc.groovyscript.event.GroovyEventManager;
 import com.cleanroommc.groovyscript.gameobjects.GameObjectHandlerManager;
+import com.cleanroommc.groovyscript.helper.EnumHelper;
+import com.cleanroommc.groovyscript.sandbox.LoadStage;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import com.google.common.collect.ImmutableList;
+import groovy.lang.Closure;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -75,6 +84,18 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     public static boolean isCurrentlyRunning() {
         return GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS) &&
                 GroovyScript.getSandbox().isRunning();
+    }
+
+    public static <T extends Enum<T>> T parseAndValidateEnumValue(Class<T> clazz, String raw, String type) {
+        T t = EnumHelper.valueOfNullable(clazz, raw, false);
+        if (t == null) {
+            GroovyLog.get().error("Can't find {} for {} in material builder. Valid values are {};",
+                    type,
+                    raw,
+                    Arrays.toString(clazz.getEnumConstants()));
+            return null;
+        }
+        return t;
     }
 
     public static GroovyContainer<?> getInstance() {
@@ -191,8 +212,40 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     }
 
     @Override
-    public @NotNull String getModName() {
+    public @NotNull String getContainerName() {
         return "GregTech";
+    }
+
+    @Override
+    public @Nullable ModPropertyContainer createModPropertyContainer() {
+        return new ModPropertyContainer() {
+
+            public void materialEvent(EventPriority priority, Closure<?> eventListener) {
+                if (isCurrentlyRunning() && GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
+                    GroovyLog.get().error("GregTech's material event can only be used in pre init!");
+                    return;
+                }
+                GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, MaterialEvent.class,
+                        eventListener);
+            }
+
+            public void materialEvent(Closure<?> eventListener) {
+                materialEvent(EventPriority.NORMAL, eventListener);
+            }
+
+            public void lateMaterialEvent(EventPriority priority, Closure<?> eventListener) {
+                if (isCurrentlyRunning() && GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
+                    GroovyLog.get().error("GregTech's material event can only be used in pre init!");
+                    return;
+                }
+                GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, PostMaterialEvent.class,
+                        eventListener);
+            }
+
+            public void lateMaterialEvent(Closure<?> eventListener) {
+                materialEvent(EventPriority.NORMAL, eventListener);
+            }
+        };
     }
 
     @Override
@@ -213,6 +266,7 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
         ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
         ExpansionHelper.mixinClass(Material.Builder.class, GroovyMaterialBuilderExpansion.class);
-        ExpansionHelper.mixinClass(RecipeBuilder.class, GroovyRecipeBuilderExpansion.class);
+        ExpansionHelper.mixinMethod(RecipeBuilder.class, GroovyExpansions.class, "property");
+        ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "materialBuilder");
     }
 }
