@@ -109,7 +109,8 @@ public class GroovyMaterialBuilderExpansion {
                 materialStacks.add(new MaterialStack(material, 1));
             } else {
                 GroovyLog.get()
-                        .error("Material components must be of type Material or MaterialStack, but was of type {}", o == null ? null : o.getClass());
+                        .error("Material components must be of type Material or MaterialStack, but was of type {}",
+                                o == null ? null : o.getClass());
             }
         }
         return builder.components(materialStacks.toArray(new MaterialStack[0]));
