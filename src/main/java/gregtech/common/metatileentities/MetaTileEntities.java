@@ -985,14 +985,14 @@ public class MetaTileEntities {
         PUMP[2] = registerMetaTileEntity(1532, new MetaTileEntityPump(gregtechId("pump.hv"), 3));
         PUMP[3] = registerMetaTileEntity(1533, new MetaTileEntityPump(gregtechId("pump.ev"), 4));
 
-        // Quantum Storage Network 1752 - 1755
-        QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1752,
+        // Quantum Storage Network 1757 - 1760
+        QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1757,
                 new MetaTileEntityQuantumStorageController(gregtechId("quantum_storage_controller")));
-        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1753,
+        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1758,
                 new MetaTileEntityQuantumProxy(gregtechId("quantum_storage_proxy")));
-        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1754,
+        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1759,
                 new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
-        QUANTUM_ENERGY_ACCEPTOR = registerMetaTileEntity(1755,
+        QUANTUM_ENERGY_ACCEPTOR = registerMetaTileEntity(1760,
                 new MetaTileEntityQuantumEnergyAcceptor(gregtechId("quantum_energy_acceptor")));
 
         // Super / Quantum Chests, IDs 1559-1574
