@@ -28,6 +28,7 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiablePart
@@ -52,8 +53,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(machineHandler);
+    public @NotNull List<?> registerAbilities(@NotNull MultiblockAbility<Object> multiblockAbility) {
+        return Collections.singletonList(machineHandler);
     }
 
     @Override
