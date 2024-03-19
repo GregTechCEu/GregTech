@@ -5278,6 +5278,11 @@ gregtech.machine.me.fluid_export.tooltip=Stores fluids directly into the ME netw
 gregtech.machine.me.fluid_export.tooltip.2=Can cache an infinite amount of fluid
 gregtech.machine.me.stocking_auto_pull_enabled=Auto-Pull Enabled
 gregtech.machine.me.stocking_auto_pull_disabled=Auto-Pull Disabled
+gregtech.machine.me.copy_paste.tooltip=Left-click with Data Stick to copy settings, right-click to apply
+gregtech.machine.me.import_copy_settings=Saved settings to Data Stick
+gregtech.machine.me.import_paste_settings=Applied settings from Data Stick
+gregtech.machine.me.item_import.data_stick.name=§oME Input Bus Configuration Data
+gregtech.machine.me.fluid_import.data_stick.name=§oME Input Hatch Configuration Data
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
