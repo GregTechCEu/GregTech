@@ -121,6 +121,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (locked && lockedFluid != null) {
                 data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
             }
+        } else {
+            this.circuitInventory.write(data);
         }
         return data;
     }
@@ -139,6 +141,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             this.locked = data.getBoolean("IsLocked");
             this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) :
                     null;
+        } else {
+            this.circuitInventory.read(data);
         }
     }
 
