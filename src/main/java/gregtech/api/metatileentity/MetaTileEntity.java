@@ -36,7 +36,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
-
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.Block;

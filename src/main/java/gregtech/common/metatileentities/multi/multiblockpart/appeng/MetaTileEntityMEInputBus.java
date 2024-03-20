@@ -55,7 +55,7 @@ import java.util.List;
 
 public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
-                                                 IGhostSlotConfigurable, IDataStickIntractable {
+                                      IGhostSlotConfigurable, IDataStickIntractable {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
@@ -349,7 +349,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         }
     }
 
-    // todo tooltip for data stick with settings applied
     @Override
     public final void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
         NBTTagCompound tag = new NBTTagCompound();
