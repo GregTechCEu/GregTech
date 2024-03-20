@@ -56,7 +56,7 @@ public class TextTexture implements IGuiTexture {
     }
 
     public TextTexture setText(String text) {
-        if (this.text.isEmpty() || !this.text.equals(text)) {
+        if (!this.text.equals(text)) {
             this.text = text;
             if (isClient) {
                 if (this.width > 0) {

@@ -460,17 +460,19 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
             try {
                 this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
             } catch (IOException ignored) {
-                GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() +
-                        " on a routine fluid update");
+                GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at {} on a routine fluid update",
+                        this.getPos());
             }
             scheduleRenderUpdate();
         } else if (dataId == UPDATE_FLUID_AMOUNT) {
             // amount must always be read even if it cannot be used to ensure the reader index advances
             int amount = buf.readInt();
+            boolean updateRendering = buf.readBoolean();
             FluidStack stack = fluidTank.getFluid();
             if (stack != null) {
                 stack.amount = Math.min(amount, fluidTank.getCapacity());
-                scheduleRenderUpdate();
+                if (updateRendering)
+                    scheduleRenderUpdate();
             }
         } else if (dataId == UPDATE_IS_VOIDING) {
             setVoiding(buf.readBoolean());

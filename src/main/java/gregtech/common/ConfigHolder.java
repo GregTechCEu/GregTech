@@ -456,8 +456,8 @@ public class ConfigHolder {
         @Config.Comment({ "Prevent optical and laser cables from animating when active.", "Default: false" })
         public boolean preventAnimatedCables = false;
 
-        @Config.Comment({"Enable the fancy rendering for Super/Quantum Chests/Tanks.",
-                            "Default: true"})
+        @Config.Comment({ "Enable the fancy rendering for Super/Quantum Chests/Tanks.",
+                "Default: true" })
         public boolean enableFancyChestRender = true;
 
         public static class GuiConfig {
