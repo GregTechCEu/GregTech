@@ -206,11 +206,11 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         var panel = new PanelSyncHandler(main) {
 
             // the panel can't be opened if there's no filter, so `getFilter()` will never be null
-            @SuppressWarnings("DataFlowIssue")
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                getFilter().setMaxTransferSize(getMaxTransferSize());
-                return getFilter().createPopupPanel(syncManager);
+                var filter = hasFilter() ? getFilter() : FilterTypeRegistry.ERROR_FILTER;
+                filter.setMaxTransferSize(getMaxTransferSize());
+                return filter.createPopupPanel(syncManager);
             }
         };
         manager.syncValue("filter_panel", panel);

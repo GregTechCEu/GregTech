@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public interface IFilter {
 
     @Deprecated
-    void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup);
+    default void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
     /** Uses Cleanroom MUI */
     @NotNull

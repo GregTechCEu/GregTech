@@ -1,10 +1,18 @@
 package gregtech.common.covers.filter;
 
+import gregtech.api.mui.GTGuis;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.common.covers.filter.readers.BaseFilterReader;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.item.ItemStack;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -39,6 +47,36 @@ public class FilterTypeRegistry {
                     .build());
     private static final Map<Integer, FilterFactory> itemFilterById = new Int2ObjectOpenHashMap<>();
     private static final Map<Integer, FilterFactory> fluidFilterById = new Int2ObjectOpenHashMap<>();
+
+    public static final BaseFilter ERROR_FILTER;
+
+    static {
+        ERROR_FILTER = new BaseFilter() {
+
+            @Override
+            public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+                return GTGuis.createPopupPanel("error", 100, 100)
+                        .child(createWidgets(syncManager));
+            }
+
+            @Override
+            public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+                return GTGuis.createPanel("error", 100, 100)
+                        .child(createWidgets(syncManager));
+            }
+
+            @Override
+            public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+                return IKey.lang("INVALID FILTER").alignment(Alignment.Center).asWidget();
+            }
+
+            @Override
+            public FilterType getType() {
+                return FilterType.ITEM;
+            }
+        };
+        ERROR_FILTER.setFilterReader(new BaseFilterReader(ItemStack.EMPTY, 0) {});
+    }
 
     public static void init() {
         // todo call this in MetaItems as a component or something
@@ -109,6 +147,8 @@ public class FilterTypeRegistry {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static BaseFilter createItemFilterById(int filterId) {
+        if (!itemFilterById.containsKey(filterId))
+            return ERROR_FILTER;
         var factory = itemFilterById.get(filterId);
         return createNewFilterInstance(factory);
     }
@@ -119,14 +159,17 @@ public class FilterTypeRegistry {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public static BaseFilter createFluidFilterById(int filterId) {
+        if (!fluidFilterById.containsKey(filterId))
+            return ERROR_FILTER;
         var factory = fluidFilterById.get(filterId);
         return createNewFilterInstance(factory);
     }
 
     public static @NotNull BaseFilter getFilterForStack(ItemStack stack) {
         if (!filterByStack.containsKey(stack)) {
-            throw new IllegalArgumentException(
-                    String.format("Failed to create filter instance for stack %s", stack));
+            GTLog.logger.warn(new IllegalArgumentException(
+                    String.format("Failed to create filter instance for stack %s", stack)));
+            return ERROR_FILTER;
         }
         return filterByStack.get(stack).create(stack);
     }
