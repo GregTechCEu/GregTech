@@ -21,8 +21,7 @@ import gregtech.api.recipes.map.MapOreDictIngredient;
 import gregtech.api.recipes.map.MapOreDictNBTIngredient;
 import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.OrePrefix;
+import gregtech.core.unification.ore.internal.OreProcessorManagerImpl;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -255,14 +254,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public static void setFoundInvalidRecipe(boolean foundInvalidRecipe) {
         RecipeMap.foundInvalidRecipe = RecipeMap.foundInvalidRecipe || foundInvalidRecipe;
-        OrePrefix currentOrePrefix = GregTechAPI.oreProcessorHandler.getCurrentProcessingPrefix();
-        if (currentOrePrefix != null) {
-            GTLog.logger.error("Error occurred during oredict processing of prefix {} and material {} using handler {}. " +
-                    "Likely a cross-mod compatibility issue. Report to GTCEu github.",
-                    currentOrePrefix,
-                    GregTechAPI.oreProcessorHandler.getCurrentMaterial(),
-                    GregTechAPI.oreProcessorHandler.getCurrentProcessingHandler());
-        }
+        ((OreProcessorManagerImpl) GregTechAPI.oreProcessorManager).notifyInvalidRecipe();
     }
 
     /**

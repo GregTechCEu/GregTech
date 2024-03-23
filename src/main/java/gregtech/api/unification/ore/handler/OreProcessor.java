@@ -3,7 +3,7 @@ package gregtech.api.unification.ore.handler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Process an {@link OrePrefix} and {@link Material} in some way.
@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  * Typically used for generating recipes.
  */
 @FunctionalInterface
-public interface IOreProcessor {
+public interface OreProcessor {
 
-    void processMaterial(@Nonnull OrePrefix orePrefix, @Nonnull Material material);
+    void processMaterial(@NotNull OrePrefix orePrefix, @NotNull Material material);
 }

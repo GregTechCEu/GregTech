@@ -35,16 +35,19 @@ public class WireCombiningHandler {
 
     public static void register() {
         // Generate Wire Packer/Unpacker recipes TODO Move into generateWireCombining?
-        GregTechAPI.oreProcessorHandler.registerProcessor(wireGtSingle, gregtechId("process_wire_compression"), PropertyKey.WIRE, WireCombiningHandler::processWireCompression);
+        GregTechAPI.oreProcessorManager.registerProcessor(wireGtSingle, gregtechId("process_wire_compression"),
+                PropertyKey.WIRE, WireCombiningHandler::processWireCompression);
 
         // Generate manual recipes for combining Wires/Cables
         for (OrePrefix wirePrefix : WIRE_DOUBLING_ORDER) {
-            GregTechAPI.oreProcessorHandler.registerProcessor(wirePrefix, gregtechId("process_wire_combining"), PropertyKey.WIRE, WireCombiningHandler::generateWireCombiningRecipe);
+            GregTechAPI.oreProcessorManager.registerProcessor(wirePrefix, gregtechId("process_wire_combining"),
+                    PropertyKey.WIRE, WireCombiningHandler::generateWireCombiningRecipe);
         }
 
         // Generate Cable -> Wire recipes in the unpacker
         for (OrePrefix cablePrefix : cableToWireMap.keySet()) {
-            GregTechAPI.oreProcessorHandler.registerProcessor(cablePrefix, gregtechId("process_cable_stripping"), PropertyKey.WIRE, WireCombiningHandler::processCableStripping);
+            GregTechAPI.oreProcessorManager.registerProcessor(cablePrefix, gregtechId("process_cable_stripping"),
+                    PropertyKey.WIRE, WireCombiningHandler::processCableStripping);
         }
     }
 

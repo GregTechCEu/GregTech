@@ -1,45 +1,52 @@
-package gregtech.api.unification.ore.handler;
+package gregtech.core.unification.ore.internal;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.ore.handler.OreProcessor;
+import gregtech.api.unification.ore.handler.OreProcessorEvent;
+import gregtech.api.unification.ore.handler.OreProcessorManager;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.function.TriConsumer;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
 
-public final class OreProcessorHandler implements IOreProcessorHandler {
+public final class OreProcessorManagerImpl implements OreProcessorManager {
 
-    private static OreProcessorHandler INSTANCE;
+    private static OreProcessorManagerImpl INSTANCE;
 
-    public static OreProcessorHandler getInstance() {
-        if (INSTANCE == null) INSTANCE = new OreProcessorHandler();
+    public static OreProcessorManagerImpl getInstance() {
+        if (INSTANCE == null) INSTANCE = new OreProcessorManagerImpl();
         return INSTANCE;
     }
 
-    private final Map<OrePrefix, Map<ResourceLocation, IOreProcessor>> registry = new Object2ObjectOpenHashMap<>();
+    private final Map<OrePrefix, Map<ResourceLocation, OreProcessor>> registry = new Object2ObjectOpenHashMap<>();
 
-    private final ThreadLocal<ResourceLocation> currentProcessingHandler = new ThreadLocal<>();
-    private final ThreadLocal<OrePrefix> currentProcessingPrefix = new ThreadLocal<>();
-    private final ThreadLocal<Material> currentMaterial = new ThreadLocal<>();
+    private @Nullable ResourceLocation currentProcessingHandler;
+    private @Nullable OrePrefix currentProcessingPrefix;
+    private @Nullable Material currentMaterial;
 
     private Phase phase = Phase.REGISTRATION;
 
-    private OreProcessorHandler() {}
+    private OreProcessorManagerImpl() {}
 
     @Override
-    public void registerProcessor(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name, @Nonnull IOreProcessor handler) {
+    public void registerProcessor(@NotNull OrePrefix prefix, @NotNull ResourceLocation name,
+                                  @NotNull OreProcessor handler) {
         if (phase != Phase.REGISTRATION) {
             throw new UnsupportedOperationException("Cannot register handlers when in phase " + phase);
         }
@@ -51,8 +58,10 @@ public final class OreProcessorHandler implements IOreProcessorHandler {
     }
 
     @Override
-    public <T extends IMaterialProperty> void registerProcessor(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name,
-                                                                @Nonnull PropertyKey<T> propertyKey, @Nonnull TriConsumer<OrePrefix, Material, T> handler) {
+    public <T extends IMaterialProperty> void registerProcessor(@NotNull OrePrefix prefix,
+                                                                @NotNull ResourceLocation name,
+                                                                @NotNull PropertyKey<T> propertyKey,
+                                                                @NotNull TriConsumer<OrePrefix, Material, T> handler) {
         registerProcessor(prefix, name, (orePrefix, material) -> {
             if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));
@@ -61,7 +70,7 @@ public final class OreProcessorHandler implements IOreProcessorHandler {
     }
 
     @Override
-    public boolean removeHandler(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name) {
+    public boolean removeHandler(@NotNull OrePrefix prefix, @NotNull ResourceLocation name) {
         if (phase != Phase.REMOVAL) {
             throw new UnsupportedOperationException("Cannot remove handlers when in phase " + phase);
         }
@@ -69,9 +78,8 @@ public final class OreProcessorHandler implements IOreProcessorHandler {
         return map != null && map.remove(name) != null;
     }
 
-    @Nonnull
     @Override
-    public @UnmodifiableView Collection<ResourceLocation> getRegisteredHandlerNames(@Nonnull OrePrefix prefix) {
+    public @UnmodifiableView @NotNull Collection<@NotNull ResourceLocation> getRegisteredHandlerNames(@NotNull OrePrefix prefix) {
         if (phase == Phase.REGISTRATION) {
             throw new UnsupportedOperationException("Cannot get registered handlers when in phase " + phase);
         }
@@ -80,27 +88,8 @@ public final class OreProcessorHandler implements IOreProcessorHandler {
         return Collections.unmodifiableCollection(map.keySet());
     }
 
-    @Nullable
     @Override
-    public ResourceLocation getCurrentProcessingHandler() {
-        return currentProcessingHandler.get();
-    }
-
-    @Nullable
-    @Override
-    public OrePrefix getCurrentProcessingPrefix() {
-        return currentProcessingPrefix.get();
-    }
-
-    @Nullable
-    @Override
-    public Material getCurrentMaterial() {
-        return currentMaterial.get();
-    }
-
-    @Nonnull
-    @Override
-    public Phase getPhase() {
+    public @NotNull Phase getPhase() {
         return this.phase;
     }
 
@@ -116,25 +105,37 @@ public final class OreProcessorHandler implements IOreProcessorHandler {
     }
 
     @ApiStatus.Internal
-    public void runGeneratedMaterialHandlers(@Nonnull OrePrefix prefix, boolean isLate) {
+    public void runGeneratedMaterialHandlers(@NotNull OrePrefix prefix, boolean isLate) {
         this.phase = isLate ? Phase.PROCESSING_POST : Phase.PROCESSING;
 
         var map = registry.get(prefix);
         if (map != null) {
-            currentProcessingPrefix.set(prefix);
+            currentProcessingPrefix = prefix;
             for (Material registeredMaterial : prefix.getGeneratedMaterials()) {
-                currentMaterial.set(registeredMaterial);
+                currentMaterial = registeredMaterial;
                 for (var entry : map.entrySet()) {
-                    currentProcessingHandler.set(entry.getKey());
+                    currentProcessingHandler = entry.getKey();
                     entry.getValue().processMaterial(prefix, registeredMaterial);
-                    currentProcessingHandler.set(null);
+                    currentProcessingHandler = null;
                 }
             }
-            currentMaterial.set(null);
+            currentMaterial = null;
         }
 
         // clear generated materials for next pass
         prefix.clearGeneratedMaterials();
-        currentProcessingPrefix.set(null);
+        currentProcessingPrefix = null;
+    }
+
+    /**
+     * Notify that an invalid recipe was found
+     */
+    @ApiStatus.Internal
+    public void notifyInvalidRecipe() {
+        if (currentProcessingPrefix != null) {
+            GTLog.logger.error(
+                    "Error occurred during oredict processing of prefix {} and material {} using handler {}. Likely a cross-mod compatibility issue. Report to GTCEu github.",
+                    currentProcessingPrefix, currentMaterial, currentProcessingHandler);
+        }
     }
 }

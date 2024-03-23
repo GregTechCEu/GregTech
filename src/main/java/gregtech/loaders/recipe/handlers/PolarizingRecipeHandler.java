@@ -11,8 +11,8 @@ import gregtech.api.unification.material.properties.IngotProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
@@ -26,7 +26,8 @@ public class PolarizingRecipeHandler {
 
     public static void register() {
         for (OrePrefix orePrefix : POLARIZING_PREFIXES) {
-            GregTechAPI.oreProcessorHandler.registerProcessor(orePrefix, GTUtility.gregtechId("process_polarizing"), PropertyKey.INGOT, PolarizingRecipeHandler::processPolarizing);
+            GregTechAPI.oreProcessorManager.registerProcessor(orePrefix, GTUtility.gregtechId("process_polarizing"),
+                    PropertyKey.INGOT, PolarizingRecipeHandler::processPolarizing);
         }
     }
 
