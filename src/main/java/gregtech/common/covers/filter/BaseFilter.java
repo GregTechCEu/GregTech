@@ -1,6 +1,8 @@
 package gregtech.common.covers.filter;
 
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.readers.BaseFilterReader;
 
@@ -10,25 +12,69 @@ import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseFilter implements IFilter {
 
-    protected IDirtyNotifiable dirtyNotifiable;
-    private BaseFilterReader filterReader;
+    public static final BaseFilter ERROR_FILTER = new BaseFilter() {
 
-    protected final void setFilterReader(BaseFilterReader filterReader) {
-        this.filterReader = filterReader;
-    }
+        private final BaseFilterReader filterReader = new BaseFilterReader(ItemStack.EMPTY, 0);
+
+        @Override
+        public BaseFilterReader getFilterReader() {
+            return this.filterReader;
+        }
+
+        @Override
+        public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+            return GTGuis.createPopupPanel("error", 100, 100)
+                    .child(createWidgets(syncManager));
+        }
+
+        @Override
+        public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+            return GTGuis.createPanel("error", 100, 100)
+                    .child(createWidgets(syncManager));
+        }
+
+        @Override
+        public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+            return IKey.lang("INVALID FILTER").alignment(Alignment.Center).asWidget();
+        }
+
+        @Override
+        public FilterType getType() {
+            return FilterType.ITEM;
+        }
+    };
+    protected IDirtyNotifiable dirtyNotifiable;
+
+    public abstract BaseFilterReader getFilterReader();
 
     public final ItemStack getContainerStack() {
-        return this.filterReader.getContainer();
+        return this.getFilterReader().getContainer();
+    }
+
+    public static @Nullable BaseFilter getFilterFromStack(ItemStack stack) {
+        if (stack.getItem() instanceof MetaItem<?>metaItem) {
+            var metaValueItem = metaItem.getItem(stack);
+            var factory = metaValueItem == null ? null : metaValueItem.getFilterFactory();
+            if (factory != null)
+                return factory.create(stack);
+        }
+        return null;
     }
 
     public final void setBlacklistFilter(boolean blacklistFilter) {
-        this.filterReader.setBlacklistFilter(blacklistFilter);
+        this.getFilterReader().setBlacklistFilter(blacklistFilter);
         markDirty();
     }
 
@@ -88,7 +134,7 @@ public abstract class BaseFilter implements IFilter {
     }
 
     public final boolean isBlacklistFilter() {
-        return filterReader.isBlacklistFilter();
+        return getFilterReader().isBlacklistFilter();
     }
 
     public IWidget createBlacklistUI() {
@@ -103,11 +149,11 @@ public abstract class BaseFilter implements IFilter {
     }
 
     public final int getMaxTransferSize() {
-        return this.filterReader.getMaxTransferRate();
+        return this.getFilterReader().getMaxTransferRate();
     }
 
     public final void setMaxTransferSize(int maxStackSize) {
-        this.filterReader.setMaxTransferRate(maxStackSize);
+        this.getFilterReader().setMaxTransferRate(maxStackSize);
     }
 
     public boolean showGlobalTransferLimitSlider() {
@@ -116,7 +162,7 @@ public abstract class BaseFilter implements IFilter {
 
     public final void setDirtyNotifiable(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
-        this.filterReader.setDirtyNotifiable(dirtyNotifiable);
+        this.getFilterReader().setDirtyNotifiable(dirtyNotifiable);
     }
 
     public final void markDirty() {
@@ -126,7 +172,7 @@ public abstract class BaseFilter implements IFilter {
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
-        this.filterReader.deserializeNBT(tagCompound);
+        this.getFilterReader().deserializeNBT(tagCompound);
         markDirty();
     }
 }

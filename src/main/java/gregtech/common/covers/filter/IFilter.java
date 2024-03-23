@@ -1,5 +1,6 @@
 package gregtech.common.covers.filter;
 
+import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.util.IDirtyNotifiable;
 
 import net.minecraft.item.ItemStack;
@@ -61,5 +62,16 @@ public interface IFilter {
     enum FilterType {
         ITEM,
         FLUID
+    }
+
+    @FunctionalInterface()
+    interface Factory extends IItemComponent {
+
+        @NotNull
+        BaseFilter create(@NotNull ItemStack stack);
+
+        static Factory of(Factory factory) {
+            return factory;
+        }
     }
 }

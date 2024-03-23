@@ -52,7 +52,8 @@ public class ItemFilterContainer extends BaseFilterContainer {
 
     @Override
     protected boolean isItemValid(ItemStack stack) {
-        return FilterTypeRegistry.isItemFilter(stack);
+        var filter = BaseFilter.getFilterFromStack(stack);
+        return filter != null && filter.getType() == IFilter.FilterType.ITEM;
     }
 
     @Override

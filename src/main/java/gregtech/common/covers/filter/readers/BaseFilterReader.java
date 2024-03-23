@@ -11,12 +11,12 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCompound> {
+public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCompound> {
 
-    protected final ItemStack container;
+    protected ItemStack container;
     private IDirtyNotifiable dirtyNotifiable;
     private final int size;
-    protected int maxTransferRate = 1;
+    private int maxTransferRate = 1;
     protected static final String BLACKLIST = "IsBlacklist";
     protected static final String FILTER_CONTENTS = "FilterSlots";
 
@@ -25,8 +25,14 @@ public abstract class BaseFilterReader implements FilterReader, INBTSerializable
         this.size = slots;
     }
 
+    @Override
     public ItemStack getContainer() {
         return this.container;
+    }
+
+    @Override
+    public void readStack(@NotNull ItemStack stack) {
+        this.container = stack;
     }
 
     public @NotNull NBTTagList getInventoryNbt() {

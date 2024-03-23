@@ -11,7 +11,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
-import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -110,7 +109,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public @NotNull BaseFilter getFilter() {
         return this.itemFilterContainer.hasFilter() ?
                 this.itemFilterContainer.getFilter() :
-                FilterTypeRegistry.ERROR_FILTER;
+                BaseFilter.ERROR_FILTER;
     }
 
     @Override
@@ -146,6 +145,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         var filteringMode = new EnumSyncValue<>(ItemFilterMode.class, this::getFilterMode, this::setFilterMode);
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
+        getFilter().getFilterReader().readStack(this.itemFilterContainer.getFilterStack());
 
         return getFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)

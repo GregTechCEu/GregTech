@@ -10,6 +10,8 @@ public interface FilterReader {
 
     ItemStack getContainer();
 
+    void readStack(ItemStack stack);
+
     @NotNull
     NBTTagList getInventoryNbt();
 

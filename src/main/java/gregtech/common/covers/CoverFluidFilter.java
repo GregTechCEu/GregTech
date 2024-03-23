@@ -11,7 +11,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
-import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -112,7 +111,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public @NotNull BaseFilter getFilter() {
         return this.fluidFilterContainer.hasFilter() ?
                 this.fluidFilterContainer.getFilter() :
-                FilterTypeRegistry.ERROR_FILTER;
+                BaseFilter.ERROR_FILTER;
     }
 
     @Override
@@ -144,6 +143,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
         this.fluidFilterContainer.setMaxTransferSize(1);
+        getFilter().getFilterReader().readStack(this.fluidFilterContainer.getFilterStack());
 
         return getFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)

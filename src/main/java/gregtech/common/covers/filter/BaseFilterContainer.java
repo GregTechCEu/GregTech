@@ -85,7 +85,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         if (stack.isEmpty()) {
             setFilter(null);
         } else if (isItemValid(stack)) {
-            setFilter(FilterTypeRegistry.getFilterForStack(stack));
+            setFilter(BaseFilter.getFilterFromStack(stack));
         }
 
         super.setStackInSlot(slot, stack);
@@ -104,7 +104,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (!isItemValid(stack)) return stack;
         var remainder = super.insertItem(slot, stack, simulate);
-        if (!simulate) setFilter(FilterTypeRegistry.getFilterForStack(stack));
+        if (!simulate) setFilter(BaseFilter.getFilterFromStack(stack));
         return remainder;
     }
 
@@ -195,7 +195,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt.getCompoundTag("FilterInventory"));
-        setFilter(getFilterStack().isEmpty() ? null : FilterTypeRegistry.getFilterForStack(getFilterStack()));
+        setFilter(getFilterStack().isEmpty() ? null : BaseFilter.getFilterFromStack(getFilterStack()));
         if (hasFilter()) getFilter().readFromNBT(nbt);
         this.maxTransferSize = nbt.getInteger("MaxStackSize");
         this.transferSize = nbt.getInteger("TransferStackSize");
@@ -205,14 +205,15 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
         var panel = new PanelSyncHandler(main) {
 
-            // the panel can't be opened if there's no filter, so `getFilter()` will never be null
+            // the panel can't be opened if there's no filter, so `getFilter()` should not be null
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                var filter = hasFilter() ? getFilter() : FilterTypeRegistry.ERROR_FILTER;
+                var filter = hasFilter() ? getFilter() : BaseFilter.ERROR_FILTER;
                 filter.setMaxTransferSize(getMaxTransferSize());
                 return filter.createPopupPanel(syncManager);
             }
         };
+
         manager.syncValue("filter_panel", panel);
         var filterButton = new ButtonWidget<>();
         filterButton.setEnabled(hasFilter());

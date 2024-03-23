@@ -39,8 +39,12 @@ public class SimpleItemFilter extends BaseFilter {
     private final SimpleItemFilterReader filterReader;
 
     public SimpleItemFilter(ItemStack stack) {
-        this.filterReader = new SimpleItemFilterReader(stack, MAX_MATCH_SLOTS);
-        setFilterReader(this.filterReader);
+        filterReader = new SimpleItemFilterReader(stack, MAX_MATCH_SLOTS);
+    }
+
+    @Override
+    public SimpleItemFilterReader getFilterReader() {
+        return filterReader;
     }
 
     @Override

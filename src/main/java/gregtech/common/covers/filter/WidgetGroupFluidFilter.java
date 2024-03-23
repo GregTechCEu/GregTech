@@ -68,7 +68,7 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
                     GTLog.logger.warn(e);
                     return;
                 }
-                this.fluidFilter = FilterTypeRegistry.getFilterForStack(stack);
+                this.fluidFilter = BaseFilter.getFilterFromStack(stack);
                 this.fluidFilter.initUI(this::addWidget);
             }
         } else if (id == 3) {

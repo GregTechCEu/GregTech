@@ -1,6 +1,6 @@
 package gregtech.common.items.behaviors.filter;
 
-import gregtech.common.covers.filter.FilterTypeRegistry;
+import gregtech.common.covers.filter.BaseFilter;
 
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -11,7 +11,7 @@ public class SimpleFluidFilterUIManager extends BaseFilterUIManager {
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
-        var filter = FilterTypeRegistry.getFilterForStack(guiData.getUsedItemStack());
+        var filter = BaseFilter.getFilterFromStack(guiData.getUsedItemStack());
         return createBasePanel(filter.getContainerStack()).padding(4).height(166)
                 .child(filter.createWidgets(guiSyncManager).top(22).left(7))
                 .child(SlotGroupWidget.playerInventory().left(7));

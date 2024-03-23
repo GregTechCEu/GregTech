@@ -48,8 +48,12 @@ public class OreDictionaryItemFilter extends BaseFilter {
 
     public OreDictionaryItemFilter(ItemStack stack) {
         this.filterReader = new OreDictFilterReader(stack);
-        setFilterReader(this.filterReader);
         recompile();
+    }
+
+    @Override
+    public OreDictFilterReader getFilterReader() {
+        return filterReader;
     }
 
     @NotNull
