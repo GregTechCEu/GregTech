@@ -4,7 +4,6 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 
 import org.jetbrains.annotations.NotNull;
 
