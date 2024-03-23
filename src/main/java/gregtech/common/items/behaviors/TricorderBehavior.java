@@ -2,7 +2,11 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -31,6 +35,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -335,12 +340,14 @@ public class TricorderBehavior implements IItemBehaviour {
         }
 
         // pollution
-        // if (GT_Pollution.hasPollution(currentChunk)) {
-        // list.add("Pollution in Chunk: " + TextFormatting.RED +
-        // GTUtility.formatNumbers(GT_Pollution.getPollution(currentChunk)) + TextFormatting.RESET + " gibbl");
-        // } else {
-        // list.add(TextFormatting.GREEN + "No Pollution in Chunk! HAYO!" + TextFormatting.RESET);
-        // }
+        int pollution = GregTechAPI.pollutionManager.getPollution(world.provider.getDimension(), pos.getX() >> 4,
+                pos.getZ() >> 4);
+        if (pollution > 0) {
+            list.add(new TextComponentString("Pollution in Chunk: " + TextFormatting.RED +
+                    TextFormattingUtil.formatNumbers(pollution) + TextFormatting.RESET + " gibbl"));
+        } else {
+            list.add(new TextComponentString(TextFormatting.GREEN + "No Pollution in Chunk! HAYO!" + TextFormatting.RESET));
+        }
 
         // debug TODO
         if (tileEntity instanceof MetaTileEntityHolder) {

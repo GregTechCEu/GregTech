@@ -43,6 +43,10 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
+    @Config.Comment("Config options for Pollution")
+    @Config.Name("Pollution Options")
+    public static PollutionOptions pollution = new PollutionOptions();
+
     public static class MachineOptions {
 
         @Config.Comment({ "Whether insufficient energy supply should reset Machine recipe progress to zero.",
@@ -456,6 +460,12 @@ public class ConfigHolder {
         @Config.Comment({ "Prevent optical and laser cables from animating when active.", "Default: false" })
         public boolean preventAnimatedCables = false;
 
+        @Config.Comment({ "If pollution fog should be enabled.", "Default: true"})
+        public boolean doPollutionFog = true;
+
+        @Config.Comment({ "If pollution particles should be enabled.", "Default: true"})
+        public boolean doPollutionParticles = true;
+
         public static class GuiConfig {
 
             @Config.Comment({ "The scrolling speed of widgets", "Default: 13" })
@@ -705,5 +715,39 @@ public class ConfigHolder {
         @Config.RangeInt(min = 1, max = 512)
         @Config.Comment({ "The EU/t consumption of the NanoSaber.", "Default: 64" })
         public int energyConsumption = 64;
+    }
+
+    public static class PollutionOptions {
+
+        @Config.Comment({ "The pollution threshold for basic smog effects.",
+                "Effects: Mining Fatigue, Weakness, and Slowness.",
+                "Default: 550000" })
+        @Config.RangeInt(min = 0)
+        public int basicThreshold = 550_000;
+
+        @Config.Comment({ "The pollution threshold for serious effects.",
+                "Effects: Hunger, Nausea, Poison, Blindness, and Block Breaking",
+                "Must be >= I:basicThreshold.",
+                "Default: 750000" })
+        @Config.RangeInt(min = 0)
+        public int seriousThreshold = 750_000;
+
+        @Config.Comment({ "The pollution threshold for plant-killing effects.",
+                "Effects: ",
+                "Default: 1000000."})
+        public int vegetationThreshold = 1_000_000;
+
+        @Config.Comment({ "The pollution threshold for sour rain effects.",
+                "Effects: ",
+                "Default: 2000000."})
+        public int sourRainThreshold = 2_000_000;
+
+        @Config.Comment({ "Whether nausea effects should be performed.", "Default: true" })
+        public boolean doNausea = true;
+
+        @Config.Comment({ "Whether in-world effects should be performed.",
+                "These effects can break some basic vanilla blocks.",
+                "Default: true" })
+        public boolean doInWorldEffects = true;
     }
 }

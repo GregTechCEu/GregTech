@@ -16,6 +16,8 @@ import gregtech.api.modules.IGregTechModule;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.pollution.PollutionManager;
+import gregtech.api.pollution.PollutionSaveData;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -41,6 +43,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.CommandHand;
 import gregtech.common.command.CommandRecipeCheck;
 import gregtech.common.command.CommandShaders;
+import gregtech.common.command.pollution.CommandPollution;
 import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
@@ -61,6 +64,7 @@ import gregtech.core.network.packets.PacketFluidVeinList;
 import gregtech.core.network.packets.PacketKeysPressed;
 import gregtech.core.network.packets.PacketNotifyCapeChange;
 import gregtech.core.network.packets.PacketPluginSynced;
+import gregtech.core.network.packets.PacketPollution;
 import gregtech.core.network.packets.PacketRecoverMTE;
 import gregtech.core.network.packets.PacketReloadShaders;
 import gregtech.core.network.packets.PacketUIClientAction;
@@ -229,6 +233,7 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.networkHandler.registerPacket(PacketNotifyCapeChange.class);
         GregTechAPI.networkHandler.registerPacket(PacketReloadShaders.class);
         GregTechAPI.networkHandler.registerPacket(PacketClipboardNBTUpdate.class);
+        GregTechAPI.networkHandler.registerPacket(PacketPollution.class);
     }
 
     @Override
@@ -301,6 +306,7 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.commandManager.addCommand(new CommandHand());
         GregTechAPI.commandManager.addCommand(new CommandRecipeCheck());
         GregTechAPI.commandManager.addCommand(new CommandShaders());
+        GregTechAPI.commandManager.addCommand(new CommandPollution());
         CapesRegistry.load();
     }
 
@@ -318,6 +324,14 @@ public class CoreModule implements IGregTechModule {
                     BedrockFluidVeinHandler.saveDataVersion = BedrockFluidVeinHandler.MAX_FLUID_SAVE_DATA_VERSION;
                 }
                 BedrockFluidVeinSaveData.setInstance(saveData);
+
+                PollutionSaveData pollutionSaveData = (PollutionSaveData) world.loadData(PollutionSaveData.class, PollutionSaveData.NAME);
+                if (pollutionSaveData == null) {
+                    pollutionSaveData = new PollutionSaveData(PollutionSaveData.NAME);
+                    pollutionSaveData.setVersion(PollutionSaveData.Version.V1);
+                    world.setData(PollutionSaveData.NAME, pollutionSaveData);
+                }
+                GregTechAPI.pollutionManager = new PollutionManager(pollutionSaveData);
             }
         }
     }
@@ -326,5 +340,7 @@ public class CoreModule implements IGregTechModule {
     public void serverStopped(FMLServerStoppedEvent event) {
         VirtualTankRegistry.clearMaps();
         CapesRegistry.clearMaps();
+        GregTechAPI.pollutionManager.reset();
+        GregTechAPI.pollutionManager = null;
     }
 }

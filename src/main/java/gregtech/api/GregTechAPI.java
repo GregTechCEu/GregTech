@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
+import gregtech.api.pollution.PollutionManager;
 import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
@@ -51,6 +52,8 @@ public class GregTechAPI {
     public static IMaterialRegistryManager materialManager;
     /** Will be available at the Pre-Initialization stage */
     public static MarkerMaterialRegistry markerMaterialRegistry;
+    /** Will be available at the Server-Started stage */
+    public static PollutionManager pollutionManager;
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;
