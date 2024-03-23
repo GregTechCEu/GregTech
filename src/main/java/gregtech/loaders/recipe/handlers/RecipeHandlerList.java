@@ -1,7 +1,7 @@
 package gregtech.loaders.recipe.handlers;
 
-import gregtech.api.unification.ore.handler.OreProcessorManager;
 import gregtech.api.unification.ore.handler.OreProcessorEvent;
+import gregtech.api.unification.ore.handler.OreProcessorManager;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

@@ -10,11 +10,11 @@ import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.handler.OreProcessor;
 import gregtech.api.unification.ore.handler.OreProcessorManager;
-import gregtech.core.unification.ore.internal.OreProcessorManagerImpl;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
+import gregtech.core.unification.ore.internal.OreProcessorManagerImpl;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;

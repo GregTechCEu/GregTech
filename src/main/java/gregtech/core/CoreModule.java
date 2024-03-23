@@ -25,7 +25,6 @@ import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
-import gregtech.core.unification.ore.internal.OreProcessorManagerImpl;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
@@ -70,6 +69,7 @@ import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
 import gregtech.core.unification.material.internal.MaterialRegistryManager;
+import gregtech.core.unification.ore.internal.OreProcessorManagerImpl;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 
