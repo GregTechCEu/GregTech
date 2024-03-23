@@ -33,7 +33,7 @@ public class DimensionProperty extends RecipeProperty<DimensionProperty.Dimensio
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.dimensions",
                     getDimensionsForRecipe(castValue(value).whiteListDimensions)), x, y, color);
         if (list.blackListDimensions.size() > 0)
-            minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.dimensions_b",
+            minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.dimensions_blocked",
                     getDimensionsForRecipe(castValue(value).blackListDimensions)), x, y, color);
     }
 

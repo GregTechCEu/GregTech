@@ -1023,7 +1023,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("hidden", hidden)
                 .append("cleanroom", getCleanroom())
                 .append("dimensions", getDimensionIDs().toString())
-                .append("dimensions_b", getBlockedDimensionIDs().toString())
+                .append("dimensions_blocked", getBlockedDimensionIDs().toString())
                 .append("recipeStatus", recipeStatus)
                 .toString();
     }
