@@ -35,13 +35,6 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
-        super.modifyOverclockPost(overclockResults, storage);
-        // make EUt negative so it is consumed
-        overclockResults[0] = -overclockResults[0];
-    }
-
-    @Override
     public int getParallelLimit() {
         // parallel is limited by voltage
         return Integer.MAX_VALUE;
