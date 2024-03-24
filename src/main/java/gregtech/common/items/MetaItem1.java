@@ -589,17 +589,17 @@ public class MetaItem1 extends StandardMetaItem {
         // Filters: ID 290-300
         FLUID_FILTER = addItem(290, "fluid_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)))
-                .addComponents(new SimpleFluidFilterUIManager(), IFilter.Factory.of(SimpleFluidFilter::new));
+                .addComponents(new SimpleFluidFilterUIManager(), IFilter.factory(SimpleFluidFilter::new));
         ITEM_FILTER = addItem(291, "item_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2),
                         new MaterialStack(Materials.Steel, M)))
-                .addComponents(new SimpleFilterUIManager(), IFilter.Factory.of(SimpleItemFilter::new));
+                .addComponents(new SimpleFilterUIManager(), IFilter.factory(SimpleItemFilter::new));
         ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)))
-                .addComponents(new OreDictFilterUIManager(), IFilter.Factory.of(OreDictionaryItemFilter::new));
+                .addComponents(new OreDictFilterUIManager(), IFilter.factory(OreDictionaryItemFilter::new));
         SMART_FILTER = addItem(293, "smart_item_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 3 / 2)))
-                .addComponents(new SmartFilterUIManager(), IFilter.Factory.of(SmartItemFilter::new));
+                .addComponents(new SmartFilterUIManager(), IFilter.factory(SmartItemFilter::new));
 
         // Functional Covers: ID 301-330
         COVER_MACHINE_CONTROLLER = addItem(301, "cover.controller");

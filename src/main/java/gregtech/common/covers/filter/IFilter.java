@@ -64,14 +64,15 @@ public interface IFilter {
         FLUID
     }
 
-    @FunctionalInterface()
+    // this only exists so i can pass in the constructor reference as a metaitem componant
+    static Factory factory(Factory factory) {
+        return factory;
+    }
+
+    @FunctionalInterface
     interface Factory extends IItemComponent {
 
         @NotNull
         BaseFilter create(@NotNull ItemStack stack);
-
-        static Factory of(Factory factory) {
-            return factory;
-        }
     }
 }
