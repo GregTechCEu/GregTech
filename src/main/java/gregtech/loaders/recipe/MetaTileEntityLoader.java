@@ -898,7 +898,8 @@ public class MetaTileEntityLoader {
                 ROTOR);
 
         registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.DIODES, GTValues.ULV, GTValues.HV), "CDC", "DHD",
-                "PDP", 'H', HULL, 'D', MetaItems.DIODE, 'P', PLATE, 'C', CABLE_QUAD);
+                "PDP", 'H', HULL, 'D', new UnificationEntry(OrePrefix.component, MarkerMaterials.Component.Diode), 'P',
+                PLATE, 'C', CABLE_QUAD);
         registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.DIODES, GTValues.HV, GTValues.LuV), "CDC", "DHD",
                 "PDP", 'H', HULL, 'D', MetaItems.SMD_DIODE, 'P', PLATE, 'C', CABLE_QUAD);
         registerMachineRecipe(
