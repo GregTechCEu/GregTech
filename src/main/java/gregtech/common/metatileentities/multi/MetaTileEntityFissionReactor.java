@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multi;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.gui.GuiTextures;
@@ -94,7 +93,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 266).shouldColor(false)
                 .widget(new ToggleButtonWidget(10, 10, 18, 18, this::isLocked, this::tryLocking))
                 .widget(new AdvancedTextWidget(35, 14, getLockingStateText(), getLockedTextColor()))
-                .widget(new SliderWidget(String.format("Control Rod Depth: %d", controlRodInsertionValue), 10, 30, 100, 18, 0.0f, 15.0f,
+                .widget(new SliderWidget(String.format("Control Rod Depth: %d", controlRodInsertionValue), 10, 30, 100,
+                        18, 0.0f, 15.0f,
                         controlRodInsertionValue, this::setControlRodInsertionValue))
                 .widget(new SliderWidget("Flow Rate", 10, 50, 150, 18, 0.0f, 16000.f, flowRate, this::setFlowRate));
         builder.widget(new AdvancedTextWidget(10, 120, getStatsText(), 0x2020D0));
@@ -118,13 +118,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     }
 
     private int getLockedTextColor() {
-        if(lockingState == LockingState.LOCKED)
+        if (lockingState == LockingState.LOCKED)
             return 0x00A000;
-        if(lockingState == LockingState.INVALID_COMPONENT)
+        if (lockingState == LockingState.INVALID_COMPONENT)
             return 0xC08000;
-        if(lockingState == LockingState.UNLOCKED)
+        if (lockingState == LockingState.UNLOCKED)
             return 0x0050D0;
-        if(lockingState == LockingState.MISSING_INPUTS)
+        if (lockingState == LockingState.MISSING_INPUTS)
             return getWorld().getWorldTime() % 2 == 0 ? 0xA00000 : 0xC08000;
         return 0x000000;
     }
@@ -148,7 +148,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private Consumer<List<ITextComponent>> getStatsText() {
         return (list) -> {
             list.add(new TextComponentString(String.format("Temperature: %.3f K", this.temperature)));
-            list.add(new TextComponentString(String.format("Pressure: \n    %.3f Pa (%.3f Atm)", this.pressure, (this.pressure / FissionReactor.standardPressure))));
+            list.add(new TextComponentString(String.format("Pressure: \n    %.3f Pa (%.3f Atm)", this.pressure,
+                    (this.pressure / FissionReactor.standardPressure))));
             list.add(new TextComponentString(String.format("Power: %.3f MW / %.3f MW", this.power, this.maxPower)));
         };
     }
@@ -216,18 +217,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
             this.syncReactorStats();
 
-//            if (this.fissionReactor.checkForMeltdown()) {
-//                this.performMeltdownEffects();
-//            }
-//
-//            if (this.fissionReactor.checkForExplosion()) {
-//                this.performPrimaryExplosion();
-//                if (this.fissionReactor.checkForSecondaryExplosion()) {
-//                    this.performSecondaryExplosion();
-//                }
-//            }
-
-
+            // if (this.fissionReactor.checkForMeltdown()) {
+            // this.performMeltdownEffects();
+            // }
+            //
+            // if (this.fissionReactor.checkForExplosion()) {
+            // this.performPrimaryExplosion();
+            // if (this.fissionReactor.checkForSecondaryExplosion()) {
+            // this.performSecondaryExplosion();
+            // }
+            // }
 
         }
     }
@@ -488,7 +487,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
 
-        if(dataId == SYNC_REACTOR_STATS) {
+        if (dataId == SYNC_REACTOR_STATS) {
             this.temperature = buf.readDouble();
             this.pressure = buf.readDouble();
             this.power = buf.readDouble();
@@ -587,7 +586,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                             }
                         }
                     } else if (mte instanceof MetaTileEntityControlRodPort controlIn) {
-                        component = new ControlRod(100000, true, 1, 800,controlIn.getInsertionAmount());
+                        component = new ControlRod(100000, true, 1, 800, controlIn.getInsertionAmount());
                     } else {
                         foundPort = false;
                     }

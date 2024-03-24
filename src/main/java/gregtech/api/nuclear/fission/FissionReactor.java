@@ -147,19 +147,25 @@ public class FissionReactor {
         return value * criticalRate / rate * Math.sqrt(target / value);
     }
 
-    protected double responseFunctionTemperature(double envTemperature, double currentTemperature, double heatAdded, double heatAbsorbed,
-                                                        double equilibrium) {
+    protected double responseFunctionTemperature(double envTemperature, double currentTemperature, double heatAdded,
+                                                 double heatAbsorbed) {
         currentTemperature = Math.max(0.1, currentTemperature);
         heatAbsorbed = Math.max(0.1, heatAbsorbed);
-        //return Math.max(value * criticalRate / rate * Math.sqrt(target / value), equilibrium);
-        return Math.max(currentTemperature + (heatAdded - heatAbsorbed) / (this.coolantMass + this.structuralMass + this.fuelMass)
-                - this.surfaceArea * thermalConductivity * wallThickness * Math.abs(envTemperature - currentTemperature), equilibrium);
+        // Solves the following differential equation:
+        // dT/dt = h_added_tot / m_tot - k(T - T_env) at t = 1s with T(0) = T_0
+        double heatFlux = this.surfaceArea * thermalConductivity * wallThickness;
+        double expDecay = Math.exp(-heatFlux);
+
+        double effectiveEnvTemperature = envTemperature +
+                (heatAdded - heatAbsorbed) / (heatFlux * (this.coolantMass + this.structuralMass + this.fuelMass));
+        return currentTemperature * expDecay + effectiveEnvTemperature * (1 - expDecay);
     }
 
     public FissionReactor(int size, int depth, int controlRodInsertion) {
         reactorLayout = new ReactorComponent[size][size];
         reactorDepth = depth;
-        reactorRadius = (double) size / 2 + 1.5; // Includes the extra block plus the distance from the center of a block to its edge
+        reactorRadius = (double) size / 2 + 1.5; // Includes the extra block plus the distance from the center of a
+                                                 // block to its edge
         this.controlRodInsertion = controlRodInsertion;
         fuelRods = new ArrayList<>();
         controlRods = new ArrayList<>();
@@ -426,13 +432,14 @@ public class FissionReactor {
      * Consumes the coolant.
      * Calculates the heat removed by the coolant based on an amalgamation of different equations.
      * It is not particularly realistic, but allows for some fine-tuning to happen.
-     * Heat removed is proportional to the surface area of the coolant channel (which is equivalent to the reactor's depth),
+     * Heat removed is proportional to the surface area of the coolant channel (which is equivalent to the reactor's
+     * depth),
      * as well as the flow rate of coolant and the difference in temperature between the reactor and the coolant
      */
     public void makeCoolantFlow(int flowRate) {
         for (CoolantChannel channel : coolantChannels) {
             FluidStack tryFluidDrain = channel.getInputHandler().getFluidTank().drain(flowRate, false);
-            if(tryFluidDrain != null) {
+            if (tryFluidDrain != null) {
                 int drained = tryFluidDrain.amount;
 
                 Material coolant = channel.getCoolant();
@@ -447,14 +454,15 @@ public class FissionReactor {
 
                 channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
 
-                if(this.temperature > this.coolantBoilingPoint()) {
+                if (this.temperature > this.coolantBoilingPoint()) {
                     channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
                 }
 
                 this.coolantMass += actualFlowRate * coolant.getMass();
 
-                this.heatRemoved += prop.getCoolingFactor()
-                        * this.reactorDepth * actualFlowRate * (prop.getHeatOfVaporization() + this.coolantBoilingPoint(coolant) - coolant.getFluid().getTemperature());
+                this.heatRemoved += prop.getCoolingFactor() * this.reactorDepth * actualFlowRate *
+                        (prop.getHeatOfVaporization() + this.coolantBoilingPoint(coolant) -
+                                coolant.getFluid().getTemperature());
             }
         }
         this.coolantMass /= 1000;
@@ -474,12 +482,13 @@ public class FissionReactor {
             return coolantBoilingPoint();
         }
         return 1. / (1. / coolant.getProperty(PropertyKey.COOLANT).getBoilingPoint() -
-                R * Math.log(this.pressure / standardPressure) / coolant.getProperty(PropertyKey.COOLANT).getHeatOfVaporization());
+                R * Math.log(this.pressure / standardPressure) /
+                        coolant.getProperty(PropertyKey.COOLANT).getHeatOfVaporization());
     }
 
     public void updateTemperature() {
         this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1000000,
-                this.heatRemoved, this.coolantBaseTemperature);
+                this.heatRemoved);
         this.heatRemoved = 0;
     }
 
