@@ -4,6 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -262,9 +263,18 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
             }
             MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
-            if (stack.hasTagCompound()) {
-                // noinspection ConstantConditions
-                metaTileEntity.initFromItemStackData(stack.getTagCompound());
+            var stackTag = stack.getTagCompound();
+            if (stackTag != null) {
+                if (stackTag.hasKey(GregtechDataCodes.BLOCK_ENTITY_TAG)) {
+                    var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
+                    String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
+                    if (!customName.isEmpty())
+                        ((MetaTileEntityHolder) holder).setCustomName(customName);
+
+                    metaTileEntity.initFromItemStackData(blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE));
+                } else {
+                    metaTileEntity.initFromItemStackData(stackTag);
+                }
             }
             if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
