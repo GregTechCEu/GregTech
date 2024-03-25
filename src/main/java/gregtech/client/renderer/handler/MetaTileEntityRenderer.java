@@ -94,7 +94,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
     @Override
     public boolean renderBlock(IBlockAccess world, BlockPos pos, IBlockState state, BufferBuilder buffer) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(world, pos);
-        if (metaTileEntity == null) {
+        if (metaTileEntity == null || !metaTileEntity.isValid()) {
             return false;
         }
         CCRenderState renderState = CCRenderState.instance();
