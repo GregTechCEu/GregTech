@@ -271,7 +271,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                     if (!customName.isEmpty())
                         ((MetaTileEntityHolder) holder).setCustomName(customName);
 
-                    metaTileEntity.initFromItemStackData(blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE));
+                    metaTileEntity.readFromNBT(blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE));
                 } else {
                     metaTileEntity.initFromItemStackData(stackTag);
                 }
