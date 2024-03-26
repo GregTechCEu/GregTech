@@ -264,7 +264,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             }
             MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             var stackTag = stack.getTagCompound();
-            if (stackTag != null) {
+            if (stackTag != null && !stackTag.isEmpty()) {
                 if (stackTag.hasKey(GregtechDataCodes.BLOCK_ENTITY_TAG)) {
                     var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
                     String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
