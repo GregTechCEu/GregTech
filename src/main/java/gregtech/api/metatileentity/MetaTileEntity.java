@@ -323,9 +323,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     /**
      * Called from ItemBlock to initialize this MTE with data contained in ItemStack
      *
-     * @param stackTag itemstack of itemblock
+     * @param itemStack itemstack of itemblock
      */
-    public void initFromItemStackData(NBTTagCompound stackTag) {}
+    public void initFromItemStackData(NBTTagCompound itemStack) {}
 
     /**
      * Called to write MTE specific data when it is destroyed to save it's state
