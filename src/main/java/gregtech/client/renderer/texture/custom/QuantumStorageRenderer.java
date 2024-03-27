@@ -111,7 +111,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         if (stack.isEmpty() || count == 0 || !ConfigHolder.client.enableFancyChestRender)
             return;
 
-        int range = 9;
+        int range = 16;
         if (x > range || y > range || z > range ||
                 x < -range || y < -range || z < -range)
             return;
@@ -178,7 +178,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, long amount) {
-        int range = 9;
+        int range = 16;
         if (x > range || y > range || z > range ||
                 x < -range || y < -range || z < -range)
             return;
