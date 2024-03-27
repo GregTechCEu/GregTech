@@ -109,7 +109,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
     public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine,
                                         ItemStack stack, long count, float partialTicks) {
-        if (!ConfigHolder.client.enableFancyChestRender || stack.isEmpty() || count == 0 || !canRender(x, y, z))
+        if (!ConfigHolder.client.enableFancyChestRender || stack.isEmpty() || count == 0)
             return;
 
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
@@ -117,15 +117,18 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         World world = machine.getWorld();
         setLightingCorrectly(world, machine.getPos());
         EnumFacing frontFacing = machine.getFrontFacing();
-        RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
-        float tick = world.getWorldTime() + partialTicks;
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
-        GlStateManager.translate(0.5D, 0.5D, 0.5D);
-        GlStateManager.rotate(tick * (float) Math.PI * 2 / 40, 0, 1, 0);
-        GlStateManager.scale(0.6f, 0.6f, 0.6f);
-        itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
-        GlStateManager.popMatrix();
+
+        if (canRender(x, y, z, 8 * MathHelper.clamp((double) Minecraft.getMinecraft().gameSettings.renderDistanceChunks / 8, 1.0, 2.5))) {
+            RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
+            float tick = world.getWorldTime() + partialTicks;
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(x, y, z);
+            GlStateManager.translate(0.5D, 0.5D, 0.5D);
+            GlStateManager.rotate(tick * (float) Math.PI * 2 / 40, 0, 1, 0);
+            GlStateManager.scale(0.6f, 0.6f, 0.6f);
+            itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
+            GlStateManager.popMatrix();
+        }
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
         renderAmountText(x, y, z, count, frontFacing);
@@ -137,9 +140,6 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         FluidStack stack = tank.getFluid();
         if (stack == null || stack.amount == 0 || !ConfigHolder.client.enableFancyChestRender)
             return;
-
-        float lastBrightnessX = OpenGlHelper.lastBrightnessX;
-        float lastBrightnessY = OpenGlHelper.lastBrightnessY;
 
         if (world != null) {
             renderState.setBrightness(world, pos);
@@ -173,20 +173,12 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         renderState.reset();
     }
 
-    public static boolean canRender(double x, double y, double z) {
+    public static boolean canRender(double x, double y, double z, double range) {
         double distance = (x * x) + (y * y) + (z * z);
-        return canRender(distance);
-    }
-
-    public static boolean canRender(double distanceSq) {
-        double range = 8 *
-                MathHelper.clamp((double) Minecraft.getMinecraft().gameSettings.renderDistanceChunks / 8, 1.0, 2.5);
-        return distanceSq < range * range;
+        return distance < range * range;
     }
 
     public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, long amount) {
-        if (!canRender(x, y, z))
-            return;
 
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
@@ -198,7 +190,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderAmountText(double x, double y, double z, long amount, EnumFacing frontFacing) {
-        if (!ConfigHolder.client.enableFancyChestRender)
+        if (!ConfigHolder.client.enableFancyChestRender || !canRender(x, y, z, 64))
             return;
 
         GlStateManager.pushMatrix();
