@@ -9,6 +9,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
+import gregtech.api.items.effect.HeldItemEffectManager;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
@@ -266,6 +267,8 @@ public class CoreModule implements IGregTechModule {
 
         DungeonLootLoader.init();
         MetaBlocks.registerWalkingSpeedBonus();
+
+        GregTechAPI.heldItemEffectManager = new HeldItemEffectManager().init();
     }
 
     @Override
