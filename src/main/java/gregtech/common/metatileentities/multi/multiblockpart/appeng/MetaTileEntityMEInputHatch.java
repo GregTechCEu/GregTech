@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
@@ -266,7 +267,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> list) {
-        list.addAll(Arrays.asList(this.getAEFluidHandler().getInventory()));
+    public @NotNull List<?> registerAbilities(@NotNull MultiblockAbility<Object> multiblockAbility) {
+        return Collections.unmodifiableList(Arrays.asList(this.getAEFluidHandler().getInventory()));
     }
 }

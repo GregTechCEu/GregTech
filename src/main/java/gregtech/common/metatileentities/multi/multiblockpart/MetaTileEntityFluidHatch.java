@@ -1,18 +1,32 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IFilter;
+import gregtech.api.capability.IFilteredFluidContainer;
+import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.FluidContainerSlotWidget;
+import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.PhantomTankWidget;
+import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -41,16 +55,20 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
-                                      implements IMultiblockAbilityPart<IFluidTank>, IControllable {
+                                      implements IMultiblockAbilityPart<IFluidTank>, IControllable,
+                                      IGhostSlotConfigurable {
 
     private static final int INITIAL_INVENTORY_SIZE = 8000;
 
     // only holding this for convenience
     private final HatchFluidTank fluidTank;
+    private GhostCircuitItemStackHandler circuitInventory;
     private boolean workingEnabled;
 
     // export hatch-only fields
@@ -63,6 +81,31 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         this.fluidTank = new HatchFluidTank(getInventorySize(), this, isExportHatch);
         this.workingEnabled = true;
         initializeInventory();
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        if (!this.hasGhostCircuitInventory()) return;
+
+        this.circuitInventory = new GhostCircuitItemStackHandler(this);
+        this.circuitInventory.addNotifiableMetaTileEntity(this);
+    }
+
+    @Override
+    public boolean hasGhostCircuitInventory() {
+        return !isExportHatch;
+    }
+
+    @Override
+    public void setGhostCircuitConfig(int config) {
+        if (this.circuitInventory == null || this.circuitInventory.getCircuitValue() == config) {
+            return;
+        }
+        this.circuitInventory.setCircuitValue(config);
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
     }
 
     @Override
@@ -79,6 +122,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (locked && lockedFluid != null) {
                 data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
             }
+        } else {
+            this.circuitInventory.write(data);
         }
         return data;
     }
@@ -97,6 +142,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             this.locked = data.getBoolean("IsLocked");
             this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) :
                     null;
+        } else {
+            this.circuitInventory.read(data);
         }
     }
 
@@ -207,8 +254,20 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.add(fluidTank);
+    public @NotNull List<MultiblockAbility<?>> getAbilities() {
+        return isExportHatch ?
+                Collections.singletonList(MultiblockAbility.EXPORT_FLUIDS) :
+                Arrays.asList(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS);
+    }
+
+    @Override
+    public @NotNull List<?> registerAbilities(@NotNull MultiblockAbility<Object> key) {
+        if (key.equals(MultiblockAbility.EXPORT_FLUIDS) || key.equals(MultiblockAbility.IMPORT_FLUIDS)) {
+            return Collections.singletonList(fluidTank);
+        } else if (key.equals(MultiblockAbility.IMPORT_ITEMS)) {
+            return Collections.singletonList(circuitInventory);
+        }
+        return Collections.emptyList();
     }
 
     @Override
@@ -257,6 +316,23 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                             .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
         }
 
+        if (this.circuitInventory != null) {
+            SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62)
+                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
+            builder.widget(circuitSlot.setConsumer(slotWidget -> {
+                String configString;
+                if (circuitInventory == null ||
+                        circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
+                    configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value")
+                            .getFormattedText();
+                } else {
+                    configString = String.valueOf(circuitInventory.getCircuitValue());
+                }
+
+                slotWidget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
+            }));
+        }
+
         // Add general widgets
         return builder.label(6, 6, title)
                 .label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF)
@@ -299,6 +375,18 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 list.add(new TextComponentString(fluidAmount));
             }
         };
+    }
+
+    @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        this.circuitInventory.addNotifiableMetaTileEntity(controllerBase);
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        super.removeFromMultiBlock(controllerBase);
+        this.circuitInventory.removeNotifiableMetaTileEntity(controllerBase);
     }
 
     @Override
