@@ -63,8 +63,14 @@ public class DimensionProperty extends RecipeProperty<DimensionProperty.Dimensio
         public IntList blackListDimensions = new IntArrayList();
 
         public void add(int key, boolean toBlacklist) {
-            if (toBlacklist) blackListDimensions.add(key);
-            else whiteListDimensions.add(key);
+            if (toBlacklist) {
+                blackListDimensions.add(key);
+                whiteListDimensions.rem(key);
+            }
+            else {
+                whiteListDimensions.add(key);
+                blackListDimensions.rem(key);
+            }
         }
 
         public void merge(DimensionPropertyList list) {
