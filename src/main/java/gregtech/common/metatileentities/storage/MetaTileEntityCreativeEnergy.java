@@ -154,6 +154,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         this.active = active;
         if (!getWorld().isRemote) {
             writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, buf -> buf.writeBoolean(active));
+            markDirty();
         }
     }
 

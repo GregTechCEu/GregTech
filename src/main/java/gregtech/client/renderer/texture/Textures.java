@@ -97,6 +97,32 @@ public class Textures {
             "casings/pipe/machine_casing_grate");
     public static final SimpleOverlayRenderer HIGH_POWER_CASING = new SimpleOverlayRenderer(
             "casings/computer/high_power_casing");
+    public static final SimpleOverlayRenderer QUANTUM_CASING = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_casing");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_FRONT_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_front_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_FRONT_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_front_active");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_active");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_PROXY_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/proxy_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_PROXY_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/proxy_active");
+    public static final SimpleOverlayRenderer QUANTUM_EXTENDER = new SimpleOverlayRenderer("casings/quantum/extender");
+    public static final SimpleOverlayRenderer QUANTUM_EXTENDER_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/extender_active");
+
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_disconnected");
+
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR_CONNECTED = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_connected");
+
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR_POWERED = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_powered");
 
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer(
