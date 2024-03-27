@@ -1,11 +1,14 @@
 package gregtech.api.pipenet.tile;
 
 import gregtech.api.metatileentity.interfaces.INeighborCache;
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.NodeG;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -15,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType>
-                          extends INeighborCache {
+public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>> extends INeighborCache {
 
     World getPipeWorld();
 
@@ -56,12 +59,16 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor);
 
+    void onConnectionChange();
+
     // if a face is blocked it will still render as connected, but it won't be able to receive stuff from that direction
     default boolean canHaveBlockedFaces() {
         return true;
     }
 
     int getBlockedConnections();
+
+    void onBlockedChange();
 
     boolean isFaceBlocked(EnumFacing side);
 
@@ -72,6 +79,11 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     PipeType getPipeType();
 
     NodeDataType getNodeData();
+
+    NodeG<PipeType, NodeDataType> getNode();
+
+    @Nullable
+    TileEntity getNonPipeNeighbour(EnumFacing facing);
 
     PipeCoverableImplementation getCoverableImplementation();
 
@@ -95,6 +107,4 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     void markAsDirty();
 
     boolean isValidTile();
-
-    void scheduleChunkForRenderUpdate();
 }

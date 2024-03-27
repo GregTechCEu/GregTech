@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -18,14 +17,14 @@ import java.util.Iterator;
 
 public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
-    private final TileEntityFluidPipeTickable pipe;
+    private final TileEntityFluidPipe pipe;
     private final FluidTank[] tanks;
     private IFluidTankProperties[] properties;
     private final EnumFacing facing;
 
     public PipeTankList(TileEntityFluidPipe pipe, EnumFacing facing, FluidTank... fluidTanks) {
         this.tanks = fluidTanks;
-        this.pipe = (TileEntityFluidPipeTickable) pipe;
+        this.pipe = pipe;
         this.facing = facing;
     }
 
@@ -78,7 +77,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             newFluid.amount = Math.min(pipe.getCapacityPerTank(), newFluid.amount);
             if (doFill) {
                 tank.setFluid(newFluid);
-                pipe.receivedFrom(facing);
+                pipe.receivedFrom(newFluid.getFluid(), facing);
                 pipe.checkAndDestroy(newFluid);
             }
             return newFluid.amount;
@@ -88,7 +87,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             if (toAdd > 0) {
                 if (doFill) {
                     currentFluid.amount += toAdd;
-                    pipe.receivedFrom(facing);
+                    pipe.receivedFrom(currentFluid.getFluid(), facing);
                     pipe.checkAndDestroy(currentFluid);
                 }
                 return toAdd;

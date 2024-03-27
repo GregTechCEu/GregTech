@@ -7,9 +7,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
 public interface IRoutePath<T extends IPipeTile<?, ?>> {
 
     @NotNull

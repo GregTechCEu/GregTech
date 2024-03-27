@@ -2,7 +2,6 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTLog;
-import gregtech.common.pipelike.itempipe.net.ItemNetWalker;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -10,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -25,8 +25,9 @@ import java.util.*;
  * <p>
  * <b>Do not walk a walker more than once</b>
  * <p>
- * For example implementations look at {@link ItemNetWalker}
  */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
 public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
 
     protected PipeNetWalker<T> root;

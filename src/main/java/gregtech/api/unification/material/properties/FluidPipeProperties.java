@@ -4,6 +4,7 @@ import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
+import gregtech.api.pipenet.INodeData;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
@@ -12,8 +13,9 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
-public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter {
+public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter, INodeData<FluidPipeProperties> {
 
     private final Object2BooleanMap<FluidAttribute> containmentPredicate = new Object2BooleanOpenHashMap<>();
 
@@ -136,6 +138,21 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
 
     public void setPlasmaProof(boolean plasmaProof) {
         this.plasmaProof = plasmaProof;
+    }
+
+    @Override
+    public int getChannelMaxCount() {
+        return this.tanks;
+    }
+
+    @Override
+    public double getWeightFactor() {
+        return this.getThroughput();
+    }
+
+    @Override
+    public FluidPipeProperties getMinData(Set<FluidPipeProperties> datas) {
+        return null;
     }
 
     @Override

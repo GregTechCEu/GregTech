@@ -121,7 +121,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
                                          @Nullable TileEntity tile) {
         if (tile == null) return false;
         if (tile.hasCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, side.getOpposite())) return true;
-        return tile.hasCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER, side.getOpposite());
+        return tile.hasCapability(GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER, side.getOpposite());
     }
 
     @Override

@@ -1,11 +1,17 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.common.pipelike.fluidpipe.FluidPipeType;
+import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class WorldFluidPipeNet extends WorldPipeNet<FluidPipeProperties, FluidPipeNet> {
+public class WorldFluidPipeNet extends WorldPipeFlowNetG<FluidPipeProperties, FluidPipeType> {
 
     private static final String DATA_ID_BASE = "gregtech.fluid_pipe_net";
 
@@ -21,11 +27,40 @@ public class WorldFluidPipeNet extends WorldPipeNet<FluidPipeProperties, FluidPi
     }
 
     public WorldFluidPipeNet(String name) {
-        super(name);
+        super(name, true);
     }
 
     @Override
-    protected FluidPipeNet createNetInstance() {
-        return new FluidPipeNet(this);
+    protected Class<? extends IPipeTile<FluidPipeType, FluidPipeProperties>> getBasePipeClass() {
+        return TileEntityFluidPipe.class;
+    }
+
+    @Override
+    protected Capability<?> getSinkCapability() {
+        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+    }
+
+    @Override
+    protected void writeNodeData(FluidPipeProperties nodeData, NBTTagCompound tagCompound) {
+        tagCompound.setInteger("max_temperature", nodeData.getMaxFluidTemperature());
+        tagCompound.setInteger("throughput", nodeData.getThroughput());
+        tagCompound.setBoolean("gas_proof", nodeData.isGasProof());
+        tagCompound.setBoolean("acid_proof", nodeData.isAcidProof());
+        tagCompound.setBoolean("cryo_proof", nodeData.isCryoProof());
+        tagCompound.setBoolean("plasma_proof", nodeData.isPlasmaProof());
+        tagCompound.setInteger("channels", nodeData.getTanks());
+    }
+
+    @Override
+    protected FluidPipeProperties readNodeData(NBTTagCompound tagCompound) {
+        int maxTemperature = tagCompound.getInteger("max_temperature");
+        int throughput = tagCompound.getInteger("throughput");
+        boolean gasProof = tagCompound.getBoolean("gas_proof");
+        boolean acidProof = tagCompound.getBoolean("acid_proof");
+        boolean cryoProof = tagCompound.getBoolean("cryo_proof");
+        boolean plasmaProof = tagCompound.getBoolean("plasma_proof");
+        int channels = tagCompound.getInteger("channels");
+        return new FluidPipeProperties(maxTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof,
+                channels);
     }
 }

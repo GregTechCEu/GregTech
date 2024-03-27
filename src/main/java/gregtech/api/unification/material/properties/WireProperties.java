@@ -1,13 +1,15 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.GTValues;
+import gregtech.api.pipenet.INodeData;
 import gregtech.api.unification.material.Material;
 
 import java.util.Objects;
+import java.util.Set;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 
-public class WireProperties implements IMaterialProperty {
+public class WireProperties implements IMaterialProperty, INodeData<WireProperties> {
 
     private int voltage;
     private int amperage;
@@ -143,10 +145,24 @@ public class WireProperties implements IMaterialProperty {
     }
 
     @Override
+    public double getWeightFactor() {
+        // aren't weighted graphs great?
+        return this.getLossPerBlock();
+    }
+
+    @Override
+    public WireProperties getMinData(Set<WireProperties> datas) {
+        int amperage = Integer.MAX_VALUE;
+        for (WireProperties data : datas) {
+            amperage = Math.min(amperage, data.getAmperage());
+        }
+        return new WireProperties(-1, amperage, -1);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof WireProperties)) return false;
-        WireProperties that = (WireProperties) o;
+        if (!(o instanceof WireProperties that)) return false;
         return voltage == that.voltage &&
                 amperage == that.amperage &&
                 lossPerBlock == that.lossPerBlock &&

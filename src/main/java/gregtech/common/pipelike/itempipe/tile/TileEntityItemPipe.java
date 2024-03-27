@@ -6,7 +6,6 @@ import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
-import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 
 import net.minecraft.util.EnumFacing;
@@ -19,7 +18,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 
 public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
@@ -29,7 +27,6 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     private ItemNetHandler defaultHandler;
     // the ItemNetHandler can only be created on the server so we have a empty placeholder for the client
     private final IItemHandler clientCapability = new ItemStackHandler(0);
-    private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
 
     private int transferredItems = 0;
     private long timer = 0;
@@ -49,10 +46,7 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     }
 
     private void initHandlers() {
-        ItemPipeNet net = getItemPipeNet();
-        if (net == null) {
-            return;
-        }
+        WorldItemPipeNet net = WorldItemPipeNet.getWorldPipeNet(getPipeWorld());
         for (EnumFacing facing : EnumFacing.values()) {
             handlers.put(facing, new ItemNetHandler(net, this, facing));
         }
@@ -69,37 +63,9 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
 
             if (handlers.size() == 0)
                 initHandlers();
-            checkNetwork();
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
-    }
-
-    public void checkNetwork() {
-        if (defaultHandler != null) {
-            ItemPipeNet current = getItemPipeNet();
-            if (defaultHandler.getNet() != current) {
-                defaultHandler.updateNetwork(current);
-                for (ItemNetHandler handler : handlers.values()) {
-                    handler.updateNetwork(current);
-                }
-            }
-        }
-    }
-
-    public ItemPipeNet getItemPipeNet() {
-        if (world == null || world.isRemote)
-            return null;
-        ItemPipeNet currentPipeNet = this.currentPipeNet.get();
-        if (currentPipeNet != null && currentPipeNet.isValid() &&
-                currentPipeNet.containsNode(getPipePos()))
-            return currentPipeNet; // if current net is valid and does contain position, return it
-        WorldItemPipeNet worldFluidPipeNet = (WorldItemPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
-        currentPipeNet = worldFluidPipeNet.getNetFromPos(getPipePos());
-        if (currentPipeNet != null) {
-            this.currentPipeNet = new WeakReference<>(currentPipeNet);
-        }
-        return currentPipeNet;
     }
 
     public void resetTransferred() {
@@ -152,11 +118,5 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     public int getTransferredItems() {
         updateTransferredState();
         return this.transferredItems;
-    }
-
-    @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
-        this.handlers.clear();
     }
 }

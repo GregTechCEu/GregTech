@@ -1,5 +1,9 @@
 package gregtech.api.pipenet.block.simple;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.9")
 @SuppressWarnings("ALL")
 public class EmptyNodeData {
 

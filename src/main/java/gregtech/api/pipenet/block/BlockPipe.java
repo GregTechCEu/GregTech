@@ -8,8 +8,8 @@ import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.IBlockAppearance;
-import gregtech.api.pipenet.PipeNet;
-import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.WorldPipeNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -64,8 +64,9 @@ import java.util.Random;
 import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 
 @SuppressWarnings("deprecation")
-public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType,
-        WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BuiltInRenderBlock
+public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>,
+        WorldPipeNetType extends WorldPipeNetG<NodeDataType, PipeType>> extends BuiltInRenderBlock
                                implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
     protected final ThreadLocal<IPipeTile<PipeType, NodeDataType>> tileEntities = new ThreadLocal<>();
@@ -86,30 +87,14 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         if (side == null)
             return new Cuboid6(min, min, min, max, max, max);
-        Cuboid6 cuboid;
-        switch (side) {
-            case WEST:
-                cuboid = new Cuboid6(faceMin, min, min, min, max, max);
-                break;
-            case EAST:
-                cuboid = new Cuboid6(max, min, min, faceMax, max, max);
-                break;
-            case NORTH:
-                cuboid = new Cuboid6(min, min, faceMin, max, max, min);
-                break;
-            case SOUTH:
-                cuboid = new Cuboid6(min, min, max, max, max, faceMax);
-                break;
-            case UP:
-                cuboid = new Cuboid6(min, max, min, max, faceMax, max);
-                break;
-            case DOWN:
-                cuboid = new Cuboid6(min, faceMin, min, max, min, max);
-                break;
-            default:
-                cuboid = new Cuboid6(min, min, min, max, max, max);
-        }
-        return cuboid;
+        return switch (side) {
+            case WEST -> new Cuboid6(faceMin, min, min, min, max, max);
+            case EAST -> new Cuboid6(max, min, min, faceMax, max, max);
+            case NORTH -> new Cuboid6(min, min, faceMin, max, max, min);
+            case SOUTH -> new Cuboid6(min, min, max, max, max, faceMax);
+            case UP -> new Cuboid6(min, max, min, max, faceMax, max);
+            case DOWN -> new Cuboid6(min, faceMin, min, max, min, max);
+        };
     }
 
     /**
@@ -152,7 +137,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             tileEntities.set(pipeTile);
         }
         super.breakBlock(worldIn, pos, state);
-        getWorldPipeNet(worldIn).removeNode(pos);
+        if (!worldIn.isRemote) getWorldPipeNet(worldIn).removeNode(pos);
     }
 
     @Override
@@ -165,9 +150,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                            @NotNull Random rand) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
+            if (worldIn.isRemote) return;
             int activeConnections = pipeTile.getConnections();
             boolean isActiveNode = activeConnections != 0;
-            getWorldPipeNet(worldIn).addNode(pos, createProperties(pipeTile), 0, activeConnections, isActiveNode);
             onActiveModeChange(worldIn, pos, isActiveNode, true);
         }
     }
@@ -190,6 +175,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     }
                 }
             }
+
         }
     }
 
@@ -228,16 +214,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     @Override
-    public void observedNeighborChange(@NotNull IBlockState observerState, @NotNull World world,
-                                       @NotNull BlockPos observerPos, @NotNull Block changedBlock,
-                                       @NotNull BlockPos changedBlockPos) {
-        PipeNet<NodeDataType> net = getWorldPipeNet(world).getNetFromPos(observerPos);
-        if (net != null) {
-            net.onNeighbourUpdate(changedBlockPos);
-        }
-    }
-
-    @Override
     public boolean canConnectRedstone(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
                                       @Nullable EnumFacing side) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
@@ -263,7 +239,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                                        IPipeTile<PipeType, NodeDataType> pipeTile) {
         if (worldIn.isRemote) return;
 
-        PipeNet<NodeDataType> pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
+        WorldPipeNetG<NodeDataType, PipeType> pipeNet = getWorldPipeNet(worldIn);
         if (pipeNet != null && pipeTile != null) {
             int activeConnections = pipeTile.getConnections(); // remove blocked connections
             boolean isActiveNodeNow = activeConnections != 0;
@@ -439,14 +415,15 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
                     pipeTile.setFaceBlocked(coverSide, !isBlocked);
                     ToolHelper.playToolSound(stack, entityPlayer);
+                    ToolHelper.damageItem(stack, entityPlayer);
                 } else {
                     boolean isOpen = pipeTile.isConnected(coverSide);
                     pipeTile.setConnection(coverSide, !isOpen, false);
                     if (isOpen != pipeTile.isConnected(coverSide)) {
                         ToolHelper.playToolSound(stack, entityPlayer);
+                        ToolHelper.damageItem(stack, entityPlayer);
                     }
                 }
-                ToolHelper.damageItem(stack, entityPlayer);
                 return EnumActionResult.SUCCESS;
             }
             entityPlayer.swingArm(hand);

@@ -7,6 +7,8 @@ import gregtech.api.metatileentity.multiblock.IMaintenance;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public class GregtechTileCapabilities {
 
     @CapabilityInject(IWorkable.class)
@@ -36,6 +38,11 @@ public class GregtechTileCapabilities {
     @CapabilityInject(ILaserContainer.class)
     public static Capability<ILaserContainer> CAPABILITY_LASER = null;
 
+    @CapabilityInject(IOpticalComputationProvider.class)
+    public static Capability<IOpticalComputationProvider> CAPABILITY_COMPUTATION_PROVIDER = null;
+
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @CapabilityInject(IOpticalComputationProvider.class)
     public static Capability<IOpticalComputationProvider> CABABILITY_COMPUTATION_PROVIDER = null;
 }
