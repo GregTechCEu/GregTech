@@ -112,7 +112,7 @@ gregtech.waila.progress_computation=计算进度：%s / %s
 
 gregtech.multiblock.title=多方块结构
 gregtech.multiblock.primitive_blast_furnace.bronze.description=土高炉是（PBF）是个多方块结构。尽管它不是很快，却能在游戏前期为你的发展提供钢材。
-gregtech.multiblock.coke_oven.description=焦炉是个多方块结构，用于在早期生产焦炭和杂酚油。无需燃料即可工作，内部至多可容纳32桶杂酚油。其存储可通过焦炉仓进行访问。
+gregtech.multiblock.coke_oven.description=焦炉是一种多方块结构，用于在早期生产焦煤和杂酚油，无需燃料即可工作，内部至多可容纳 32 桶杂酚油。其存储可通过焦炉仓进行访问。
 gregtech.multiblock.vacuum_freezer.description=真空冷冻机是个多方块结构，主要用于热锭冷却。此外，它还可以冻结水等其他物质。
 gregtech.multiblock.implosion_compressor.description=聚爆压缩机是个多方块结构，能够借助炸药将宝石粉转化为相应的宝石。
 gregtech.multiblock.pyrolyse_oven.description=热解炉是种用于将原木处理为木炭、杂酚油、灰烬或重油的多方块结构。
@@ -852,7 +852,7 @@ metaitem.cover.item.voiding.advanced.tooltip=作§f覆盖板§7时允许按数�
 metaitem.cover.storage.name=存储覆盖板
 metaitem.cover.storage.tooltip=给零碎的小玩意准备的小型存储空间
 metaitem.cover.maintenance.detector.name=维护需求覆盖板
-metaitem.cover.maintenance.detector.tooltip=作§f覆盖板§7时在机器§f需要维护§7输出红石信号。
+metaitem.cover.maintenance.detector.tooltip=作§f覆盖板§7时在机器§f需要维护§7时发出红石信号。
 
 metaitem.cover.facade.name=%s伪装板
 metaitem.cover.facade.tooltip=可作为§f覆盖板§7加装装饰性套壳。
@@ -1008,6 +1008,9 @@ item.gt.tool.screwdriver_lv.name=%s螺丝刀（LV）
 item.gt.tool.screwdriver_lv.tooltip=§8调整覆盖板和机器
 item.gt.tool.plunger.name=%s搋子
 item.gt.tool.plunger.tooltip=§8从机器中抽除流体
+item.gt.tool.wire_cutter_lv.name=%s剪线钳（LV）
+item.gt.tool.wire_cutter_hv.name=%s剪线钳（HV）
+item.gt.tool.wire_cutter_iv.name=%s剪线钳（IV）
 
 
 item.gt.tool.tooltip.crafting_uses=§a合成耐久度：%s
@@ -2347,6 +2350,17 @@ tile.rubber_wood_fence.name=橡胶木栅栏
 tile.treated_wood_fence.name=防腐木栅栏
 tile.rubber_wood_fence_gate.name=橡胶木栅栏门
 tile.treated_wood_fence_gate.name=防腐木栅栏门
+
+tile.gt_explosive.breaking_tooltip=破坏它会引爆火药，潜行挖掘以重新拾取
+tile.gt_explosive.lighting_tooltip=无法用红石信号引爆
+
+tile.powderbarrel.name=火药桶
+tile.powderbarrel.drops_tooltip=爆炸范围略大于TNT，所有被摧毁的方块都会掉落
+entity.Powderbarrel.name=火药桶
+
+tile.itnt.name=工业TNT
+tile.itnt.drops_tooltip=爆炸范围比TNT大得多，所有被摧毁的方块都会掉落
+entity.ITNT.name=工业TNT
 
 tile.brittle_charcoal.name=脆木炭块
 tile.brittle_charcoal.tooltip.1=产自木炭堆点火器。
@@ -4410,7 +4424,7 @@ gregtech.machine.world_accelerator.zpm.name=精英世界加速器 III
 gregtech.machine.world_accelerator.zpm.tooltip=“时间之§m瓶§r”§7方块
 gregtech.machine.world_accelerator.uv.name=终极世界加速器
 gregtech.machine.world_accelerator.uv.tooltip=时间扭曲者
-gregtech.machine.world_accelerator.description=使用§f螺丝刀§7在§f方块实体§r或§f随机刻§7模式中切换。
+gregtech.machine.world_accelerator.description=使用§f螺丝刀§7在§f方块实体§7或§f随机刻§7模式中切换。
 gregtech.machine.world_accelerator.power_usage=§7在随机刻模式下最多使用§f%dA，§7在方块实体模式下最多使用§f%dA 。
 gregtech.machine.world_accelerator.acceleration=§d加速倍率: §f%dx
 gregtech.machine.world_accelerator.working_area=§b作用范围：
@@ -5248,15 +5262,27 @@ gregtech.machine.laser_hatch.tooltip2=§c激光传导线缆必须直线摆放！
 gregtech.machine.fluid_tank.max_multiblock=多方块结构最大尺寸：%,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=含有%s mB%s
 
-gregtech.machine.me_export_fluid_hatch.name=ME输出仓
+# ME Parts
+gregtech.machine.me_import_item_bus.name=ME输入总线
+gregtech.machine.me.item_import.tooltip=从ME网络提取指定物品
+gregtech.machine.me_stocking_item_bus.name=ME库存输入总线
+gregtech.machine.me.stocking_item.tooltip=直接从ME网络抽取物品
+gregtech.machine.me.stocking_item.tooltip.2=ME自动拉取模式将自动标记ME网络中的前16种物品，每5秒更新一次。
+gregtech.machine.me_import_item_hatch.configs.tooltip=可标记16种物品
+gregtech.machine.me_import_fluid_hatch.name=ME输入仓
+gregtech.machine.me.fluid_import.tooltip=从ME网络提取指定流体
+gregtech.machine.me_stocking_fluid_hatch.name=ME库存输入仓
+gregtech.machine.me.stocking_fluid.tooltip=直接从ME网络抽取流体
+gregtech.machine.me.stocking_fluid.tooltip.2=ME自动拉取模式将自动标记ME网络中的前16种流体，每5秒更新一次。
+gregtech.machine.me_import_fluid_hatch.configs.tooltip=可标记16种流体
 gregtech.machine.me_export_item_bus.name=ME输出总线
-gregtech.machine.me_import_fluid_hatch.name=ME库存输入仓
-gregtech.machine.me_import_item_bus.name=ME库存输入总线
-gregtech.machine.me.fluid_export.tooltip=将流体直接存储到ME网络中。
-gregtech.machine.me.item_export.tooltip=将物品直接存储到ME网络中。
-gregtech.machine.me.fluid_import.tooltip=自动从ME网络获取流体。
-gregtech.machine.me.item_import.tooltip=自动从ME网络获取物品。
-gregtech.machine.me.export.tooltip=在连接到ME网络之前，它具有无限容量。
+gregtech.machine.me.item_export.tooltip=将物品直接存储到ME网络中
+gregtech.machine.me.item_export.tooltip.2=可以缓存无限数量的物品
+gregtech.machine.me_export_fluid_hatch.name=ME输出仓
+gregtech.machine.me.fluid_export.tooltip=将流体直接存储到ME网络中
+gregtech.machine.me.fluid_export.tooltip.2=可以缓存无限数量的流体
+gregtech.machine.me.stocking_auto_pull_enabled=ME自动拉取已启用
+gregtech.machine.me.stocking_auto_pull_disabled=ME自动拉取已禁用
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§a输入电压：§f%,d EU/t（%s§f）
@@ -5279,7 +5305,7 @@ gregtech.universal.tooltip.item_stored=§d内含物品：§f%2$,d + %3$,d 个%1$
 gregtech.universal.tooltip.item_transfer_rate=§b传输速率：§f%,d件物品/s
 gregtech.universal.tooltip.item_transfer_rate_stacks=§b传输速率：§f%,d组物品/s
 gregtech.universal.tooltip.fluid_storage_capacity=§9流体容量：§f%,d L
-gregtech.universal.tooltip.fluid_storage_capacity_mult=§9流体容量：§r共§f%d§7个流体槽，每个§f%dL§7
+gregtech.universal.tooltip.fluid_storage_capacity_mult=§9流体容量：§7共§f%d§7个流体槽，每个§f%dL§7
 gregtech.universal.tooltip.fluid_stored=§d内含流体：§f%2$,d L %1$s
 gregtech.universal.tooltip.fluid_transfer_rate=§b传输速率：§f%,d L/t
 gregtech.universal.tooltip.parallel=§d最大并行：§f%d
@@ -5397,8 +5423,12 @@ gregtech.gui.me_network.offline=网络状态：§4离线§r
 gregtech.gui.waiting_list=发送队列：
 gregtech.gui.config_slot=§f配置槽位§r
 gregtech.gui.config_slot.set=§7点击§b设置/选择§7配置槽位。§r
+gregtech.gui.config_slot.set_only=§7点击§b设置§7配置槽位。§r
 gregtech.gui.config_slot.scroll=§7使用滚轮§a切换§7配置数。§r
 gregtech.gui.config_slot.remove=§7右击§4清除§7配置槽位。§r
+gregtech.gui.config_slot.auto_pull_managed=§4禁用：§7由ME自动拉取管理
+gregtech.gui.me_bus.extra_slot=额外槽位/n§7在这里放置配方的额外物品，例如模具或透镜
+gregtech.gui.me_bus.auto_pull_button=单击以切换ME自动拉取模式
 gregtech.gui.alarm.radius=半径：
 
 
