@@ -22,6 +22,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -108,12 +109,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
     public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine,
                                         ItemStack stack, long count, float partialTicks) {
-        if (stack.isEmpty() || count == 0 || !ConfigHolder.client.enableFancyChestRender)
-            return;
-
-        int range = 16;
-        if (x > range || y > range || z > range ||
-                x < -range || y < -range || z < -range)
+        if (!ConfigHolder.client.enableFancyChestRender || stack.isEmpty() || count == 0 || !canRender(x, y, z))
             return;
 
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
@@ -177,10 +173,19 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         renderState.reset();
     }
 
+    public static boolean canRender(double x, double y, double z) {
+        double distance = (x * x) + (y * y) + (z * z);
+        return canRender(distance);
+    }
+
+    public static boolean canRender(double distanceSq) {
+        double range = 8 *
+                MathHelper.clamp((double) Minecraft.getMinecraft().gameSettings.renderDistanceChunks / 8, 1.0, 2.5);
+        return distanceSq < range * range;
+    }
+
     public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, long amount) {
-        int range = 16;
-        if (x > range || y > range || z > range ||
-                x < -range || y < -range || z < -range)
+        if (!canRender(x, y, z))
             return;
 
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
