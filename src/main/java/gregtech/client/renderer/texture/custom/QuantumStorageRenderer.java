@@ -174,6 +174,16 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         renderState.reset();
     }
 
+    /**
+     * Takes in the difference in x, y, and z from the camera to the rendering TE and
+     * calculates the squared distance and checks if it's within the range squared
+     * 
+     * @param x     the difference in x from entity to this rendering TE
+     * @param y     the difference in y from entity to this rendering TE
+     * @param z     the difference in z from entity to this rendering TE
+     * @param range distance needed to be rendered
+     * @return true if the camera is within the given range, otherwise false
+     */
     public static boolean canRender(double x, double y, double z, double range) {
         double distance = (x * x) + (y * y) + (z * z);
         return distance < range * range;
