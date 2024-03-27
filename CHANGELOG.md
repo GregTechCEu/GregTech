@@ -76,9 +76,9 @@ BETA RELEASE
 
 Featured Changes:
 * MANY Bug Fixes
-    * Fixed item duplication exploits with Crafting Tweaks and GregTech MetaItems 
-    * Fixed machines overclocking too many times 
-    * Fixed bug causing machine back-stuffing lag 
+    * Fixed item duplication exploits with Crafting Tweaks and GregTech MetaItems
+    * Fixed machines overclocking too many times
+    * Fixed bug causing machine back-stuffing lag
     * Fixed Item Fluid Containers accepting fluids they shouldn't be allowed to hold
 
 * Added missing Coal Gas recipe using Coal Blocks
@@ -588,7 +588,7 @@ Featured Changes:
     * Surface rocks can now always be broken by a bare hand
     * Surface rocks can be right-clicked to be "picked up" (drop their Tiny Dusts)
     * A few fixes for Surface Blocks, which can be specified in JSON ore veins
-    
+
 * Fix Various Mod Compatibility Problems:
     * Fix crash with the Terminal Hardware Manager and some mods (like Building Gadgets)
     * Fix crash with NuclearCraft in rare situations
@@ -679,7 +679,7 @@ BETA RELEASE
 * Move ASMD Assembler recipes to IV
 * Separate Fusion Ring config from normal bloom settings
 * Rework Rubber Tree leaf biome coloring, sapling item model,
-log top texture, leaf shape, generating in wrong biomes, generating too frequently
+  log top texture, leaf shape, generating in wrong biomes, generating too frequently
 * Add config to increase/reduce Rubber Tree spawnrate in their allowed biomes (Forest, Jungle, Swamp)
 
 ### 2.0.0
@@ -736,11 +736,11 @@ ALPHA RELEASE
 
 ### 1.15.0
 * Highlight: Fixed Granite ID Shift (#1549) - dan
-  * Full info: https://github.com/GregTechCE/GregTech/pull/1549
-  * There may be conversion of old worlds
+    * Full info: https://github.com/GregTechCE/GregTech/pull/1549
+    * There may be conversion of old worlds
 * Added minimal Coil tier for Electric Blast furnace recipes to JEI (#1580) - LAGIdiot
 * Added notconsumable for fluids to CT (#1603) - dan
-* Updated GTCE chests to allow covers on bottom side (#1579) - htmlcsjs  
+* Updated GTCE chests to allow covers on bottom side (#1579) - htmlcsjs
 * Updated Hay Bale recipe to use Packager instead of Compressor (#1592) - LAGIdiot
 * Updated Assembler Slot background to be more darker (#1611) - galyfray
 * Removed Forge Multipart legacy support (#1594) - LAGIdiot
@@ -778,7 +778,7 @@ ALPHA RELEASE
 
 ### 1.13.0
 * Highlight: Chemistry update, Take Two (#1492) - dan
-  * Full info: https://github.com/GregTechCE/GregTech/pull/1492
+    * Full info: https://github.com/GregTechCE/GregTech/pull/1492
 * Added ability to set Allowed Input from output side via the machine grid (#1483) - ALongStringOfNumbers
 * Added notConsumable Fluids as possible recipe input (#1514) - dan
 * Updated Plunger to work as always empty fluid container (#1461) - Adrian Brock
@@ -799,12 +799,12 @@ ALPHA RELEASE
 
 ### 1.12.0
 * Highlight: TOP now displays fuel information (#1484) - Adrian Brock
-  * Blocks consuming fuel now has new information provided in TOP
-  * Specifically what fuel is used and how long will last
+    * Blocks consuming fuel now has new information provided in TOP
+    * Specifically what fuel is used and how long will last
 * Highlight: Ore vein generation page in JEI (#1386) - ALongStringOfNumbers
-  * Pressing U on GTCE Ore will show in which veins it can be found
-  * Additional information like dimensions, spawn range and vein weight are available
-  * Vein files now can contain name and description optional values
+    * Pressing U on GTCE Ore will show in which veins it can be found
+    * Additional information like dimensions, spawn range and vein weight are available
+    * Vein files now can contain name and description optional values
 * Added descriptors to the machine controller (#1459) - ALongStringOfNumbers
 * Added unlocalized name of supported items is copied to clipboard when using /gt util hand (#1465) - Adrian Brock
 * Added support for multiblocks having own front side overlay (#1494) - dan
@@ -839,15 +839,15 @@ ALPHA RELEASE
 
 ### 1.11.0
 * Highlight: Chemistry update (#1414) - dan
-  * Unifies conventions of how much of a material is considered 1 mol
-  * Corrects non-stoichiometric reactions, removing the possibility of positive crafting loops
-  * High number of recipes got added/changed/removed
-  * Full info: https://github.com/GregTechCE/GregTech/pull/1414
+    * Unifies conventions of how much of a material is considered 1 mol
+    * Corrects non-stoichiometric reactions, removing the possibility of positive crafting loops
+    * High number of recipes got added/changed/removed
+    * Full info: https://github.com/GregTechCE/GregTech/pull/1414
 * Added better TOP Transformer info (#1404) - dan
 * Added Cable separation recipes (#1405) - dan
 * Added Wire & Cable 4x recipes (#1405) - dan
 * Added Rotor Mold (#1408) - dan
-  * Old Assembler recipe was removed
+    * Old Assembler recipe was removed
 * Added "Regular" to dust oredict entries (#1416) - dan
 * Added ability to take Fluids out of Input Hatch (#1427) - dan
 * Updated CT bracket handler to allows getting MetaItems (#1352) - idcppl
@@ -974,7 +974,7 @@ ALPHA RELEASE
 * Added Metal Bender recipe for Empty Shape Plate (#1138) - LAGIdiot
 * Added JEI information for integrated circuits (#1142) - Eutro
 * Added support custom chance functions (#1145) - Eutro
-  * This allows for reverting to old byproduct chances
+    * This allows for reverting to old byproduct chances
 * Added Implosion Compressor CraftTweaker integration for the ability to specify explosives types (#1148) - ALongStringOfNumbers
 * Added config option for lossless wires ot damage player on contact (#1151) - ALongStringOfNumbers
 * Updated JEI recipe info to render from the bottom instead of at a constant height (#1118) - Eutro
@@ -992,7 +992,7 @@ ALPHA RELEASE
 * Removed localization for old way of handling fuel recipe maps (#1160) - LAGIdiot
 
 ### 1.9.2
-* Updated dependencies versions (#1070) - LAGIdiot 
+* Updated dependencies versions (#1070) - LAGIdiot
     * Forge updated to 14.23.5.2847
     * CraftTweaker updated to 4.1.9.6
     * CodeChickenLib updated to 3.2.3.358
@@ -1073,9 +1073,9 @@ ALPHA RELEASE
 
 ### 1.8.7
 - ##### Added WorldGen - abandoned structures.
-  * Can spawn anywhere in the world on the surface
-  * Contain useful materials for progression, if you can get them!
-  * More is coming soon!
+    * Can spawn anywhere in the world on the surface
+    * Contain useful materials for progression, if you can get them!
+    * More is coming soon!
 * Disallowed fake players to use most of GTCE tool abilities.
 * Fixed battery buffers charging batteries wrongly.
 * Buff multi smelter smelting speed & item amount.
@@ -1120,7 +1120,7 @@ ALPHA RELEASE
 * Added discharge mode for batteries in player inventory.
 * Don't connect wires on sides of mach ines that can't neither input nor output energy.
 * Increased overclock efficiency a bit for high voltage recipes.
-* Reduce damage taken by tools in certain actions a bit. 
+* Reduce damage taken by tools in certain actions a bit.
 * Added a Fisher.
 * Show only stone variants of ore in ores tab, show all variants in search tab.
 * Use voltage names instead of tier numbers in electric items tooltip.
@@ -1137,7 +1137,7 @@ ALPHA RELEASE
 * Show actual meta tile entity creator mod ID in JEI.
 * Enhanced placement grid for covers on machines and pipes, show it only when it's used now.
 * Robotic Arm now isn't limited in the transfer rate in transfer exact & keep exact modes.
-* Fix few tools-related issues. 
+* Fix few tools-related issues.
 
 ### 1.8.1
 Added a config option to specify bonus EU output per turbine type.
@@ -1379,9 +1379,9 @@ Added a config option to specify bonus EU output per turbine type.
 * Made electrolyzer and centrifuge output slots tabbed.
 * Fixed some recipes.
 * Fire tree grow event. Closes #509.
-* #### Implemented covers: 
-- Robot Arm (most advanced cover- filtering, putting in specific slots, buffering and many more) 
-- Conveyor Belt (transporting items, not filtered) 
+* #### Implemented covers:
+- Robot Arm (most advanced cover- filtering, putting in specific slots, buffering and many more)
+- Conveyor Belt (transporting items, not filtered)
 - Pump (Fluid transportation, filtered)
 - Filter (item/fluid/ore dictionary) (allows you to filter items/fluids passing through machines)
 
@@ -1414,7 +1414,7 @@ All covers have GUIs that help you set them up. They can be placed on machines a
 ### 0.5.8
 * **Optimized cables and reworked pipes due to performance impact they had. Unfortunately these are not backwards compatible with previous ones, and it is better to remove all existing pipes and cables from the world to avoid possible world corruption**
 * Fixed multiblock info tooltip rendering
-* Fixes an issue where BuildCraft oil cannot be refined in a Distillery, among others *(codewarrior0)* 
+* Fixes an issue where BuildCraft oil cannot be refined in a Distillery, among others *(codewarrior0)*
 * Removed glow effect from metatools
 * Added turbine rotor efficiency description
 * Added option to reset recipe progress when energy supply is insufficient (default is slowly going down like in vanilla)

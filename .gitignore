@@ -1,5 +1,5 @@
 .nopublish
-
+*.sh
 ### Windows ###
 
 thumbs.db

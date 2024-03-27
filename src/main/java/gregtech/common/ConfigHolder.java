@@ -43,6 +43,11 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
+    @Config.Comment("Config options to selectively disable recipes generation")
+    @Config.Name("Recipe disabling config")
+    @Config.RequiresMcRestart
+    public static RecipeDisablingConfig recipeDisablingConfig = new RecipeDisablingConfig();
+
     public static class MachineOptions {
 
         @Config.Comment({ "Whether insufficient energy supply should reset Machine recipe progress to zero.",
@@ -705,5 +710,69 @@ public class ConfigHolder {
         @Config.RangeInt(min = 1, max = 512)
         @Config.Comment({ "The EU/t consumption of the NanoSaber.", "Default: 64" })
         public int energyConsumption = 64;
+    }
+
+    public static class RecipeDisablingConfig {
+
+        @Config.Comment("Config options to disable ores processing handlers generation")
+        @Config.Name("Processing handlers recipes generation")
+        public ProcessingHandlers processingHandlers = new ProcessingHandlers();
+
+        @Config.Comment("Config options to disable other recipes generation")
+        @Config.Name("Other recipes generation")
+        public OtherStuff otherStuff = new OtherStuff();
+    }
+
+    public static class ProcessingHandlers {
+
+        @Config.Name("disable all rotor recipes")
+        @Config.RequiresMcRestart
+        public boolean disableRotorRecipes;
+
+        @Config.Name("disable all wire recipes")
+        @Config.RequiresMcRestart
+        public boolean disableWireRecipes;
+
+        @Config.Name("disable all foil recipes")
+        @Config.RequiresMcRestart
+        public boolean disableFoilRecipes;
+        @Config.Name("disable all fine wire recipes")
+        @Config.RequiresMcRestart
+        public boolean disableFineWireRecipes;
+    }
+
+    public static class OtherStuff {
+
+        @Config.Comment({ "disable motors, pumps etc. shaped and assembler/assembly line recipes" })
+        @Config.Name("disable component recipes")
+        @Config.RequiresMcRestart
+        public boolean disableComponentRecipes;
+
+        @Config.Comment({ "disable circuit assembler recipes using liquid tin" })
+        @Config.Name("disable tin circuit assembler recipes")
+        @Config.RequiresMcRestart
+        public boolean disableTinCircuitRecipes;
+
+        @Config.Comment({ "disable ulv to uhv casing shaped and assembler recipes" })
+        @Config.Name("disable tier casing recipes")
+        @Config.RequiresMcRestart
+        public boolean disableTierCasingRecipes;
+
+        @Config.Comment({ " disable all electrolysis recipes including auto-generated recipes" })
+        @Config.Name("disable electrolysis recipes")
+        @Config.RequiresMcRestart
+        public boolean disableElectrolysisRecipes;
+
+        @Config.Name("disable hydrocarbons cracking recipes")
+        @Config.RequiresMcRestart
+        public boolean disableCrackingRecipes;
+
+        @Config.Name("disable desulfurization recipes")
+        @Config.RequiresMcRestart
+        public boolean disableDesulfurizationRecipes;
+
+        @Config.Name("disable wire coil recipes")
+        @Config.RequiresMcRestart
+        public boolean disableWirecoilRecipes;
     }
 }
