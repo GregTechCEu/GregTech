@@ -66,8 +66,7 @@ public class DimensionProperty extends RecipeProperty<DimensionProperty.Dimensio
             if (toBlacklist) {
                 blackListDimensions.add(key);
                 whiteListDimensions.rem(key);
-            }
-            else {
+            } else {
                 whiteListDimensions.add(key);
                 blackListDimensions.rem(key);
             }
