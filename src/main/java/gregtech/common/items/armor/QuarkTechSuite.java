@@ -2,6 +2,7 @@ package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
@@ -264,7 +265,8 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
     public boolean handleUnblockableDamage(EntityLivingBase entity, @NotNull ItemStack armor, DamageSource source,
                                            double damage, EntityEquipmentSlot equipmentSlot) {
         return source != DamageSource.FALL && source != DamageSource.DROWN && source != DamageSource.STARVE &&
-                source != DamageSource.OUT_OF_WORLD;
+                source != DamageSource.OUT_OF_WORLD && source != DamageSources.getSuffocationDamage() &&
+                source != DamageSources.getToxicAtmoDamage();
     }
 
     @Override

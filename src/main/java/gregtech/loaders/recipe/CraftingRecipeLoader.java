@@ -303,6 +303,13 @@ public class CraftingRecipeLoader {
                 "LdL", 'C', new UnificationEntry(OrePrefix.circuit, Tier.ULV), 'S',
                 new UnificationEntry(OrePrefix.screw, Steel), 'R', new UnificationEntry(OrePrefix.ring, Rubber), 'B',
                 MetaItems.BATTERY_LV_SODIUM, 'L', new UnificationEntry(OrePrefix.lens, Glass));
+        ModHandler.addShapedRecipe("simple_gas_mask", MetaItems.SIMPLE_GAS_MASK.getStackForm(), " T ", "WFW", "SMR",
+                'W', Blocks.WOOL, 'F', new UnificationEntry(OrePrefix.rotor, Materials.Steel), 'T', Items.STRING, 'S',
+                MetaItems.STICKY_RESIN, 'M', MetaItems.ELECTRIC_MOTOR_MV, 'R',
+                new UnificationEntry(OrePrefix.plate, Materials.Rubber));
+        ModHandler.addShapedRecipe("gas_mask", MetaItems.GAS_MASK.getStackForm(), "CkC", "RNR", "xMd", 'N',
+                MetaItems.NIGHTVISION_GOGGLES.getStackForm(), 'C', MetaItems.CARBON_FIBER_PLATE.getStackForm(), 'M',
+                MetaItems.SIMPLE_GAS_MASK.getStackForm(), 'R', new UnificationEntry(OrePrefix.foil, Materials.Rubber));
         ModHandler.addShapedRecipe("fluid_jetpack", MetaItems.SEMIFLUID_JETPACK.getStackForm(), "xCw", "SUS", "RIR",
                 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'S',
                 MetaItems.FLUID_CELL_LARGE_STEEL.getStackForm(), 'U', MetaItems.ELECTRIC_PUMP_LV.getStackForm(), 'R',
@@ -318,7 +325,7 @@ public class CraftingRecipeLoader {
                 new UnificationEntry(OrePrefix.wireGtQuadruple, Gold), 'C',
                 new UnificationEntry(OrePrefix.circuit, Tier.HV));
         ModHandler.addShapedRecipe("nano_helmet", MetaItems.NANO_HELMET.getStackForm(), "PPP", "PNP", "xEd", 'P',
-                MetaItems.CARBON_FIBER_PLATE.getStackForm(), 'N', MetaItems.NIGHTVISION_GOGGLES.getStackForm(), 'E',
+                MetaItems.CARBON_FIBER_PLATE.getStackForm(), 'N', GAS_MASK.getStackForm(), 'E',
                 MetaItems.ENERGIUM_CRYSTAL.getStackForm());
         ModHandler.addShapedRecipe("nano_chestplate", MetaItems.NANO_CHESTPLATE.getStackForm(), "PEP", "PPP", "PPP",
                 'P', MetaItems.CARBON_FIBER_PLATE.getStackForm(), 'E', MetaItems.ENERGIUM_CRYSTAL.getStackForm());

@@ -2,6 +2,7 @@ package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
@@ -232,7 +233,8 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     @Override
     public boolean handleUnblockableDamage(EntityLivingBase entity, @NotNull ItemStack armor, DamageSource source,
                                            double damage, EntityEquipmentSlot equipmentSlot) {
-        return source != DamageSource.FALL && source != DamageSource.DROWN && source != DamageSource.STARVE;
+        return source != DamageSource.FALL && source != DamageSource.DROWN && source != DamageSource.STARVE &&
+                source != DamageSources.getSuffocationDamage() && source != DamageSources.getToxicAtmoDamage();
     }
 
     @Override

@@ -14,6 +14,11 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
         MetaItems.NIGHTVISION_GOGGLES = addItem(1, "nightvision_goggles").setArmorLogic(new NightvisionGoggles(2,
                 80_000L * (long) Math.max(1, Math.pow(1, ConfigHolder.tools.voltageTierNightVision - 1)),
                 ConfigHolder.tools.voltageTierNightVision, EntityEquipmentSlot.HEAD));
+        MetaItems.SIMPLE_GAS_MASK = addItem(10, "simple_gas_mask")
+                .setArmorLogic(new SimpleGasMask());
+        MetaItems.GAS_MASK = addItem(11, "gas_mask").setArmorLogic(new GasMask(2,
+                80_000L * (long) Math.max(1, Math.pow(1, ConfigHolder.tools.voltageTierNightVision - 1)),
+                ConfigHolder.tools.voltageTierNightVision, EntityEquipmentSlot.HEAD));
 
         MetaItems.SEMIFLUID_JETPACK = addItem(2, "liquid_fuel_jetpack").setArmorLogic(new PowerlessJetpack());
         MetaItems.ELECTRIC_JETPACK = addItem(3, "electric_jetpack").setArmorLogic(new Jetpack(30,

@@ -53,6 +53,7 @@ import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -62,6 +63,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import static net.minecraft.inventory.EntityEquipmentSlot.*;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
@@ -85,8 +88,8 @@ public class EventHandlers {
             if (entity instanceof EntityZombie && ConfigHolder.tools.nanoSaber.zombieSpawnWithSabers) {
                 ItemStack itemStack = MetaItems.NANO_SABER.getInfiniteChargedStack();
                 ToggleEnergyConsumerBehavior.setItemActive(itemStack, true);
-                entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
-                ((EntityZombie) entity).setDropChance(EntityEquipmentSlot.MAINHAND, 0.0f);
+                entity.setItemStackToSlot(MAINHAND, itemStack);
+                ((EntityZombie) entity).setDropChance(MAINHAND, 0.0f);
             }
         }
     }
@@ -160,8 +163,8 @@ public class EventHandlers {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onEntityLivingFallEvent(LivingFallEvent event) {
         if (event.getEntity() instanceof EntityPlayerMP player) {
-            ItemStack armor = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            ItemStack jet = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+            ItemStack armor = player.getItemStackFromSlot(FEET);
+            ItemStack jet = player.getItemStackFromSlot(CHEST);
 
             if (player.fallDistance < 3.2f)
                 return;
@@ -170,7 +173,7 @@ public class EventHandlers {
                 ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
                 if (valueItem != null) {
                     valueItem.getArmorLogic().damageArmor(player, armor, DamageSource.FALL,
-                            (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                            (int) (player.fallDistance - 1.2f), FEET);
                     player.fallDistance = 0;
                     event.setCanceled(true);
                 }
@@ -179,7 +182,7 @@ public class EventHandlers {
                         ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
                         if (valueItem != null) {
                             valueItem.getArmorLogic().damageArmor(player, jet, DamageSource.FALL,
-                                    (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                                    (int) (player.fallDistance - 1.2f), FEET);
                             player.fallDistance = 0;
                             event.setCanceled(true);
                         }
@@ -190,7 +193,7 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event) {
         EntityEquipmentSlot slot = event.getSlot();
-        if (event.getFrom().isEmpty() || slot == EntityEquipmentSlot.MAINHAND || slot == EntityEquipmentSlot.OFFHAND)
+        if (event.getFrom().isEmpty() || slot == MAINHAND || slot == OFFHAND)
             return;
 
         ItemStack stack = event.getFrom();
@@ -221,6 +224,10 @@ public class EventHandlers {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         EntityPlayer player = event.player;
         if (event.phase == TickEvent.Phase.START && !player.world.isRemote) {
+            if (FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter() % 20 == 0) {
+                DimensionBreathabilityHandler.checkPlayer(player);
+            }
+
             IAttributeInstance movementSpeed = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
             if (movementSpeed == null) return;
             AttributeModifier modifier = movementSpeed.getModifier(BlockUtility.WALKING_SPEED_UUID);
@@ -306,7 +313,7 @@ public class EventHandlers {
     public static void onPlayerTickClient(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START && !event.player.isSpectator() &&
                 !(event.player instanceof EntityOtherPlayerMP) && !(event.player instanceof FakePlayer)) {
-            ItemStack feetEquip = event.player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            ItemStack feetEquip = event.player.getItemStackFromSlot(FEET);
             if (!lastFeetEquip.getItem().equals(feetEquip.getItem())) {
                 if (lastFeetEquip.getItem() instanceof ArmorMetaItem<?>) {
                     ArmorMetaItem<?>.ArmorMetaValueItem valueItem = ((ArmorMetaItem<?>) lastFeetEquip.getItem())
