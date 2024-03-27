@@ -69,7 +69,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
                 ArrayUtils.add(pipeline,
                         new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
-                this.getFrontFacing(), this.getTier());
+                this);
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
         Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);

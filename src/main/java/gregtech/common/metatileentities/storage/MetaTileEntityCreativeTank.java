@@ -52,7 +52,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
                 ArrayUtils.add(pipeline,
                         new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
-                this.getFrontFacing(), this.getTier());
+                this);
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (this.getOutputFacing() != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
