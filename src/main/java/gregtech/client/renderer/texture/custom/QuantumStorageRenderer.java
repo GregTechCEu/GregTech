@@ -118,7 +118,8 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         setLightingCorrectly(world, machine.getPos());
         EnumFacing frontFacing = machine.getFrontFacing();
 
-        if (canRender(x, y, z, 8 * MathHelper.clamp((double) Minecraft.getMinecraft().gameSettings.renderDistanceChunks / 8, 1.0, 2.5))) {
+        if (canRender(x, y, z, 8 *
+                MathHelper.clamp((double) Minecraft.getMinecraft().gameSettings.renderDistanceChunks / 8, 1.0, 2.5))) {
             RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
             float tick = world.getWorldTime() + partialTicks;
             GlStateManager.pushMatrix();
@@ -179,7 +180,6 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, long amount) {
-
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
