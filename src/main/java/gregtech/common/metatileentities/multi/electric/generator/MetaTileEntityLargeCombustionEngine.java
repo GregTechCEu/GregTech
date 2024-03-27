@@ -411,11 +411,6 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         @Override
-        protected long getMaxParallelVoltage() {
-            return getMaxVoltage();
-        }
-
-        @Override
         protected long boostProduction(long production) {
             // this multiplies production without increasing consumption
             if (isOxygenBoosted)
