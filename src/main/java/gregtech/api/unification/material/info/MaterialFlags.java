@@ -198,6 +198,14 @@ public class MaterialFlags {
                     .requireProps(PropertyKey.DUST)
                     .build();
 
+    public static final MaterialFlag GENERATE_SMALL_DUST = new MaterialFlag.Builder("small_dust")
+            .requireProps(PropertyKey.DUST)
+            .build();
+
+    public static final MaterialFlag GENERATE_TINY_DUST = new MaterialFlag.Builder("tiny_dust")
+            .requireProps(PropertyKey.DUST)
+            .build();
+
     /////////////////
     // FLUID //
     /////////////////

@@ -220,14 +220,14 @@ public class SeparationRecipes {
                 .chancedOutput(dust, Tantalite, 125, 35)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
-                .input(dust, RareEarth)
-                .chancedOutput(dustSmall, Cadmium, 2500, 400)
-                .chancedOutput(dustSmall, Neodymium, 2500, 400)
-                .chancedOutput(dustSmall, Samarium, 2500, 400)
-                .chancedOutput(dustSmall, Cerium, 2500, 400)
-                .chancedOutput(dustSmall, Yttrium, 2500, 400)
-                .chancedOutput(dustSmall, Lanthanum, 2500, 400)
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(256).EUt(20)
+                .input(dust, RareEarth, 4)
+                .chancedOutput(dust, Cadmium, 2500, 400)
+                .chancedOutput(dust, Neodymium, 2500, 400)
+                .chancedOutput(dust, Samarium, 2500, 400)
+                .chancedOutput(dust, Cerium, 2500, 400)
+                .chancedOutput(dust, Yttrium, 2500, 400)
+                .chancedOutput(dust, Lanthanum, 2500, 400)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])

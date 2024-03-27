@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.properties.PropertyMaterial;
@@ -85,7 +86,7 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
     }
 
     private ItemStack getDropStack(IBlockState state, int amount) {
-        return OreDictUnifier.get(OrePrefix.dustTiny, getGtMaterial(state), amount);
+        return OreDictUnifier.get(OrePrefix.dust, getGtMaterial(state), amount);
     }
 
     @Override
@@ -98,8 +99,12 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
     @Override
     public void getDrops(NonNullList<ItemStack> drops, @NotNull IBlockAccess world, @NotNull BlockPos pos,
                          @NotNull IBlockState state, int fortune) {
-        int amount = 3 + GTValues.RNG.nextInt((int) (2 + fortune * 1.5));
-        drops.add(getDropStack(state, amount));
+        int amount = GTValues.RNG.nextInt(Math.max(1, 9 - (fortune * 2)));
+        if (amount == 0) {
+            drops.add(getDropStack(state, 1));
+        } else {
+            drops.add(OreDictUnifier.get(OrePrefix.dust, Materials.Stone, 1));
+        }
     }
 
     @Override

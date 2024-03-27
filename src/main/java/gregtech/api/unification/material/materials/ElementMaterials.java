@@ -194,7 +194,7 @@ public class ElementMaterials {
                 .ore()
                 .color(0xFF6400).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE,
-                        GENERATE_DOUBLE_PLATE)
+                        GENERATE_DOUBLE_PLATE, GENERATE_TINY_DUST)
                 .element(Elements.Cu)
                 .cableProperties(V[MV], 1, 2)
                 .fluidPipeProperties(1696, 6, true)
@@ -352,6 +352,7 @@ public class ElementMaterials {
                 .liquid(new FluidBuilder().temperature(430))
                 .color(0x400080).iconSet(SHINY)
                 .element(Elements.In)
+                .flags(GENERATE_SMALL_DUST)
                 .build();
 
         Iodine = new Material.Builder(49, gregtechId("iodine"))
@@ -427,6 +428,7 @@ public class ElementMaterials {
                 .ore()
                 .color(0xBDC7DB)
                 .element(Elements.Li)
+                .flags(GENERATE_TINY_DUST)
                 .build();
 
         Livermorium = new Material.Builder(57, gregtechId("livermorium"))
@@ -593,6 +595,7 @@ public class ElementMaterials {
                 .dust()
                 .color(0xFFFF00)
                 .element(Elements.P)
+                .flags(GENERATE_SMALL_DUST)
                 .build();
 
         Polonium = new Material.Builder(79, gregtechId("polonium"))
@@ -617,6 +620,7 @@ public class ElementMaterials {
                 .ore(true)
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu239)
+                .flags(GENERATE_TINY_DUST)
                 .build();
 
         Plutonium241 = new Material.Builder(82, gregtechId("plutonium_241"))
@@ -632,6 +636,7 @@ public class ElementMaterials {
                 .liquid(new FluidBuilder().temperature(337))
                 .color(0xBEDCFF).iconSet(METALLIC)
                 .element(Elements.K)
+                .flags(GENERATE_TINY_DUST)
                 .build();
 
         Praseodymium = new Material.Builder(84, gregtechId("praseodymium"))
@@ -869,7 +874,7 @@ public class ElementMaterials {
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(1405))
                 .color(0x32F032).iconSet(METALLIC)
-                .flags(EXT_METAL)
+                .flags(EXT_METAL, GENERATE_TINY_DUST)
                 .element(Elements.U238)
                 .build();
 
@@ -877,7 +882,7 @@ public class ElementMaterials {
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(1405))
                 .color(0x46FA46).iconSet(SHINY)
-                .flags(EXT_METAL)
+                .flags(EXT_METAL, GENERATE_TINY_DUST)
                 .element(Elements.U235)
                 .build();
 
@@ -953,7 +958,7 @@ public class ElementMaterials {
                 .liquid(new FluidBuilder().customStill())
                 .color(0x1E1E1E).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FINE_WIRE,
-                        GENERATE_BOLT_SCREW)
+                        GENERATE_BOLT_SCREW, GENERATE_TINY_DUST)
                 .element(Elements.Nq2)
                 .blast(b -> b
                         .temp(9000, GasTier.HIGH)
