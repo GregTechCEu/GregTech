@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.handlers;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
@@ -10,6 +11,7 @@ import gregtech.api.unification.material.properties.IngotProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
 
@@ -24,7 +26,8 @@ public class PolarizingRecipeHandler {
 
     public static void register() {
         for (OrePrefix orePrefix : POLARIZING_PREFIXES) {
-            orePrefix.addProcessingHandler(PropertyKey.INGOT, PolarizingRecipeHandler::processPolarizing);
+            GregTechAPI.oreProcessorManager.registerProcessor(orePrefix, GTUtility.gregtechId("process_polarizing"),
+                    PropertyKey.INGOT, PolarizingRecipeHandler::processPolarizing);
         }
     }
 

@@ -330,7 +330,7 @@ public class CommonProxy {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void runEarlyMaterialHandlers(RegistryEvent.Register<IRecipe> event) {
         GTLog.logger.info("Running early material handlers...");
-        OrePrefix.runMaterialHandlers();
+        OrePrefix.runMaterialHandlers(false);
     }
 
     // this is called last, so all mods finished registering their stuff, as example, CraftTweaker
@@ -338,7 +338,7 @@ public class CommonProxy {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registerRecipesLowest(RegistryEvent.Register<IRecipe> event) {
         GTLog.logger.info("Running late material handlers...");
-        OrePrefix.runMaterialHandlers();
+        OrePrefix.runMaterialHandlers(true);
         GTRecipeManager.loadLatest();
 
         // On initial load we need to postpone cache flushing until FMLPostInitializationEvent

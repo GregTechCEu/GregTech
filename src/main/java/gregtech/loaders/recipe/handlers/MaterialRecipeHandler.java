@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
@@ -30,6 +31,7 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.util.GTUtility.gregtechId;
 
 public class MaterialRecipeHandler {
 
@@ -46,21 +48,28 @@ public class MaterialRecipeHandler {
                     OrePrefix.gemExquisite);
 
     public static void register() {
-        OrePrefix.ingot.addProcessingHandler(PropertyKey.INGOT, MaterialRecipeHandler::processIngot);
-        OrePrefix.nugget.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processNugget);
+        GregTechAPI.oreProcessorManager.registerProcessor(ingot, gregtechId("process_ingot"), PropertyKey.INGOT,
+                MaterialRecipeHandler::processIngot);
+        GregTechAPI.oreProcessorManager.registerProcessor(nugget, gregtechId("process_nugget"), PropertyKey.DUST,
+                MaterialRecipeHandler::processNugget);
 
-        OrePrefix.block.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processBlock);
-        OrePrefix.frameGt.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processFrame);
+        GregTechAPI.oreProcessorManager.registerProcessor(block, gregtechId("process_block"), PropertyKey.DUST,
+                MaterialRecipeHandler::processBlock);
+        GregTechAPI.oreProcessorManager.registerProcessor(frameGt, gregtechId("process_frame"), PropertyKey.DUST,
+                MaterialRecipeHandler::processFrame);
 
-        OrePrefix.dust.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processDust);
-        OrePrefix.dustSmall.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processSmallDust);
-        OrePrefix.dustTiny.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processTinyDust);
+        GregTechAPI.oreProcessorManager.registerProcessor(dust, gregtechId("process_dust"), PropertyKey.DUST,
+                MaterialRecipeHandler::processDust);
+        GregTechAPI.oreProcessorManager.registerProcessor(dustSmall, gregtechId("process_dust_small"), PropertyKey.DUST,
+                MaterialRecipeHandler::processSmallDust);
+        GregTechAPI.oreProcessorManager.registerProcessor(dustTiny, gregtechId("process_dust_tiny"), PropertyKey.DUST,
+                MaterialRecipeHandler::processTinyDust);
 
         for (int i = 0; i < GEM_ORDER.size(); i++) {
             OrePrefix gemPrefix = GEM_ORDER.get(i);
             OrePrefix prevGemPrefix = i == 0 ? null : GEM_ORDER.get(i - 1);
-            gemPrefix.addProcessingHandler(PropertyKey.GEM,
-                    (p, material, property) -> processGemConversion(p, prevGemPrefix, material));
+            GregTechAPI.oreProcessorManager.registerProcessor(gemPrefix, gregtechId("process_" + gemPrefix.name),
+                    PropertyKey.GEM, (p, material, property) -> processGemConversion(p, prevGemPrefix, material));
         }
     }
 
