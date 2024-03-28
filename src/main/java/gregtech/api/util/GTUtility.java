@@ -18,7 +18,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.items.behaviors.ColorSprayBehaviour;
+import gregtech.common.items.behaviors.ColorSprayBehavior;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -580,7 +580,7 @@ public class GTUtility {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                    return behaviour instanceof ColorSprayBehaviour;
+                    return behaviour instanceof ColorSprayBehavior;
                 }
             }
         }
