@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -26,6 +27,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
@@ -44,7 +46,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
-                                        implements IMultiblockAbilityPart<IFluidTank> {
+        implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
 
     public final static String FLUID_BUFFER_TAG = "FluidTanks";
     public final static String WORKING_TAG = "WorkingEnabled";
@@ -257,6 +259,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
         tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.fluid_import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me_import_fluid_hatch.configs.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
@@ -268,5 +271,58 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
     @Override
     public void registerAbilities(List<IFluidTank> list) {
         list.addAll(Arrays.asList(this.getAEFluidHandler().getInventory()));
+    }
+
+    @Override
+    public final void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("MEInputHatch", writeConfigToTag());
+        dataStick.setTagCompound(tag);
+        dataStick.setTranslatableName("gregtech.machine.me.fluid_import.data_stick.name");
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_copy_settings"), true);
+    }
+
+    protected NBTTagCompound writeConfigToTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagCompound configStacks = new NBTTagCompound();
+        tag.setTag("ConfigStacks", configStacks);
+        for (int i = 0; i < CONFIG_SIZE; i++) {
+            var slot = this.aeFluidHandler.getInventory()[i];
+            IAEFluidStack config = slot.getConfig();
+            if (config == null) {
+                continue;
+            }
+            NBTTagCompound stackNbt = new NBTTagCompound();
+            config.writeToNBT(stackNbt);
+            configStacks.setTag(Integer.toString(i), stackNbt);
+        }
+        return tag;
+    }
+
+    @Override
+    public final boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = dataStick.getTagCompound();
+        if (tag == null || !tag.hasKey("MEInputHatch")) {
+            return false;
+        }
+        readConfigFromTag(tag.getCompoundTag("MEInputHatch"));
+        syncME();
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_paste_settings"), true);
+        return true;
+    }
+
+    protected void readConfigFromTag(NBTTagCompound tag) {
+        if (tag.hasKey("ConfigStacks")) {
+            NBTTagCompound configStacks = tag.getCompoundTag("ConfigStacks");
+            for (int i = 0; i < CONFIG_SIZE; i++) {
+                String key = Integer.toString(i);
+                if (configStacks.hasKey(key)) {
+                    NBTTagCompound configTag = configStacks.getCompoundTag(key);
+                    this.aeFluidHandler.getInventory()[i].setConfig(WrappedFluidStack.fromNBT(configTag));
+                } else {
+                    this.aeFluidHandler.getInventory()[i].setConfig(null);
+                }
+            }
+        }
     }
 }

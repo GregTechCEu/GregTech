@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
@@ -54,15 +55,15 @@ import java.util.List;
 
 public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
-                                      IGhostSlotConfigurable {
+                                                 IGhostSlotConfigurable, IDataStickIntractable {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
     private boolean workingEnabled = true;
     protected ExportOnlyAEItemList aeItemHandler;
-    private GhostCircuitItemStackHandler circuitInventory;
-    private NotifiableItemStackHandler extraSlotInventory;
+    protected GhostCircuitItemStackHandler circuitInventory;
+    protected NotifiableItemStackHandler extraSlotInventory;
     private ItemHandlerList actualImportItems;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
@@ -318,6 +319,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.item_import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
@@ -344,6 +346,63 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         this.circuitInventory.setCircuitValue(config);
         if (!getWorld().isRemote) {
             markDirty();
+        }
+    }
+
+    @Override
+    public final void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("MEInputBus", writeConfigToTag());
+        dataStick.setTagCompound(tag);
+        dataStick.setTranslatableName("gregtech.machine.me.item_import.data_stick.name");
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_copy_settings"), true);
+    }
+
+    protected NBTTagCompound writeConfigToTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagCompound configStacks = new NBTTagCompound();
+        tag.setTag("ConfigStacks", configStacks);
+        for (int i = 0; i < CONFIG_SIZE; i++) {
+            var slot = this.aeItemHandler.getInventory()[i];
+            IAEItemStack config = slot.getConfig();
+            if (config == null) {
+                continue;
+            }
+            NBTTagCompound stackNbt = new NBTTagCompound();
+            config.getDefinition().writeToNBT(stackNbt);
+            configStacks.setTag(Integer.toString(i), stackNbt);
+        }
+        tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
+        return tag;
+    }
+
+    @Override
+    public final boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = dataStick.getTagCompound();
+        if (tag == null || !tag.hasKey("MEInputBus")) {
+            return false;
+        }
+        readConfigFromTag(tag.getCompoundTag("MEInputBus"));
+        syncME();
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_paste_settings"), true);
+        return true;
+    }
+
+    protected void readConfigFromTag(NBTTagCompound tag) {
+        if (tag.hasKey("ConfigStacks")) {
+            NBTTagCompound configStacks = tag.getCompoundTag("ConfigStacks");
+            for (int i = 0; i < CONFIG_SIZE; i++) {
+                String key = Integer.toString(i);
+                if (configStacks.hasKey(key)) {
+                    NBTTagCompound configTag = configStacks.getCompoundTag(key);
+                    this.aeItemHandler.getInventory()[i].setConfig(WrappedItemStack.fromNBT(configTag));
+                } else {
+                    this.aeItemHandler.getInventory()[i].setConfig(null);
+                }
+            }
+        }
+        if (tag.hasKey("GhostCircuit")) {
+            this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
         }
     }
 }
