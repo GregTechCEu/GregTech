@@ -86,6 +86,8 @@ public class Textures {
             "casings/solid/machine_casing_sturdy_hsse");
     public static final SimpleOverlayRenderer PALLADIUM_SUBSTATION_CASING = new SimpleOverlayRenderer(
             "casings/solid/machine_casing_palladium_substation");
+    public static final SimpleOverlayRenderer COBALT_IRIDIUM_FORGING_CASING = new SimpleOverlayRenderer(
+            "casings/solid/machine_casing_cobalt_iridium_forging");
     public static final SimpleOverlayRenderer INERT_PTFE_CASING = new SimpleOverlayRenderer(
             "casings/solid/machine_casing_inert_ptfe");
     public static final SimpleOverlayRenderer PLASCRETE = new SimpleOverlayRenderer("casings/cleanroom/plascrete");
@@ -196,6 +198,8 @@ public class Textures {
             "multiblock/network_switch");
     public static final OrientedOverlayRenderer POWER_SUBSTATION_OVERLAY = new OrientedOverlayRenderer(
             "multiblock/power_substation");
+    public static final OrientedOverlayRenderer LINEAR_FORGING_FURNACE_OVERLAY = new OrientedOverlayRenderer(
+            "multiblock/linear_forging_furnace");
 
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer(
             "machines/alloy_smelter");

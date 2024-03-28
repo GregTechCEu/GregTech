@@ -718,6 +718,11 @@ public class MachineRecipeLoader {
                 .outputs(METAL_CASING.getItemVariant(MetalCasingType.PALLADIUM_SUBSTATION,
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(plate, CobaltIridium, 6).input(frameGt, Aluminium)
+                .circuitMeta(6)
+                .outputs(METAL_CASING.getItemVariant(MetalCasingType.COBALT_IRIDIUM_FORGING,
+                        ConfigHolder.recipes.casingsPerCraft))
+                .duration(50).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16)
                 .inputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STEEL_SOLID))

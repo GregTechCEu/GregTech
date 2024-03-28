@@ -64,6 +64,11 @@
         "textures": {
           "all": "gregtech:blocks/casings/solid/machine_casing_palladium_substation"
         }
+      },
+      "cobalt_iridium_forging": {
+        "textures": {
+          "all": "gregtech:blocks/casings/solid/machine_casing_cobalt_iridium_forging"
+        }
       }
     }
   }

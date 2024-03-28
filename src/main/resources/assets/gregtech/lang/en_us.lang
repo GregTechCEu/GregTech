@@ -1796,6 +1796,7 @@ gregtech.material.antimony_trifluoride=Antimony Trifluoride
 gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
+gregtech.material.cobalt_iridium=Cobalt-Iridium High Temperature Alloy
 gregtech.material.rtm_alloy=RTM Alloy
 
 
@@ -2280,6 +2281,7 @@ recipemap.centrifuge.name=Centrifuge
 recipemap.electrolyzer.name=Electrolyzer
 recipemap.electric_blast_furnace.name=Blast Furnace
 recipemap.blast_furnace.value=Heat Capacity: %s K
+recipemap.linear_forging_furnace.name=Forging Furnace
 recipemap.implosion_compressor.name=Implosion Compressor
 recipemap.vacuum_freezer.name=Vacuum Freezer
 recipemap.chemical_reactor.name=Chemical Reactor
@@ -2627,6 +2629,7 @@ tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
 tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
 tile.metal_casing.hsse_sturdy.name=Sturdy HSS-E Machine Casing
 tile.metal_casing.palladium_substation.name=Palladium Substation Casing
+tile.metal_casing.cobalt_iridium_forging.name=Cobalt-Iridium Forge Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
@@ -4724,6 +4727,8 @@ gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke Oven.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
+gregtech.machine.linear_forging_furnace.name=Linear Forging Furnace
+gregtech.machine.linear_forging_furnace.tooltip.1=Allows for up to §f4§7 Blast Furnace recipes to run in parallel. Not active while forging.
 
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
 gregtech.machine.extreme_combustion_engine.name=Extreme Combustion Engine
@@ -4886,6 +4891,7 @@ gregtech.machine.monitor_screen.name=Monitor Screen
 gregtech.machine.primitive_water_pump.tooltip=Endervoir at Home
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=Making your first Steel
 gregtech.machine.electric_blast_furnace.tooltip=Where's the electric smoker?
+gregtech.machine.linear_forging_furnace.tooltip=Striking while the Iron is Hot
 gregtech.machine.vacuum_freezer.tooltip=Aluminium Ice Box
 gregtech.machine.implosion_compressor.tooltip=The only Machine you want to go Boom
 gregtech.machine.pyrolyse_oven.tooltip=Electric Coke Oven
@@ -6037,6 +6043,7 @@ gregtech.subtitle.tick.turbine=Turbine spinning
 gregtech.subtitle.tick.combustion=Fuel combusting
 gregtech.subtitle.tick.miner=Miner drilling
 gregtech.subtitle.tick.computation=Computers processing
+gregtech.subtitle.tick.forging=Forge clanging
 gregtech.subtitle.use.wrench=Wrench turns
 gregtech.subtitle.use.soft_hammer=Block smacked
 gregtech.subtitle.use.drill=Blocks drilled

@@ -131,6 +131,10 @@ public class MetaTileEntityLoader {
                 MetaBlocks.METAL_CASING.getItemVariant(PALLADIUM_SUBSTATION, ConfigHolder.recipes.casingsPerCraft),
                 "PhP", "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Palladium), 'F',
                 new UnificationEntry(OrePrefix.frameGt, Materials.Iridium));
+        ModHandler.addShapedRecipe(true, "casing_cobalt_iridium_forging",
+                MetaBlocks.METAL_CASING.getItemVariant(COBALT_IRIDIUM_FORGING, ConfigHolder.recipes.casingsPerCraft),
+                "PhP", "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.CobaltIridium), 'F',
+                new UnificationEntry(OrePrefix.frameGt, Materials.Aluminium));
 
         ModHandler.addShapedRecipe(true, "casing_steel_turbine_casing",
                 MetaBlocks.TURBINE_CASING.getItemVariant(STEEL_TURBINE_CASING, ConfigHolder.recipes.casingsPerCraft),
@@ -1124,6 +1128,15 @@ public class MetaTileEntityLoader {
                     new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LV), 'W',
                     new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin));
         }
+
+        ModHandler.addShapedRecipe(true, "linear_forging_furnace",
+                MetaTileEntities.LINEAR_FORGING_FURNACE.getStackForm(),
+                "AHA", "CFC", "AVA",
+                'A', MetaItems.ROBOT_ARM_IV.getStackForm(),
+                'C', new UnificationEntry(OrePrefix.circuit, Tier.LuV),
+                'H', MetaTileEntities.FORGE_HAMMER[GTValues.IV].getStackForm(),
+                'F', MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(),
+                'V', MetaTileEntities.VACUUM_FREEZER.getStackForm());
 
         ModHandler.addShapedRecipe(true, "cleanroom", MetaTileEntities.CLEANROOM.getStackForm(), "FFF", "RHR", "MCM",
                 'F', MetaItems.ITEM_FILTER.getStackForm(), 'R',

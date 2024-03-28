@@ -580,6 +580,15 @@ public class MixerRecipes {
                 .output(dust, RutheniumTriniumAmericiumNeutronate, 14)
                 .buildAndRegister();
 
+        MIXER_RECIPES.recipeBuilder().duration(350).EUt(VA[IV])
+                .input(dust, Cobalt, 3)
+                .input(dust, Iridium, 3)
+                .input(dust, Aluminium, 1)
+                .input(dust, Tungsten, 1)
+                .circuitMeta(1)
+                .output(dust, CobaltIridium, 8)
+                .buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder().duration(300).EUt(VA[EV])
                 .input(dust, Ruthenium, 4)
                 .input(dust, Tungsten, 2)

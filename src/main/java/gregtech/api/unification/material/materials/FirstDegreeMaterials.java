@@ -1540,7 +1540,17 @@ public class FirstDegreeMaterials {
                 .components(Calcium, 2, Niobium, 2, Oxygen, 7)
                 .build();
 
-        // FREE ID 450
+        CobaltIridium = new Material.Builder(450, gregtechId("cobalt_iridium"))
+                .ingot().fluid()
+                .color(0x3E6D85).iconSet(METALLIC)
+                .flags(GENERATE_PLATE)
+                .components(Cobalt, 3, Iridium, 3, Aluminium, 1, Tungsten, 1)
+                // Note, this is accessible with RTM coils due to voltage tier temp increase
+                .blast(b -> b
+                        .temp(4700, GasTier.HIGH)
+                        .blastStats(VA[IV], 1700)
+                        .vacuumStats(VA[EV], 250))
+                .build();
 
         RTMAlloy = new Material.Builder(451, gregtechId("rtm_alloy"))
                 .ingot().fluid()
