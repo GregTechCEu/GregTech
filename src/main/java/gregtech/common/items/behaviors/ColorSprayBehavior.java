@@ -1,6 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.GTValues;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -36,14 +35,14 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IItemDurabilityManager {
+public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItemDurabilityManager {
 
     private final ItemStack empty;
     private final EnumDyeColor color;
     private final Pair<Color, Color> durabilityBarColors;
     private static final int MAX_PIPE_TRAVERSAL_LENGTH = 256;
 
-    public ColorSprayBehaviour(ItemStack empty, int totalUses, int color) {
+    public ColorSprayBehavior(ItemStack empty, int totalUses, int color) {
         super(totalUses);
         this.empty = empty;
         EnumDyeColor[] colors = EnumDyeColor.values();
@@ -268,6 +267,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
         lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
         lines.add(I18n.format("behaviour.paintspray.offhand"));
+        lines.add(I18n.format("behaviour.paintspray.crouch"));
     }
 
     @Override
