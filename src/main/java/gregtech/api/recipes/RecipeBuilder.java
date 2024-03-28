@@ -276,20 +276,20 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R inputNBT(Item item, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(item)), matcher, condition);
+        return inputNBT(new ItemStack(item), matcher, condition);
     }
 
     public R inputNBT(Item item, int count, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(item), count), matcher, condition);
+        return inputNBT(new ItemStack(item, count), matcher, condition);
     }
 
     public R inputNBT(Item item, int count, int meta, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(item, count, meta)), matcher, condition);
+        return inputNBT(new ItemStack(item, count, meta), matcher, condition);
     }
 
     public R inputNBT(Item item, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher,
                       NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(item, count, GTValues.W)), matcher, condition);
+        return inputNBT(new ItemStack(item, count, GTValues.W), matcher, condition);
     }
 
     public R inputNBT(Block block, NBTMatcher matcher, NBTCondition condition) {
@@ -297,28 +297,40 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R inputNBT(Block block, int count, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(block, count)), matcher, condition);
+        return inputNBT(new ItemStack(block, count), matcher, condition);
     }
 
     public R inputNBT(Block block, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher,
                       NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(block, count, GTValues.W)), matcher, condition);
+        return inputNBT(new ItemStack(block, count, GTValues.W), matcher, condition);
     }
 
     public R inputNBT(MetaItem<?>.MetaValueItem item, int count, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(item.getStackForm(count)), matcher, condition);
+        return inputNBT(item.getStackForm(count), matcher, condition);
     }
 
     public R inputNBT(MetaItem<?>.MetaValueItem item, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(item.getStackForm()), matcher, condition);
+        return inputNBT(item.getStackForm(), matcher, condition);
     }
 
     public R inputNBT(MetaTileEntity mte, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(mte.getStackForm()), matcher, condition);
+        return inputNBT(mte.getStackForm(), matcher, condition);
     }
 
     public R inputNBT(MetaTileEntity mte, int amount, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(mte.getStackForm(amount)), matcher, condition);
+        return inputNBT(mte.getStackForm(amount), matcher, condition);
+    }
+
+    /**
+     * NBT tags are stripped from the input stack and are not automatically checked.
+     *
+     * @param stack     the itemstack to input.
+     * @param matcher   the matcher for the stack's nbt
+     * @param condition the condition for the stack's nbt
+     * @return this
+     */
+    public R inputNBT(@NotNull ItemStack stack, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(new GTRecipeItemInput(stack), matcher, condition);
     }
 
     public R inputs(ItemStack... inputs) {
