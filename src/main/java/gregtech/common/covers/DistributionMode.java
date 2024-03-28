@@ -10,6 +10,7 @@ public enum DistributionMode implements IStringSerializable {
     ROUND_ROBIN_PRIO("cover.conveyor.distribution.round_robin"),
     INSERT_FIRST("cover.conveyor.distribution.first_insert");
 
+    public static final DistributionMode[] VALUES = values();
     public final String localeName;
 
     DistributionMode(String localeName) {

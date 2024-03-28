@@ -120,7 +120,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         guiSyncManager.syncValue("inverted", invertedValue);
 
         return GTGuis.createPanel(this, 176, 112)
-                .child(createTitleRow())
+                .child(CoverWithUI.createTitleRow(getPickItem()))
                 .child(new Column()
                         .widthRel(1.0f).margin(7, 0)
                         .top(24).coverChildrenHeight()

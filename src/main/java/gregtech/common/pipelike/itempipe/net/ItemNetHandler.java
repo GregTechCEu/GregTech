@@ -6,7 +6,11 @@ import gregtech.api.cover.CoverHolder;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
-import gregtech.common.covers.*;
+import gregtech.common.covers.CoverConveyor;
+import gregtech.common.covers.CoverItemFilter;
+import gregtech.common.covers.CoverRoboticArm;
+import gregtech.common.covers.DistributionMode;
+import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.item.ItemStack;
@@ -364,15 +368,18 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate,
                                         int allowed, boolean ignoreLimit) {
-        int rate;
+        var matched = arm.getItemFilterContainer().match(stack);
         boolean isStackSpecific = false;
-        Object index = arm.getItemFilterContainer().matchItemStack(stack);
-        if (index instanceof Integer) {
-            rate = arm.getItemFilterContainer().getSlotTransferLimit(index);
+        int rate, count;
+
+        if (matched.isMatched()) {
+            int index = matched.getFilterIndex();
+            rate = arm.getItemFilterContainer().getTransferLimit(index);
             isStackSpecific = true;
-        } else
-            rate = arm.getItemFilterContainer().getTransferStackSize();
-        int count;
+        } else {
+            rate = arm.getItemFilterContainer().getTransferSize();
+        }
+
         switch (arm.getTransferMode()) {
             case TRANSFER_ANY:
                 return insert(handler, stack, simulate, allowed, ignoreLimit);
@@ -405,7 +412,7 @@ public class ItemNetHandler implements IItemHandler {
             ItemStack slot = handler.getStackInSlot(i);
             if (slot.isEmpty()) continue;
             if (isStackSpecific ? ItemStackHashStrategy.comparingAllButCount().equals(stack, slot) :
-                    arm.getItemFilterContainer().testItemStack(slot)) {
+                    arm.getItemFilterContainer().test(slot)) {
                 count += slot.getCount();
             }
         }

@@ -5,15 +5,23 @@ import gregtech.api.util.Position;
 
 import net.minecraft.network.PacketBuffer;
 
+import org.jetbrains.annotations.ApiStatus;
+
+import java.io.IOException;
 import java.util.function.Supplier;
 
+/**
+ * @deprecated in favor of new MUI
+ */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class WidgetGroupItemFilter extends AbstractWidgetGroup {
 
-    private final Supplier<ItemFilter> itemFilterSupplier;
-    private ItemFilter itemFilter;
+    private final Supplier<BaseFilter> itemFilterSupplier;
+    private BaseFilter itemFilter;
     private int maxStackSize = 1;
 
-    public WidgetGroupItemFilter(int yPosition, Supplier<ItemFilter> itemFilterSupplier) {
+    public WidgetGroupItemFilter(int yPosition, Supplier<BaseFilter> itemFilterSupplier) {
         super(new Position(0, yPosition));
         this.itemFilterSupplier = itemFilterSupplier;
     }
@@ -21,7 +29,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        ItemFilter newItemFilter = itemFilterSupplier.get();
+        BaseFilter newItemFilter = itemFilterSupplier.get();
         if (itemFilter != newItemFilter) {
             clearAllWidgets();
             this.itemFilter = newItemFilter;
@@ -31,14 +39,13 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
             writeUpdateInfo(2, buffer -> {
                 if (itemFilter != null) {
                     buffer.writeBoolean(true);
-                    int filterId = FilterTypeRegistry.getIdForItemFilter(itemFilter);
-                    buffer.writeVarInt(filterId);
+                    buffer.writeItemStack(itemFilter.getContainerStack());
                 } else {
                     buffer.writeBoolean(false);
                 }
             });
         }
-        int newMaxStackSize = itemFilter == null ? 1 : itemFilter.getMaxStackSize();
+        int newMaxStackSize = itemFilter == null ? 1 : itemFilter.getMaxTransferSize();
         if (maxStackSize != newMaxStackSize) {
             this.maxStackSize = newMaxStackSize;
             writeUpdateInfo(3, buffer -> buffer.writeVarInt(maxStackSize));
@@ -51,15 +58,19 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
         if (id == 2) {
             clearAllWidgets();
             if (buffer.readBoolean()) {
-                int filterId = buffer.readVarInt();
-                this.itemFilter = FilterTypeRegistry.createItemFilterById(filterId);
-                this.itemFilter.initUI(this::addWidget);
-                this.itemFilter.setMaxStackSize(maxStackSize);
+                // int filterId = buffer.readVarInt();
+                try {
+                    this.itemFilter = BaseFilter.getFilterFromStack(buffer.readItemStack());
+                    this.itemFilter.initUI(this::addWidget);
+                    this.itemFilter.setMaxTransferSize(maxStackSize);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else if (id == 3) {
             this.maxStackSize = buffer.readVarInt();
             if (itemFilter != null) {
-                itemFilter.setMaxStackSize(maxStackSize);
+                itemFilter.setMaxTransferSize(maxStackSize);
             }
         }
     }
