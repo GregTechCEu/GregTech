@@ -6,8 +6,8 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
 
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -35,9 +35,6 @@ public final class GTRecipeInputCache {
     private static ObjectOpenHashSet<GTRecipeInput> instances;
 
     private static final String DATA_NAME = "expectedIngredientInstances";
-    private static final String DATA_COMMENT = """
-            The expected amount of unique GT recipe ingredients.
-            This setting improves memory allocation and garbage collection during game-load.""";
 
     private GTRecipeInputCache() {}
 
@@ -67,22 +64,17 @@ public final class GTRecipeInputCache {
             instances = null;
 
             if (size >= MINIMUM_CACHE_SIZE && size < MAXIMUM_CACHE_SIZE) {
-                Configuration config = PersistentData.instance().getConfig();
-                Property expected = getExpectedInstanceAmount(config);
-
-                if (expected.getInt() != size) {
-                    expected.set(size);
-                    if (expected.hasChanged()) {
-                        config.save();
-                    }
+                NBTTagCompound tagCompound = PersistentData.instance().getTag();
+                if (getExpectedInstanceAmount(tagCompound) != size) {
+                    tagCompound.setInteger(DATA_NAME, size);
+                    PersistentData.instance().save();
                 }
             }
         }
     }
 
-    private static @NotNull Property getExpectedInstanceAmount(@NotNull Configuration configuration) {
-        return configuration.get(PersistentData.CATEGORY_NAME, DATA_NAME, MINIMUM_CACHE_SIZE,
-                DATA_COMMENT, MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE);
+    private static int getExpectedInstanceAmount(@NotNull NBTTagCompound tagCompound) {
+        return MathHelper.clamp(tagCompound.getInteger(DATA_NAME), MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE);
     }
 
     /**
@@ -146,8 +138,7 @@ public final class GTRecipeInputCache {
      * @return the optimal expected input cache size
      */
     private static int calculateOptimalExpectedSize() {
-        int min = getExpectedInstanceAmount(PersistentData.instance().getConfig())
-                .getInt(MINIMUM_CACHE_SIZE);
+        int min = Math.max(getExpectedInstanceAmount(PersistentData.instance().getTag()), MINIMUM_CACHE_SIZE);
         for (int i = 13; i < 31; i++) {
             int sizeToTest = 1 << i;
             int arraySize = nextHighestPowerOf2((int) (sizeToTest / Hash.DEFAULT_LOAD_FACTOR));
