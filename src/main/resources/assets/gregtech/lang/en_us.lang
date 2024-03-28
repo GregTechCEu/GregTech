@@ -6255,3 +6255,5 @@ gregtech.scanner.forestry.larvae=§oScanned Larvae
 gregtech.scanner.forestry.serum=§oScanned Serum
 gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
+
+record.sus=Temp name
