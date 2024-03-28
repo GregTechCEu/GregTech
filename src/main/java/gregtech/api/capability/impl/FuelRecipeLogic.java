@@ -4,7 +4,6 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,13 +31,6 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
         // generators always have enough power to run recipes
         return true;
-    }
-
-    @Override
-    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
-        super.modifyOverclockPost(overclockResults, storage);
-        // make EUt negative so it is consumed
-        overclockResults[0] = -overclockResults[0];
     }
 
     @Override

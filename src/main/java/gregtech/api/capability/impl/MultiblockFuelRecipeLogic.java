@@ -45,9 +45,6 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         if (maintenanceValues.getFirst() > 0) {
             overclockResults[1] = (int) (overclockResults[1] * (1 - 0.1 * maintenanceValues.getFirst()));
         }
-
-        // make EUt negative so it is consumed
-        overclockResults[0] = -overclockResults[0];
     }
 
     @NotNull
