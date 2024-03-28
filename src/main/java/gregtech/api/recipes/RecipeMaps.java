@@ -11,7 +11,6 @@ import gregtech.api.recipes.builders.CircuitAssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.ComputationRecipeBuilder;
 import gregtech.api.recipes.builders.FuelRecipeBuilder;
 import gregtech.api.recipes.builders.FusionRecipeBuilder;
-import gregtech.api.recipes.builders.GasCollectorRecipeBuilder;
 import gregtech.api.recipes.builders.ImplosionRecipeBuilder;
 import gregtech.api.recipes.builders.PrimitiveRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
@@ -982,8 +981,8 @@ public final class RecipeMaps {
                     .build();
 
     @ZenProperty
-    public static final RecipeMap<GasCollectorRecipeBuilder> GAS_COLLECTOR_RECIPES = new RecipeMapBuilder<>(
-            "gas_collector", new GasCollectorRecipeBuilder())
+    public static final RecipeMap<SimpleRecipeBuilder> GAS_COLLECTOR_RECIPES = new RecipeMapBuilder<>(
+            "gas_collector", new SimpleRecipeBuilder())
                     .itemInputs(1)
                     .fluidOutputs(1)
                     .itemSlotOverlay(GuiTextures.INT_CIRCUIT_OVERLAY, false, true)

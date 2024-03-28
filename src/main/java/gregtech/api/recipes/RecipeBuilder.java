@@ -13,6 +13,7 @@ import gregtech.api.recipes.ingredients.*;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
+import gregtech.api.recipes.recipeproperties.DimensionProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
@@ -39,6 +40,8 @@ import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntLists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -137,8 +140,51 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R dimension(int dimensionID) {
+        return dimension(dimensionID, false);
+    }
+
+    public R dimension(int dimensionID, boolean toBlackList) {
+        DimensionProperty.DimensionPropertyList dimensionIDs = getCompleteDimensionIDs();
+        if (dimensionIDs == DimensionProperty.DimensionPropertyList.EMPTY_LIST) {
+            dimensionIDs = new DimensionProperty.DimensionPropertyList();
+            this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
+        }
+        dimensionIDs.add(dimensionID, toBlackList);
+        return (R) this;
+    }
+
+    public DimensionProperty.DimensionPropertyList getCompleteDimensionIDs() {
+        return this.recipePropertyStorage == null ? DimensionProperty.DimensionPropertyList.EMPTY_LIST :
+                this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
+                        DimensionProperty.DimensionPropertyList.EMPTY_LIST);
+    }
+
+    public IntList getDimensionIDs() {
+        return this.recipePropertyStorage == null ? IntLists.EMPTY_LIST :
+                this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
+                        DimensionProperty.DimensionPropertyList.EMPTY_LIST).whiteListDimensions;
+    }
+
+    public IntList getBlockedDimensionIDs() {
+        return this.recipePropertyStorage == null ? IntLists.EMPTY_LIST :
+                this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
+                        DimensionProperty.DimensionPropertyList.EMPTY_LIST).whiteListDimensions;
+    }
+
     public boolean applyProperty(@NotNull String key, @Nullable Object value) {
-        if (key.equals(CleanroomProperty.KEY)) {
+        if (key.equals(DimensionProperty.KEY)) {
+            if (value instanceof DimensionProperty.DimensionPropertyList list) {
+                DimensionProperty.DimensionPropertyList dimensionIDs = getCompleteDimensionIDs();
+                if (dimensionIDs == DimensionProperty.DimensionPropertyList.EMPTY_LIST) {
+                    dimensionIDs = new DimensionProperty.DimensionPropertyList();
+                    this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
+                }
+                dimensionIDs.merge(list);
+                return true;
+            }
+            return false;
+        } else if (key.equals(CleanroomProperty.KEY)) {
             if (value instanceof CleanroomType) {
                 this.cleanroom((CleanroomType) value);
             } else if (value instanceof String) {
@@ -976,6 +1022,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("EUt", EUt)
                 .append("hidden", hidden)
                 .append("cleanroom", getCleanroom())
+                .append("dimensions", getDimensionIDs().toString())
+                .append("dimensions_blocked", getBlockedDimensionIDs().toString())
                 .append("recipeStatus", recipeStatus)
                 .toString();
     }
