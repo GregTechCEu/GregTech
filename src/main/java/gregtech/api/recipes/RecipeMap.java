@@ -39,6 +39,7 @@ import gregtech.modules.GregTechModules;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -59,6 +60,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -75,9 +77,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -124,9 +124,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
-    private Consumer<R> onRecipeBuildAction;
-    protected SoundEvent sound;
-    private RecipeMap<?> smallRecipeMap;
+    private final Map<ResourceLocation, RecipeBuildAction<R>> recipeBuildActions = new Object2ObjectOpenHashMap<>();
+    protected @Nullable SoundEvent sound;
+    private @Nullable RecipeMap<?> smallRecipeMap;
 
     /**
      * Create and register new instance of RecipeMap with specified properties. All
@@ -140,7 +140,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
      *
-     * @deprecated {@link #RecipeMap(String, RecipeBuilder, Function, int, int, int, int)}
+     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
@@ -169,7 +169,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
      *
-     * @deprecated {@link #RecipeMap(String, RecipeBuilder, Function, int, int, int, int)}
+     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
@@ -311,9 +311,44 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> onRecipeBuild(Consumer<R> consumer) {
-        onRecipeBuildAction = consumer;
+    /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param name   the unique name of the action
+     * @param action the action to perform
+     * @return this
+     */
+    public RecipeMap<R> onRecipeBuild(@NotNull ResourceLocation name, @NotNull RecipeBuildAction<R> action) {
+        if (recipeBuildActions.containsKey(name)) {
+            throw new IllegalArgumentException("Cannot register RecipeBuildAction with duplicate name: " + name);
+        }
+        recipeBuildActions.put(name, action);
         return this;
+    }
+
+    /**
+     * @param name the name of the build action to remove
+     */
+    public void removeBuildAction(@NotNull ResourceLocation name) {
+        recipeBuildActions.remove(name);
+    }
+
+    /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param actions the actions to perform
+     */
+    @ApiStatus.Internal
+    protected void onRecipeBuild(@NotNull Map<ResourceLocation, RecipeBuildAction<R>> actions) {
+        recipeBuildActions.putAll(actions);
+    }
+
+    /**
+     * @return the build actions for this RecipeMap's default RecipeBuilder
+     */
+    @ApiStatus.Internal
+    protected @UnmodifiableView @NotNull Collection<@NotNull RecipeBuildAction<R>> getBuildActions() {
+        return this.recipeBuildActions.values();
     }
 
     public RecipeMap<R> allowEmptyOutput() {
@@ -1326,7 +1361,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy().onBuild(onRecipeBuildAction);
+        return recipeBuilderSample.copy();
     }
 
     /**
