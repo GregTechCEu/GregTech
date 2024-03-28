@@ -194,11 +194,11 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         var filterTag = tagCompound.getCompoundTag("Filter");
         if (!filterTag.hasKey("FilterInventory")) {
             this.fluidFilterContainer.setFilterStack(getDefinition().getDropItemStack());
-            this.fluidFilterContainer.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-            this.fluidFilterContainer.getFilter().readFromNBT(filterTag);
         } else {
             this.fluidFilterContainer.deserializeNBT(filterTag);
         }
+
+        this.fluidFilterContainer.handleLegacyNBT(tagCompound);
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

@@ -306,8 +306,9 @@ public class CoverFluidRegulator extends CoverPump {
 
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
         this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
+        this.fluidFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
+        super.readFromNBT(tagCompound);
         // legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
             if (this.fluidFilterContainer.getFilter() instanceof SimpleFluidFilter simpleFluidFilter) {
@@ -315,8 +316,6 @@ public class CoverFluidRegulator extends CoverPump {
                         .configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
         }
-        // this.transferAmount = tagCompound.getInteger("TransferAmount");
-        this.fluidFilterContainer.setTransferSize(tagCompound.getInteger("TransferAmount"));
     }
 
     @Override

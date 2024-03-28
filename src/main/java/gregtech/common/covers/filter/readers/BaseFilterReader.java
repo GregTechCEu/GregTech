@@ -19,6 +19,7 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
     private int maxTransferRate = 1;
     protected static final String BLACKLIST = "IsBlacklist";
     protected static final String FILTER_CONTENTS = "FilterSlots";
+    protected static final String KEY_LEGACY_FILTER = "Filter";
 
     public BaseFilterReader(ItemStack container, int slots) {
         this.container = container;
@@ -114,5 +115,10 @@ public class BaseFilterReader implements FilterReader, INBTSerializable<NBTTagCo
     public void deserializeNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(BLACKLIST))
             setBlacklistFilter(nbt.getBoolean(BLACKLIST));
+    }
+
+    public void handleLegacyNBT(NBTTagCompound tag) {
+        if (tag.hasKey(BLACKLIST))
+            setBlacklistFilter(tag.getBoolean(BLACKLIST));
     }
 }

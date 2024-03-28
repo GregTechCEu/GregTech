@@ -30,4 +30,11 @@ public class SmartItemFilterReader extends SimpleItemFilterReader {
         super.deserializeNBT(nbt);
         this.setFilteringMode(SmartItemFilter.SmartFilteringMode.VALUES[nbt.getInteger(FILTER_MODE)]);
     }
+
+    @Override
+    public void handleLegacyNBT(NBTTagCompound tag) {
+        super.handleLegacyNBT(tag);
+        var legacyFilter = tag.getCompoundTag(KEY_LEGACY_FILTER);
+        this.setFilteringMode(SmartItemFilter.SmartFilteringMode.VALUES[legacyFilter.getInteger(FILTER_MODE)]);
+    }
 }

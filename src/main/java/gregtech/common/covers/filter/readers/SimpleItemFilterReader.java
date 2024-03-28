@@ -15,6 +15,7 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
 
     public static final String COUNT = "Count";
     protected static final String LEGACY_ITEM_KEY = "ItemFilter";
+    protected static final String LEGACY_STACK_SIZE = "BigStackSize";
     public static final String RESPECT_NBT = "IgnoreNBT";
     public static final String RESPECT_DAMAGE = "IgnoreDamage";
 
@@ -156,19 +157,36 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
+
         if (nbt.hasKey(RESPECT_DAMAGE))
             this.setIgnoreDamage(nbt.getBoolean(RESPECT_DAMAGE));
 
         if (nbt.hasKey(RESPECT_NBT))
             this.setIgnoreNBT(nbt.getBoolean(RESPECT_NBT));
+    }
 
-        if (nbt.hasKey(LEGACY_ITEM_KEY)) {
+    @Override
+    public void handleLegacyNBT(NBTTagCompound tag) {
+        super.handleLegacyNBT(tag);
+        NBTTagCompound legacyFilter = tag.getCompoundTag(KEY_LEGACY_FILTER);
+
+        if (legacyFilter.hasKey(LEGACY_ITEM_KEY)) {
             var temp = new ItemStackHandler();
-            temp.deserializeNBT(nbt.getCompoundTag(LEGACY_ITEM_KEY));
+            var legacyTag = legacyFilter.getCompoundTag(LEGACY_ITEM_KEY);
+            var stackSizes = legacyTag.getCompoundTag(LEGACY_STACK_SIZE);
+
+            temp.deserializeNBT(legacyTag);
             for (int i = 0; i < temp.getSlots(); i++) {
                 var stack = temp.getStackInSlot(i);
-                if (stack.isEmpty()) continue;
-                this.setStackInSlot(i, stack);
+                if (stack.isEmpty())
+                    continue;
+
+                if (stackSizes.hasKey(String.valueOf(i)))
+                    stack.setCount(stackSizes.getInteger(String.valueOf(i)));
+
+                var stackTag = stack.serializeNBT();
+                stackTag.setInteger(COUNT, stack.getCount());
+                getInventoryNbt().set(i, stackTag);
             }
         }
     }

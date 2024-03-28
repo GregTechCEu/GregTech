@@ -54,7 +54,6 @@ public interface IFilter {
         return transferSize;
     }
 
-    /** Read legacy NBT here */
     void readFromNBT(NBTTagCompound tagCompound);
 
     FilterType getType();

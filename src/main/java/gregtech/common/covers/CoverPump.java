@@ -390,11 +390,12 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
-        this.pumpMode = PumpMode.values()[tagCompound.getInteger("PumpMode")];
-        this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
+        this.pumpMode = PumpMode.VALUES[tagCompound.getInteger("PumpMode")];
+        this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
-        this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
+        this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
         this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.fluidFilterContainer.handleLegacyNBT(tagCompound);
     }
 
     @Override

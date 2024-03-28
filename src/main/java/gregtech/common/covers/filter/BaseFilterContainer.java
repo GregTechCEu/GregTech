@@ -187,7 +187,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setTag("FilterInventory", super.serializeNBT());
-        tagCompound.setInteger("MaxStackSize", getMaxTransferSize());
+//        tagCompound.setInteger("MaxStackSize", getMaxTransferSize());
         tagCompound.setInteger("TransferStackSize", getTransferSize());
         return tagCompound;
     }
@@ -195,10 +195,16 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt.getCompoundTag("FilterInventory"));
-        setFilter(getFilterStack().isEmpty() ? null : BaseFilter.getFilterFromStack(getFilterStack()));
-        if (hasFilter()) getFilter().readFromNBT(nbt);
-        this.maxTransferSize = nbt.getInteger("MaxStackSize");
-        this.transferSize = nbt.getInteger("TransferStackSize");
+        setFilter(BaseFilter.getFilterFromStack(getFilterStack()));
+        if (nbt.hasKey("TransferStackSize"))
+            this.transferSize = nbt.getInteger("TransferStackSize");
+
+    }
+
+    public void handleLegacyNBT(NBTTagCompound nbt) {
+        if (hasFilter()) {
+            getFilter().getFilterReader().handleLegacyNBT(nbt);
+        }
     }
 
     /** Uses Cleanroom MUI */
@@ -252,6 +258,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         packetBuffer.writeItemStack(this.getFilterStack());
+        packetBuffer.writeInt(this.maxTransferSize);
+        packetBuffer.writeInt(this.transferSize);
     }
 
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
@@ -260,5 +268,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
             stack = packetBuffer.readItemStack();
         } catch (IOException ignore) {}
         this.setFilterStack(stack);
+        this.setMaxTransferSize(packetBuffer.readInt());
+        this.setTransferSize(packetBuffer.readInt());
     }
 }

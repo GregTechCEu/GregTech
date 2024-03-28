@@ -8,6 +8,7 @@ import gregtech.common.covers.filter.readers.BaseFilterReader;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -21,6 +22,8 @@ import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 public abstract class BaseFilter implements IFilter {
 
@@ -171,8 +174,12 @@ public abstract class BaseFilter implements IFilter {
         }
     }
 
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        this.getFilterReader().deserializeNBT(tagCompound);
+    public void readFromNBT(NBTTagCompound tag) {
+        this.getFilterReader().deserializeNBT(tag);
         markDirty();
     }
+
+    public void writeInitialSyncData(PacketBuffer packetBuffer) {}
+
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {}
 }

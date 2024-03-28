@@ -162,7 +162,8 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
         this.voidingMode = VoidingMode.VALUES[tagCompound.getInteger("VoidMode")];
+        this.itemFilterContainer.setMaxTransferSize(this.voidingMode.maxStackSize);
+        super.readFromNBT(tagCompound);
     }
 }

@@ -1,5 +1,7 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.screen.PanelManager;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
@@ -256,8 +258,8 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
         this.transferMode = TransferMode.VALUES[tagCompound.getInteger("TransferMode")];
         this.itemFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
+        super.readFromNBT(tagCompound);
     }
 }

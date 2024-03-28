@@ -178,15 +178,14 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     @Override
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        this.filterMode = ItemFilterMode.values()[tagCompound.getInteger("FilterMode")];
+        this.filterMode = ItemFilterMode.VALUES[tagCompound.getInteger("FilterMode")];
         var filterTag = tagCompound.getCompoundTag("Filter");
         if (!filterTag.hasKey("FilterInventory")) {
             this.itemFilterContainer.setFilterStack(getDefinition().getDropItemStack());
-            this.itemFilterContainer.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-            this.itemFilterContainer.getFilter().readFromNBT(filterTag);
         } else {
             this.itemFilterContainer.deserializeNBT(filterTag);
         }
+        this.itemFilterContainer.handleLegacyNBT(tagCompound);
     }
 
     @Override
