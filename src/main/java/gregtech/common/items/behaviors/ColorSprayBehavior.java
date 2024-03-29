@@ -134,14 +134,14 @@ public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItem
                                   EnumFacing facing) {
         startPos = startPos.offset(facing);
         TileEntity connectedTe = world.getTileEntity(startPos);
-        int count = 1;
+        int count = 0;
         boolean painted = false;
+        ItemStack heldItem = player.getHeldItem(hand);
         while (connectedTe instanceof IPipeTile<?, ?>connectedPipe && count < MAX_PIPE_TRAVERSAL_LENGTH) {
             if (connectedPipe.getPaintingColor() != (this.color == null ? -1 : this.color.colorValue)) {
                 connectedPipe.setPaintingColor(this.color == null ? -1 : this.color.colorValue);
                 connectedPipe.scheduleRenderUpdate();
-                ItemStack heldItem = player.getHeldItem(hand);
-                if (getUsesLeft(heldItem) == 1 && !player.isCreative()) {
+                if (getUsesLeft(heldItem) == 1) {
                     useItemDurability(player, hand, heldItem, empty.copy());
                     return true;
                 }
