@@ -10,19 +10,21 @@ import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
 import com.cleanroommc.groovyscript.event.EventBusType;
 import com.cleanroommc.groovyscript.event.GroovyEventManager;
+import com.cleanroommc.groovyscript.sandbox.ClosureHelper;
 import com.cleanroommc.groovyscript.sandbox.LoadStage;
 import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 
 public class PropertyContainer extends ModPropertyContainer {
 
-    public void materialEvent(EventPriority priority, Closure<?> eventListener) {
+    public void materialEvent(EventPriority priority, @DelegatesTo(MaterialEvent.class) Closure<?> eventListener) {
         if (GroovyScriptModule.isCurrentlyRunning() &&
                 GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
             GroovyLog.get().error("GregTech's material event can only be used in pre init!");
             return;
         }
-        GroovyEventManager.INSTANCE.listen(priority, EventBusType.MAIN, MaterialEvent.class,
-                eventListener);
+        ClosureHelper.withEnvironment(eventListener, new MaterialEvent(), true);
+        GroovyEventManager.INSTANCE.listen(priority, EventBusType.MAIN, MaterialEvent.class, eventListener);
     }
 
     public void materialEvent(Closure<?> eventListener) {
