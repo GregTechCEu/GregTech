@@ -9,7 +9,6 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.event.MaterialEvent;
-import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.Mods;
@@ -38,14 +37,10 @@ import com.cleanroommc.groovyscript.api.GroovyPlugin;
 import com.cleanroommc.groovyscript.api.IGameObjectParser;
 import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
-import com.cleanroommc.groovyscript.event.EventBusType;
-import com.cleanroommc.groovyscript.event.GroovyEventManager;
 import com.cleanroommc.groovyscript.gameobjects.GameObjectHandler;
 import com.cleanroommc.groovyscript.helper.EnumHelper;
-import com.cleanroommc.groovyscript.sandbox.LoadStage;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import com.google.common.collect.ImmutableList;
-import groovy.lang.Closure;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.eclipse.lsp4j.CompletionItem;
 import org.eclipse.lsp4j.CompletionItemKind;
@@ -218,36 +213,10 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         return "GregTech";
     }
 
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     @Override
     public @Nullable ModPropertyContainer createModPropertyContainer() {
-        return new ModPropertyContainer() {
-
-            public void materialEvent(EventPriority priority, Closure<?> eventListener) {
-                if (isCurrentlyRunning() && GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
-                    GroovyLog.get().error("GregTech's material event can only be used in pre init!");
-                    return;
-                }
-                GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, MaterialEvent.class,
-                        eventListener);
-            }
-
-            public void materialEvent(Closure<?> eventListener) {
-                materialEvent(EventPriority.NORMAL, eventListener);
-            }
-
-            public void lateMaterialEvent(EventPriority priority, Closure<?> eventListener) {
-                if (isCurrentlyRunning() && GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
-                    GroovyLog.get().error("GregTech's material event can only be used in pre init!");
-                    return;
-                }
-                GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, PostMaterialEvent.class,
-                        eventListener);
-            }
-
-            public void lateMaterialEvent(Closure<?> eventListener) {
-                materialEvent(EventPriority.NORMAL, eventListener);
-            }
-        };
+        return new PropertyContainer();
     }
 
     @Override

@@ -1,0 +1,45 @@
+package gregtech.integration.groovy;
+
+import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.unification.material.event.PostMaterialEvent;
+
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+
+import com.cleanroommc.groovyscript.GroovyScript;
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
+import com.cleanroommc.groovyscript.event.EventBusType;
+import com.cleanroommc.groovyscript.event.GroovyEventManager;
+import com.cleanroommc.groovyscript.sandbox.LoadStage;
+import groovy.lang.Closure;
+
+public class PropertyContainer extends ModPropertyContainer {
+
+    public void materialEvent(EventPriority priority, Closure<?> eventListener) {
+        if (GroovyScriptModule.isCurrentlyRunning() &&
+                GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
+            GroovyLog.get().error("GregTech's material event can only be used in pre init!");
+            return;
+        }
+        GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, MaterialEvent.class,
+                eventListener);
+    }
+
+    public void materialEvent(Closure<?> eventListener) {
+        materialEvent(EventPriority.NORMAL, eventListener);
+    }
+
+    public void lateMaterialEvent(EventPriority priority, Closure<?> eventListener) {
+        if (GroovyScriptModule.isCurrentlyRunning() &&
+                GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
+            GroovyLog.get().error("GregTech's material event can only be used in pre init!");
+            return;
+        }
+        GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, PostMaterialEvent.class,
+                eventListener);
+    }
+
+    public void lateMaterialEvent(Closure<?> eventListener) {
+        materialEvent(EventPriority.NORMAL, eventListener);
+    }
+}
