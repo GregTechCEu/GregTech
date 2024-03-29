@@ -359,6 +359,8 @@ public class FissionReactor {
         this.computeControlRodWeights();
         this.computeCoolantChannelWeights();
 
+        maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) / avgFuelRodDistance;
+
         controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods);
         avgCoolantTemperature /= coolantChannels.size();
 
