@@ -21,7 +21,7 @@ public class PropertyContainer extends ModPropertyContainer {
             GroovyLog.get().error("GregTech's material event can only be used in pre init!");
             return;
         }
-        GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, MaterialEvent.class,
+        GroovyEventManager.INSTANCE.listen(priority, EventBusType.MAIN, MaterialEvent.class,
                 eventListener);
     }
 
@@ -35,7 +35,7 @@ public class PropertyContainer extends ModPropertyContainer {
             GroovyLog.get().error("GregTech's material event can only be used in pre init!");
             return;
         }
-        GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, PostMaterialEvent.class,
+        GroovyEventManager.INSTANCE.listen(priority, EventBusType.MAIN, PostMaterialEvent.class,
                 eventListener);
     }
 
