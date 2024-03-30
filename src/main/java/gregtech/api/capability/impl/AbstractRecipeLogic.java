@@ -765,6 +765,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return recipe;
         }
 
+        ocResult.setEut(builder.getEUt());
         r = builder.EUt(recipe.getEUt())
                 .build()
                 .getResult();
@@ -773,7 +774,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return recipe;
         }
 
-        ocResult.setEut(r.getEUt());
         return r;
     }
 
