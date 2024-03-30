@@ -92,7 +92,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         // "cover.generic.advanced_detector.invert_label"));
         group.addWidget(
                 new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                        "behaviour.soft_hammer.enabled", "behaviour.soft_hammer.disabled")
+                        "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
                                 .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
         group.addWidget(
                 new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
