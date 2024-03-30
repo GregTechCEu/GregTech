@@ -45,8 +45,8 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             if (capability instanceof PrimitiveRecipeLogic) {
                 return; // do not show info for primitive machines, as they are supposed to appear powerless
             }
-            int EUt = capability.getInfoProviderEUt();
-            int absEUt = Math.abs(EUt);
+            long EUt = capability.getInfoProviderEUt();
+            long absEUt = Math.abs(EUt);
             String text = null;
 
             if (tileEntity instanceof IGregTechTileEntity) {

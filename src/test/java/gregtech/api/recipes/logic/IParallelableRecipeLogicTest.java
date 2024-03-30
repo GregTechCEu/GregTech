@@ -525,7 +525,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -600,7 +600,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -665,7 +665,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -732,7 +732,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 

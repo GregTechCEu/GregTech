@@ -33,6 +33,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
+import gregtech.api.util.GTUtility;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.init.SoundEvents;
@@ -612,18 +613,19 @@ public final class RecipeMaps {
                     .onBuild(gregtechId("cutter_fluid"), recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
                             int duration = recipeBuilder.getDuration();
-                            int eut = recipeBuilder.getEUt();
+                            long eut = recipeBuilder.getEUt();
                             recipeBuilder
                                     .copy()
-                                    .fluidInputs(Materials.Water.getFluid(Math.max(4,
-                                            Math.min(1000, duration * eut / 320))))
+                                    .fluidInputs(Materials.Water.getFluid(GTUtility.safeCastLongToInt(Math.max(4,
+                                            Math.min(1000, duration * eut / 320)))))
                                     .duration(duration * 2)
                                     .buildAndRegister();
 
                             recipeBuilder
                                     .copy()
-                                    .fluidInputs(Materials.DistilledWater.getFluid(Math.max(3,
-                                            Math.min(750, duration * eut / 426))))
+                                    .fluidInputs(
+                                            Materials.DistilledWater.getFluid(GTUtility.safeCastLongToInt(Math.max(3,
+                                                    Math.min(750, duration * eut / 426)))))
                                     .duration((int) (duration * 1.5))
                                     .buildAndRegister();
 
@@ -631,8 +633,8 @@ public final class RecipeMaps {
                             // middle of a buildAndRegister call.
                             // Adding a second call will result in duplicate recipe generation attempts
                             recipeBuilder
-                                    .fluidInputs(Materials.Lubricant.getFluid(Math.max(1,
-                                            Math.min(250, duration * eut / 1280))))
+                                    .fluidInputs(Materials.Lubricant.getFluid(GTUtility.safeCastLongToInt(Math.max(1,
+                                            Math.min(250, duration * eut / 1280)))))
                                     .duration(Math.max(1, duration));
 
                         }

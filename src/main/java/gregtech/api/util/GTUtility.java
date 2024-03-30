@@ -891,4 +891,14 @@ public class GTUtility {
                 (1.0 / (1 - splitPoint)) * (tracker.get() - splitPoint) : 0;
         return Pair.of(supplier1, supplier2);
     }
+
+    /**
+     * Safely cast a Long to an Int without overflow.
+     *
+     * @param v The Long value to cast to an Int.
+     * @return v, casted to Int, or Integer.MAX_VALUE if it would overflow.
+     */
+    public static int safeCastLongToInt(long v) {
+        return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    }
 }

@@ -40,7 +40,11 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
@@ -249,7 +253,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         // Default entries
         if (drawTotalEU) {
-            long eu = Math.abs((long) recipe.getEUt()) * recipe.getDuration();
+            long eu = Math.abs(recipe.getEUt()) * recipe.getDuration();
             // sadly we still need a custom override here, since computation uses duration and EU/t very differently
             if (recipe.hasProperty(TotalComputationProperty.getInstance()) &&
                     recipe.hasProperty(ComputationProperty.getInstance())) {

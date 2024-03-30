@@ -48,7 +48,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setBoolean("Working", capability.isWorking());
         if (capability.isWorking() && !(capability instanceof PrimitiveRecipeLogic)) {
-            subTag.setInteger("RecipeEUt", capability.getInfoProviderEUt());
+            subTag.setLong("RecipeEUt", capability.getInfoProviderEUt());
         }
         tag.setTag("gregtech.AbstractRecipeLogic", subTag);
         return tag;
