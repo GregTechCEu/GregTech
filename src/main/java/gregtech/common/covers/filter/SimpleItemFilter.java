@@ -11,11 +11,9 @@ import gregtech.common.covers.CoverItemVoidingAdvanced;
 import gregtech.common.covers.CoverRoboticArm;
 import gregtech.common.covers.TransferMode;
 import gregtech.common.covers.VoidingMode;
-import gregtech.common.covers.filter.readers.BaseFilterReader;
 import gregtech.common.covers.filter.readers.SimpleItemFilterReader;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -33,7 +31,6 @@ import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class SimpleItemFilter extends BaseFilter {

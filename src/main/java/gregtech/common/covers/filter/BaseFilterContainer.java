@@ -187,7 +187,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setTag("FilterInventory", super.serializeNBT());
-//        tagCompound.setInteger("MaxStackSize", getMaxTransferSize());
+        // tagCompound.setInteger("MaxStackSize", getMaxTransferSize());
         tagCompound.setInteger("TransferStackSize", getTransferSize());
         return tagCompound;
     }
@@ -198,7 +198,6 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
         setFilter(BaseFilter.getFilterFromStack(getFilterStack()));
         if (nbt.hasKey("TransferStackSize"))
             this.transferSize = nbt.getInteger("TransferStackSize");
-
     }
 
     public void handleLegacyNBT(NBTTagCompound nbt) {

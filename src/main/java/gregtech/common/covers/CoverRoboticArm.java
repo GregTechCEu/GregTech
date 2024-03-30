@@ -1,7 +1,5 @@
 package gregtech.common.covers;
 
-import com.cleanroommc.modularui.screen.PanelManager;
-
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;

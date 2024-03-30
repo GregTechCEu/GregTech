@@ -23,8 +23,6 @@ import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 public abstract class BaseFilter implements IFilter {
 
     public static final BaseFilter ERROR_FILTER = new BaseFilter() {
