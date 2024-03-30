@@ -383,6 +383,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
+        tagCompound.setInteger("BucketMode", bucketMode.ordinal());
         tagCompound.setTag("Filter", fluidFilterContainer.serializeNBT());
     }
 
@@ -394,6 +395,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
+        this.bucketMode = BucketMode.VALUES[tagCompound.getInteger("BucketMode")];
         this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         this.fluidFilterContainer.handleLegacyNBT(tagCompound);
     }
