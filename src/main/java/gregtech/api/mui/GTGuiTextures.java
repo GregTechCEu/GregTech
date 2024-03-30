@@ -200,6 +200,10 @@ public class GTGuiTextures {
             "textures/gui/overlay/filter_mode_overlay.png",
             16, 48, 16, 16, true);
 
+    public static final UITexture[] PRIVATE_MODE_BUTTON = slice(
+            "textures/gui/widget/button_public_private.png",
+            18, 36, 18, 18, true);
+
     // todo bronze/steel/primitive fluid slots?
 
     // SLOT OVERLAYS

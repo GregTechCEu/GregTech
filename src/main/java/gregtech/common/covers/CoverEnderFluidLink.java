@@ -164,40 +164,6 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
-        widgetGroup.addWidget(new gregtech.api.gui.widgets.LabelWidget(10, 5, "cover.ender_fluid_link.title"));
-        widgetGroup.addWidget(
-                new gregtech.api.gui.widgets.ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
-                        this::isPrivate, this::setPrivate)
-                                .setTooltipText("cover.ender_fluid_link.private.tooltip"));
-        widgetGroup.addWidget(new gregtech.api.gui.widgets.SyncableColorRectWidget(35, 18, 18, 18, () -> color)
-                .setBorderWidth(1)
-                .drawCheckerboard(4, 4));
-        widgetGroup.addWidget(new gregtech.api.gui.widgets.TextFieldWidget(58, 13, 58, 18, true,
-                this::getColorStr, this::updateColor, 8)
-                        .setValidator(str -> COLOR_INPUT_PATTERN.matcher(str).matches()));
-        widgetGroup.addWidget(new gregtech.api.gui.widgets.TankWidget(this.linkedTank, 123, 18, 18, 18)
-                .setContainerClicking(true, true)
-                .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
-        widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(147, 19, 16, 16)
-                .setImage(GuiTextures.INFO_ICON)
-                .setPredicate(() -> isColorTemp)
-                .setTooltip("cover.ender_fluid_link.incomplete_hex")
-                .setIgnoreColor(true));
-        widgetGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(10, 42, 75, 18,
-                CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode));
-        widgetGroup.addWidget(new gregtech.api.gui.widgets.CycleButtonWidget(92, 42, 75, 18,
-                this::isIoEnabled, this::setIoEnabled, "cover.ender_fluid_link.iomode.disabled",
-                "cover.ender_fluid_link.iomode.enabled"));
-        this.fluidFilter.initUI(65, widgetGroup::addWidget);
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
-                .widget(widgetGroup)
-                .bindPlayerInventory(player.inventory, 139)
-                .build(this, player);
-    }
-
-    @Override
     public boolean usesMui2() {
         return true;
     }
@@ -235,6 +201,10 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
                         .coverChildrenHeight()
                         .child(new ToggleButton()
                                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                                .background(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
+                                .hoverBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
+                                .selectedBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[1])
+                                .selectedHoverBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[1])
                                 .tooltipBuilder(tooltip -> tooltip.addLine(IKey.lang(this.isPrivate ?
                                         "cover.ender_fluid_link.private.tooltip.enabled" :
                                         "cover.ender_fluid_link.private.tooltip.disabled")))
@@ -271,7 +241,8 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
                 .child(getFluidFilterContainer().initUI(panel, syncManager))
                 .child(new EnumRowBuilder<>(CoverPump.PumpMode.class)
                         .value(pumpMode)
-                        .lang("Pump Mode")
+                        .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
+                        .lang("cover.pump.mode")
                         .build());
     }
 
