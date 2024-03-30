@@ -144,8 +144,10 @@ public class FissionReactor {
                 value = 0.1;
             }
         }
-        return value * criticalRate / rate * Math.sqrt(target / value);
+        double expDecay = Math.exp(-criticalRate / rate);
+        return value * expDecay + target * (1 - expDecay);
     }
+
 
     protected double responseFunctionTemperature(double envTemperature, double currentTemperature, double heatAdded,
                                                  double heatAbsorbed) {
@@ -359,7 +361,11 @@ public class FissionReactor {
         this.computeControlRodWeights();
         this.computeCoolantChannelWeights();
 
-        maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) / avgFuelRodDistance;
+        double depthDiameterDifference = 0.5 * (reactorDepth - reactorRadius * 2) / reactorRadius;
+        double sigmoid = 1 / (1 + Math.exp(-depthDiameterDifference));
+        double fuelRodFactor = sigmoid * Math.pow(avgFuelRodDistance, -2) + (1 - sigmoid) * Math.pow(avgFuelRodDistance, -1);
+
+        maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) * fuelRodFactor;
 
         controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods);
         avgCoolantTemperature /= coolantChannels.size();
@@ -497,7 +503,7 @@ public class FissionReactor {
     public void updatePressure() {
         this.pressure = responseFunction(
                 this.temperature <= this.coolantBoilingPoint() ? this.exteriorPressure : 1000. * R * this.temperature,
-                this.pressure, 1., 1.);
+                this.pressure, 0.2, 1.);
     }
 
     public void updateNeutronPoisoning() {
@@ -516,6 +522,8 @@ public class FissionReactor {
     public void updatePower() {
         this.prevPower = this.power;
         this.prevFuelDepletion = this.fuelDepletion;
+        // maps (1, 1.1) to (0, 15)
+        this.criticalRodInsertion = (int) Math.min(15, Math.max(0, (kEff - 1) * 150.));
         this.power = responseFunction(this.realMaxPower(), this.power,
                 this.criticalRodInsertion + this.voidContribution(), this.controlRodInsertion);
         this.fuelDepletion = Math.min(this.fuelDepletion + 0.001 * this.power / this.maxPower, 1.);
