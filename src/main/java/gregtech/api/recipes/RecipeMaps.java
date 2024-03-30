@@ -333,7 +333,7 @@ public final class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> CANNER_RECIPES = new RecipeMapFluidCanner("canner",
             new SimpleRecipeBuilder(), recipeMap -> {
 
-                RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+                RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
                 ui.setItemSlotOverlay(GuiTextures.CANNER_OVERLAY, false, false);
                 ui.setItemSlotOverlay(GuiTextures.CANISTER_OVERLAY, false, true);
                 ui.setItemSlotOverlay(GuiTextures.CANISTER_OVERLAY, true);
@@ -941,7 +941,7 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = new RecipeMapFurnace("electric_furnace",
             new SimpleRecipeBuilder(), recipeMap -> {
-                RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+                RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
                 ui.setItemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false);
                 ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
                 return ui;
@@ -1367,7 +1367,7 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SCANNER_RECIPES = new RecipeMapScanner("scanner",
             new SimpleRecipeBuilder(), recipeMap -> {
-                RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true);
+                RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
                 ui.setItemSlotOverlay(GuiTextures.DATA_ORB_OVERLAY, false, false);
                 ui.setItemSlotOverlay(GuiTextures.SCANNER_OVERLAY, false, true);
                 ui.setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);
@@ -1485,6 +1485,7 @@ public final class RecipeMaps {
                     .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
                     .sound(GTSoundEvents.COMBUSTION)
                     .allowEmptyOutputs()
+                    .generator()
                     .build();
 
     @ZenProperty
@@ -1495,6 +1496,7 @@ public final class RecipeMaps {
                     .progressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR)
                     .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
+                    .generator()
                     .build();
 
     @ZenProperty
@@ -1506,6 +1508,7 @@ public final class RecipeMaps {
                     .progressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR)
                     .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
+                    .generator()
                     .build();
 
     @ZenProperty
@@ -1516,6 +1519,7 @@ public final class RecipeMaps {
                     .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
                     .sound(GTSoundEvents.COMBUSTION)
                     .allowEmptyOutputs()
+            .generator()
                     .build();
 
     @ZenProperty
@@ -1527,6 +1531,7 @@ public final class RecipeMaps {
                     .progressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR)
                     .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
+            .generator()
                     .build();
 
     private RecipeMaps() {}

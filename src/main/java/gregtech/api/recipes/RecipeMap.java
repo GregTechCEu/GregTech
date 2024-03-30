@@ -193,7 +193,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.recipeBuilderSample = defaultRecipeBuilder;
 
         this.recipeMapUI = new RecipeMapUI<>(this, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
-                modifyFluidOutputs);
+                modifyFluidOutputs, false);
         this.recipeMapUI.setJEIVisible(!isHidden);
 
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);

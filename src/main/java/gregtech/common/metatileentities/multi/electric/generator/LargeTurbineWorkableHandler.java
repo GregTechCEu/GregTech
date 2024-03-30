@@ -86,7 +86,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     private int getParallel(@NotNull Recipe recipe, double totalHolderEfficiencyCoefficient, long turbineMaxVoltage) {
         return MathHelper.ceil((turbineMaxVoltage - this.excessVoltage) /
-                (Math.abs(recipe.getEUt()) * totalHolderEfficiencyCoefficient));
+                (recipe.getEUt() * totalHolderEfficiencyCoefficient));
     }
 
     private boolean canDoRecipeWithParallel(Recipe recipe) {
@@ -155,7 +155,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             }
 
             // this is necessary to prevent over-consumption of fuel
-            this.excessVoltage += (long) (parallel * Math.abs(recipe.getEUt()) * holderEfficiency - turbineMaxVoltage);
+            this.excessVoltage += (long) (parallel * recipe.getEUt() * holderEfficiency - turbineMaxVoltage);
         }
 
         // rebuild the recipe and adjust voltage to match the turbine
