@@ -7,13 +7,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class OverclockingLogic {
 
-    @Deprecated
-    public static final double STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER = 4.0;
-    @Deprecated
-    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = 2.0;
-    @Deprecated
-    public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
-
     public static final double STD_VOLTAGE_FACTOR = 4.0;
     public static final double PERFECT_HALF_VOLTAGE_FACTOR = 2.0;
 
@@ -108,7 +101,7 @@ public final class OverclockingLogic {
                 }
 
                 double potentialDuration = duration * durationFactor;
-                if (potentialDuration <= 1) {
+                if (potentialDuration < 1) {
                     duration = 1;
                     potentialEUt = eut * durationFactor;
                     if (potentialEUt > maxVoltage || potentialEUt < 1) {
@@ -163,7 +156,7 @@ public final class OverclockingLogic {
                 parallel /= durationFactor;
             } else {
                 double potentialDuration = duration * durationFactor;
-                if (potentialDuration <= 1) {
+                if (potentialDuration < 1) {
                     duration = 1;
                     parallel *= voltageFactor;
                     shouldParallel = true;
@@ -230,7 +223,7 @@ public final class OverclockingLogic {
                     potentialDuration = duration * STD_DURATION_FACTOR;
                 }
 
-                if (potentialDuration <= 1) {
+                if (potentialDuration < 1) {
                     duration = 1;
                     if (perfect) {
                         parallel *= PERFECT_DURATION_FACTOR_INV;
@@ -246,13 +239,6 @@ public final class OverclockingLogic {
         }
 
         result.init((long) (eut / parallel), (int) duration, (int) parallel, (long) eut);
-    }
-
-    @Deprecated
-    public static int @NotNull [] standardOverclockingLogic(int recipeEUt, long maxVoltage, int recipeDuration,
-                                                            int numberOfOCs,
-                                                            double durationDivisor, double voltageMultiplier) {
-        return null;
     }
 
     /**
@@ -277,12 +263,5 @@ public final class OverclockingLogic {
         int amountEUtDiscount = calculateAmountCoilEUtDiscount(providedTemp, requiredTemp);
         if (amountEUtDiscount < 1) return recipeEUt;
         return (long) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
-    }
-
-    @Deprecated
-    public static int @NotNull [] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration,
-                                                               int maxOverclocks, int currentTemp,
-                                                               int recipeRequiredTemp) {
-        return null;
     }
 }

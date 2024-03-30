@@ -1519,7 +1519,7 @@ public final class RecipeMaps {
                     .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
                     .sound(GTSoundEvents.COMBUSTION)
                     .allowEmptyOutputs()
-            .generator()
+                    .generator()
                     .build();
 
     @ZenProperty
@@ -1531,7 +1531,7 @@ public final class RecipeMaps {
                     .progressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR)
                     .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
-            .generator()
+                    .generator()
                     .build();
 
     private RecipeMaps() {}
