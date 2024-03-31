@@ -79,7 +79,7 @@ public class FissionReactor {
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
-    public int controlRodInsertion = 1;
+    public double controlRodInsertion = 1;
     public int reactorDepth;
     public double reactorRadius;
 
@@ -168,7 +168,8 @@ public class FissionReactor {
         reactorDepth = depth;
         reactorRadius = (double) size / 2 + 1.5; // Includes the extra block plus the distance from the center of a
                                                  // block to its edge
-        this.controlRodInsertion = controlRodInsertion;
+        // Maps (0, 15) -> (0.01, 1)
+        this.controlRodInsertion = Math.max(0.01, (double) controlRodInsertion / 15);
         fuelRods = new ArrayList<>();
         controlRods = new ArrayList<>();
         coolantChannels = new ArrayList<>();
@@ -524,6 +525,8 @@ public class FissionReactor {
         this.prevFuelDepletion = this.fuelDepletion;
         // maps (1, 1.1) to (0, 15)
         this.criticalRodInsertion = (int) Math.min(15, Math.max(0, (kEff - 1) * 150.));
+
+
         this.power = responseFunction(this.realMaxPower(), this.power,
                 this.criticalRodInsertion + this.voidContribution(), this.controlRodInsertion);
         this.fuelDepletion = Math.min(this.fuelDepletion + 0.001 * this.power / this.maxPower, 1.);

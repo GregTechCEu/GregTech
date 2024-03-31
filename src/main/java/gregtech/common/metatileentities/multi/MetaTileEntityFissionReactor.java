@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.gui.GuiTextures;
@@ -72,8 +73,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private int flowRate = 1;
     private int controlRodInsertionValue = 4;
     private LockingState lockingState = LockingState.UNLOCKED;
-
-    private int SYNC_REACTOR_STATS = 39454;
 
     private double temperature;
     private double pressure;
@@ -506,7 +505,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.pressure = this.fissionReactor.pressure;
         this.power = this.fissionReactor.power;
         this.maxPower = this.fissionReactor.maxPower;
-        writeCustomData(SYNC_REACTOR_STATS, (packetBuffer -> {
+        writeCustomData(GregtechDataCodes.SYNC_REACTOR_STATS, (packetBuffer -> {
             packetBuffer.writeDouble(this.fissionReactor.temperature);
             packetBuffer.writeDouble(this.fissionReactor.pressure);
             packetBuffer.writeDouble(this.fissionReactor.power);
@@ -518,11 +517,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
 
-        if (dataId == SYNC_REACTOR_STATS) {
+        if (dataId == GregtechDataCodes.SYNC_REACTOR_STATS) {
             this.temperature = buf.readDouble();
             this.pressure = buf.readDouble();
             this.power = buf.readDouble();
             this.maxPower = buf.readDouble();
+        } else if (dataId == GregtechDataCodes.SYNC_LOCKING_STATE) {
+            this.lockingState = buf.readEnumValue(LockingState.class);
         }
     }
 
@@ -558,7 +559,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             handler.setLock(false);
         }
         // this.fissionReactor = null;
-        this.lockingState = LockingState.UNLOCKED;
+        setLockingState(LockingState.UNLOCKED);
     }
 
     @Override
@@ -628,14 +629,14 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                         } else {                            // Invalid component located
                             this.unlockAll();
                             fissionReactor = null;
-                            this.lockingState = LockingState.INVALID_COMPONENT;
+                            setLockingState(LockingState.INVALID_COMPONENT);
                             return;
                         }
                     } else if (foundPort) {               // This implies that a port was found, but it didn't generate
                                                           // a component because of mismatched inputs
                         this.unlockAll();
                         fissionReactor = null;
-                        this.lockingState = LockingState.MISSING_INPUTS;
+                        setLockingState(LockingState.MISSING_INPUTS);
                         return;
                     }
                 }
@@ -643,7 +644,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         }
         fissionReactor.prepareThermalProperties();
         fissionReactor.computeGeometry();
-        this.lockingState = LockingState.LOCKED;
+        setLockingState(LockingState.LOCKED);
     }
 
     private void updateReactorState() {
@@ -651,6 +652,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.fissionReactor.updateTemperature();
         this.fissionReactor.updatePressure();
         this.fissionReactor.updateNeutronPoisoning();
+    }
+
+    protected void setLockingState(LockingState lockingState) {
+        if (this.lockingState != lockingState) {
+            writeCustomData(GregtechDataCodes.SYNC_LOCKING_STATE, (buf) -> buf.writeEnumValue(lockingState));
+        }
+        this.lockingState = lockingState;
     }
 
     private enum LockingState {
