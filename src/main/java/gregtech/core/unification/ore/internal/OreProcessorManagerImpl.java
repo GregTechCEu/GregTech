@@ -95,13 +95,14 @@ public final class OreProcessorManagerImpl implements OreProcessorManager {
 
     @ApiStatus.Internal
     public void startRegistration() {
-        MinecraftForge.EVENT_BUS.post(new OreProcessorEvent(phase));
+        this.phase = Phase.REGISTRATION;
+        MinecraftForge.EVENT_BUS.post(new OreProcessorEvent.Registration());
     }
 
     @ApiStatus.Internal
     public void startRemoval() {
         this.phase = Phase.REMOVAL;
-        MinecraftForge.EVENT_BUS.post(new OreProcessorEvent(phase));
+        MinecraftForge.EVENT_BUS.post(new OreProcessorEvent.Removal());
     }
 
     @ApiStatus.Internal

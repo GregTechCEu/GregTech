@@ -2,22 +2,20 @@ package gregtech.api.unification.ore.handler;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
- * Fired when the {@link #registrationPhase()} for OreProcessors changes.
- * <p>
- * Be sure to check the current phase before use.
+ * Fired when the {@link OreProcessorManager.Phase} for OreProcessors changes.
  */
-public class OreProcessorEvent extends Event {
+public abstract class OreProcessorEvent extends Event {
 
-    private final OreProcessorManager.Phase phase;
+    protected OreProcessorEvent() {}
 
-    public OreProcessorEvent(@NotNull OreProcessorManager.Phase phase) {
-        this.phase = phase;
-    }
+    /**
+     * Event during which {@link OreProcessor}s can be registered with an {@link OreProcessorManager}
+     */
+    public static class Registration extends OreProcessorEvent {}
 
-    public @NotNull OreProcessorManager.Phase registrationPhase() {
-        return phase;
-    }
+    /**
+     * Event during which {@link OreProcessor}s can be removed with an {@link OreProcessorManager}
+     */
+    public static class Removal extends OreProcessorEvent {}
 }
