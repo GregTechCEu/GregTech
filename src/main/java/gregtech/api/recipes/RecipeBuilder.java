@@ -57,7 +57,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @see Recipe
@@ -388,6 +387,17 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputNBT(new GTRecipeItemInput(stack), matcher, condition);
     }
 
+    public R inputs(ItemStack input) {
+        if (input == null || input.isEmpty()) {
+            GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input);
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            recipeStatus = EnumValidationResult.INVALID;
+        } else {
+            this.inputs.add(new GTRecipeItemInput(input));
+        }
+        return (R) this;
+    }
+
     public R inputs(ItemStack... inputs) {
         for (ItemStack input : inputs) {
             if (input == null || input.isEmpty()) {
@@ -410,6 +420,17 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 continue;
             }
             this.inputs.add(new GTRecipeItemInput(input));
+        }
+        return (R) this;
+    }
+
+    public R inputs(GTRecipeInput input) {
+        if (input.getAmount() < 0) {
+            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            recipeStatus = EnumValidationResult.INVALID;
+        } else {
+            this.inputs.add(input);
         }
         return (R) this;
     }
@@ -532,6 +553,13 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return outputs(mte.getStackForm(amount));
     }
 
+    public R outputs(ItemStack output) {
+        if (output != null && !output.isEmpty()) {
+            this.outputs.add(output);
+        }
+        return (R) this;
+    }
+
     public R outputs(ItemStack... outputs) {
         return outputs(Arrays.asList(outputs));
     }
@@ -558,6 +586,18 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R fluidInputs(FluidStack input) {
+        if (input != null && input.amount > 0) {
+            this.fluidInputs.add(new GTRecipeFluidInput(input));
+        } else if (input != null) {
+            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.amount);
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+        } else {
+            GTLog.logger.error("FluidStack cannot be null.");
+        }
+        return (R) this;
+    }
+
     public R fluidInputs(FluidStack... fluidStacks) {
         ArrayList<GTRecipeInput> fluidIngredients = new ArrayList<>();
         for (FluidStack fluidStack : fluidStacks) {
@@ -579,13 +619,20 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R fluidOutputs(FluidStack output) {
+        if (output != null && output.amount > 0) {
+            this.fluidOutputs.add(output);
+        }
+        return (R) this;
+    }
+
     public R fluidOutputs(FluidStack... outputs) {
         return fluidOutputs(Arrays.asList(outputs));
     }
 
     public R fluidOutputs(Collection<FluidStack> outputs) {
         outputs = new ArrayList<>(outputs);
-        outputs.removeIf(Objects::isNull);
+        outputs.removeIf(o -> o == null || o.amount <= 0);
         this.fluidOutputs.addAll(outputs);
         return (R) this;
     }
