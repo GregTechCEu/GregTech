@@ -4,6 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -90,15 +91,46 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 266).shouldColor(false)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 236).shouldColor(false)
                 .widget(new ToggleButtonWidget(10, 10, 18, 18, this::isLocked, this::tryLocking))
                 .widget(new AdvancedTextWidget(35, 14, getLockingStateText(), getLockedTextColor()))
-                .widget(new SliderWidget(String.format("Control Rod Depth: %d", controlRodInsertionValue), 10, 30, 100,
+                .widget(new SliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 150,
                         18, 0.0f, 15.0f,
-                        controlRodInsertionValue, this::setControlRodInsertionValue))
-                .widget(new SliderWidget("Flow Rate", 10, 50, 150, 18, 0.0f, 16000.f, flowRate, this::setFlowRate));
-        builder.widget(new AdvancedTextWidget(10, 120, getStatsText(), 0x2020D0));
-        builder.bindPlayerInventory(entityPlayer.inventory, 178);
+                        controlRodInsertionValue, this::setControlRodInsertionValue) {
+
+                    @Override
+                    public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
+                        if (lockingState != LockingState.LOCKED)
+                            return super.mouseDragged(mouseX, mouseY, button, timeDragged);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean mouseReleased(int mouseX, int mouseY, int button) {
+                        if (lockingState != LockingState.LOCKED)
+                            return super.mouseReleased(mouseX, mouseY, button);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+                        if (lockingState != LockingState.LOCKED)
+                            return super.mouseClicked(mouseX, mouseY, button);
+                        return false;
+                    }
+
+                    @Override
+                    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+                        if (lockingState == LockingState.LOCKED) {
+                            this.setTextColor(0xFF0000);
+                        }
+                        super.drawInBackground(mouseX, mouseY, partialTicks, context);
+                        this.setTextColor(0xFFFFFF);
+                    }
+                })
+                .widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 150, 18, 0.0f, 16000.f, flowRate, this::setFlowRate));
+        builder.widget(new AdvancedTextWidget(10, 90, getStatsText(), 0x2020D0));
+        builder.bindPlayerInventory(entityPlayer.inventory, 148);
         return builder;
     }
 
@@ -141,16 +173,15 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     private Consumer<List<ITextComponent>> getLockingStateText() {
         return (list) -> {
-            list.add(new TextComponentString("Locking State: " + lockingState.toString()));
+            list.add(new TextComponentTranslation("gregtech.gui.fission.lock." + lockingState.toString().toLowerCase()));
         };
     }
 
     private Consumer<List<ITextComponent>> getStatsText() {
         return (list) -> {
-            list.add(new TextComponentString(String.format("Temperature: %.3f K", this.temperature)));
-            list.add(new TextComponentString(String.format("Pressure: \n    %.3f Pa (%.3f Atm)", this.pressure,
-                    (this.pressure / FissionReactor.standardPressure))));
-            list.add(new TextComponentString(String.format("Power: %.3f MW / %.3f MW", this.power, this.maxPower)));
+            list.add(new TextComponentTranslation("gregtech.gui.fission.temperature", String.format("%.1f", this.temperature)));
+            list.add(new TextComponentTranslation("gregtech.gui.fission.pressure", String.format("%.0f",this.pressure)));
+            list.add(new TextComponentTranslation("gregtech.gui.fission.power", String.format("%.1f", this.power), String.format("%.1f", this.maxPower)));
         };
     }
 
