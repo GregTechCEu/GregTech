@@ -389,7 +389,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R inputs(ItemStack input) {
         if (input == null || input.isEmpty()) {
-            GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input);
+            GTLog.logger.error("Input cannot be null or empty. Input: {}", input);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
         } else {
@@ -401,7 +401,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R inputs(ItemStack... inputs) {
         for (ItemStack input : inputs) {
             if (input == null || input.isEmpty()) {
-                GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input);
+                GTLog.logger.error("Inputs cannot contain null or empty ItemStacks. Inputs: {}", input);
                 GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
@@ -426,7 +426,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R inputs(GTRecipeInput input) {
         if (input.getAmount() < 0) {
-            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
+            GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
         } else {
@@ -438,7 +438,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R inputs(GTRecipeInput... inputs) {
         for (GTRecipeInput input : inputs) {
             if (input.getAmount() < 0) {
-                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
+                GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount());
                 GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
@@ -590,7 +590,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (input != null && input.amount > 0) {
             this.fluidInputs.add(new GTRecipeFluidInput(input));
         } else if (input != null) {
-            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.amount);
+            GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", input.amount);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
         } else {
             GTLog.logger.error("FluidStack cannot be null.");
@@ -604,7 +604,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             if (fluidStack != null && fluidStack.amount > 0) {
                 fluidIngredients.add(new GTRecipeFluidInput(fluidStack));
             } else if (fluidStack != null) {
-                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", fluidStack.amount);
+                GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", fluidStack.amount);
                 GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             } else {
                 GTLog.logger.error("FluidStack cannot be null.");
