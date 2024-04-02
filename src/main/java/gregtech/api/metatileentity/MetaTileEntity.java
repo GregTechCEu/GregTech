@@ -39,7 +39,6 @@ import gregtech.common.creativetab.GTCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -812,19 +811,21 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
+        if (!getWorld().isRemote && !allowTickAcceleration()) {
+            int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+            if (currentTick == lastTick) {
+                return;
+            }
+            lastTick = currentTick;
+        }
+
         for (MTETrait mteTrait : this.mteTraits.values()) {
             if (shouldUpdate(mteTrait)) {
                 mteTrait.update();
             }
         }
+
         if (!getWorld().isRemote) {
-            if (!allowTickAcceleration()) {
-                int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-                if (currentTick == lastTick) {
-                    return;
-                }
-                lastTick = currentTick;
-            }
             updateCovers();
         } else {
             updateSound();
