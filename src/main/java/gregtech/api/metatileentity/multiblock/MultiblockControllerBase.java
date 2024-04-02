@@ -20,6 +20,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.Block;
@@ -46,6 +47,9 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -70,6 +74,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
     protected boolean isFlipped;
+
+    // dimension ids, reserved locations in a dimension, set of reserving locations for a location
+    protected final static Map<Integer, Map<Long, Set<Long>>> globalReservedLocations = new Int2ObjectOpenHashMap<>();
+    protected final Set<Long> selfReservedLocations = new LongOpenHashSet();
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -322,6 +330,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
         if (context != null && !structureFormed) {
+            if (!ConfigHolder.machines.allowWallsharing) {
+                Set<Long> keySet = this.structurePattern.cache.keySet();
+                for (long pos : keySet) {
+                    if (checkIfLocationReserved(pos)) return;
+                }
+                for (long pos : keySet) {
+                    reserveLocation(pos);
+                }
+            }
+
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
             for (IMultiblockPart part : parts) {
@@ -368,6 +386,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         this.structureFormed = false;
         this.setFlipped(false);
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(false));
+        this.unreserveLocations();
     }
 
     @Override
@@ -526,7 +545,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     // todo tooltip on multis saying if this is enabled or disabled?
     /** Whether this multi can be rotated or face upwards. */
     public boolean allowsExtendedFacing() {
-        return true;
+        return ConfigHolder.machines.allowExtendedFacing;
     }
 
     /** Set this to false only if your multiblock is set up such that it could have a wall-shared controller. */
@@ -590,5 +609,70 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      */
     public boolean isMultiblockPartWeatherResistant(@NotNull IMultiblockPart part) {
         return false;
+    }
+
+    public @Nullable Integer getDimensionID() {
+        if (this.getWorld() != null) return this.getWorld().provider.getDimension();
+        return null;
+    }
+
+    protected static Map<Long, Set<Long>> getReservedLocationsForDimension(int dim) {
+        globalReservedLocations.putIfAbsent(dim, new Long2ObjectOpenHashMap<>());
+        return globalReservedLocations.get(dim);
+    }
+
+    public static boolean checkIfLocationReserved(BlockPos location, int dim) {
+        return checkIfLocationReserved(location.toLong(), dim);
+    }
+
+    protected boolean checkIfLocationReserved(long location) {
+        Integer dim = getDimensionID();
+        if (dim != null) return checkIfLocationReserved(location, dim);
+        else return false;
+    }
+
+    protected static boolean checkIfLocationReserved(long location, int dim) {
+        return !getReservedLocationsForDimension(dim).getOrDefault(location, Collections.emptySet()).isEmpty();
+    }
+
+    public void reserveLocation(BlockPos location) {
+        this.reserveLocation(location.toLong());
+    }
+
+    protected void reserveLocation(long location) {
+        Integer dim = getDimensionID();
+        if (dim == null) return;
+        selfReservedLocations.add(location);
+        getReservedLocationsForDimension(dim).compute(location, (a, b) -> {
+            if (b == null) b = new LongOpenHashSet();
+            b.add(this.getPos().toLong());
+            return b;
+        });
+    }
+
+    public void unreserveLocation(BlockPos location) {
+        Integer dim = getDimensionID();
+        if (dim == null) return;
+        unreserveLocation(location.toLong());
+        selfReservedLocations.remove(location.toLong());
+    }
+
+    protected void unreserveLocation(long location) {
+        Integer dim = getDimensionID();
+        if (dim == null) return;
+        getReservedLocationsForDimension(dim)
+                .getOrDefault(location, Collections.emptySet()).remove(this.getPos().toLong());
+    }
+
+    protected void unreserveLocations() {
+        selfReservedLocations.forEach(this::unreserveLocation);
+        selfReservedLocations.clear();
+    }
+
+    /**
+     * To be called on server stopped event
+     */
+    public static void clearReservedLocations() {
+        globalReservedLocations.clear();
     }
 }
