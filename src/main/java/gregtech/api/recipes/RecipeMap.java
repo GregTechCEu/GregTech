@@ -462,11 +462,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         boolean emptyInputs = recipe.getInputs().isEmpty() && recipe.getFluidInputs().isEmpty();
         if (emptyInputs) {
-            GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.");
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -474,11 +472,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().getChancedEntries().isEmpty() &&
                 recipe.getChancedFluidOutputs().getChancedEntries().isEmpty();
         if (emptyOutputs) {
-            GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.", new Throwable());
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.");
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.",
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -486,12 +483,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int amount = recipe.getInputs().size();
         if (amount > getMaxInputs()) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxInputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                    getMaxInputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(String.format(
-                        "Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                        "Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -499,13 +495,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getOutputs().size() + recipe.getChancedOutputs().getChancedEntries().size();
         if (amount > getMaxOutputs()) {
             GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxOutputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                    getMaxOutputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI
                         .logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxOutputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                                amount, getMaxOutputs()), new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -513,13 +507,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getFluidInputs().size();
         if (amount > getMaxFluidInputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxFluidInputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
+                    getMaxFluidInputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(
                         String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxFluidInputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
+                                amount, getMaxFluidInputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -527,14 +520,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getFluidOutputs().size() + recipe.getChancedFluidOutputs().getChancedEntries().size();
         if (amount > getMaxFluidOutputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxFluidOutputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
+                    getMaxFluidOutputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(
                         String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxFluidOutputs()));
-                CraftTweakerAPI.logError("Stacktrace:",
-                        new IllegalArgumentException("Invalid number of Fluid Outputs"));
+                                amount, getMaxFluidOutputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -1008,7 +999,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                                              @NotNull Branch branchMap, int index, int count) {
         if (count >= ingredients.size()) return true;
         if (index >= ingredients.size()) {
-            throw new RuntimeException("Index out of bounds for recurseItemTreeAdd, should not happen");
+            throw new IllegalStateException("Index out of bounds for recurseItemTreeAdd, should not happen");
         }
         // Loop through NUMBER_OF_INGREDIENTS times.
 

@@ -225,8 +225,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R input(GTRecipeInput input) {
         if (input.getAmount() < 0) {
-            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
         } else {
             this.inputs.add(input);
         }
@@ -295,18 +294,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R inputNBT(GTRecipeInput input, NBTMatcher matcher, NBTCondition condition) {
         if (input.getAmount() < 0) {
-            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
             return (R) this;
         }
         if (matcher == null) {
-            GTLog.logger.error("NBTMatcher must not be null");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("NBTMatcher must not be null", new Throwable());
             return (R) this;
         }
         if (condition == null) {
-            GTLog.logger.error("NBTCondition must not be null");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("NBTCondition must not be null", new Throwable());
             return (R) this;
         }
         this.inputs.add(input.setNBTMatchingCondition(matcher, condition));
@@ -389,8 +385,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R inputs(ItemStack input) {
         if (input == null || input.isEmpty()) {
-            GTLog.logger.error("Input cannot be null or empty. Input: {}", input);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Input cannot be null or empty. Input: {}", input, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         } else {
             this.inputs.add(new GTRecipeItemInput(input));
@@ -401,8 +396,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R inputs(ItemStack... inputs) {
         for (ItemStack input : inputs) {
             if (input == null || input.isEmpty()) {
-                GTLog.logger.error("Inputs cannot contain null or empty ItemStacks. Inputs: {}", input);
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Inputs cannot contain null or empty ItemStacks. Inputs: {}", input,
+                        new Throwable());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
@@ -414,8 +409,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R inputStacks(Collection<ItemStack> inputs) {
         for (ItemStack input : inputs) {
             if (input == null || input.isEmpty()) {
-                GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input);
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input, new Throwable());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
@@ -426,8 +420,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R inputs(GTRecipeInput input) {
         if (input.getAmount() < 0) {
-            GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         } else {
             this.inputs.add(input);
@@ -438,8 +431,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R inputs(GTRecipeInput... inputs) {
         for (GTRecipeInput input : inputs) {
             if (input.getAmount() < 0) {
-                GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount());
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount(),
+                        new Throwable());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
@@ -451,8 +444,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R inputIngredients(Collection<GTRecipeInput> inputs) {
         for (GTRecipeInput input : inputs) {
             if (input.getAmount() < 0) {
-                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
@@ -501,8 +493,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R circuitMeta(int circuitNumber) {
         if (IntCircuitIngredient.CIRCUIT_MIN > circuitNumber || circuitNumber > IntCircuitIngredient.CIRCUIT_MAX) {
             GTLog.logger.error("Integrated Circuit Number cannot be less than {} and more than {}",
-                    IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid Integrated Circuit Number"));
+                    IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
@@ -590,8 +581,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (input != null && input.amount > 0) {
             this.fluidInputs.add(new GTRecipeFluidInput(input));
         } else if (input != null) {
-            GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", input.amount);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", input.amount, new Throwable());
         } else {
             GTLog.logger.error("FluidStack cannot be null.");
         }
@@ -604,8 +594,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             if (fluidStack != null && fluidStack.amount > 0) {
                 fluidIngredients.add(new GTRecipeFluidInput(fluidStack));
             } else if (fluidStack != null) {
-                GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", fluidStack.amount);
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", fluidStack.amount,
+                        new Throwable());
             } else {
                 GTLog.logger.error("FluidStack cannot be null.");
             }
@@ -648,8 +638,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
         if (0 >= chance || chance > ChancedOutputLogic.getMaxChancedValue()) {
             GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.",
-                    ChancedOutputLogic.getMaxChancedValue(), chance);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                    ChancedOutputLogic.getMaxChancedValue(), chance, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
@@ -696,8 +685,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
         if (0 >= chance || chance > ChancedOutputLogic.getMaxChancedValue()) {
             GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.",
-                    ChancedOutputLogic.getMaxChancedValue(), chance);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                    ChancedOutputLogic.getMaxChancedValue(), chance, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
@@ -934,31 +922,31 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
         }
         if (EUt == 0) {
-            GTLog.logger.error("EU/t cannot be equal to 0", new IllegalArgumentException());
+            GTLog.logger.error("EU/t cannot be equal to 0", new Throwable());
             if (isCTRecipe) {
-                CraftTweakerAPI.logError("EU/t cannot be equal to 0", new IllegalArgumentException());
+                CraftTweakerAPI.logError("EU/t cannot be equal to 0", new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (duration <= 0) {
-            GTLog.logger.error("Duration cannot be less or equal to 0", new IllegalArgumentException());
+            GTLog.logger.error("Duration cannot be less or equal to 0", new Throwable());
             if (isCTRecipe) {
-                CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new IllegalArgumentException());
+                CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (recipeMap != null) { // recipeMap can be null in tests
             if (category == null) {
-                GTLog.logger.error("Recipes must have a category", new IllegalArgumentException());
+                GTLog.logger.error("Recipes must have a category", new Throwable());
                 if (isCTRecipe) {
-                    CraftTweakerAPI.logError("Recipes must have a category", new IllegalArgumentException());
+                    CraftTweakerAPI.logError("Recipes must have a category", new Throwable());
                 }
                 recipeStatus = EnumValidationResult.INVALID;
             } else if (category.getRecipeMap() != this.recipeMap) {
-                GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
+                GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new Throwable());
                 if (isCTRecipe) {
                     CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap",
-                            new IllegalArgumentException());
+                            new Throwable());
                 }
                 recipeStatus = EnumValidationResult.INVALID;
             }

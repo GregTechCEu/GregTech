@@ -5,8 +5,6 @@ import java.util.Set;
 
 public interface IRecipePropertyStorage {
 
-    String STACKTRACE = "Stacktrace:";
-
     /**
      * Stores new {@link RecipeProperty} with value
      *
