@@ -58,14 +58,14 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     private boolean applyResearchProperty(ResearchPropertyData.ResearchEntry researchEntry) {
         if (!ConfigHolder.machines.enableResearch) return false;
         if (researchEntry == null) {
-            GTLog.logger.error("Assembly Line Research Entry cannot be empty.", new IllegalArgumentException());
+            GTLog.logger.error("Assembly Line Research Entry cannot be empty.", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
 
         if (!generatingRecipes) {
             GTLog.logger.error("Cannot generate recipes when using researchWithoutRecipe()",
-                    new IllegalArgumentException());
+                    new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
