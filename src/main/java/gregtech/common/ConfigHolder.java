@@ -162,7 +162,7 @@ public class ConfigHolder {
                 "Default: true" })
         public boolean allowTickAcceleration = true;
 
-        @Config.Comment({ "Whether to allow wallsharing for multiblocks.",
+        @Config.Comment({ "Whether to allow wallsharing for multiblocks as default behavior.",
                 "Warning - disabling this requires extra checks to be performed, impacting performance.",
                 "Default: true" })
         @Config.RequiresWorldRestart

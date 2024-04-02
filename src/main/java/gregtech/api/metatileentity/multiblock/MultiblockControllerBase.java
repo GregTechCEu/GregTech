@@ -330,7 +330,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
         if (context != null && !structureFormed) {
-            if (!ConfigHolder.machines.allowWallsharing) {
+            if (!this.allowsWallsharing()) {
                 Set<Long> keySet = this.structurePattern.cache.keySet();
                 for (long pos : keySet) {
                     if (checkIfLocationReserved(pos)) return;
@@ -614,6 +614,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public @Nullable Integer getDimensionID() {
         if (this.getWorld() != null) return this.getWorld().provider.getDimension();
         return null;
+    }
+
+    // todo tooltip on multis saying if this is enabled or disabled?
+    /**
+     * Whether this multi allows wallsharing.
+     * This is an OR-y operation; only if both multis disallow wallsharing will wallsharing be prevented.
+     */
+    public boolean allowsWallsharing() {
+        return ConfigHolder.machines.allowWallsharing;
     }
 
     protected static Map<Long, Set<Long>> getReservedLocationsForDimension(int dim) {
