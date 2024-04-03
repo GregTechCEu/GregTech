@@ -59,8 +59,7 @@ public class PipeCollectorWalker<T extends IPipeTile<?, ?>> extends PipeNetWalke
 
     @Override
     protected void checkNeighbour(T pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour,
-                                  @Nullable TileEntity neighbourTile) {
-    }
+                                  @Nullable TileEntity neighbourTile) {}
 
     @Override
     protected Class<T> getBasePipeClass() {
