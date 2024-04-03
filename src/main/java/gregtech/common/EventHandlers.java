@@ -12,6 +12,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.entities.EntityGTExplosive;
@@ -23,6 +24,7 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -54,6 +56,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -62,6 +65,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import appeng.entity.EntitySingularity;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
@@ -381,8 +386,13 @@ public class EventHandlers {
     public static void onExplosionDetonate(ExplosionEvent.Detonate event) {
         if (event.getExplosion().exploder instanceof EntityGTExplosive explosive) {
             if (explosive.dropsAllBlocks()) {
-                event.getAffectedEntities().removeIf(entity -> entity instanceof EntityItem);
+                event.getAffectedEntities().removeIf(entity -> entity instanceof EntityItem && !checkAEEntity(entity));
             }
         }
+    }
+
+    @Optional.Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
+    private static boolean checkAEEntity(Entity entity) {
+        return entity instanceof EntitySingularity;
     }
 }
