@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GradientUtil;
 import gregtech.api.util.Mods;
+import gregtech.common.pipelike.PipeCollectorWalker;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;
@@ -134,38 +135,27 @@ public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItem
                                   EnumFacing facing) {
         startPos = startPos.offset(facing);
         TileEntity connectedTe = world.getTileEntity(startPos);
-        int count = 0;
         boolean painted = false;
         ItemStack heldItem = player.getHeldItem(hand);
-        while (connectedTe instanceof IPipeTile<?, ?>connectedPipe && count < MAX_PIPE_TRAVERSAL_LENGTH) {
-            if (connectedPipe.getPaintingColor() != (this.color == null ? -1 : this.color.colorValue)) {
-                connectedPipe.setPaintingColor(this.color == null ? -1 : this.color.colorValue);
-                connectedPipe.scheduleRenderUpdate();
-                if (getUsesLeft(heldItem) == 1) {
-                    useItemDurability(player, hand, heldItem, empty.copy());
-                    return true;
-                }
-                // Off by one durability as the final use is handled by onItemUse, along with the use animation
-                if (painted) {
-                    useItemDurability(player, hand, heldItem, empty.copy());
-                }
-                painted = true;
-            }
-            if (connectedPipe.getNumConnections() == 2) {
-                int connections = connectedPipe.getConnections();
-                connections &= ~(1 << facing.getOpposite().getIndex());
-                for (EnumFacing other : EnumFacing.VALUES) {
-                    if ((connections & (1 << other.getIndex())) != 0) {
-                        facing = other;
-                        startPos = startPos.offset(facing);
-                        connectedTe = world.getTileEntity(startPos);
-                        count++;
-                        break;
+        if (connectedTe instanceof IPipeTile<?, ?>startPipe) {
+            List<IPipeTile<?, ?>> pipes = PipeCollectorWalker.collectPipeNet(world, startPos, startPipe,
+                    Math.min(MAX_PIPE_TRAVERSAL_LENGTH, getUsesLeft(heldItem)));
+            for (IPipeTile<?, ?> pipe : pipes) {
+                if (pipe.getPaintingColor() != (this.color == null ? -1 : this.color.colorValue)) {
+                    pipe.setPaintingColor(this.color == null ? -1 : this.color.colorValue);
+                    pipe.scheduleRenderUpdate();
+                    if (getUsesLeft(heldItem) == 1) {
+                        useItemDurability(player, hand, heldItem, empty.copy());
+                        return true;
                     }
+                    // Off by one durability as the final use is handled by onItemUse, along with the use animation
+                    if (painted) {
+                        useItemDurability(player, hand, heldItem, empty.copy());
+                    }
+                    painted = true;
                 }
-            } else {
-                break;
             }
+
         }
         return painted;
     }
