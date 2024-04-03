@@ -56,7 +56,6 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -391,8 +390,7 @@ public class EventHandlers {
         }
     }
 
-    @Optional.Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     private static boolean checkAEEntity(Entity entity) {
-        return entity instanceof EntitySingularity;
+        return Mods.AppliedEnergistics2.isModLoaded() && entity instanceof EntitySingularity;
     }
 }
