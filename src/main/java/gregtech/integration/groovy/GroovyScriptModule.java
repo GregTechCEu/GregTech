@@ -2,11 +2,14 @@ package gregtech.integration.groovy;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.unification.Element;
+import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
@@ -20,8 +23,6 @@ import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.integration.IntegrationSubmodule;
-import gregtech.integration.crafttweaker.material.MaterialExpansion;
-import gregtech.integration.crafttweaker.material.MaterialPropertyExpansion;
 import gregtech.modules.GregTechModules;
 
 import net.minecraft.item.ItemStack;
@@ -35,24 +36,25 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import com.cleanroommc.groovyscript.GroovyScript;
 import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.GroovyPlugin;
-import com.cleanroommc.groovyscript.api.IGameObjectHandler;
+import com.cleanroommc.groovyscript.api.IGameObjectParser;
+import com.cleanroommc.groovyscript.api.Result;
 import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
-import com.cleanroommc.groovyscript.event.EventBusType;
-import com.cleanroommc.groovyscript.event.GroovyEventManager;
-import com.cleanroommc.groovyscript.gameobjects.GameObjectHandlerManager;
+import com.cleanroommc.groovyscript.gameobjects.GameObjectHandler;
 import com.cleanroommc.groovyscript.helper.EnumHelper;
-import com.cleanroommc.groovyscript.sandbox.LoadStage;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import com.google.common.collect.ImmutableList;
-import groovy.lang.Closure;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.eclipse.lsp4j.CompletionItem;
+import org.eclipse.lsp4j.CompletionItemKind;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -68,7 +70,7 @@ import java.util.function.Supplier;
 public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPlugin {
 
     private static GroovyContainer<?> modSupportContainer;
-    private static final Map<String, Map<String, ItemStack>> metaItems = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<String, Map<String, ItemStack>> metaItems = new Object2ObjectOpenHashMap<>();
 
     @NotNull
     @Override
@@ -87,12 +89,20 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     }
 
     public static <T extends Enum<T>> T parseAndValidateEnumValue(Class<T> clazz, String raw, String type) {
+        return parseAndValidateEnumValue(clazz, raw, type, false);
+    }
+
+    @Contract("_,_,_,true -> !null")
+    public static <T extends Enum<T>> T parseAndValidateEnumValue(Class<T> clazz, String raw, String type,
+                                                                  boolean crash) {
         T t = EnumHelper.valueOfNullable(clazz, raw, false);
         if (t == null) {
-            GroovyLog.get().error("Can't find {} for {} in material builder. Valid values are {};",
+            String msg = GroovyLog.format("Can't find {} for {} in material builder. Valid values are {};",
                     type,
                     raw,
                     Arrays.toString(clazz.getEnumConstants()));
+            if (crash) throw new NoSuchElementException(msg);
+            GroovyLog.get().error(msg);
             return null;
         }
         return t;
@@ -216,57 +226,90 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         return "GregTech";
     }
 
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     @Override
     public @Nullable ModPropertyContainer createModPropertyContainer() {
-        return new ModPropertyContainer() {
-
-            public void materialEvent(EventPriority priority, Closure<?> eventListener) {
-                if (isCurrentlyRunning() && GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
-                    GroovyLog.get().error("GregTech's material event can only be used in pre init!");
-                    return;
-                }
-                GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, MaterialEvent.class,
-                        eventListener);
-            }
-
-            public void materialEvent(Closure<?> eventListener) {
-                materialEvent(EventPriority.NORMAL, eventListener);
-            }
-
-            public void lateMaterialEvent(EventPriority priority, Closure<?> eventListener) {
-                if (isCurrentlyRunning() && GroovyScript.getSandbox().getCurrentLoader() != LoadStage.PRE_INIT) {
-                    GroovyLog.get().error("GregTech's material event can only be used in pre init!");
-                    return;
-                }
-                GroovyEventManager.INSTANCE.listen(priority, EventBusType.FORGE, PostMaterialEvent.class,
-                        eventListener);
-            }
-
-            public void lateMaterialEvent(Closure<?> eventListener) {
-                materialEvent(EventPriority.NORMAL, eventListener);
-            }
-        };
+        return new PropertyContainer();
     }
 
     @Override
     public void onCompatLoaded(GroovyContainer<?> groovyContainer) {
-        modSupportContainer = groovyContainer;
-        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "recipemap",
-                IGameObjectHandler.wrapStringGetter(RecipeMap::getByName));
+        GroovyScriptModule.modSupportContainer = groovyContainer;
+        GameObjectHandler.builder("recipemap", RecipeMap.class)
+                .mod(GTValues.MODID)
+                .parser(IGameObjectParser.wrapStringGetter(RecipeMap::getByName))
+                .completerOfNamed(RecipeMap::getRecipeMaps, RecipeMap::getUnlocalizedName)
+                .register();
+        GameObjectHandler.builder("material", Material.class)
+                .mod(GTValues.MODID)
+                .parser(IGameObjectParser.wrapStringGetter(GregTechAPI.materialManager::getMaterial))
+                .completerOfNamed(GregTechAPI.materialManager::getRegisteredMaterials,
+                        mat -> mat.getResourceLocation().toString())
+                .register();
 
-        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "material",
-                IGameObjectHandler.wrapStringGetter(GregTechAPI.materialManager::getMaterial));
+        GameObjectHandler.builder("oreprefix", OrePrefix.class)
+                .mod(GTValues.MODID)
+                .parser(IGameObjectParser.wrapStringGetter(OrePrefix::getPrefix))
+                .completerOfNamed(OrePrefix::values, v -> v.name)
+                .register();
 
-        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "oreprefix",
-                IGameObjectHandler.wrapStringGetter(OrePrefix::getPrefix));
+        GameObjectHandler.builder("metaitem", ItemStack.class)
+                .mod(GTValues.MODID)
+                .parser(IGameObjectParser.wrapStringGetter(GroovyScriptModule::getMetaItem))
+                .completer((paramIndex, items) -> {
+                    if (paramIndex != 0) return;
+                    for (var iterator = metaItems.object2ObjectEntrySet().fastIterator(); iterator.hasNext();) {
+                        var entry = iterator.next();
+                        String mod = entry.getKey();
+                        for (String key : entry.getValue().keySet()) {
+                            var item = new CompletionItem(mod + ":" + key);
+                            item.setKind(CompletionItemKind.Constant);
+                            items.add(item);
+                        }
+                    }
+                })
+                .register();
 
-        GameObjectHandlerManager.registerGameObjectHandler(GTValues.MODID, "metaitem",
-                IGameObjectHandler.wrapStringGetter(GroovyScriptModule::getMetaItem), ItemStack.EMPTY);
+        GameObjectHandler.builder("element", Element.class)
+                .mod(GTValues.MODID)
+                .parser((s, args) -> {
+                    Element element = Elements.get(s);
+                    if (element != null) return Result.some(element);
+                    if (s.length() <= 6) {
+                        for (Element element1 : Elements.getAllElements()) {
+                            if (element1.symbol.equals(s)) {
+                                return Result.some(element1);
+                            }
+                        }
+                    }
+                    return Result.error();
+                })
+                .completerOfNamed(Elements::getAllElements, Element::getName)
+                .register();
 
         ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
         ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);
         ExpansionHelper.mixinClass(Material.Builder.class, GroovyMaterialBuilderExpansion.class);
         ExpansionHelper.mixinMethod(RecipeBuilder.class, GroovyExpansions.class, "property");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "materialBuilder");
+        ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "toolBuilder");
+        ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
+        ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "toolBuilder");
+        ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
+        ExpansionHelper.mixinMethod(FluidBuilder.class, GroovyExpansions.class, "acidic");
+    }
+
+    protected static boolean checkFrozen(String description) {
+        if (!GregTechAPI.materialManager.canModifyMaterials()) {
+            GroovyLog.get().error("Cannot {} now, must be done in preInit loadStage and material event", description);
+            return true;
+        }
+        return false;
+    }
+
+    protected static void logError(Material m, String cause, String type) {
+        GroovyLog.get().error(
+                "Cannot {0} of a Material with no {1}! Try calling \"add{1}\" in your late material event first if this is intentional. Material: {2}",
+                cause, type, m.getUnlocalizedName());
     }
 }
