@@ -532,6 +532,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CLIPBOARD;
 
     public static ArmorMetaItem<?>.ArmorMetaValueItem NIGHTVISION_GOGGLES;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem SIMPLE_GAS_MASK;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem GAS_MASK;
 
     public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_CHESTPLATE;
     public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_LEGGINGS;
