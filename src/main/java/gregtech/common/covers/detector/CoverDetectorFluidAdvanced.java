@@ -92,7 +92,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         // "cover.generic.advanced_detector.invert_label"));
         group.addWidget(
                 new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
+                        "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
                                 .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
         group.addWidget(
                 new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
@@ -145,7 +145,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         for (IFluidTankProperties properties : tankProperties) {
             FluidStack contents = properties.getContents();
 
-            if (contents != null && fluidFilter.testFluidStack(contents))
+            if (contents != null && fluidFilter.test(contents))
                 storedFluid += contents.amount;
         }
 
