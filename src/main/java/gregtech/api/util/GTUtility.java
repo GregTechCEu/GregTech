@@ -707,15 +707,19 @@ public class GTUtility {
         return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
     }
 
-    public static boolean canSeeSunClearly(World world, BlockPos blockPos) {
-        if (!world.canSeeSky(blockPos.up())) {
+    /**
+     * @param world    the world containing the block
+     * @param blockPos the position of the block to check
+     * @return if the block can see the sun clearly
+     */
+    public static boolean canSeeSunClearly(@NotNull World world, @NotNull BlockPos blockPos) {
+        BlockPos up = blockPos.up();
+        if (!world.canSeeSky(up)) {
             return false;
         }
-        Biome biome = world.getBiome(blockPos.up());
-        if (world.isRaining()) {
-            if (biome.canRain() || biome.getEnableSnow()) {
-                return false;
-            }
+        Biome biome = world.getBiome(up);
+        if (world.isRaining() && (biome.canRain() || biome.getEnableSnow())) {
+            return false;
         }
         Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
         if (biomeTypes.contains(BiomeDictionary.Type.END)) {
