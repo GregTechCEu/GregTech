@@ -39,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
-import static gregtech.api.capability.GregtechDataCodes.TAG_KEY_PAINTING_COLOR;
 
 public class MetaTileEntityCrate extends MetaTileEntity {
 
@@ -64,11 +63,6 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @Override
     public boolean hasFrontFacing() {
         return false;
-    }
-
-    @Override
-    public int getLightOpacity() {
-        return 1;
     }
 
     @Override

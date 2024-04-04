@@ -481,7 +481,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public int getLightOpacity(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        return metaTileEntity == null ? 0 : metaTileEntity.getLightOpacity();
+        return metaTileEntity == null ? 255 : metaTileEntity.getLightOpacity();
     }
 
     @Override
