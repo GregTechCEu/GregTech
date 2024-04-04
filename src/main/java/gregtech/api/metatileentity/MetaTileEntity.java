@@ -789,18 +789,20 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
-        if (!allowTickAcceleration()) {
+        if (!getWorld().isRemote && !allowTickAcceleration()) {
             int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
             if (currentTick == lastTick) {
                 return;
             }
             lastTick = currentTick;
         }
+
         for (MTETrait mteTrait : this.mteTraits.values()) {
             if (shouldUpdate(mteTrait)) {
                 mteTrait.update();
             }
         }
+
         if (!getWorld().isRemote) {
             updateCovers();
         } else {
