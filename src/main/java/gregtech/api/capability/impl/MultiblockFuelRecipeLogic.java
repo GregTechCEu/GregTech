@@ -78,6 +78,11 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         return Integer.MAX_VALUE;
     }
 
+    @Override
+    protected long getMaxParallelVoltage() {
+        return getMaxVoltage();
+    }
+
     /**
      * Boost the energy production.
      * Should not change the state of the workable logic. Only read current values.

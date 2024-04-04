@@ -10,6 +10,7 @@ public enum ManualImportExportMode implements IStringSerializable {
     FILTERED("cover.universal.manual_import_export.mode.filtered"),
     UNFILTERED("cover.universal.manual_import_export.mode.unfiltered");
 
+    public static final ManualImportExportMode[] VALUES = values();
     public final String localeName;
 
     ManualImportExportMode(String localeName) {

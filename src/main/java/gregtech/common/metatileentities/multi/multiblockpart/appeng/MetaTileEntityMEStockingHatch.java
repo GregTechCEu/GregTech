@@ -263,8 +263,34 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.stocking_fluid.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me_import_fluid_hatch.configs.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.stocking_fluid.tooltip.2"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
+    }
+
+    @Override
+    protected NBTTagCompound writeConfigToTag() {
+        if (!autoPull) {
+            NBTTagCompound tag = super.writeConfigToTag();
+            tag.setBoolean("AutoPull", false);
+            return tag;
+        }
+        // if in auto-pull, no need to write actual configured slots, but still need to write the ghost circuit
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setBoolean("AutoPull", true);
+        return tag;
+    }
+
+    @Override
+    protected void readConfigFromTag(NBTTagCompound tag) {
+        if (tag.getBoolean("AutoPull")) {
+            // if being set to auto-pull, no need to read the configured slots
+            this.setAutoPull(true);
+            return;
+        }
+        // set auto pull first to avoid issues with clearing the config after reading from the data stick
+        this.setAutoPull(false);
+        super.readConfigFromTag(tag);
     }
 
     private static class ExportOnlyAEStockingFluidSlot extends ExportOnlyAEFluidSlot {

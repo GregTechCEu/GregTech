@@ -358,8 +358,36 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip.2"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
+    }
+
+    @Override
+    protected NBTTagCompound writeConfigToTag() {
+        if (!autoPull) {
+            NBTTagCompound tag = super.writeConfigToTag();
+            tag.setBoolean("AutoPull", false);
+            return tag;
+        }
+        // if in auto-pull, no need to write actual configured slots, but still need to write the ghost circuit
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setBoolean("AutoPull", true);
+        tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
+        return tag;
+    }
+
+    @Override
+    protected void readConfigFromTag(NBTTagCompound tag) {
+        if (tag.getBoolean("AutoPull")) {
+            // if being set to auto-pull, no need to read the configured slots
+            this.setAutoPull(true);
+            this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
+            return;
+        }
+        // set auto pull first to avoid issues with clearing the config after reading from the data stick
+        this.setAutoPull(false);
+        super.readConfigFromTag(tag);
     }
 
     private static class ExportOnlyAEStockingItemList extends ExportOnlyAEItemList {
