@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
      dependencies = "required:forge@[14.23.5.2847,);" + "required-after:codechickenlib@[3.2.3,);" +
              "after:appliedenergistics2;" + "after:forestry;" + "after:extrabees;" + "after:extratrees;" +
              "after:genetics;" + "after:magicbees;" + "after:jei@[4.15.0,);" + "after:crafttweaker@[4.1.20,);" +
-             "after:groovyscript@[0.7.0,);" + "after:theoneprobe;" + "after:hwyla;")
+             "after:groovyscript@[1.0.1,);" + "after:theoneprobe;" + "after:hwyla;")
 public class GregTechMod {
 
     // Hold this so that we can reference non-interface methods without
