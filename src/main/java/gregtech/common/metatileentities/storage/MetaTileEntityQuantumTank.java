@@ -40,6 +40,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -134,9 +135,17 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
                     updatePreviousFluid(null);
                 } else if (previousFluid.getFluid().equals(currentFluid.getFluid()) &&
                         previousFluid.amount != currentFluid.amount) {
+                            int currentFill = MathHelper
+                                    .floor(16 * ((float) currentFluid.amount) / fluidTank.getCapacity());
+                            int previousFill = MathHelper
+                                    .floor(16 * ((float) previousFluid.amount) / fluidTank.getCapacity());
                             // tank has fluid with changed amount
                             previousFluid.amount = currentFluid.amount;
-                            writeCustomData(UPDATE_FLUID_AMOUNT, buf -> buf.writeInt(currentFluid.amount));
+                            writeCustomData(UPDATE_FLUID_AMOUNT, buf -> {
+                                buf.writeInt(currentFluid.amount);
+                                buf.writeBoolean(currentFill != previousFill);
+                            });
+
                         } else
                     if (!previousFluid.equals(currentFluid)) {
                         // tank has a different fluid from before
@@ -266,7 +275,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
         Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
                 ArrayUtils.add(pipeline,
                         new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
-                this.getFrontFacing(), this.tier);
+                this);
         Textures.QUANTUM_TANK_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
@@ -282,6 +291,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.fluidTank.getFluid() == null || this.fluidTank.getFluid().amount == 0)
             return;
+
         QuantumStorageRenderer.renderTankAmount(x, y, z, this.getFrontFacing(), this.fluidTank.getFluid().amount);
     }
 
@@ -457,10 +467,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
         } else if (dataId == UPDATE_FLUID_AMOUNT) {
             // amount must always be read even if it cannot be used to ensure the reader index advances
             int amount = buf.readInt();
+            boolean updateRendering = buf.readBoolean();
             FluidStack stack = fluidTank.getFluid();
             if (stack != null) {
                 stack.amount = Math.min(amount, fluidTank.getCapacity());
-                scheduleRenderUpdate();
+                if (updateRendering)
+                    scheduleRenderUpdate();
             }
         } else if (dataId == UPDATE_IS_VOIDING) {
             setVoiding(buf.readBoolean());
