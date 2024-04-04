@@ -3,6 +3,7 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
+import gregtech.api.persistence.PersistentData;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
@@ -49,6 +50,7 @@ public class GregTechMod {
 
     @EventHandler
     public void onConstruction(FMLConstructionEvent event) {
+        PersistentData.instance().init();
         moduleManager = ModuleManager.getInstance();
         GregTechAPI.moduleManager = moduleManager;
         moduleManager.registerContainer(new GregTechModules());
