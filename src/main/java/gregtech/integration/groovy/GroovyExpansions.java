@@ -1,8 +1,13 @@
 package gregtech.integration.groovy;
 
+import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.unification.Element;
+import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.unification.material.properties.ToolProperty;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -38,5 +43,27 @@ public class GroovyExpansions {
             path = s;
         }
         return materialBuilder(event, id, new ResourceLocation(domain, path));
+    }
+
+    public static ToolProperty.Builder toolBuilder(MaterialEvent event, float harvestSpeed, float attackDamage,
+                                                   int durability, int harvestLevel) {
+        return ToolProperty.Builder.of(harvestSpeed, attackDamage, durability, harvestLevel);
+    }
+
+    public static ToolProperty.Builder toolBuilder(MaterialEvent event) {
+        return toolBuilder(event, 1.0F, 1.0F, 100, 2);
+    }
+
+    public static FluidBuilder fluidBuilder(MaterialEvent event) {
+        return new FluidBuilder();
+    }
+
+    public static Element addElement(MaterialEvent event, long protons, long neutrons, long halfLifeSeconds,
+                                     String decayTo, String name, String symbol, boolean isIsotope) {
+        return Elements.add(protons, neutrons, halfLifeSeconds, decayTo, name, symbol, isIsotope);
+    }
+
+    public static FluidBuilder acidic(FluidBuilder builder) {
+        return builder.attributes(FluidAttributes.ACID);
     }
 }
