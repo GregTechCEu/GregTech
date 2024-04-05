@@ -24,7 +24,8 @@ public class MultiblockDisplayText {
      * <br>
      * If your multiblock does not explicitly allow wallsharing, use the {@link #builder(List, boolean, BlockPos)}
      * override instead.
-     * <br><br>
+     * <br>
+     * <br>
      * This WILL NOT BE REMOVED due to deprecation,
      * the deprecation tag is merely encouragement to instead use the new preferred override.
      */
