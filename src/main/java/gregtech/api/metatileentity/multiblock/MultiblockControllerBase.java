@@ -75,9 +75,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
     protected boolean isFlipped;
 
-    // dimension ids, reserved locations in a dimension, set of reserving locations for a location
-    protected final static Map<Integer, Map<Long, Set<Long>>> globalReservedLocations = new Int2ObjectOpenHashMap<>();
+    // dimension ids, reserved locations in a dimension, location that is reserving a location
+    protected final static Map<Integer, Map<Long, Long>> globalReservedLocations = new Int2ObjectOpenHashMap<>();
     protected final Set<Long> selfReservedLocations = new LongOpenHashSet();
+    private BlockPos wallshareBlocker = null;
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -333,8 +334,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (!this.allowsWallsharing()) {
                 Set<Long> keySet = this.structurePattern.cache.keySet();
                 for (long pos : keySet) {
-                    if (checkIfLocationReserved(pos)) return;
+                    Long reservation = checkIfLocationReserved(pos);
+                    if (reservation != null) {
+                        this.wallshareBlocker = BlockPos.fromLong(reservation);
+                        return;
+                    }
                 }
+                this.wallshareBlocker = null;
                 for (long pos : keySet) {
                     reserveLocation(pos);
                 }
@@ -625,23 +631,31 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return ConfigHolder.machines.allowWallsharing;
     }
 
-    protected static Map<Long, Set<Long>> getReservedLocationsForDimension(int dim) {
+    public boolean isWallshareBlocked() {
+        return this.wallshareBlocker != null;
+    }
+
+    public BlockPos getWallshareBlocker() {
+        return this.wallshareBlocker;
+    }
+
+    protected static Map<Long, Long> getReservedLocationsForDimension(int dim) {
         globalReservedLocations.putIfAbsent(dim, new Long2ObjectOpenHashMap<>());
         return globalReservedLocations.get(dim);
     }
 
     public static boolean checkIfLocationReserved(BlockPos location, int dim) {
-        return checkIfLocationReserved(location.toLong(), dim);
+        return checkIfLocationReserved(location.toLong(), dim) != null;
     }
 
-    protected boolean checkIfLocationReserved(long location) {
+    protected @Nullable Long checkIfLocationReserved(long location) {
         Integer dim = getDimensionID();
         if (dim != null) return checkIfLocationReserved(location, dim);
-        else return false;
+        else return null;
     }
 
-    protected static boolean checkIfLocationReserved(long location, int dim) {
-        return !getReservedLocationsForDimension(dim).getOrDefault(location, Collections.emptySet()).isEmpty();
+    protected static @Nullable Long checkIfLocationReserved(long location, int dim) {
+        return getReservedLocationsForDimension(dim).get(location);
     }
 
     public void reserveLocation(BlockPos location) {
@@ -653,24 +667,21 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (dim == null) return;
         selfReservedLocations.add(location);
         getReservedLocationsForDimension(dim).compute(location, (a, b) -> {
-            if (b == null) b = new LongOpenHashSet();
-            b.add(this.getPos().toLong());
-            return b;
+            if (b == null) return this.getPos().toLong();
+            throw new IllegalStateException("(WALLSHARE PREVENTION) Tried to reserve an already reserved location!");
         });
     }
 
     public void unreserveLocation(BlockPos location) {
-        Integer dim = getDimensionID();
-        if (dim == null) return;
-        unreserveLocation(location.toLong());
-        selfReservedLocations.remove(location.toLong());
+        if (selfReservedLocations.remove(location.toLong()))
+            unreserveLocation(location.toLong());
     }
 
     protected void unreserveLocation(long location) {
         Integer dim = getDimensionID();
         if (dim == null) return;
-        getReservedLocationsForDimension(dim)
-                .getOrDefault(location, Collections.emptySet()).remove(this.getPos().toLong());
+        if (getReservedLocationsForDimension(dim).remove(location) == null)
+            GTLog.logger.warn("(WALLSHARE PREVENTION) A location wasn't reserved when trying to unreserve it.");
     }
 
     protected void unreserveLocations() {
