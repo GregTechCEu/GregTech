@@ -140,9 +140,10 @@ public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItem
         if (connectedTe instanceof IPipeTile<?, ?>startPipe) {
             List<IPipeTile<?, ?>> pipes = PipeCollectorWalker.collectPipeNet(world, startPos, startPipe,
                     Math.min(MAX_PIPE_TRAVERSAL_LENGTH, getUsesLeft(heldItem)));
+            int colour = this.color == null ? -1 : this.color.colorValue;
             for (IPipeTile<?, ?> pipe : pipes) {
-                if (pipe.getPaintingColor() != (this.color == null ? -1 : this.color.colorValue)) {
-                    pipe.setPaintingColor(this.color == null ? -1 : this.color.colorValue);
+                if (pipe.getPaintingColor() != colour) {
+                    pipe.setPaintingColor(colour);
                     pipe.scheduleRenderUpdate();
                     if (getUsesLeft(heldItem) == 1) {
                         useItemDurability(player, hand, heldItem, empty.copy());

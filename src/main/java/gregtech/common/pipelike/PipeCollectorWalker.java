@@ -18,13 +18,12 @@ import java.util.List;
 public class PipeCollectorWalker<T extends IPipeTile<?, ?>> extends PipeNetWalker<T> {
 
     @NotNull
-    @SuppressWarnings("unchecked")
     public static List<IPipeTile<?, ?>> collectPipeNet(World world, BlockPos sourcePipe, IPipeTile<?, ?> pipe,
                                                        int limit) {
         PipeCollectorWalker<? extends IPipeTile<?, ?>> walker = (PipeCollectorWalker<? extends IPipeTile<?, ?>>) new PipeCollectorWalker<>(
                 world, sourcePipe, 0, pipe.getClass());
         walker.traversePipeNet(limit);
-        return walker.isFailed() ? Collections.EMPTY_LIST : Collections.unmodifiableList(walker.pipes);
+        return walker.isFailed() ? Collections.emptyList() : Collections.unmodifiableList(walker.pipes);
     }
 
     public static List<IPipeTile<?, ?>> collectPipeNet(World world, BlockPos sourcePipe, IPipeTile<?, ?> pipe) {
