@@ -8,6 +8,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -558,5 +559,9 @@ public class FissionReactor {
 
     public void addComponent(ReactorComponent component, int x, int y) {
         reactorLayout[x][y] = component;
+    }
+
+    public void writeToNBT(NBTTagCompound tagCompound) {
+
     }
 }

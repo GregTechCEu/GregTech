@@ -229,14 +229,25 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
             // Fuel handling
             if (this.fissionReactor.fuelDepletion == 1.) {
-                boolean hasEmpty = false;
+                boolean needsOutput = fissionReactor.prevFuelDepletion != 1.;
+                boolean canWork = true;
                 for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                    if (fuelImport.getStackHandler().extractItem(0, 1, true).isEmpty()) hasEmpty = true;
+                    canWork &= !fuelImport.getStackHandler().extractItem(0, 1, true).isEmpty();
+                    if (needsOutput) {
+                        canWork &= ((MetaTileEntityFuelRodImportHatch) fuelImport).getExportHatch(this.height - 1)
+                                .getExportItems().insertItem(0,
+                                        OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
+                                .isEmpty();
+                    }
                 }
-                if (!hasEmpty) {
+                if (canWork) {
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                        ItemStack is = fuelImport.getStackHandler().extractItem(0, 1, false);
-
+                        fuelImport.getStackHandler().extractItem(0, 1, false);
+                        if (needsOutput) {
+                            ((MetaTileEntityFuelRodImportHatch) fuelImport).getExportHatch(this.height - 1)
+                                    .getExportItems().insertItem(0,
+                                            OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), false);
+                        }
                         this.fissionReactor.fuelMass += 60;
                     }
                     this.fissionReactor.fuelDepletion = 0.;
@@ -461,6 +472,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         data.setInteger("heightTop", this.heightTop);
         data.setInteger("heightBottom", this.heightBottom);
         data.setBoolean("locked", this.lockingState == LockingState.LOCKED);
+
         return super.writeToNBT(data);
     }
 
@@ -613,8 +625,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                             MaterialStack mat = OreDictUnifier.getMaterial(lockedFuel);
                             if (mat != null && OreDictUnifier.getPrefix(lockedFuel) == OrePrefix.fuelRod) {
                                 FissionFuelProperty property = mat.material.getProperty(PropertyKey.FISSION_FUEL);
-                                if (property != null)
+                                if (property != null) {
                                     component = new FuelRod(property.getMaxTemperature(), 1, property, 650, 3);
+                                    fuelIn.setFuel(mat.material);
+                                }
                             }
                         }
                     } else if (mte instanceof MetaTileEntityControlRodPort controlIn) {

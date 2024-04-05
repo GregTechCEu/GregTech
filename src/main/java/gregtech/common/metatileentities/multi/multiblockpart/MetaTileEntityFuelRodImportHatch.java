@@ -16,7 +16,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,11 +35,13 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
 
 public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNotifiablePart
-                                              implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
-                                              IControllable, IFissionReactorHatch {
+        implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
+                   IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
+    private Material mat;
+    public MetaTileEntityFuelRodExportHatch pairedHatch;
 
     public MetaTileEntityFuelRodImportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, false);
@@ -116,17 +117,8 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     public boolean checkValidity(int depth) {
-        BlockPos pos = this.getPos();
-        for (int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) !=
-                    MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
-                return false;
-            }
-        }
-        if (getWorld().getTileEntity(pos.offset(EnumFacing.DOWN, depth)) instanceof IGregTechTileEntity gtTe) {
-            return gtTe.getMetaTileEntity().metaTileEntityId.equals(MetaTileEntities.FUEL_ROD_OUTPUT.metaTileEntityId);
-        }
-        return false;
+        this.pairedHatch = getExportHatch(depth);
+        return pairedHatch != null;
     }
 
     @Override
@@ -171,14 +163,31 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     public Material getFuel() {
-        return null;
+        return this.mat;
     }
 
     @Override
-    public void setFuel(Material material) {}
+    public void setFuel(Material material) {this.mat = material;}
 
     @Override
     public LockableItemStackHandler getStackHandler() {
         return this.getLockedImport();
+    }
+
+    public MetaTileEntityFuelRodExportHatch getExportHatch(int depth) {
+        BlockPos pos = this.getPos();
+        for (int i = 1; i < depth; i++) {
+            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) !=
+                    MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
+                return null;
+            }
+        }
+        if (getWorld().getTileEntity(pos.offset(EnumFacing.DOWN, depth)) instanceof IGregTechTileEntity gtTe) {
+            MetaTileEntity mte = gtTe.getMetaTileEntity();
+            if (mte instanceof MetaTileEntityFuelRodExportHatch) {
+                return (MetaTileEntityFuelRodExportHatch) mte;
+            }
+        }
+        return null;
     }
 }
