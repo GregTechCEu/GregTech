@@ -11,29 +11,26 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.function.Function;
 
 public class PipeCollectorWalker<T extends IPipeTile<?, ?>> extends PipeNetWalker<T> {
 
-    @NotNull
-    public static List<IPipeTile<?, ?>> collectPipeNet(World world, BlockPos sourcePipe, IPipeTile<?, ?> pipe,
-                                                       int limit) {
+    public static void collectPipeNet(World world, BlockPos sourcePipe, IPipeTile<?, ?> pipe,
+                                      Function<IPipeTile<?, ?>, Boolean> pipeFunction) {
         PipeCollectorWalker<? extends IPipeTile<?, ?>> walker = (PipeCollectorWalker<? extends IPipeTile<?, ?>>) new PipeCollectorWalker<>(
                 world, sourcePipe, 0, pipe.getClass());
-        walker.traversePipeNet(limit);
-        return walker.isFailed() ? Collections.emptyList() : Collections.unmodifiableList(walker.pipes);
-    }
-
-    public static List<IPipeTile<?, ?>> collectPipeNet(World world, BlockPos sourcePipe, IPipeTile<?, ?> pipe) {
-        // Default limit for a pipenet walker
-        return collectPipeNet(world, sourcePipe, pipe, 32768);
+        walker.pipeFunction = pipeFunction;
+        walker.traversePipeNet();
     }
 
     // I love type erasure
     private final Class<T> basePipeClass;
-    private List<T> pipes = new ArrayList<>();
+    /**
+     * Function to run on every pipe
+     * If false is returned then halt the walker
+     */
+    private Function<IPipeTile<?, ?>, @NotNull Boolean> pipeFunction;
+
     private BlockPos sourcePipe;
 
     protected PipeCollectorWalker(World world, BlockPos sourcePipe, int walkedBlocks, Class<T> basePipeClass) {
@@ -46,14 +43,16 @@ public class PipeCollectorWalker<T extends IPipeTile<?, ?>> extends PipeNetWalke
     protected PipeNetWalker<T> createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos,
                                                int walkedBlocks) {
         PipeCollectorWalker<T> walker = new PipeCollectorWalker<>(world, nextPos, walkedBlocks, this.basePipeClass);
-        walker.pipes = pipes;
+        walker.pipeFunction = pipeFunction;
         walker.sourcePipe = sourcePipe;
         return walker;
     }
 
     @Override
     protected void checkPipe(T pipeTile, BlockPos pos) {
-        this.pipes.add(pipeTile);
+        if (this.pipeFunction != null && !this.pipeFunction.apply(pipeTile)) {
+            this.root.stop();
+        }
     }
 
     @Override

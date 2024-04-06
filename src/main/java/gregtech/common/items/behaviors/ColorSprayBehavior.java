@@ -1,6 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -22,14 +21,16 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
-import codechicken.lib.raytracer.RayTracer;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +42,6 @@ public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItem
     private final ItemStack empty;
     private final EnumDyeColor color;
     private final Pair<Color, Color> durabilityBarColors;
-    private static final int MAX_PIPE_TRAVERSAL_LENGTH = 256;
 
     public ColorSprayBehavior(ItemStack empty, int totalUses, int color) {
         super(totalUses);
@@ -99,23 +99,8 @@ public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItem
             return true;
         }
         TileEntity te = world.getTileEntity(pos);
-        if (player.isSneaking() && te instanceof IPipeTile<?, ?>mainPipe) {
-            RayTraceResult hitResult = RayTracer.retraceBlock(world, player, pos);
-            if (hitResult != null) {
-                EnumFacing facing = CoverRayTracer.determineGridSideHit(hitResult);
-                if (facing != null && mainPipe.isConnected(facing)) {
-                    boolean paintedOthers = traversePipes(player, world, hand, pos, facing);
-                    if (mainPipe.getPaintingColor() != this.color.colorValue) {
-                        mainPipe.setPaintingColor(this.color.colorValue);
-                        // Account for traversePipes having the durability used off by one
-                        if (paintedOthers) {
-                            ItemStack heldItem = player.getHeldItem(hand);
-                            useItemDurability(player, hand, heldItem, empty.copy());
-                        }
-                        return true;
-                    } else return paintedOthers;
-                }
-            }
+        if (player.isSneaking() && te instanceof IPipeTile<?, ?>) {
+            return traversePipes(player, world, hand, pos);
         }
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             if (te instanceof TileCableBus cable) {
@@ -131,34 +116,38 @@ public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItem
 
     // note: automatically uses durability from recolouring pipes, apart from the last use, as this allows for proper
     // animation of the item's use
-    private boolean traversePipes(EntityPlayer player, World world, EnumHand hand, BlockPos startPos,
-                                  EnumFacing facing) {
-        startPos = startPos.offset(facing);
+    private boolean traversePipes(EntityPlayer player, World world, EnumHand hand, BlockPos startPos) {
         TileEntity connectedTe = world.getTileEntity(startPos);
-        boolean painted = false;
+        // I LOVE LAMBDAS
+        final boolean[] painted = { false };
         ItemStack heldItem = player.getHeldItem(hand);
+        int colour = this.color == null ? -1 : this.color.colorValue;
         if (connectedTe instanceof IPipeTile<?, ?>startPipe) {
-            List<IPipeTile<?, ?>> pipes = PipeCollectorWalker.collectPipeNet(world, startPos, startPipe,
-                    Math.min(MAX_PIPE_TRAVERSAL_LENGTH, getUsesLeft(heldItem)));
-            int colour = this.color == null ? -1 : this.color.colorValue;
-            for (IPipeTile<?, ?> pipe : pipes) {
+            PipeCollectorWalker.collectPipeNet(world, startPos, startPipe, pipe -> {
+                if (getUsesLeft(heldItem) == 0) {
+                    return false;
+                }
                 if (pipe.getPaintingColor() != colour) {
                     pipe.setPaintingColor(colour);
                     pipe.scheduleRenderUpdate();
                     if (getUsesLeft(heldItem) == 1) {
-                        useItemDurability(player, hand, heldItem, empty.copy());
-                        return true;
+                        if (painted[0]) {
+                            useItemDurability(player, hand, heldItem, empty.copy());
+                        }
+                        painted[0] = true;
+                        return false;
                     }
                     // Off by one durability as the final use is handled by onItemUse, along with the use animation
-                    if (painted) {
+                    if (painted[0]) {
                         useItemDurability(player, hand, heldItem, empty.copy());
                     }
-                    painted = true;
+                    painted[0] = true;
                 }
-            }
+                return true;
+            });
 
         }
-        return painted;
+        return painted[0];
     }
 
     @SuppressWarnings("unchecked, rawtypes")
@@ -191,27 +180,8 @@ public class ColorSprayBehavior extends AbstractUsableBehaviour implements IItem
         }
 
         // TileEntityPipeBase special case
-        if (te instanceof IPipeTile<?, ?>pipe) {
-            if (player.isSneaking()) {
-                RayTraceResult hitResult = RayTracer.retraceBlock(world, player, pos);
-                if (hitResult != null) {
-                    EnumFacing facing = CoverRayTracer.determineGridSideHit(hitResult);
-                    if (facing != null && pipe.isConnected(facing)) {
-                        boolean paintedOthers = traversePipes(player, world, hand, pos, facing);
-                        if (pipe.isPainted()) {
-                            pipe.setPaintingColor(-1);
-                            if (paintedOthers) {
-                                ItemStack heldItem = player.getHeldItem(hand);
-                                useItemDurability(player, hand, heldItem, empty.copy());
-                            }
-                            return true;
-                        } else return paintedOthers;
-                    }
-                }
-            } else if (pipe.isPainted()) {
-                pipe.setPaintingColor(-1);
-                return true;
-            } else return false;
+        if (player.isSneaking() && te instanceof IPipeTile<?, ?>) {
+            return traversePipes(player, world, hand, pos);
         }
 
         // AE2 cable special case
