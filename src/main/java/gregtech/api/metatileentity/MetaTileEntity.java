@@ -371,7 +371,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return getMetaName() + ".name";
     }
 
-    public <T> void addNotifiedInput(T input) {
+    public void addNotifiedInput(Object input) {
         if (input instanceof IItemHandlerModifiable) {
             if (!notifiedItemInputList.contains(input)) {
                 this.notifiedItemInputList.add((IItemHandlerModifiable) input);
@@ -383,7 +383,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    public <T> void addNotifiedOutput(T output) {
+    public void addNotifiedOutput(Object output) {
         if (output instanceof IItemHandlerModifiable) {
             if (!notifiedItemOutputList.contains(output)) {
                 this.notifiedItemOutputList.add((IItemHandlerModifiable) output);
