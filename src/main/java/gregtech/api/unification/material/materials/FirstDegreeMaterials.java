@@ -1586,5 +1586,12 @@ public class FirstDegreeMaterials {
                 .components(Uranium235, 1, Oxygen, 2)
                 .build()
                 .setFormula("PuO2", true);
+
+        Zircaloy = new Material.Builder(456, gregtechId("zircaloy"))
+                .dust()
+                .color(0x566570).iconSet(METALLIC)
+                .components(Zirconium, 9, Tin, 1)
+                .blast(1700, GasTier.LOW)
+                .build();
     }
 }

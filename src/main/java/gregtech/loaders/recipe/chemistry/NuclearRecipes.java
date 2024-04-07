@@ -4,6 +4,7 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.plate;
 
 public class NuclearRecipes {
 
@@ -33,5 +34,40 @@ public class NuclearRecipes {
                 .output(dust, Uranium)
                 .fluidOutputs(Fluorine.getFluid(6000))
                 .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(420).EUt(VA[LV])
+                .input(dust, DepletedUraniumDioxide, 20)
+                .input(dust, EnrichedUraniumDioxide)
+                .circuitMeta(1)
+                .output(dust, LEU235, 21)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(120).EUt(VA[LV])
+                .input(dust, DepletedUraniumDioxide, 5)
+                .input(dust, EnrichedUraniumDioxide)
+                .circuitMeta(2)
+                .output(dust, HEU235, 6)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(420).EUt(VA[LV])
+                .input(dust, Uraninite, 20)
+                .circuitMeta(1)
+                .input(dust, Plutonium239Dioxide)
+                .output(dust, LowGradeMOX, 21)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(120).EUt(VA[LV])
+                .input(dust, Uraninite, 5)
+                .circuitMeta(2)
+                .input(dust, Plutonium239Dioxide)
+                .output(dust, HighGradeMOX, 6)
+                .buildAndRegister();
+
+/*
+        BENDER_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
+                .input(plate, Zircaloy)
+                .circuitMeta(2)
+                .outputs(MetaItems.)
+*/
     }
 }

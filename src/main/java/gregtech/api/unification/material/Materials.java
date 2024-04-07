@@ -481,6 +481,7 @@ public class Materials {
     public static Material DepletedUraniumDioxide;
     public static Material HighPressureSteam;
     public static Material Plutonium239Dioxide;
+    public static Material Zircaloy;
 
     /**
      * Organic chemistry
