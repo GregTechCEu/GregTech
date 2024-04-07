@@ -12,6 +12,7 @@ import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
@@ -22,6 +23,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
+import gregtech.core.unification.material.internal.MaterialRegistryManager;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.modules.GregTechModules;
 
@@ -69,6 +71,7 @@ import java.util.function.Supplier;
                 description = "GroovyScript Integration Module")
 public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPlugin {
 
+    private static MaterialRegistry materialRegistry;
     private static GroovyContainer<?> modSupportContainer;
     private static final Object2ObjectOpenHashMap<String, Map<String, ItemStack>> metaItems = new Object2ObjectOpenHashMap<>();
 
@@ -81,6 +84,11 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRecipeEvent(RegistryEvent.Register<IRecipe> event) {
         GroovyScriptModule.loadMetaItemBracketHandler();
+    }
+
+    @SubscribeEvent
+    public static void onMaterialRegistryRegistry(MaterialRegistryEvent event) {
+        materialRegistry = GregTechAPI.materialManager.createRegistry(GroovyScript.getRunConfig().getPackOrModId());
     }
 
     public static boolean isCurrentlyRunning() {
@@ -242,9 +250,9 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
                 .register();
         GameObjectHandler.builder("material", Material.class)
                 .mod(GTValues.MODID)
-                .parser(IGameObjectParser.wrapStringGetter(GregTechAPI.materialManager::getMaterial))
+                .parser(GroovyScriptModule::parseMaterial)
                 .completerOfNamed(GregTechAPI.materialManager::getRegisteredMaterials,
-                        mat -> mat.getResourceLocation().toString())
+                        GroovyScriptModule::getMaterialId)
                 .register();
 
         GameObjectHandler.builder("oreprefix", OrePrefix.class)
@@ -297,6 +305,38 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "toolBuilder");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
         ExpansionHelper.mixinMethod(FluidBuilder.class, GroovyExpansions.class, "acidic");
+    }
+
+    public static Result<Material> parseMaterial(String s, Object... args) {
+        String name;
+        MaterialRegistry reg;
+        int i = s.indexOf(':');
+        if (i < 0) {
+            if (args.length > 0 && args[0] instanceof String n) {
+                name = n;
+                reg = MaterialRegistryManager.getInstance().getRegistry(s);
+            } else {
+                name = s;
+                reg = materialRegistry;
+            }
+        } else {
+            name = s.substring(i + 1);
+            reg = MaterialRegistryManager.getInstance().getRegistry(s.substring(0, i));
+        }
+        Material mat = reg.getObject(name);
+        if (mat == null && reg != MaterialRegistryManager.getInstance().getDefaultRegistry()) {
+            mat = MaterialRegistryManager.getInstance().getDefaultRegistry().getObject(name);
+        }
+        if (mat != null) return Result.some(mat);
+        return Result.error();
+    }
+
+    private static String getMaterialId(Material mat) {
+        if (mat.getRegistry() == MaterialRegistryManager.getInstance().getDefaultRegistry() ||
+                mat.getRegistry() == materialRegistry) {
+            return mat.getResourceLocation().getPath();
+        }
+        return mat.getResourceLocation().toString();
     }
 
     protected static boolean checkFrozen(String description) {
