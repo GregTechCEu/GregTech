@@ -1175,15 +1175,15 @@ public class MetaTileEntities {
         // Alarm, ID 1751
         ALARM = registerMetaTileEntity(1751, new MetaTileEntityAlarm(gregtechId("alarm")));
 
-        // Nuclear hatches, 1752-1756
-        FUEL_ROD_INPUT = registerMetaTileEntity(1752,
+        // Nuclear hatches, 1800-1804
+        FUEL_ROD_INPUT = registerMetaTileEntity(1800,
                 new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
-        FUEL_ROD_OUTPUT = registerMetaTileEntity(1753,
+        FUEL_ROD_OUTPUT = registerMetaTileEntity(1801,
                 new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
-        COOLANT_INPUT = registerMetaTileEntity(1754, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
-        COOLANT_OUTPUT = registerMetaTileEntity(1755,
+        COOLANT_INPUT = registerMetaTileEntity(1802, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
+        COOLANT_OUTPUT = registerMetaTileEntity(1803,
                 new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));
-        CONTROL_ROD = registerMetaTileEntity(1756, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
+        CONTROL_ROD = registerMetaTileEntity(1804, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
 
         // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
         // EV hatches separate because of old names/IDs
