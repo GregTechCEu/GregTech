@@ -43,7 +43,6 @@ import gregtech.common.command.CommandRecipeCheck;
 import gregtech.common.command.CommandShaders;
 import gregtech.common.command.worldgen.CommandWorldgen;
 import gregtech.common.covers.CoverBehaviors;
-import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
@@ -255,7 +254,6 @@ public class CoreModule implements IGregTechModule {
         WorldGenRegistry.INSTANCE.initializeRegistry();
 
         LootTableHelper.initialize();
-        FilterTypeRegistry.init();
 
         /* Start Cover Definition Registration */
         COVER_REGISTRY.unfreeze();

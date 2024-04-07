@@ -4,6 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.integration.groovy.GroovyScriptModule;
 
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
@@ -17,7 +18,9 @@ public class CTMaterialHelpers {
     protected static FluidState validateFluidState(String fluidTypeName) {
         if (fluidTypeName == null || fluidTypeName.equals("fluid"))
             return FluidState.LIQUID;
-
+        if (GroovyScriptModule.isCurrentlyRunning()) {
+            return GroovyScriptModule.parseAndValidateEnumValue(FluidState.class, fluidTypeName, "fluid type");
+        }
         if (fluidTypeName.equals("liquid")) return FluidState.LIQUID;
         if (fluidTypeName.equals("gas")) return FluidState.GAS;
         if (fluidTypeName.equals("plasma")) return FluidState.PLASMA;

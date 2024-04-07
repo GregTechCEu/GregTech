@@ -45,16 +45,15 @@ public class RecipePropertyStorage implements IRecipePropertyStorage {
 
         try {
             recipeProperty.castValue(value);
-        } catch (ClassCastException ex) {
-            GTLog.logger.warn("Provided incorrect value for RecipeProperty with key {}", key);
-            GTLog.logger.warn("Full exception:", ex);
+        } catch (ClassCastException e) {
+            GTLog.logger.warn("Provided incorrect value for RecipeProperty with key {}", key, e);
             success = false;
         }
 
         if (success) {
             recipeProperties.put(recipeProperty, value);
         } else {
-            GTLog.logger.warn(STACKTRACE, new IllegalArgumentException());
+            GTLog.logger.warn("RecipePropertyStorage error found", new Throwable());
         }
 
         return success;

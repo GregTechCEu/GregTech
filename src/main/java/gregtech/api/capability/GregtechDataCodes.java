@@ -23,6 +23,9 @@ public class GregtechDataCodes {
     public static final int UPDATE_AUTO_OUTPUT_FLUIDS = assignId();
     public static final int UPDATE_IS_VOIDING = assignId();
 
+    // Robotic Arm
+    public static final int UPDATE_TRANSFER_MODE = assignId();
+
     // Drum
     public static final int UPDATE_AUTO_OUTPUT = assignId();
 
@@ -173,4 +176,8 @@ public class GregtechDataCodes {
     // Fission Reactor
     public static int SYNC_REACTOR_STATS = assignId();
     public static int SYNC_LOCKING_STATE = assignId();
+
+    // ME Parts
+    public static final int UPDATE_AUTO_PULL = assignId();
+    public static final int UPDATE_ONLINE_STATUS = assignId();
 }

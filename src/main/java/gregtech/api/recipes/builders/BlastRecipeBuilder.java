@@ -39,7 +39,7 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
     public BlastRecipeBuilder blastFurnaceTemp(int blastFurnaceTemp) {
         if (blastFurnaceTemp <= 0) {
             GTLog.logger.error("Blast Furnace Temperature cannot be less than or equal to 0",
-                    new IllegalArgumentException());
+                    new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(TemperatureProperty.getInstance(), blastFurnaceTemp);

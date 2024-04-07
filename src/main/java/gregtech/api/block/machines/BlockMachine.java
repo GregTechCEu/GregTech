@@ -1,6 +1,5 @@
 package gregtech.api.block.machines;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.block.UnlistedIntegerProperty;
@@ -15,6 +14,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
@@ -56,7 +56,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -282,7 +281,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                     }
                 }
             }
-            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            if (Mods.AppliedEnergistics2.isModLoaded()) {
                 if (metaTileEntity.getProxy() != null) {
                     metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
                 }
@@ -483,7 +482,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public int getLightOpacity(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        return metaTileEntity == null ? 0 : metaTileEntity.getLightOpacity();
+        return metaTileEntity == null ? 255 : metaTileEntity.getLightOpacity();
     }
 
     @Override

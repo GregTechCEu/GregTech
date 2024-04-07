@@ -16,6 +16,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.Mods;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
 import gregtech.common.crafting.FluidReplaceRecipe;
@@ -48,7 +49,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -679,8 +685,6 @@ public final class ModHandler {
      * disable the config and remove the recipes manually
      */
     public static void removeSmeltingEBFMetals() {
-        boolean isCTLoaded = Loader.isModLoaded(GTValues.MODID_CT);
-
         Field actionAddFurnaceRecipe$output = null;
 
         Map<ItemStack, ItemStack> furnaceList = FurnaceRecipes.instance().getSmeltingList();
@@ -702,7 +706,7 @@ public final class ModHandler {
                     ItemStack ingot = OreDictUnifier.get(OrePrefix.ingot, material);
                     // Check if the inputs are actually dust -> ingot
                     if (ingot.isItemEqual(output) && dust.isItemEqual(input)) {
-                        if (isCTLoaded) {
+                        if (Mods.CraftTweaker.isModLoaded()) {
                             if (actionAddFurnaceRecipe$output == null) {
                                 try {
                                     actionAddFurnaceRecipe$output = ActionAddFurnaceRecipe.class
@@ -753,6 +757,6 @@ public final class ModHandler {
     }
 
     public static void logInvalidRecipe(@NotNull String message) {
-        GTLog.logger.warn("Invalid Recipe Found", new IllegalArgumentException(message));
+        GTLog.logger.warn("Invalid Recipe Found: {}", message, new Throwable());
     }
 }

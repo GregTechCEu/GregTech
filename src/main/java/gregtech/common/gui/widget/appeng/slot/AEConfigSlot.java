@@ -5,7 +5,7 @@ import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -17,13 +17,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @Author GlodBlock
- * @Description A configurable slot
- * @Date 2023/4/22-0:30
- */
 public class AEConfigSlot<T extends IAEStack<T>> extends Widget implements IGhostIngredientTarget {
 
+    protected static final int DISPLAY_X_OFFSET = 18 * 5;
     protected AEConfigWidget<T> parentWidget;
     protected int index;
     protected final static int REMOVE_ID = 1000;
@@ -43,12 +39,22 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget implements IGhos
         IConfigurableSlot<T> slot = this.parentWidget.getDisplay(this.index);
         if (slot.getConfig() == null && mouseOverConfig(mouseX, mouseY)) {
             List<String> hoverStringList = new ArrayList<>();
-            hoverStringList.add(I18n.format("gregtech.gui.config_slot"));
-            hoverStringList.add(I18n.format("gregtech.gui.config_slot.set"));
-            hoverStringList.add(I18n.format("gregtech.gui.config_slot.scroll"));
-            hoverStringList.add(I18n.format("gregtech.gui.config_slot.remove"));
-            drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
+            addHoverText(hoverStringList);
+            if (!hoverStringList.isEmpty()) {
+                drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
+            }
         }
+    }
+
+    protected void addHoverText(List<String> hoverText) {
+        hoverText.add(I18n.format("gregtech.gui.config_slot"));
+        if (!parentWidget.isStocking()) {
+            hoverText.add(I18n.format("gregtech.gui.config_slot.set"));
+            hoverText.add(I18n.format("gregtech.gui.config_slot.scroll"));
+        } else {
+            hoverText.add(I18n.format("gregtech.gui.config_slot.set_only"));
+        }
+        hoverText.add(I18n.format("gregtech.gui.config_slot.remove"));
     }
 
     public void setSelect(boolean val) {
@@ -62,11 +68,15 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget implements IGhos
 
     protected boolean mouseOverStock(int mouseX, int mouseY) {
         Position position = getPosition();
-        return isMouseOver(position.x, position.y + 18, 18, 18, mouseX, mouseY);
+        return isMouseOver(position.x + DISPLAY_X_OFFSET, position.y, 18, 18, mouseX, mouseY);
     }
 
     @Override
     public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
         return Collections.emptyList();
+    }
+
+    public AEConfigWidget<T> getParentWidget() {
+        return parentWidget;
     }
 }

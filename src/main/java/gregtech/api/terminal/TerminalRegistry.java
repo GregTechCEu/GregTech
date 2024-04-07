@@ -5,6 +5,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.Mods;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.VirtualTankApp;
@@ -131,7 +132,7 @@ public class TerminalRegistry {
                 .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
                 .defaultApp()
                 .build();
-        if (Loader.isModLoaded(GTValues.MODID_JEI)) {
+        if (Mods.JustEnoughItems.isModLoaded()) {
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 160)
                     .upgrade(0, new ItemStack(Items.PAPER, 32))

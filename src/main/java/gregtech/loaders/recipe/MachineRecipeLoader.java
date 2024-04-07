@@ -15,6 +15,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.Mods;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.*;
 import gregtech.common.blocks.BlockMachineCasing.MachineCasingType;
@@ -34,7 +35,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
@@ -1405,6 +1405,16 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("data_module_nbt", TOOL_DATA_MODULE.getStackForm(),
                 TOOL_DATA_MODULE.getStackForm());
 
+        // Filters
+        ModHandler.addShapelessNBTClearingRecipe("clear_item_filter",
+                ITEM_FILTER.getStackForm(), ITEM_FILTER);
+        ModHandler.addShapelessNBTClearingRecipe("clear_fluid_filter",
+                FLUID_FILTER.getStackForm(), FLUID_FILTER);
+        ModHandler.addShapelessNBTClearingRecipe("clear_smart_filter",
+                SMART_FILTER.getStackForm(), SMART_FILTER);
+        ModHandler.addShapelessNBTClearingRecipe("clear_oredict_filter",
+                ORE_DICTIONARY_FILTER.getStackForm(), ORE_DICTIONARY_FILTER);
+
         // Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(),
                 SEMIFLUID_JETPACK.getStackForm());
@@ -1461,7 +1471,7 @@ public class MachineRecipeLoader {
             }
         }
 
-        if (Loader.isModLoaded(MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
             ModHandler.addShapedRecipe("me_fluid_hatch_output_to_input", FLUID_IMPORT_HATCH_ME.getStackForm(), "d", "B",
                     'B', FLUID_EXPORT_HATCH_ME.getStackForm());
             ModHandler.addShapedRecipe("me_fluid_hatch_input_to_output", FLUID_EXPORT_HATCH_ME.getStackForm(), "d", "B",

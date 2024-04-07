@@ -30,8 +30,10 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.Mods;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.covers.filter.IFilter;
 import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.client.Minecraft;
@@ -110,7 +112,9 @@ import java.util.Set;
  * {@code addItem(0, "test_item").addStats(new ElectricStats(10000, 1,  false)) } This will add single-use (not
  * rechargeable) LV battery with initial capacity 10000 EU
  */
-@Optional.Interface(modid = GTValues.MODID_ECORE, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
+@Optional.Interface(
+                    modid = Mods.Names.ENDER_CORE,
+                    iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
 public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                               implements ItemUIFactory, IOverlayRenderAware {
 
@@ -778,6 +782,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private final List<IItemBehaviour> behaviours = new ArrayList<>();
         private IItemUseManager useManager;
         private ItemUIFactory uiManager;
+        private IFilter.Factory filterBehavior;
         private IItemColorProvider colorProvider;
         private IItemDurabilityManager durabilityManager;
         private IEnchantabilityHelper enchantabilityHelper;
@@ -905,9 +910,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 if (itemComponent instanceof IFoodBehavior) {
                     this.useManager = new FoodUseManager((IFoodBehavior) itemComponent);
                 }
-                if (itemComponent instanceof ItemUIFactory)
+                if (itemComponent instanceof ItemUIFactory) {
                     this.uiManager = (ItemUIFactory) itemComponent;
-
+                }
+                if (itemComponent instanceof IFilter.Factory) {
+                    this.filterBehavior = (IFilter.Factory) itemComponent;
+                }
                 if (itemComponent instanceof IItemColorProvider) {
                     this.colorProvider = (IItemColorProvider) itemComponent;
                 }
@@ -951,6 +959,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         @Nullable
         public ItemUIFactory getUIManager() {
             return uiManager;
+        }
+
+        @Nullable
+        public IFilter.Factory getFilterFactory() {
+            return filterBehavior;
         }
 
         @Nullable

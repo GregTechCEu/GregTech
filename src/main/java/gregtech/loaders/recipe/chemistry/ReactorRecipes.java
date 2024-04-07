@@ -3,6 +3,7 @@ package gregtech.loaders.recipe.chemistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.init.Blocks;
@@ -569,6 +570,13 @@ public class ReactorRecipes {
                 .fluidInputs(SulfuricAcid.getFluid(250))
                 .outputs(new ItemStack(Blocks.TNT))
                 .duration(200).EUt(24).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .inputs(MetaItems.GELLED_TOLUENE.getStackForm(4))
+                .fluidInputs(NitrationMixture.getFluid(200))
+                .outputs(new ItemStack(MetaBlocks.ITNT))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(150))
+                .duration(80).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, SodiumHydroxide, 6)

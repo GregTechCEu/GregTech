@@ -1,12 +1,11 @@
 package gregtech.client.utils;
 
-import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.Mods;
 import gregtech.api.util.world.DummyWorld;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Loader;
 
 import appeng.items.misc.ItemEncodedPattern;
 import org.jetbrains.annotations.ApiStatus;
@@ -74,7 +73,7 @@ public final class ItemRenderCompat {
     private static final class AE2StackExtractor implements RepresentativeStackExtractor {
 
         public static @Nullable ItemRenderCompat.AE2StackExtractor create() {
-            if (!Loader.isModLoaded(GTValues.MODID_APPENG)) return null;
+            if (!Mods.AppliedEnergistics2.isModLoaded()) return null;
             GTLog.logger.info("AppliedEnergistics2 found; enabling render integration.");
             return new AE2StackExtractor();
         }
@@ -112,7 +111,7 @@ public final class ItemRenderCompat {
         }
 
         public static @Nullable ItemRenderCompat.RSStackExtractor create() {
-            if (!Loader.isModLoaded(GTValues.MODID_RS)) return null;
+            if (!Mods.RefinedStorage.isModLoaded()) return null;
 
             Class<?> clazz;
             try {
