@@ -536,7 +536,7 @@ public class SecondDegreeMaterials {
                 .color(0x7EA432).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Plutonium239Dioxide, 1, Uraninite, 5)
-                .fissionFuelProperties(2000, 1500, 10., 10., 2000., 10.)
+                .fissionFuelProperties(2000, 1500, 35., 25., 2000., 25.)
                 .build()
                 .setFormula("(U,Pu)O2", true);
     }
