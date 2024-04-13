@@ -189,7 +189,7 @@ public class MetaBlocks {
     public static void init() {
         for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
             BlockMachine machine = new BlockMachine();
-            machine.setRegistryName(registry.getModid(), "machine");
+            machine.setRegistryName(registry.getModid(), "mte");
             registry.setBlock(machine);
         }
 

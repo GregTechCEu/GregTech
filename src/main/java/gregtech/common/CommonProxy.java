@@ -45,6 +45,7 @@ import gregtech.common.pipelike.laser.ItemBlockLaserPipe;
 import gregtech.common.pipelike.optical.BlockOpticalPipe;
 import gregtech.common.pipelike.optical.ItemBlockOpticalPipe;
 import gregtech.integration.groovy.GroovyScriptModule;
+import gregtech.datafix.GTDataFixers;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
@@ -404,7 +405,9 @@ public class CommonProxy {
 
     public void onPreLoad() {}
 
-    public void onLoad() {}
+    public void onLoad() {
+        GTDataFixers.init();
+    }
 
     public void onPostLoad() {
         TerminalRegistry.init();
