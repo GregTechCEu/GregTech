@@ -37,7 +37,7 @@ public class MaintenanceDataProvider extends CapabilityDataProvider<IMaintenance
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.maintenance");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.maintenance");
     }
 
     @Override

@@ -21,7 +21,7 @@ public class LampDataProvider implements IWailaDataProvider {
 
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, BlockLamp.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.block_lamp");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.block_lamp");
     }
 
     @NotNull
