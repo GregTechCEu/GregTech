@@ -223,7 +223,7 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
 
     @Override
     public @NotNull String getContainerName() {
-        return "GregTech";
+        return GTValues.MOD_NAME;
     }
 
     @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)

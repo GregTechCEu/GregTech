@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 @Mod(modid = GTValues.MODID,
-     name = "GregTech",
+     name = GTValues.MOD_NAME,
      acceptedMinecraftVersions = "[1.12.2,1.13)",
      version = GTInternalTags.VERSION,
      dependencies = "required:forge@[14.23.5.2847,);" + "required-after:codechickenlib@[3.2.3,);" +
