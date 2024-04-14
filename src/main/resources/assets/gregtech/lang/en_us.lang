@@ -104,6 +104,21 @@ gregtech.top.ld_pipe_output=Output
 gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
 gregtech.top.ld_pipe_output_endpoint=Output Endpoint:
 
+option.gregtech.block_ore=Ore Blocks
+option.gregtech.controllable=Controllable Machines
+option.gregtech.converter=Energy Converters
+option.gregtech.diode=Diodes
+option.gregtech.energy=Energy Containers
+option.gregtech.block_lamp=Lamp Blocks
+option.gregtech.maintenance=Maintenance Problems
+option.gregtech.multi_recipemap=Machine Modes
+option.gregtech.multiblock=Multiblocks
+option.gregtech.primitive_pump=Primitive Pump
+option.gregtech.recipe_logic=Recipes
+option.gregtech.steam_boiler=Steam Boilers
+option.gregtech.transformer=Transformers
+option.gregtech.workable=Workable Machines
+
 gregtech.waila.energy_stored=Energy: %d EU / %d EU
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
