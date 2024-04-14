@@ -154,7 +154,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
                     new ItemStackTextRenderer(recipeWrapper.getChance(i / 2 + itemInputs.size()),
                             ChancedOutputLogic.OR),
                     ITEM_OUTPUT_LOCATIONS.get(i) + 1, ITEM_OUTPUT_LOCATIONS.get(i + 1) + 1, 16, 16, 0, 0);
-            itemOutputExists.add(itemOutputs.get(i / 2).size() > 0);
+            itemOutputExists.add(!itemOutputs.get(i / 2).isEmpty());
         }
 
         List<List<FluidStack>> fluidInputs = ingredients.getInputs(VanillaTypes.FLUID);
@@ -162,7 +162,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         for (int i = 0; i < FLUID_LOCATIONS.size(); i += 2) {
             fluidStackGroup.init(i / 2, true, new FluidStackTextRenderer(1, false, 16, 16, null),
                     FLUID_LOCATIONS.get(i) + 1, FLUID_LOCATIONS.get(i + 1) + 1, 16, 16, 0, 0);
-            fluidInputExists.add(fluidInputs.get(i / 2).size() > 0);
+            fluidInputExists.add(!fluidInputs.get(i / 2).isEmpty());
         }
 
         itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
@@ -208,7 +208,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
 
         for (int i = 0; i < ITEM_OUTPUT_LOCATIONS.size(); i += 2) {
             // stupid hack to show all sifter slots if the first one exists
-            if (itemOutputExists.get(i / 2) || (i > 28 * 2 && itemOutputExists.get(28) && hasSifter)) {
+            if (itemOutputExists.get(i / 2) || (i >= 28 * 2 && hasSifter)) {
                 slot.draw(minecraft, ITEM_OUTPUT_LOCATIONS.get(i), ITEM_OUTPUT_LOCATIONS.get(i + 1));
             }
         }
