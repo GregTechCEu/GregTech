@@ -1,5 +1,6 @@
 package gregtech.integration.hwyla.provider;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultiblockController;
@@ -36,7 +37,7 @@ public class MaintenanceDataProvider extends CapabilityDataProvider<IMaintenance
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig("GregTech", "gregtech.maintenance");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.maintenance");
     }
 
     @Override

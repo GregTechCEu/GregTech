@@ -1,5 +1,6 @@
 package gregtech.integration.hwyla.provider;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.TextFormattingUtil;
@@ -26,7 +27,7 @@ public class DiodeDataProvider extends ElectricContainerDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig("GregTech", "gregtech.diode");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.diode");
     }
 
     @Override

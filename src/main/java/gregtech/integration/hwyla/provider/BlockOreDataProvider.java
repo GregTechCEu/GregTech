@@ -1,5 +1,6 @@
 package gregtech.integration.hwyla.provider;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
 import gregtech.integration.hwyla.HWYLAModule;
@@ -21,7 +22,7 @@ public class BlockOreDataProvider implements IWailaDataProvider {
 
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, BlockOre.class);
-        registrar.addConfig("GregTech", "gregtech.block_ore");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.block_ore");
     }
 
     @NotNull
