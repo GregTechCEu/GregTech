@@ -3,6 +3,7 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.PrimitiveRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -46,7 +47,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
     protected NBTTagCompound getNBTData(AbstractRecipeLogic capability, NBTTagCompound tag) {
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setBoolean("Working", capability.isWorking());
-        if (capability.isWorking()) {
+        if (capability.isWorking() && !(capability instanceof PrimitiveRecipeLogic)) {
             subTag.setInteger("RecipeEUt", capability.getInfoProviderEUt());
         }
         tag.setTag("gregtech.AbstractRecipeLogic", subTag);
