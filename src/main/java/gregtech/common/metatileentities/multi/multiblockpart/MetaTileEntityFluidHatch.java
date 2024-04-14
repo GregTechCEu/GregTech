@@ -56,7 +56,6 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -266,7 +265,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         if (key.equals(MultiblockAbility.EXPORT_FLUIDS)) {
             return Collections.singletonList(fluidTank);
         } else if (key.equals(MultiblockAbility.IMPORT_DUAL)) {
-            return Collections.singletonList(new DualHandler(this.circuitInventory, this.importFluids,false));
+            return Collections.singletonList(new DualHandler(this.circuitInventory, this.importFluids, false));
         }
         return Collections.emptyList();
     }
