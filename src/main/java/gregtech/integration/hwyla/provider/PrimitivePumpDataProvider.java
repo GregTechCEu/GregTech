@@ -1,6 +1,5 @@
 package gregtech.integration.hwyla.provider;
 
-import gregtech.api.GTValues;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IPrimitivePump;
 import gregtech.api.util.TextFormattingUtil;
@@ -29,7 +28,7 @@ public class PrimitivePumpDataProvider implements IWailaDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, IGregTechTileEntity.class);
         registrar.registerNBTProvider(this, IGregTechTileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.primitive_pump");
+        registrar.addConfig("GregTech", "gregtech.primitive_pump");
     }
 
     @NotNull

@@ -1,6 +1,5 @@
 package gregtech.integration.hwyla.provider;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 
@@ -26,7 +25,7 @@ public class MultiblockDataProvider extends CapabilityDataProvider<IMultiblockCo
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.multiblock");
+        registrar.addConfig("GregTech", "gregtech.multiblock");
     }
 
     @Override

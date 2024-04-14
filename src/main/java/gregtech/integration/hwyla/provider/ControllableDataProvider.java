@@ -1,6 +1,5 @@
 package gregtech.integration.hwyla.provider;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 
@@ -26,7 +25,7 @@ public class ControllableDataProvider extends CapabilityDataProvider<IControllab
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.controllable");
+        registrar.addConfig("GregTech", "gregtech.controllable");
     }
 
     @Override

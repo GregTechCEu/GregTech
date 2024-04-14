@@ -1,6 +1,5 @@
 package gregtech.integration.hwyla.provider;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
@@ -26,7 +25,7 @@ public class WorkableDataProvider extends CapabilityDataProvider<IWorkable> {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.workable");
+        registrar.addConfig("GregTech", "gregtech.workable");
     }
 
     @Override

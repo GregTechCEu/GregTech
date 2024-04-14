@@ -1,6 +1,5 @@
 package gregtech.integration.hwyla.provider;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleRecipeMaps;
 
@@ -25,7 +24,7 @@ public class MultiRecipeMapDataProvider extends CapabilityDataProvider<IMultiple
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.multi_recipemap");
+        registrar.addConfig("GregTech", "gregtech.multi_recipemap");
     }
 
     @Override

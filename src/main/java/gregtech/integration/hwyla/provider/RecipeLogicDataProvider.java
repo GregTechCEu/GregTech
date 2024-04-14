@@ -34,7 +34,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.recipe_logic");
+        registrar.addConfig("GregTech", "gregtech.recipe_logic");
     }
 
     @Override

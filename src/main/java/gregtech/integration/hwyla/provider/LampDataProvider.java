@@ -1,6 +1,5 @@
 package gregtech.integration.hwyla.provider;
 
-import gregtech.api.GTValues;
 import gregtech.common.blocks.BlockLamp;
 
 import net.minecraft.block.state.IBlockState;
@@ -21,7 +20,7 @@ public class LampDataProvider implements IWailaDataProvider {
 
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, BlockLamp.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.block_lamp");
+        registrar.addConfig("GregTech", "gregtech.block_lamp");
     }
 
     @NotNull

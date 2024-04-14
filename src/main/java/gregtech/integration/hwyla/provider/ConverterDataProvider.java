@@ -30,7 +30,7 @@ public class ConverterDataProvider extends CapabilityDataProvider<ConverterTrait
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.converter");
+        registrar.addConfig("GregTech", "gregtech.converter");
     }
 
     @Override

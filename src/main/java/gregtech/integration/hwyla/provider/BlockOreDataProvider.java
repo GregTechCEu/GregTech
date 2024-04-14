@@ -1,6 +1,5 @@
 package gregtech.integration.hwyla.provider;
 
-import gregtech.api.GTValues;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
 import gregtech.integration.hwyla.HWYLAModule;
@@ -8,7 +7,10 @@ import gregtech.integration.hwyla.HWYLAModule;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
-import mcp.mobius.waila.api.*;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaDataProvider;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,7 +21,7 @@ public class BlockOreDataProvider implements IWailaDataProvider {
 
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, BlockOre.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.block_ore");
+        registrar.addConfig("GregTech", "gregtech.block_ore");
     }
 
     @NotNull

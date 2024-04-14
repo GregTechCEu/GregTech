@@ -1,6 +1,5 @@
 package gregtech.integration.hwyla.provider;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 
@@ -25,7 +24,7 @@ public class ElectricContainerDataProvider extends CapabilityDataProvider<IEnerg
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.energy");
+        registrar.addConfig("GregTech", "gregtech.energy");
     }
 
     @Override
