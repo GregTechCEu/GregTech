@@ -80,16 +80,10 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         super(metaTileEntityId, tier, isExportHatch);
         this.fluidTank = new HatchFluidTank(getInventorySize(), this, isExportHatch);
         this.workingEnabled = true;
-        initializeInventory();
-    }
-
-    @Override
-    protected void initializeInventory() {
-        super.initializeInventory();
-        if (!this.hasGhostCircuitInventory()) return;
-
-        this.circuitInventory = new GhostCircuitItemStackHandler(this);
-        this.circuitInventory.addNotifiableMetaTileEntity(this);
+        if (this.hasGhostCircuitInventory()) {
+            this.circuitInventory = new GhostCircuitItemStackHandler(this);
+            this.circuitInventory.addNotifiableMetaTileEntity(this);
+        }
     }
 
     @Override
@@ -380,13 +374,15 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
-        this.circuitInventory.addNotifiableMetaTileEntity(controllerBase);
+        if (hasGhostCircuitInventory())
+            this.circuitInventory.addNotifiableMetaTileEntity(controllerBase);
     }
 
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
-        this.circuitInventory.removeNotifiableMetaTileEntity(controllerBase);
+        if (hasGhostCircuitInventory())
+            this.circuitInventory.removeNotifiableMetaTileEntity(controllerBase);
     }
 
     @Override
