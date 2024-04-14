@@ -1,12 +1,21 @@
 package gregtech.api.metatileentity.multiblock;
 
-import gregtech.api.capability.impl.*;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
+import gregtech.api.capability.impl.PrimitiveRecipeLogic;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.recipes.RecipeMap;
 
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +51,15 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
             fluidTankList.add(new NotifiableFluidTank(32000, this, isExport));
         }
         return fluidTankList;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if ((capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ||
+                capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) && side != null) {
+            return null;
+        }
+        return super.getCapability(capability, side);
     }
 
     @Override
