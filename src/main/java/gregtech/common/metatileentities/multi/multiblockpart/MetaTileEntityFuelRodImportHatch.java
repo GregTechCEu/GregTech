@@ -84,6 +84,16 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
+    public void update() {
+        super.update();
+        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+            if (workingEnabled) {
+                pullItemsFromNearbyHandlers(getFrontFacing());
+            }
+        }
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createUITemplate(entityPlayer).build(getHolder(), entityPlayer);
     }

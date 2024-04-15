@@ -354,13 +354,23 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         interiorSlice[this.diameter - 1] = interiorSlice[0] = interiorSlice[0].replace('A', 'B');
         for (int i = 1; i < this.diameter - 1; i++) {
             for (int j = 0; j < this.diameter; j++) {
+                if (interiorSlice[i].charAt(j) != 'A') {
+                    continue;
+                }
+
                 // The integer division is fine here, since we want an odd diameter (say, 5) to go to the middle value (2 in this case)
                 int outerI = i + (int) Math.signum(i - (diameter / 2));
-                int outerJ = j + (int) Math.signum(j - (diameter / 2));
 
-                if (Math.pow(outerI - Math.floor(this.diameter / 2.), 2) + Math.pow(outerJ - Math.floor(this.diameter / 2.), 2) <
+
+                if (Math.pow(outerI - Math.floor(this.diameter / 2.), 2) + Math.pow(j - Math.floor(this.diameter / 2.), 2) >
                         Math.pow(radius + 0.5f, 2)) {
-                    GTStringUtils.replace(interiorSlice[i], 'A', 'B');
+                    interiorSlice[i] = GTStringUtils.replace(interiorSlice[i], j, 'B');
+                }
+
+                int outerJ = j + (int) Math.signum(j - (diameter / 2));
+                if (Math.pow(i - Math.floor(this.diameter / 2.), 2) + Math.pow(outerJ - Math.floor(this.diameter / 2.), 2) >
+                        Math.pow(radius + 0.5f, 2)) {
+                    interiorSlice[i] = GTStringUtils.replace(interiorSlice[i], j, 'B');
                 }
             }
         }
