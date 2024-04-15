@@ -5479,11 +5479,12 @@ gregtech.gui.fission.coolant_flow=Coolant flow rate: %d L
 gregtech.gui.fission.temperature=Temperature: %.3f K
 gregtech.gui.fission.pressure=Pressure: %.3f Pa
 gregtech.gui.fission.power=Power: %.3f MW / %.3f MW
+gregtech.gui.fission.k_eff=K eff: %f
 
 gregtech.gui.fission.lock.locked=Reactor locked & active!
 gregtech.gui.fission.lock.unlocked=Reactor not active
 gregtech.gui.fission.lock.should_lock=Activating...
-gregtech.gui.fission.lock.missing_inputs=A hatch is missing inputs!
+gregtech.gui.fission.lock.missing_inputs=A hatch is blocked/empty!
 gregtech.gui.fission.lock.invalid_component=erm, what the flip? check your log file
 
 

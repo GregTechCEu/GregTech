@@ -509,7 +509,7 @@ public class SecondDegreeMaterials {
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(EnrichedUraniumDioxide, 1, DepletedUraniumDioxide, 20)
-                .fissionFuelProperties(2000, 1000, 100., 0., 1000., 0.)
+                .fissionFuelProperties(2000, 1000, 100., 1., 1000., 0.)
                 .build()
                 .setFormula("UO2", true);
 
@@ -518,7 +518,7 @@ public class SecondDegreeMaterials {
                 .color(0x242826).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(EnrichedUraniumDioxide, 1, DepletedUraniumDioxide, 5)
-                .fissionFuelProperties(2000, 1000, 10., 0., 2000., 0.)
+                .fissionFuelProperties(2000, 1000, 10., 1., 2000., 0.)
                 .build()
                 .setFormula("UO2", true);
 

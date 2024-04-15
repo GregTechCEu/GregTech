@@ -136,6 +136,7 @@ public class FissionReactor {
     public double coolantMass;
     public double fuelMass;
     public double structuralMass;
+    public boolean needsOutput;
 
     protected static double responseFunction(double target, double value, double criticalRate, double rate) {
         if (value <= 0) {
@@ -436,6 +437,7 @@ public class FissionReactor {
             coolantBoilingPointStandardPressure = airBoilingPoint;
         }
         surfaceArea = (reactorRadius * reactorRadius) * Math.PI * 2 + reactorDepth * reactorRadius * Math.PI;
+        needsOutput = false;
     }
 
     /**
@@ -531,6 +533,7 @@ public class FissionReactor {
         this.power = responseFunction(this.realMaxPower(), this.power,
                 this.criticalRodInsertion + this.voidContribution(), this.controlRodInsertion);
         this.fuelDepletion = Math.min(this.fuelDepletion + 0.001 * this.power / this.maxPower, 1.);
+
         this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.);
         this.decayProductsAmount *= 0.99;
     }
@@ -561,7 +564,30 @@ public class FissionReactor {
         reactorLayout[x][y] = component;
     }
 
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setDouble("Temperature", this.temperature);
+        tagCompound.setDouble("Pressure", this.pressure);
+        tagCompound.setDouble("Power", this.power);
+        tagCompound.setDouble("FuelDepletion", this.fuelDepletion);
+        tagCompound.setDouble("AccumulatedHydrogen", this.accumulatedHydrogen);
+        tagCompound.setDouble("HeatRemoved", this.heatRemoved);
+        tagCompound.setDouble("NeutronPoisonAmount", this.neutronPoisonAmount);
+        tagCompound.setDouble("DecayProductsAmount", this.decayProductsAmount);
+        tagCompound.setBoolean("NeedsOutput", this.needsOutput);
 
+        return tagCompound;
+    }
+
+    public void deserializeNBT(NBTTagCompound tagCompound) {
+        this.temperature = tagCompound.getDouble("Temperature");
+        this.pressure = tagCompound.getDouble("Pressure");
+        this.power = tagCompound.getDouble("Power");
+        this.fuelDepletion = tagCompound.getDouble("FuelDepletion");
+        this.accumulatedHydrogen = tagCompound.getDouble("AccumulatedHydrogen");
+        this.heatRemoved = tagCompound.getDouble("HeatRemoved");
+        this.neutronPoisonAmount = tagCompound.getDouble("NeutronPoisonAmount");
+        this.decayProductsAmount = tagCompound.getDouble("DecayProductsAmount");
+        this.needsOutput = tagCompound.getBoolean("NeedsOutput");
     }
 }
