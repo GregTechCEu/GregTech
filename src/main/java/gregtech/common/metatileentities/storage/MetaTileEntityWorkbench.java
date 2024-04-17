@@ -1,19 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
-import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.core.mixin.GuiContainerAccessor;
-import com.cleanroommc.modularui.drawable.GuiDraw;
-import com.cleanroommc.modularui.drawable.TextRenderer;
-import com.cleanroommc.modularui.screen.GuiScreenWrapper;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.utils.NumberFormat;
-import com.cleanroommc.modularui.widget.Widget;
-
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.IFilter;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -30,14 +17,12 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -53,14 +38,20 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.PageButton;
@@ -100,6 +91,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         }
     };
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9) {
+
         @Override
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
@@ -120,47 +112,53 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         super(metaTileEntityId);
     }
 
-//    public static gregtech.api.gui.widgets.AbstractWidgetGroup createWorkbenchTab(CraftingRecipeLogic craftingRecipeLogic,
-//                                                         ItemStackHandler craftingGrid,
-//                                                         CraftingRecipeMemory recipeMemory,
-//                                                         ItemStackHandler toolInventory,
-//                                                         ItemStackHandler internalInventory) {
-//        gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
-//        widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(88 - 13, 44 - 14, 26, 26, gregtech.api.gui.GuiTextures.SLOT));
-//        widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.CraftingSlotWidget(craftingRecipeLogic, 0, 88 - 9, 44 - 9));
-//
-//        // crafting grid
-//        widgetGroup.addWidget(new gregtech.api.gui.widgets.CraftingStationInputWidgetGroup(4, 7, craftingGrid, craftingRecipeLogic));
-//
-//        Supplier<String> textSupplier = () -> Integer.toString(craftingRecipeLogic.getItemsCraftedAmount());
-//        widgetGroup.addWidget(new gregtech.api.gui.widgets.SimpleTextWidget(88, 44 + 19, "", textSupplier));
-//
-//        Consumer<gregtech.api.gui.Widget.ClickData> clearAction = (clickData) -> craftingRecipeLogic.clearCraftingGrid();
-//        widgetGroup.addWidget(new gregtech.api.gui.widgets.ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction)
-//                .setButtonTexture(gregtech.api.gui.GuiTextures.BUTTON_CLEAR_GRID));
-//
-//        widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3,
-//                gregtech.api.gui.resources.TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
-//        for (int i = 0; i < 3; ++i) {
-//            for (int j = 0; j < 3; ++j) {
-//                widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid,
-//                        168 - 18 * 3 / 2 - 27 + j * 18, 44 - 28 + i * 18));
-//            }
-//        }
-//        // tool inventory
-//        for (int i = 0; i < 9; i++) {
-//            widgetGroup.addWidget(new gregtech.api.gui.widgets.SlotWidget(toolInventory, i, 7 + i * 18, 75)
-//                    .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT, gregtech.api.gui.GuiTextures.TOOL_SLOT_OVERLAY));
-//        }
-//        // internal inventory
-//        for (int i = 0; i < 2; ++i) {
-//            for (int j = 0; j < 9; ++j) {
-//                widgetGroup.addWidget(new gregtech.api.gui.widgets.SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i * 18)
-//                        .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
-//            }
-//        }
-//        return widgetGroup;
-//    }
+    // public static gregtech.api.gui.widgets.AbstractWidgetGroup createWorkbenchTab(CraftingRecipeLogic
+    // craftingRecipeLogic,
+    // ItemStackHandler craftingGrid,
+    // CraftingRecipeMemory recipeMemory,
+    // ItemStackHandler toolInventory,
+    // ItemStackHandler internalInventory) {
+    // gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
+    // widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(88 - 13, 44 - 14, 26, 26,
+    // gregtech.api.gui.GuiTextures.SLOT));
+    // widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.CraftingSlotWidget(craftingRecipeLogic, 0,
+    // 88 - 9, 44 - 9));
+    //
+    // // crafting grid
+    // widgetGroup.addWidget(new gregtech.api.gui.widgets.CraftingStationInputWidgetGroup(4, 7, craftingGrid,
+    // craftingRecipeLogic));
+    //
+    // Supplier<String> textSupplier = () -> Integer.toString(craftingRecipeLogic.getItemsCraftedAmount());
+    // widgetGroup.addWidget(new gregtech.api.gui.widgets.SimpleTextWidget(88, 44 + 19, "", textSupplier));
+    //
+    // Consumer<gregtech.api.gui.Widget.ClickData> clearAction = (clickData) -> craftingRecipeLogic.clearCraftingGrid();
+    // widgetGroup.addWidget(new gregtech.api.gui.widgets.ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction)
+    // .setButtonTexture(gregtech.api.gui.GuiTextures.BUTTON_CLEAR_GRID));
+    //
+    // widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3,
+    // gregtech.api.gui.resources.TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
+    // for (int i = 0; i < 3; ++i) {
+    // for (int j = 0; j < 3; ++j) {
+    // widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.MemorizedRecipeWidget(recipeMemory, j + i *
+    // 3, craftingGrid,
+    // 168 - 18 * 3 / 2 - 27 + j * 18, 44 - 28 + i * 18));
+    // }
+    // }
+    // // tool inventory
+    // for (int i = 0; i < 9; i++) {
+    // widgetGroup.addWidget(new gregtech.api.gui.widgets.SlotWidget(toolInventory, i, 7 + i * 18, 75)
+    // .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT, gregtech.api.gui.GuiTextures.TOOL_SLOT_OVERLAY));
+    // }
+    // // internal inventory
+    // for (int i = 0; i < 2; ++i) {
+    // for (int j = 0; j < 9; ++j) {
+    // widgetGroup.addWidget(new gregtech.api.gui.widgets.SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i *
+    // 18)
+    // .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
+    // }
+    // }
+    // return widgetGroup;
+    // }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
@@ -236,7 +234,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         }
         this.connectedInventory = new HandlerListWrapper(handlers);
         handlers.clear();
-        
+
         handlers.add(this.internalInventory);
         handlers.add(this.toolInventory);
         handlers.add(this.connectedInventory);
@@ -282,7 +280,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
         final String nineSlot = "XXXXXXXXX";
-        final String[] craftingGrid = new String[] {"XXX", "XXX", "XXX"};
+        final String[] craftingGrid = new String[] { "XXX", "XXX", "XXX" };
         final char key = 'X';
 
         var toolSlots = new SlotGroup("tool_slots", 9, true);
@@ -334,11 +332,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                                 .matrix(craftingGrid)
                                                 .key(key, i -> new ItemSlot()
                                                         .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
-                                                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                                                    if (!init) {
-                                                                        this.recipeLogic.updateCurrentRecipe();
-                                                                    }
-                                                                })))
+                                                                .changeListener(
+                                                                        (newItem, onlyAmountChanged, client, init) -> {
+                                                                            if (!init) {
+                                                                                this.recipeLogic.updateCurrentRecipe();
+                                                                            }
+                                                                        })))
                                                 .build())
                                         .child(new Column()
                                                 .size(54)
@@ -395,14 +394,14 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         var connected = new SlotGroup("connected_inventory", 9, true);
         syncManager.registerSlotGroup(connected);
 
-        //todo this needs to handle when inventories are removed/added
+        // todo this needs to handle when inventories are removed/added
         List<IWidget> list = new ArrayList<>(this.connectedInventory.getSlots());
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
             if (i < this.connectedInventory.getSlots()) {
                 list.add(new ItemSlot()
-                                .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
-                                        .slotGroup(connected)));
-                //todo maybe show what inventory a slot belongs to?
+                        .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
+                                .slotGroup(connected)));
+                // todo maybe show what inventory a slot belongs to?
                 continue;
             }
             list.add(GuiTextures.DISABLED.asWidget().size(18));
@@ -469,7 +468,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             guiScreen.setZ(100f);
             guiScreen.getItemRenderer().zLevel = 100.0F;
 
-//            GuiDraw.drawRect(1, 1, 16, 16, -2130706433);
+            // GuiDraw.drawRect(1, 1, 16, 16, -2130706433);
 
             if (!itemstack.isEmpty()) {
                 GlStateManager.enableDepth();
@@ -477,23 +476,24 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 guiScreen.getItemRenderer().renderItemAndEffectIntoGUI(guiScreen.mc.player, itemstack, 1, 1);
 
                 // render the amount overlay
-//                String amountText = NumberFormat.formatWithMaxDigits(1);
-//                textRenderer.setShadow(true);
-//                textRenderer.setColor(Color.WHITE.main);
-//                textRenderer.setAlignment(Alignment.BottomRight, getArea().width - 1, getArea().height - 1);
-//                textRenderer.setPos(1, 1);
-//                GlStateManager.disableLighting();
-//                GlStateManager.disableDepth();
-//                GlStateManager.disableBlend();
-//                textRenderer.draw(amountText);
-//                GlStateManager.enableLighting();
-//                GlStateManager.enableDepth();
-//                GlStateManager.enableBlend();
+                // String amountText = NumberFormat.formatWithMaxDigits(1);
+                // textRenderer.setShadow(true);
+                // textRenderer.setColor(Color.WHITE.main);
+                // textRenderer.setAlignment(Alignment.BottomRight, getArea().width - 1, getArea().height - 1);
+                // textRenderer.setPos(1, 1);
+                // GlStateManager.disableLighting();
+                // GlStateManager.disableDepth();
+                // GlStateManager.disableBlend();
+                // textRenderer.draw(amountText);
+                // GlStateManager.enableLighting();
+                // GlStateManager.enableDepth();
+                // GlStateManager.enableBlend();
 
                 int cachedCount = itemstack.getCount();
                 itemstack.setCount(1); // required to not render the amount overlay
                 // render other overlays like durability bar
-                guiScreen.getItemRenderer().renderItemOverlayIntoGUI(guiScreen.getFontRenderer(), itemstack, 1, 1, null);
+                guiScreen.getItemRenderer().renderItemOverlayIntoGUI(guiScreen.getFontRenderer(), itemstack, 1, 1,
+                        null);
                 itemstack.setCount(cachedCount);
                 GlStateManager.disableDepth();
             }
@@ -520,6 +520,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     private class CraftingOutputSlot extends ModularSlot {
+
         IntSyncValue syncValue;
 
         public CraftingOutputSlot(IItemHandler itemHandler, IntSyncValue syncValue) {
@@ -565,7 +566,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             if (cachedRecipe != null) {
                 ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
                 this.syncValue.setValue(this.syncValue.getValue() + resultStack.getCount(), true, false);
-//                itemsCrafted += resultStack.getCount();
+                // itemsCrafted += resultStack.getCount();
                 recipeMemory.notifyRecipePerformed(craftingGrid, resultStack);
             }
         }
@@ -658,25 +659,27 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         }
     }
 
-//    @Override
-//    protected gregtech.api.gui.ModularUI createUI(EntityPlayer entityPlayer) {
-//
-//        gregtech.api.gui.ModularUI.Builder builder = gregtech.api.gui.ModularUI.builder(gregtech.api.gui.GuiTextures.BACKGROUND, 176, 221)
-//                .bindPlayerInventory(entityPlayer.inventory, 138);
-//        builder.label(5, 5, getMetaFullName());
-//
-//        gregtech.api.gui.widgets.TabGroup<gregtech.api.gui.widgets.AbstractWidgetGroup> tabGroup = new gregtech.api.gui.widgets.TabGroup<>(
-//                gregtech.api.gui.widgets.TabGroup.TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
-//        tabGroup.addTab(new gregtech.api.gui.widgets.tab.ItemTabInfo("gregtech.machine.workbench.tab.workbench",
-//                new ItemStack(Blocks.CRAFTING_TABLE)),
-//                createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
-//        tabGroup.addTab(new gregtech.api.gui.widgets.tab.ItemTabInfo("gregtech.machine.workbench.tab.item_list",
-//                new ItemStack(Blocks.CHEST)), createItemListTab());
-//        builder.widget(tabGroup);
-//        builder.bindCloseListener(() -> discardRecipeResolver(entityPlayer));
-//
-//        return builder.build(getHolder(), entityPlayer);
-//    }
+    // @Override
+    // protected gregtech.api.gui.ModularUI createUI(EntityPlayer entityPlayer) {
+    //
+    // gregtech.api.gui.ModularUI.Builder builder =
+    // gregtech.api.gui.ModularUI.builder(gregtech.api.gui.GuiTextures.BACKGROUND, 176, 221)
+    // .bindPlayerInventory(entityPlayer.inventory, 138);
+    // builder.label(5, 5, getMetaFullName());
+    //
+    // gregtech.api.gui.widgets.TabGroup<gregtech.api.gui.widgets.AbstractWidgetGroup> tabGroup = new
+    // gregtech.api.gui.widgets.TabGroup<>(
+    // gregtech.api.gui.widgets.TabGroup.TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
+    // tabGroup.addTab(new gregtech.api.gui.widgets.tab.ItemTabInfo("gregtech.machine.workbench.tab.workbench",
+    // new ItemStack(Blocks.CRAFTING_TABLE)),
+    // createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
+    // tabGroup.addTab(new gregtech.api.gui.widgets.tab.ItemTabInfo("gregtech.machine.workbench.tab.item_list",
+    // new ItemStack(Blocks.CHEST)), createItemListTab());
+    // builder.widget(tabGroup);
+    // builder.bindCloseListener(() -> discardRecipeResolver(entityPlayer));
+    //
+    // return builder.build(getHolder(), entityPlayer);
+    // }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {

@@ -172,8 +172,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(craftingStationGuiHandler,
                 VanillaRecipeCategoryUid.CRAFTING);
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(new GregTechGuiTransferHandler(
-                        jeiHelpers.recipeTransferHandlerHelper()
-                ), VanillaRecipeCategoryUid.CRAFTING);
+                jeiHelpers.recipeTransferHandlerHelper()), VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             if (recipeMap.getRecipeMapUI().isJEIVisible()) {
