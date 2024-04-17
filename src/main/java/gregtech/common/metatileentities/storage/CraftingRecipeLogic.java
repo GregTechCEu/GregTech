@@ -21,7 +21,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
@@ -39,21 +38,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("OverrideOnly") //stupid annotations conflicting with each other
+@SuppressWarnings("OverrideOnly") // stupid annotations conflicting with each other
 public class CraftingRecipeLogic extends SyncHandler {
 
     private final World world;
     private IItemHandlerModifiable availableHandlers;
 
     /** Used to lookup a list of slots for a given stack */
-    private final Object2ObjectOpenCustomHashMap<ItemStack, List<Integer>> stackLookupMap =
-            new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+    private final Object2ObjectOpenCustomHashMap<ItemStack, List<Integer>> stackLookupMap = new Object2ObjectOpenCustomHashMap<>(
+            ItemStackHashStrategy.comparingAllButCount());
 
-    /** List of items needed to complete the crafting recipe,
+    /**
+     * List of items needed to complete the crafting recipe,
      * filled by {@link CraftingRecipeLogic#getIngredientEquivalent(int)}
      **/
-    private final Map<ItemStack, Integer> requiredItems =
-            new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+    private final Map<ItemStack, Integer> requiredItems = new Object2IntOpenCustomHashMap<>(
+            ItemStackHashStrategy.comparingAllButCount());
 
     private final Map<Integer, Object2BooleanMap<ItemStack>> replaceAttemptMap = new Int2ObjectArrayMap<>();
     private final InventoryCrafting craftingMatrix;
@@ -98,6 +98,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     /**
      * Attempts to match the crafting matrix against all available inventories
+     * 
      * @return true if all items matched
      */
     public boolean attemptMatchRecipe() {
@@ -112,6 +113,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     /**
      * Searches all available inventories for an ingredient equivalent for a stack in the crafting matrix
+     * 
      * @param slot index of the crafting matrix
      * @return true if a valid substitute exists for the stack in the slot
      */
@@ -144,7 +146,8 @@ public class CraftingRecipeLogic extends SyncHandler {
                     } else {
                         // cant return here before checking if:
                         // The item is available for extraction
-                        // The recipe output is still the same, as depending on the ingredient, the output NBT may change
+                        // The recipe output is still the same, as depending on the ingredient, the output NBT may
+                        // change
                         matchedPreviously = true;
                     }
                 }
@@ -187,6 +190,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     /**
      * Attempts to extract the given stack from connected inventories
+     * 
      * @param itemStack - stack from the crafting matrix
      * @return true if the item exists in available inventories
      */
@@ -227,11 +231,11 @@ public class CraftingRecipeLogic extends SyncHandler {
                 continue;
             }
 
-//            ItemStack current = craftingMatrix.getStackInSlot(i);
-//            craftingMatrix.setInventorySlotContents(i, itemStack);
-//            if (!cachedRecipe.matches(craftingMatrix, this.world)) {
-//                craftingMatrix.setInventorySlotContents(i, current);
-//            }
+            // ItemStack current = craftingMatrix.getStackInSlot(i);
+            // craftingMatrix.setInventorySlotContents(i, itemStack);
+            // if (!cachedRecipe.matches(craftingMatrix, this.world)) {
+            // craftingMatrix.setInventorySlotContents(i, current);
+            // }
 
             int remainingAmount = GTTransferUtils.insertItem(this.availableHandlers, itemStack, true).getCount();
             if (remainingAmount > 0) {
@@ -312,8 +316,8 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     public void update() {
         if (getCachedRecipeData().getRecipe() != null) {
-            //todo fix tint location
-//            tintLocation = getCachedRecipeData().attemptMatchRecipe();
+            // todo fix tint location
+            // tintLocation = getCachedRecipeData().attemptMatchRecipe();
         } else {
             tintLocation = ALL_INGREDIENTS_PRESENT;
         }
@@ -326,7 +330,6 @@ public class CraftingRecipeLogic extends SyncHandler {
     public CachedRecipeData getCachedRecipeData() {
         return this.cachedRecipeData;
     }
-
 
     public void writeAvailableStacks(PacketBuffer buffer) {
         this.collectAvailableItems();
@@ -415,7 +418,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         try {
             var tag = buffer.readCompoundTag();
             if (tag == null) throw new IOException();
-//            GTLog.logger.warn(String.format("Received: %s", tag));
+            // GTLog.logger.warn(String.format("Received: %s", tag));
             stack = new ItemStack(tag);
         } catch (IOException ignore) {
             GTLog.logger.warn("A stack was read incorrectly, something is seriously wrong!");
@@ -425,7 +428,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     private static void writeStackSafe(PacketBuffer buffer, ItemStack stack) {
         var tag = stack.serializeNBT();
-//        GTLog.logger.warn(String.format("Sent: %s", tag));
+        // GTLog.logger.warn(String.format("Sent: %s", tag));
         buffer.writeCompoundTag(tag);
     }
 
