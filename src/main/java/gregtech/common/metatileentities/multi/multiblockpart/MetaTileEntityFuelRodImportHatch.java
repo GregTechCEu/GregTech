@@ -87,9 +87,7 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
-            if (workingEnabled) {
-                pullItemsFromNearbyHandlers(getFrontFacing());
-            }
+            pullItemsFromNearbyHandlers(getFrontFacing());
         }
     }
 

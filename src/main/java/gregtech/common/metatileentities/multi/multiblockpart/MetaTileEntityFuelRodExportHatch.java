@@ -25,8 +25,8 @@ import codechicken.lib.vec.Matrix4;
 import java.util.List;
 
 public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNotifiablePart
-                                              implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable,
-                                              IFissionReactorHatch {
+        implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable,
+                   IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
@@ -55,9 +55,7 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
-            if (workingEnabled) {
-                pushItemsIntoNearbyHandlers(getFrontFacing());
-            }
+            pushItemsIntoNearbyHandlers(getFrontFacing());
         }
     }
 

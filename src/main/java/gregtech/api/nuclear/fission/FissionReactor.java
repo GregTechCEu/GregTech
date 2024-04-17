@@ -63,7 +63,7 @@ public class FissionReactor {
     private double controlRodFactor;
 
     // TODO: Determine tolerance range from config
-    private double kEff; // criticality value, based on k
+    public double kEff; // criticality value, based on k
 
     // Is this still needed?
     private double avgBoilingPoint;

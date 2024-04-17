@@ -492,7 +492,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         data.setInteger("heightTop", this.heightTop);
         data.setInteger("heightBottom", this.heightBottom);
         data.setBoolean("locked", this.lockingState == LockingState.LOCKED);
-        data.setTag("transientData", this.fissionReactor.serializeNBT());
+        if (fissionReactor != null) {
+            data.setTag("transientData", this.fissionReactor.serializeNBT());
+        }
 
         return super.writeToNBT(data);
     }
@@ -541,11 +543,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.pressure = this.fissionReactor.pressure;
         this.power = this.fissionReactor.power;
         this.maxPower = this.fissionReactor.maxPower;
+        this.kEff = this.fissionReactor.kEff;
         writeCustomData(GregtechDataCodes.SYNC_REACTOR_STATS, (packetBuffer -> {
             packetBuffer.writeDouble(this.fissionReactor.temperature);
             packetBuffer.writeDouble(this.fissionReactor.pressure);
             packetBuffer.writeDouble(this.fissionReactor.power);
             packetBuffer.writeDouble(this.fissionReactor.maxPower);
+            packetBuffer.writeDouble(this.fissionReactor.kEff);
         }));
     }
 
@@ -558,6 +562,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             this.pressure = buf.readDouble();
             this.power = buf.readDouble();
             this.maxPower = buf.readDouble();
+            this.kEff = buf.readDouble();
         } else if (dataId == GregtechDataCodes.SYNC_LOCKING_STATE) {
             this.lockingState = buf.readEnumValue(LockingState.class);
         }
