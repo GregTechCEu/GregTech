@@ -112,54 +112,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         super(metaTileEntityId);
     }
 
-    // public static gregtech.api.gui.widgets.AbstractWidgetGroup createWorkbenchTab(CraftingRecipeLogic
-    // craftingRecipeLogic,
-    // ItemStackHandler craftingGrid,
-    // CraftingRecipeMemory recipeMemory,
-    // ItemStackHandler toolInventory,
-    // ItemStackHandler internalInventory) {
-    // gregtech.api.gui.widgets.WidgetGroup widgetGroup = new gregtech.api.gui.widgets.WidgetGroup();
-    // widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(88 - 13, 44 - 14, 26, 26,
-    // gregtech.api.gui.GuiTextures.SLOT));
-    // widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.CraftingSlotWidget(craftingRecipeLogic, 0,
-    // 88 - 9, 44 - 9));
-    //
-    // // crafting grid
-    // widgetGroup.addWidget(new gregtech.api.gui.widgets.CraftingStationInputWidgetGroup(4, 7, craftingGrid,
-    // craftingRecipeLogic));
-    //
-    // Supplier<String> textSupplier = () -> Integer.toString(craftingRecipeLogic.getItemsCraftedAmount());
-    // widgetGroup.addWidget(new gregtech.api.gui.widgets.SimpleTextWidget(88, 44 + 19, "", textSupplier));
-    //
-    // Consumer<gregtech.api.gui.Widget.ClickData> clearAction = (clickData) -> craftingRecipeLogic.clearCraftingGrid();
-    // widgetGroup.addWidget(new gregtech.api.gui.widgets.ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction)
-    // .setButtonTexture(gregtech.api.gui.GuiTextures.BUTTON_CLEAR_GRID));
-    //
-    // widgetGroup.addWidget(new gregtech.api.gui.widgets.ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3,
-    // gregtech.api.gui.resources.TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
-    // for (int i = 0; i < 3; ++i) {
-    // for (int j = 0; j < 3; ++j) {
-    // widgetGroup.addWidget(new gregtech.common.gui.widget.craftingstation.MemorizedRecipeWidget(recipeMemory, j + i *
-    // 3, craftingGrid,
-    // 168 - 18 * 3 / 2 - 27 + j * 18, 44 - 28 + i * 18));
-    // }
-    // }
-    // // tool inventory
-    // for (int i = 0; i < 9; i++) {
-    // widgetGroup.addWidget(new gregtech.api.gui.widgets.SlotWidget(toolInventory, i, 7 + i * 18, 75)
-    // .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT, gregtech.api.gui.GuiTextures.TOOL_SLOT_OVERLAY));
-    // }
-    // // internal inventory
-    // for (int i = 0; i < 2; ++i) {
-    // for (int j = 0; j < 9; ++j) {
-    // widgetGroup.addWidget(new gregtech.api.gui.widgets.SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i *
-    // 18)
-    // .setBackgroundTexture(gregtech.api.gui.GuiTextures.SLOT));
-    // }
-    // }
-    // return widgetGroup;
-    // }
-
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityWorkbench(metaTileEntityId);
@@ -658,28 +610,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             return slot >= 0 || slot < this.getSlots();
         }
     }
-
-    // @Override
-    // protected gregtech.api.gui.ModularUI createUI(EntityPlayer entityPlayer) {
-    //
-    // gregtech.api.gui.ModularUI.Builder builder =
-    // gregtech.api.gui.ModularUI.builder(gregtech.api.gui.GuiTextures.BACKGROUND, 176, 221)
-    // .bindPlayerInventory(entityPlayer.inventory, 138);
-    // builder.label(5, 5, getMetaFullName());
-    //
-    // gregtech.api.gui.widgets.TabGroup<gregtech.api.gui.widgets.AbstractWidgetGroup> tabGroup = new
-    // gregtech.api.gui.widgets.TabGroup<>(
-    // gregtech.api.gui.widgets.TabGroup.TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
-    // tabGroup.addTab(new gregtech.api.gui.widgets.tab.ItemTabInfo("gregtech.machine.workbench.tab.workbench",
-    // new ItemStack(Blocks.CRAFTING_TABLE)),
-    // createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
-    // tabGroup.addTab(new gregtech.api.gui.widgets.tab.ItemTabInfo("gregtech.machine.workbench.tab.item_list",
-    // new ItemStack(Blocks.CHEST)), createItemListTab());
-    // builder.widget(tabGroup);
-    // builder.bindCloseListener(() -> discardRecipeResolver(entityPlayer));
-    //
-    // return builder.build(getHolder(), entityPlayer);
-    // }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
