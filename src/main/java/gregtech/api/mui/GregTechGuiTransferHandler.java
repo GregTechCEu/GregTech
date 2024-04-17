@@ -1,29 +1,20 @@
 package gregtech.api.mui;
 
-import gregtech.api.recipes.category.RecipeCategories;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
-
-import mezz.jei.api.recipe.IRecipeCategory;
-
-import mezz.jei.plugins.vanilla.crafting.CraftingRecipeCategory;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class GregTechGuiTransferHandler implements IRecipeTransferHandler<ModularContainer> {
 
@@ -33,6 +24,7 @@ public class GregTechGuiTransferHandler implements IRecipeTransferHandler<Modula
     public GregTechGuiTransferHandler(IRecipeTransferHandlerHelper handlerHelper) {
         this.handlerHelper = handlerHelper;
     }
+
     @Override
     public @NotNull Class<ModularContainer> getContainerClass() {
         return ModularContainer.class;

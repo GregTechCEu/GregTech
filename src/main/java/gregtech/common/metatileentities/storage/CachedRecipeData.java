@@ -14,6 +14,7 @@ public class CachedRecipeData {
     public CachedRecipeData() {
         this(null);
     }
+
     public CachedRecipeData(@Nullable IRecipe recipe) {
         this.recipe = recipe;
     }
