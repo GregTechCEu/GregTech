@@ -14,12 +14,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
 
-import gregtech.common.items.MetaItem1;
-
-import gregtech.common.items.MetaItems;
-
-import gregtech.common.metatileentities.MetaTileEntities;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -299,14 +293,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                 // internal inventory
                                 .child(createInternalInventory(guiSyncManager)))
                         // storage page
-                        .addPage(new Column()
-                                .debugName("inventory section")
-                                .margin(7, 0)
-                                .background(GTGuiTextures.DISPLAY)
-                                .coverChildren()
-                                .padding(2)
-                                .child(createInventoryList(guiSyncManager))
-                        ))
+                        .addPage(createInventoryPage(guiSyncManager)))
                 .bindPlayerInventory();
     }
 
@@ -375,7 +362,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .asWidget().widthRel(1f));
     }
 
-    public IWidget createInventoryList(GuiSyncManager syncManager) {
+    public IWidget createInventoryPage(GuiSyncManager syncManager) {
         var connected = new SlotGroup("connected_inventory", 9, true);
         syncManager.registerSlotGroup(connected);
 
@@ -391,13 +378,16 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             }
             list.add(GuiTextures.DISABLED.asWidget().size(18));
         }
-        return new Column().size(64);
-//        return new Grid();
-//                .coverChildrenWidth()
-//                .height(18 * 6);
-//                .scrollable(new VerticalScrollData(), null)
-//                .minElementMargin(0, 0)
-//                .mapTo(8, list, (index, value) -> value);
+        return new Column()
+                .debugName("inventory page")
+                .padding(2)
+                .background(GTGuiTextures.DISPLAY)
+                .height(18 * 6)
+                // todo for some reason mui has an issue with grids in paged widgets
+                .child(new Grid()
+                        .scrollable(new VerticalScrollData(), null)
+                        .minElementMargin(0, 0)
+                        .mapTo(8, list, (index, value) -> value));
     }
 
     @Override
