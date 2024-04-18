@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -11,6 +13,12 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
+
+import gregtech.common.items.MetaItem1;
+
+import gregtech.common.items.MetaItems;
+
+import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -78,6 +86,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     // todo move these to GregtechDataCodes
     public static final int UPDATE_CLIENT_STACKS = GregtechDataCodes.assignId();
     public static final int UPDATE_CLIENT_HANDLER = GregtechDataCodes.assignId();
+
+    private static final IDrawable CHEST = new ItemDrawable(new ItemStack(Blocks.CHEST))
+            .asIcon().size(16);
+
+    private final IDrawable WORKSTATION = new ItemDrawable(getStackForm())
+            .asIcon().size(16);
 
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18) {
@@ -231,42 +245,30 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
-        final String nineSlot = "XXXXXXXXX";
-        final String[] craftingGrid = new String[] { "XXX", "XXX", "XXX" };
-        final char key = 'X';
-
-        var toolSlots = new SlotGroup("tool_slots", 9, true);
-        var inventory = new SlotGroup("inventory", 9, true);
-        guiSyncManager.registerSlotGroup(toolSlots);
-        guiSyncManager.registerSlotGroup(inventory);
-
         getCraftingRecipeLogic().updateCurrentRecipe();
         if (!guiSyncManager.isClient()) {
             writeCustomData(UPDATE_CLIENT_STACKS, getCraftingRecipeLogic()::writeAvailableStacks);
         }
 
-        var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
-        guiSyncManager.syncValue("amount_crafted", amountCrafted);
         guiSyncManager.syncValue("recipe_logic", this.recipeLogic);
-        amountCrafted.updateCacheFromSource(true);
 
         var controller = new PagedWidget.Controller();
 
         return GTGuis.createPanel(this, 176, 224)
-                .child(new Row().widthRel(1f)
+                .child(new Row()
+                        .widthRel(1f)
                         .leftRel(0.5f)
                         .margin(3, 0)
                         .coverChildrenHeight()
                         .topRel(0f, 3, 1f)
                         .child(new PageButton(0, controller)
                                 .tab(GuiTextures.TAB_TOP, 0)
-                                .overlay(new ItemDrawable(getStackForm())
-                                        .asIcon().size(16)))
+                                .overlay(WORKSTATION))
                         .child(new PageButton(1, controller)
                                 .tab(GuiTextures.TAB_TOP, 0)
-                                .overlay(new ItemDrawable(new ItemStack(Blocks.CHEST))
-                                        .asIcon().size(16))))
-                .child(IKey.lang(getMetaFullName()).asWidget()
+                                .overlay(CHEST)))
+                .child(IKey.lang(getMetaFullName())
+                        .asWidget()
                         .top(7).left(7))
                 .child(new PagedWidget<>()
                         .top(22)
@@ -275,71 +277,102 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .controller(controller)
                         // workstation page
                         .addPage(new Column()
-                                .coverChildren()
-                                .child(new Row().coverChildrenHeight()
+                                .debugName("crafting section")
+                                .coverChildrenWidth()
+                                .child(new Row()
+                                        .debugName("crafting row")
+                                        .coverChildrenHeight()
                                         .widthRel(1f)
-                                        .marginBottom(2)
                                         // crafting grid
-                                        .child(SlotGroupWidget.builder()
-                                                .matrix(craftingGrid)
-                                                .key(key, i -> new ItemSlot()
-                                                        .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
-                                                                .changeListener(
-                                                                        (newItem, onlyAmountChanged, client, init) -> {
-                                                                            if (!init) {
-                                                                                this.recipeLogic.updateCurrentRecipe();
-                                                                            }
-                                                                        })))
-                                                .build())
-                                        .child(new Column()
-                                                .size(54)
-                                                // crafting output slot
-                                                .child(new ItemSlot().marginTop(18)
-                                                        // todo figure this shit (recipe output slot) out
-                                                        .slot(new CraftingOutputSlot(new InventoryWrapper(
-                                                                this.recipeLogic.getCraftingResultInventory(),
-                                                                guiData.getPlayer()), amountCrafted))
-                                                        .background(GTGuiTextures.SLOT.asIcon().size(22))
-                                                        .marginBottom(4))
-                                                .child(IKey.dynamic(amountCrafted::getStringValue)
-                                                        .alignment(Alignment.Center)
-                                                        .asWidget().widthRel(1f)))
+                                        .child(createCraftingGrid())
+                                        .child(createCraftingOutput(guiData, guiSyncManager))
                                         // recipe memory
                                         .child(SlotGroupWidget.builder()
                                                 .matrix("XXX",
                                                         "XXX",
                                                         "XXX")
                                                 .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
-                                                .build().right(0)))
+                                                .build().right(0))
+                                )
                                 // tool inventory
-                                .child(SlotGroupWidget.builder()
-                                        .row(nineSlot)
-                                        .key(key, i -> new ItemSlot()
-                                                .background(GTGuiTextures.SLOT, GTGuiTextures.INGOT_OVERLAY)
-                                                .slot(SyncHandlers.itemSlot(this.toolInventory, i)
-                                                        .slotGroup(toolSlots)))
-                                        .build().marginBottom(2))
+                                .child(createToolInventory(guiSyncManager))
                                 // internal inventory
-                                .child(SlotGroupWidget.builder()
-                                        .row(nineSlot)
-                                        .row(nineSlot)
-                                        .key(key, i -> new ItemSlot()
-                                                .slot(SyncHandlers.itemSlot(this.internalInventory, i)
-                                                        .slotGroup(inventory)))
-                                        .build()))
+                                .child(createInternalInventory(guiSyncManager)))
                         // storage page
                         .addPage(new Column()
+                                .debugName("inventory section")
                                 .margin(7, 0)
                                 .background(GTGuiTextures.DISPLAY)
                                 .coverChildren()
                                 .padding(2)
-                                .child(createInventoryList(guiSyncManager))))
+                                .child(createInventoryList(guiSyncManager))
+                        ))
                 .bindPlayerInventory();
     }
 
     public void sendHandlerToClient(PacketBuffer buffer) {
         buffer.writeVarInt(this.combinedInventory.getSlots());
         getCraftingRecipeLogic().writeAvailableStacks(buffer);
+    }
+
+    public IWidget createToolInventory(GuiSyncManager syncManager) {
+        var toolSlots = new SlotGroup("tool_slots", 9, true);
+        syncManager.registerSlotGroup(toolSlots);
+
+        return SlotGroupWidget.builder()
+                .row("XXXXXXXXX")
+                .key('X', i -> new ItemSlot()
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.INGOT_OVERLAY)
+                        .slot(SyncHandlers.itemSlot(this.toolInventory, i)
+                                .slotGroup(toolSlots)))
+                .build().marginTop(2);
+    }
+
+    public IWidget createInternalInventory(GuiSyncManager syncManager) {
+        var inventory = new SlotGroup("inventory", 9, true);
+        syncManager.registerSlotGroup(inventory);
+
+        return SlotGroupWidget.builder()
+                .row("XXXXXXXXX")
+                .row("XXXXXXXXX")
+                .key('X', i -> new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(this.internalInventory, i)
+                                .slotGroup(inventory)))
+                .build().marginTop(2);
+    }
+
+    public IWidget createCraftingGrid() {
+        return SlotGroupWidget.builder()
+                .matrix("XXX", "XXX", "XXX")
+                .key('X', i -> new ItemSlot()
+                        .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
+                                .changeListener(
+                                        (newItem, onlyAmountChanged, client, init) -> {
+                                            if (!init) {
+                                                this.recipeLogic.updateCurrentRecipe();
+                                            }
+                                        })))
+                .build();
+    }
+
+    public IWidget createCraftingOutput(PosGuiData guiData, GuiSyncManager syncManager) {
+        var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
+        syncManager.syncValue("amount_crafted", amountCrafted);
+        amountCrafted.updateCacheFromSource(true);
+
+        return new Column()
+                .size(54)
+                // crafting output slot
+                .child(new ItemSlot().marginTop(18)
+                        // todo figure this shit (recipe output slot) out
+                        .slot(new CraftingOutputSlot(new InventoryWrapper(
+                                this.recipeLogic.getCraftingResultInventory(),
+                                guiData.getPlayer()), amountCrafted))
+                        .background(GTGuiTextures.SLOT.asIcon().size(22))
+                        .marginBottom(4))
+                .child(IKey.dynamic(amountCrafted::getStringValue)
+                        .alignment(Alignment.Center)
+                        .asWidget().widthRel(1f));
     }
 
     public IWidget createInventoryList(GuiSyncManager syncManager) {
@@ -358,12 +391,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             }
             list.add(GuiTextures.DISABLED.asWidget().size(18));
         }
-        return new Grid()
-                .coverChildrenWidth()
-                .height(18 * 6)
-                .scrollable(new VerticalScrollData(), null)
-                .minElementMargin(0, 0)
-                .mapTo(8, list, (index, value) -> value);
+        return new Column().size(64);
+//        return new Grid();
+//                .coverChildrenWidth()
+//                .height(18 * 6);
+//                .scrollable(new VerticalScrollData(), null)
+//                .minElementMargin(0, 0)
+//                .mapTo(8, list, (index, value) -> value);
     }
 
     @Override
