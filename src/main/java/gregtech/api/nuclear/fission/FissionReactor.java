@@ -157,7 +157,7 @@ public class FissionReactor {
         heatAbsorbed = Math.max(0.1, heatAbsorbed);
         // Solves the following differential equation:
         // dT/dt = h_added_tot / m_tot - k(T - T_env) at t = 1s with T(0) = T_0
-        double heatFlux = this.surfaceArea * thermalConductivity * wallThickness;
+        double heatFlux = this.surfaceArea * thermalConductivity / wallThickness;
         double expDecay = Math.exp(-heatFlux);
 
         double effectiveEnvTemperature = envTemperature +
@@ -436,7 +436,8 @@ public class FissionReactor {
         if (coolantBoilingPointStandardPressure == 0) {
             coolantBoilingPointStandardPressure = airBoilingPoint;
         }
-        surfaceArea = (reactorRadius * reactorRadius) * Math.PI * 2 + reactorDepth * reactorRadius * Math.PI;
+        // 2pi * r^2 + 2pi * r * l
+        surfaceArea = (reactorRadius * reactorRadius) * Math.PI * 2 + reactorDepth * reactorRadius * Math.PI * 2;
         needsOutput = false;
     }
 
@@ -458,9 +459,18 @@ public class FissionReactor {
 
                 CoolantProperty prop = coolant.getProperty(PropertyKey.COOLANT);
 
+                double heatRemovedPerLiter = prop.getHeatOfVaporization() + prop.getCoolingFactor() *
+                        (this.coolantBoilingPoint(coolant) - coolant.getFluid().getTemperature());
+                // Explained by:
+                // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa
+                double heatFluxPerAreaAndTemp = 1 / (1 / prop.getCoolingFactor() + wallThickness / thermalConductivity);
+                double idealHeatFlux = heatFluxPerAreaAndTemp * 4 * reactorDepth * (temperature - coolant.getFluid().getTemperature());
+
+                double idealFluidUsed = idealHeatFlux / heatRemovedPerLiter;
+
                 int remainingSpace = channel.getOutputHandler().getFluidTank().getCapacity() -
                         channel.getOutputHandler().getFluidTank().getFluidAmount();
-                int actualFlowRate = Math.min(remainingSpace, drained);
+                int actualFlowRate = Math.min(Math.min(remainingSpace, drained), (int) idealFluidUsed);
                 FluidStack HPCoolant = new FluidStack(
                         prop.getHotHPCoolant().getFluid(), actualFlowRate);
 
@@ -471,10 +481,7 @@ public class FissionReactor {
                 }
 
                 this.coolantMass += actualFlowRate * coolant.getMass();
-
-                this.heatRemoved += prop.getCoolingFactor() * this.reactorDepth * actualFlowRate *
-                        (prop.getHeatOfVaporization() + this.coolantBoilingPoint(coolant) -
-                                coolant.getFluid().getTemperature());
+                this.heatRemoved += actualFlowRate * heatRemovedPerLiter;
             }
         }
         this.coolantMass /= 1000;
