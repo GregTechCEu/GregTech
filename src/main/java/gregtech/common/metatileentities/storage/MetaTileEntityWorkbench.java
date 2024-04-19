@@ -533,8 +533,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         @Override
         public boolean canTakeStack(EntityPlayer playerIn) {
-            if (recipeLogic.getSyncManager().isClient()) recipeLogic.syncToServer(3);
-            return recipeLogic.isRecipeValid();
+            if (recipeLogic.getSyncManager().isClient()) {
+                recipeLogic.syncToServer(3);
+                return false;
+            }
+            return recipeLogic.isRecipeValid() && recipeLogic.consumeRecipeItems(true);
         }
 
         @Override
