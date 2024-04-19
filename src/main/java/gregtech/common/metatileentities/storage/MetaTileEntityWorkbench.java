@@ -74,6 +74,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
 
@@ -267,7 +268,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .child(new PagedWidget<>()
                         .top(22)
                         .margin(7)
-                        .coverChildren()
+                        .widthRel(0.9f)
+//                        .bottom(100)
                         .controller(controller)
                         // workstation page
                         .addPage(new Column()
@@ -363,29 +365,35 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public IWidget createInventoryPage(GuiSyncManager syncManager) {
-        var connected = new SlotGroup("connected_inventory", 9, true);
+        var connected = new SlotGroup("connected_inventory", 8, true);
         syncManager.registerSlotGroup(connected);
 
         // todo this needs to handle when inventories are removed/added
         List<IWidget> list = new ArrayList<>(this.connectedInventory.getSlots());
+        Predicate<ItemSlot> checkSlotValid = itemSlot -> {
+            int slot = itemSlot.getSlot().getSlotIndex();
+            return slot < this.connectedInventory.getSlots();
+        };
+
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
-            if (i < this.connectedInventory.getSlots()) {
-                list.add(new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
-                                .slotGroup(connected)));
-                // todo maybe show what inventory a slot belongs to?
-                continue;
-            }
-            list.add(GuiTextures.DISABLED.asWidget().size(18));
+            // todo maybe show what inventory a slot belongs to?
+            var widget = new ItemSlot()
+                    .setEnabledIf(checkSlotValid)
+                    .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
+                            .slotGroup(connected));
+            widget.setEnabled(checkSlotValid.test(widget));
+            list.add(widget);
         }
         return new Column()
                 .debugName("inventory page")
                 .padding(2)
+                .leftRel(0.5f)
+                .coverChildren()
                 .background(GTGuiTextures.DISPLAY)
-                .height(18 * 6)
-                // todo for some reason mui has an issue with grids in paged widgets
                 .child(new Grid()
                         .scrollable(new VerticalScrollData(), null)
+                        .coverChildrenWidth()
+                        .height(18 * 6)
                         .minElementMargin(0, 0)
                         .mapTo(8, list, (index, value) -> value));
     }
