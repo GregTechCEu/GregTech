@@ -215,7 +215,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         if (!getSyncManager().isClient())
             syncToClient(1, this::writeAvailableStacks);
 
-        if (!attemptMatchRecipe() || !consumeRecipeItems()) {
+        if (!attemptMatchRecipe() || !consumeRecipeItems(false)) {
             return;
         }
 
@@ -247,7 +247,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         }
     }
 
-    protected boolean consumeRecipeItems() {
+    protected boolean consumeRecipeItems(boolean simulate) {
         if (requiredItems.isEmpty()) {
             return false;
         }
@@ -284,9 +284,9 @@ public class CraftingRecipeLogic extends SyncHandler {
                     if (stack.getItem() instanceof IGTTool gtTool) {
                         damage = gtTool.getToolStats().getDamagePerCraftingAction(stack);
                     }
-                    stack.damageItem(damage, getSyncManager().getPlayer());
+                    if (!simulate) stack.damageItem(damage, getSyncManager().getPlayer());
                 } else {
-                    availableHandlers.extractItem(slot, stack.getCount(), false);
+                    availableHandlers.extractItem(slot, stack.getCount(), simulate);
                 }
                 extracted = true;
             }
@@ -365,6 +365,8 @@ public class CraftingRecipeLogic extends SyncHandler {
             updateClientStacks(buf);
         } else if (id == 3) {
             syncToServer(3);
+        } else if (id == 4) {
+            getSyncManager().setCursorItem(readStackSafe(buf));
         } else if (id == 5) {
             int slot = buf.readVarInt();
             var stack = readStackSafe(buf);
@@ -384,7 +386,13 @@ public class CraftingRecipeLogic extends SyncHandler {
         } else if (id == 1) {
             syncToClient(1, this::writeAvailableStacks);
         } else if (id == 3) {
-            syncToClient(1, this::writeAvailableStacks);
+//            syncToClient(1, this::writeAvailableStacks);
+            var curStack = getSyncManager().getCursorItem();
+            var outStack = getCachedRecipe().getRecipeOutput();
+            if (ItemStack.areItemStacksEqual(curStack, outStack)) {
+                curStack.grow(outStack.getCount());
+                syncToClient(4, buffer -> writeStackSafe(buffer, curStack));
+            }
         } else if (id == 4) {
             int slot = buf.readVarInt();
             syncToClient(5, buffer -> {
