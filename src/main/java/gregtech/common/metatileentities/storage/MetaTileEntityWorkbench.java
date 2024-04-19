@@ -2,6 +2,8 @@ package gregtech.common.metatileentities.storage;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 
+import com.cleanroommc.modularui.widget.ParentWidget;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -73,6 +75,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -299,11 +302,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .bindPlayerInventory();
     }
 
-    public void sendHandlerToClient(PacketBuffer buffer) {
-        buffer.writeVarInt(this.combinedInventory.getSlots());
-        getCraftingRecipeLogic().writeAvailableStacks(buffer);
-    }
-
     public IWidget createToolInventory(GuiSyncManager syncManager) {
         var toolSlots = new SlotGroup("tool_slots", 9, true);
         syncManager.registerSlotGroup(toolSlots);
@@ -375,6 +373,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             return slot < this.connectedInventory.getSlots();
         };
 
+        if (this.connectedInventory.getSlots() == 0) {
+            return new ParentWidget<>();
+        }
+
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
             // todo maybe show what inventory a slot belongs to?
             var widget = new ItemSlot()
@@ -398,6 +400,15 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .mapTo(8, list, (index, value) -> value));
     }
 
+    public void sendHandlerToClient(PacketBuffer buffer) {
+        int combined = this.combinedInventory.getSlots(),
+                connected = this.connectedInventory.getSlots();
+
+        buffer.writeVarInt(connected);
+        buffer.writeVarInt(combined - connected);
+        getCraftingRecipeLogic().writeAvailableStacks(buffer);
+    }
+
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
@@ -406,8 +417,16 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                     .updateClientStacks(buf);
 
         } else if (dataId == UPDATE_CLIENT_HANDLER) {
+            int connected = buf.readVarInt(), internal = buf.readVarInt();
+
+            // set connected inventory
+            this.connectedInventory = new ItemStackHandler(connected);
+
+            // set combined inventory
+            this.combinedInventory = new ItemHandlerList(Arrays.asList(this.connectedInventory, new ItemStackHandler(internal)));
+
             getCraftingRecipeLogic()
-                    .updateInventory(new ItemStackHandler(buf.readVarInt()));
+                    .updateInventory(this.combinedInventory);
 
             getCraftingRecipeLogic()
                     .updateClientStacks(buf);
