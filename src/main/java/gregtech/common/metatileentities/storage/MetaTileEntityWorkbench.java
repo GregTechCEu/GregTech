@@ -80,7 +80,6 @@ import java.util.function.Predicate;
 public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     // todo move these to GregtechDataCodes
-    public static final int UPDATE_CLIENT_STACKS = GregtechDataCodes.assignId();
     public static final int UPDATE_CLIENT_HANDLER = GregtechDataCodes.assignId();
 
     private static final IDrawable CHEST = new ItemDrawable(new ItemStack(Blocks.CHEST))
@@ -252,6 +251,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         return GTGuis.createPanel(this, 176, 224)
                 .child(new Row()
+                        .debugName("tab row")
                         .widthRel(1f)
                         .leftRel(0.5f)
                         .margin(3, 0)
@@ -273,7 +273,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .controller(controller)
                         // workstation page
                         .addPage(new Column()
-                                .debugName("crafting section")
+                                .debugName("crafting page")
                                 .coverChildrenWidth()
                                 .child(new Row()
                                         .debugName("crafting row")
@@ -281,6 +281,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                         .widthRel(1f)
                                         // crafting grid
                                         .child(createCraftingGrid())
+                                        // crafting output slot
                                         .child(createCraftingOutput(guiData, guiSyncManager))
                                         // recipe memory
                                         .child(createRecipeMemoryGrid(guiSyncManager)))
@@ -340,12 +341,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         return new Column()
                 .size(54)
-                // crafting output slot
                 .child(new ItemSlot().marginTop(18)
                         // todo figure this shit (recipe output slot) out
                         .slot(new CraftingOutputSlot(new InventoryWrapper(
                                 this.recipeLogic.getCraftingResultInventory(),
-                                guiData.getPlayer()), amountCrafted))
+                                guiData.getPlayer()), amountCrafted, getCraftingRecipeLogic()))
                         .background(GTGuiTextures.SLOT.asIcon().size(22))
                         .marginBottom(4))
                 .child(IKey.dynamic(amountCrafted::getStringValue)
@@ -516,10 +516,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     private class CraftingOutputSlot extends ModularSlot {
 
         IntSyncValue syncValue;
+        private final CraftingRecipeLogic recipeLogic;
 
-        public CraftingOutputSlot(IItemHandler itemHandler, IntSyncValue syncValue) {
+        public CraftingOutputSlot(IItemHandler itemHandler, IntSyncValue syncValue, CraftingRecipeLogic recipeLogic) {
             super(itemHandler, 0, false);
             this.syncValue = syncValue;
+            this.recipeLogic = recipeLogic;
         }
 
         @Override
