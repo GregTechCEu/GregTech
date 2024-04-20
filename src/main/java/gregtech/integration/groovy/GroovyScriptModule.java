@@ -297,6 +297,10 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "toolBuilder");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
         ExpansionHelper.mixinMethod(FluidBuilder.class, GroovyExpansions.class, "acidic");
+
+        // Not Needed if JEI Module is enabled
+        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI))
+            modSupportContainer.getRegistrar().addRegistry(new VirtualizedOreDictHelper());
     }
 
     protected static boolean checkFrozen(String description) {

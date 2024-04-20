@@ -13,6 +13,12 @@ import java.util.Objects;
 
 public class GTRecipeOreInput extends GTRecipeInput {
 
+    // Standard forces a refresh of the input stack cache
+    // Used in GroovyScript Reload, and to avoid race conditions with CraftTweaker.
+    // Short.MAX_VALUE should be enough for the amount of times this is loaded
+    // (1 without GroovyScript Reload, Amount of GroovyScript Reloads otherwise)
+    private static short STANDARD = 0;
+    private short currentStandard;
     private final int ore;
     private ItemStack[] inputStacks;
 
@@ -93,7 +99,10 @@ public class GTRecipeOreInput extends GTRecipeInput {
     // the OreDicts being modified.
     @Override
     public ItemStack[] getInputStacks() {
-        if (this.inputStacks == null) {
+        // Standard forces a refresh of the input stack cache
+        // Used in GroovyScript Reload, and to avoid race conditions with CraftTweaker.
+        if (inputStacks == null || currentStandard != STANDARD) {
+            currentStandard = STANDARD;
             inputStacks = (OreDictionary.getOres(OreDictionary.getOreName(ore)).stream().map(is -> {
                 is = is.copy();
                 is.setCount(this.amount);
@@ -162,5 +171,12 @@ public class GTRecipeOreInput extends GTRecipeInput {
     public String toString() {
         // noinspection StringConcatenationMissingWhitespace
         return amount + "x" + OreDictionary.getOreName(ore);
+    }
+
+    /**
+     * Forces a Refresh of every GTRecipeOreInput's Stack Cache.
+     */
+    public static void refreshStackCache() {
+        STANDARD++;
     }
 }

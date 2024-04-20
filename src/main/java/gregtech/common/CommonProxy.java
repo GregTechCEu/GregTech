@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
@@ -37,6 +38,7 @@ import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
+import gregtech.modules.GregTechModules;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -399,6 +401,11 @@ public class CommonProxy {
 
     public void onLoadComplete() {
         GTRecipeInputCache.disableCache();
+
+        // If JEI is not loaded, refresh ore dict ingredients
+        // Not needed if JEI is loaded, as done in the JEI plugin (and this runs after that)
+        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI))
+            GTRecipeOreInput.refreshStackCache();
     }
 
     public boolean isFancyGraphics() {
