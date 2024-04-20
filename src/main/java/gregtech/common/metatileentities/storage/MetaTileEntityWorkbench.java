@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import com.cleanroommc.modularui.api.drawable.IDrawable;
-
-import com.cleanroommc.modularui.widget.ParentWidget;
-
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -40,6 +36,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
@@ -55,6 +52,7 @@ import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -244,9 +242,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
         getCraftingRecipeLogic().updateCurrentRecipe();
-        if (!guiSyncManager.isClient()) {
-            writeCustomData(UPDATE_CLIENT_STACKS, getCraftingRecipeLogic()::writeAvailableStacks);
-        }
+        // if (!guiSyncManager.isClient()) {
+        // writeCustomData(UPDATE_CLIENT_STACKS, getCraftingRecipeLogic()::writeAvailableStacks);
+        // }
 
         guiSyncManager.syncValue("recipe_logic", this.recipeLogic);
 
@@ -272,7 +270,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .top(22)
                         .margin(7)
                         .widthRel(0.9f)
-//                        .bottom(100)
                         .controller(controller)
                         // workstation page
                         .addPage(new Column()
@@ -286,13 +283,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                         .child(createCraftingGrid())
                                         .child(createCraftingOutput(guiData, guiSyncManager))
                                         // recipe memory
-                                        .child(SlotGroupWidget.builder()
-                                                .matrix("XXX",
-                                                        "XXX",
-                                                        "XXX")
-                                                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
-                                                .build().right(0))
-                                )
+                                        .child(createRecipeMemoryGrid(guiSyncManager)))
                                 // tool inventory
                                 .child(createToolInventory(guiSyncManager))
                                 // internal inventory
@@ -362,6 +353,15 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .asWidget().widthRel(1f));
     }
 
+    public IWidget createRecipeMemoryGrid(GuiSyncManager syncManager) {
+        return SlotGroupWidget.builder()
+                .matrix("XXX",
+                        "XXX",
+                        "XXX")
+                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
+                .build().right(0);
+    }
+
     public IWidget createInventoryPage(GuiSyncManager syncManager) {
         var connected = new SlotGroup("connected_inventory", 8, true);
         syncManager.registerSlotGroup(connected);
@@ -401,35 +401,26 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public void sendHandlerToClient(PacketBuffer buffer) {
-        int combined = this.combinedInventory.getSlots(),
-                connected = this.connectedInventory.getSlots();
-
-        buffer.writeVarInt(connected);
-        buffer.writeVarInt(combined - connected);
-        getCraftingRecipeLogic().writeAvailableStacks(buffer);
+        buffer.writeVarInt(this.connectedInventory.getSlots());
     }
 
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == UPDATE_CLIENT_STACKS) {
-            getCraftingRecipeLogic()
-                    .updateClientStacks(buf);
+        if (dataId == UPDATE_CLIENT_HANDLER) {
+            int connected = buf.readVarInt();
 
-        } else if (dataId == UPDATE_CLIENT_HANDLER) {
-            int connected = buf.readVarInt(), internal = buf.readVarInt();
+            // check if sizes have changed, and keep any existing items
 
             // set connected inventory
             this.connectedInventory = new ItemStackHandler(connected);
 
             // set combined inventory
-            this.combinedInventory = new ItemHandlerList(Arrays.asList(this.connectedInventory, new ItemStackHandler(internal)));
+            this.combinedInventory = new ItemHandlerList(
+                    Arrays.asList(this.connectedInventory, this.internalInventory));
 
             getCraftingRecipeLogic()
                     .updateInventory(this.combinedInventory);
-
-            getCraftingRecipeLogic()
-                    .updateClientStacks(buf);
         }
     }
 
@@ -534,10 +525,14 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         @Override
         public boolean canTakeStack(EntityPlayer playerIn) {
             if (recipeLogic.getSyncManager().isClient()) {
-                recipeLogic.syncToServer(3);
+                // recipeLogic.syncToServer(3);
                 return false;
             }
-            return recipeLogic.isRecipeValid() && recipeLogic.consumeRecipeItems(true);
+
+            if (recipeLogic.isRecipeValid())
+                recipeLogic.collectAvailableItems();
+
+            return recipeLogic.attemptMatchRecipe();
         }
 
         @Override
@@ -549,16 +544,16 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         @Override
         public void putStack(@NotNull ItemStack stack) {
-            super.putStack(recipeLogic.getCachedRecipeData().getRecipeOutput());
+            super.putStack(getStack());
         }
 
         @Override
-        public ItemStack decrStackSize(int amount) {
+        public @NotNull ItemStack decrStackSize(int amount) {
             return getStack();
         }
 
         public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
-            itemStack.onCrafting(getWorld(), player, 1);
+            itemStack.onCrafting(player.world, player, 1);
 
             var inventoryCrafting = recipeLogic.getCraftingMatrix();
 
@@ -571,10 +566,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             }
             if (cachedRecipe != null) {
                 ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
-                this.syncValue.setValue(this.syncValue.getValue() + resultStack.getCount(), true, false);
+                this.syncValue.setValue(this.syncValue.getValue() + resultStack.getCount(), true, true);
                 // itemsCrafted += resultStack.getCount();
                 recipeMemory.notifyRecipePerformed(craftingGrid, resultStack);
             }
+            // call method from recipe logic to sync to client
         }
     }
 

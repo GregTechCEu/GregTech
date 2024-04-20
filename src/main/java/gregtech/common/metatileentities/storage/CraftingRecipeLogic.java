@@ -219,6 +219,9 @@ public class CraftingRecipeLogic extends SyncHandler {
             return;
         }
 
+        // updateClientCraft();
+        syncToClient(4, buffer -> writeStackSafe(buffer, getSyncManager().getCursorItem()));
+
         var cachedRecipe = cachedRecipeData.getRecipe();
         var player = getSyncManager().getPlayer();
         ForgeHooks.setCraftingPlayer(player);
@@ -362,7 +365,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
         if (id == 1) {
-            updateClientStacks(buf);
+            // updateClientStacks(buf);
         } else if (id == 3) {
             syncToServer(3);
         } else if (id == 4) {
@@ -386,13 +389,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         } else if (id == 1) {
             syncToClient(1, this::writeAvailableStacks);
         } else if (id == 3) {
-//            syncToClient(1, this::writeAvailableStacks);
-            var curStack = getSyncManager().getCursorItem();
-            var outStack = getCachedRecipe().getRecipeOutput();
-            if (ItemStack.areItemStacksEqual(curStack, outStack)) {
-                curStack.grow(outStack.getCount());
-                syncToClient(4, buffer -> writeStackSafe(buffer, curStack));
-            }
+            // syncToClient(1, this::writeAvailableStacks);
         } else if (id == 4) {
             int slot = buf.readVarInt();
             syncToClient(5, buffer -> {
@@ -433,6 +430,16 @@ public class CraftingRecipeLogic extends SyncHandler {
         }
         return stack;
     }
+
+    // public void updateClientCraft() {
+    // var curStack = getSyncManager().getCursorItem();
+    // var outStack = getCachedRecipe().getRecipeOutput();
+    // if (curStack.isEmpty()) {
+    // getSyncManager().setCursorItem(outStack);
+    // } else if (ItemStack.areItemStacksEqual(curStack, outStack)) {
+    // curStack.grow(outStack.getCount());
+    // }
+    // }
 
     private static void writeStackSafe(PacketBuffer buffer, ItemStack stack) {
         var tag = stack.serializeNBT();
