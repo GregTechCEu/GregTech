@@ -7,6 +7,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -176,6 +177,7 @@ public class GTRecipeOreInput extends GTRecipeInput {
     /**
      * Forces a Refresh of every GTRecipeOreInput's Stack Cache.
      */
+    @ApiStatus.Internal
     public static void refreshStackCache() {
         STANDARD++;
     }
