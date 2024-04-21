@@ -403,9 +403,11 @@ public class CommonProxy {
     public void onLoadComplete() {
         GTRecipeInputCache.disableCache();
 
-        // If JEI is not loaded, refresh ore dict ingredients
+        // If JEI and GS is not loaded, refresh ore dict ingredients
         // Not needed if JEI is loaded, as done in the JEI plugin (and this runs after that)
-        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI) && !GroovyScriptModule.isCurrentlyRunning())
+        // Not needed if GS is loaded, as done after script loads (and this runs after that)
+        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI) &&
+                !GroovyScriptModule.isCurrentlyRunning())
             GTRecipeOreInput.refreshStackCache();
     }
 
