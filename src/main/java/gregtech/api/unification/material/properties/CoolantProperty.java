@@ -18,11 +18,14 @@ public class CoolantProperty implements IMaterialProperty {
     private double absorption;
     // in pascal
     private double pressure;
-    // in J/mol
+    // in J/L
     private double heatOfVaporization;
+    // in J/(kg*K)
+    private double specificHeatCapacity;
+    private double sadgeCoefficient = 1;
 
     public CoolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor, double coolingFactor,
-                           double boilingPoint, double absorption, double pressure, double heatOfVaporization) {
+                           double boilingPoint, double absorption, double pressure, double heatOfVaporization, double specificHeatCapacity) {
         this.hotCoolant = hotCoolant;
         this.hotHPCoolant = hotHPCoolant;
         this.moderatorFactor = moderatorFactor;
@@ -31,6 +34,7 @@ public class CoolantProperty implements IMaterialProperty {
         this.absorption = absorption;
         this.pressure = pressure;
         this.heatOfVaporization = heatOfVaporization;
+        this.specificHeatCapacity = specificHeatCapacity;
     }
 
     @Override
@@ -100,5 +104,27 @@ public class CoolantProperty implements IMaterialProperty {
 
     public void setHeatOfVaporization(double heatOfVaporization) {
         this.heatOfVaporization = heatOfVaporization;
+    }
+
+    public double getSpecificHeatCapacity() {
+        return specificHeatCapacity;
+    }
+
+    public void setSpecificHeatCapacity(double specificHeatCapacity) {
+        this.specificHeatCapacity = specificHeatCapacity;
+    }
+
+    public double getSadgeCoefficient() {
+        return sadgeCoefficient;
+    }
+
+    /**
+     * Used to adjust the amount of heat needed to heat the coolant from the ideal thermodynamic conditions; this is really only for distilled water.
+     * @param sadgeCoefficient A divisor to the amount of heat needed to heat the coolant from the ideal thermodynamic conditions.
+     * @return The property itself.
+     */
+    public CoolantProperty setSadgeCoefficient(double sadgeCoefficient) {
+        this.sadgeCoefficient = sadgeCoefficient;
+        return this;
     }
 }

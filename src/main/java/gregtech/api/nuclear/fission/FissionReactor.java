@@ -8,6 +8,8 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
+import gregtech.common.ConfigHolder;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -16,8 +18,8 @@ import java.util.ArrayList;
 public class FissionReactor {
 
     /**
-     * The gas constant in J * K^-1 * mol^-1 if you want to use a different
-     * set of units prepare thy life to become the worst of nightmares
+     * The gas constant in J * K^-1 * mol^-1 if you want to use a different set of units prepare thy life to become the
+     * worst of nightmares
      */
     public static final double R = 8.31446261815324;
     /**
@@ -72,8 +74,7 @@ public class FissionReactor {
     private double avgModeration;
 
     /**
-     * Thresholds important for determining the evolution of the reactor
-     * ^^^ This is a very epic comment
+     * Thresholds important for determining the evolution of the reactor ^^^ This is a very epic comment
      */
     public int criticalRodInsertion = 15; // determined by k value
 
@@ -98,20 +99,17 @@ public class FissionReactor {
     public double pressure = standardPressure;
     public double exteriorPressure = standardPressure;
     /**
-     * Temperature of boiling point in kelvin at standard pressure
-     * Determined by a weighted sum of the individual coolant boiling points in
-     * {@link FissionReactor#prepareInitialConditions()}
+     * Temperature of boiling point in kelvin at standard pressure Determined by a weighted sum of the individual
+     * coolant boiling points in {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantBoilingPointStandardPressure;
     /**
-     * Latent heat of vaporization in J/mol
-     * Determined by a weighted sum of the individual heats of vaporization in
+     * Latent heat of vaporization in J/mol Determined by a weighted sum of the individual heats of vaporization in
      * {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantHeatOfVaporization;
     /**
-     * Equilibrium temperature in kelvin
-     * Determined by a weighted sum of the individual coolant temperatures in
+     * Equilibrium temperature in kelvin Determined by a weighted sum of the individual coolant temperatures in
      * {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantBaseTemperature;
@@ -132,6 +130,8 @@ public class FissionReactor {
     public double surfaceArea;
     public static double thermalConductivity = 45; // 45 W/(m K), for steel
     public static double wallThickness = 0.1;
+    public static double specificHeatCapacity = 420; // 420 J/(kg K), for steel
+    public static double convectiveHeatTransferCoefficient = 10; // 10 W/(m^2 K), for slow-moving air
 
     public double coolantMass;
     public double fuelMass;
@@ -150,18 +150,27 @@ public class FissionReactor {
         return value * expDecay + target * (1 - expDecay);
     }
 
-
     protected double responseFunctionTemperature(double envTemperature, double currentTemperature, double heatAdded,
                                                  double heatAbsorbed) {
         currentTemperature = Math.max(0.1, currentTemperature);
         heatAbsorbed = Math.max(0.1, heatAbsorbed);
+/*
+        Simplifies what is the following:
+        heatTransferCoefficient = 1 / (1 / convectiveHeatTransferCoefficient + wallThickness / thermalConductivity);
+        (https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling#First-order_transient_response_of_lumped-capacitance_objects)
+        This assumes that we're extracting heat from the reactor through the wall into slowly moving air, removing the second convective heat.
+        timeConstant = heatTransferCoefficient * this.surfaceArea / specificHeatCapacity;
+*/
+        double timeConstant = specificHeatCapacity *
+                (1 / convectiveHeatTransferCoefficient + wallThickness / thermalConductivity) / this.surfaceArea;
+
         // Solves the following differential equation:
+
         // dT/dt = h_added_tot / m_tot - k(T - T_env) at t = 1s with T(0) = T_0
-        double heatFlux = this.surfaceArea * thermalConductivity / wallThickness;
-        double expDecay = Math.exp(-heatFlux);
+        double expDecay = Math.exp(-timeConstant);
 
         double effectiveEnvTemperature = envTemperature +
-                (heatAdded - heatAbsorbed) / (heatFlux * (this.coolantMass + this.structuralMass + this.fuelMass));
+                (heatAdded - heatAbsorbed) / (timeConstant * (this.coolantMass + this.structuralMass + this.fuelMass));
         return currentTemperature * expDecay + effectiveEnvTemperature * (1 - expDecay);
     }
 
@@ -169,7 +178,7 @@ public class FissionReactor {
         reactorLayout = new ReactorComponent[size][size];
         reactorDepth = depth;
         reactorRadius = (double) size / 2 + 1.5; // Includes the extra block plus the distance from the center of a
-                                                 // block to its edge
+        // block to its edge
         // Maps (0, 15) -> (0.01, 1)
         this.controlRodInsertion = Math.max(0.01, (double) controlRodInsertion / 15);
         fuelRods = new ArrayList<>();
@@ -366,9 +375,11 @@ public class FissionReactor {
 
         double depthDiameterDifference = 0.5 * (reactorDepth - reactorRadius * 2) / reactorRadius;
         double sigmoid = 1 / (1 + Math.exp(-depthDiameterDifference));
-        double fuelRodFactor = sigmoid * Math.pow(avgFuelRodDistance, -2) + (1 - sigmoid) * Math.pow(avgFuelRodDistance, -1);
+        double fuelRodFactor =
+                sigmoid * Math.pow(avgFuelRodDistance, -2) + (1 - sigmoid) * Math.pow(avgFuelRodDistance, -1);
 
-        maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) * fuelRodFactor;
+        maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) * fuelRodFactor *
+                ConfigHolder.machines.nuclearPowerMultiplier;
 
         controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods);
         avgCoolantTemperature /= coolantChannels.size();
@@ -442,12 +453,10 @@ public class FissionReactor {
     }
 
     /**
-     * Consumes the coolant.
-     * Calculates the heat removed by the coolant based on an amalgamation of different equations.
-     * It is not particularly realistic, but allows for some fine-tuning to happen.
-     * Heat removed is proportional to the surface area of the coolant channel (which is equivalent to the reactor's
-     * depth),
-     * as well as the flow rate of coolant and the difference in temperature between the reactor and the coolant
+     * Consumes the coolant. Calculates the heat removed by the coolant based on an amalgamation of different equations.
+     * It is not particularly realistic, but allows for some fine-tuning to happen. Heat removed is proportional to the
+     * surface area of the coolant channel (which is equivalent to the reactor's depth), as well as the flow rate of
+     * coolant and the difference in temperature between the reactor and the coolant
      */
     public void makeCoolantFlow(int flowRate) {
         for (CoolantChannel channel : coolantChannels) {
@@ -459,18 +468,24 @@ public class FissionReactor {
 
                 CoolantProperty prop = coolant.getProperty(PropertyKey.COOLANT);
 
-                double heatRemovedPerLiter = prop.getHeatOfVaporization() + prop.getCoolingFactor() *
-                        (this.coolantBoilingPoint(coolant) - coolant.getFluid().getTemperature());
+                double heatRemovedPerLiter = prop.getSpecificHeatCapacity() *
+                        (prop.getHotHPCoolant().getFluid().getTemperature() - coolant.getFluid().getTemperature())
+                        / prop.getSadgeCoefficient();
                 // Explained by:
                 // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa
                 double heatFluxPerAreaAndTemp = 1 / (1 / prop.getCoolingFactor() + wallThickness / thermalConductivity);
-                double idealHeatFlux = heatFluxPerAreaAndTemp * 4 * reactorDepth * (temperature - coolant.getFluid().getTemperature());
+                double idealHeatFlux =
+                        heatFluxPerAreaAndTemp * 4 * reactorDepth * (temperature - coolant.getFluid().getTemperature());
 
                 double idealFluidUsed = idealHeatFlux / heatRemovedPerLiter;
 
                 int remainingSpace = channel.getOutputHandler().getFluidTank().getCapacity() -
                         channel.getOutputHandler().getFluidTank().getFluidAmount();
-                int actualFlowRate = Math.min(Math.min(remainingSpace, drained), (int) idealFluidUsed);
+                int actualFlowRate = Math.min(Math.min(remainingSpace, drained),
+                        (int) (idealFluidUsed + channel.partialCoolant));
+                // Should occasionally decrease when coolant is actually consumed.
+                channel.partialCoolant += Math.max(0, Math.min(idealFluidUsed, drained)) - actualFlowRate;
+
                 FluidStack HPCoolant = new FluidStack(
                         prop.getHotHPCoolant().getFluid(), actualFlowRate);
 
@@ -535,7 +550,6 @@ public class FissionReactor {
         this.prevFuelDepletion = this.fuelDepletion;
         // maps (1, 1.1) to (0, 15)
         this.criticalRodInsertion = (int) Math.min(15, Math.max(0, (kEff - 1) * 150.));
-
 
         this.power = responseFunction(this.realMaxPower(), this.power,
                 this.criticalRodInsertion + this.voidContribution(), this.controlRodInsertion);

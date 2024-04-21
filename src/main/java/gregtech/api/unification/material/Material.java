@@ -1079,10 +1079,10 @@ public class Material implements Comparable<Material> {
 
         public Builder coolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor,
                                        double coolingFactor, double boilingPoint, double absorption, double pressure,
-                                       double heatOfVaporization) {
+                                       double heatOfVaporization, double specificHeatCapacity) {
             properties.ensureSet(PropertyKey.FLUID);
             properties.setProperty(PropertyKey.COOLANT, new CoolantProperty(hotCoolant, hotHPCoolant, moderatorFactor,
-                    coolingFactor, boilingPoint, absorption, pressure, heatOfVaporization));
+                    coolingFactor, boilingPoint, absorption, pressure, heatOfVaporization, specificHeatCapacity));
             return this;
         }
 

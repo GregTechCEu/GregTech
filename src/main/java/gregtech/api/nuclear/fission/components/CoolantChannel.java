@@ -18,6 +18,7 @@ public class CoolantChannel extends ReactorComponent {
 
     private ICoolantHandler inputHandler;
     private ICoolantHandler outputHandler;
+    public double partialCoolant;
 
     public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant, double mass,
                           ICoolantHandler inputHandler, ICoolantHandler outputHandler) {

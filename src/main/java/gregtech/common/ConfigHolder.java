@@ -90,6 +90,9 @@ public class ConfigHolder {
                 "1.0 means 1L Steam -> 1 EU. 0.5 means 2L Steam -> 1 EU.", "Default: 0.5" })
         public double multiblockSteamToEU = 0.5;
 
+        @Config.Comment({ "Nuclear Max Power multiplier for balancing purposes", "Default: 2.0" })
+        public double nuclearPowerMultiplier = 2.0;
+
         @Config.Comment({ "Whether machines or boilers damage the terrain when they explode.",
                 "Note machines and boilers always explode when overloaded with power or met with special conditions, regardless of this config.",
                 "Default: true" })
