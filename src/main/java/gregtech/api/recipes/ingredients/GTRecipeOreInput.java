@@ -94,13 +94,13 @@ public class GTRecipeOreInput extends GTRecipeInput {
         return copy;
     }
 
-    // The items returned here are not updated after its first call, so they are not suitable for use while recipes are
-    // being processed and
+    // The items returned here are not updated after its first call, unless standard is changed,
+    // so they are not suitable for use while recipes are being processed and
     // the OreDicts being modified.
     @Override
     public ItemStack[] getInputStacks() {
-        // Standard forces a refresh of the input stack cache
-        // Used in GroovyScript Reload, and to avoid race conditions with CraftTweaker.
+        // Standard forces a refresh of the input stack cache.
+        // Used in GroovyScript Reload, and upon Load Complete to fix unreliable behaviour with CT and GS scripts.
         if (inputStacks == null || currentStandard != STANDARD) {
             currentStandard = STANDARD;
             inputStacks = (OreDictionary.getOres(OreDictionary.getOreName(ore)).stream().map(is -> {

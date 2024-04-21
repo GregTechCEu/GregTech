@@ -1,5 +1,7 @@
 package gregtech.integration.groovy;
 
+import com.cleanroommc.groovyscript.event.ScriptRunEvent;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
@@ -8,6 +10,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -81,6 +84,14 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRecipeEvent(RegistryEvent.Register<IRecipe> event) {
         GroovyScriptModule.loadMetaItemBracketHandler();
+    }
+
+    @SubscribeEvent
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
+    public static void afterScriptLoad(ScriptRunEvent.Post event) {
+        // Not Needed if JEI Module is enabled
+        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI))
+            GTRecipeOreInput.refreshStackCache();
     }
 
     public static boolean isCurrentlyRunning() {
@@ -297,10 +308,6 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "toolBuilder");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
         ExpansionHelper.mixinMethod(FluidBuilder.class, GroovyExpansions.class, "acidic");
-
-        // Not Needed if JEI Module is enabled
-        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI))
-            modSupportContainer.getRegistrar().addRegistry(new VirtualizedOreDictHelper());
     }
 
     protected static boolean checkFrozen(String description) {
