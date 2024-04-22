@@ -41,6 +41,10 @@ public class CraftingOutputSlot extends ItemSlot {
         return this;
     }
 
+    public static ModularSlot modular(IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
+        return new CraftingOutputModularSlot(workbench.getCraftingRecipeLogic().getCraftingResultInventory(), syncValue, workbench);
+    }
+
     @SuppressWarnings("UnstableApiUsage")
     protected static class CraftingSlotSH extends ItemSlotSH {
 
@@ -97,7 +101,7 @@ public class CraftingOutputSlot extends ItemSlot {
         }
     }
 
-    public static class CraftingOutputModularSlot extends ModularSlot {
+    protected static class CraftingOutputModularSlot extends ModularSlot {
 
         private final IntSyncValue syncValue;
         private final CraftingRecipeLogic recipeLogic;
