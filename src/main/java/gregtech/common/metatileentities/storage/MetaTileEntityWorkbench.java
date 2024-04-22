@@ -322,11 +322,12 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     public IWidget createCraftingGrid() {
         return SlotGroupWidget.builder()
-                .matrix("XXX", "XXX", "XXX")
+                .matrix("XXX",
+                        "XXX",
+                        "XXX")
                 .key('X', i -> new ItemSlot()
                         .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
-                                .changeListener(
-                                        (newItem, onlyAmountChanged, client, init) -> {
+                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                             if (!init) {
                                                 this.recipeLogic.updateCurrentRecipe();
                                             }
@@ -342,9 +343,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         return new Column()
                 .size(54)
                 .child(new CraftingOutputSlot()
-                        .slot(new CraftingOutputSlot.CraftingOutputModularSlot(
-                                getCraftingRecipeLogic().getCraftingResultInventory(),
-                                amountCrafted, this))
+                        .slot(CraftingOutputSlot.modular(amountCrafted, this))
                         .marginTop(18)
                         .background(GTGuiTextures.SLOT.asIcon().size(22))
                         .marginBottom(4))
@@ -374,7 +373,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         };
 
         if (this.connectedInventory.getSlots() == 0) {
-            return new ParentWidget<>();
+            return new Column()
+                    .debugName("inventory page")
+                    .leftRel(0.5f)
+                    .padding(2)
+                    .height(18 * 6)
+                    .width(18 * 8 + 4)
+                    .background(GTGuiTextures.DISPLAY);
         }
 
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
@@ -417,7 +422,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
             // set combined inventory
             this.combinedInventory = new ItemHandlerList(
-                    Arrays.asList(this.connectedInventory, this.internalInventory));
+                    Arrays.asList(this.internalInventory, this.connectedInventory));
 
             getCraftingRecipeLogic()
                     .updateInventory(this.combinedInventory);
