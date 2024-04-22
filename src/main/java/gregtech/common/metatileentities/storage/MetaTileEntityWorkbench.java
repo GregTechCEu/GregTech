@@ -344,7 +344,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .size(54)
                 .child(new CraftingOutputSlot()
                         .slot(new CraftingOutputSlot.CraftingOutputModularSlot(
-                                new InventoryWrapper(getCraftingRecipeLogic().getCraftingResultInventory(), guiData.getPlayer()),
+                                getCraftingRecipeLogic().getCraftingResultInventory(),
                                 amountCrafted, this))
                         .marginTop(18)
                         .background(GTGuiTextures.SLOT.asIcon().size(22))
@@ -511,52 +511,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                     memory.removeRecipe(index);
             }
             return Result.ACCEPT;
-        }
-    }
-
-    private class InventoryWrapper implements IItemHandlerModifiable {
-
-        IInventory inventory;
-        EntityPlayer player;
-
-        private InventoryWrapper(IInventory inventory, EntityPlayer player) {
-            this.inventory = inventory;
-            this.player = player;
-        }
-
-        @Override
-        public int getSlots() {
-            return inventory.getSizeInventory();
-        }
-
-        @Override
-        public ItemStack getStackInSlot(int slot) {
-            return inventory.getStackInSlot(slot).copy();
-        }
-
-        @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return stack;
-        }
-
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return inventory.getStackInSlot(slot);
-        }
-
-        @Override
-        public int getSlotLimit(int slot) {
-            return inventory.getInventoryStackLimit();
-        }
-
-        @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
-            if (!recipeLogic.isRecipeValid()) {
-                inventory.setInventorySlotContents(slot, ItemStack.EMPTY);
-            }
-
-            if (!stack.isEmpty())
-                inventory.setInventorySlotContents(slot, stack);
         }
     }
 

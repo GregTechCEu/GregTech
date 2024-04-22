@@ -13,10 +13,13 @@ import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.IItemHandler;
+
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -100,8 +103,8 @@ public class CraftingOutputSlot extends ItemSlot {
         private final CraftingRecipeMemory recipeMemory;
         private final IItemHandler craftingGrid;
 
-        public CraftingOutputModularSlot(IItemHandler itemHandler, IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
-            super(itemHandler, 0, true);
+        public CraftingOutputModularSlot(IInventory craftingInventory, IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
+            super(new InventoryWrapper(craftingInventory, workbench.getCraftingRecipeLogic()), 0, true);
             this.syncValue = syncValue;
             this.recipeLogic = workbench.getCraftingRecipeLogic();
             this.recipeMemory = workbench.getRecipeMemory();
@@ -133,6 +136,52 @@ public class CraftingOutputSlot extends ItemSlot {
         @Override
         public @NotNull ItemStack decrStackSize(int amount) {
             return getStack();
+        }
+    }
+
+    private static class InventoryWrapper implements IItemHandlerModifiable {
+
+        private final IInventory inventory;
+        private final CraftingRecipeLogic recipeLogic;
+
+        private InventoryWrapper(IInventory inventory, CraftingRecipeLogic recipeLogic) {
+            this.inventory = inventory;
+            this.recipeLogic = recipeLogic;
+        }
+
+        @Override
+        public int getSlots() {
+            return inventory.getSizeInventory();
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return inventory.getStackInSlot(slot).copy();
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            return stack;
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return inventory.getStackInSlot(slot);
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return inventory.getInventoryStackLimit();
+        }
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            if (!recipeLogic.isRecipeValid()) {
+                inventory.setInventorySlotContents(slot, ItemStack.EMPTY);
+            }
+
+            if (!stack.isEmpty())
+                inventory.setInventorySlotContents(slot, stack);
         }
     }
 }
