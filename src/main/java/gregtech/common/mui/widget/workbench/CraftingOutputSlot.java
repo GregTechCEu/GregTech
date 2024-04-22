@@ -26,17 +26,32 @@ public class CraftingOutputSlot extends ItemSlot {
 
     private CraftingSlotSH syncHandler;
 
-    public CraftingOutputSlot slot(CraftingOutputModularSlot slot) {
-        this.syncHandler = new CraftingSlotSH(slot);
-        setSyncHandler(this.syncHandler);
+    @Override
+    public ItemSlot slot(ModularSlot slot) {
+        if (slot instanceof CraftingOutputModularSlot craftingSlot) {
+            this.syncHandler = new CraftingSlotSH(craftingSlot);
+            if (isValidSyncHandler(this.syncHandler))
+                setSyncHandler(this.syncHandler);
+        } else {
+            super.slot(slot);
+        }
         return this;
     }
 
     @SuppressWarnings("UnstableApiUsage")
     protected static class CraftingSlotSH extends ItemSlotSH {
 
+        private final CraftingRecipeLogic recipeLogic;
+        private final IntSyncValue syncValue;
+        private final CraftingRecipeMemory recipeMemory;
+        private final IItemHandler craftingGrid;
+
         public CraftingSlotSH(CraftingOutputModularSlot slot) {
             super(slot);
+            this.recipeLogic = slot.recipeLogic;
+            this.syncValue = slot.syncValue;
+            this.recipeMemory = slot.recipeMemory;
+            this.craftingGrid = slot.craftingGrid;
         }
 
         @Override
@@ -47,56 +62,13 @@ public class CraftingOutputSlot extends ItemSlot {
         @Override
         public void readOnServer(int id, PacketBuffer buf) throws IOException {
             if (id == 2) {
-                getSlot().recipeLogic.performRecipe();
-                getSlot().handleItemCraft(getSlot().getStack(), getSyncManager().getPlayer());
+                if (recipeLogic.isRecipeValid() && getSlot().canTakeStack(getSyncManager().getPlayer())) {
+                    recipeLogic.performRecipe();
+                    handleItemCraft(getSlot().getStack(), getSyncManager().getPlayer());
+                }
             } else {
                 super.readOnServer(id, buf);
             }
-        }
-    }
-
-    public static class CraftingOutputModularSlot extends ModularSlot {
-
-        IntSyncValue syncValue;
-        private final CraftingRecipeLogic recipeLogic;
-        private final CraftingRecipeMemory recipeMemory;
-        private final IItemHandler craftingGrid;
-
-        public CraftingOutputModularSlot(IItemHandler itemHandler, IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
-            super(itemHandler, 0, true);
-            this.syncValue = syncValue;
-            this.recipeLogic = workbench.getCraftingRecipeLogic();
-            this.recipeMemory = workbench.getRecipeMemory();
-            this.craftingGrid = workbench.getCraftingGrid();
-        }
-
-        @Override
-        public boolean canTakeStack(EntityPlayer playerIn) {
-            if (recipeLogic.getSyncManager().isClient()) {
-                return false;
-            }
-
-            if (recipeLogic.isRecipeValid())
-                recipeLogic.collectAvailableItems();
-
-            return recipeLogic.attemptMatchRecipe();
-        }
-
-        @Override
-        public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
-            recipeLogic.performRecipe();
-            handleItemCraft(stack, thePlayer);
-            return super.onTake(thePlayer, stack);
-        }
-
-        @Override
-        public void putStack(@NotNull ItemStack stack) {
-            super.putStack(getStack());
-        }
-
-        @Override
-        public @NotNull ItemStack decrStackSize(int amount) {
-            return getStack();
         }
 
         public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
@@ -118,6 +90,56 @@ public class CraftingOutputSlot extends ItemSlot {
                 recipeMemory.notifyRecipePerformed(craftingGrid, resultStack);
             }
             // call method from recipe logic to sync to client
+        }
+    }
+
+    public static class CraftingOutputModularSlot extends ModularSlot {
+
+        private final IntSyncValue syncValue;
+        private final CraftingRecipeLogic recipeLogic;
+        private final CraftingRecipeMemory recipeMemory;
+        private final IItemHandler craftingGrid;
+
+        public CraftingOutputModularSlot(IItemHandler itemHandler, IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
+            super(itemHandler, 0, true);
+            this.syncValue = syncValue;
+            this.recipeLogic = workbench.getCraftingRecipeLogic();
+            this.recipeMemory = workbench.getRecipeMemory();
+            this.craftingGrid = workbench.getCraftingGrid();
+        }
+
+        @Override
+        public boolean canTakeStack(EntityPlayer playerIn) {
+            ItemStack curStack = playerIn.inventory.getItemStack();
+            if (curStack.isEmpty()) return true;
+
+            ItemStack outStack = recipeLogic.getCachedRecipe().getRecipeOutput();
+            if (curStack.getItem() == outStack.getItem() &&
+                    curStack.getMetadata() == outStack.getMetadata() &&
+                    ItemStack.areItemStackTagsEqual(curStack, outStack)) {
+
+                int combined = curStack.getCount() + outStack.getCount();
+                return combined <= outStack.getMaxStackSize();
+            } else {
+                return false;
+            }
+        }
+
+//        @Override
+//        public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
+//            recipeLogic.performRecipe();
+//            handleItemCraft(stack, thePlayer);
+//            return super.onTake(thePlayer, stack);
+//        }
+
+        @Override
+        public void putStack(@NotNull ItemStack stack) {
+            super.putStack(getStack());
+        }
+
+        @Override
+        public @NotNull ItemStack decrStackSize(int amount) {
+            return getStack();
         }
     }
 }

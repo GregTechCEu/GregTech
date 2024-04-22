@@ -11,6 +11,7 @@ import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -84,6 +85,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     public void updateInventory(IItemHandlerModifiable handler) {
         this.availableHandlers = handler;
+        collectAvailableItems();
     }
 
     public void clearCraftingGrid() {
@@ -212,15 +214,30 @@ public class CraftingRecipeLogic extends SyncHandler {
     public void performRecipe() {
         if (!isRecipeValid()) return;
 
-        // if (!getSyncManager().isClient())
-        // syncToClient(1, this::writeAvailableStacks);
-
         if (!attemptMatchRecipe() || !consumeRecipeItems(false)) {
             return;
         }
 
-        // updateClientCraft();
-        syncToClient(4, buffer -> writeStackSafe(buffer, getSyncManager().getCursorItem()));
+        // sync crafted stack to client
+        syncToClient(4, buffer -> {
+            ItemStack curStack = getSyncManager().getCursorItem();
+            ItemStack outStack = getCachedRecipe().getRecipeOutput();
+            ItemStack toSync = outStack.copy();
+            if (curStack.getItem() == outStack.getItem() &&
+                    curStack.getMetadata() == outStack.getMetadata() &&
+                    ItemStack.areItemStackTagsEqual(curStack, outStack)) {
+
+                int combined = curStack.getCount() + outStack.getCount();
+                if (combined <= outStack.getMaxStackSize()) {
+                    toSync.setCount(curStack.getCount() + outStack.getCount());
+                } else {
+                    toSync.setCount(outStack.getMaxStackSize());
+                }
+            } else if (!curStack.isEmpty()) {
+                toSync = curStack;
+            }
+            writeStackSafe(buffer, toSync);
+        });
 
         var cachedRecipe = cachedRecipeData.getRecipe();
         var player = getSyncManager().getPlayer();
@@ -261,6 +278,10 @@ public class CraftingRecipeLogic extends SyncHandler {
             int extractedAmount = 0;
             for (int slot : slotList) {
                 var extracted = availableHandlers.extractItem(slot, requestedAmount, true);
+                if (extracted.isEmpty()) {
+                    stackLookupMap.get(stack).remove(slot);
+                    continue;
+                }
                 gatheredItems.put(extracted, slot);
                 extractedAmount += extracted.getCount();
                 requestedAmount -= extractedAmount;
@@ -273,20 +294,17 @@ public class CraftingRecipeLogic extends SyncHandler {
         for (var gathered : gatheredItems.entrySet()) {
             var stack = gathered.getKey();
             int slot = gathered.getValue();
-            if (stack.isEmpty()) {
-                stackLookupMap.get(stack).remove(slot);
-            } else {
-                if (stack.getItem().hasContainerItem(stack) && stack.isItemStackDamageable()) {
-                    int damage = 1;
-                    if (stack.getItem() instanceof IGTTool gtTool) {
-                        damage = gtTool.getToolStats().getDamagePerCraftingAction(stack);
-                    }
-                    if (!simulate) stack.damageItem(damage, getSyncManager().getPlayer());
-                } else {
-                    availableHandlers.extractItem(slot, stack.getCount(), simulate);
+
+            if (stack.getItem().hasContainerItem(stack) && stack.isItemStackDamageable()) {
+                int damage = 1;
+                if (stack.getItem() instanceof IGTTool gtTool) {
+                    damage = gtTool.getToolStats().getDamagePerCraftingAction(stack);
                 }
-                extracted = true;
+                if (!simulate) stack.damageItem(damage, getSyncManager().getPlayer());
+            } else {
+                availableHandlers.extractItem(slot, stack.getCount(), simulate);
             }
+            extracted = true;
         }
         return extracted;
     }

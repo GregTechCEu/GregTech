@@ -13,6 +13,8 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
 
+import gregtech.common.mui.widget.workbench.CraftingOutputSlot;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -242,9 +244,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
         getCraftingRecipeLogic().updateCurrentRecipe();
-        // if (!guiSyncManager.isClient()) {
-        // writeCustomData(UPDATE_CLIENT_STACKS, getCraftingRecipeLogic()::writeAvailableStacks);
-        // }
+        getCraftingRecipeLogic().collectAvailableItems();
 
         guiSyncManager.syncValue("recipe_logic", this.recipeLogic);
 
@@ -342,11 +342,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         return new Column()
                 .size(54)
-                .child(new ItemSlot().marginTop(18)
-                        // todo figure this shit (recipe output slot) out
-                        .slot(new CraftingOutputSlot(new InventoryWrapper(
-                                this.recipeLogic.getCraftingResultInventory(),
-                                guiData.getPlayer()), amountCrafted, getCraftingRecipeLogic()))
+                .child(new CraftingOutputSlot()
+                        .slot(new CraftingOutputSlot.CraftingOutputModularSlot(
+                                new InventoryWrapper(getCraftingRecipeLogic().getCraftingResultInventory(), guiData.getPlayer()),
+                                amountCrafted, this))
+                        .marginTop(18)
                         .background(GTGuiTextures.SLOT.asIcon().size(22))
                         .marginBottom(4))
                 .child(IKey.dynamic(amountCrafted::getStringValue)
@@ -411,7 +411,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         if (dataId == UPDATE_CLIENT_HANDLER) {
             int connected = buf.readVarInt();
 
-            // check if sizes have changed, and keep any existing items
+            // resize and keep any existing items
 
             // set connected inventory
             this.connectedInventory = new ItemStackHandler(connected);
@@ -511,68 +511,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                     memory.removeRecipe(index);
             }
             return Result.ACCEPT;
-        }
-    }
-
-    private class CraftingOutputSlot extends ModularSlot {
-
-        IntSyncValue syncValue;
-        private final CraftingRecipeLogic recipeLogic;
-
-        public CraftingOutputSlot(IItemHandler itemHandler, IntSyncValue syncValue, CraftingRecipeLogic recipeLogic) {
-            super(itemHandler, 0, true);
-            this.syncValue = syncValue;
-            this.recipeLogic = recipeLogic;
-        }
-
-        @Override
-        public boolean canTakeStack(EntityPlayer playerIn) {
-            if (recipeLogic.getSyncManager().isClient()) {
-                return false;
-            }
-
-            if (recipeLogic.isRecipeValid())
-                recipeLogic.collectAvailableItems();
-
-            return recipeLogic.attemptMatchRecipe();
-        }
-
-        @Override
-        public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
-            recipeLogic.performRecipe();
-            handleItemCraft(stack, thePlayer);
-            return super.onTake(thePlayer, stack);
-        }
-
-        @Override
-        public void putStack(@NotNull ItemStack stack) {
-            super.putStack(getStack());
-        }
-
-        @Override
-        public @NotNull ItemStack decrStackSize(int amount) {
-            return getStack();
-        }
-
-        public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
-            itemStack.onCrafting(player.world, player, 1);
-
-            var inventoryCrafting = recipeLogic.getCraftingMatrix();
-
-            // if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
-            FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
-
-            var cachedRecipe = recipeLogic.getCachedRecipe();
-            if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
-                player.unlockRecipes(Lists.newArrayList(cachedRecipe));
-            }
-            if (cachedRecipe != null) {
-                ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
-                this.syncValue.setValue(this.syncValue.getValue() + resultStack.getCount(), true, true);
-                // itemsCrafted += resultStack.getCount();
-                recipeMemory.notifyRecipePerformed(craftingGrid, resultStack);
-            }
-            // call method from recipe logic to sync to client
         }
     }
 
