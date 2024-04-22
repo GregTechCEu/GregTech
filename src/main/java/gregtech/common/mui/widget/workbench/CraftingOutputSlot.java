@@ -1,11 +1,13 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.ItemSlotSH;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.google.common.collect.Lists;
 
+import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
@@ -69,14 +71,59 @@ public class CraftingOutputSlot extends ItemSlot {
         @Override
         public void readOnServer(int id, PacketBuffer buf) throws IOException {
             if (id == 2) {
+                var data = MouseData.readPacket(buf);
+                // todo handle shift transfer
+                if (data.shift) return;
+
                 if (recipeLogic.isRecipeValid() && getSlot().canTakeStack(getSyncManager().getPlayer())) {
                     recipeLogic.collectAvailableItems();
                     recipeLogic.performRecipe();
+                    syncToClient(5, this::syncCraftedStack);
                     handleItemCraft(getSlot().getStack(), getSyncManager().getPlayer());
                 }
             } else {
                 super.readOnServer(id, buf);
             }
+        }
+
+        @Override
+        public void readOnClient(int id, PacketBuffer buf) {
+            super.readOnClient(id, buf);
+            if (id == 5) {
+                getSyncManager().setCursorItem(readStackSafe(buf));
+            } else if (id == 6) {
+
+            }
+        }
+
+        private static ItemStack readStackSafe(PacketBuffer buffer) {
+            var stack = ItemStack.EMPTY;
+            try {
+                stack = buffer.readItemStack();
+            } catch (IOException ignore) {
+                GTLog.logger.warn("A stack was read incorrectly, something is seriously wrong!");
+            }
+            return stack;
+        }
+
+        private void syncCraftedStack(PacketBuffer buf) {
+            ItemStack curStack = getSyncManager().getCursorItem();
+            ItemStack outStack = recipeLogic.getCachedRecipe().getRecipeOutput();
+            ItemStack toSync = outStack.copy();
+            if (curStack.getItem() == outStack.getItem() &&
+                    curStack.getMetadata() == outStack.getMetadata() &&
+                    ItemStack.areItemStackTagsEqual(curStack, outStack)) {
+
+                int combined = curStack.getCount() + outStack.getCount();
+                if (combined <= outStack.getMaxStackSize()) {
+                    toSync.setCount(curStack.getCount() + outStack.getCount());
+                } else {
+                    toSync.setCount(outStack.getMaxStackSize());
+                }
+            } else if (!curStack.isEmpty()) {
+                toSync = curStack;
+            }
+            buf.writeItemStack(toSync);
         }
 
         public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
