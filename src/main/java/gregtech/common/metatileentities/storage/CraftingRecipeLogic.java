@@ -85,7 +85,6 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     public void updateInventory(IItemHandlerModifiable handler) {
         this.availableHandlers = handler;
-        collectAvailableItems();
     }
 
     public void clearCraftingGrid() {
@@ -279,7 +278,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             for (int slot : slotList) {
                 var extracted = availableHandlers.extractItem(slot, requestedAmount, true);
                 if (extracted.isEmpty()) {
-                    stackLookupMap.get(stack).remove(slot);
+                    stackLookupMap.get(stack).remove((Integer) slot);
                     continue;
                 }
                 gatheredItems.put(extracted, slot);

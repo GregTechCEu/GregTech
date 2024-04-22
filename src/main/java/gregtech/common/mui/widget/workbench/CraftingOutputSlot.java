@@ -66,6 +66,7 @@ public class CraftingOutputSlot extends ItemSlot {
         public void readOnServer(int id, PacketBuffer buf) throws IOException {
             if (id == 2) {
                 if (recipeLogic.isRecipeValid() && getSlot().canTakeStack(getSyncManager().getPlayer())) {
+                    recipeLogic.collectAvailableItems();
                     recipeLogic.performRecipe();
                     handleItemCraft(getSlot().getStack(), getSyncManager().getPlayer());
                 }

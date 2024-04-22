@@ -244,7 +244,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
         getCraftingRecipeLogic().updateCurrentRecipe();
-        getCraftingRecipeLogic().collectAvailableItems();
 
         guiSyncManager.syncValue("recipe_logic", this.recipeLogic);
 
