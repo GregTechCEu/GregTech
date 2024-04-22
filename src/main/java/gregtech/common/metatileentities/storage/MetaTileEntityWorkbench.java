@@ -9,6 +9,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
 
@@ -218,7 +219,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         writeCustomData(UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
     }
 
-    private @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
+    public @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
         Preconditions.checkState(getWorld() != null, "getRecipeResolver called too early");
         if (this.recipeLogic == null) {
             this.recipeLogic = new CraftingRecipeLogic(getWorld(), getAvailableHandlers(), getCraftingGrid());
@@ -519,7 +520,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         private final CraftingRecipeLogic recipeLogic;
 
         public CraftingOutputSlot(IItemHandler itemHandler, IntSyncValue syncValue, CraftingRecipeLogic recipeLogic) {
-            super(itemHandler, 0, false);
+            super(itemHandler, 0, true);
             this.syncValue = syncValue;
             this.recipeLogic = recipeLogic;
         }
@@ -527,7 +528,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         @Override
         public boolean canTakeStack(EntityPlayer playerIn) {
             if (recipeLogic.getSyncManager().isClient()) {
-                // recipeLogic.syncToServer(3);
                 return false;
             }
 
