@@ -28,7 +28,6 @@ import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -155,7 +154,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // register transfer handler for all categories, but not for the crafting station
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
-        modularUIGuiHandler.setValidHandlers(widget -> !(widget instanceof CraftingSlotWidget));
+//        modularUIGuiHandler.setValidHandlers(widget -> !(widget instanceof CraftingSlotWidget));
         modularUIGuiHandler.blacklistCategory(
                 IntCircuitCategory.UID,
                 GTValues.MODID + ":material_tree",
