@@ -39,7 +39,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("OverrideOnly") // stupid annotations conflicting with each other
 public class CraftingRecipeLogic extends SyncHandler {
 
     private final World world;
@@ -68,11 +67,6 @@ public class CraftingRecipeLogic extends SyncHandler {
         this.availableHandlers = handlers;
         this.craftingMatrix = new CraftingWrapper(craftingMatrix);
         this.cachedRecipeData = new CachedRecipeData();
-    }
-
-    @Override
-    public void init(String key, GuiSyncManager syncManager) {
-        super.init(key, syncManager);
     }
 
     public IInventory getCraftingResultInventory() {
@@ -213,30 +207,9 @@ public class CraftingRecipeLogic extends SyncHandler {
     public void performRecipe() {
         if (!isRecipeValid()) return;
 
-        if (!attemptMatchRecipe() || !consumeRecipeItems(false)) {
+        if (!attemptMatchRecipe() || !consumeRecipeItems()) {
             return;
         }
-
-        // sync crafted stack to client
-        syncToClient(4, buffer -> {
-            ItemStack curStack = getSyncManager().getCursorItem();
-            ItemStack outStack = getCachedRecipe().getRecipeOutput();
-            ItemStack toSync = outStack.copy();
-            if (curStack.getItem() == outStack.getItem() &&
-                    curStack.getMetadata() == outStack.getMetadata() &&
-                    ItemStack.areItemStackTagsEqual(curStack, outStack)) {
-
-                int combined = curStack.getCount() + outStack.getCount();
-                if (combined <= outStack.getMaxStackSize()) {
-                    toSync.setCount(curStack.getCount() + outStack.getCount());
-                } else {
-                    toSync.setCount(outStack.getMaxStackSize());
-                }
-            } else if (!curStack.isEmpty()) {
-                toSync = curStack;
-            }
-            writeStackSafe(buffer, toSync);
-        });
 
         var cachedRecipe = cachedRecipeData.getRecipe();
         var player = getSyncManager().getPlayer();
@@ -244,8 +217,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         // todo right here is where tools get damaged (in UI)
         NonNullList<ItemStack> remainingItems = cachedRecipe.getRemainingItems(craftingMatrix);
         ForgeHooks.setCraftingPlayer(null);
-        for (int i = 0; i < remainingItems.size(); i++) {
-            ItemStack itemStack = remainingItems.get(i);
+        for (ItemStack itemStack : remainingItems) {
             if (itemStack.isEmpty()) {
                 continue;
             }
@@ -260,7 +232,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         }
     }
 
-    protected boolean consumeRecipeItems(boolean simulate) {
+    protected boolean consumeRecipeItems() {
         if (requiredItems.isEmpty()) {
             return false;
         }
@@ -299,9 +271,9 @@ public class CraftingRecipeLogic extends SyncHandler {
                 if (stack.getItem() instanceof IGTTool gtTool) {
                     damage = gtTool.getToolStats().getDamagePerCraftingAction(stack);
                 }
-                if (!simulate) stack.damageItem(damage, getSyncManager().getPlayer());
+                stack.damageItem(damage, getSyncManager().getPlayer());
             } else {
-                availableHandlers.extractItem(slot, stack.getCount(), simulate);
+                availableHandlers.extractItem(slot, stack.getCount(), false);
             }
             extracted = true;
         }
