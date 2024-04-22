@@ -374,7 +374,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         if (this.connectedInventory.getSlots() == 0) {
             return new Column()
-                    .debugName("inventory page")
+                    .debugName("inventory page - empty")
                     .leftRel(0.5f)
                     .padding(2)
                     .height(18 * 6)
