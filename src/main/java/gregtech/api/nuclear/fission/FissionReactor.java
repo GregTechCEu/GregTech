@@ -5,6 +5,7 @@ import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
@@ -126,6 +127,7 @@ public class FissionReactor {
     public double maxPressure = 2000000;
     // In MW apparently
     public double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
+    public static double zircaloyHydrogenReactionTemperature = 1500;
 
     public double surfaceArea;
     public static double thermalConductivity = 45; // 45 W/(m K), for steel
@@ -495,11 +497,23 @@ public class FissionReactor {
                     channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
                 }
 
+                if (prop.accumulatesHydrogen() &&
+                        this.temperature > zircaloyHydrogenReactionTemperature) {
+                    double boilingPoint = coolantBoilingPoint(coolant);
+                    if (this.temperature > boilingPoint) {
+                        this.accumulatedHydrogen += (this.temperature - boilingPoint) / boilingPoint;
+                    } else if (actualFlowRate < Math.min(remainingSpace, idealFluidUsed)) {
+                        this.accumulatedHydrogen += (this.temperature - zircaloyHydrogenReactionTemperature) /
+                                zircaloyHydrogenReactionTemperature;
+                    }
+                }
+
                 this.coolantMass += actualFlowRate * coolant.getMass();
                 this.heatRemoved += actualFlowRate * heatRemovedPerLiter;
             }
         }
         this.coolantMass /= 1000;
+        this.accumulatedHydrogen *= 0.98;
     }
 
     /**
@@ -575,10 +589,6 @@ public class FissionReactor {
 
     public boolean checkForExplosion() {
         return this.pressure > this.maxPressure;
-    }
-
-    public boolean checkForSecondaryExplosion() {
-        return this.accumulatedHydrogen > 0.;
     }
 
     public void addComponent(ReactorComponent component, int x, int y) {

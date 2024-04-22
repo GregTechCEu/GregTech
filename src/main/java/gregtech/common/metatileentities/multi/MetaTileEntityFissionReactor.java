@@ -270,23 +270,24 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
             this.syncReactorStats();
 
-            // if (this.fissionReactor.checkForMeltdown()) {
-            // this.performMeltdownEffects();
-            // }
-            //
-            // if (this.fissionReactor.checkForExplosion()) {
-            // this.performPrimaryExplosion();
-            // if (this.fissionReactor.checkForSecondaryExplosion()) {
-            // this.performSecondaryExplosion();
-            // }
-            // }
+            if (this.fissionReactor.checkForMeltdown()) {
+                this.performMeltdownEffects();
+            }
+
+            if (this.fissionReactor.checkForExplosion()) {
+                this.performPrimaryExplosion();
+                if (this.fissionReactor.accumulatedHydrogen > 1) {
+                    this.performSecondaryExplosion(fissionReactor.accumulatedHydrogen);
+                }
+            }
 
         }
     }
 
     protected void performMeltdownEffects() {
+        this.unlockAll();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
-        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
+        pos = pos.move(this.getFrontFacing().getOpposite(), diameter / 2);
         for (int i = 0; i <= this.heightBottom; i++) {
             this.getWorld().setBlockState(pos.add(0, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
             this.getWorld().setBlockState(pos.add(1, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
@@ -298,15 +299,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     }
 
     protected void performPrimaryExplosion() {
+        this.unlockAll();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
-        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
+        pos = pos.move(this.getFrontFacing().getOpposite(), diameter / 2);
         this.getWorld().createExplosion(null, pos.getX(), pos.getY() + heightTop, pos.getZ(), 4.f, true);
     }
 
-    protected void performSecondaryExplosion() {
+    protected void performSecondaryExplosion(double accumulatedHydrogen) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
-        pos = pos.move(this.getFrontFacing().getOpposite(), Math.floorDiv(diameter, 2));
-        this.getWorld().newExplosion(null, pos.getX(), pos.getY() + heightTop + 3, pos.getZ(), 10.f, true, true);
+        pos = pos.move(this.getFrontFacing().getOpposite(), diameter / 2);
+        this.getWorld().newExplosion(null, pos.getX(), pos.getY() + heightTop + 3, pos.getZ(), 4.f + (float) Math.log(accumulatedHydrogen), true, true);
     }
 
     public boolean updateStructureDimensions() {
@@ -361,14 +363,15 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 // The integer division is fine here, since we want an odd diameter (say, 5) to go to the middle value (2 in this case)
                 int outerI = i + (int) Math.signum(i - (diameter / 2));
 
-
-                if (Math.pow(outerI - Math.floor(this.diameter / 2.), 2) + Math.pow(j - Math.floor(this.diameter / 2.), 2) >
+                if (Math.pow(outerI - Math.floor(this.diameter / 2.), 2) +
+                        Math.pow(j - Math.floor(this.diameter / 2.), 2) >
                         Math.pow(radius + 0.5f, 2)) {
                     interiorSlice[i] = GTStringUtils.replace(interiorSlice[i], j, 'B');
                 }
 
                 int outerJ = j + (int) Math.signum(j - (diameter / 2));
-                if (Math.pow(i - Math.floor(this.diameter / 2.), 2) + Math.pow(outerJ - Math.floor(this.diameter / 2.), 2) >
+                if (Math.pow(i - Math.floor(this.diameter / 2.), 2) +
+                        Math.pow(outerJ - Math.floor(this.diameter / 2.), 2) >
                         Math.pow(radius + 0.5f, 2)) {
                     interiorSlice[i] = GTStringUtils.replace(interiorSlice[i], j, 'B');
                 }
@@ -491,6 +494,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         data.setInteger("diameter", this.diameter);
         data.setInteger("heightTop", this.heightTop);
         data.setInteger("heightBottom", this.heightBottom);
+        data.setInteger("flowRate", this.flowRate);
         data.setBoolean("locked", this.lockingState == LockingState.LOCKED);
         if (fissionReactor != null) {
             data.setTag("transientData", this.fissionReactor.serializeNBT());
@@ -505,6 +509,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.diameter = data.getInteger("diameter");
         this.heightTop = data.getInteger("heightTop");
         this.heightBottom = data.getInteger("heightBottom");
+        this.flowRate = data.getInteger("flowRate");
         this.height = this.heightTop + this.heightBottom + 1;
         if (data.getBoolean("locked")) {
             this.lockingState = LockingState.SHOULD_LOCK;
@@ -520,6 +525,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         buf.writeInt(this.diameter);
         buf.writeInt(this.heightTop);
         buf.writeInt(this.heightBottom);
+        buf.writeInt(this.flowRate);
         if (this.lockingState == LockingState.SHOULD_LOCK) {
             this.lockAndPrepareReactor();
         }
@@ -532,6 +538,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.diameter = buf.readInt();
         this.heightTop = buf.readInt();
         this.heightBottom = buf.readInt();
+        this.flowRate = buf.readInt();
         if (buf.readBoolean()) {
             this.lockingState = LockingState.LOCKED;
         }

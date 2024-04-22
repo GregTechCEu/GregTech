@@ -23,6 +23,7 @@ public class CoolantProperty implements IMaterialProperty {
     // in J/(kg*K)
     private double specificHeatCapacity;
     private double sadgeCoefficient = 1;
+    private boolean accumulatesHydrogen = false;
 
     public CoolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor, double coolingFactor,
                            double boilingPoint, double absorption, double pressure, double heatOfVaporization, double specificHeatCapacity) {
@@ -125,6 +126,15 @@ public class CoolantProperty implements IMaterialProperty {
      */
     public CoolantProperty setSadgeCoefficient(double sadgeCoefficient) {
         this.sadgeCoefficient = sadgeCoefficient;
+        return this;
+    }
+
+    public boolean accumulatesHydrogen() {
+        return accumulatesHydrogen;
+    }
+
+    public CoolantProperty setAccumulatesHydrogen(boolean accumulatesHydrogen) {
+        this.accumulatesHydrogen = accumulatesHydrogen;
         return this;
     }
 }
