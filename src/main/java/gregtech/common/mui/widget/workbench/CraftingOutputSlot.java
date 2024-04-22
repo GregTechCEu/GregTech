@@ -125,13 +125,6 @@ public class CraftingOutputSlot extends ItemSlot {
             }
         }
 
-//        @Override
-//        public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
-//            recipeLogic.performRecipe();
-//            handleItemCraft(stack, thePlayer);
-//            return super.onTake(thePlayer, stack);
-//        }
-
         @Override
         public void putStack(@NotNull ItemStack stack) {
             super.putStack(getStack());
