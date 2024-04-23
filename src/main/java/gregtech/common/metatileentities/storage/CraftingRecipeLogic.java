@@ -330,14 +330,8 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
-        if (id == 3) {
-            syncToServer(3);
-        } else if (id == 4) {
+        if (id == 4) {
             getSyncManager().setCursorItem(readStackSafe(buf));
-        } else if (id == 5) {
-            int slot = buf.readVarInt();
-            var stack = readStackSafe(buf);
-            this.availableHandlers.setStackInSlot(slot, stack);
         }
     }
 
