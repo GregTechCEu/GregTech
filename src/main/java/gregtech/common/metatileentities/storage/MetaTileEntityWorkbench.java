@@ -92,26 +92,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             .asIcon().size(16);
 
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
-    private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18) {
-
-        @Override
-        protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            var logic = getCraftingRecipeLogic();
-            if (logic.isValid() && logic.getSyncManager().isClient())
-                logic.syncToServer(4, buffer -> buffer.writeVarInt(slot));
-        }
-    };
-    private final ItemStackHandler toolInventory = new ToolItemStackHandler(9) {
-
-        @Override
-        protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            var logic = getCraftingRecipeLogic();
-            if (logic.isValid() && logic.getSyncManager().isClient())
-                logic.syncToServer(4, buffer -> buffer.writeVarInt(slot));
-        }
-    };
+    private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
+    private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
     private IItemHandlerModifiable combinedInventory;
     private IItemHandlerModifiable connectedInventory;
