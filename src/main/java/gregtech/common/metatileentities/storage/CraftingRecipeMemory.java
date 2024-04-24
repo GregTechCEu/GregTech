@@ -15,9 +15,9 @@ public class CraftingRecipeMemory {
     private final MemorizedRecipe[] memorizedRecipes;
     private final IItemHandlerModifiable craftingMatrix;
 
-    public CraftingRecipeMemory(IItemHandlerModifiable craftingMatrix, int memorySize) {
-        this.craftingMatrix = craftingMatrix;
+    public CraftingRecipeMemory(int memorySize, IItemHandlerModifiable craftingMatrix) {
         this.memorizedRecipes = new MemorizedRecipe[memorySize];
+        this.craftingMatrix = craftingMatrix;
     }
 
     public void loadRecipe(int index) {
@@ -30,6 +30,11 @@ public class CraftingRecipeMemory {
     @Nullable
     public MemorizedRecipe getRecipeAtIndex(int index) {
         return memorizedRecipes[index];
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    public ItemStack getRecipeOutputAtIndex(int index) {
+        return hasRecipe(index) ? getRecipeAtIndex(index).getRecipeResult() : ItemStack.EMPTY;
     }
 
     @Nullable
@@ -77,6 +82,7 @@ public class CraftingRecipeMemory {
     public void notifyRecipePerformed(IItemHandler craftingGrid, ItemStack resultStack) {
         MemorizedRecipe recipe = findOrCreateRecipe(resultStack);
         if (recipe != null) {
+            // notify slot and sync to client
             recipe.updateCraftingMatrix(craftingGrid);
             recipe.timesUsed++;
         }
