@@ -213,6 +213,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         getCraftingRecipeLogic().updateCurrentRecipe();
 
         guiSyncManager.syncValue("recipe_logic", this.recipeLogic);
+        guiSyncManager.syncValue("recipe_memory", this.recipeMemory);
 
         var controller = new PagedWidget.Controller();
 
@@ -324,7 +325,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .matrix("XXX",
                         "XXX",
                         "XXX")
-                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i, syncManager))
+                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
                 .build().right(0);
     }
 
