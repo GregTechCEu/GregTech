@@ -3,14 +3,22 @@ package gregtech.common.metatileentities.storage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CraftingRecipeMemory {
+import java.io.IOException;
+import java.util.Map;
+
+public class CraftingRecipeMemory extends SyncHandler {
 
     private final MemorizedRecipe[] memorizedRecipes;
     private final IItemHandlerModifiable craftingMatrix;
@@ -33,7 +41,7 @@ public class CraftingRecipeMemory {
     }
 
     @SuppressWarnings("DataFlowIssue")
-    public ItemStack getRecipeOutputAtIndex(int index) {
+    public @NotNull ItemStack getRecipeOutputAtIndex(int index) {
         return hasRecipe(index) ? getRecipeAtIndex(index).getRecipeResult() : ItemStack.EMPTY;
     }
 
@@ -128,6 +136,58 @@ public class CraftingRecipeMemory {
 
     public final boolean hasRecipe(int index) {
         return memorizedRecipes[index] != null;
+    }
+
+    @Override
+    public void readOnClient(int id, PacketBuffer buf) {
+        if (id == 1) {
+            int size = buf.readByte();
+            for (int i = 0; i < size; i++) {
+                int index = buf.readByte();
+                if (!hasRecipe(index)) memorizedRecipes[index] = new MemorizedRecipe();
+                memorizedRecipes[index].recipeResult = readStackSafe(buf);
+            }
+        }
+    }
+
+    @Override
+    public void readOnServer(int id, PacketBuffer buf) {
+        if (id == 1) {
+            syncToClient(1, buffer -> {
+                Map<Integer, ItemStack> written = new Int2ObjectOpenHashMap<>();
+                for (int i = 0; i < memorizedRecipes.length; i++) {
+                    var stack = getRecipeOutputAtIndex(i);
+                    if (stack.isEmpty()) continue;
+                    written.put(i, stack);
+                }
+                buffer.writeByte(written.size());
+                for (var entry : written.entrySet()) {
+                    buffer.writeByte(entry.getKey());
+                    buffer.writeItemStack(entry.getValue());
+                }
+            });
+        } else if (id == 2) {
+            // read mouse data
+            int index = buf.readByte();
+            var data = MouseData.readPacket(buf);
+            if (data.shift && data.mouseButton == 0 && hasRecipe(index)) {
+                var recipe = getRecipeAtIndex(index);
+                recipe.setRecipeLocked(!recipe.isRecipeLocked());
+            } else if (data.mouseButton == 0) {
+                loadRecipe(index);
+            } else if (data.mouseButton == 1) {
+                if (hasRecipe(index) && !getRecipeAtIndex(index).isRecipeLocked())
+                    removeRecipe(index);
+            }
+        }
+    }
+
+    private ItemStack readStackSafe(PacketBuffer buffer) {
+        ItemStack ret = ItemStack.EMPTY;
+        try {
+            ret = buffer.readItemStack();
+        } catch (IOException ignored) {}
+        return ret;
     }
 
     public static class MemorizedRecipe {

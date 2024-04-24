@@ -5,34 +5,28 @@ import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 
 @SuppressWarnings("DataFlowIssue")
 public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable {
 
     private final CraftingRecipeMemory memory;
     private final int index;
-    private final RecipeSyncHandler syncHandler;
 
-    public RecipeMemorySlot(CraftingRecipeMemory memory, int index, GuiSyncManager syncManager) {
+    public RecipeMemorySlot(CraftingRecipeMemory memory, int index) {
         this.memory = memory;
         this.index = index;
-        this.syncHandler = new RecipeSyncHandler(this.memory, this.index);
+        // this.syncHandler = new RecipeSyncHandler(this.memory, this.index);
         // setSyncHandler(this.syncHandler);
-        syncManager.syncValue("recipe_memory", this.index, this.syncHandler);
+        // syncManager.syncValue("recipe_memory", this.index, this.syncHandler);
     }
 
     @Override
@@ -43,7 +37,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
     @Override
     public void afterInit() {
-        this.syncHandler.syncToServer(1);
+        this.memory.syncToServer(1);
     }
 
     @Override
@@ -53,7 +47,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
     public void drawStack() {
         GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
-        ItemStack itemstack = this.syncHandler.drawableStack;
+        ItemStack itemstack = this.memory.getRecipeOutputAtIndex(this.index);
         if (itemstack.isEmpty()) return;
 
         guiScreen.setZ(100f);
@@ -95,54 +89,10 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
     @Override
     public Result onMousePressed(int mouseButton) {
         var data = MouseData.create(mouseButton);
-        this.syncHandler.syncToServer(2, data::writeToPacket);
+        this.memory.syncToServer(2, buffer -> {
+            buffer.writeByte(this.index);
+            data.writeToPacket(buffer);
+        });
         return Result.ACCEPT;
-    }
-
-    private static class RecipeSyncHandler extends SyncHandler {
-
-        public ItemStack drawableStack;
-        private final CraftingRecipeMemory memory;
-        private final int index;
-
-        public RecipeSyncHandler(CraftingRecipeMemory memory, int index) {
-            this.memory = memory;
-            this.index = index;
-            this.drawableStack = this.memory.getRecipeOutputAtIndex(this.index);
-        }
-
-        @Override
-        public void readOnClient(int id, PacketBuffer buf) {
-            if (id == 1) {
-                this.drawableStack = readStackSafe(buf);
-            }
-        }
-
-        @Override
-        public void readOnServer(int id, PacketBuffer buf) {
-            if (id == 1) {
-                this.syncToClient(1, buffer -> buffer.writeItemStack(this.drawableStack));
-            } else if (id == 2) {
-                // read mouse data
-                var data = MouseData.readPacket(buf);
-                if (data.shift && data.mouseButton == 0 && memory.hasRecipe(index)) {
-                    var recipe = memory.getRecipeAtIndex(index);
-                    recipe.setRecipeLocked(!recipe.isRecipeLocked());
-                } else if (data.mouseButton == 0) {
-                    memory.loadRecipe(index);
-                } else if (data.mouseButton == 1) {
-                    if (memory.hasRecipe(index) && !memory.getRecipeAtIndex(index).isRecipeLocked())
-                        memory.removeRecipe(index);
-                }
-            }
-        }
-
-        private ItemStack readStackSafe(PacketBuffer buffer) {
-            ItemStack ret = ItemStack.EMPTY;
-            try {
-                ret = buffer.readItemStack();
-            } catch (IOException ignored) {}
-            return ret;
-        }
     }
 }
