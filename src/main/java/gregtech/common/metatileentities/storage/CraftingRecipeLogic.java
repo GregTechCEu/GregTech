@@ -11,7 +11,6 @@ import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -24,7 +23,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;

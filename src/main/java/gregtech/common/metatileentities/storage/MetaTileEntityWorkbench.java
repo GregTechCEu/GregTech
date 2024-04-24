@@ -9,18 +9,14 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
-
 import gregtech.common.mui.widget.workbench.CraftingOutputSlot;
+import gregtech.common.mui.widget.workbench.RecipeMemorySlot;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -42,21 +38,14 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
-import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.PageButton;
@@ -65,10 +54,8 @@ import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.layout.Row;
-import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +85,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     private IItemHandlerModifiable combinedInventory;
     private IItemHandlerModifiable connectedInventory;
 
-    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(this.craftingGrid, 9);
+    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9, this.craftingGrid);
     private CraftingRecipeLogic recipeLogic = null;
     private int itemsCrafted = 0;
 
@@ -190,10 +177,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote) {
-            if (recipeLogic != null) {
-                getCraftingRecipeLogic().update();
-            }
+        if (!getWorld().isRemote && recipeLogic != null) {
+            getCraftingRecipeLogic().update();
         }
     }
 
@@ -310,10 +295,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .key('X', i -> new ItemSlot()
                         .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                            if (!init) {
-                                                this.recipeLogic.updateCurrentRecipe();
-                                            }
-                                        })))
+                                    if (!init) {
+                                        this.recipeLogic.updateCurrentRecipe();
+                                    }
+                                })))
                 .build();
     }
 
@@ -339,7 +324,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .matrix("XXX",
                         "XXX",
                         "XXX")
-                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
+                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i, syncManager))
                 .build().right(0);
     }
 
@@ -417,87 +402,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     public void setItemsCrafted(int itemsCrafted) {
         this.itemsCrafted = itemsCrafted;
-    }
-
-    private static class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable {
-
-        private final CraftingRecipeMemory memory;
-        private final int index;
-
-        public RecipeMemorySlot(CraftingRecipeMemory memory, int index) {
-            this.memory = memory;
-            this.index = index;
-        }
-
-        @Override
-        public void onInit() {
-            size(ItemSlot.SIZE);
-            background(GTGuiTextures.SLOT);
-        }
-
-        @Override
-        public void draw(GuiContext context, WidgetTheme widgetTheme) {
-            drawStack();
-        }
-
-        public void drawStack() {
-            GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
-            var recipe = memory.getRecipeAtIndex(index);
-            if (recipe == null) return;
-            ItemStack itemstack = recipe.getRecipeResult();
-
-            guiScreen.setZ(100f);
-            guiScreen.getItemRenderer().zLevel = 100.0F;
-
-            // GuiDraw.drawRect(1, 1, 16, 16, -2130706433);
-
-            if (!itemstack.isEmpty()) {
-                GlStateManager.enableDepth();
-                // render the item itself
-                guiScreen.getItemRenderer().renderItemAndEffectIntoGUI(guiScreen.mc.player, itemstack, 1, 1);
-
-                // render the amount overlay
-                // String amountText = NumberFormat.formatWithMaxDigits(1);
-                // textRenderer.setShadow(true);
-                // textRenderer.setColor(Color.WHITE.main);
-                // textRenderer.setAlignment(Alignment.BottomRight, getArea().width - 1, getArea().height - 1);
-                // textRenderer.setPos(1, 1);
-                // GlStateManager.disableLighting();
-                // GlStateManager.disableDepth();
-                // GlStateManager.disableBlend();
-                // textRenderer.draw(amountText);
-                // GlStateManager.enableLighting();
-                // GlStateManager.enableDepth();
-                // GlStateManager.enableBlend();
-
-                int cachedCount = itemstack.getCount();
-                itemstack.setCount(1); // required to not render the amount overlay
-                // render other overlays like durability bar
-                guiScreen.getItemRenderer().renderItemOverlayIntoGUI(guiScreen.getFontRenderer(), itemstack, 1, 1,
-                        null);
-                itemstack.setCount(cachedCount);
-                GlStateManager.disableDepth();
-            }
-
-            guiScreen.getItemRenderer().zLevel = 0.0F;
-            guiScreen.setZ(0f);
-        }
-
-        @NotNull
-        @Override
-        public Result onMousePressed(int mouseButton) {
-            var data = MouseData.create(mouseButton);
-            if (data.shift && data.mouseButton == 0 && memory.hasRecipe(index)) {
-                var recipe = memory.getRecipeAtIndex(index);
-                recipe.setRecipeLocked(!recipe.isRecipeLocked());
-            } else if (data.mouseButton == 0) {
-                memory.loadRecipe(index);
-            } else if (data.mouseButton == 1) {
-                if (memory.hasRecipe(index) && !memory.getRecipeAtIndex(index).isRecipeLocked())
-                    memory.removeRecipe(index);
-            }
-            return Result.ACCEPT;
-        }
     }
 
     private static class HandlerListWrapper extends ItemHandlerList {
