@@ -93,6 +93,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             // notify slot and sync to client
             recipe.updateCraftingMatrix(craftingGrid);
             recipe.timesUsed++;
+            syncToClient(1, this::writeRecipes);
         }
     }
 
@@ -131,6 +132,7 @@ public class CraftingRecipeMemory extends SyncHandler {
     public final void removeRecipe(int index) {
         if (hasRecipe(index)) {
             memorizedRecipes[index] = null;
+            syncToClient(2, buffer -> buffer.writeByte(index));
         }
     }
 
@@ -147,25 +149,29 @@ public class CraftingRecipeMemory extends SyncHandler {
                 if (!hasRecipe(index)) memorizedRecipes[index] = new MemorizedRecipe();
                 memorizedRecipes[index].recipeResult = readStackSafe(buf);
             }
+        } else if (id == 2) {
+            removeRecipe(buf.readByte());
+        }
+    }
+
+    public void writeRecipes(PacketBuffer buffer) {
+        Map<Integer, ItemStack> written = new Int2ObjectOpenHashMap<>();
+        for (int i = 0; i < memorizedRecipes.length; i++) {
+            var stack = getRecipeOutputAtIndex(i);
+            if (stack.isEmpty()) continue;
+            written.put(i, stack);
+        }
+        buffer.writeByte(written.size());
+        for (var entry : written.entrySet()) {
+            buffer.writeByte(entry.getKey());
+            buffer.writeItemStack(entry.getValue());
         }
     }
 
     @Override
     public void readOnServer(int id, PacketBuffer buf) {
         if (id == 1) {
-            syncToClient(1, buffer -> {
-                Map<Integer, ItemStack> written = new Int2ObjectOpenHashMap<>();
-                for (int i = 0; i < memorizedRecipes.length; i++) {
-                    var stack = getRecipeOutputAtIndex(i);
-                    if (stack.isEmpty()) continue;
-                    written.put(i, stack);
-                }
-                buffer.writeByte(written.size());
-                for (var entry : written.entrySet()) {
-                    buffer.writeByte(entry.getKey());
-                    buffer.writeItemStack(entry.getValue());
-                }
-            });
+            syncToClient(1, this::writeRecipes);
         } else if (id == 2) {
             // read mouse data
             int index = buf.readByte();
