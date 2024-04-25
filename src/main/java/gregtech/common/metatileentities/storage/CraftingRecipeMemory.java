@@ -71,17 +71,22 @@ public class CraftingRecipeMemory extends SyncHandler {
         for (int i = 0; i < memorizedRecipes.length; i++) {
             MemorizedRecipe memorizedRecipe;
             if (memorizedRecipes[i] == null) {
-                memorizedRecipe = new MemorizedRecipe();
+                memorizedRecipe = new MemorizedRecipe(i);
             } else if (memorizedRecipes[i].recipeLocked) {
                 continue;
             } else {
                 memorizedRecipe = offsetRecipe(i);
                 if (memorizedRecipe == null) {
-                    memorizedRecipe = new MemorizedRecipe();
+                    memorizedRecipe = new MemorizedRecipe(i);
                 }
             }
             memorizedRecipe.initialize(resultItemStack);
             memorizedRecipes[i] = memorizedRecipe;
+            var sync = memorizedRecipes[i];
+            syncToClient(3, buffer -> {
+                buffer.writeByte(sync.index);
+                buffer.writeItemStack(sync.recipeResult);
+            });
             return memorizedRecipe;
         }
         return null;
@@ -93,7 +98,6 @@ public class CraftingRecipeMemory extends SyncHandler {
             // notify slot and sync to client
             recipe.updateCraftingMatrix(craftingGrid);
             recipe.timesUsed++;
-            syncToClient(1, this::writeRecipes);
         }
     }
 
@@ -117,7 +121,7 @@ public class CraftingRecipeMemory extends SyncHandler {
         for (int i = 0; i < resultList.tagCount(); i++) {
             NBTTagCompound entryComponent = resultList.getCompoundTagAt(i);
             int slotIndex = entryComponent.getInteger("Slot");
-            MemorizedRecipe recipe = MemorizedRecipe.deserializeNBT(entryComponent.getCompoundTag("Recipe"));
+            MemorizedRecipe recipe = MemorizedRecipe.deserializeNBT(entryComponent.getCompoundTag("Recipe"), slotIndex);
             this.memorizedRecipes[slotIndex] = recipe;
         }
     }
@@ -140,17 +144,36 @@ public class CraftingRecipeMemory extends SyncHandler {
         return memorizedRecipes[index] != null;
     }
 
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        this.writeRecipes(buf);
+    }
+
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        int size = buf.readByte();
+        for (int i = 0; i < size; i++) {
+            int index = buf.readByte();
+            if (!hasRecipe(index))
+                memorizedRecipes[index] = new MemorizedRecipe(index);
+
+            memorizedRecipes[index].recipeResult = readStackSafe(buf);
+        }
+    }
+
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
         if (id == 1) {
             int size = buf.readByte();
             for (int i = 0; i < size; i++) {
                 int index = buf.readByte();
-                if (!hasRecipe(index)) memorizedRecipes[index] = new MemorizedRecipe();
+                if (!hasRecipe(index)) memorizedRecipes[index] = new MemorizedRecipe(index);
                 memorizedRecipes[index].recipeResult = readStackSafe(buf);
             }
         } else if (id == 2) {
             removeRecipe(buf.readByte());
+        } else if (id == 3) {
+            int index = buf.readByte();
+            if (!hasRecipe(index)) memorizedRecipes[index] = new MemorizedRecipe(index);
+            memorizedRecipes[index].recipeResult = readStackSafe(buf);
         }
     }
 
@@ -169,6 +192,7 @@ public class CraftingRecipeMemory extends SyncHandler {
     }
 
     @Override
+    @SuppressWarnings("DataFlowIssue")
     public void readOnServer(int id, PacketBuffer buf) {
         if (id == 1) {
             syncToClient(1, this::writeRecipes);
@@ -202,8 +226,11 @@ public class CraftingRecipeMemory extends SyncHandler {
         private ItemStack recipeResult;
         private boolean recipeLocked = false;
         private int timesUsed = 0;
+        public final int index;
 
-        private MemorizedRecipe() {}
+        private MemorizedRecipe(int index) {
+            this.index = index;
+        }
 
         private NBTTagCompound serializeNBT() {
             NBTTagCompound result = new NBTTagCompound();
@@ -214,8 +241,8 @@ public class CraftingRecipeMemory extends SyncHandler {
             return result;
         }
 
-        private static MemorizedRecipe deserializeNBT(NBTTagCompound tagCompound) {
-            MemorizedRecipe recipe = new MemorizedRecipe();
+        private static MemorizedRecipe deserializeNBT(NBTTagCompound tagCompound, int index) {
+            MemorizedRecipe recipe = new MemorizedRecipe(index);
             recipe.recipeResult = new ItemStack(tagCompound.getCompoundTag("Result"));
             recipe.craftingMatrix.deserializeNBT(tagCompound.getCompoundTag("Matrix"));
             recipe.recipeLocked = tagCompound.getBoolean("Locked");

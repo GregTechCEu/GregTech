@@ -69,6 +69,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     // todo move these to GregtechDataCodes
     public static final int UPDATE_CLIENT_HANDLER = GregtechDataCodes.assignId();
+    public static final int SYNC_MEMORY = GregtechDataCodes.assignId();
 
     private static final IDrawable CHEST = new ItemDrawable(new ItemStack(Blocks.CHEST))
             .asIcon().size(16);
@@ -120,6 +121,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         for (int i = 0; i < craftingGrid.getSlots(); i++) {
             buf.writeItemStack(craftingGrid.getStackInSlot(i));
         }
+        this.recipeMemory.writeInitialSyncData(buf);
     }
 
     @Override
@@ -131,6 +133,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 craftingGrid.setStackInSlot(i, buf.readItemStack());
             }
         } catch (IOException ignored) {}
+        this.recipeMemory.receiveInitialSyncData(buf);
     }
 
     @Override

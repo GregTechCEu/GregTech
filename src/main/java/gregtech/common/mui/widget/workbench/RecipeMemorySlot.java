@@ -24,20 +24,12 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
     public RecipeMemorySlot(CraftingRecipeMemory memory, int index) {
         this.memory = memory;
         this.index = index;
-        // this.syncHandler = new RecipeSyncHandler(this.memory, this.index);
-        // setSyncHandler(this.syncHandler);
-        // syncManager.syncValue("recipe_memory", this.index, this.syncHandler);
     }
 
     @Override
     public void onInit() {
         size(ItemSlot.SIZE);
         background(GTGuiTextures.SLOT);
-    }
-
-    @Override
-    public void afterInit() {
-        this.memory.syncToServer(1);
     }
 
     @Override

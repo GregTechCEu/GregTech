@@ -74,9 +74,10 @@ public class CraftingOutputSlot extends ItemSlot {
 
                 if (recipeLogic.isRecipeValid() && getSlot().canTakeStack(getSyncManager().getPlayer())) {
                     recipeLogic.collectAvailableItems();
-                    recipeLogic.performRecipe();
-                    syncToClient(5, this::syncCraftedStack);
-                    handleItemCraft(getSlot().getStack(), getSyncManager().getPlayer());
+                    if (recipeLogic.performRecipe()) {
+                        handleItemCraft(getSlot().getStack(), getSyncManager().getPlayer());
+                        syncToClient(5, this::syncCraftedStack);
+                    }
                 }
             } else {
                 super.readOnServer(id, buf);
@@ -105,7 +106,7 @@ public class CraftingOutputSlot extends ItemSlot {
 
         private void syncCraftedStack(PacketBuffer buf) {
             ItemStack curStack = getSyncManager().getCursorItem();
-            ItemStack outStack = recipeLogic.getCachedRecipe().getRecipeOutput();
+            ItemStack outStack = getSlot().getStack();
             ItemStack toSync = outStack.copy();
             if (curStack.getItem() == outStack.getItem() &&
                     curStack.getMetadata() == outStack.getMetadata() &&
