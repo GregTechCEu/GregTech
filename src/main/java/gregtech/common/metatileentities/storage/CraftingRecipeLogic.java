@@ -202,11 +202,11 @@ public class CraftingRecipeLogic extends SyncHandler {
         return false;
     }
 
-    public void performRecipe() {
-        if (!isRecipeValid()) return;
+    public boolean performRecipe() {
+        if (!isRecipeValid()) return false;
 
         if (!attemptMatchRecipe() || !consumeRecipeItems()) {
-            return;
+            return false;
         }
 
         var cachedRecipe = cachedRecipeData.getRecipe();
@@ -228,6 +228,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                 }
             }
         }
+        return true;
     }
 
     protected boolean consumeRecipeItems() {
