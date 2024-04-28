@@ -19,27 +19,11 @@ import net.minecraft.util.math.BlockPos;
 import java.util.List;
 
 public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifiablePart
-                                          implements IControllable, IFissionReactorHatch,
-                                          IMultiblockAbilityPart<IControlRodPort>, IControlRodPort {
-
-    private boolean workingEnabled;
-    private boolean valid;
-
-    private byte insertion = 1;
+                                          implements IFissionReactorHatch, IControlRodPort, IMultiblockAbilityPart<IControlRodPort> {
 
     public MetaTileEntityControlRodPort(ResourceLocation metaTileEntityId, boolean isExportHatch) {
         super(metaTileEntityId, 4, false);
         this.frontFacing = EnumFacing.UP;
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return workingEnabled;
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean isWorkingAllowed) {
-        this.workingEnabled = isWorkingAllowed;
     }
 
     @Override
@@ -50,6 +34,11 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return null;
+    }
+
+    @Override
+    protected boolean openGUIOnRightClick() {
+        return false;
     }
 
     @Override
@@ -73,7 +62,6 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
 
     @Override
     public void setValid(boolean valid) {
-        this.valid = valid;
     }
 
     @Override
@@ -86,8 +74,4 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
         abilityList.add(this);
     }
 
-    @Override
-    public byte getInsertionAmount() {
-        return this.insertion;
-    }
 }

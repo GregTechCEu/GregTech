@@ -5,7 +5,6 @@ import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
@@ -82,7 +81,7 @@ public class FissionReactor {
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
-    public double controlRodInsertion = 1;
+    public double controlRodInsertion;
     public int reactorDepth;
     public double reactorRadius;
 
@@ -134,6 +133,8 @@ public class FissionReactor {
     public static double wallThickness = 0.1;
     public static double specificHeatCapacity = 420; // 420 J/(kg K), for steel
     public static double convectiveHeatTransferCoefficient = 10; // 10 W/(m^2 K), for slow-moving air
+
+    public static double powerDefectCoefficient = 0.016; // In units of reactivity
 
     public double coolantMass;
     public double fuelMass;
@@ -196,10 +197,6 @@ public class FissionReactor {
 
     public boolean explosionPossible() {
         return false;
-    }
-
-    public double voidFactor() {
-        return this.canCoolantBoil() ? (this.temperature - this.envTemperature) / (double) this.pressure : 0.D;
     }
 
     public void prepareThermalProperties() {
@@ -383,7 +380,7 @@ public class FissionReactor {
         maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) * fuelRodFactor *
                 ConfigHolder.machines.nuclearPowerMultiplier;
 
-        controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods);
+        controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
         avgCoolantTemperature /= coolantChannels.size();
 
         this.prepareInitialConditions();
@@ -555,18 +552,22 @@ public class FissionReactor {
         return this.neutronPoisonAmount * 0.05 + this.decayProductsAmount * 0.1;
     }
 
+/*
     public double voidContribution() {
         return this.temperature > this.coolantBoilingPoint() ? this.voidFactor() * this.maxPressure : 0.;
     }
+*/
 
     public void updatePower() {
+        this.kEff = this.k - powerDefectCoefficient * (this.power / this.maxPower) - controlRodFactor;
+
         this.prevPower = this.power;
         this.prevFuelDepletion = this.fuelDepletion;
         // maps (1, 1.1) to (0, 15)
         this.criticalRodInsertion = (int) Math.min(15, Math.max(0, (kEff - 1) * 150.));
 
-        this.power = responseFunction(this.realMaxPower(), this.power,
-                this.criticalRodInsertion + this.voidContribution(), this.controlRodInsertion);
+        this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff + 0.0001), this.power,
+                this.criticalRodInsertion, this.controlRodInsertion);
         this.fuelDepletion = Math.min(this.fuelDepletion + 0.001 * this.power / this.maxPower, 1.);
 
         this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.);
@@ -620,5 +621,10 @@ public class FissionReactor {
         this.neutronPoisonAmount = tagCompound.getDouble("NeutronPoisonAmount");
         this.decayProductsAmount = tagCompound.getDouble("DecayProductsAmount");
         this.needsOutput = tagCompound.getBoolean("NeedsOutput");
+    }
+
+    public void updateControlRodInsertion(int controlRodInsertion) {
+        this.controlRodInsertion = Math.max(0.01, (double) controlRodInsertion / 15);
+        this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
     }
 }

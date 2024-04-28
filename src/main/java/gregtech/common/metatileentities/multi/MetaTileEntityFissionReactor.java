@@ -45,6 +45,9 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoola
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantImportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportHatch;
 
+import gregtech.core.sound.GTSoundEvents;
+import gregtech.core.sound.internal.SoundManager;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -99,38 +102,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .widget(new AdvancedTextWidget(35, 14, getLockingStateText(), getLockedTextColor()))
                 .widget(new SliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 150,
                         18, 0.0f, 15.0f,
-                        controlRodInsertionValue, this::setControlRodInsertionValue) {
-
-                    @Override
-                    public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
-                        if (lockingState != LockingState.LOCKED)
-                            return super.mouseDragged(mouseX, mouseY, button, timeDragged);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean mouseReleased(int mouseX, int mouseY, int button) {
-                        if (lockingState != LockingState.LOCKED)
-                            return super.mouseReleased(mouseX, mouseY, button);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean mouseClicked(int mouseX, int mouseY, int button) {
-                        if (lockingState != LockingState.LOCKED)
-                            return super.mouseClicked(mouseX, mouseY, button);
-                        return false;
-                    }
-
-                    @Override
-                    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-                        if (lockingState == LockingState.LOCKED) {
-                            this.setTextColor(0xFF0000);
-                        }
-                        super.drawInBackground(mouseX, mouseY, partialTicks, context);
-                        this.setTextColor(0xFFFFFF);
-                    }
-                })
+                        controlRodInsertionValue, this::setControlRodInsertionValue))
                 .widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 150, 18, 0.0f, 16000.f, flowRate,
                         this::setFlowRate));
         builder.widget(new AdvancedTextWidget(10, 90, getStatsText(), 0x2020D0));
@@ -144,9 +116,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     }
 
     private void setControlRodInsertionValue(float value) {
-        if (lockingState == LockingState.LOCKED)
-            return;
         this.controlRodInsertionValue = (int) value;
+        if (lockingState == LockingState.LOCKED && fissionReactor != null)
+            fissionReactor.updateControlRodInsertion(controlRodInsertionValue);
     }
 
     private boolean isLocked() {
@@ -269,8 +241,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             this.updateReactorState();
 
             this.syncReactorStats();
-
             if (this.fissionReactor.checkForMeltdown()) {
+                SoundManager.getInstance().startTileSound(GTSoundEvents.SUS_RECORD.getSoundName(), 1, this.getPos());
+            }
+/*            if (this.fissionReactor.checkForMeltdown()) {
                 this.performMeltdownEffects();
             }
 
@@ -279,7 +253,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 if (this.fissionReactor.accumulatedHydrogen > 1) {
                     this.performSecondaryExplosion(fissionReactor.accumulatedHydrogen);
                 }
-            }
+            }*/
 
         }
     }
@@ -409,8 +383,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .where('B',
                         states(getVesselState())
                                 .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1)
-                                        .setMaxGlobalLimited(1))
-                                .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1)))
+                                        .setMaxGlobalLimited(1)))
                 .where(' ', any())
                 .build();
     }
@@ -485,6 +458,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public void invalidateStructure() {
         if (lockingState == LockingState.LOCKED) {
             this.unlockAll();
+            this.temperature = 273;
+            this.power = 0;
+            this.kEff = 0;
+            this.pressure = 0;
+            this.maxPower = 0;
         }
         super.invalidateStructure();
     }
@@ -588,9 +566,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
             handler.setLock(true);
         }
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
-            // handler.setLock(true);
-        }
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(true);
         }
@@ -607,9 +582,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         }
         fissionReactor.needsOutput = false;
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-            handler.setLock(false);
-        }
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.EXPORT_COOLANT)) {
             handler.setLock(false);
         }
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
@@ -677,7 +649,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                             }
                         }
                     } else if (mte instanceof MetaTileEntityControlRodPort controlIn) {
-                        component = new ControlRod(100000, true, 1, 800, controlIn.getInsertionAmount());
+                        component = new ControlRod(100000, true, 1, 800);
                     } else {
                         foundPort = false;
                     }
