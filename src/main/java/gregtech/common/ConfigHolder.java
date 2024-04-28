@@ -161,6 +161,11 @@ public class ConfigHolder {
                 "Default: false" })
         @Config.RequiresMcRestart
         public boolean highTierContent = false;
+
+        @Config.Comment({ "Whether tick acceleration effects are allowed to affect GT machines.",
+                "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
+                "Default: true" })
+        public boolean allowTickAcceleration = true;
     }
 
     public static class WorldGenOptions {
@@ -404,7 +409,7 @@ public class ConfigHolder {
 
         @Config.Comment({
                 "Whether or not to enable Emissive Textures for Electric Blast Furnace Coils when the multiblock is working.",
-                "Default: false" })
+                "Default: true" })
         public boolean coilsActiveEmissiveTextures = true;
 
         @Config.Comment({ "Whether or not sounds should be played when using tools outside of crafting.",
@@ -455,6 +460,10 @@ public class ConfigHolder {
 
         @Config.Comment({ "Prevent optical and laser cables from animating when active.", "Default: false" })
         public boolean preventAnimatedCables = false;
+
+        @Config.Comment({ "Enable the fancy rendering for Super/Quantum Chests/Tanks.",
+                "Default: true" })
+        public boolean enableFancyChestRender = true;
 
         public static class GuiConfig {
 

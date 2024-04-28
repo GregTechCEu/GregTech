@@ -38,7 +38,7 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
 
     public FusionRecipeBuilder EUToStart(long EUToStart) {
         if (EUToStart <= 0) {
-            GTLog.logger.error("EU to start cannot be less than or equal to 0", new IllegalArgumentException());
+            GTLog.logger.error("EU to start cannot be less than or equal to 0", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(FusionEUToStartProperty.getInstance(), EUToStart);

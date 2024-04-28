@@ -29,7 +29,7 @@ public class SteamBoilerDataProvider implements IWailaDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, IGregTechTileEntity.class);
         registrar.registerNBTProvider(this, IGregTechTileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.steam_boiler");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.steam_boiler");
     }
 
     @NotNull

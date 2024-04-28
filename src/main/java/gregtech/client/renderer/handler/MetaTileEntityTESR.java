@@ -46,12 +46,12 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
         MetaTileEntity metaTileEntity = te.getMetaTileEntity();
-        if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
+        if (metaTileEntity instanceof IFastRenderMetaTileEntity fastRender) {
             CCRenderState renderState = CCRenderState.instance();
             renderState.reset();
             renderState.bind(buffer);
             renderState.setBrightness(te.getWorld(), te.getPos());
-            ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityFast(renderState,
+            fastRender.renderMetaTileEntityFast(renderState,
                     new Matrix4().translate(x, y, z), partialTicks);
         }
         if (metaTileEntity != null) {

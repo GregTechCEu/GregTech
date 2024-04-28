@@ -25,7 +25,7 @@ public class ElectricContainerDataProvider extends CapabilityDataProvider<IEnerg
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.energy");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.energy");
     }
 
     @Override

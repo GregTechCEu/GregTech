@@ -126,6 +126,11 @@ public class GTValues {
      */
     public static final String MODID = "gregtech";
 
+    /**
+     * GregTech Mod Name
+     */
+    public static final String MOD_NAME = "GregTech";
+
     /** @deprecated Use {@link gregtech.api.util.Mods} instead */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
