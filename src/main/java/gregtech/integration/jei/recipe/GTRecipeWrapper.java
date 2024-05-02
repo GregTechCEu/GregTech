@@ -1,6 +1,7 @@
 package gregtech.integration.jei.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.items.metaitem.MetaItem;
@@ -28,6 +29,8 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
+
+import gregtech.integration.jei.utils.JeiInteractableText;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -247,6 +250,16 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
 
+        int recipeTier = GTUtility.getFloorTierByVoltage(recipe.getEUt());
+        // tier difference can be negative here
+        int tierDifference = getDisplayOCTier() - recipeTier;
+        // if tier difference is negative, the color is red since the recipe can't be run
+        int color = getTieredColor(tierDifference);
+        tierDifference = Math.max(0, tierDifference);
+        // if duration is less than 0.25, that means even with one less overclock, the recipe would still 1 tick
+        // so add the yellow warning
+        int duration = (int) (Math.floor(recipe.getDuration() / Math.pow(2, tierDifference)) / 20D);
+        color = duration <= 0.025 ? 0xFFFF55 : color;
         // Default entries
         if (drawTotalEU) {
             long eu = Math.abs((long) recipe.getEUt()) * recipe.getDuration();
@@ -257,22 +270,21 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition,
                         0x111111);
             } else {
-                minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", eu), 0, yPosition, 0x111111);
+                minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", (int) (eu * Math.pow(2, tierDifference))), 0, yPosition, color);
             }
         }
         if (drawEUt) {
             minecraft.fontRenderer.drawString(
                     I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
-                            Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]),
-                    0, yPosition += LINE_HEIGHT, 0x111111);
+                            (int) (Math.abs(recipe.getEUt()) * Math.pow(4, tierDifference)), GTValues.VN[tierDifference + recipeTier]),
+                    0, yPosition += LINE_HEIGHT, color);
         }
         if (drawDuration) {
             minecraft.fontRenderer.drawString(
                     I18n.format("gregtech.recipe.duration",
-                            TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)),
-                    0, yPosition += LINE_HEIGHT, 0x111111);
+                            TextFormattingUtil.formatNumbers(Math.max(0.05, duration))),
+                    0, yPosition += LINE_HEIGHT, color);
         }
-
         // Property custom entries
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
             if (!propertyEntry.getKey().isHidden()) {
@@ -322,6 +334,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     return true;
                 })
                 .setActiveSupplier(creativePlayerCtPredicate));
+
+        jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[GTValues.ULV], 0x111111)
+                .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
+                    final int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1: GTValues.OpV + 1;
+                    final int state = (text.getState() + 1) % maxTier;
+                    text.setColor(GTValues.VC[state]);
+                    text.setCurrentText(GTValues.VN[state]);
+                    text.setState(state);
+                    return true;
+                })
+        );
     }
 
     public ChancedItemOutput getOutputChance(int slot) {
@@ -348,5 +371,14 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     public boolean isNotConsumedFluid(int slot) {
         return slot < this.sortedFluidInputs.size() && this.sortedFluidInputs.get(slot).isNonConsumable();
+    }
+
+    public int getDisplayOCTier() {
+        return jeiTexts.get(0).getState();
+    }
+
+    public int getTieredColor(int tierDifference) {
+        if (tierDifference < 0) return 0xAA0000;
+        return 0x111111;
     }
 }
