@@ -50,7 +50,8 @@ public abstract class AdvancedRecipeWrapper implements IRecipeWrapper {
                 text.buildTooltip(tooltip);
                 if (tooltip.isEmpty()) continue;
                 int width = (int) (minecraft.displayWidth / 2f + recipeWidth / 2f);
-                GuiUtils.drawHoveringText(tooltip, mouseX, mouseY, width, minecraft.displayHeight, Math.min(200, width - mouseX - 5), minecraft.fontRenderer);
+                GuiUtils.drawHoveringText(tooltip, mouseX, mouseY, width, minecraft.displayHeight,
+                        Math.min(200, width - mouseX - 5), minecraft.fontRenderer);
                 GlStateManager.disableLighting();
             }
         }
@@ -67,7 +68,8 @@ public abstract class AdvancedRecipeWrapper implements IRecipeWrapper {
             }
         }
         for (JeiInteractableText text : jeiTexts) {
-            if (text.isHovering(mouseX, mouseY) && text.getTextClickAction().click(minecraft, text, mouseX, mouseY, mouseButton)) {
+            if (text.isHovering(mouseX, mouseY) &&
+                    text.getTextClickAction().click(minecraft, text, mouseX, mouseY, mouseButton)) {
                 Minecraft.getMinecraft().getSoundHandler()
                         .playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 return true;

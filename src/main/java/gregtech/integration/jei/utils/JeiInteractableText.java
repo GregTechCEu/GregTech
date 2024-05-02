@@ -4,17 +4,18 @@ import net.minecraft.client.Minecraft;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class JeiInteractableText {
+
     private final int x;
     private final int y;
     private int color;
-    private String currentText = "null";
+    private String currentText;
     private int textWidth;
     private TextClickAction textClickAction;
     private BiConsumer<String, List<String>> tooltipBuilder;
     private int state;
+
     public JeiInteractableText(int x, int y, String defaultText, int color) {
         this.x = x;
         this.y = y;
@@ -27,12 +28,10 @@ public class JeiInteractableText {
         minecraft.fontRenderer.drawString(currentText, x, y, color);
     }
 
-
     public JeiInteractableText setTooltipBuilder(BiConsumer<String, List<String>> builder) {
         this.tooltipBuilder = builder;
         return this;
     }
-
 
     public boolean isHovering(int mouseX, int mouseY) {
         return mouseX >= x && mouseY >= y && mouseX <= x + textWidth && mouseY <= y + 10;
@@ -76,8 +75,10 @@ public class JeiInteractableText {
         if (tooltipBuilder == null) return;
         tooltipBuilder.accept(currentText, baseTooltip);
     }
+
     @FunctionalInterface
     public interface TextClickAction {
+
         boolean click(Minecraft minecraft, JeiInteractableText text, int mouseX, int mouseY, int mouseButton);
     }
 }

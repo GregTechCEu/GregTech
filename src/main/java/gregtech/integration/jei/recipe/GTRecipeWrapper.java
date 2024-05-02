@@ -29,7 +29,6 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
-
 import gregtech.integration.jei.utils.JeiInteractableText;
 
 import net.minecraft.client.Minecraft;
@@ -270,13 +269,16 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition,
                         0x111111);
             } else {
-                minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", (int) (eu * Math.pow(2, tierDifference))), 0, yPosition, color);
+                minecraft.fontRenderer.drawString(
+                        I18n.format("gregtech.recipe.total", (int) (eu * Math.pow(2, tierDifference))), 0, yPosition,
+                        color);
             }
         }
         if (drawEUt) {
             minecraft.fontRenderer.drawString(
                     I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
-                            (int) (Math.abs(recipe.getEUt()) * Math.pow(4, tierDifference)), GTValues.VN[tierDifference + recipeTier]),
+                            (int) (Math.abs(recipe.getEUt()) * Math.pow(4, tierDifference)),
+                            GTValues.VN[tierDifference + recipeTier]),
                     0, yPosition += LINE_HEIGHT, color);
         }
         if (drawDuration) {
@@ -337,14 +339,13 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[GTValues.ULV], 0x111111)
                 .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
-                    final int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1: GTValues.OpV + 1;
+                    final int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1 : GTValues.OpV + 1;
                     final int state = (text.getState() + 1) % maxTier;
                     text.setColor(GTValues.VC[state]);
                     text.setCurrentText(GTValues.VN[state]);
                     text.setState(state);
                     return true;
-                })
-        );
+                }));
     }
 
     public ChancedItemOutput getOutputChance(int slot) {
