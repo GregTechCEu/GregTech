@@ -252,8 +252,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
 
         int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
+        // ULV doesn't overclock to LV, so treat ULV recipes as LV
         // tier difference can be negative here
-        int tierDifference = getDisplayOCTier() - recipeTier;
+        int tierDifference = getDisplayOCTier() - recipeTier - (recipeTier == GTValues.ULV ? 1 : 0);
         // if tier difference is negative, the color is red since the recipe can't be run
         tierDifference = Math.max(0, tierDifference);
         // if duration is less than 0.5, that means even with one less overclock, the recipe would still 1 tick
@@ -280,10 +281,11 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             }
         }
         if (drawEUt) {
+            // scuffed way of dealing with 2 eu/t recipes, just recomputing instead of checking it eu/t <= 2
             minecraft.fontRenderer.drawString(
                     I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
                             (int) (eut),
-                            GTValues.VN[tierDifference + recipeTier]),
+                            GTValues.VN[GTUtility.getTierByVoltage(eut)]),
                     0, yPosition += LINE_HEIGHT, color);
         }
         if (drawDuration) {
@@ -321,9 +323,11 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     public void initExtras() {
         // initExtras is called in the super before this.recipe is set, so this has to be called twice
         if (recipe == null) return;
+        // don't render the overclock text for research
+        if (!recipeMap.JeiOverclockButtonEnabled()) return;
+        int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
 
-        jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())], 0x111111,
-                GTUtility.getTierByVoltage(recipe.getEUt()))
+        jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[recipeTier], GTValues.VC[recipeTier], recipeTier)
                         .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
                             int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1 : GTValues.OpV + 1;
                             int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
@@ -388,6 +392,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public int getDisplayOCTier() {
-        return jeiTexts.isEmpty() ? Integer.MIN_VALUE : jeiTexts.get(0).getState();
+        return jeiTexts.isEmpty() ? Short.MIN_VALUE : jeiTexts.get(0).getState();
     }
 }

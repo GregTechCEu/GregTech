@@ -33,7 +33,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private boolean modifyFluidInputs = true;
     private int fluidOutputs;
     private boolean modifyFluidOutputs = true;
-
+    private boolean jeiOverclockButton = true;
     private @Nullable TextureArea progressBar;
     private @Nullable ProgressWidget.MoveType moveType;
 
@@ -253,6 +253,11 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         return this;
     }
 
+    public @NotNull RecipeMapBuilder<B> disableJeiOverclockButton() {
+        this.jeiOverclockButton = false;
+        return this;
+    }
+
     /**
      * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
      *
@@ -285,6 +290,9 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         }
         if (buildActions != null) {
             recipeMap.onRecipeBuild(buildActions);
+        }
+        if (!jeiOverclockButton) {
+            recipeMap.disableJeiOverclockButton();
         }
         return recipeMap;
     }
