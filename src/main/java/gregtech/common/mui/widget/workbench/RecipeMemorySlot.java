@@ -5,6 +5,7 @@ import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
@@ -34,10 +35,6 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
     @Override
     public void draw(GuiContext context, WidgetTheme widgetTheme) {
-        drawStack();
-    }
-
-    public void drawStack() {
         GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
         ItemStack itemstack = this.memory.getRecipeOutputAtIndex(this.index);
         if (itemstack.isEmpty()) return;
@@ -45,24 +42,15 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         guiScreen.setZ(100f);
         guiScreen.getItemRenderer().zLevel = 100.0F;
 
-        // GuiDraw.drawRect(1, 1, 16, 16, -2130706433);
-
-//        GlStateManager.enableDepth();
-        // render the item itself
-//        guiScreen.getItemRenderer().renderItemAndEffectIntoGUI(guiScreen.mc.player, itemstack, 1, 1);
-
         int cachedCount = itemstack.getCount();
         itemstack.setCount(1); // required to not render the amount overlay
-        // render other overlays like durability bar
-//        guiScreen.getItemRenderer().renderItemOverlayIntoGUI(guiScreen.getFontRenderer(), itemstack, 1, 1,
-//                null);
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
         RenderUtil.renderItemGUI(itemstack, 1, 1);
         GlStateManager.popMatrix();
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.disableLighting();
         itemstack.setCount(cachedCount);
-//        GlStateManager.disableDepth();
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);

@@ -1,10 +1,20 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.screen.GuiScreenWrapper;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widget.Widget;
+
 import gregtech.api.util.GTLog;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -16,78 +26,83 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.ItemSlotSH;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-// todo make output slot not extend item slot
-public class CraftingOutputSlot extends ItemSlot {
+public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable {
 
-    private CraftingSlotSH syncHandler;
+    private final CraftingSlotSH syncHandler;
+
+    public CraftingOutputSlot(IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
+        this.syncHandler = new CraftingSlotSH(
+                new CraftingOutputMS(
+                        workbench.getCraftingRecipeLogic().getCraftingResultInventory(),
+                        syncValue, workbench));
+        setSyncHandler(this.syncHandler);
+    }
 
     @Override
-    public ItemSlot slot(ModularSlot slot) {
-        if (slot instanceof CraftingOutputModularSlot craftingSlot) {
-            this.syncHandler = new CraftingSlotSH(craftingSlot);
-            if (isValidSyncHandler(this.syncHandler))
-                setSyncHandler(this.syncHandler);
-        } else {
-            super.slot(slot);
-        }
-        return this;
+    public @NotNull Result onMousePressed(int mouseButton) {
+        MouseData mouseData = MouseData.create(mouseButton);
+        this.syncHandler.syncToServer(2, mouseData::writeToPacket);
+        return Result.SUCCESS;
     }
 
-    public static ModularSlot modular(IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
-        return new CraftingOutputModularSlot(workbench.getCraftingRecipeLogic().getCraftingResultInventory(), syncValue,
-                workbench);
+    @Override
+    public void draw(GuiContext context, WidgetTheme widgetTheme) {
+        GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
+        ItemStack itemstack = this.syncHandler.getOutputStack();
+        if (itemstack.isEmpty()) return;
+
+        guiScreen.setZ(100f);
+        guiScreen.getItemRenderer().zLevel = 100.0F;
+
+        int cachedCount = itemstack.getCount();
+        itemstack.setCount(1); // required to not render the amount overlay
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.pushMatrix();
+        RenderUtil.renderItemGUI(itemstack, 1, 1);
+        GlStateManager.popMatrix();
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.disableLighting();
+        itemstack.setCount(cachedCount);
+
+        guiScreen.getItemRenderer().zLevel = 0.0F;
+        guiScreen.setZ(0f);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    protected static class CraftingSlotSH extends ItemSlotSH {
+    protected static class CraftingSlotSH extends SyncHandler {
 
         private final CraftingRecipeLogic recipeLogic;
-        private final IntSyncValue syncValue;
-        private final CraftingRecipeMemory recipeMemory;
-        private final IItemHandler craftingGrid;
+        private final CraftingOutputMS slot;
 
-        public CraftingSlotSH(CraftingOutputModularSlot slot) {
-            super(slot);
+        public CraftingSlotSH(CraftingOutputMS slot) {
+            this.slot  = slot;
             this.recipeLogic = slot.recipeLogic;
-            this.syncValue = slot.syncValue;
-            this.recipeMemory = slot.recipeMemory;
-            this.craftingGrid = slot.craftingGrid;
         }
 
         @Override
-        public CraftingOutputModularSlot getSlot() {
-            return (CraftingOutputModularSlot) super.getSlot();
-        }
-
-        @Override
-        public void readOnServer(int id, PacketBuffer buf) throws IOException {
+        public void readOnServer(int id, PacketBuffer buf) {
             if (id == 2) {
                 var data = MouseData.readPacket(buf);
                 // todo handle shift transfer
                 if (data.shift) return;
 
-                if (recipeLogic.isRecipeValid() && getSlot().canTakeStack(getSyncManager().getPlayer())) {
+                if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
                     recipeLogic.collectAvailableItems();
                     if (recipeLogic.performRecipe()) {
-                        handleItemCraft(getSlot().getStack(), getSyncManager().getPlayer());
+                        handleItemCraft(this.slot.getStack(), getSyncManager().getPlayer());
                         syncToClient(5, this::syncCraftedStack);
                     }
                 }
-            } else {
-                super.readOnServer(id, buf);
             }
         }
 
         @Override
         public void readOnClient(int id, PacketBuffer buf) {
-            super.readOnClient(id, buf);
             if (id == 5) {
                 getSyncManager().setCursorItem(readStackSafe(buf));
             }
@@ -105,7 +120,7 @@ public class CraftingOutputSlot extends ItemSlot {
 
         private void syncCraftedStack(PacketBuffer buf) {
             ItemStack curStack = getSyncManager().getCursorItem();
-            ItemStack outStack = getSlot().getStack();
+            ItemStack outStack = this.slot.getStack();
             ItemStack toSync = outStack.copy();
             if (curStack.getItem() == outStack.getItem() &&
                     curStack.getMetadata() == outStack.getMetadata() &&
@@ -123,6 +138,10 @@ public class CraftingOutputSlot extends ItemSlot {
             buf.writeItemStack(toSync);
         }
 
+        public ItemStack getOutputStack() {
+            return slot.getStack();
+        }
+
         public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
             itemStack.onCrafting(player.world, player, 1);
 
@@ -137,23 +156,22 @@ public class CraftingOutputSlot extends ItemSlot {
             }
             if (cachedRecipe != null) {
                 ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
-                this.syncValue.setValue(this.syncValue.getValue() + resultStack.getCount(), true, true);
                 // itemsCrafted += resultStack.getCount();
-                recipeMemory.notifyRecipePerformed(craftingGrid, resultStack);
+                this.slot.notifyRecipePerformed(resultStack);
             }
             // call method from recipe logic to sync to client
         }
     }
 
-    protected static class CraftingOutputModularSlot extends ModularSlot {
+    protected static class CraftingOutputMS extends ModularSlot {
 
         private final IntSyncValue syncValue;
         private final CraftingRecipeLogic recipeLogic;
         private final CraftingRecipeMemory recipeMemory;
         private final IItemHandler craftingGrid;
 
-        public CraftingOutputModularSlot(IInventory craftingInventory, IntSyncValue syncValue,
-                                         MetaTileEntityWorkbench workbench) {
+        public CraftingOutputMS(IInventory craftingInventory, IntSyncValue syncValue,
+                                MetaTileEntityWorkbench workbench) {
             super(new InventoryWrapper(craftingInventory, workbench.getCraftingRecipeLogic()), 0, true);
             this.syncValue = syncValue;
             this.recipeLogic = workbench.getCraftingRecipeLogic();
@@ -176,6 +194,11 @@ public class CraftingOutputSlot extends ItemSlot {
             } else {
                 return false;
             }
+        }
+
+        public void notifyRecipePerformed(ItemStack stack) {
+            this.syncValue.setValue(this.syncValue.getValue() + stack.getCount(), true, true);
+            this.recipeMemory.notifyRecipePerformed(this.craftingGrid, stack);
         }
 
         @Override
