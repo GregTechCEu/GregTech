@@ -8,10 +8,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -28,16 +24,16 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +105,8 @@ public class CraftingRecipeLogic extends SyncHandler {
     }
 
     private Map<ItemStack, IntList> compressMatrixToList(InventoryCrafting craftingMatrix) {
-        Map<ItemStack, IntList> map = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+        Map<ItemStack, IntList> map = new Object2ObjectOpenCustomHashMap<>(
+                ItemStackHashStrategy.comparingAllButCount());
         for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
             var stack = craftingMatrix.getStackInSlot(i).copy();
             if (stack.isEmpty()) continue;

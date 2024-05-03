@@ -4,8 +4,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
