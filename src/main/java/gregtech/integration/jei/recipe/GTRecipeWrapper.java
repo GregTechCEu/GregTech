@@ -52,7 +52,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
-
+    private boolean registeredTweakerJeiButton;
     private final List<GTRecipeInput> sortedInputs;
     private final List<GTRecipeInput> sortedFluidInputs;
 
@@ -254,9 +254,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
         // ULV doesn't overclock to LV, so treat ULV recipes as LV
         // tier difference can be negative here
-        int tierDifference = getDisplayOCTier() - recipeTier - (recipeTier == GTValues.ULV ? 1 : 0);
-        // if tier difference is negative, the color is red since the recipe can't be run
-        tierDifference = Math.max(0, tierDifference);
+        int tierDifference = Math.max(0, getDisplayOCTier() - recipeTier - (recipeTier == GTValues.ULV ? 1 : 0));
         // if duration is less than 0.5, that means even with one less overclock, the recipe would still 1 tick
         // so add the yellow warning
         double duration = Math.floor(recipe.getDuration() / Math.pow(2, tierDifference));
@@ -280,7 +278,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             }
         }
         if (drawEUt) {
-            // scuffed way of dealing with 2 eu/t recipes, just recomputing instead of checking it eu/t <= 2
+            // scuffed way of dealing with 2 eu/t recipes, just recomputing instead of checking if eu/t <= 2
             minecraft.fontRenderer.drawString(
                     I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
                             (int) (eut),
@@ -321,9 +319,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void initExtras() {
         // initExtras is called in the super before this.recipe is set, so this has to be called twice
-        if (recipe == null) return;
-        // don't render the overclock text for research
-        if (!recipeMap.JeiOverclockButtonEnabled()) return;
+        if (recipe == null || !recipeMap.JeiOverclockButtonEnabled()) return;
         int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
 
         jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[recipeTier], GTValues.VC[recipeTier], recipeTier)
@@ -341,7 +337,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         // do not add the X button if no tweaker mod is present, or the button is already added(initExtras is called
         // twice because of the comment above)
-        if (!RecipeCompatUtil.isTweakerLoaded() || !buttons.isEmpty()) return;
+        if (!RecipeCompatUtil.isTweakerLoaded() || registeredTweakerJeiButton) return;
 
         BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
                 Minecraft.getMinecraft().player.isCreative();
@@ -362,6 +358,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     return true;
                 })
                 .setActiveSupplier(creativePlayerCtPredicate));
+        registeredTweakerJeiButton = true;
     }
 
     public ChancedItemOutput getOutputChance(int slot) {
