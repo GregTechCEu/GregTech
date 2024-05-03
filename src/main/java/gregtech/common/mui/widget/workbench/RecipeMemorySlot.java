@@ -1,6 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,7 +16,6 @@ import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("DataFlowIssue")
 public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable {
 
     private final CraftingRecipeMemory memory;
@@ -47,31 +47,22 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
         // GuiDraw.drawRect(1, 1, 16, 16, -2130706433);
 
-        GlStateManager.enableDepth();
+//        GlStateManager.enableDepth();
         // render the item itself
-        guiScreen.getItemRenderer().renderItemAndEffectIntoGUI(guiScreen.mc.player, itemstack, 1, 1);
-
-        // render the amount overlay
-        // String amountText = NumberFormat.formatWithMaxDigits(1);
-        // textRenderer.setShadow(true);
-        // textRenderer.setColor(Color.WHITE.main);
-        // textRenderer.setAlignment(Alignment.BottomRight, getArea().width - 1, getArea().height - 1);
-        // textRenderer.setPos(1, 1);
-        // GlStateManager.disableLighting();
-        // GlStateManager.disableDepth();
-        // GlStateManager.disableBlend();
-        // textRenderer.draw(amountText);
-        // GlStateManager.enableLighting();
-        // GlStateManager.enableDepth();
-        // GlStateManager.enableBlend();
+//        guiScreen.getItemRenderer().renderItemAndEffectIntoGUI(guiScreen.mc.player, itemstack, 1, 1);
 
         int cachedCount = itemstack.getCount();
         itemstack.setCount(1); // required to not render the amount overlay
         // render other overlays like durability bar
-        guiScreen.getItemRenderer().renderItemOverlayIntoGUI(guiScreen.getFontRenderer(), itemstack, 1, 1,
-                null);
+//        guiScreen.getItemRenderer().renderItemOverlayIntoGUI(guiScreen.getFontRenderer(), itemstack, 1, 1,
+//                null);
+        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        GlStateManager.pushMatrix();
+        RenderUtil.renderItemGUI(itemstack, 1, 1);
+        GlStateManager.popMatrix();
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
         itemstack.setCount(cachedCount);
-        GlStateManager.disableDepth();
+//        GlStateManager.disableDepth();
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);

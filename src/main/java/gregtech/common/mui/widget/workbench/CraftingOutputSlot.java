@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+// todo make output slot not extend item slot
 public class CraftingOutputSlot extends ItemSlot {
 
     private CraftingSlotSH syncHandler;
@@ -89,8 +90,6 @@ public class CraftingOutputSlot extends ItemSlot {
             super.readOnClient(id, buf);
             if (id == 5) {
                 getSyncManager().setCursorItem(readStackSafe(buf));
-            } else if (id == 6) {
-
             }
         }
 
