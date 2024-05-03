@@ -252,8 +252,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
         // ULV doesn't overclock to LV, so treat ULV recipes as LV
-        // tier difference can be negative here
-        int tierDifference = Math.max(0, getDisplayOCTier() - recipeTier - (recipeTier == GTValues.ULV ? 1 : 0));
+        recipeTier += recipeTier == GTValues.ULV ? 1 : 0;
+        // tier difference *should* not be negative here since at least displayOCTier() == recipeTier
+        int tierDifference = getDisplayOCTier() - recipeTier;
         // if duration is less than 0.5, that means even with one less overclock, the recipe would still 1 tick
         // so add the yellow warning
         double duration = Math.floor(recipe.getDuration() / Math.pow(2, tierDifference));
@@ -270,7 +271,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition,
                         0x111111);
             } else {
-                // duration is in sec
                 minecraft.fontRenderer.drawString(
                         I18n.format("gregtech.recipe.total", (long) (eut * duration)), 0, yPosition,
                         color);
@@ -341,7 +341,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     .setActiveSupplier(creativePlayerCtPredicate));
         }
         if (recipeMap.JeiOverclockButtonEnabled()) {
-            // on second call recipe != null, so add this instead
             int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
 
             jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[recipeTier], GTValues.VC[recipeTier], recipeTier)
