@@ -44,26 +44,33 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
         int cachedCount = itemstack.getCount();
         itemstack.setCount(1); // required to not render the amount overlay
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.pushMatrix();
         RenderUtil.renderItemGUI(itemstack, 1, 1);
-        GlStateManager.popMatrix();
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.disableLighting();
         itemstack.setCount(cachedCount);
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);
+
+        if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked())
+            GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
     }
 
     @NotNull
     @Override
     public Result onMousePressed(int mouseButton) {
+        var recipe = memory.getRecipeAtIndex(this.index);
+        if (recipe == null)
+            return Result.IGNORE;
+
         var data = MouseData.create(mouseButton);
         this.memory.syncToServer(2, buffer -> {
             buffer.writeByte(this.index);
             data.writeToPacket(buffer);
         });
+
+        if (data.shift && data.mouseButton == 0) {
+            recipe.setRecipeLocked(!recipe.isRecipeLocked());
+        }
+
         return Result.ACCEPT;
     }
 }
