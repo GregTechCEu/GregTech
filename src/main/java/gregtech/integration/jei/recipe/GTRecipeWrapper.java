@@ -317,9 +317,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        // recipe is null on the first call of this method, so load the tweaker recipe remove button here
-        if (recipe == null) {
-            if (!RecipeCompatUtil.isTweakerLoaded()) return;
+        // recipe is null on the first call of this method
+        if (recipe == null) return;
+        if (RecipeCompatUtil.isTweakerLoaded()) {
             BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
                     Minecraft.getMinecraft().player.isCreative();
             buttons.add(new JeiButton(166, 2, 10, 10)
@@ -339,7 +339,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                         return true;
                     })
                     .setActiveSupplier(creativePlayerCtPredicate));
-        } else if (recipeMap.JeiOverclockButtonEnabled()) {
+        }
+        if (recipeMap.JeiOverclockButtonEnabled()) {
             // on second call recipe != null, so add this instead
             int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
 
