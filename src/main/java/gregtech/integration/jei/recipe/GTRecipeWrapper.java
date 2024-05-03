@@ -52,7 +52,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
-    private boolean registeredTweakerJeiButton;
     private final List<GTRecipeInput> sortedInputs;
     private final List<GTRecipeInput> sortedFluidInputs;
 
@@ -318,47 +317,45 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        // initExtras is called in the super before this.recipe is set, so this has to be called twice
-        if (recipe == null || !recipeMap.JeiOverclockButtonEnabled()) return;
-        int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+        // recipe is null on the first call of this method, so load the tweaker recipe remove button here
+        if (recipe == null) {
+            if (!RecipeCompatUtil.isTweakerLoaded()) return;
+            BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
+                    Minecraft.getMinecraft().player.isCreative();
+            buttons.add(new JeiButton(166, 2, 10, 10)
+                    .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
+                    .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() +
+                            " script, to remove this recipe, to the clipboard"))
+                    .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
+                        String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
+                        String output = RecipeCompatUtil.getFirstOutputString(recipe);
+                        if (!output.isEmpty()) {
+                            output = "// " + output + "\n";
+                        }
+                        String copyString = output + recipeLine + "\n";
+                        ClipboardUtil.copyToClipboard(copyString);
+                        Minecraft.getMinecraft().player.sendMessage(
+                                new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
+                        return true;
+                    })
+                    .setActiveSupplier(creativePlayerCtPredicate));
+        } else if (recipeMap.JeiOverclockButtonEnabled()) {
+            // on second call recipe != null, so add this instead
+            int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
 
-        jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[recipeTier], GTValues.VC[recipeTier], recipeTier)
-                .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
-                    int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1 : GTValues.OpV + 1;
-                    int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
-                    int state = (text.getState() + 1) % maxTier;
-                    // ULV isnt real sorry
-                    state = Math.max(state, minTier);
-                    text.setColor(GTValues.VC[state]);
-                    text.setCurrentText(GTValues.VN[state]);
-                    text.setState(state);
-                    return true;
-                }));
-
-        // do not add the X button if no tweaker mod is present, or the button is already added(initExtras is called
-        // twice because of the comment above)
-        if (!RecipeCompatUtil.isTweakerLoaded() || registeredTweakerJeiButton) return;
-
-        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
-                Minecraft.getMinecraft().player.isCreative();
-        buttons.add(new JeiButton(166, 2, 10, 10)
-                .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() +
-                        " script, to remove this recipe, to the clipboard"))
-                .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
-                    String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
-                    String output = RecipeCompatUtil.getFirstOutputString(recipe);
-                    if (!output.isEmpty()) {
-                        output = "// " + output + "\n";
-                    }
-                    String copyString = output + recipeLine + "\n";
-                    ClipboardUtil.copyToClipboard(copyString);
-                    Minecraft.getMinecraft().player.sendMessage(
-                            new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
-                    return true;
-                })
-                .setActiveSupplier(creativePlayerCtPredicate));
-        registeredTweakerJeiButton = true;
+            jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[recipeTier], GTValues.VC[recipeTier], recipeTier)
+                    .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
+                        int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1 : GTValues.OpV + 1;
+                        int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+                        int state = (text.getState() + 1) % maxTier;
+                        // ULV isn't real sorry
+                        state = Math.max(state, minTier);
+                        text.setColor(GTValues.VC[state]);
+                        text.setCurrentText(GTValues.VN[state]);
+                        text.setState(state);
+                        return true;
+                    }));
+        }
     }
 
     public ChancedItemOutput getOutputChance(int slot) {
