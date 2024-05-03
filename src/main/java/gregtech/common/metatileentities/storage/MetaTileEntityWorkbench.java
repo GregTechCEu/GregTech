@@ -313,8 +313,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
         return new Column()
                 .size(54)
-                .child(new CraftingOutputSlot()
-                        .slot(CraftingOutputSlot.modular(amountCrafted, this))
+                .child(new CraftingOutputSlot(amountCrafted, this)
                         .marginTop(18)
                         .background(GTGuiTextures.SLOT.asIcon().size(22))
                         .marginBottom(4))
