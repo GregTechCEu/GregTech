@@ -1,20 +1,11 @@
 package gregtech.common.mui.widget.workbench;
 
-import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.screen.GuiScreenWrapper;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.theme.WidgetTheme;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
-import com.cleanroommc.modularui.widget.Widget;
-
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -23,9 +14,14 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.screen.GuiScreenWrapper;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
-import com.cleanroommc.modularui.value.sync.ItemSlotSH;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +71,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         private final CraftingOutputMS slot;
 
         public CraftingSlotSH(CraftingOutputMS slot) {
-            this.slot  = slot;
+            this.slot = slot;
             this.recipeLogic = slot.recipeLogic;
         }
 
