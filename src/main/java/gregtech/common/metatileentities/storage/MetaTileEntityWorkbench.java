@@ -11,6 +11,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
+import gregtech.common.mui.widget.workbench.CraftingInputSlot;
 import gregtech.common.mui.widget.workbench.CraftingOutputSlot;
 import gregtech.common.mui.widget.workbench.RecipeMemorySlot;
 
@@ -296,13 +297,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .matrix("XXX",
                         "XXX",
                         "XXX")
-                .key('X', i -> new ItemSlot()
-                        .slot(SyncHandlers.phantomItemSlot(this.craftingGrid, i)
-                                .changeListener((newItem, onlyAmountChanged, client, init) -> {
-                                    if (!init) {
-                                        this.recipeLogic.updateCurrentRecipe();
-                                    }
-                                })))
+                .key('X', i -> new CraftingInputSlot(this.craftingGrid, i)
+                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                            if (!init) {
+                                this.recipeLogic.updateCurrentRecipe();
+                            }
+                        })
+                        .background(GTGuiTextures.SLOT))
                 .build();
     }
 
