@@ -378,10 +378,14 @@ public class RenderUtil {
         GlStateManager.pushMatrix();
         GlStateManager.scale(scale, scale, 0.0001f);
         GlStateManager.translate(x * 16, y * 16, z * 16);
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0);
+        renderItemGUI(itemStack, 0, 0);
         GlStateManager.popMatrix();
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+    }
+
+    public static void renderItemGUI(ItemStack stack, int x, int y) {
+        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+        renderItem.renderItemAndEffectIntoGUI(stack, x, y);
     }
 
     public static void renderFluidOverLay(float x, float y, float width, float height, float z, FluidStack fluidStack,
