@@ -259,13 +259,12 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         tierDifference = Math.max(0, tierDifference);
         // if duration is less than 0.5, that means even with one less overclock, the recipe would still 1 tick
         // so add the yellow warning
-        double duration = (Math.floor(recipe.getDuration() / Math.pow(2, tierDifference)));
+        double duration = Math.floor(recipe.getDuration() / Math.pow(2, tierDifference));
         int color = duration <= 0.5 ? 0xFFFF55 : 0x111111;
         long eut = (long) Math.abs(recipe.getEUt()) * (int) Math.pow(4, tierDifference);
         duration = Math.max(1, duration);
         // Default entries
         if (drawTotalEU) {
-
             // sadly we still need a custom override here, since computation uses duration and EU/t very differently
             if (recipe.hasProperty(TotalComputationProperty.getInstance()) &&
                     recipe.hasProperty(ComputationProperty.getInstance())) {
@@ -276,7 +275,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             } else {
                 // duration is in sec
                 minecraft.fontRenderer.drawString(
-                        I18n.format("gregtech.recipe.total", (int) (eut * duration)), 0, yPosition,
+                        I18n.format("gregtech.recipe.total", (long) (eut * duration)), 0, yPosition,
                         color);
             }
         }
