@@ -323,17 +323,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
 
         jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[recipeTier], GTValues.VC[recipeTier], recipeTier)
-                        .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
-                            int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1 : GTValues.OpV + 1;
-                            int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
-                            int state = (text.getState() + 1) % maxTier;
-                            // ULV isnt real sorry
-                            state = Math.max(state, minTier);
-                            text.setColor(GTValues.VC[state]);
-                            text.setCurrentText(GTValues.VN[state]);
-                            text.setState(state);
-                            return true;
-                        }));
+                .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
+                    int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1 : GTValues.OpV + 1;
+                    int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+                    int state = (text.getState() + 1) % maxTier;
+                    // ULV isnt real sorry
+                    state = Math.max(state, minTier);
+                    text.setColor(GTValues.VC[state]);
+                    text.setCurrentText(GTValues.VN[state]);
+                    text.setState(state);
+                    return true;
+                }));
 
         // do not add the X button if no tweaker mod is present, or the button is already added(initExtras is called
         // twice because of the comment above)
