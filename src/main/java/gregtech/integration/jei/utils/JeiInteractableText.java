@@ -16,12 +16,13 @@ public class JeiInteractableText {
     private BiConsumer<String, List<String>> tooltipBuilder;
     private int state;
 
-    public JeiInteractableText(int x, int y, String defaultText, int color) {
+    public JeiInteractableText(int x, int y, String defaultText, int color, int baseState) {
         this.x = x;
         this.y = y;
         this.currentText = defaultText;
         this.textWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(defaultText);
         this.color = color;
+        this.state = baseState;
     }
 
     public void render(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
