@@ -259,7 +259,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         // so add the yellow warning
         double duration = Math.floor(recipe.getDuration() / Math.pow(2, tierDifference));
         int color = duration <= 0.5 ? 0xFFFF55 : 0x111111;
-        long eut = (long) Math.abs(recipe.getEUt()) * (int) Math.pow(4, tierDifference);
+        // currently manual override for fusion's 2x EU/t instead of 4x, maybe custom multiplier per recipeMap soontm?
+        long eut = (long) Math.abs(recipe.getEUt()) *
+                (int) Math.pow(recipeMap == RecipeMaps.FUSION_RECIPES ? 2 : 4, tierDifference);
         duration = Math.max(1, duration);
         // Default entries
         if (drawTotalEU) {
@@ -280,7 +282,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             // scuffed way of dealing with 2 eu/t recipes, just recomputing instead of checking if eu/t <= 2
             minecraft.fontRenderer.drawString(
                     I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
-                            (int) (eut),
+                            eut,
                             GTValues.VN[GTUtility.getTierByVoltage(eut)]),
                     0, yPosition += LINE_HEIGHT, color);
         }
@@ -345,11 +347,19 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
             jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[recipeTier], GTValues.VC[recipeTier], recipeTier)
                     .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
-                        int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV + 1 : GTValues.OpV + 1;
+                        int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX;
                         int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
-                        int state = (text.getState() + 1) % maxTier;
                         // ULV isn't real sorry
-                        state = Math.max(state, minTier);
+                        int state = minTier;
+                        if (mouseButton == 0) {
+                            // increment tier if left click
+                            state = text.getState() + 1;
+                            if (state > maxTier) state = minTier;
+                        } else if (mouseButton == 1) {
+                            // decrement tier if right click
+                            state = text.getState() - 1;
+                            if (state < minTier) state = maxTier;
+                        }
                         text.setColor(GTValues.VC[state]);
                         text.setCurrentText(GTValues.VN[state]);
                         text.setState(state);
