@@ -335,9 +335,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (recipeMap.jeiOverclockButtonEnabled()) {
             int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
             int maxTier = Math.max(recipeTier, GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX);
-            // seems like recipeHeight is always 120
+            // scuffed positioning because we can't have good ui(until mui soontm)
             jeiTexts.add(
-                    new JeiInteractableText(0, 120 - LINE_HEIGHT, GTValues.VNF[recipeTier], 0x111111, recipeTier, true)
+                    new JeiInteractableText(0, 90 - LINE_HEIGHT, GTValues.VNF[recipeTier], 0x111111, recipeTier, true)
                             .setTooltipBuilder((state, tooltip) -> {
                                 tooltip.add(I18n.format("gregtech.jei.overclock_button", GTValues.VNF[state]));
                                 tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.jei.overclock_warn"));
@@ -363,8 +363,11 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public long[] calculateJeiOverclock() {
-        long[] result = new long[3];
+        // simple case
+        if (!recipeMap.jeiOverclockButtonEnabled())
+            return new long[] { recipe.getEUt(), recipe.getDuration(), 0x111111 };
 
+        long[] result = new long[3];
         int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
         // ULV doesn't overclock to LV, so treat ULV recipes as LV
         recipeTier += recipeTier == GTValues.ULV ? 1 : 0;
