@@ -13,7 +13,7 @@ public class JeiInteractableText {
     private String currentText;
     private int textWidth;
     private TextClickAction textClickAction;
-    private BiConsumer<String, List<String>> tooltipBuilder;
+    private BiConsumer<Integer, List<String>> tooltipBuilder;
     private int state;
 
     public JeiInteractableText(int x, int y, String defaultText, int color, int baseState) {
@@ -29,7 +29,7 @@ public class JeiInteractableText {
         minecraft.fontRenderer.drawString(currentText, x, y, color);
     }
 
-    public JeiInteractableText setTooltipBuilder(BiConsumer<String, List<String>> builder) {
+    public JeiInteractableText setTooltipBuilder(BiConsumer<Integer, List<String>> builder) {
         this.tooltipBuilder = builder;
         return this;
     }
@@ -79,7 +79,7 @@ public class JeiInteractableText {
 
     public void buildTooltip(List<String> baseTooltip) {
         if (tooltipBuilder == null) return;
-        tooltipBuilder.accept(currentText, baseTooltip);
+        tooltipBuilder.accept(this.state, baseTooltip);
     }
 
     @FunctionalInterface
