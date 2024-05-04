@@ -53,6 +53,11 @@ public class CraftingRecipeMemory extends SyncHandler {
             if (recipe != null && recipe.recipeLocked) continue;
             memorizedRecipes[i] = previousRecipe;
             if (recipe == null) return null;
+            recipe.index = i;
+            syncToClient(3, buffer -> {
+                buffer.writeByte(recipe.index);
+                buffer.writeItemStack(recipe.recipeResult);
+            });
             previousRecipe = recipe;
         }
         return previousRecipe;
@@ -98,6 +103,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             // notify slot and sync to client
             recipe.updateCraftingMatrix(craftingGrid);
             recipe.timesUsed++;
+//            syncToClient(5, buffer -> buffer.writeByte(recipe.index));
         }
     }
 
@@ -136,7 +142,7 @@ public class CraftingRecipeMemory extends SyncHandler {
     public final void removeRecipe(int index) {
         if (hasRecipe(index)) {
             memorizedRecipes[index] = null;
-            syncToClient(2, buffer -> buffer.writeByte(index));
+            syncToClient(4, buffer -> buffer.writeByte(index));
         }
     }
 
@@ -165,8 +171,12 @@ public class CraftingRecipeMemory extends SyncHandler {
             int size = buf.readByte();
             for (int i = 0; i < size; i++) {
                 int index = buf.readByte();
-                if (!hasRecipe(index)) memorizedRecipes[index] = new MemorizedRecipe(index);
+                if (!hasRecipe(index))
+                    memorizedRecipes[index] = new MemorizedRecipe(index);
+
                 memorizedRecipes[index].recipeResult = readStackSafe(buf);
+//                memorizedRecipes[index].timesUsed = buf.readVarInt();
+
             }
         } else if (id == 2) {
             removeRecipe(buf.readByte());
@@ -186,8 +196,10 @@ public class CraftingRecipeMemory extends SyncHandler {
         }
         buffer.writeByte(written.size());
         for (var entry : written.entrySet()) {
-            buffer.writeByte(entry.getKey());
-            buffer.writeItemStack(entry.getValue());
+            var recipe = memorizedRecipes[entry.getKey()];
+            buffer.writeByte(recipe.index);
+            buffer.writeItemStack(recipe.recipeResult);
+//            buffer.writeVarInt(recipe.timesUsed);
         }
     }
 
@@ -225,8 +237,8 @@ public class CraftingRecipeMemory extends SyncHandler {
         private final ItemStackHandler craftingMatrix = new ItemStackHandler(9);
         private ItemStack recipeResult;
         private boolean recipeLocked = false;
-        private int timesUsed = 0;
-        public final int index;
+        public int timesUsed = 0;
+        public int index;
 
         private MemorizedRecipe(int index) {
             this.index = index;

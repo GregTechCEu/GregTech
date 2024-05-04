@@ -384,14 +384,19 @@ public class RenderUtil {
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
     }
 
-    public static void renderItemGUI(ItemStack stack, int x, int y) {
+    public static void renderItemInGUI(ItemStack stack, int x, int y, @Nullable String text) {
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.renderItemAndEffectIntoGUI(stack, x, y);
+        renderItem.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, stack, x, y, text);
         GlStateManager.popMatrix();
         RenderHelper.enableStandardItemLighting();
         GlStateManager.disableLighting();
+    }
+
+    public static void renderItemInGUI(ItemStack stack, int x, int y) {
+        renderItemInGUI(stack, x, y, null);
     }
 
     public static void renderFluidOverLay(float x, float y, float width, float height, float z, FluidStack fluidStack,

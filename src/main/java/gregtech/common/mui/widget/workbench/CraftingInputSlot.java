@@ -2,6 +2,7 @@ package gregtech.common.mui.widget.workbench;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
+import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
@@ -28,6 +29,14 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     public CraftingInputSlot(IItemHandlerModifiable handler, int index) {
         this.syncHandler = new InputSyncHandler(handler, index);
         setSyncHandler(this.syncHandler);
+        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
+        tooltipBuilder(tooltip -> {
+            tooltip.excludeArea(getArea());
+            if (!isSynced()) return;
+            ItemStack stack = this.syncHandler.getStack();
+            if (stack.isEmpty()) return;
+            tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
+        });
     }
 
     public CraftingInputSlot changeListener(IOnSlotChanged listener) {
@@ -56,10 +65,18 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         guiScreen.setZ(100f);
         guiScreen.getItemRenderer().zLevel = 100.0F;
 
-        RenderUtil.renderItemGUI(itemstack, 1, 1);
+        RenderUtil.renderItemInGUI(itemstack, 1, 1);
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);
+    }
+
+    @Override
+    public void drawForeground(GuiContext context) {
+        Tooltip tooltip = getTooltip();
+        if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
+            tooltip.draw(getContext(), this.syncHandler.getStack());
+        }
     }
 
     @SuppressWarnings("OverrideOnly")
@@ -124,7 +141,8 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         }
 
         public void syncStack() {
-            var s = getSyncManager().getCursorItem();
+            var s = getSyncManager().getCursorItem().copy();
+            s.setCount(1);
             this.handler.setStackInSlot(this.index, s);
             syncToServer(1, buffer -> buffer.writeItemStack(s));
         }
