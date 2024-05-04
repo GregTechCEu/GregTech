@@ -1,6 +1,5 @@
 package gregtech.asm;
 
-import gregtech.api.util.Mods;
 import gregtech.asm.util.ObfMapping;
 import gregtech.asm.util.TargetClassVisitor;
 import gregtech.asm.visitors.*;
@@ -128,21 +127,6 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(new TargetClassVisitor(classWriter, CCLVisitor.TARGET_METHOD, CCLVisitor::new), 0);
-                return classWriter.toByteArray();
-            }
-            case NuclearCraftRecipeHelperVisitor.TARGET_CLASS_NAME: {
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(0);
-
-                // fix NC recipe compat different depending on overhaul vs normal
-                if (Mods.NuclearCraftOverhauled.isModLoaded()) {
-                    classReader.accept(new TargetClassVisitor(classWriter,
-                            NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NCO, NuclearCraftRecipeHelperVisitor::new),
-                            0);
-                } else if (Mods.NuclearCraft.isModLoaded()) {
-                    classReader.accept(new TargetClassVisitor(classWriter,
-                            NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NC, NuclearCraftRecipeHelperVisitor::new), 0);
-                }
                 return classWriter.toByteArray();
             }
             case RenderItemVisitor.TARGET_CLASS_NAME: {
