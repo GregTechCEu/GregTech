@@ -334,7 +334,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
         if (recipeMap.jeiOverclockButtonEnabled()) {
             int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+            // just here because if highTier is disabled, if a recipe is (incorrectly) registering
+            // UIV+ recipes, this allows it to go up to the recipe tier for that recipe only
             int maxTier = Math.max(recipeTier, GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX);
+            int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
             // scuffed positioning because we can't have good ui(until mui soontm)
             jeiTexts.add(
                     new JeiInteractableText(0, 90 - LINE_HEIGHT, GTValues.VNF[recipeTier], 0x111111, recipeTier, true)
@@ -343,10 +346,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                                 tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.jei.overclock_warn"));
                             })
                             .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
-                                // just here because if highTier is disabled, if a recipe is (incorrectly) registering
-                                // UIV+ recipes, this allows it to go up to the recipe tier for that recipe
-                                int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
-                                // ULV isn't real sorry
                                 int state = text.getState();
                                 if (mouseButton == 0) {
                                     // increment tier if left click
@@ -354,7 +353,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                                 } else if (mouseButton == 1) {
                                     // decrement tier if right click
                                     if (--state < minTier) state = maxTier;
-                                }
+                                } else return false;
                                 text.setCurrentText(GTValues.VNF[state]);
                                 text.setState(state);
                                 return true;
@@ -367,12 +366,14 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!recipeMap.jeiOverclockButtonEnabled())
             return new long[] { recipe.getEUt(), recipe.getDuration(), 0x111111 };
 
-        long[] result = new long[3];
-        int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
         // ULV doesn't overclock to LV, so treat ULV recipes as LV
-        recipeTier += recipeTier == GTValues.ULV ? 1 : 0;
+        int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
         // tier difference *should* not be negative here since at least displayOCTier() == recipeTier
-        int tierDifference = getDisplayOCTier() - recipeTier;
+        int tierDifference = jeiTexts.get(0).getState() - recipeTier;
+        // there isn't any overclocking
+        if (tierDifference == 0) return new long[] { recipe.getEUt(), recipe.getDuration(), 0x111111 };
+
+        long[] result = new long[3];
         // if duration is less than 0.5, that means even with one less overclock, the recipe would still 1 tick
         // so add the yellow warning
         // LCR and fusion get manual overrides for now
@@ -410,9 +411,5 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     public boolean isNotConsumedFluid(int slot) {
         return slot < this.sortedFluidInputs.size() && this.sortedFluidInputs.get(slot).isNonConsumable();
-    }
-
-    public int getDisplayOCTier() {
-        return jeiTexts.isEmpty() ? Short.MIN_VALUE : jeiTexts.get(0).getState();
     }
 }

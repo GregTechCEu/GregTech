@@ -26,7 +26,7 @@ public class JeiInteractableText {
      * @param color       the default color of the text, overridden by in-text formatting codes
      * @param baseState   the default state of the button, it is used for tooltip and general information storage
      * @param invertX     instead defines x as the distance from the right border,
-     *                    * this takes into account the text width,
+     *                    this takes into account the text width,
      *                    ensuring the rightmost part of the text is always aligned
      */
     public JeiInteractableText(int x, int y, String defaultText, int color, int baseState, boolean invertX) {
