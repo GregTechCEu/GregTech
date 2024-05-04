@@ -35,7 +35,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             if (!memory.isValid()) return;
             var recipe = memory.getRecipeAtIndex(this.index);
             if (recipe == null) return;
-            tooltip.addLine(IKey.lang("Recipe Used: " + recipe.timesUsed));
+            tooltip.addLine(IKey.lang("Times Used: " + recipe.timesUsed));
         });
     }
 
