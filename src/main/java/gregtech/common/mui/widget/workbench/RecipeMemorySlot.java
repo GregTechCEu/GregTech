@@ -1,5 +1,11 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+
+import com.cleanroommc.modularui.api.drawable.IKey;
+
+import com.cleanroommc.modularui.screen.Tooltip;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
@@ -23,12 +29,14 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
     public RecipeMemorySlot(CraftingRecipeMemory memory, int index) {
         this.memory = memory;
         this.index = index;
-    }
-
-    @Override
-    public void onInit() {
-        size(ItemSlot.SIZE);
-        background(GTGuiTextures.SLOT);
+        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
+        tooltipBuilder(tooltip -> {
+            tooltip.excludeArea(getArea());
+            if (!memory.isValid()) return;
+            var recipe = memory.getRecipeAtIndex(this.index);
+            if (recipe == null) return;
+            tooltip.addLine(IKey.lang("Recipe Used: " + recipe.timesUsed));
+        });
     }
 
     @Override
@@ -42,7 +50,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
         int cachedCount = itemstack.getCount();
         itemstack.setCount(1); // required to not render the amount overlay
-        RenderUtil.renderItemGUI(itemstack, 1, 1);
+        RenderUtil.renderItemInGUI(itemstack, 1, 1);
         itemstack.setCount(cachedCount);
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
@@ -50,6 +58,14 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
         if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked())
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
+    }
+
+    @Override
+    public void drawForeground(GuiContext context) {
+        Tooltip tooltip = getTooltip();
+        if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
+            tooltip.draw(getContext(), this.memory.getRecipeOutputAtIndex(this.index));
+        }
     }
 
     @NotNull
