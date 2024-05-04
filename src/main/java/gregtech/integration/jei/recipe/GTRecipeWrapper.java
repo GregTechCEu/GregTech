@@ -283,7 +283,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             minecraft.fontRenderer.drawString(
                     I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
                             eut,
-                            GTValues.VN[GTUtility.getTierByVoltage(eut)]),
+                            GTValues.VNF[GTUtility.getTierByVoltage(eut)]),
                     0, yPosition += LINE_HEIGHT, color);
         }
         if (drawDuration) {
@@ -345,7 +345,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (recipeMap.JeiOverclockButtonEnabled()) {
             int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
 
-            jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VN[recipeTier], GTValues.VC[recipeTier], recipeTier)
+            jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VNF[recipeTier], 0x111111, recipeTier)
                     .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
                         int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX;
                         int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
@@ -360,8 +360,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                             state = text.getState() - 1;
                             if (state < minTier) state = maxTier;
                         }
-                        text.setColor(GTValues.VC[state]);
-                        text.setCurrentText(GTValues.VN[state]);
+                        text.setCurrentText(GTValues.VNF[state]);
                         text.setState(state);
                         return true;
                     }));
