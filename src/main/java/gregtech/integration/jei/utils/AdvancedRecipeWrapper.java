@@ -51,7 +51,7 @@ public abstract class AdvancedRecipeWrapper implements IRecipeWrapper {
                 if (tooltip.isEmpty()) continue;
                 int width = (int) (minecraft.displayWidth / 2f + recipeWidth / 2f);
                 GuiUtils.drawHoveringText(tooltip, mouseX, mouseY, width, minecraft.displayHeight,
-                        Math.min(200, width - mouseX - 5), minecraft.fontRenderer);
+                        Math.min(150, width - mouseX - 5), minecraft.fontRenderer);
                 GlStateManager.disableLighting();
             }
         }

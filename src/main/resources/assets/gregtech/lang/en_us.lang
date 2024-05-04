@@ -5499,6 +5499,9 @@ gregtech.jei.fluid.dep_chance_hover=The percentage chance for the vein to be dep
 gregtech.jei.fluid.dep_amount_hover=The amount the vein will be depleted by
 gregtech.jei.fluid.dep_yield_hover=The maximum yield of the vein when it is fully depleted
 
+gregtech.jei.overclock_button=§rThe speed of the recipe at %s
+gregtech.jei.overclock_warn=Results may not be fully accurate for some recipes!
+
 gregtech.jei.materials.average_mass=Average mass: %,d
 gregtech.jei.materials.average_protons=Average protons: %,d
 gregtech.jei.materials.average_neutrons=Average neutrons: %,d

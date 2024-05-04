@@ -9,6 +9,7 @@ public class JeiInteractableText {
 
     private final int x;
     private final int y;
+    private final boolean invertX;
     private int color;
     private String currentText;
     private int textWidth;
@@ -16,9 +17,22 @@ public class JeiInteractableText {
     private BiConsumer<Integer, List<String>> tooltipBuilder;
     private int state;
 
-    public JeiInteractableText(int x, int y, String defaultText, int color, int baseState) {
+    /**
+     * Creates a new text object when can handle clicks and update state when clicked
+     * 
+     * @param x           x value, 0 on the left border, increases moving right.
+     * @param y           x value, 0 on the top border, increases moving down.
+     * @param defaultText the text that should be initially displayed(without any clicks)
+     * @param color       the default color of the text, overridden by in-text formatting codes
+     * @param baseState   the default state of the button, it is used for tooltip and general information storage
+     * @param invertX     instead defines x as the distance from the right border,
+     *                    * this takes into account the text width,
+     *                    ensuring the rightmost part of the text is always aligned
+     */
+    public JeiInteractableText(int x, int y, String defaultText, int color, int baseState, boolean invertX) {
         this.x = x;
         this.y = y;
+        this.invertX = invertX;
         this.currentText = defaultText;
         this.textWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(defaultText);
         this.color = color;
@@ -26,7 +40,7 @@ public class JeiInteractableText {
     }
 
     public void render(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        minecraft.fontRenderer.drawString(currentText, x, y, color);
+        minecraft.fontRenderer.drawString(currentText, invertX ? recipeWidth - x - textWidth : x, y, color);
     }
 
     public JeiInteractableText setTooltipBuilder(BiConsumer<Integer, List<String>> builder) {
@@ -35,7 +49,10 @@ public class JeiInteractableText {
     }
 
     public boolean isHovering(int mouseX, int mouseY) {
-        return mouseX >= x && mouseY >= y && mouseX <= x + textWidth && mouseY <= y + 10;
+        if (!(mouseY >= y && mouseY <= y + 10)) return false;
+        // seems like recipeWidth is always 176
+        if (invertX) return 176 - textWidth - x <= mouseX && mouseX <= 176 - x;
+        return mouseX >= x && mouseX <= x + textWidth;
     }
 
     public void setCurrentText(String text) {

@@ -344,26 +344,34 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
         if (recipeMap.JeiOverclockButtonEnabled()) {
             int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
-
-            jeiTexts.add(new JeiInteractableText(0, 0, GTValues.VNF[recipeTier], 0x111111, recipeTier)
-                    .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
-                        int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX;
-                        int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
-                        // ULV isn't real sorry
-                        int state = minTier;
-                        if (mouseButton == 0) {
-                            // increment tier if left click
-                            state = text.getState() + 1;
-                            if (state > maxTier) state = minTier;
-                        } else if (mouseButton == 1) {
-                            // decrement tier if right click
-                            state = text.getState() - 1;
-                            if (state < minTier) state = maxTier;
-                        }
-                        text.setCurrentText(GTValues.VNF[state]);
-                        text.setState(state);
-                        return true;
-                    }));
+            // seems like recipeHeight is always 120
+            jeiTexts.add(
+                    new JeiInteractableText(0, 120 - LINE_HEIGHT, GTValues.VNF[recipeTier], 0x111111, recipeTier, true)
+                            .setTooltipBuilder((state, tooltip) -> {
+                                tooltip.add(I18n.format("gregtech.jei.overclock_button", GTValues.VNF[state]));
+                                tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.jei.overclock_warn"));
+                            })
+                            .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
+                                // just here because if highTier is disabled, if a recipe is (incorrectly) registering
+                                // UIV+ recipes, this allows it to go up to the recipe tier for that recipe
+                                int maxTier = Math.max(recipeTier,
+                                        GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX);
+                                int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+                                // ULV isn't real sorry
+                                int state = minTier;
+                                if (mouseButton == 0) {
+                                    // increment tier if left click
+                                    state = text.getState() + 1;
+                                    if (state > maxTier) state = minTier;
+                                } else if (mouseButton == 1) {
+                                    // decrement tier if right click
+                                    state = text.getState() - 1;
+                                    if (state < minTier) state = maxTier;
+                                }
+                                text.setCurrentText(GTValues.VNF[state]);
+                                text.setState(state);
+                                return true;
+                            }));
         }
     }
 
