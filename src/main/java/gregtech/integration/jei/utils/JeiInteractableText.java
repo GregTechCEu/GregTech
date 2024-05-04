@@ -49,6 +49,7 @@ public class JeiInteractableText {
 
     /**
      * This is overriden by in-text formatting codes!
+     * 
      * @param color The color to set the text to
      */
     public void setColor(int color) {
