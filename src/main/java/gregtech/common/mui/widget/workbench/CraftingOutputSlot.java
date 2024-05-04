@@ -58,7 +58,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
         int cachedCount = itemstack.getCount();
         itemstack.setCount(1); // required to not render the amount overlay
-        RenderUtil.renderItemGUI(itemstack, 1, 1);
+        RenderUtil.renderItemInGUI(itemstack, 1, 1);
         itemstack.setCount(cachedCount);
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
