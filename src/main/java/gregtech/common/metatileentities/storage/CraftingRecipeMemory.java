@@ -103,7 +103,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             // notify slot and sync to client
             recipe.updateCraftingMatrix(craftingGrid);
             recipe.timesUsed++;
-//            syncToClient(5, buffer -> buffer.writeByte(recipe.index));
+            syncToClient(4, buffer -> buffer.writeByte(recipe.index));
         }
     }
 
@@ -155,6 +155,41 @@ public class CraftingRecipeMemory extends SyncHandler {
     }
 
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        this.readRecipes(buf);
+    }
+
+    @Override
+    public void readOnClient(int id, PacketBuffer buf) {
+        if (id == 1) {
+            this.readRecipes(buf);
+        } else if (id == 2) {
+            this.removeRecipe(buf.readByte());
+        } else if (id == 3) {
+            int index = buf.readByte();
+            if (!hasRecipe(index)) memorizedRecipes[index] = new MemorizedRecipe(index);
+            memorizedRecipes[index].recipeResult = readStackSafe(buf);
+        } else if (id == 4) {
+            memorizedRecipes[buf.readByte()].timesUsed++;
+        }
+    }
+
+    public void writeRecipes(PacketBuffer buf) {
+        Map<Integer, ItemStack> written = new Int2ObjectOpenHashMap<>();
+        for (int i = 0; i < memorizedRecipes.length; i++) {
+            var stack = getRecipeOutputAtIndex(i);
+            if (stack.isEmpty()) continue;
+            written.put(i, stack);
+        }
+        buf.writeByte(written.size());
+        for (var entry : written.entrySet()) {
+            var recipe = memorizedRecipes[entry.getKey()];
+            buf.writeByte(recipe.index);
+            buf.writeItemStack(recipe.recipeResult);
+            buf.writeInt(recipe.timesUsed);
+        }
+    }
+
+    public void readRecipes(PacketBuffer buf) {
         int size = buf.readByte();
         for (int i = 0; i < size; i++) {
             int index = buf.readByte();
@@ -162,44 +197,7 @@ public class CraftingRecipeMemory extends SyncHandler {
                 memorizedRecipes[index] = new MemorizedRecipe(index);
 
             memorizedRecipes[index].recipeResult = readStackSafe(buf);
-        }
-    }
-
-    @Override
-    public void readOnClient(int id, PacketBuffer buf) {
-        if (id == 1) {
-            int size = buf.readByte();
-            for (int i = 0; i < size; i++) {
-                int index = buf.readByte();
-                if (!hasRecipe(index))
-                    memorizedRecipes[index] = new MemorizedRecipe(index);
-
-                memorizedRecipes[index].recipeResult = readStackSafe(buf);
-//                memorizedRecipes[index].timesUsed = buf.readVarInt();
-
-            }
-        } else if (id == 2) {
-            removeRecipe(buf.readByte());
-        } else if (id == 3) {
-            int index = buf.readByte();
-            if (!hasRecipe(index)) memorizedRecipes[index] = new MemorizedRecipe(index);
-            memorizedRecipes[index].recipeResult = readStackSafe(buf);
-        }
-    }
-
-    public void writeRecipes(PacketBuffer buffer) {
-        Map<Integer, ItemStack> written = new Int2ObjectOpenHashMap<>();
-        for (int i = 0; i < memorizedRecipes.length; i++) {
-            var stack = getRecipeOutputAtIndex(i);
-            if (stack.isEmpty()) continue;
-            written.put(i, stack);
-        }
-        buffer.writeByte(written.size());
-        for (var entry : written.entrySet()) {
-            var recipe = memorizedRecipes[entry.getKey()];
-            buffer.writeByte(recipe.index);
-            buffer.writeItemStack(recipe.recipeResult);
-//            buffer.writeVarInt(recipe.timesUsed);
+            memorizedRecipes[index].timesUsed = buf.readInt();
         }
     }
 
