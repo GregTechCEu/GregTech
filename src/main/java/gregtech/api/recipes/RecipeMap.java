@@ -370,7 +370,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public boolean JeiOverclockButtonEnabled() {
+    public boolean jeiOverclockButtonEnabled() {
         return this.jeiOverclockButton;
     }
 
