@@ -328,7 +328,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .matrix("XXX",
                         "XXX",
                         "XXX")
-                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i))
+                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i)
+                        .background(GTGuiTextures.SLOT))
                 .build().right(0);
     }
 
