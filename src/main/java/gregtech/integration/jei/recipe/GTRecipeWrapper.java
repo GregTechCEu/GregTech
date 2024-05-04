@@ -257,7 +257,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         int tierDifference = getDisplayOCTier() - recipeTier;
         // if duration is less than 0.5, that means even with one less overclock, the recipe would still 1 tick
         // so add the yellow warning
-        double duration = Math.floor(recipe.getDuration() / Math.pow(2, tierDifference));
+        double duration = Math.floor(recipe.getDuration() / Math.pow(recipeMap == RecipeMaps.LARGE_CHEMICAL_RECIPES ? 4 : 2, tierDifference));
         int color = duration <= 0.5 ? 0xFFFF55 : 0x111111;
         // currently manual override for fusion's 2x EU/t instead of 4x, maybe custom multiplier per recipeMap soontm?
         long eut = (long) Math.abs(recipe.getEUt()) *
