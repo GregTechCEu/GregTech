@@ -32,10 +32,11 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
             tooltip.excludeArea(getArea());
-            if (!memory.isValid()) return;
             var recipe = memory.getRecipeAtIndex(this.index);
             if (recipe == null) return;
-            tooltip.addLine(IKey.lang("Times Used: " + recipe.timesUsed));
+            var list = getScreen().getScreenWrapper().getItemToolTip(recipe.getRecipeResult());
+            list.add(1, IKey.lang("Times Used: " + recipe.timesUsed).get());
+            tooltip.addStringLines(list);
         });
     }
 

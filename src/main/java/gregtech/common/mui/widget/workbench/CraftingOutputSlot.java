@@ -1,5 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.screen.Tooltip;
+
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
@@ -38,6 +40,14 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                         workbench.getCraftingRecipeLogic().getCraftingResultInventory(),
                         syncValue, workbench));
         setSyncHandler(this.syncHandler);
+        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
+        tooltipBuilder(tooltip -> {
+            tooltip.excludeArea(getArea());
+            if (!isSynced()) return;
+            ItemStack stack = this.syncHandler.getOutputStack();
+            if (stack.isEmpty()) return;
+            tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
+        });
     }
 
     @Override
@@ -63,6 +73,14 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);
+    }
+
+    @Override
+    public void drawForeground(GuiContext context) {
+        Tooltip tooltip = getTooltip();
+        if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
+            tooltip.draw(getContext(), this.syncHandler.getOutputStack());
+        }
     }
 
     protected static class CraftingSlotSH extends SyncHandler {

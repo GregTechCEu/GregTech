@@ -243,6 +243,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .margin(7)
                         .widthRel(0.9f)
                         .controller(controller)
+                        .coverChildrenHeight()
                         // workstation page
                         .addPage(new Column()
                                 .debugName("crafting page")
