@@ -704,7 +704,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
-        return this.hasFusionRingColor();
+        return this.hasFusionRingColor() && context.camera().isBoundingBoxInFrustum(getRenderBoundingBox());
     }
 
     @Override
