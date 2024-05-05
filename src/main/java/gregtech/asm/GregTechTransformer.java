@@ -127,30 +127,34 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
              * return classWriter.toByteArray();
              * }
              */
-            /*case LittleTilesVisitor.TARGET_CLASS_NAME: {
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(
-                        new TargetClassVisitor(classWriter, LittleTilesVisitor.TARGET_METHOD, LittleTilesVisitor::new),
-                        0);
-                return classWriter.toByteArray();
-            }*/
-            /*case CCLVisitor.TARGET_CLASS_NAME: {
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(new TargetClassVisitor(classWriter, CCLVisitor.TARGET_METHOD, CCLVisitor::new), 0);
-                return classWriter.toByteArray();
-            }
-            case RenderItemVisitor.TARGET_CLASS_NAME: {
-                ClassNode classNode = new ClassNode();
-                ClassReader classReader = new ClassReader(basicClass);
-                classReader.accept(classNode, 0);
-                Iterator<MethodNode> methods = classNode.methods.iterator();
-                RenderItemVisitor.transform(methods);
-                ClassWriter classWriter = new ClassWriter(0);
-                classNode.accept(classWriter);
-                return classWriter.toByteArray();
-            } */
+            /*
+             * case LittleTilesVisitor.TARGET_CLASS_NAME: {
+             * ClassReader classReader = new ClassReader(basicClass);
+             * ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+             * classReader.accept(
+             * new TargetClassVisitor(classWriter, LittleTilesVisitor.TARGET_METHOD, LittleTilesVisitor::new),
+             * 0);
+             * return classWriter.toByteArray();
+             * }
+             */
+            /*
+             * case CCLVisitor.TARGET_CLASS_NAME: {
+             * ClassReader classReader = new ClassReader(basicClass);
+             * ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+             * classReader.accept(new TargetClassVisitor(classWriter, CCLVisitor.TARGET_METHOD, CCLVisitor::new), 0);
+             * return classWriter.toByteArray();
+             * }
+             * case RenderItemVisitor.TARGET_CLASS_NAME: {
+             * ClassNode classNode = new ClassNode();
+             * ClassReader classReader = new ClassReader(basicClass);
+             * classReader.accept(classNode, 0);
+             * Iterator<MethodNode> methods = classNode.methods.iterator();
+             * RenderItemVisitor.transform(methods);
+             * ClassWriter classWriter = new ClassWriter(0);
+             * classNode.accept(classWriter);
+             * return classWriter.toByteArray();
+             * }
+             */
             /*
              * case RecipeRepairItemVisitor.TARGET_CLASS_NAME: {
              * ClassReader classReader = new ClassReader(basicClass);
