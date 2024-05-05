@@ -30,7 +30,7 @@ public interface IBloomEffect {
     /**
      * @param context render context
      * @return if this effect should be rendered; returning {@code false} skips
-     * {@link #renderBloomEffect(BufferBuilder, EffectRenderContext)} call.
+     *         {@link #renderBloomEffect(BufferBuilder, EffectRenderContext)} call.
      */
     @SideOnly(Side.CLIENT)
     default boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {

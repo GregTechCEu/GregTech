@@ -20,6 +20,7 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -46,6 +48,8 @@ public class BloomEffectUtil {
 
     private static final Map<BloomRenderKey, List<BloomRenderTicket>> BLOOM_RENDERS = new Object2ObjectOpenHashMap<>();
     private static final List<BloomRenderTicket> SCHEDULED_BLOOM_RENDERS = new ArrayList<>();
+
+    private static final ReentrantLock BLOOM_RENDER_LOCK = new ReentrantLock();
 
     /**
      * @deprecated use {@link #getBloomLayer()}
@@ -81,7 +85,7 @@ public class BloomEffectUtil {
      * disabled, {@link BlockRenderLayer#CUTOUT} is returned instead.
      *
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if bloom
-     * layer is disabled
+     *         layer is disabled
      * @see #getEffectiveBloomLayer(BlockRenderLayer)
      */
     @NotNull
@@ -96,7 +100,7 @@ public class BloomEffectUtil {
      *
      * @param fallback Block render layer to be returned when bloom layer is disabled
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
-     * disabled
+     *         disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
     @Contract("null -> _; !null -> !null")
@@ -112,7 +116,7 @@ public class BloomEffectUtil {
      * @param isBloomActive Whether bloom layer should be active. If this value is {@code false}, {@code fallback} layer
      *                      will be returned. Has no effect if Optifine is present.
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if bloom
-     * layer is disabled
+     *         layer is disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
     @NotNull
@@ -129,7 +133,7 @@ public class BloomEffectUtil {
      *                      will be returned. Has no effect if Optifine is present.
      * @param fallback      Block render layer to be returned when bloom layer is disabled
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
-     * disabled
+     *         disabled
      */
     @Contract("_, null -> _; _, !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive, BlockRenderLayer fallback) {
@@ -147,8 +151,8 @@ public class BloomEffectUtil {
     /**
      * <p>
      * Register a custom bloom render callback for subsequent world render. The render call persists until the
-     * {@code metaTileEntity} is invalidated, or the world associated with {@code metaTileEntity}  or the ticket is manually freed by calling
-     * {@link BloomRenderTicket#invalidate()}.
+     * {@code metaTileEntity} is invalidated, or the world associated with {@code metaTileEntity} or the ticket is
+     * manually freed by calling {@link BloomRenderTicket#invalidate()}.
      * </p>
      * <p>
      * This method does not register bloom render ticket when Optifine is present, and an invalid ticket will be
@@ -168,9 +172,22 @@ public class BloomEffectUtil {
                                                         @NotNull IBloomEffect render,
                                                         @NotNull MetaTileEntity metaTileEntity) {
         Objects.requireNonNull(metaTileEntity, "metaTileEntity == null");
-        return registerBloomRender(setup, bloomType, render, t ->
-                metaTileEntity.isValid() && metaTileEntity.getWorld() != null &&
-                        metaTileEntity.getWorld() == Minecraft.getMinecraft().world);
+        return registerBloomRender(setup, bloomType,
+                new IBloomEffect() {
+
+                    @Override
+                    public void renderBloomEffect(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {
+                        render.renderBloomEffect(buffer, context);
+                    }
+
+                    @Override
+                    public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
+                        return metaTileEntity.getWorld() == context.renderViewEntity().world &&
+                                render.shouldRenderBloomEffect(context);
+                    }
+                },
+                t -> metaTileEntity.isValid(),
+                Objects.requireNonNull(metaTileEntity.getWorld(), "No world associated to MTE"));
     }
 
     /**
@@ -219,16 +236,80 @@ public class BloomEffectUtil {
      * @throws NullPointerException if {@code bloomType == null || render == null}
      * @see #registerBloomRender(IRenderSetup, BloomType, IBloomEffect, MetaTileEntity)
      * @see #registerBloomRender(IRenderSetup, BloomType, IBloomEffect, GTParticle)
+     * @see #registerBloomRender(IRenderSetup, BloomType, IBloomEffect, Predicate, World)
      */
     @NotNull
     public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
                                                         @NotNull BloomType bloomType,
                                                         @NotNull IBloomEffect render,
                                                         @Nullable Predicate<BloomRenderTicket> validityChecker) {
+        return registerBloomRender(setup, bloomType, render, validityChecker, null);
+    }
+
+    /**
+     * <p>
+     * Register a custom bloom render callback for subsequent world render. The render call persists until it is
+     * manually freed by calling {@link BloomRenderTicket#invalidate()}, or invalidated by validity checker.
+     * </p>
+     * <p>
+     * This method does not register bloom render ticket when Optifine is present, and an invalid ticket will be
+     * returned instead.
+     * </p>
+     *
+     * @param setup           Render setup, if exists
+     * @param bloomType       Type of the bloom
+     * @param render          Rendering callback
+     * @param validityChecker Optional validity checker; returning {@code false} causes the ticket to be invalidated.
+     *                        Checked on both pre/post render each frame.
+     * @param world           Optional world bound to the ticket. If the world is not null, the bloom ticket will be
+     *                        automatically invalidated on world unload.
+     * @return Ticket for the registered bloom render callback
+     * @throws NullPointerException if {@code bloomType == null || render == null}
+     * @see #registerBloomRender(IRenderSetup, BloomType, IBloomEffect, MetaTileEntity)
+     * @see #registerBloomRender(IRenderSetup, BloomType, IBloomEffect, GTParticle)
+     */
+    @NotNull
+    public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
+                                                        @NotNull BloomType bloomType,
+                                                        @NotNull IBloomEffect render,
+                                                        @Nullable Predicate<BloomRenderTicket> validityChecker,
+                                                        @Nullable World world) {
         if (Mods.Optifine.isModLoaded()) return BloomRenderTicket.INVALID;
-        BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render, validityChecker);
-        SCHEDULED_BLOOM_RENDERS.add(ticket);
+        BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render, validityChecker, world);
+        BLOOM_RENDER_LOCK.lock();
+        try {
+            SCHEDULED_BLOOM_RENDERS.add(ticket);
+        } finally {
+            BLOOM_RENDER_LOCK.unlock();
+        }
         return ticket;
+    }
+
+    /**
+     * Invalidate tickets associated with given world.
+     *
+     * @param world World
+     */
+    public static void invalidateWorldTickets(@NotNull World world) {
+        Objects.requireNonNull(world, "world == null");
+        BLOOM_RENDER_LOCK.lock();
+        try {
+            for (BloomRenderTicket ticket : SCHEDULED_BLOOM_RENDERS) {
+                if (ticket.isValid() && ticket.world == world) {
+                    ticket.invalidate();
+                }
+            }
+
+            for (Map.Entry<BloomRenderKey, List<BloomRenderTicket>> e : BLOOM_RENDERS.entrySet()) {
+                for (BloomRenderTicket ticket : e.getValue()) {
+                    if (ticket.isValid() && ticket.world == world) {
+                        ticket.invalidate();
+                    }
+                }
+            }
+        } finally {
+            BLOOM_RENDER_LOCK.unlock();
+        }
     }
 
     /**
@@ -285,14 +366,26 @@ public class BloomEffectUtil {
                                             BlockRenderLayer blockRenderLayer, // 70% sure it's translucent uh yeah
                                             double partialTicks,
                                             int pass,
-                                            Entity entity) {
-        Minecraft mc = Minecraft.getMinecraft();
-        mc.profiler.endStartSection("BTLayer");
+                                            @NotNull Entity entity) {
+        Minecraft.getMinecraft().profiler.endStartSection("BTLayer");
 
         if (Mods.Optifine.isModLoaded()) {
             return renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 
+        BLOOM_RENDER_LOCK.lock();
+        try {
+            return renderBloomInternal(renderGlobal, blockRenderLayer, partialTicks, pass, entity);
+        } finally {
+            BLOOM_RENDER_LOCK.unlock();
+        }
+    }
+
+    private static int renderBloomInternal(RenderGlobal renderGlobal,
+                                           BlockRenderLayer blockRenderLayer,
+                                           double partialTicks,
+                                           int pass,
+                                           @NotNull Entity entity) {
         preDraw();
 
         EffectRenderContext context = EffectRenderContext.getInstance().update(entity, (float) partialTicks);
@@ -313,7 +406,7 @@ public class BloomEffectUtil {
             return renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 
-        Framebuffer fbo = mc.getFramebuffer();
+        Framebuffer fbo = Minecraft.getMinecraft().getFramebuffer();
 
         if (bloomFBO == null ||
                 bloomFBO.framebufferWidth != fbo.framebufferWidth ||
@@ -364,12 +457,12 @@ public class BloomEffectUtil {
         // reset transparent layer render state and render
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
         GlStateManager.enableBlend();
-        mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
         int result = renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
 
-        mc.profiler.endStartSection("bloom");
+        Minecraft.getMinecraft().profiler.endStartSection("bloom");
 
         // blend bloom + transparent
         fbo.bindFramebufferTexture();
@@ -477,7 +570,7 @@ public class BloomEffectUtil {
     }
 
     private static void postDraw() {
-        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext(); ) {
+        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext();) {
             List<BloomRenderTicket> list = it.next();
 
             if (!list.isEmpty()) {
@@ -504,20 +597,24 @@ public class BloomEffectUtil {
         private final IBloomEffect render;
         @Nullable
         private final Predicate<BloomRenderTicket> validityChecker;
+        @Nullable
+        private final World world;
 
         private boolean invalidated;
 
         BloomRenderTicket() {
-            this(null, BloomType.DISABLED, (b, c) -> {}, null);
+            this(null, BloomType.DISABLED, (b, c) -> {}, null, null);
             this.invalidated = true;
         }
 
         BloomRenderTicket(@Nullable IRenderSetup renderSetup, @NotNull BloomType bloomType,
-                          @NotNull IBloomEffect render, @Nullable Predicate<BloomRenderTicket> validityChecker) {
+                          @NotNull IBloomEffect render, @Nullable Predicate<BloomRenderTicket> validityChecker,
+                          @Nullable World world) {
             this.renderSetup = renderSetup;
             this.bloomType = Objects.requireNonNull(bloomType, "bloomType == null");
             this.render = Objects.requireNonNull(render, "render == null");
             this.validityChecker = validityChecker;
+            this.world = world;
         }
 
         @Nullable
@@ -560,12 +657,12 @@ public class BloomEffectUtil {
          * Custom Bloom Style.
          *
          * @return 0 - Simple Gaussian Blur Bloom
-         * <p>
-         * 1 - Unity Bloom
-         * </p>
-         * <p>
-         * 2 - Unreal Bloom
-         * </p>
+         *         <p>
+         *         1 - Unity Bloom
+         *         </p>
+         *         <p>
+         *         2 - Unreal Bloom
+         *         </p>
          */
         int customBloomStyle();
     }
