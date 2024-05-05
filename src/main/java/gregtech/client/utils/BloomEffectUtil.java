@@ -81,7 +81,7 @@ public class BloomEffectUtil {
      * disabled, {@link BlockRenderLayer#CUTOUT} is returned instead.
      *
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if bloom
-     *         layer is disabled
+     * layer is disabled
      * @see #getEffectiveBloomLayer(BlockRenderLayer)
      */
     @NotNull
@@ -96,7 +96,7 @@ public class BloomEffectUtil {
      *
      * @param fallback Block render layer to be returned when bloom layer is disabled
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
-     *         disabled
+     * disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
     @Contract("null -> _; !null -> !null")
@@ -112,7 +112,7 @@ public class BloomEffectUtil {
      * @param isBloomActive Whether bloom layer should be active. If this value is {@code false}, {@code fallback} layer
      *                      will be returned. Has no effect if Optifine is present.
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if bloom
-     *         layer is disabled
+     * layer is disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
     @NotNull
@@ -129,7 +129,7 @@ public class BloomEffectUtil {
      *                      will be returned. Has no effect if Optifine is present.
      * @param fallback      Block render layer to be returned when bloom layer is disabled
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
-     *         disabled
+     * disabled
      */
     @Contract("_, null -> _; _, !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive, BlockRenderLayer fallback) {
@@ -168,7 +168,9 @@ public class BloomEffectUtil {
                                                         @NotNull IBloomEffect render,
                                                         @NotNull MetaTileEntity metaTileEntity) {
         Objects.requireNonNull(metaTileEntity, "metaTileEntity == null");
-        return registerBloomRender(setup, bloomType, render, t -> metaTileEntity.isValid());
+        return registerBloomRender(setup, bloomType, render, t ->
+                metaTileEntity.isValid() && metaTileEntity.getWorld() != null &&
+                        metaTileEntity.getWorld() == Minecraft.getMinecraft().world);
     }
 
     /**
@@ -473,7 +475,7 @@ public class BloomEffectUtil {
     }
 
     private static void postDraw() {
-        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext();) {
+        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext(); ) {
             List<BloomRenderTicket> list = it.next();
 
             if (!list.isEmpty()) {
@@ -545,12 +547,12 @@ public class BloomEffectUtil {
          * Custom Bloom Style.
          *
          * @return 0 - Simple Gaussian Blur Bloom
-         *         <p>
-         *         1 - Unity Bloom
-         *         </p>
-         *         <p>
-         *         2 - Unreal Bloom
-         *         </p>
+         * <p>
+         * 1 - Unity Bloom
+         * </p>
+         * <p>
+         * 2 - Unreal Bloom
+         * </p>
          */
         int customBloomStyle();
     }
