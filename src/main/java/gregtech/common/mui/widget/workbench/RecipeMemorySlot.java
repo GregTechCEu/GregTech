@@ -1,24 +1,19 @@
 package gregtech.common.mui.widget.workbench;
 
-import com.cleanroommc.modularui.api.drawable.IDrawable;
-
-import com.cleanroommc.modularui.api.drawable.IKey;
-
-import com.cleanroommc.modularui.screen.Tooltip;
-
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
 import net.minecraft.item.ItemStack;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
+import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import org.jetbrains.annotations.NotNull;
 
 public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable {

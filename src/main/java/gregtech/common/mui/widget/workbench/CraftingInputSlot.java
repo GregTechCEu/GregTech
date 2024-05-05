@@ -1,5 +1,12 @@
 package gregtech.common.mui.widget.workbench;
 
+import gregtech.client.utils.RenderUtil;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemHandlerHelper;
+
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.Tooltip;
@@ -8,22 +15,13 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
-
 import com.cleanroommc.modularui.widgets.slot.IOnSlotChanged;
-
-import gregtech.client.utils.RenderUtil;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import net.minecraftforge.items.ItemHandlerHelper;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable {
+
     private final InputSyncHandler syncHandler;
 
     public CraftingInputSlot(IItemHandlerModifiable handler, int index) {
@@ -53,8 +51,6 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         this.syncHandler.syncStack();
         return Result.SUCCESS;
     }
-
-
 
     @Override
     public void draw(GuiContext context, WidgetTheme widgetTheme) {
