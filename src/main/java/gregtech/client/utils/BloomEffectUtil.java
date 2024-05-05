@@ -147,12 +147,12 @@ public class BloomEffectUtil {
     /**
      * <p>
      * Register a custom bloom render callback for subsequent world render. The render call persists until the
-     * {@code metaTileEntity} is invalidated, or the ticket is manually freed by calling
+     * {@code metaTileEntity} is invalidated, or the world associated with {@code metaTileEntity}  or the ticket is manually freed by calling
      * {@link BloomRenderTicket#invalidate()}.
      * </p>
      * <p>
-     * This method does not register bloom render ticket when Optifine is present, and {@code null} will be returned
-     * instead of a ticket instance.
+     * This method does not register bloom render ticket when Optifine is present, and an invalid ticket will be
+     * returned instead.
      * </p>
      *
      * @param setup          Render setup, if exists
@@ -162,7 +162,7 @@ public class BloomEffectUtil {
      * @return Ticket for the registered bloom render callback
      * @throws NullPointerException if {@code bloomType == null || render == null || metaTileEntity == null}
      */
-    @Nullable
+    @NotNull
     public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
                                                         @NotNull BloomType bloomType,
                                                         @NotNull IBloomEffect render,
@@ -180,8 +180,8 @@ public class BloomEffectUtil {
      * {@link BloomRenderTicket#invalidate()}.
      * </p>
      * <p>
-     * This method does not register bloom render ticket when Optifine is present, and {@code null} will be returned
-     * instead of a ticket instance.
+     * This method does not register bloom render ticket when Optifine is present, and an invalid ticket will be
+     * returned instead.
      * </p>
      *
      * @param setup     Render setup, if exists
@@ -191,7 +191,7 @@ public class BloomEffectUtil {
      * @return Ticket for the registered bloom render callback
      * @throws NullPointerException if {@code bloomType == null || render == null || metaTileEntity == null}
      */
-    @Nullable
+    @NotNull
     public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
                                                         @NotNull BloomType bloomType,
                                                         @NotNull IBloomEffect render,
@@ -206,8 +206,8 @@ public class BloomEffectUtil {
      * manually freed by calling {@link BloomRenderTicket#invalidate()}, or invalidated by validity checker.
      * </p>
      * <p>
-     * This method does not register bloom render ticket when Optifine is present, and {@code null} will be returned
-     * instead of a ticket instance.
+     * This method does not register bloom render ticket when Optifine is present, and an invalid ticket will be
+     * returned instead.
      * </p>
      *
      * @param setup           Render setup, if exists
@@ -217,13 +217,15 @@ public class BloomEffectUtil {
      *                        Checked on both pre/post render each frame.
      * @return Ticket for the registered bloom render callback
      * @throws NullPointerException if {@code bloomType == null || render == null}
+     * @see #registerBloomRender(IRenderSetup, BloomType, IBloomEffect, MetaTileEntity)
+     * @see #registerBloomRender(IRenderSetup, BloomType, IBloomEffect, GTParticle)
      */
-    @Nullable
+    @NotNull
     public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
                                                         @NotNull BloomType bloomType,
                                                         @NotNull IBloomEffect render,
                                                         @Nullable Predicate<BloomRenderTicket> validityChecker) {
-        if (Mods.Optifine.isModLoaded()) return null;
+        if (Mods.Optifine.isModLoaded()) return BloomRenderTicket.INVALID;
         BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render, validityChecker);
         SCHEDULED_BLOOM_RENDERS.add(ticket);
         return ticket;
@@ -494,6 +496,8 @@ public class BloomEffectUtil {
 
     public static final class BloomRenderTicket {
 
+        public static final BloomRenderTicket INVALID = new BloomRenderTicket();
+
         @Nullable
         private final IRenderSetup renderSetup;
         private final BloomType bloomType;
@@ -502,6 +506,11 @@ public class BloomEffectUtil {
         private final Predicate<BloomRenderTicket> validityChecker;
 
         private boolean invalidated;
+
+        BloomRenderTicket() {
+            this(null, BloomType.DISABLED, (b, c) -> {}, null);
+            this.invalidated = true;
+        }
 
         BloomRenderTicket(@Nullable IRenderSetup renderSetup, @NotNull BloomType bloomType,
                           @NotNull IBloomEffect render, @Nullable Predicate<BloomRenderTicket> validityChecker) {
@@ -512,11 +521,15 @@ public class BloomEffectUtil {
         }
 
         @Nullable
+        @Deprecated
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
         public IRenderSetup getRenderSetup() {
             return this.renderSetup;
         }
 
         @NotNull
+        @Deprecated
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
         public BloomType getBloomType() {
             return this.bloomType;
         }
