@@ -691,18 +691,20 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped())
                 .getAxis();
 
+        buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
         RenderBufferHelper.renderRing(buffer,
                 getPos().getX() - context.cameraX() + relativeBack.getXOffset() * 7 + 0.5,
                 getPos().getY() - context.cameraY() + relativeBack.getYOffset() * 7 + 0.5,
                 getPos().getZ() - context.cameraZ() + relativeBack.getZOffset() * 7 + 0.5,
                 6, 0.2, 10, 20,
                 r, g, b, a, axis);
+        Tessellator.getInstance().draw();
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
-        return this.hasFusionRingColor();
+        return this.hasFusionRingColor() && context.camera().isBoundingBoxInFrustum(getRenderBoundingBox());
     }
 
     @Override
@@ -753,14 +755,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
             GlStateManager.color(1, 1, 1, 1);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
             GlStateManager.disableTexture2D();
-
-            buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
         }
 
         @Override
         public void postDraw(@NotNull BufferBuilder buffer) {
-            Tessellator.getInstance().draw();
-
             GlStateManager.enableTexture2D();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
         }
