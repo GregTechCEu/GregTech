@@ -68,6 +68,7 @@ public enum Mods {
     TOPAddons(Names.TOP_ADDONS),
     VoxelMap(Names.VOXEL_MAP),
     XaerosMinimap(Names.XAEROS_MINIMAP),
+    Vintagium(Names.VINTAGIUM),
 
     // Special Optifine handler, but consolidated here for simplicity
     Optifine(null) {
@@ -135,6 +136,7 @@ public enum Mods {
         public static final String TOP_ADDONS = "topaddons";
         public static final String VOXEL_MAP = "voxelmap";
         public static final String XAEROS_MINIMAP = "xaerominimap";
+        public static final String VINTAGIUM = "vintagium";
     }
 
     private final String ID;
