@@ -6288,4 +6288,4 @@ gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
 
 # Mutation
-gregtech.mutation.block_of=Block of
+gregtech.mutation.block_of=Block of %s

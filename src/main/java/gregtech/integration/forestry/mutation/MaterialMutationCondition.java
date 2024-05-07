@@ -1,6 +1,8 @@
 package gregtech.integration.forestry.mutation;
 
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.LocalizationUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -9,9 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreDictionary;
 
 import forestry.api.apiculture.IBeeHousing;
 import forestry.api.climate.IClimateProvider;
@@ -19,7 +19,6 @@ import forestry.api.genetics.IAllele;
 import forestry.api.genetics.IGenome;
 import forestry.api.genetics.IMutationCondition;
 import forestry.core.tiles.TileUtil;
-import forestry.core.utils.Translator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,10 +31,10 @@ public class MaterialMutationCondition implements IMutationCondition {
     private final String displayName;
 
     public MaterialMutationCondition(Material material) {
-        this.displayName = I18n.translateToLocal("gregtech.mutation.block_of") + " " + material.getLocalizedName();
+        this.displayName = LocalizationUtils.format("gregtech.mutation.block_of", material.getLocalizedName());
         String oredictName = "block" + capitalize(material.getName());
 
-        for (ItemStack ore : OreDictionary.getOres(oredictName)) {
+        for (ItemStack ore : OreDictUnifier.getAllWithOreDictionaryName(oredictName)) {
             if (!ore.isEmpty()) {
                 Item oreItem = ore.getItem();
                 Block oreBlock = Block.getBlockFromItem(oreItem);
@@ -59,6 +58,6 @@ public class MaterialMutationCondition implements IMutationCondition {
     }
 
     public String getDescription() {
-        return Translator.translateToLocalFormatted("for.mutation.condition.resource", this.displayName);
+        return LocalizationUtils.format("for.mutation.condition.resource", this.displayName);
     }
 }
