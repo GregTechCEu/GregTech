@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -40,6 +41,7 @@ import com.cleanroommc.groovyscript.api.IGameObjectParser;
 import com.cleanroommc.groovyscript.api.Result;
 import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
 import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
+import com.cleanroommc.groovyscript.event.ScriptRunEvent;
 import com.cleanroommc.groovyscript.gameobjects.GameObjectHandler;
 import com.cleanroommc.groovyscript.helper.EnumHelper;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
@@ -81,6 +83,14 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRecipeEvent(RegistryEvent.Register<IRecipe> event) {
         GroovyScriptModule.loadMetaItemBracketHandler();
+    }
+
+    @SubscribeEvent
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
+    public static void afterScriptLoad(ScriptRunEvent.Post event) {
+        // Not Needed if JEI Module is enabled
+        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI))
+            GTRecipeOreInput.refreshStackCache();
     }
 
     public static boolean isCurrentlyRunning() {
