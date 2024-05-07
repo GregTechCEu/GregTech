@@ -268,7 +268,7 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
                 .parser(IGameObjectParser.wrapStringGetter(GroovyScriptModule::getMetaItem))
                 .completer((paramIndex, items) -> {
                     if (paramIndex != 0) return;
-                    for (var iterator = metaItems.object2ObjectEntrySet().fastIterator(); iterator.hasNext(); ) {
+                    for (var iterator = metaItems.object2ObjectEntrySet().fastIterator(); iterator.hasNext();) {
                         var entry = iterator.next();
                         String mod = entry.getKey();
                         for (String key : entry.getValue().keySet()) {

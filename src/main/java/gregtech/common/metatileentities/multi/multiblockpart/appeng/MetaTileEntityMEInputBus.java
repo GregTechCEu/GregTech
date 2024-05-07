@@ -55,7 +55,7 @@ import java.util.List;
 
 public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
                                       implements IMultiblockAbilityPart<IItemHandlerModifiable>,
-                                                 IGhostSlotConfigurable, IDataStickIntractable {
+                                      IGhostSlotConfigurable, IDataStickIntractable {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";

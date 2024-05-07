@@ -46,7 +46,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
-        implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
+                                        implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
 
     public final static String FLUID_BUFFER_TAG = "FluidTanks";
     public final static String WORKING_TAG = "WorkingEnabled";
