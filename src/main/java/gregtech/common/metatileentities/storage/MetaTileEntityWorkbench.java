@@ -169,13 +169,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
             var handler = neighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
             if (handler != null) handlers.add(handler);
         }
-        this.connectedInventory = new HandlerListWrapper(handlers);
+        this.connectedInventory = new ItemHandlerList(handlers);
         handlers.clear();
 
         handlers.add(this.internalInventory);
         handlers.add(this.toolInventory);
         handlers.add(this.connectedInventory);
-        return this.combinedInventory = new HandlerListWrapper(handlers);
+        return this.combinedInventory = new ItemHandlerList(handlers);
     }
 
     @Override
@@ -408,47 +408,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     public void setItemsCrafted(int itemsCrafted) {
         this.itemsCrafted = itemsCrafted;
-    }
-
-    private static class HandlerListWrapper extends ItemHandlerList {
-
-        public HandlerListWrapper(List<? extends IItemHandler> itemHandlerList) {
-            super(itemHandlerList);
-        }
-
-        @Override
-        public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            if (validSlot(slot))
-                return super.insertItem(slot, stack, simulate);
-
-            return stack;
-        }
-
-        @Override
-        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (validSlot(slot))
-                return super.extractItem(slot, amount, simulate);
-
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-            if (validSlot(slot))
-                super.setStackInSlot(slot, stack);
-        }
-
-        @Override
-        public @NotNull ItemStack getStackInSlot(int slot) {
-            if (validSlot(slot))
-                return super.getStackInSlot(slot);
-
-            return ItemStack.EMPTY;
-        }
-
-        private boolean validSlot(int slot) {
-            return slot >= 0 || slot < this.getSlots();
-        }
     }
 
     @Override

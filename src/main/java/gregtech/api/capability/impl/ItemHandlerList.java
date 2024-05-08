@@ -40,6 +40,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
 
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        if (invalidSlot(slot)) return;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
         if (itemHandler instanceof IItemHandlerModifiable modifiable) {
             modifiable.setStackInSlot(slot - baseIndexOffset.get(itemHandler), stack);
@@ -52,12 +53,14 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
+        if (invalidSlot(slot)) return ItemStack.EMPTY;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
         return itemHandler.getStackInSlot(slot - baseIndexOffset.get(itemHandler));
     }
 
     @Override
     public int getSlotLimit(int slot) {
+        if (invalidSlot(slot)) return 0;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
         return itemHandler.getSlotLimit(slot - baseIndexOffset.get(itemHandler));
     }
@@ -65,6 +68,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (invalidSlot(slot)) return stack;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
         return itemHandler.insertItem(slot - baseIndexOffset.get(itemHandler), stack, simulate);
     }
@@ -72,6 +76,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (invalidSlot(slot)) return ItemStack.EMPTY;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
         return itemHandler.extractItem(slot - baseIndexOffset.get(itemHandler), amount, simulate);
     }
@@ -79,5 +84,9 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     @NotNull
     public Collection<IItemHandler> getBackingHandlers() {
         return Collections.unmodifiableCollection(handlerBySlotIndex.values());
+    }
+
+    private boolean invalidSlot(int slot) {
+        return slot < 0 && slot >= this.getSlots();
     }
 }
