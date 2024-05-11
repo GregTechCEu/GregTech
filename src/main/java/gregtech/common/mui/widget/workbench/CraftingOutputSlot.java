@@ -1,6 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
@@ -8,11 +9,13 @@ import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
@@ -20,14 +23,20 @@ import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable {
 
@@ -87,26 +96,133 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         private final CraftingRecipeLogic recipeLogic;
         private final CraftingOutputMS slot;
 
+        private IItemHandlerModifiable shiftclickslots;
+
         public CraftingSlotSH(CraftingOutputMS slot) {
             this.slot = slot;
             this.recipeLogic = slot.recipeLogic;
         }
 
         @Override
+        @SuppressWarnings("OverrideOnly")
+        public void init(String key, GuiSyncManager syncManager) {
+            super.init(key, syncManager);
+            List<Slot> list = new ArrayList<>();
+            getSyncManager().getSlotGroups().stream()
+                    .sorted(Comparator.comparingInt(SlotGroup::getShiftClickPriority))
+                    .collect(Collectors.toList())
+                    .forEach(slotGroup -> list.addAll(slotGroup.getSlots()));
+            shiftclickslots = listToHandler(list);
+        }
+
+        @Override
         public void readOnServer(int id, PacketBuffer buf) {
             if (id == 2) {
                 var data = MouseData.readPacket(buf);
-                // todo handle shift transfer
-                if (data.shift) return;
 
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
                     recipeLogic.collectAvailableItems();
                     if (recipeLogic.performRecipe()) {
                         handleItemCraft(this.slot.getStack(), getSyncManager().getPlayer());
-                        syncToClient(5, this::syncCraftedStack);
+                        if (data.shift) {
+                            // todo handle shift transfer
+                            GTTransferUtils.insertItem(this.shiftclickslots, this.slot.getStack(), false);
+                        } else {
+                            syncToClient(5, this::syncCraftedStack);
+                        }
                     }
                 }
             }
+        }
+
+        private static IItemHandlerModifiable listToHandler(List<Slot> list) {
+            return new IItemHandlerModifiable() {
+
+                @Override
+                public void setStackInSlot(int slot, ItemStack stack) {
+                    list.get(slot).putStack(stack);
+                }
+
+                @Override
+                public int getSlots() {
+                    return list.size();
+                }
+
+                @Override
+                public ItemStack getStackInSlot(int slot) {
+                    return list.get(slot).getStack();
+                }
+
+                @Override
+                public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+                    if (stack.isEmpty())
+                        return ItemStack.EMPTY;
+
+                    var slot1 = list.get(slot);
+                    ItemStack existing = slot1.getStack();
+
+                    int limit = slot1.getItemStackLimit(stack);
+
+                    if (!existing.isEmpty()) {
+                        if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
+                            return stack;
+
+                        limit -= existing.getCount();
+                    }
+
+                    if (limit <= 0)
+                        return stack;
+
+                    boolean reachedLimit = stack.getCount() > limit;
+
+                    if (!simulate) {
+                        if (existing.isEmpty()) {
+                            ItemStack s = reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack;
+                            slot1.putStack(s);
+                        } else {
+                            existing.grow(reachedLimit ? limit : stack.getCount());
+                            slot1.putStack(existing);
+                        }
+                    }
+
+                    return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - limit) :
+                            ItemStack.EMPTY;
+                }
+
+                @Override
+                public ItemStack extractItem(int slot, int amount, boolean simulate) {
+                    if (amount == 0)
+                        return ItemStack.EMPTY;
+
+                    var slot1 = list.get(slot);
+                    ItemStack existing = slot1.getStack();
+
+                    if (existing.isEmpty())
+                        return ItemStack.EMPTY;
+
+                    int toExtract = Math.min(amount, existing.getMaxStackSize());
+
+                    if (existing.getCount() <= toExtract) {
+                        if (!simulate) {
+                            slot1.putStack(ItemStack.EMPTY);
+                        }
+                        return existing;
+                    } else {
+                        if (!simulate) {
+                            ItemStack s = ItemHandlerHelper.copyStackWithSize(existing,
+                                    existing.getCount() - toExtract);
+                            slot1.putStack(s);
+                        }
+
+                        return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+                    }
+                }
+
+                @Override
+                public int getSlotLimit(int slot) {
+                    return list.get(slot).getSlotStackLimit();
+                }
+            };
         }
 
         @Override
@@ -167,7 +283,6 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 // itemsCrafted += resultStack.getCount();
                 this.slot.notifyRecipePerformed(resultStack);
             }
-            // call method from recipe logic to sync to client
         }
     }
 
