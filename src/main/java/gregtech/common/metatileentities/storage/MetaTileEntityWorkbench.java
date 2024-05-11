@@ -268,7 +268,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public IWidget createToolInventory(GuiSyncManager syncManager) {
-        var toolSlots = new SlotGroup("tool_slots", 9, true);
+        var toolSlots = new SlotGroup("tool_slots", 9, -120, true);
         syncManager.registerSlotGroup(toolSlots);
 
         return SlotGroupWidget.builder()
@@ -281,7 +281,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public IWidget createInternalInventory(GuiSyncManager syncManager) {
-        var inventory = new SlotGroup("inventory", 9, true);
+        var inventory = new SlotGroup("internal_slots", 9, -100, true);
         syncManager.registerSlotGroup(inventory);
 
         return SlotGroupWidget.builder()
