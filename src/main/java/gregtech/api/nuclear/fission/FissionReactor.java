@@ -81,7 +81,7 @@ public class FissionReactor {
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
-    public double controlRodInsertion;
+    public double controlRodInsertion = 1;
     public int reactorDepth;
     public double reactorRadius;
 
@@ -123,7 +123,7 @@ public class FissionReactor {
 
     public double maxTemperature = Double.MAX_VALUE;
     // Pascals
-    public double maxPressure = 2000000;
+    public double maxPressure = 15000000;
     // In MW apparently
     public double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
     public static double zircaloyHydrogenReactionTemperature = 1500;
@@ -131,6 +131,7 @@ public class FissionReactor {
     public double surfaceArea;
     public static double thermalConductivity = 45; // 45 W/(m K), for steel
     public static double wallThickness = 0.1;
+    public static double coolantWallThickness = 0.06; // Ideal for a 1-m diameter steel pipe with the given maximum pressure
     public static double specificHeatCapacity = 420; // 420 J/(kg K), for steel
     public static double convectiveHeatTransferCoefficient = 10; // 10 W/(m^2 K), for slow-moving air
 
@@ -140,6 +141,7 @@ public class FissionReactor {
     public double fuelMass;
     public double structuralMass;
     public boolean needsOutput;
+    public boolean isOn = false;
 
     protected static double responseFunction(double target, double value, double criticalRate, double rate) {
         if (value <= 0) {
@@ -177,18 +179,22 @@ public class FissionReactor {
         return currentTemperature * expDecay + effectiveEnvTemperature * (1 - expDecay);
     }
 
-    public FissionReactor(int size, int depth, int controlRodInsertion) {
+    public FissionReactor(int size, int depth, double controlRodInsertion) {
         reactorLayout = new ReactorComponent[size][size];
         reactorDepth = depth;
         reactorRadius = (double) size / 2 + 1.5; // Includes the extra block plus the distance from the center of a
         // block to its edge
         // Maps (0, 15) -> (0.01, 1)
-        this.controlRodInsertion = Math.max(0.01, (double) controlRodInsertion / 15);
+        this.controlRodInsertion = Math.max(0.001, controlRodInsertion);
         fuelRods = new ArrayList<>();
         controlRods = new ArrayList<>();
         coolantChannels = new ArrayList<>();
         effectiveControlRods = new ArrayList<>();
         effectiveCoolantChannels = new ArrayList<>();
+        // 2pi * r^2 + 2pi * r * l
+        surfaceArea = (reactorRadius * reactorRadius) * Math.PI * 2 + reactorDepth * reactorRadius * Math.PI * 2;
+        structuralMass = reactorDepth * reactorRadius * reactorRadius * Math.PI *
+                300; // Assuming 300 kg/m^3 when it's basically empty, does not have to be precise
     }
 
     public boolean canCoolantBoil() {
@@ -385,7 +391,7 @@ public class FissionReactor {
 
         this.prepareInitialConditions();
 
-        kEff = 1. * k;
+        kEff = k;
     }
 
     /**
@@ -417,6 +423,12 @@ public class FissionReactor {
     }
 
     public void prepareInitialConditions() {
+        coolantBaseTemperature = 0;
+        coolantBoilingPointStandardPressure = 0;
+        avgAbsorption = 0;
+        avgModeration = 0;
+        avgPressure = 0;
+        coolantHeatOfVaporization = 0;
         for (CoolantChannel channel : effectiveCoolantChannels) {
 
             CoolantProperty prop = channel.getCoolant().getProperty(PropertyKey.COOLANT);
@@ -435,9 +447,7 @@ public class FissionReactor {
                     channel.getWeight();
         }
 
-        temperature = coolantBaseTemperature;
         if (coolantBaseTemperature == 0) {
-            temperature = envTemperature;
             coolantBaseTemperature = envTemperature;
         }
         if (avgPressure == 0) {
@@ -446,9 +456,7 @@ public class FissionReactor {
         if (coolantBoilingPointStandardPressure == 0) {
             coolantBoilingPointStandardPressure = airBoilingPoint;
         }
-        // 2pi * r^2 + 2pi * r * l
-        surfaceArea = (reactorRadius * reactorRadius) * Math.PI * 2 + reactorDepth * reactorRadius * Math.PI * 2;
-        needsOutput = false;
+        isOn = true;
     }
 
     /**
@@ -539,7 +547,8 @@ public class FissionReactor {
 
     public void updatePressure() {
         this.pressure = responseFunction(
-                this.temperature <= this.coolantBoilingPoint() ? this.exteriorPressure : 1000. * R * this.temperature,
+                this.temperature <= this.coolantBoilingPoint() || !this.isOn ? this.exteriorPressure :
+                        1000. * R * this.temperature,
                 this.pressure, 0.2, 1.);
     }
 
@@ -559,25 +568,34 @@ public class FissionReactor {
 */
 
     public void updatePower() {
-        this.kEff = this.k - powerDefectCoefficient * (this.power / this.maxPower) - controlRodFactor;
+        if (this.isOn) {
+            this.kEff = this.k + controlRodFactor;
+            // Since the power defect is a change in the reactivity rho (1 - 1 / kEff), we have to do this thing.
+            // (1 - 1 / k) = rho(k) => rho^-1(rho) = 1 / (1 - rho)
+            // rho^-1(rho(k) - defect) is thus 1 / (1 - (1 - 1/k - defect)) = 1 / (1/k + defect)
+            this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower));
+            this.kEff = Math.max(0, this.kEff);
+            this.prevPower = this.power;
+            this.prevFuelDepletion = this.fuelDepletion;
+            // maps (1, 1.1) to (1, 15); this value basically sets how quickly kEff operates
+            this.criticalRodInsertion = (int) Math.max(1, Math.min(15, (kEff - 1) * 150.));
 
-        this.prevPower = this.power;
-        this.prevFuelDepletion = this.fuelDepletion;
-        // maps (1, 1.1) to (0, 15)
-        this.criticalRodInsertion = (int) Math.min(15, Math.max(0, (kEff - 1) * 150.));
+            this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff + 0.0001), this.power,
+                    this.criticalRodInsertion, 1);
+            this.fuelDepletion = Math.min(this.fuelDepletion + 0.001 * this.power / this.maxPower, 1.);
 
-        this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff + 0.0001), this.power,
-                this.criticalRodInsertion, this.controlRodInsertion);
-        this.fuelDepletion = Math.min(this.fuelDepletion + 0.001 * this.power / this.maxPower, 1.);
-
-        this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.);
+            this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.);
+        } else {
+            this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff), this.power,
+                    controlRodInsertion, 1);
+        }
         this.decayProductsAmount *= 0.99;
     }
 
     public double realMaxPower() {
         if (this.moderatorTipped && (this.controlRodInsertion <= 9 && this.controlRodInsertion >= 7)) {
             return this.maxPower * 1.1;
-        } else if (this.controlRodInsertion > this.criticalRodInsertion || this.fuelDepletion >= 1.) {
+        } else if (this.controlRodInsertion > this.criticalRodInsertion || this.fuelDepletion >= 1. || !this.isOn) {
             return this.getDecayHeat();
         } else {
             return this.maxPower;
@@ -607,6 +625,8 @@ public class FissionReactor {
         tagCompound.setDouble("NeutronPoisonAmount", this.neutronPoisonAmount);
         tagCompound.setDouble("DecayProductsAmount", this.decayProductsAmount);
         tagCompound.setBoolean("NeedsOutput", this.needsOutput);
+        tagCompound.setDouble("ControlRodInsertion", this.controlRodInsertion);
+        tagCompound.setBoolean("IsOn", this.isOn);
 
         return tagCompound;
     }
@@ -621,10 +641,45 @@ public class FissionReactor {
         this.neutronPoisonAmount = tagCompound.getDouble("NeutronPoisonAmount");
         this.decayProductsAmount = tagCompound.getDouble("DecayProductsAmount");
         this.needsOutput = tagCompound.getBoolean("NeedsOutput");
+        this.controlRodInsertion = tagCompound.getDouble("ControlRodInsertion");
+        this.isOn = tagCompound.getBoolean("IsOn");
     }
 
-    public void updateControlRodInsertion(int controlRodInsertion) {
-        this.controlRodInsertion = Math.max(0.01, (double) controlRodInsertion / 15);
+    public void updateControlRodInsertion(double controlRodInsertion) {
+        this.controlRodInsertion = Math.max(0.001, controlRodInsertion);
         this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+    }
+
+    public void regulateControlRods() {
+        if (!this.isOn)
+            return;
+        if (temperature < maxTemperature * 3 / 4 && pressure < maxPressure * 3 / 4) {
+            if (kEff < 1) {
+                this.controlRodInsertion -= 1f / 255;
+                this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
+                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+            }
+        } else {
+            if (kEff > 1) {
+                this.controlRodInsertion += 1f / 255;
+                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
+                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+            }
+        }
+    }
+
+    public void turnOff() {
+        this.isOn = false;
+        this.maxPower = 0;
+        this.k = 0;
+        this.kEff = 0;
+        this.coolantMass = 0;
+        this.fuelMass = 0;
+        reactorLayout = new ReactorComponent[reactorLayout.length][reactorLayout.length];
+        fuelRods.clear();
+        controlRods.clear();
+        coolantChannels.clear();
+        effectiveControlRods.clear();
+        effectiveCoolantChannels.clear();
     }
 }
