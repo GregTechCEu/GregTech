@@ -136,6 +136,9 @@ public class FissionReactor {
     public static double convectiveHeatTransferCoefficient = 10; // 10 W/(m^2 K), for slow-moving air
 
     public static double powerDefectCoefficient = 0.016; // In units of reactivity
+    public static double decayProductRate = 0.997; // Based on the half-life of xenon-135, using real-life days as Minecraft days, and yes, I am using this for plutonium too
+    public static double poisonFraction = 0.063; // Xenon-135 yield from fission
+    public static double crossSectionRatio = 4; // The ratio between the cross section for typical fuels and xenon-135; very much changed here for balance purposes
 
     public double coolantMass;
     public double fuelMass;
@@ -480,7 +483,7 @@ public class FissionReactor {
                         / prop.getSadgeCoefficient();
                 // Explained by:
                 // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa
-                double heatFluxPerAreaAndTemp = 1 / (1 / prop.getCoolingFactor() + wallThickness / thermalConductivity);
+                double heatFluxPerAreaAndTemp = 1 / (1 / prop.getCoolingFactor() + coolantWallThickness / thermalConductivity);
                 double idealHeatFlux =
                         heatFluxPerAreaAndTemp * 4 * reactorDepth * (temperature - coolant.getFluid().getTemperature());
 
@@ -553,8 +556,8 @@ public class FissionReactor {
     }
 
     public void updateNeutronPoisoning() {
-        this.neutronPoisonAmount += Math.max(0., this.prevPower - this.power);
-        this.neutronPoisonAmount *= 0.99;
+        this.neutronPoisonAmount += this.decayProductsAmount * (1 - decayProductRate) * poisonFraction;
+        this.neutronPoisonAmount *= decayProductRate;
     }
 
     public double getDecayHeat() {
@@ -573,7 +576,7 @@ public class FissionReactor {
             // Since the power defect is a change in the reactivity rho (1 - 1 / kEff), we have to do this thing.
             // (1 - 1 / k) = rho(k) => rho^-1(rho) = 1 / (1 - rho)
             // rho^-1(rho(k) - defect) is thus 1 / (1 - (1 - 1/k - defect)) = 1 / (1/k + defect)
-            this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower));
+            this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower) + neutronPoisonAmount * crossSectionRatio);
             this.kEff = Math.max(0, this.kEff);
             this.prevPower = this.power;
             this.prevFuelDepletion = this.fuelDepletion;
@@ -589,7 +592,7 @@ public class FissionReactor {
             this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff), this.power,
                     controlRodInsertion, 1);
         }
-        this.decayProductsAmount *= 0.99;
+        this.decayProductsAmount *= decayProductRate;
     }
 
     public double realMaxPower() {
