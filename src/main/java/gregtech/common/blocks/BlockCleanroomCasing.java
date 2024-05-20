@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -38,16 +39,18 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
         return false;
     }
 
-    public enum CasingType implements IStringSerializable {
+    public enum CasingType implements IStringSerializable, ICleanroomFilter {
 
-        PLASCRETE("plascrete"),
-        FILTER_CASING("filter_casing"),
-        FILTER_CASING_STERILE("filter_casing_sterile");
+        PLASCRETE("plascrete", null),
+        FILTER_CASING("filter_casing", "cleanroom"),
+        FILTER_CASING_STERILE("filter_casing_sterile", "sterile_cleanroom");
 
         private final String name;
+        private final String cleanroomType;
 
-        CasingType(String name) {
+        CasingType(String name, String cleanroomType) {
             this.name = name;
+            this.cleanroomType = cleanroomType;
         }
 
         @NotNull
@@ -60,6 +63,16 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
         @Override
         public String toString() {
             return getName();
+        }
+
+        @Override
+        public String getCleanroomName() {
+            return cleanroomType;
+        }
+
+        @Override
+        public int getTier() {
+            return this.ordinal() - 1;
         }
     }
 
