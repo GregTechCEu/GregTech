@@ -503,6 +503,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                 cleanState));
                     }
                 })
+                .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
                 .addWorkingStatusLine()
                 .addProgressLine(getProgressPercent() / 100.0);
     }
@@ -585,7 +586,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation(
-                isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state"));
+                isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state", this.cleanAmount));
     }
 
     @Override
@@ -631,7 +632,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     public boolean drainEnergy(boolean simulate) {
-        long energyToDrain = isClean() ? (long) Math.min(4, Math.pow(4, getEnergyTier())) :
+        long energyToDrain = isClean() ? 4 :
                 GTValues.VA[getEnergyTier()];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {

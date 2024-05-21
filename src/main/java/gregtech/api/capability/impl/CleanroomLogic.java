@@ -48,6 +48,9 @@ public class CleanroomLogic {
         // all maintenance problems not fixed means the machine does not run
         if (hasMaintenance && ((IMaintenance) metaTileEntity).getNumMaintenanceProblems() > 5) return;
 
+        // if the energy tier is below min tier then do nothing
+        if (minEnergyTier > ((ICleanroomProvider) metaTileEntity).getEnergyTier()) return;
+
         // drain the energy
         if (consumeEnergy(true)) {
             consumeEnergy(false);
