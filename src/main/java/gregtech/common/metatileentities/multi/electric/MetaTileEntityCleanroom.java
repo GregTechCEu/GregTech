@@ -586,7 +586,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation(
-                isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state", this.cleanAmount));
+                isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state",
+                this.cleanAmount));
     }
 
     @Override
