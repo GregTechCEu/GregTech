@@ -1218,7 +1218,7 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("UF6", true);
 
-        EnrichedUraniumHexafluoride = new Material.Builder(413, gregtechId("enriched_uranium_hexafluoride"))
+        LowEnrichedUraniumHexafluoride = new Material.Builder(413, gregtechId("enriched_uranium_hexafluoride"))
                 .gas()
                 .color(0x4BF52A)
                 .flags(DISABLE_DECOMPOSITION)
@@ -1593,5 +1593,77 @@ public class FirstDegreeMaterials {
                 .components(Zirconium, 9, Tin, 1)
                 .blast(1700, GasTier.LOW)
                 .build();
+
+        LowEnrichedUraniumDioxide = new Material.Builder(457, gregtechId("low_enriched_uranium_dioxide"))
+                .gas()
+                .color(0x4BF52A) // TODO Color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium235, 1, Oxygen, 2)
+                .build()
+                .setFormula("UO2", true);
+
+        Zircon = new Material.Builder(458, gregtechId("zircon"))
+                .gas()
+                .color(0x4BF52A) // TODO Color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
+                .build();
+
+        ZirconiumDioxide = new Material.Builder(459, gregtechId("zirconium_dioxide"))
+                .gas()
+                .color(0x4BF52A) // TODO Color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Oxygen, 2)
+                .build();
+
+        ZirconiumTetrachloride = new Material.Builder(460, gregtechId("zirconium_tetrachloride"))
+                .gas()
+                .color(0x4BF52A) // TODO Color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Chlorine, 4)
+                .build();
+
+        HafniumDioxide = new Material.Builder(461, gregtechId("hafnium_dioxide"))
+                .gas()
+                .color(0x4BF52A) // TODO Color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hafnium, 1, Oxygen, 2)
+                .build();
+
+        HafniumTetrachloride = new Material.Builder(462, gregtechId("hafnium_tetrachloride"))
+                .gas()
+                .color(0x4BF52A) // TODO Color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hafnium, 1, Chlorine, 4)
+                .build();
+
+        Inconel = new Material.Builder(463, gregtechId("inconel"))
+                .ingot().fluid()
+                .color(0x7F8F75).iconSet(SHINY)
+                .flags(GENERATE_SPRING, DISABLE_DECOMPOSITION)
+                .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
+                .blastTemp(1610, GasTier.MID, GTValues.VA[EV], 200)
+                .build()
+                .setFormula("Ni50Cr20Fe20Ni5Mo3", true);
+
+        NButanol = new Material.Builder(464, gregtechId("n_butanol"))
+                .fluid()
+                .color(0x7F8F75) // TODO Color
+                .components(Carbon, 4, Hydrogen, 10, Oxygen, 1)
+                .build();
+
+        PhosphorusTrichloride = new Material.Builder(465, gregtechId("phosphorus_trichloride"))
+                .fluid()
+                .color(0x7F8F75) // TODO Color
+                .components(Phosphorus, 1, Chlorine, 3)
+                .build();
+
+        PhosphorylChloride = new Material.Builder(466, gregtechId("phosphoryl_chloride"))
+                .fluid()
+                .color(0x7F8F75) // TODO Color
+                .components(Phosphorus, 1, Oxygen, 1, Chlorine, 3)
+                .build();
+
+
     }
 }

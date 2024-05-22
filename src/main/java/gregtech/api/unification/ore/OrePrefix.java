@@ -332,6 +332,8 @@ public class OrePrefix {
             MaterialIconType.fuelRodDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
     public static final OrePrefix fuelRodHotDepleted = new OrePrefix("fuelRodHotDepleted", -1, null,
             MaterialIconType.fuelRodHotDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
+    public static final OrePrefix fuelPellet = new OrePrefix("fuelPellet", -1, null,
+            MaterialIconType.fuelPellet, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
 
     public static class Flags {
 

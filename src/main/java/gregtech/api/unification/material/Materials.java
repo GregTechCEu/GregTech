@@ -438,8 +438,9 @@ public class Materials {
     public static Material NitricOxide;
     public static Material Iron3Chloride;
     public static Material UraniumHexafluoride;
-    public static Material EnrichedUraniumHexafluoride;
+    public static Material LowEnrichedUraniumHexafluoride;
     public static Material DepletedUraniumHexafluoride;
+    public static Material LowEnrichedUraniumDioxide;
     public static Material NitrousOxide;
     public static Material EnderPearl;
     public static Material PotassiumFeldspar;
@@ -482,6 +483,16 @@ public class Materials {
     public static Material HighPressureSteam;
     public static Material Plutonium239Dioxide;
     public static Material Zircaloy;
+    public static Material Zircon;
+    public static Material ZirconiumDioxide;
+    public static Material ZirconiumTetrachloride;
+    public static Material HafniumDioxide;
+    public static Material HafniumTetrachloride;
+    public static Material Inconel;
+    public static Material NButanol;
+    public static Material PhosphorusTrichloride;
+    public static Material PhosphorylChloride;
+    public static Material TributylPhosphate;
 
     /**
      * Organic chemistry
@@ -698,6 +709,7 @@ public class Materials {
     public static Material UUMatter;
     public static Material PCBCoolant;
     public static Material Corium;
+    public static Material SpentUraniumFuelSolution;
 
     /**
      * Second Degree Compounds
@@ -759,6 +771,7 @@ public class Materials {
     public static Material HEU235;
     public static Material LowGradeMOX;
     public static Material HighGradeMOX;
+    public static Material DilutedNitricAcid;
 
     /**
      * Third Degree Materials

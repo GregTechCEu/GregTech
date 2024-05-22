@@ -539,5 +539,12 @@ public class SecondDegreeMaterials {
                 .fissionFuelProperties(2000, 1500, 35., 25., 2000., 25.)
                 .build()
                 .setFormula("(U,Pu)O2", true);
+
+        DilutedNitricAcid = new Material.Builder(2069, gregtechId("diluted_nitric_acid"))
+                .liquid(new FluidBuilder().attribute(FluidAttributes.ACID))
+                .color(0xC07820) // TODO color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(NitricAcid, 1, Water, 1)
+                .build();
     }
 }
