@@ -62,6 +62,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -106,6 +107,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     private IEnergyContainer energyContainer;
 
+    private ICleanroomFilter cleanroomFilter;
     private final CleanroomLogic cleanroomLogic;
     private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
 
@@ -131,14 +133,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
-        String type = context.get("FilterType");
-        this.cleanroomType = CleanroomType.getByName(type);
+        this.cleanroomFilter = context.get("FilterType");
+        this.cleanroomType = CleanroomType.getByName(cleanroomFilter.getCleanroomType().getName());
 
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
         this.cleanroomLogic.setMaxProgress(Math.max(100,
                 ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
+        this.cleanroomLogic.setMinEnergyTier(cleanroomFilter.getMinTier());
     }
 
     @Override
@@ -386,11 +389,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             IBlockState blockState = blockWorldState.getBlockState();
             if (GregTechAPI.CLEANROOM_FILTERS.containsKey(blockState)) {
                 ICleanroomFilter cleanroomFilter = GregTechAPI.CLEANROOM_FILTERS.get(blockState);
-                if (cleanroomFilter.getCleanroomName() == null) return false;
+                if (cleanroomFilter.getCleanroomType() == null) return false;
 
-                String currentFilter = blockWorldState.getMatchContext().getOrPut("FilterType",
-                        cleanroomFilter.getCleanroomName());
-                if (!currentFilter.equals(cleanroomFilter.getCleanroomName())) {
+                ICleanroomFilter currentFilter = blockWorldState.getMatchContext().getOrPut("FilterType",
+                        cleanroomFilter);
+                if (!currentFilter.getCleanroomType().equals(cleanroomFilter.getCleanroomType())) {
                     blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.filters"));
                     return false;
                 }
@@ -399,7 +402,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             }
             return false;
         }, () -> GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
-                .filter(entry -> entry.getValue().getCleanroomName() != null)
+                .filter(entry -> entry.getValue().getCleanroomType() != null)
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                 .map(entry -> new BlockInfo(entry.getKey(), null))
                 .toArray(BlockInfo[]::new))
@@ -501,6 +504,14 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                 TextFormatting.GRAY,
                                 "gregtech.multiblock.cleanroom.clean_status",
                                 cleanState));
+                    }
+                })
+                .addCustom(tl -> {
+                    if (!cleanroomLogic.isVoltageHighEnough()) {
+                        ITextComponent energyNeeded = new TextComponentString(
+                                GTValues.VNF[cleanroomFilter.getMinTier()]);
+                        tl.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                                "gregtech.multiblock.cleanroom.low_tier", energyNeeded));
                     }
                 })
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
@@ -756,7 +767,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                         .withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER));
 
         GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
-                .filter(entry -> entry.getValue().getCleanroomName() != null)
+                .filter(entry -> entry.getValue().getCleanroomType() != null)
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                 .forEach(entry -> shapeInfo.add(builder.where('F', entry.getKey()).build()));
 

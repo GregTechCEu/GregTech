@@ -19,7 +19,7 @@ public class CleanroomLogic {
     private int maxProgress = 0;
     private int progressTime = 0;
 
-    private final int minEnergyTier;
+    private int minEnergyTier;
 
     private final MetaTileEntity metaTileEntity;
     private final boolean hasMaintenance;
@@ -49,7 +49,7 @@ public class CleanroomLogic {
         if (hasMaintenance && ((IMaintenance) metaTileEntity).getNumMaintenanceProblems() > 5) return;
 
         // if the energy tier is below min tier then do nothing
-        if (minEnergyTier > ((ICleanroomProvider) metaTileEntity).getEnergyTier()) return;
+        if (!isVoltageHighEnough()) return;
 
         // drain the energy
         if (consumeEnergy(true)) {
@@ -131,6 +131,10 @@ public class CleanroomLogic {
         }
     }
 
+    public boolean isVoltageHighEnough() {
+        return minEnergyTier <= ((ICleanroomProvider) metaTileEntity).getEnergyTier();
+    }
+
     /**
      * @return whether working is enabled for the logic
      */
@@ -166,6 +170,10 @@ public class CleanroomLogic {
 
     protected int getTierDifference() {
         return ((ICleanroomProvider) metaTileEntity).getEnergyTier() - minEnergyTier;
+    }
+
+    public void setMinEnergyTier(int energyTier) {
+        this.minEnergyTier = energyTier;
     }
 
     /**

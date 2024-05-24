@@ -4831,6 +4831,7 @@ gregtech.multiblock.cleanroom.clean_status=Status: %s
 gregtech.multiblock.cleanroom.clean_state=Clean (%s%%)
 gregtech.multiblock.cleanroom.dirty_state=Contaminated (%s%%)
 gregtech.multiblock.cleanroom.warning_contaminated=Contaminated!
+gregtech.multiblock.cleanroom.low_tier=Energy tier too low, minimum of %s!
 
 gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
 gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.

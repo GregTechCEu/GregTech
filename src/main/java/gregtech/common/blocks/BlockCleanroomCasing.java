@@ -4,6 +4,7 @@ import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -42,13 +43,13 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
     public enum CasingType implements IStringSerializable, ICleanroomFilter {
 
         PLASCRETE("plascrete", null),
-        FILTER_CASING("filter_casing", "cleanroom"),
-        FILTER_CASING_STERILE("filter_casing_sterile", "sterile_cleanroom");
+        FILTER_CASING("filter_casing", CleanroomType.CLEANROOM),
+        FILTER_CASING_STERILE("filter_casing_sterile", CleanroomType.STERILE_CLEANROOM);
 
         private final String name;
-        private final String cleanroomType;
+        private final CleanroomType cleanroomType;
 
-        CasingType(String name, String cleanroomType) {
+        CasingType(String name, CleanroomType cleanroomType) {
             this.name = name;
             this.cleanroomType = cleanroomType;
         }
@@ -66,7 +67,7 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
         }
 
         @Override
-        public String getCleanroomName() {
+        public CleanroomType getCleanroomType() {
             return cleanroomType;
         }
 
