@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -35,10 +36,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.utils.FluidTankHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +56,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     private final boolean useAdvHatchLogic;
 
     protected int layerCount;
-    protected List<IFluidTank> orderedFluidOutputs;
+    protected List<IFluidHandler> orderedFluidOutputs;
 
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId) {
         this(metaTileEntityId, false);
@@ -125,7 +128,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
      * 
      * @return the fluid hatches of the multiblock, in order, with null entries for layers that do not have hatches.
      */
-    protected List<IFluidTank> determineOrderedFluidOutputs() {
+    protected List<IFluidHandler> determineOrderedFluidOutputs() {
         List<MetaTileEntityMultiblockPart> fluidExportParts = this.getMultiblockParts().stream()
                 .filter(iMultiblockPart -> iMultiblockPart instanceof IMultiblockAbilityPart<?>abilityPart &&
                         abilityPart.getAbility() == MultiblockAbility.EXPORT_FLUIDS &&
@@ -133,18 +136,22 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                 .map(iMultiblockPart -> (MetaTileEntityMultiblockPart) iMultiblockPart)
                 .collect(Collectors.toList());
         // the fluidExportParts should come sorted in smallest Y first, largest Y last.
-        List<IFluidTank> orderedTankList = new ObjectArrayList<>();
+        List<IFluidHandler> orderedHandlerList = new ObjectArrayList<>();
         int firstY = this.getPos().getY() + 1;
         int exportIndex = 0;
         for (int y = firstY; y < firstY + this.layerCount; y++) {
             if (fluidExportParts.size() <= exportIndex) break;
             MetaTileEntityMultiblockPart first = fluidExportParts.get(exportIndex);
             if (first.getPos().getY() == y) {
+                List<IFluidTank> hatchTanks = new ObjectArrayList<>();
                 // noinspection unchecked
-                ((IMultiblockAbilityPart<IFluidTank>) first).registerAbilities(orderedTankList);
+                ((IMultiblockAbilityPart<IFluidTank>) first).registerAbilities(hatchTanks);
+                if (hatchTanks.size() == 1)
+                    orderedHandlerList.add(FluidTankHandler.getTankFluidHandler(hatchTanks.get(0)));
+                else orderedHandlerList.add(new FluidTankList(false, hatchTanks));
                 exportIndex++;
             } else if (first.getPos().getY() > y) {
-                orderedTankList.add(null);
+                orderedHandlerList.add(null);
             } else {
                 GTLog.logger.error("The Distillation Tower at " + this.getPos() +
                         " had a fluid export hatch with an unexpected Y position.");
@@ -152,7 +159,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                 return new ObjectArrayList<>();
             }
         }
-        return orderedTankList;
+        return orderedHandlerList;
     }
 
     @Override
@@ -174,10 +181,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setExactLimit(1)))
                 .where('X', states(getCasingState())
-                        .or(metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.EXPORT_FLUIDS).stream()
-                                .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch) &&
-                                        !(mte instanceof MetaTileEntityMEOutputHatch))
-                                .toArray(MetaTileEntity[]::new)).setMaxLayerLimited(1, 1))
+                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxLayerLimited(1, 1))
                         .or(autoAbilities(true, false)))
                 .where('#', air())
                 .build();
@@ -224,11 +228,11 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
         protected boolean applyFluidToOutputs(List<FluidStack> fluids, boolean doFill) {
             boolean valid = true;
             for (int i = 0; i < fluids.size(); i++) {
-                IFluidTank tank = orderedFluidOutputs.get(i);
+                IFluidHandler handler = orderedFluidOutputs.get(i);
                 // void if no hatch is found on that fluid's layer
                 // this is considered trimming and thus ignores canVoid
-                if (tank == null) continue;
-                int accepted = tank.fill(fluids.get(i), doFill);
+                if (handler == null) continue;
+                int accepted = handler.fill(fluids.get(i), doFill);
                 if (accepted != fluids.get(i).amount) valid = false;
                 if (!doFill && !valid) break;
             }
