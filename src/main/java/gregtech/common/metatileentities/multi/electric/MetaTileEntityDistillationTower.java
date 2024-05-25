@@ -69,7 +69,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDistillationTower(metaTileEntityId);
+        return new MetaTileEntityDistillationTower(metaTileEntityId, this.useAdvHatchLogic);
     }
 
     @Override
