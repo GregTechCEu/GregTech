@@ -50,12 +50,21 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController {
 
+    private final boolean useAdvHatchLogic;
+
     protected int layerCount;
     protected List<IFluidTank> orderedFluidOutputs;
 
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId) {
+        this(metaTileEntityId, false);
+    }
+
+    public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId, boolean useAdvHatchLogic) {
         super(metaTileEntityId, RecipeMaps.DISTILLATION_RECIPES);
-        this.recipeMapWorkable = new DistillationTowerRecipeLogic(this);
+        this.useAdvHatchLogic = useAdvHatchLogic;
+        if (useAdvHatchLogic) {
+            this.recipeMapWorkable = new DistillationTowerRecipeLogic(this);
+        }
     }
 
     @Override
@@ -96,7 +105,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        if (this.structurePattern == null) return;
+        if (!useAdvHatchLogic || this.structurePattern == null) return;
         this.layerCount = determineLayerCount(this.structurePattern);
         this.orderedFluidOutputs = determineOrderedFluidOutputs();
     }
