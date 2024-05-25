@@ -159,6 +159,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     public void invalidateStructure() {
         super.invalidateStructure();
         this.layerCount = 0;
+        this.orderedFluidOutputs = null;
     }
 
     @Override
