@@ -478,7 +478,7 @@ public class Materials {
     public static Material NaquadriaSulfate;
     public static Material Pyrochlore;
     public static Material RTMAlloy;
-    public static Material EnrichedUraniumDioxide;
+    public static Material HighEnrichedUraniumDioxide;
     public static Material DepletedUraniumDioxide;
     public static Material HighPressureSteam;
     public static Material Plutonium239Dioxide;

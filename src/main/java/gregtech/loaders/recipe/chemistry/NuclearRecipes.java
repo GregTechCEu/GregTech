@@ -41,7 +41,7 @@ public class NuclearRecipes {
         // Uranium enrichment
 
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(dust, Uraninite, 1)
+                .input(dust, Uraninite, 3)
                 .fluidInputs(HydrofluoricAcid.getFluid(4000))
                 .fluidInputs(Fluorine.getFluid(2000))
                 .fluidOutputs(UraniumHexafluoride.getFluid(1000))
@@ -54,7 +54,25 @@ public class NuclearRecipes {
                 .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
                 .buildAndRegister();
 
-        // Fuel rod fabrication
+        GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
+                .fluidInputs(LowEnrichedUraniumDioxide.getFluid(1000))
+                .fluidOutputs(HighEnrichedUraniumDioxide.getFluid(100))
+                .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
+                .input(dust, Plutonium239Dioxide, 1)
+                .input(dust, Uraninite, 20)
+                .circuitMeta(1)
+                .output(dust, LowGradeMOX, 1)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
+                .input(dust, Plutonium239Dioxide, 1)
+                .input(dust, Uraninite, 5)
+                .circuitMeta(2)
+                .output(dust, HighGradeMOX, 1)
+                .buildAndRegister();
 
         // Zircaloy
         BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(2100)
@@ -116,7 +134,7 @@ public class NuclearRecipes {
                 .fluidInputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
                 .fluidInputs(Water.getFluid(2000))
                 .fluidInputs(Hydrogen.getFluid(2000))
-                .output(dust, EnrichedUraniumDioxide, 1)
+                .output(dust, LowEnrichedUraniumDioxide, 1)
                 .fluidOutputs(HydrofluoricAcid.getFluid(6000))
                 .buildAndRegister();
 
@@ -126,65 +144,6 @@ public class NuclearRecipes {
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .output(dust, DepletedUraniumDioxide, 3)
                 .fluidOutputs(HydrofluoricAcid.getFluid(6000))
-                .buildAndRegister();
-
-        FORMING_PRESS_RECIPES.recipeBuilder().duration(25).EUt(VA[EV])
-                .input(dust, LowEnrichedUraniumDioxide, 1)
-                .notConsumable(MetaItems.SHAPE_MOLD_CYLINDER)
-                .output(fuelPellet, LEU235)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
-                .input(plate, Zircaloy, 4)
-                .input(spring, Inconel, 1)
-                .input(round, StainlessSteel, 2)
-                .input(fuelPellet, LEU235, 16)
-                .output(fuelRod, LEU235)
-                .buildAndRegister();
-
-        // Natural Uranium Fuel
-
-/*        FORMING_PRESS_RECIPES.recipeBuilder().duration(25).EUt(VA[EV])
-                .input(dust, Uraninite, 1)
-                .notConsumable(MetaItems.SHAPE_MOLD_CYLINDER)
-                .output(FUEL_PELLET_NATURAL_URANIUM)
-                .buildAndRegister();*/
-
-/*        ASSEMBLER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
-                .input(plate, Zircaloy, 4)
-                .input(spring, Inconel, 1)
-                .input(round, StainlessSteel, 2)
-                .input(FUEL_PELLET_NATURAL_URANIUM, 16)
-                .output(FUEL_ROD_NATURAL_URANIUM)
-                .buildAndRegister();*/
-
-        // Fuel reprocessing
-
-        // Fuel rod preparation and spent fuel dissolution
-
-        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(24000)
-                .input(fuelRod, LEU235)
-                .output(fuelRodDepleted, LEU235)
-                .buildAndRegister();
-
-/*        CUTTER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(FUEL_ROD_DECAYED_URANIUM)
-                .output(FUEL_ROD_OPEN_URANIUM)
-                .buildAndRegister();*/
-
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
-                .input(fuelRodDepleted, LEU235)
-                .fluidInputs(NitricAcid.getFluid(64000))
-                .output(FUEL_ROD_CASING)
-                .output(round, StainlessSteel, 2)
-                .output(spring, Inconel, 1)
-                .fluidOutputs(SpentUraniumFuelSolution.getFluid(32000))
-                .fluidOutputs(NitrogenDioxide.getFluid(32000))
-                .buildAndRegister();
-
-        MACERATOR_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(fuelRodDepleted, Uranium235)
-                .output(dust, Zircaloy, 4)
                 .buildAndRegister();
 
         // Purex Mixture
@@ -218,95 +177,113 @@ public class NuclearRecipes {
 
         // U/Pu extraction
 
+        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(VA[LV])
+                .input(ring, Titanium, 2)
+                .input(stick, Titanium, 16)
+                .output(MetaItems.ANODE_BASKET)
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+                .notConsumable(MetaItems.ANODE_BASKET)
+                .notConsumable(Salt.getFluid(1000))
+                .input(fuelPelletDepleted, LEU235)
+                .output(dustSpentFuel, LEU235)
+                .output(dustBredFuel, LEU235)
+                .chancedOutput(dustFissionByproduct, LEU235, 266, 0)
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+                .notConsumable(MetaItems.ANODE_BASKET)
+                .notConsumable(Salt.getFluid(1000))
+                .input(fuelPelletDepleted, HEU235)
+                .output(dustSpentFuel, HEU235)
+                .output(dustBredFuel, HEU235)
+                .chancedOutput(dustFissionByproduct, LEU235, 266, 0)
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+                .notConsumable(MetaItems.ANODE_BASKET)
+                .notConsumable(Salt.getFluid(1000))
+                .input(fuelPelletDepleted, LowGradeMOX)
+                .output(dustSpentFuel, LowGradeMOX)
+                .output(dustBredFuel, LowGradeMOX)
+                .chancedOutput(dustFissionByproduct, LowGradeMOX, 266, 0)
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+                .notConsumable(MetaItems.ANODE_BASKET)
+                .notConsumable(Salt.getFluid(1000))
+                .input(fuelPelletDepleted, HighGradeMOX)
+                .output(dustSpentFuel, HighGradeMOX)
+                .output(dustBredFuel, HighGradeMOX)
+                .chancedOutput(dustFissionByproduct, HighGradeMOX, 266, 0)
+                .buildAndRegister();
+
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dustSpentFuel, LEU235, 1)
+                .fluidInputs(HydrofluoricAcid.getFluid(4000))
+                .fluidInputs(Fluorine.getFluid(2000))
+                .fluidOutputs(UraniumHexafluoride.getFluid(1000))
+                .fluidOutputs(Water.getFluid(2000))
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dustSpentFuel, HEU235, 1)
+                .fluidInputs(HydrofluoricAcid.getFluid(4000))
+                .fluidInputs(Fluorine.getFluid(2000))
+                .fluidOutputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
+                .fluidOutputs(Water.getFluid(2000))
+                .buildAndRegister();
+
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .fluidInputs(SpentUraniumFuelSolution.getFluid(2000))
-                .notConsumable(TributylPhosphate.getFluid(1000))
-                .fluidOutputs(TransplutoniumNitrateSolution.getFluid(2000))
-                .buildAndRegister();
-
-        // Uranyl ion stripping
-
-        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .fluidInputs(NitricAcid.getFluid(1000))
-                .fluidInputs(Water.getFluid(1000))
-                .fluidOutputs(DilutedNitricAcid.getFluid(2000))
+                .input(dustBredFuel, LEU235)
+                .chancedOutput(dust, Plutonium239, 47, 0)
+                .chancedOutput(dust, Plutonium240, 22, 0)
+                .chancedOutput(dust, Plutonium241, 14, 0)
+                .chancedOutput(dust, Neptunium239, 3, 0)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .fluidInputs(LoadedPurexMixture.getFluid(4000))
-                .fluidInputs(DilutedNitricAcid.getFluid(3600))
-                .fluidOutputs(PlutoniumPurexMixture.getFluid(4000))
-                .fluidOutputs(ReactorUranylNitrateSolution.getFluid(3600))
+                .input(dustBredFuel, HEU235)
+                .chancedOutput(dust, Plutonium239, 47, 0)
+                .chancedOutput(dust, Plutonium240, 22, 0)
+                .chancedOutput(dust, Plutonium241, 14, 0)
+                .chancedOutput(dust, Neptunium239, 3, 0)
                 .buildAndRegister();
-
-        // Ferrous sulfamate, for Pu stripping
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .fluidInputs(Ammonia.getFluid(2000))
-                .fluidInputs(CarbonDioxide.getFluid(1000))
-                .fluidOutputs(UreaSolution.getFluid(1000))
-                .buildAndRegister();
-
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
-                .fluidInputs(UreaSolution.getFluid(1000))
-                .fluidInputs(SulfurTrioxide.getFluid(1000))
-                .fluidInputs(SulfuricAcid.getFluid(1000))
-                .fluidOutputs(SulfamicAcidSolution.getFluid(1000))
-                .fluidOutputs(CarbonDioxide.getFluid(1000))
-                .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(dust, Iron, 1)
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidInputs(SulfamicAcidSolution.getFluid(1000))
-                .fluidOutputs(FerrousSulfamateSolution.getFluid(2000))
-                .buildAndRegister();
-
-        // Pu stripping/reduction
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .fluidInputs(PlutoniumPurexMixture.getFluid(4000)) // 0.075 mol Pu(NO3)4 * 2 TBP
-                .fluidInputs(FerrousSulfamateSolution.getFluid(150))
-                .fluidOutputs(PurexMixture.getFluid(4000))
-                .fluidOutputs(ReactorPlutoniumIIINitrateSolution.getFluid(150)) // 0.075 mol Pu(NO3)3, 0.075 mol FeNO3(NH2SO3)2
+                .input(dustFissionByproduct, LEU235)
+                .chancedOutput(dust, Zirconium, 1040, 0)
+                .chancedOutput(dust, Technetium, 1190, 0)
+                .chancedOutput(dust, Caesium, 1100, 0)
+                .chancedOutput(dust, Neodymium, 1110, 0)
+                .chancedOutput(dust, Ruthenium, 690, 0)
+                .chancedOutput(dust, Palladium, 370, 0)
+                .chancedFluidOutput(Xenon.getFluid(1000), 1270, 0)
                 .buildAndRegister();
 
-        // NH2SO3- + NO2- -> N2 + SO4 2- + H2O
-        // 6Pu 3+ + 2NO2- + 8H+ -> 6 Pu 4+ + N2 + 4H2O
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .fluidInputs(ReactorPlutoniumIIINitrateSolution.getFluid(150))
-                .fluidInputs(SodiumNitriteSolution.getFluid(175))
-                .fluidInputs(NitricAcid.getFluid(100))
-                .fluidOutputs(ReactorPlutoniumIVNitrateSolution.getFluid(525))
-                .fluidOutputs(Nitrogen.getFluid(175))
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dustFissionByproduct, LowGradeMOX)
+                .chancedOutput(dust, Zirconium, 740, 0)
+                .chancedOutput(dust, Technetium, 1140, 0)
+                .chancedOutput(dust, Caesium, 1140, 0)
+                .chancedOutput(dust, Neodymium, 980, 0)
+                .chancedOutput(dust, Ruthenium, 890, 0)
+                .chancedOutput(dust, Palladium, 730, 0)
+                .chancedFluidOutput(Xenon.getFluid(1000), 1330, 0)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(dust, Sugar, 24)
-                .fluidInputs(NitricAcid.getFluid(2000))
-                .outputs(dust, OxalicAcid, 24)
-                .fluidOutputs(Water.getFluid(4000))
-                .fluidOutputs(NitrogenDioxide.getFluid(2000))
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dustFissionByproduct, HighGradeMOX)
+                .chancedOutput(dust, Zirconium, 740, 0)
+                .chancedOutput(dust, Molybdenum, 900, 0)
+                .chancedOutput(dust, Caesium, 1140, 0)
+                .chancedOutput(dust, Neodymium, 980, 0)
+                .chancedOutput(dust, Ruthenium, 890, 0)
+                .chancedOutput(dust, Palladium, 730, 0)
+                .chancedFluidOutput(Xenon.getFluid(1000), 1330, 0)
                 .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(dust, OxalicAcid, 16)
-                .fluidInputs(ReactorPlutoniumIVNitrateSolution.getFluid(7000))
-                .output(dust, ReactorPlutoniumOxalate, 13)
-                .fluidOutputs(PlutoniumWaste.getFluid(7000))
-                .buildAndRegister();
-
-        DISTILLATION_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(570)
-                .input(dust, ReactorPlutoniumOxalate, 13)
-                .fluidInputs(Oxygen.getFluid(2000))
-                .output(dust, ReactorPlutoniumDioxide, 9)
-                .fluidOutputs(CarbonDioxide.getFluid(4000))
-                .buildAndRegister();
-
 
     }
 }

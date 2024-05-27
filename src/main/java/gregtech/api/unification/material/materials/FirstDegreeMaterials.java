@@ -1554,7 +1554,7 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV], 250))
                 .build();
 
-        EnrichedUraniumDioxide = new Material.Builder(452, gregtechId("enriched_uranium_dioxide"))
+        HighEnrichedUraniumDioxide = new Material.Builder(452, gregtechId("enriched_uranium_dioxide"))
                 .dust(3)
                 .color(0x232323).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
@@ -1595,7 +1595,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         LowEnrichedUraniumDioxide = new Material.Builder(457, gregtechId("low_enriched_uranium_dioxide"))
-                .gas()
+                .dust()
                 .color(0x4BF52A) // TODO Color
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Oxygen, 2)
@@ -1603,35 +1603,35 @@ public class FirstDegreeMaterials {
                 .setFormula("UO2", true);
 
         Zircon = new Material.Builder(458, gregtechId("zircon"))
-                .gas()
+                .ore()
                 .color(0x4BF52A) // TODO Color
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
                 .build();
 
         ZirconiumDioxide = new Material.Builder(459, gregtechId("zirconium_dioxide"))
-                .gas()
+                .dust()
                 .color(0x4BF52A) // TODO Color
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Oxygen, 2)
                 .build();
 
         ZirconiumTetrachloride = new Material.Builder(460, gregtechId("zirconium_tetrachloride"))
-                .gas()
+                .dust()
                 .color(0x4BF52A) // TODO Color
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Chlorine, 4)
                 .build();
 
         HafniumDioxide = new Material.Builder(461, gregtechId("hafnium_dioxide"))
-                .gas()
+                .dust()
                 .color(0x4BF52A) // TODO Color
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hafnium, 1, Oxygen, 2)
                 .build();
 
         HafniumTetrachloride = new Material.Builder(462, gregtechId("hafnium_tetrachloride"))
-                .gas()
+                .dust()
                 .color(0x4BF52A) // TODO Color
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hafnium, 1, Chlorine, 4)
