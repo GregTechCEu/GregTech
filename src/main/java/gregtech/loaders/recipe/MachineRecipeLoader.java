@@ -47,6 +47,7 @@ import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.BRONZE_BRICKS;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING;
 import static gregtech.common.blocks.MetaBlocks.METAL_CASING;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
@@ -860,6 +861,19 @@ public class MachineRecipeLoader {
                 .outputs(MetaBlocks.FISSION_CASING.getItemVariant(
                         BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL))
                 .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(48).duration(200)
+                .inputs(MetaBlocks.BOILER_CASING.getItemVariant(
+                        BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE))
+                .input(wireGtSingle, Nichrome, 4)
+                .outputs(MetaBlocks.NUCLEAR_CASING.getItemVariant(
+                        BlockNuclearCasing.NuclearCasingType.GAS_CENTRIFUGE_HEATER))
+                .buildAndRegister();
+/*
+
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(200)
+                        .input
+*/
 
         // If these recipes are changed, change the values in MaterialInfoLoader.java
 

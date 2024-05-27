@@ -2623,6 +2623,23 @@ tile.studs.green.name=Green Studs
 tile.studs.red.name=Red Studs
 tile.studs.black.name=Black Studs
 
+tile.panelling.white.name=White Panelling
+tile.panelling.orange.name=Orange Panelling
+tile.panelling.magenta.name=Magenta Panelling
+tile.panelling.light_blue.name=Light Blue Panelling
+tile.panelling.yellow.name=Yellow Panelling
+tile.panelling.lime.name=Lime Panelling
+tile.panelling.pink.name=Pink Panelling
+tile.panelling.gray.name=Gray Panelling
+tile.panelling.silver.name=Light Gray Panelling
+tile.panelling.cyan.name=Cyan Panelling
+tile.panelling.purple.name=Purple Panelling
+tile.panelling.blue.name=Blue Panelling
+tile.panelling.brown.name=Brown Panelling
+tile.panelling.green.name=Green Panelling
+tile.panelling.red.name=Red Panelling
+tile.panelling.black.name=Black Panelling
+
 # Lamps(ON)
 tile.gregtech_lamp.white.name=White Lamp
 tile.gregtech_lamp.orange.name=Orange Lamp
@@ -2764,6 +2781,11 @@ tile.battery_block.tooltip_empty=For filling space in your Power Substation
 # Long Distance Pipeline Blocks
 tile.long_distance_item_pipeline.name=Long Distance Item Pipe
 tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
+
+# Nuclear Blocks
+tile.nuclear_casing.spent_fuel_casing.name=Spent Fuel Casing
+tile.nuclear_casing.gas_centrigue_heater.name=Gas Centrifuge Heater
+tile.centrifuge_casing.gas_centrifuge_column.name=Gas Centrifuge Column
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech

@@ -1641,7 +1641,7 @@ public class FirstDegreeMaterials {
         Inconel = new Material.Builder(463, gregtechId("inconel"))
                 .ingot().fluid()
                 .color(0x7F8F75).iconSet(SHINY)
-                .flags(GENERATE_SPRING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_PLATE, GENERATE_SPRING, DISABLE_DECOMPOSITION)
                 .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
                 .blastTemp(1610, GasTier.MID, GTValues.VA[EV], 200)
                 .fluidPipeProperties(2010, 175, true, true, true, false)

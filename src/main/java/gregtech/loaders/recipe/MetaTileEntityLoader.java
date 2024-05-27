@@ -1167,8 +1167,8 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "spent_fuel_pool", MetaTileEntities.SPENT_FUEL_POOL.getStackForm(), "PFP",
                 "PCP", "PFP",
                 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LV),
-                'F', MetaBlocks.BOILER_CASING.getItemVariant(STEEL_PIPE),
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
+                'F', MetaBlocks.METAL_CASING.getItemVariant(STAINLESS_CLEAN),
+                'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel));
     }
 
     // Can only accept a subset of "Item" types:
