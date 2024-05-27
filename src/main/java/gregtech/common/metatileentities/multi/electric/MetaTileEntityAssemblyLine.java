@@ -444,19 +444,23 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
         protected List<List<ItemStack>> allItemPermutations() {
             List<List<ItemStack>> permutations = new ObjectArrayList<>();
-            permutations.add(new ObjectArrayList<>());
-            for (IItemHandlerModifiable bus : getAbilities(MultiblockAbility.IMPORT_ITEMS)) {
-                List<List<ItemStack>> newPermutations = new ObjectArrayList<>();
-                for (int i = 0; i < bus.getSlots(); i++) {
-                    ItemStack stack = bus.getStackInSlot(i);
-                    if (stack.isEmpty()) continue;
-                    for (var permutation : permutations) {
-                        List<ItemStack> newPermutation = new ObjectArrayList<>(permutation);
-                        newPermutation.add(stack);
-                        newPermutations.add(newPermutation);
+            if (ConfigHolder.machines.orderedAssembly) {
+                permutations.add(new ObjectArrayList<>());
+                for (IItemHandlerModifiable bus : getAbilities(MultiblockAbility.IMPORT_ITEMS)) {
+                    List<List<ItemStack>> newPermutations = new ObjectArrayList<>();
+                    for (int i = 0; i < bus.getSlots(); i++) {
+                        ItemStack stack = bus.getStackInSlot(i);
+                        if (stack.isEmpty()) continue;
+                        for (var permutation : permutations) {
+                            List<ItemStack> newPermutation = new ObjectArrayList<>(permutation);
+                            newPermutation.add(stack);
+                            newPermutations.add(newPermutation);
+                        }
                     }
+                    permutations = newPermutations;
                 }
-                permutations = newPermutations;
+            } else {
+                permutations.add(GTUtility.itemHandlerToList(getImportItems()));
             }
             return permutations;
         }
@@ -478,11 +482,10 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                     }
                     permutations = newPermutations;
                 }
-                return permutations;
             } else {
                 permutations.add(GTUtility.fluidHandlerToList(getInputTank()));
-                return permutations;
             }
+            return permutations;
         }
     }
 }
