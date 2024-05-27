@@ -55,8 +55,8 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
-                .fluidInputs(LowEnrichedUraniumDioxide.getFluid(1000))
-                .fluidOutputs(HighEnrichedUraniumDioxide.getFluid(100))
+                .fluidInputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
+                .fluidOutputs(HighEnrichedUraniumHexafluoride.getFluid(100))
                 .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
                 .buildAndRegister();
 

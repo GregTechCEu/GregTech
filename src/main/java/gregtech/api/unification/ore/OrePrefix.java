@@ -338,11 +338,11 @@ public class OrePrefix {
             MaterialIconType.fuelPelletDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
 
     public static final OrePrefix dustSpentFuel = new OrePrefix("dustSpentFuel", -1, null,
-            MaterialIconType.dustSpentFuel, 0, Conditions.hasToolProperty.and(Conditions.hasDustProperty));
+            MaterialIconType.dustSpentFuel, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
     public static final OrePrefix dustBredFuel = new OrePrefix("dustBredFuel", -1, null,
-            MaterialIconType.dustBredFuel, 0, Conditions.hasToolProperty.and(Conditions.hasDustProperty));
+            MaterialIconType.dustBredFuel, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
     public static final OrePrefix dustFissionByproduct = new OrePrefix("dustFissionByproduct", -1, null,
-            MaterialIconType.dustFissionByproduct, 0, Conditions.hasToolProperty.and(Conditions.hasDustProperty));
+            MaterialIconType.dustFissionByproduct, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL));
 
     public static class Flags {
 

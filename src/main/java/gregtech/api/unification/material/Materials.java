@@ -438,6 +438,7 @@ public class Materials {
     public static Material NitricOxide;
     public static Material Iron3Chloride;
     public static Material UraniumHexafluoride;
+    public static Material HighEnrichedUraniumHexafluoride;
     public static Material LowEnrichedUraniumHexafluoride;
     public static Material DepletedUraniumHexafluoride;
     public static Material LowEnrichedUraniumDioxide;
@@ -771,7 +772,6 @@ public class Materials {
     public static Material HEU235;
     public static Material LowGradeMOX;
     public static Material HighGradeMOX;
-    public static Material DilutedNitricAcid;
 
     /**
      * Third Degree Materials

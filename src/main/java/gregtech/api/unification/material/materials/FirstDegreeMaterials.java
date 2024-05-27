@@ -514,7 +514,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Salt = new Material.Builder(312, gregtechId("salt"))
-                .gem(1).ore(2, 1)
+                .gem(1).ore(2, 1).fluid()
                 .color(0xFAFAFA).iconSet(FINE)
                 .flags(NO_SMASHING)
                 .components(Sodium, 1, Chlorine, 1)
@@ -1664,6 +1664,18 @@ public class FirstDegreeMaterials {
                 .components(Phosphorus, 1, Oxygen, 1, Chlorine, 3)
                 .build();
 
+        HighEnrichedUraniumHexafluoride = new Material.Builder(467, gregtechId("high_enriched_uranium_hexafluoride"))
+                .gas()
+                .color(0x4BF52A) // TODO Color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium235, 1, Fluorine, 6)
+                .build()
+                .setFormula("UF6", true);
 
+        TributylPhosphate = new Material.Builder(468, gregtechId("tributyl_phosphate"))
+                .fluid()
+                .color(0x7F8F75) // TODO Color
+                .components(Carbon, 12, Hydrogen, 27, Oxygen, 4, Phosphorus, 1)
+                .build();
     }
 }
