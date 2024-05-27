@@ -33,6 +33,8 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMulti
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.core.sound.GTSoundEvents;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -59,6 +61,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -442,12 +445,12 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             } else return super.findRecipe(maxVoltage, inputs, fluidInputs);
         }
 
-        protected List<List<ItemStack>> allItemPermutations() {
-            List<List<ItemStack>> permutations = new ObjectArrayList<>();
+        protected Set<List<ItemStack>> allItemPermutations() {
+            Set<List<ItemStack>> permutations = new ObjectOpenHashSet<>();
             if (ConfigHolder.machines.orderedAssembly) {
                 permutations.add(new ObjectArrayList<>());
                 for (IItemHandlerModifiable bus : getAbilities(MultiblockAbility.IMPORT_ITEMS)) {
-                    List<List<ItemStack>> newPermutations = new ObjectArrayList<>();
+                    Set<List<ItemStack>> newPermutations = new ObjectOpenHashSet<>();
                     for (int i = 0; i < bus.getSlots(); i++) {
                         ItemStack stack = bus.getStackInSlot(i);
                         if (stack.isEmpty()) continue;
@@ -465,12 +468,12 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             return permutations;
         }
 
-        protected List<List<FluidStack>> allFluidPermutations() {
-            List<List<FluidStack>> permutations = new ObjectArrayList<>();
+        protected Set<List<FluidStack>> allFluidPermutations() {
+            Set<List<FluidStack>> permutations = new ObjectOpenHashSet<>();
             if (ConfigHolder.machines.orderedFluidAssembly) {
                 permutations.add(new ObjectArrayList<>());
                 for (IFluidHandler hatch : getOrderedFluidHatches()) {
-                    List<List<FluidStack>> newPermutations = new ObjectArrayList<>();
+                    Set<List<FluidStack>> newPermutations = new ObjectOpenHashSet<>();
                     for (var internalTank : hatch.getTankProperties()) {
                         FluidStack contents = internalTank.getContents();
                         if (contents == null) continue;
