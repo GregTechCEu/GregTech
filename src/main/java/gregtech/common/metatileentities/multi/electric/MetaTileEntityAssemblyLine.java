@@ -1,10 +1,13 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -26,8 +29,8 @@ import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.state.IBlockState;
@@ -39,7 +42,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -48,11 +53,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
+import com.cleanroommc.modularui.utils.FluidTankHandler;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -68,6 +76,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
+        this.recipeMapWorkable = new AssemblyLineRecipeLogic(this);
     }
 
     @Override
@@ -92,7 +101,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                         .or(abilities(MultiblockAbility.INPUT_ENERGY)
                                 .setMinGlobalLimited(1)
                                 .setMaxGlobalLimited(3)))
-                .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[GTValues.ULV]))
+                .where('I', abilities(MultiblockAbility.IMPORT_ITEMS))
                 .where('G', states(getGrateState()))
                 .where('A',
                         states(MetaBlocks.MULTIBLOCK_CASING
@@ -328,9 +337,13 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             if (itemInputInventory.size() < inputs.size()) return false;
 
             for (int i = 0; i < inputs.size(); i++) {
-                if (!inputs.get(i).acceptsStack(itemInputInventory.get(i).getStackInSlot(0))) {
-                    return false;
+                IItemHandlerModifiable inventory = itemInputInventory.get(i);
+                boolean oneSuccess = false;
+                for (int j = 0; j < inventory.getSlots(); j++) {
+                    oneSuccess = inputs.get(i).acceptsStack(itemInputInventory.get(i).getStackInSlot(j));
+                    if (oneSuccess) break;
                 }
+                if (!oneSuccess) return false;
             }
 
             // check ordered fluids
@@ -378,6 +391,99 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_items"));
         } else if (ConfigHolder.machines.orderedFluidAssembly) {
             tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_fluids"));
+        }
+    }
+
+    protected List<IFluidHandler> getOrderedFluidHatches() {
+        List<MetaTileEntityMultiblockPart> fluidExportParts = this.getMultiblockParts().stream()
+                .filter(iMultiblockPart -> iMultiblockPart instanceof IMultiblockAbilityPart<?>abilityPart &&
+                        abilityPart.getAbility() == MultiblockAbility.EXPORT_FLUIDS &&
+                        abilityPart instanceof MetaTileEntityMultiblockPart)
+                .map(iMultiblockPart -> (MetaTileEntityMultiblockPart) iMultiblockPart)
+                .collect(Collectors.toList());
+        List<IFluidHandler> orderedHandlerList = new ObjectArrayList<>();
+        for (MetaTileEntityMultiblockPart hatch : fluidExportParts) {
+            List<IFluidTank> hatchTanks = new ObjectArrayList<>();
+            // noinspection unchecked
+            ((IMultiblockAbilityPart<IFluidTank>) hatch).registerAbilities(hatchTanks);
+            if (hatchTanks.size() == 1)
+                orderedHandlerList.add(FluidTankHandler.getTankFluidHandler(hatchTanks.get(0)));
+            else orderedHandlerList.add(new FluidTankList(false, hatchTanks));
+        }
+        return orderedHandlerList;
+    }
+
+    protected class AssemblyLineRecipeLogic extends MultiblockRecipeLogic {
+
+        public AssemblyLineRecipeLogic(RecipeMapMultiblockController tileEntity) {
+            super(tileEntity);
+        }
+
+        @Override
+        protected @Nullable Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs,
+                                              IMultipleTankHandler fluidInputs) {
+            if (ConfigHolder.machines.advancedAssemblyRecipeSearch) {
+                for (var items : allItemPermutations()) {
+                    for (var fluids : allFluidPermutations()) {
+                        Recipe recipe = recipeMap.findRecipe(maxVoltage, items, fluids);
+                        if (recipe == null) continue;
+                        if (MetaTileEntityAssemblyLine.this.checkRecipe(recipe, false)) return recipe;
+                    }
+                }
+                return null;
+            } else return super.findRecipe(maxVoltage, inputs, fluidInputs);
+        }
+
+        protected List<List<ItemStack>> allItemPermutations() {
+            List<List<ItemStack>> list = new ObjectArrayList<>();
+            list.add(new ObjectArrayList<>());
+            return itemPermutationsRecursion(list, getAbilities(MultiblockAbility.IMPORT_ITEMS), 0);
+        }
+
+        protected List<List<ItemStack>> itemPermutationsRecursion(List<List<ItemStack>> permutations,
+                                                                  List<IItemHandlerModifiable> inputs, int index) {
+            if (index == inputs.size()) return permutations;
+            List<List<ItemStack>> newPermutations = new ObjectArrayList<>();
+            IItemHandlerModifiable bus = inputs.get(index);
+            for (int i = 0; i < bus.getSlots(); i++) {
+                ItemStack stack = bus.getStackInSlot(i);
+                if (stack.isEmpty()) continue;
+                for (var permutation : permutations) {
+                    List<ItemStack> newPermutation = new ObjectArrayList<>(permutation);
+                    newPermutation.add(stack);
+                    newPermutations.add(newPermutation);
+                }
+            }
+            permutations.addAll(newPermutations);
+            return itemPermutationsRecursion(permutations, inputs, index + 1);
+        }
+
+        protected List<List<FluidStack>> allFluidPermutations() {
+            List<List<FluidStack>> list = new ObjectArrayList<>();
+            if (ConfigHolder.machines.orderedFluidAssembly) {
+                list.add(new ObjectArrayList<>());
+                return fluidPermutationsRecursion(list, getOrderedFluidHatches(), 0);
+            } else {
+                list.add(GTUtility.fluidHandlerToList(getInputTank()));
+                return list;
+            }
+        }
+
+        protected List<List<FluidStack>> fluidPermutationsRecursion(List<List<FluidStack>> permutations,
+                                                                    List<IFluidHandler> inputs, int index) {
+            if (index == inputs.size()) return permutations;
+            List<List<FluidStack>> newPermutations = new ObjectArrayList<>();
+            for (var internalTank : inputs.get(index).getTankProperties()) {
+                FluidStack contents = internalTank.getContents();
+                if (contents == null) continue;
+                for (var permutation : permutations) {
+                    List<FluidStack> newPermutation = new ObjectArrayList<>(permutation);
+                    newPermutation.add(contents);
+                    newPermutations.add(newPermutation);
+                }
+            }
+            permutations.addAll(newPermutations);
+            return fluidPermutationsRecursion(permutations, inputs, index + 1);
         }
     }
 }
