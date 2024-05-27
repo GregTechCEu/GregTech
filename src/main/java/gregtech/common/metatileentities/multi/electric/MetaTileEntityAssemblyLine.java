@@ -423,14 +423,22 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         protected @Nullable Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs,
                                               IMultipleTankHandler fluidInputs) {
             if (ConfigHolder.machines.advancedAssemblyRecipeSearch) {
+                long startTime = System.currentTimeMillis();
+                Recipe returnable = null;
                 for (var items : allItemPermutations()) {
                     for (var fluids : allFluidPermutations()) {
                         Recipe recipe = recipeMap.findRecipe(maxVoltage, items, fluids);
                         if (recipe == null) continue;
-                        if (MetaTileEntityAssemblyLine.this.checkRecipe(recipe, false)) return recipe;
+                        if (MetaTileEntityAssemblyLine.this.checkRecipe(recipe, false)) {
+                            returnable = recipe;
+                            break;
+                        }
                     }
+                    if (returnable != null) break;
                 }
-                return null;
+                long endTime = System.currentTimeMillis();
+                if (endTime - startTime > 1000) ConfigHolder.machines.advancedAssemblyRecipeSearch = false;
+                return returnable;
             } else return super.findRecipe(maxVoltage, inputs, fluidInputs);
         }
 
