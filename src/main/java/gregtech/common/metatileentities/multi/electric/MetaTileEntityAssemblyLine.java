@@ -435,55 +435,46 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
 
         protected List<List<ItemStack>> allItemPermutations() {
-            List<List<ItemStack>> list = new ObjectArrayList<>();
-            list.add(new ObjectArrayList<>());
-            return itemPermutationsRecursion(list, getAbilities(MultiblockAbility.IMPORT_ITEMS), 0);
-        }
-
-        protected List<List<ItemStack>> itemPermutationsRecursion(List<List<ItemStack>> permutations,
-                                                                  List<IItemHandlerModifiable> inputs, int index) {
-            if (index == inputs.size()) return permutations;
-            List<List<ItemStack>> newPermutations = new ObjectArrayList<>();
-            IItemHandlerModifiable bus = inputs.get(index);
-            for (int i = 0; i < bus.getSlots(); i++) {
-                ItemStack stack = bus.getStackInSlot(i);
-                if (stack.isEmpty()) continue;
-                for (var permutation : permutations) {
-                    List<ItemStack> newPermutation = new ObjectArrayList<>(permutation);
-                    newPermutation.add(stack);
-                    newPermutations.add(newPermutation);
+            List<List<ItemStack>> permutations = new ObjectArrayList<>();
+            permutations.add(new ObjectArrayList<>());
+            for (IItemHandlerModifiable bus : getAbilities(MultiblockAbility.IMPORT_ITEMS)) {
+                List<List<ItemStack>> newPermutations = new ObjectArrayList<>();
+                for (int i = 0; i < bus.getSlots(); i++) {
+                    ItemStack stack = bus.getStackInSlot(i);
+                    if (stack.isEmpty()) continue;
+                    for (var permutation : permutations) {
+                        List<ItemStack> newPermutation = new ObjectArrayList<>(permutation);
+                        newPermutation.add(stack);
+                        newPermutations.add(newPermutation);
+                    }
                 }
+                permutations = newPermutations;
             }
-            permutations.addAll(newPermutations);
-            return itemPermutationsRecursion(permutations, inputs, index + 1);
+            return permutations;
         }
 
         protected List<List<FluidStack>> allFluidPermutations() {
-            List<List<FluidStack>> list = new ObjectArrayList<>();
+            List<List<FluidStack>> permutations = new ObjectArrayList<>();
             if (ConfigHolder.machines.orderedFluidAssembly) {
-                list.add(new ObjectArrayList<>());
-                return fluidPermutationsRecursion(list, getOrderedFluidHatches(), 0);
-            } else {
-                list.add(GTUtility.fluidHandlerToList(getInputTank()));
-                return list;
-            }
-        }
-
-        protected List<List<FluidStack>> fluidPermutationsRecursion(List<List<FluidStack>> permutations,
-                                                                    List<IFluidHandler> inputs, int index) {
-            if (index == inputs.size()) return permutations;
-            List<List<FluidStack>> newPermutations = new ObjectArrayList<>();
-            for (var internalTank : inputs.get(index).getTankProperties()) {
-                FluidStack contents = internalTank.getContents();
-                if (contents == null) continue;
-                for (var permutation : permutations) {
-                    List<FluidStack> newPermutation = new ObjectArrayList<>(permutation);
-                    newPermutation.add(contents);
-                    newPermutations.add(newPermutation);
+                permutations.add(new ObjectArrayList<>());
+                for (IFluidHandler hatch : getOrderedFluidHatches()) {
+                    List<List<FluidStack>> newPermutations = new ObjectArrayList<>();
+                    for (var internalTank : hatch.getTankProperties()) {
+                        FluidStack contents = internalTank.getContents();
+                        if (contents == null) continue;
+                        for (var permutation : permutations) {
+                            List<FluidStack> newPermutation = new ObjectArrayList<>(permutation);
+                            newPermutation.add(contents);
+                            newPermutations.add(newPermutation);
+                        }
+                    }
+                    permutations = newPermutations;
                 }
+                return permutations;
+            } else {
+                permutations.add(GTUtility.fluidHandlerToList(getInputTank()));
+                return permutations;
             }
-            permutations.addAll(newPermutations);
-            return fluidPermutationsRecursion(permutations, inputs, index + 1);
         }
     }
 }
