@@ -118,8 +118,8 @@ public final class GTStringUtils {
     /**
      * Returns a new String with the character at the given index replaced with the given character
      *
-     * @param str The original string whose character is to be replaced
-     * @param index The index of the character to be replaced
+     * @param str     The original string whose character is to be replaced
+     * @param index   The index of the character to be replaced
      * @param replace The character to replace the character at the given index
      * @return The new string with the character at the given index replaced with the given character
      */

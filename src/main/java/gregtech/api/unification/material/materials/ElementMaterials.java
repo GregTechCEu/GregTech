@@ -307,6 +307,7 @@ public class ElementMaterials {
 
         Hafnium = new Material.Builder(42, gregtechId("hafnium"))
                 .color(0x99999A).iconSet(SHINY)
+                .flags(GENERATE_LONG_ROD)
                 .element(Elements.Hf)
                 .build();
 
@@ -871,7 +872,7 @@ public class ElementMaterials {
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.U)
-                //.fissionFuelProperties(1600, 40, 1.2, 0.1, 0.1, 0.5)
+                // .fissionFuelProperties(1600, 40, 1.2, 0.1, 0.1, 0.5)
                 .build();
 
         Uranium235 = new Material.Builder(117, gregtechId("uranium_235"))

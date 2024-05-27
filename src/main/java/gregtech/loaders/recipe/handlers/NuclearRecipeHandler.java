@@ -4,16 +4,15 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.common.items.MetaItems.FUEL_ROD_CASING;
 
 public class NuclearRecipeHandler {
+
     public static void register() {
         OrePrefix.fuelRod.addProcessingHandler(PropertyKey.ORE, NuclearRecipeHandler::processFuelRod);
     }
@@ -29,14 +28,14 @@ public class NuclearRecipeHandler {
                 .output(dust, Zircaloy, 4)
                 .buildAndRegister();
 
-        VACUUM_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
+        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(400)
                 .input(fuelRodHotDepleted, material)
                 .output(fuelRodDepleted, material)
                 .buildAndRegister();
 
         CUTTER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
                 .input(fuelRodDepleted, material)
-                .output(FUEL_ROD_CASING)
+                .output(plate, Zircaloy, 4)
                 .output(fuelPelletDepleted, material, 16)
                 .buildAndRegister();
 
@@ -53,9 +52,5 @@ public class NuclearRecipeHandler {
                 .input(fuelPellet, material, 16)
                 .output(fuelRod, material)
                 .buildAndRegister();
-
-
-
     }
-
 }

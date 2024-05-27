@@ -1146,7 +1146,6 @@ public class MetaItem1 extends StandardMetaItem {
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);
 
-        FUEL_ROD_CASING = addItem(1005, "casing.fuel_rod");
-        ANODE_BASKET = addItem(1006, "basket.anode");
+        ANODE_BASKET = addItem(1005, "basket.anode");
     }
 }

@@ -26,7 +26,8 @@ public class CoolantProperty implements IMaterialProperty {
     private boolean accumulatesHydrogen = false;
 
     public CoolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor, double coolingFactor,
-                           double boilingPoint, double absorption, double pressure, double heatOfVaporization, double specificHeatCapacity) {
+                           double boilingPoint, double absorption, double pressure, double heatOfVaporization,
+                           double specificHeatCapacity) {
         this.hotCoolant = hotCoolant;
         this.hotHPCoolant = hotHPCoolant;
         this.moderatorFactor = moderatorFactor;
@@ -120,8 +121,11 @@ public class CoolantProperty implements IMaterialProperty {
     }
 
     /**
-     * Used to adjust the amount of heat needed to heat the coolant from the ideal thermodynamic conditions; this is really only for distilled water.
-     * @param sadgeCoefficient A divisor to the amount of heat needed to heat the coolant from the ideal thermodynamic conditions.
+     * Used to adjust the amount of heat needed to heat the coolant from the ideal thermodynamic conditions; this is
+     * really only for distilled water.
+     * 
+     * @param sadgeCoefficient A divisor to the amount of heat needed to heat the coolant from the ideal thermodynamic
+     *                         conditions.
      * @return The property itself.
      */
     public CoolantProperty setSadgeCoefficient(double sadgeCoefficient) {

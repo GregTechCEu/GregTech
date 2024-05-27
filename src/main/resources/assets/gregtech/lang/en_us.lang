@@ -2515,7 +2515,6 @@ metaitem.cover.digital.wireless.name=Wireless Digital Interface
 metaitem.coloured.leds.name=Coloured LEDs
 metaitem.display.name=Display
 
-metaitem.casing.fuel_rod.name=Fuel Rod Casing
 metaitem.basket.anode.name=Anode Basket
 
 tile.casing.ulv=ULV Machine Casing

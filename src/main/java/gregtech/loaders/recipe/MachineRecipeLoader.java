@@ -830,6 +830,37 @@ public class MachineRecipeLoader {
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(200).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(48).duration(280)
+                .input(plateDouble, Inconel)
+                .input(plate, Steel, 5)
+                .input(frameGt, Steel)
+                .outputs(MetaBlocks.FISSION_CASING.getItemVariant(
+                        BlockFissionCasing.FissionCasingType.REACTOR_VESSEL, ConfigHolder.recipes.casingsPerCraft))
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(48).duration(280)
+                .input(pipeLargeFluid, Inconel)
+                .input(frameGt, Steel)
+                .outputs(MetaBlocks.FISSION_CASING.getItemVariant(
+                        BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL))
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(48).duration(280)
+                .input(stick, Zircaloy, 6)
+                .input(ring, Zircaloy, 1)
+                .circuitMeta(1)
+                .outputs(MetaBlocks.FISSION_CASING.getItemVariant(
+                        BlockFissionCasing.FissionCasingType.FUEL_CHANNEL))
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(48).duration(280)
+                .input(stick, Zircaloy, 3)
+                .input(ring, Zircaloy, 1)
+                .circuitMeta(2)
+                .outputs(MetaBlocks.FISSION_CASING.getItemVariant(
+                        BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL))
+                .buildAndRegister();
+
         // If these recipes are changed, change the values in MaterialInfoLoader.java
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(25).EUt(16)

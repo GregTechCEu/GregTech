@@ -5,7 +5,6 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -34,7 +33,6 @@ import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextFormattingUtil;
@@ -46,7 +44,6 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityContr
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantImportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportHatch;
-
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
 
@@ -67,7 +64,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -237,7 +233,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                         if (fissionReactor.needsOutput) {
                             ((MetaTileEntityFuelRodImportHatch) fuelImport).getExportHatch(this.height - 1)
                                     .getExportItems().insertItem(0,
-                                            OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), false);
+                                            OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()),
+                                            false);
                         }
                         if (canWork) {
                             fuelImport.getStackHandler().extractItem(0, 1, false);
@@ -256,16 +253,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             if (this.fissionReactor.checkForMeltdown()) {
                 SoundManager.getInstance().startTileSound(GTSoundEvents.SUS_RECORD.getSoundName(), 1, this.getPos());
             }
-/*            if (this.fissionReactor.checkForMeltdown()) {
-                this.performMeltdownEffects();
-            }
-
-            if (this.fissionReactor.checkForExplosion()) {
-                this.performPrimaryExplosion();
-                if (this.fissionReactor.accumulatedHydrogen > 1) {
-                    this.performSecondaryExplosion(fissionReactor.accumulatedHydrogen);
-                }
-            }*/
+            /*
+             * if (this.fissionReactor.checkForMeltdown()) {
+             * this.performMeltdownEffects();
+             * }
+             * 
+             * if (this.fissionReactor.checkForExplosion()) {
+             * this.performPrimaryExplosion();
+             * if (this.fissionReactor.accumulatedHydrogen > 1) {
+             * this.performSecondaryExplosion(fissionReactor.accumulatedHydrogen);
+             * }
+             * }
+             */
         }
     }
 
@@ -346,7 +345,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     continue;
                 }
 
-                // The integer division is fine here, since we want an odd diameter (say, 5) to go to the middle value (2 in this case)
+                // The integer division is fine here, since we want an odd diameter (say, 5) to go to the middle value
+                // (2 in this case)
                 int outerI = i + (int) Math.signum(i - (diameter / 2));
 
                 if (Math.pow(outerI - Math.floor(this.diameter / 2.), 2) +
@@ -679,7 +679,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                             }
                         }
                     } else if (mte instanceof MetaTileEntityControlRodPort controlIn) {
-                        component = new ControlRod(100000, true, 1, 800);
+                        component = new ControlRod(100000, controlIn.hasModeratorTip(), 1, 800);
                     } else {
                         foundPort = false;
                     }

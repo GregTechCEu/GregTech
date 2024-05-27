@@ -413,6 +413,7 @@ public class MaterialFlagAddition {
          */
         DistilledWater.setProperty(PropertyKey.COOLANT,
                 new CoolantProperty(Steam, HighPressureSteam, 1., 50,
-                        373, 10., FissionReactor.standardPressure, 2260000, 4168).setSadgeCoefficient(1000).setAccumulatesHydrogen(true));
+                        373, 10., FissionReactor.standardPressure, 2260000, 4168).setSadgeCoefficient(1000)
+                                .setAccumulatesHydrogen(true));
     }
 }

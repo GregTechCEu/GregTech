@@ -7,7 +7,6 @@ import gregtech.api.nuclear.fission.components.ReactorComponent;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -131,14 +130,17 @@ public class FissionReactor {
     public double surfaceArea;
     public static double thermalConductivity = 45; // 45 W/(m K), for steel
     public static double wallThickness = 0.1;
-    public static double coolantWallThickness = 0.06; // Ideal for a 1-m diameter steel pipe with the given maximum pressure
+    public static double coolantWallThickness = 0.06; // Ideal for a 1-m diameter steel pipe with the given maximum
+                                                      // pressure
     public static double specificHeatCapacity = 420; // 420 J/(kg K), for steel
     public static double convectiveHeatTransferCoefficient = 10; // 10 W/(m^2 K), for slow-moving air
 
     public static double powerDefectCoefficient = 0.016; // In units of reactivity
-    public static double decayProductRate = 0.997; // Based on the half-life of xenon-135, using real-life days as Minecraft days, and yes, I am using this for plutonium too
+    public static double decayProductRate = 0.997; // Based on the half-life of xenon-135, using real-life days as
+                                                   // Minecraft days, and yes, I am using this for plutonium too
     public static double poisonFraction = 0.063; // Xenon-135 yield from fission
-    public static double crossSectionRatio = 4; // The ratio between the cross section for typical fuels and xenon-135; very much changed here for balance purposes
+    public static double crossSectionRatio = 4; // The ratio between the cross section for typical fuels and xenon-135;
+                                                // very much changed here for balance purposes
 
     public double coolantMass;
     public double fuelMass;
@@ -162,13 +164,15 @@ public class FissionReactor {
                                                  double heatAbsorbed) {
         currentTemperature = Math.max(0.1, currentTemperature);
         heatAbsorbed = Math.max(0.1, heatAbsorbed);
-/*
-        Simplifies what is the following:
-        heatTransferCoefficient = 1 / (1 / convectiveHeatTransferCoefficient + wallThickness / thermalConductivity);
-        (https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling#First-order_transient_response_of_lumped-capacitance_objects)
-        This assumes that we're extracting heat from the reactor through the wall into slowly moving air, removing the second convective heat.
-        timeConstant = heatTransferCoefficient * this.surfaceArea / specificHeatCapacity;
-*/
+        /*
+         * Simplifies what is the following:
+         * heatTransferCoefficient = 1 / (1 / convectiveHeatTransferCoefficient + wallThickness / thermalConductivity);
+         * (https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling#First-order_transient_response_of_lumped-
+         * capacitance_objects)
+         * This assumes that we're extracting heat from the reactor through the wall into slowly moving air, removing
+         * the second convective heat.
+         * timeConstant = heatTransferCoefficient * this.surfaceArea / specificHeatCapacity;
+         */
         double timeConstant = specificHeatCapacity *
                 (1 / convectiveHeatTransferCoefficient + wallThickness / thermalConductivity) / this.surfaceArea;
 
@@ -383,8 +387,8 @@ public class FissionReactor {
 
         double depthDiameterDifference = 0.5 * (reactorDepth - reactorRadius * 2) / reactorRadius;
         double sigmoid = 1 / (1 + Math.exp(-depthDiameterDifference));
-        double fuelRodFactor =
-                sigmoid * Math.pow(avgFuelRodDistance, -2) + (1 - sigmoid) * Math.pow(avgFuelRodDistance, -1);
+        double fuelRodFactor = sigmoid * Math.pow(avgFuelRodDistance, -2) +
+                (1 - sigmoid) * Math.pow(avgFuelRodDistance, -1);
 
         maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) * fuelRodFactor *
                 ConfigHolder.machines.nuclearPowerMultiplier;
@@ -479,13 +483,14 @@ public class FissionReactor {
                 CoolantProperty prop = coolant.getProperty(PropertyKey.COOLANT);
 
                 double heatRemovedPerLiter = prop.getSpecificHeatCapacity() *
-                        (prop.getHotHPCoolant().getFluid().getTemperature() - coolant.getFluid().getTemperature())
-                        / prop.getSadgeCoefficient();
+                        (prop.getHotHPCoolant().getFluid().getTemperature() - coolant.getFluid().getTemperature()) /
+                        prop.getSadgeCoefficient();
                 // Explained by:
                 // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa
-                double heatFluxPerAreaAndTemp = 1 / (1 / prop.getCoolingFactor() + coolantWallThickness / thermalConductivity);
-                double idealHeatFlux =
-                        heatFluxPerAreaAndTemp * 4 * reactorDepth * (temperature - coolant.getFluid().getTemperature());
+                double heatFluxPerAreaAndTemp = 1 /
+                        (1 / prop.getCoolingFactor() + coolantWallThickness / thermalConductivity);
+                double idealHeatFlux = heatFluxPerAreaAndTemp * 4 * reactorDepth *
+                        (temperature - coolant.getFluid().getTemperature());
 
                 double idealFluidUsed = idealHeatFlux / heatRemovedPerLiter;
 
@@ -564,11 +569,11 @@ public class FissionReactor {
         return this.neutronPoisonAmount * 0.05 + this.decayProductsAmount * 0.1;
     }
 
-/*
-    public double voidContribution() {
-        return this.temperature > this.coolantBoilingPoint() ? this.voidFactor() * this.maxPressure : 0.;
-    }
-*/
+    /*
+     * public double voidContribution() {
+     * return this.temperature > this.coolantBoilingPoint() ? this.voidFactor() * this.maxPressure : 0.;
+     * }
+     */
 
     public void updatePower() {
         if (this.isOn) {
@@ -576,7 +581,8 @@ public class FissionReactor {
             // Since the power defect is a change in the reactivity rho (1 - 1 / kEff), we have to do this thing.
             // (1 - 1 / k) = rho(k) => rho^-1(rho) = 1 / (1 - rho)
             // rho^-1(rho(k) - defect) is thus 1 / (1 - (1 - 1/k - defect)) = 1 / (1/k + defect)
-            this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower) + neutronPoisonAmount * crossSectionRatio);
+            this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower) +
+                    neutronPoisonAmount * crossSectionRatio);
             this.kEff = Math.max(0, this.kEff);
             this.prevPower = this.power;
             this.prevFuelDepletion = this.fuelDepletion;

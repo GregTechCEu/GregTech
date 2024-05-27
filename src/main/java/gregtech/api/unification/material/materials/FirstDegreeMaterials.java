@@ -1588,8 +1588,9 @@ public class FirstDegreeMaterials {
                 .setFormula("PuO2", true);
 
         Zircaloy = new Material.Builder(456, gregtechId("zircaloy"))
-                .dust()
+                .ingot()
                 .color(0x566570).iconSet(METALLIC)
+                .flags(GENERATE_RING)
                 .components(Zirconium, 9, Tin, 1)
                 .blast(1700, GasTier.LOW)
                 .build();
@@ -1643,6 +1644,7 @@ public class FirstDegreeMaterials {
                 .flags(GENERATE_SPRING, DISABLE_DECOMPOSITION)
                 .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
                 .blastTemp(1610, GasTier.MID, GTValues.VA[EV], 200)
+                .fluidPipeProperties(2010, 175, true, true, true, false)
                 .build()
                 .setFormula("Ni50Cr20Fe20Ni5Mo3", true);
 

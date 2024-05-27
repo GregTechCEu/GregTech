@@ -10,33 +10,33 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 public class NuclearRecipes {
 
     public static void init() {
-
         // Thorium Fuel
-/*
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(dust, Thorium, 1)
-                .fluidInputs(Fluorine.getFluid(4000))
-                .output(dust, ThoriumTetrafluoride, 5)
-                .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                .input(dust, Lithium, 1)
-                .fluidInputs(Fluorine.getFluid(1000))
-                .output(dust, LithiumFluoride, 2)
-                .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(dust, Beryllium, 1)
-                .fluidInputs(Fluorine.getFluid(2000))
-                .output(dust, BerylliumFluoride, 3)
-                .buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1000)
-                .input(dust, ThoriumTetrafluoride, 5)
-                .input(dust, LithiumFluoride, 4)
-                .input(dust, BerylliumFluoride, 3)
-                .fluidOutputs(ThoriumFLiBe.getFluid(4000))
-                .buildAndRegister();*/
+        /*
+         * CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+         * .input(dust, Thorium, 1)
+         * .fluidInputs(Fluorine.getFluid(4000))
+         * .output(dust, ThoriumTetrafluoride, 5)
+         * .buildAndRegister();
+         * 
+         * CHEMICAL_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
+         * .input(dust, Lithium, 1)
+         * .fluidInputs(Fluorine.getFluid(1000))
+         * .output(dust, LithiumFluoride, 2)
+         * .buildAndRegister();
+         * 
+         * CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+         * .input(dust, Beryllium, 1)
+         * .fluidInputs(Fluorine.getFluid(2000))
+         * .output(dust, BerylliumFluoride, 3)
+         * .buildAndRegister();
+         * 
+         * BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1000)
+         * .input(dust, ThoriumTetrafluoride, 5)
+         * .input(dust, LithiumFluoride, 4)
+         * .input(dust, BerylliumFluoride, 3)
+         * .fluidOutputs(ThoriumFLiBe.getFluid(4000))
+         * .buildAndRegister();
+         */
 
         // Uranium enrichment
 
@@ -219,7 +219,6 @@ public class NuclearRecipes {
                 .chancedOutput(dustFissionByproduct, HighGradeMOX, 266, 0)
                 .buildAndRegister();
 
-
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustSpentFuel, LEU235, 1)
                 .fluidInputs(HydrofluoricAcid.getFluid(4000))
@@ -284,6 +283,5 @@ public class NuclearRecipes {
                 .chancedOutput(dust, Palladium, 730, 0)
                 .chancedFluidOutput(Xenon.getFluid(1000), 1330, 0)
                 .buildAndRegister();
-
     }
 }
