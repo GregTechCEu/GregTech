@@ -34,14 +34,15 @@ public interface ICategoryOverride {
      *
      * @return an array of recipe maps the mte should be associated with in JEI. Can be empty, but not null.
      */
-    @NotNull RecipeMap<?>[] getJEIRecipeMapCategoryOverrides();
+    @NotNull
+    RecipeMap<?>[] getJEIRecipeMapCategoryOverrides();
 
     /**
      * Allows JEI category association using JEI's underlying API.
      * Use this to associate a multiblock with solid, burnable fuel recipes for example.
      *
      * @return an array of recipe category UUIDs that are valid for JEI's
-     * {@link mezz.jei.api.IModRegistry#addRecipeCatalyst(Object, String...)} method.
+     *         {@link mezz.jei.api.IModRegistry#addRecipeCatalyst(Object, String...)} method.
      */
     default @NotNull String[] getJEICategoryOverrides() {
         return new String[] {};

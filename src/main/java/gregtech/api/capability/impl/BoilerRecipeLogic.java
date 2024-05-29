@@ -12,8 +12,6 @@ import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 
-import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -359,6 +357,6 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
 
     @Override
     public @NotNull String[] getJEICategoryOverrides() {
-        return new String[] { VanillaRecipeCategoryUid.FUEL };
+        return new String[] { "minecraft.fuel" };
     }
 }
