@@ -4,11 +4,15 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.category.ICategoryOverride;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
+
+import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +32,7 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.BOILER_HEAT;
 import static gregtech.api.capability.GregtechDataCodes.BOILER_LAST_TICK_STEAM;
 
-public class BoilerRecipeLogic extends AbstractRecipeLogic {
+public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryOverride {
 
     private static final long STEAM_PER_WATER = 160;
 
@@ -346,5 +350,15 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             }
         }
         return drainedWater;
+    }
+
+    @Override
+    public @NotNull RecipeMap<?>[] getJEIRecipeMapCategoryOverrides() {
+        return new RecipeMap<?>[] { RecipeMaps.COMBUSTION_GENERATOR_FUELS, RecipeMaps.SEMI_FLUID_GENERATOR_FUELS };
+    }
+
+    @Override
+    public @NotNull String[] getJEICategoryOverrides() {
+        return new String[] { VanillaRecipeCategoryUid.FUEL };
     }
 }
