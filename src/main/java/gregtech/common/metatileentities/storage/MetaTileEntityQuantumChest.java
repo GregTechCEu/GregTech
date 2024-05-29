@@ -198,16 +198,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 ItemStack.areItemStackTagsEqual(first, second);
     }
 
-    protected void addDisplayInformation(List<ITextComponent> textList) {
-        textList.add(new TextComponentTranslation("gregtech.machine.quantum_chest.items_stored"));
-        textList.add(new TextComponentString(String.format("%,d", itemsStoredInside)));
-        ItemStack export = exportItems.getStackInSlot(0);
-        if (!export.isEmpty()) {
-            textList.add(
-                    new TextComponentString(TextFormattingUtil.formatStringWithNewlines(export.getDisplayName(), 14)));
-        }
-    }
-
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
@@ -400,31 +390,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                         .child(new ToggleButton()
                                 .value(isVoiding)))
                 .child(SlotGroupWidget.playerInventory().left(7));
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        Builder builder = ModularUI.defaultBuilder();
-        builder.image(7, 16, 81, 46, GuiTextures.DISPLAY);
-        builder.widget(new AdvancedTextWidget(11, 20, this::addDisplayInformation, 0xFFFFFF));
-        builder.label(6, 6, getMetaFullName())
-                .widget(new SlotWidget(importItems, 0, 90, 17, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .widget(new SlotWidget(exportItems, 0, 90, 44, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-                .widget(new ToggleButtonWidget(7, 64, 18, 18,
-                        GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                                .shouldUseBaseBackground()
-                                .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
-                .widget(new ToggleButtonWidget(25, 64, 18, 18,
-                        GuiTextures.BUTTON_ITEM_VOID, this::isVoiding, this::setVoiding)
-                                .setTooltipText("gregtech.gui.item_voiding.tooltip")
-                                .shouldUseBaseBackground())
-                .bindPlayerInventory(entityPlayer.inventory);
-
-        builder.widget(createConnectedGui(64));
-
-        return builder.build(getHolder(), entityPlayer);
     }
 
     public EnumFacing getOutputFacing() {
