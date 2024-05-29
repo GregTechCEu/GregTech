@@ -4,6 +4,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 
@@ -362,13 +363,21 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                         .size(81, 46)
                         .pos(7,16)
                         .child(IKey.lang("gregtech.machine.quantum_chest.items_stored")
+                                .alignment(Alignment.TopLeft)
+                                .color(Color.WHITE.main)
                                 .asWidget()
-                                .widthRel(1.0f))
-                        .child(IKey.dynamic(virtualItemStack::getDisplayName)
+                                .widthRel(1.0f)
+                                .marginBottom(2))
+                        .child(IKey.dynamic(() -> IKey.lang(virtualItemStack.getDisplayName()).get())
+                                .alignment(Alignment.TopLeft)
+                                .color(Color.WHITE.main)
                                 .asWidget()
                                 .setEnabledIf(textWidget -> !virtualItemStack.isEmpty())
-                                .widthRel(1.0f))
+                                .widthRel(1.0f)
+                                .height(20))
                         .child(IKey.dynamic(() -> String.valueOf(itemsStoredInside))
+                                .alignment(Alignment.TopLeft)
+                                .color(Color.WHITE.main)
                                 .asWidget()
                                 .widthRel(1.0f)))
                 .child(new ItemSlot()
