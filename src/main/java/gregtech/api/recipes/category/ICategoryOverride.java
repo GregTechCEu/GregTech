@@ -35,7 +35,9 @@ public interface ICategoryOverride {
      * @return an array of recipe maps the mte should be associated with in JEI. Can be empty, but not null.
      */
     @NotNull
-    RecipeMap<?>[] getJEIRecipeMapCategoryOverrides();
+    default RecipeMap<?>[] getJEIRecipeMapCategoryOverrides() {
+        return new RecipeMap[] {};
+    }
 
     /**
      * Allows JEI category association using JEI's underlying API.
