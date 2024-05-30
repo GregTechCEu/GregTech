@@ -206,6 +206,9 @@ public class GTGuiTextures {
             "textures/gui/widget/button_public_private.png",
             18, 36, 18, 18, true);
 
+    public static final UITexture FLUID_VOID_OVERLAY = fullImage("textures/gui/widget/button_fluid_void.png", true);
+    public static final UITexture ITEM_VOID_OVERLAY = fullImage("textures/gui/widget/button_item_void.png", true);
+
     // todo bronze/steel/primitive fluid slots?
 
     // SLOT OVERLAYS

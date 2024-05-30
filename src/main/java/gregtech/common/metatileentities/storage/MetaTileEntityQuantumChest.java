@@ -390,8 +390,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                         .coverChildren()
                         .pos(7, 63)
                         .child(new ToggleButton()
+                                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
                                 .value(autoOutput))
                         .child(new ToggleButton()
+                                .overlay(GTGuiTextures.ITEM_VOID_OVERLAY)
                                 .value(isVoiding)))
                 .child(SlotGroupWidget.playerInventory().left(7));
     }
