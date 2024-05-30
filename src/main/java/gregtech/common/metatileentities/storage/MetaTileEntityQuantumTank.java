@@ -1,5 +1,22 @@
 package gregtech.common.metatileentities.storage;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IFilter;
@@ -24,8 +41,11 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 
@@ -329,6 +349,73 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
+        var autoOutput = new BooleanSyncValue(this::isAutoOutputFluids, this::setAutoOutputFluids);
+        var isLocked = new BooleanSyncValue(this::isLocked, this::setLocked);
+        var isVoiding = new BooleanSyncValue(this::isVoiding, this::setVoiding);
+
+        return GTGuis.createPanel(this, 176, 166)
+                .padding(4)
+                .child(IKey.lang(getMetaFullName()).asWidget())
+                .child(new Column()
+                        .background(GTGuiTextures.DISPLAY)
+                        .padding(4)
+                        .size(81, 46)
+                        .pos(7,16)
+                        .child(IKey.lang("gregtech.gui.fluid_amount")
+                                .alignment(Alignment.TopLeft)
+                                .color(Color.WHITE.main)
+                                .asWidget()
+                                .widthRel(1.0f)
+                                .marginBottom(2))
+                        .child(IKey.dynamic(() -> {
+                                    var f = fluidTank.getFluid();
+                                    if (f == null) return "";
+                                    return IKey.lang(f.getUnlocalizedName()).get();
+                                })
+                                .alignment(Alignment.TopLeft)
+                                .color(Color.WHITE.main)
+                                .asWidget()
+                                .setEnabledIf(textWidget -> fluidTank.getFluid() != null)
+                                .widthRel(1.0f)
+                                .height(20))
+                        .child(IKey.dynamic(() -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L")
+                                .alignment(Alignment.TopLeft)
+                                .color(Color.WHITE.main)
+                                .asWidget()
+                                .widthRel(1.0f))
+                ).child(new ItemSlot()
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.IN_SLOT_OVERLAY)
+                        .pos(90, 17)
+                        .slot(SyncHandlers.itemSlot(importItems, 0)
+                                .accessibility(true, false)
+                                .singletonSlotGroup(200)))
+                .child(new ItemSlot()
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.OUT_SLOT_OVERLAY)
+                        .pos(90, 44)
+                        .slot(SyncHandlers.itemSlot(exportItems, 0)
+                                .accessibility(false, true)))
+                .child(new Row()
+                        .coverChildren()
+                        .pos(7, 63)
+                        .child(new ToggleButton()
+                                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                                .value(autoOutput))
+                        .child(new ToggleButton()
+                                .overlay(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
+                                .value(isLocked))
+                        .child(new ToggleButton()
+                                .overlay(GTGuiTextures.ITEM_VOID_OVERLAY)
+                                .value(isVoiding)))
+                .child(SlotGroupWidget.playerInventory().left(7));
     }
 
     @Override
