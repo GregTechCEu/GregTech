@@ -134,7 +134,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         super.formStructure(context);
         initializeAbilities();
         this.cleanroomFilter = context.get("FilterType");
-        this.cleanroomType = CleanroomType.getByName(cleanroomFilter.getCleanroomType().getName());
+        this.cleanroomType = cleanroomFilter.getCleanroomType();
 
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
