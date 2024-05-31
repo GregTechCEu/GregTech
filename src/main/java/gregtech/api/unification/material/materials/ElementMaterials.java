@@ -306,8 +306,10 @@ public class ElementMaterials {
                 .build();
 
         Hafnium = new Material.Builder(42, gregtechId("hafnium"))
+                .ingot()
                 .color(0x99999A).iconSet(SHINY)
                 .flags(GENERATE_LONG_ROD)
+                .blast(2227)
                 .element(Elements.Hf)
                 .build();
 
@@ -917,6 +919,7 @@ public class ElementMaterials {
                 .build();
 
         Zirconium = new Material.Builder(123, gregtechId("zirconium"))
+                .dust()
                 .color(0xC8FFFF).iconSet(METALLIC)
                 .element(Elements.Zr)
                 .build();

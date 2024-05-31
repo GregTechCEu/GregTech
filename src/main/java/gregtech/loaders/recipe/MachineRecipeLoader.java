@@ -869,11 +869,13 @@ public class MachineRecipeLoader {
                 .outputs(MetaBlocks.NUCLEAR_CASING.getItemVariant(
                         BlockNuclearCasing.NuclearCasingType.GAS_CENTRIFUGE_HEATER))
                 .buildAndRegister();
-/*
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(200)
-                        .input
-*/
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(64).duration(200)
+                .input(stick, BoronCarbide, 8)
+                .outputs(
+                        MetaBlocks.NUCLEAR_CASING.getItemVariant(BlockNuclearCasing.NuclearCasingType.SPENT_FUEL_CASING,
+                                ConfigHolder.recipes.casingsPerCraft))
+                .buildAndRegister();
 
         // If these recipes are changed, change the values in MaterialInfoLoader.java
 

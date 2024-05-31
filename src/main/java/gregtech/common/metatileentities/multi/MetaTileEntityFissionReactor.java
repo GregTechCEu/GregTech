@@ -1,5 +1,9 @@
 package gregtech.common.metatileentities.multi;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IFuelRodHandler;
@@ -25,6 +29,7 @@ import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -38,8 +43,10 @@ import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityControlRodPort;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantImportHatch;
@@ -50,6 +57,7 @@ import gregtech.core.sound.internal.SoundManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -63,9 +71,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 import java.util.function.Consumer;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase implements IDataInfoProvider {
@@ -257,7 +268,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
              * if (this.fissionReactor.checkForMeltdown()) {
              * this.performMeltdownEffects();
              * }
-             * 
+             *
              * if (this.fissionReactor.checkForExplosion()) {
              * this.performPrimaryExplosion();
              * if (this.fissionReactor.accumulatedHydrogen > 1) {
@@ -382,7 +393,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .aisle(topSlice)
                 .where('S', selfPredicate())
                 // A for interior components
-                .where('A', states(getFuelChannelState(), getControlRodChannelState(), getCoolantChannelState()))
+                .where('A',
+                        states(getFuelChannelState(), getControlRodChannelState(), getCoolantChannelState()).or(air()))
                 // I for the inputs on the top
                 .where('I',
                         states(getVesselState()).or(abilities(MultiblockAbility.IMPORT_COOLANT,
@@ -447,7 +459,20 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.ASSEMBLER_OVERLAY;
+        return Textures.FISSION_REACTOR_OVERLAY;
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(),
+                true);
+    }
+
+    @Override
+    public boolean isActive() {
+        return isStructureFormed() && lockingState == LockingState.LOCKED;
     }
 
     @Override
@@ -632,7 +657,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     private void lockAndPrepareReactor() {
         this.lockAll();
-        int radius = (int) this.diameter / 2;     // This is the floor of the radius, the actual radius is 0.5 blocks
+        int radius = this.diameter / 2;     // This is the floor of the radius, the actual radius is 0.5 blocks
         // larger
         BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite(), radius);
         radius--;
@@ -732,5 +757,105 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         MISSING_INPUTS,
         // The reactor can't lock because components are flagged as invalid
         INVALID_COMPONENT
+    }
+
+    public List<MultiblockShapeInfo> getMatchingShapes() {
+        List<MultiblockShapeInfo> shapes = new ArrayList<>();
+
+        for (int diameter = 5; diameter <= 15; diameter += 2) {
+            int radius = diameter % 2 == 0 ? (int) Math.floor(diameter / 2.f) :
+                    Math.round((diameter - 1) / 2.f);
+            StringBuilder interiorBuilder = new StringBuilder();
+
+            String[] interiorSlice = new String[diameter];
+            String[] controllerSlice;
+            String[] topSlice;
+            String[] bottomSlice;
+
+            // First loop over the matrix
+            for (int i = 0; i < diameter; i++) {
+                for (int j = 0; j < diameter; j++) {
+                    if (Math.pow(i - Math.floor(diameter / 2.), 2) +
+                            Math.pow(j - Math.floor(diameter / 2.), 2) <
+                            Math.pow(radius + 0.5f, 2)) {
+                        interiorBuilder.append('A');
+                    } else {
+                        interiorBuilder.append(' ');
+                    }
+                }
+
+                interiorSlice[i] = interiorBuilder.toString();
+                interiorBuilder.setLength(0);
+            }
+
+            // Second loop is to detect where to put walls, the controller and I/O, two fewer iterations are needed because
+            // two strings always represent two walls on opposite sides
+            for (int i = 0; i < diameter; i++) {
+                for (int j = 0; j < diameter; j++) {
+                    if (interiorSlice[i].charAt(j) != 'A') {
+                        continue;
+                    }
+
+                    // The integer division is fine here, since we want an odd diameter (say, 5) to go to the middle value
+                    // (2 in this case)
+                    int outerI = i + (int) Math.signum(i - (diameter / 2));
+
+                    if (Math.pow(outerI - Math.floor(diameter / 2.), 2) +
+                            Math.pow(j - Math.floor(diameter / 2.), 2) >
+                            Math.pow(radius + 0.5f, 2)) {
+                        interiorSlice[i] = GTStringUtils.replace(interiorSlice[i], j, 'V');
+                    }
+
+                    int outerJ = j + (int) Math.signum(j - (diameter / 2));
+                    if (Math.pow(i - Math.floor(diameter / 2.), 2) +
+                            Math.pow(outerJ - Math.floor(diameter / 2.), 2) >
+                            Math.pow(radius + 0.5f, 2)) {
+                        interiorSlice[i] = GTStringUtils.replace(interiorSlice[i], j, 'V');
+                    }
+                }
+            }
+
+            controllerSlice = interiorSlice.clone();
+            topSlice = interiorSlice.clone();
+            bottomSlice = interiorSlice.clone();
+            controllerSlice[0] = controllerSlice[0].substring(0, (int) Math.floor(diameter / 2.)) + "SM" +
+                    controllerSlice[0].substring((int) Math.floor(diameter / 2.) + 2);
+            for (int i = 0; i < diameter; i++) {
+                topSlice[i] = topSlice[i].replace('A', 'V');
+                bottomSlice[i] = bottomSlice[i].replace('A', 'V');
+            }
+            MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder(RelativeDirection.RIGHT,
+                    RelativeDirection.FRONT, RelativeDirection.UP);
+            builder.aisle(bottomSlice);
+            for (int i = 0; i < heightBottom - 1; i++) {
+                builder.aisle(interiorSlice);
+            }
+            builder.aisle(controllerSlice);
+            for (int i = 0; i < heightTop - 1; i++) {
+                builder.aisle(interiorSlice);
+            }
+            builder.aisle(topSlice);
+
+            shapes.add(builder.where('S', MetaTileEntities.FISSION_REACTOR, EnumFacing.NORTH)
+                    // A for interior components, which are air here
+                    .where('A', Blocks.AIR.getDefaultState())
+                    // Technically a duplicate, but this just makes things easier
+                    .where(' ', Blocks.AIR.getDefaultState())
+                    // I for the inputs on the top
+                    .where('V', this.getVesselState())
+                    // B for the vessel blocks on the walls
+                    .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
+                            this.getVesselState(), EnumFacing.NORTH).build());
+        }
+        return shapes;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.3"));
     }
 }

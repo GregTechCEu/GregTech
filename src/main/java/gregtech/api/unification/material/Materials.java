@@ -494,6 +494,8 @@ public class Materials {
     public static Material PhosphorusTrichloride;
     public static Material PhosphorylChloride;
     public static Material TributylPhosphate;
+    public static Material BoronTrioxide;
+    public static Material BoronCarbide;
 
     /**
      * Organic chemistry

@@ -1641,7 +1641,7 @@ public class FirstDegreeMaterials {
         Inconel = new Material.Builder(463, gregtechId("inconel"))
                 .ingot().fluid()
                 .color(0x7F8F75).iconSet(SHINY)
-                .flags(GENERATE_PLATE, GENERATE_SPRING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_DOUBLE_PLATE, GENERATE_SPRING, DISABLE_DECOMPOSITION)
                 .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
                 .blastTemp(1610, GasTier.MID, GTValues.VA[EV], 200)
                 .fluidPipeProperties(2010, 175, true, true, true, false)
@@ -1678,6 +1678,20 @@ public class FirstDegreeMaterials {
                 .fluid()
                 .color(0x7F8F75) // TODO Color
                 .components(Carbon, 12, Hydrogen, 27, Oxygen, 4, Phosphorus, 1)
+                .build();
+
+        BoronTrioxide = new Material.Builder(469, gregtechId("boron_trioxide"))
+                .dust()
+                .color(0x7F8F75) // TODO Color
+                .components(Boron, 2, Oxygen, 3)
+                .build();
+
+        BoronCarbide = new Material.Builder(470, gregtechId("boron_carbide"))
+                .ingot()
+                .flags(GENERATE_ROD, DISABLE_DECOMPOSITION)
+                .blast(2620)
+                .color(0x7F8F75) // TODO Color
+                .components(Boron, 4, Carbon, 1)
                 .build();
     }
 }

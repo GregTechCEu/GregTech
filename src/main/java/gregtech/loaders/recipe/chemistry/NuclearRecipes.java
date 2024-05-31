@@ -38,6 +38,21 @@ public class NuclearRecipes {
          * .buildAndRegister();
          */
 
+        // Boron carbide for spent fuel racks
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dust, Boron, 2)
+                .fluidInputs(Oxygen.getFluid(3000))
+                .output(dust, BoronTrioxide, 5)
+                        .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
+                .input(dust, BoronTrioxide, 2)
+                .input(dust, Carbon, 7)
+                .output(dust, BoronCarbide, 5)
+                .fluidOutputs(CarbonMonoxide.getFluid(6000))
+                .buildAndRegister();
+
         // Uranium enrichment
 
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
