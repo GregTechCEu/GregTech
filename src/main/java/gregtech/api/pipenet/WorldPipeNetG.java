@@ -56,7 +56,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     /**
      * @param isDirected   Determines whether this net needs directed graph handling.
      *                     Used to respect filter directions in the item net and fluid net, for example.
-     *                     If the graph is not directed, pipes should not support blocked connections.
+     *                     If the graph is not directed, pipes should not support blocked connections
+     *                     or unidirectional covers.
      * @param isSinglePath Determines whether this net allows only one source and one destination per group.
      *                     Allows for optimizations in path lookup and cache invalidation.
      */

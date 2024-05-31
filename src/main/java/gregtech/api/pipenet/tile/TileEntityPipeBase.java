@@ -576,7 +576,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (getWorld().isRemote || this.nbtLoad) return;
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (!isConnected(facing)) continue;
-            this.getPipeBlock().getWorldPipeNet(this.getPipeWorld()).predicateEdge(this.getPipePos(), facing);
+            this.getPipeBlock().getWorldPipeNet(this.getPipeWorld()).predicateUndirectedEdge(this.getPipePos(), facing);
         }
     }
 

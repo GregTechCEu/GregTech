@@ -39,7 +39,8 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
     /**
      * @param isDirected Determines whether this net needs directed graph handling.
      *                   Used to respect filter directions in the item net and fluid net, for example.
-     *                   If the graph is not directed, pipes should not support blocked connections.
+     *                   If the graph is not directed, pipes should not support blocked connections
+     *                   or unidirectional covers.
      */
     public WorldPipeFlowNetG(String name, boolean isDirected) {
         super(name, isDirected, false, isDirected ? new FlowDirected<>() : new FlowUndirected<>());
