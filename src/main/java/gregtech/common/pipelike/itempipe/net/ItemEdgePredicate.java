@@ -1,10 +1,7 @@
 package gregtech.common.pipelike.itempipe.net;
 
-import gregtech.api.pipenet.IShutteredEdgePredicate;
 import gregtech.api.pipenet.StandardEdgePredicate;
-
 import gregtech.common.covers.filter.BaseFilterContainer;
-
 import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.item.ItemStack;

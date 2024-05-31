@@ -2,7 +2,6 @@ package gregtech.api.pipenet;
 
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.BaseFilterContainer;
-import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -10,8 +9,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class StandardEdgePredicate<T extends StandardEdgePredicate<T>> extends AbstractEdgePredicate<T>
-        implements IShutteredEdgePredicate {
-
+                                           implements IShutteredEdgePredicate {
 
     protected static final IDirtyNotifiable DECOY = () -> {};
 

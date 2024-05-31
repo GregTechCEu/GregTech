@@ -9,12 +9,12 @@ import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.covers.*;
-import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverItemFilter;
 import gregtech.common.covers.CoverRoboticArm;
 import gregtech.common.covers.DistributionMode;
 import gregtech.common.covers.ItemFilterMode;
+import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.item.ItemStack;

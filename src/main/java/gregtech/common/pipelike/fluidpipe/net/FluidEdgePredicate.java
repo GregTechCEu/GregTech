@@ -1,15 +1,8 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.AbstractEdgePredicate;
-import gregtech.api.pipenet.IShutteredEdgePredicate;
 import gregtech.api.pipenet.StandardEdgePredicate;
-import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
-import gregtech.common.covers.filter.ItemFilterContainer;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.fluids.FluidStack;
 
