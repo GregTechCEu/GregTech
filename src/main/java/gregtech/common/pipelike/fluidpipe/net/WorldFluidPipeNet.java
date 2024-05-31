@@ -1,8 +1,17 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gregtech.api.cover.Cover;
+import gregtech.api.pipenet.AbstractEdgePredicate;
 import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.common.covers.CoverConveyor;
+import gregtech.common.covers.CoverFluidFilter;
+import gregtech.common.covers.CoverItemFilter;
+import gregtech.common.covers.CoverPump;
+import gregtech.common.covers.FluidFilterMode;
+import gregtech.common.covers.ItemFilterMode;
+import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 
@@ -33,6 +42,35 @@ public class WorldFluidPipeNet extends WorldPipeFlowNetG<FluidPipeProperties, Fl
     @Override
     protected Class<? extends IPipeTile<FluidPipeType, FluidPipeProperties>> getBasePipeClass() {
         return TileEntityFluidPipe.class;
+    }
+
+    @Override
+    protected AbstractEdgePredicate<?> getPredicate(Cover thisCover, Cover neighbourCover) {
+        FluidEdgePredicate predicate = new FluidEdgePredicate();
+        if (thisCover instanceof CoverFluidFilter filter &&
+                filter.getFilterMode() != FluidFilterMode.FILTER_FILL) {
+            predicate.setSourceFilter(filter.getFilterContainer());
+        }
+        if (neighbourCover instanceof CoverFluidFilter filter &&
+                filter.getFilterMode() != FluidFilterMode.FILTER_DRAIN) {
+            predicate.setTargetFilter(filter.getFilterContainer());
+        }
+        if (thisCover instanceof CoverPump pump) {
+            if (pump.getManualImportExportMode() == ManualImportExportMode.DISABLED) {
+                predicate.setShutteredSource(true);
+            } else if (pump.getManualImportExportMode() == ManualImportExportMode.FILTERED) {
+                predicate.setSourceFilter(pump.getFluidFilterContainer());
+            }
+        }
+        if (neighbourCover instanceof CoverPump pump) {
+            if (pump.getManualImportExportMode() == ManualImportExportMode.DISABLED) {
+                predicate.setShutteredTarget(true);
+            } else if (pump.getManualImportExportMode() == ManualImportExportMode.FILTERED) {
+                predicate.setTargetFilter(pump.getFluidFilterContainer());
+            }
+        }
+        // TODO should fluid regulators apply rate limits to edge predicates?
+        return shutterify(predicate, thisCover, neighbourCover);
     }
 
     @Override

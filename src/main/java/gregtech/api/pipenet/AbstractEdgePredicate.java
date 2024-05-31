@@ -27,7 +27,7 @@ public abstract class AbstractEdgePredicate<T extends AbstractEdgePredicate<T>>
     @NotNull
     protected abstract T createPredicate();
 
-    protected abstract String predicateType();
+    protected abstract String predicateName();
 
     public static AbstractEdgePredicate<?> newPredicate(String identifier) {
         AbstractEdgePredicate<?> predicate = PREDICATES.get(identifier);
@@ -50,7 +50,7 @@ public abstract class AbstractEdgePredicate<T extends AbstractEdgePredicate<T>>
 
     public static NBTTagCompound toNBT(AbstractEdgePredicate<?> predicate) {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("Type", predicate.predicateType());
+        tag.setString("Type", predicate.predicateName());
         tag.setTag("Data", predicate.serializeNBT());
         return tag;
     }

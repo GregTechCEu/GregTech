@@ -48,7 +48,7 @@ public class BasicEdgePredicate extends AbstractEdgePredicate<BasicEdgePredicate
     }
 
     @Override
-    protected String predicateType() {
+    protected String predicateName() {
         return "Basic";
     }
 }

@@ -11,6 +11,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
+import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -105,6 +106,10 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     public FluidFilterMode getFilterMode() {
         return filterMode;
+    }
+
+    public @NotNull BaseFilterContainer getFilterContainer() {
+        return this.fluidFilterContainer;
     }
 
     @SuppressWarnings("DataFlowIssue") // this cover always has a filter
