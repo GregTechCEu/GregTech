@@ -3,8 +3,10 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.pipenet.AbstractEdgePredicate;
 import gregtech.api.pipenet.IShutteredEdgePredicate;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.common.covers.filter.FilterTypeRegistry;
-import gregtech.common.covers.filter.ItemFilterWrapper;
+
+import gregtech.common.covers.filter.BaseFilterContainer;
+
+import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,8 +24,8 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
     protected boolean shutteredSource;
     protected boolean shutteredTarget;
 
-    ItemFilterWrapper sourceFilter = new ItemFilterWrapper(DECOY);
-    ItemFilterWrapper targetFilter = new ItemFilterWrapper(DECOY);
+    @NotNull BaseFilterContainer sourceFilter = new DecoyContainer();
+    @NotNull BaseFilterContainer targetFilter = new DecoyContainer();
 
     @Override
     public void setShutteredSource(boolean shutteredSource) {
@@ -35,11 +37,11 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
         this.shutteredTarget = shutteredTarget;
     }
 
-    public void setSourceFilter(ItemFilterWrapper sourceFilter) {
+    public void setSourceFilter(@NotNull BaseFilterContainer sourceFilter) {
         this.sourceFilter = sourceFilter;
     }
 
-    public void setTargetFilter(ItemFilterWrapper targetFilter) {
+    public void setTargetFilter(@NotNull BaseFilterContainer targetFilter) {
         this.targetFilter = targetFilter;
     }
 
@@ -47,7 +49,7 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
     public boolean test(Object o) {
         if (shutteredSource || shutteredTarget) return false;
         if (!(o instanceof ItemStack stack)) return false;
-        return sourceFilter.testItemStack(stack) && targetFilter.testItemStack(stack);
+        return sourceFilter.test(stack) && targetFilter.test(stack);
     }
 
     @Override
@@ -55,22 +57,13 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
         NBTTagCompound tag = new NBTTagCompound();
         if (shutteredSource) tag.setBoolean("ShutteredSource", true);
         if (shutteredTarget) tag.setBoolean("ShutteredTarget", true);
-        NBTTagCompound filterComponent;
         tag.setBoolean("SourceBlacklist", this.sourceFilter.isBlacklistFilter());
-        if (this.sourceFilter.getItemFilter() != null) {
-            filterComponent = new NBTTagCompound();
-            tag.setInteger("SourceFilterType",
-                    FilterTypeRegistry.getIdForItemFilter(this.sourceFilter.getItemFilter()));
-            this.sourceFilter.getItemFilter().writeToNBT(filterComponent);
-            tag.setTag("SourceFilter", filterComponent);
+        if (this.sourceFilter.getFilter() != null) {
+            tag.setTag("SourceFilter", this.sourceFilter.serializeNBT());
         }
         tag.setBoolean("TargetBlacklist", this.targetFilter.isBlacklistFilter());
-        if (this.targetFilter.getItemFilter() != null) {
-            filterComponent = new NBTTagCompound();
-            tag.setInteger("TargetFilterType",
-                    FilterTypeRegistry.getIdForItemFilter(this.targetFilter.getItemFilter()));
-            this.targetFilter.getItemFilter().writeToNBT(filterComponent);
-            tag.setTag("TargetFilter", filterComponent);
+        if (this.targetFilter.getFilter() != null) {
+            tag.setTag("TargetFilter", this.targetFilter.serializeNBT());
         }
         return tag;
     }
@@ -80,16 +73,10 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
         shutteredSource = nbt.getBoolean("ShutteredSource");
         shutteredTarget = nbt.getBoolean("ShutteredTarget");
         if (nbt.hasKey("SourceFilter")) {
-            this.sourceFilter
-                    .setItemFilter(FilterTypeRegistry.createItemFilterById(nbt.getInteger("SourceFilterType")));
-            this.sourceFilter.getItemFilter().readFromNBT(nbt.getCompoundTag("SourceFilter"));
-            this.sourceFilter.setBlacklistFilter(nbt.getBoolean("SourceBlacklist"));
+            this.sourceFilter.deserializeNBT(nbt.getCompoundTag("SourceFilter"));
         }
         if (nbt.hasKey("TargetFilter")) {
-            this.targetFilter
-                    .setItemFilter(FilterTypeRegistry.createItemFilterById(nbt.getInteger("TargetFilterType")));
-            this.targetFilter.getItemFilter().readFromNBT(nbt.getCompoundTag("TargetFilter"));
-            this.targetFilter.setBlacklistFilter(nbt.getBoolean("TargetBlacklist"));
+            this.targetFilter.deserializeNBT(nbt.getCompoundTag("TargetFilter"));
         }
     }
 
@@ -101,6 +88,23 @@ public class ItemEdgePredicate extends AbstractEdgePredicate<ItemEdgePredicate> 
     @Override
     protected String predicateType() {
         return "Item";
+    }
+
+    private static class DecoyContainer extends ItemFilterContainer {
+
+        protected DecoyContainer() {
+            super(DECOY);
+        }
+
+        @Override
+        protected boolean isItemValid(ItemStack stack) {
+            return false;
+        }
+
+        @Override
+        protected String getFilterName() {
+            return "INVALID";
+        }
     }
 
     private static class Decoy implements IDirtyNotifiable {

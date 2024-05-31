@@ -43,24 +43,24 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
         ItemEdgePredicate predicate = new ItemEdgePredicate();
         if (thisCover instanceof CoverItemFilter filter &&
                 filter.getFilterMode() != ItemFilterMode.FILTER_INSERT) {
-            predicate.setSourceFilter(filter.getItemFilter());
+            predicate.setSourceFilter(filter.getFilterContainer());
         }
         if (neighbourCover instanceof CoverItemFilter filter &&
                 filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
-            predicate.setTargetFilter(filter.getItemFilter());
+            predicate.setTargetFilter(filter.getFilterContainer());
         }
         if (thisCover instanceof CoverConveyor conveyor) {
             if (conveyor.getManualImportExportMode() == ManualImportExportMode.DISABLED) {
                 predicate.setShutteredSource(true);
             } else if (conveyor.getManualImportExportMode() == ManualImportExportMode.FILTERED) {
-                predicate.setSourceFilter(conveyor.getItemFilterContainer().getFilterWrapper());
+                predicate.setSourceFilter(conveyor.getItemFilterContainer());
             }
         }
         if (neighbourCover instanceof CoverConveyor conveyor) {
             if (conveyor.getManualImportExportMode() == ManualImportExportMode.DISABLED) {
                 predicate.setShutteredTarget(true);
             } else if (conveyor.getManualImportExportMode() == ManualImportExportMode.FILTERED) {
-                predicate.setTargetFilter(conveyor.getItemFilterContainer().getFilterWrapper());
+                predicate.setTargetFilter(conveyor.getItemFilterContainer());
             }
         }
         // TODO should robot arms apply rate limits to edge predicates?

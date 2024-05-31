@@ -9,9 +9,9 @@ import gregtech.api.pipenet.flow.FlowChannel;
 import gregtech.api.pipenet.flow.FlowChannelTicker;
 import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.CoverShutter;
-import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 
@@ -188,13 +188,13 @@ public class FluidChannel extends FlowChannel<FluidPipeType, FluidPipeProperties
                     return 0;
                 }
                 case FILTERED -> {
-                    if (!p.getFluidFilterContainer().testFluidStack(this.fluid)) return 0;
+                    if (!p.getFluidFilterContainer().test(this.fluid)) return 0;
                 }
             }
             return Math.min(transferMax, p.getTransferRate());
         }
-        if (cover instanceof FluidFilter f) {
-            return f.testFluid(this.fluid) ? transferMax : 0;
+        if (cover instanceof CoverFluidFilter f) {
+            return f.getFilter().testFluid(this.fluid) ? transferMax : 0;
         }
         if (cover instanceof CoverShutter) return 0;
         return transferMax;
