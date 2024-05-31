@@ -8,6 +8,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
+import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -39,6 +40,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTStringUtils;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -185,21 +187,28 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         };
     }
 
-    public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction) {
-        return this.isBlockEdge(world, pos, direction, 1);
-    }
-
     public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction, int steps) {
-        return world.getBlockState(pos.offset(direction, steps)).getBlock() != MetaBlocks.FISSION_CASING;
+        BlockPos test = pos.offset(direction, steps);
+
+        if (world.getBlockState(test).getBlock() == MetaBlocks.FISSION_CASING) {
+            return false;
+        }
+
+        MetaTileEntity potentialTile = GTUtility.getMetaTileEntity(world, test);
+        if (potentialTile == null) {
+            return true;
+        }
+
+        return potentialTile instanceof IFissionReactorHatch || potentialTile instanceof IMaintenanceHatch;
     }
 
     /**
-     * Uses the layer the controller is on to determine the diameter of the structure
+     * Uses the upper layer to determine the diameter of the structure
      */
-    public int findDiameter() {
+    public int findDiameter(int heightAbove) {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), this.getPos(), this.getFrontFacing().getOpposite(), i))
+            if (this.isBlockEdge(this.getWorld(), this.getPos().up(heightAbove), this.getFrontFacing().getOpposite(), i))
                 break;
             i++;
         }
@@ -319,7 +328,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
         this.height = heightTop + heightBottom + 1;
 
-        this.diameter = this.getWorld() != null ? Math.max(Math.min(this.findDiameter(), 15), 5) : 5;
+        this.diameter = this.getWorld() != null ? Math.max(Math.min(this.findDiameter(heightTop), 15), 5) : 5;
 
         int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) :
                 Math.round((this.diameter - 1) / 2.f);
@@ -661,6 +670,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         // larger
         BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite(), radius);
         radius--;
+        boolean foundFuel = false;
         for (int i = -radius; i <= radius; i++) {
             for (int j = -radius; j <= radius; j++) {
                 if (Math.pow(i, 2) + Math.pow(j, 2) > Math.pow(radius, 2) + radius)         // (radius + .5)^2 =
@@ -700,6 +710,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                 if (property != null) {
                                     component = new FuelRod(property.getMaxTemperature(), 1, property, 650, 3);
                                     fuelIn.setFuel(mat.material);
+                                    foundFuel = true;
                                 }
                             }
                         }
@@ -725,6 +736,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     }
                 }
             }
+        }
+        if (!foundFuel) {
+            this.unlockAll();
+            setLockingState(LockingState.MISSING_FUEL);
+            return;
         }
         fissionReactor.prepareThermalProperties();
         fissionReactor.computeGeometry();
@@ -755,6 +771,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         SHOULD_LOCK,
         // The reactor can't lock because it is missing inputs
         MISSING_INPUTS,
+        MISSING_FUEL,
         // The reactor can't lock because components are flagged as invalid
         INVALID_COMPONENT
     }

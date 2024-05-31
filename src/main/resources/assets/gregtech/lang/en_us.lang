@@ -5534,6 +5534,7 @@ gregtech.gui.fission.lock.locked=Reactor locked & active!
 gregtech.gui.fission.lock.unlocked=Reactor not active
 gregtech.gui.fission.lock.should_lock=Activating...
 gregtech.gui.fission.lock.missing_inputs=A hatch is blocked/empty!
+gregtech.gui.fission.lock.missing_fuel=There is no fuel!
 gregtech.gui.fission.lock.invalid_component=erm, what the flip? check your log file
 
 
