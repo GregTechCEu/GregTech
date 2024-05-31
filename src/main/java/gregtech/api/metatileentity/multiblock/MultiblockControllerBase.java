@@ -343,9 +343,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     abilityPart.registerAbilities(abilityInstancesList);
                 }
             }
-            parts.forEach(part -> part.addToMultiBlock(this));
             this.multiblockParts.addAll(parts);
             this.multiblockAbilities.putAll(abilities);
+            parts.forEach(part -> part.addToMultiBlock(this));
             this.structureFormed = true;
             writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(true));
             formStructure(context);

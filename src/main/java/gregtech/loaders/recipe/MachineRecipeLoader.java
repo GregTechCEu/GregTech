@@ -1405,6 +1405,16 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("data_module_nbt", TOOL_DATA_MODULE.getStackForm(),
                 TOOL_DATA_MODULE.getStackForm());
 
+        // Filters
+        ModHandler.addShapelessNBTClearingRecipe("clear_item_filter",
+                ITEM_FILTER.getStackForm(), ITEM_FILTER);
+        ModHandler.addShapelessNBTClearingRecipe("clear_fluid_filter",
+                FLUID_FILTER.getStackForm(), FLUID_FILTER);
+        ModHandler.addShapelessNBTClearingRecipe("clear_smart_filter",
+                SMART_FILTER.getStackForm(), SMART_FILTER);
+        ModHandler.addShapelessNBTClearingRecipe("clear_oredict_filter",
+                ORE_DICTIONARY_FILTER.getStackForm(), ORE_DICTIONARY_FILTER);
+
         // Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(),
                 SEMIFLUID_JETPACK.getStackForm());

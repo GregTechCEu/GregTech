@@ -191,12 +191,18 @@ public class WrappedItemStack implements IAEItemStack {
 
     @Override
     public boolean isSameType(IAEItemStack iaeItemStack) {
-        return false;
+        if (iaeItemStack == null) return false;
+        IAEItemStack aeStack = AEItemStack.fromItemStack(this.delegate);
+        if (aeStack == null) return false;
+        return aeStack.isSameType(iaeItemStack);
     }
 
     @Override
     public boolean isSameType(ItemStack itemStack) {
-        return false;
+        if (this.delegate.isEmpty()) return itemStack.isEmpty();
+        IAEItemStack aeStack = AEItemStack.fromItemStack(this.delegate);
+        if (aeStack == null) return false;
+        return aeStack.isSameType(itemStack);
     }
 
     @Override

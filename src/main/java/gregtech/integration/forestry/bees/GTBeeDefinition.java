@@ -18,7 +18,12 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.Optional;
 
 import appeng.core.Api;
-import forestry.api.apiculture.*;
+import forestry.api.apiculture.BeeManager;
+import forestry.api.apiculture.EnumBeeType;
+import forestry.api.apiculture.IAlleleBeeSpecies;
+import forestry.api.apiculture.IBee;
+import forestry.api.apiculture.IBeeGenome;
+import forestry.api.apiculture.IBeeMutationBuilder;
 import forestry.api.core.EnumHumidity;
 import forestry.api.core.EnumTemperature;
 import forestry.api.genetics.IAllele;
@@ -1206,7 +1211,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
         String name = "for.bees.species." + lowercaseName;
 
         this.branch = branch;
-        this.species = new GTAlleleBeeSpecies(GTValues.MODID, uid, name, "GregTech", description, dominant,
+        this.species = new GTAlleleBeeSpecies(GTValues.MODID, uid, name, GTValues.MOD_NAME, description, dominant,
                 branch.getBranch(), binomial, primary, secondary);
         this.generationCondition = generationCondition;
     }

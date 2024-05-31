@@ -42,7 +42,7 @@ public class ComputationRecipeBuilder extends RecipeBuilder<ComputationRecipeBui
 
     public ComputationRecipeBuilder CWUt(int cwut) {
         if (cwut < 0) {
-            GTLog.logger.error("CWU/t cannot be less than 0", new IllegalArgumentException());
+            GTLog.logger.error("CWU/t cannot be less than 0", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(ComputationProperty.getInstance(), cwut);
@@ -54,7 +54,7 @@ public class ComputationRecipeBuilder extends RecipeBuilder<ComputationRecipeBui
      */
     public ComputationRecipeBuilder totalCWU(int totalCWU) {
         if (totalCWU < 0) {
-            GTLog.logger.error("Total CWU cannot be less than 0", new IllegalArgumentException());
+            GTLog.logger.error("Total CWU cannot be less than 0", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(TotalComputationProperty.getInstance(), totalCWU);

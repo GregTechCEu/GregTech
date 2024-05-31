@@ -404,7 +404,7 @@ public class ConfigHolder {
 
         @Config.Comment({
                 "Whether or not to enable Emissive Textures for Electric Blast Furnace Coils when the multiblock is working.",
-                "Default: false" })
+                "Default: true" })
         public boolean coilsActiveEmissiveTextures = true;
 
         @Config.Comment({ "Whether or not sounds should be played when using tools outside of crafting.",
@@ -455,6 +455,10 @@ public class ConfigHolder {
 
         @Config.Comment({ "Prevent optical and laser cables from animating when active.", "Default: false" })
         public boolean preventAnimatedCables = false;
+
+        @Config.Comment({ "Enable the fancy rendering for Super/Quantum Chests/Tanks.",
+                "Default: true" })
+        public boolean enableFancyChestRender = true;
 
         public static class GuiConfig {
 

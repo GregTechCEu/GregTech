@@ -49,7 +49,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     @ZenMethod
     public ImplosionRecipeBuilder explosivesAmount(int explosivesAmount) {
         if (1 > explosivesAmount || explosivesAmount > 64) {
-            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new IllegalArgumentException());
+            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(ImplosionExplosiveProperty.getInstance(), new ItemStack(Blocks.TNT, explosivesAmount));
@@ -59,7 +59,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     @ZenMethod
     public ImplosionRecipeBuilder explosivesType(ItemStack explosivesType) {
         if (1 > explosivesType.getCount() || explosivesType.getCount() > 64) {
-            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new IllegalArgumentException());
+            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(ImplosionExplosiveProperty.getInstance(), explosivesType);

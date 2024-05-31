@@ -6,7 +6,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.util.Position;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 
 import net.minecraft.network.PacketBuffer;
 

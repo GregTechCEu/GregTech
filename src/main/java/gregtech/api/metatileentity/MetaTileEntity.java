@@ -6,6 +6,7 @@ import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.FluidHandlerProxy;
@@ -35,6 +36,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
+import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
@@ -487,6 +489,12 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                 CuboidRayTraceResult hitResult) {
         ItemStack heldStack = playerIn.getHeldItem(hand);
+        if (this instanceof IDataStickIntractable dsi) {
+            if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) && dsi.onDataStickRightClick(playerIn, heldStack)) {
+                return true;
+            }
+        }
+
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 if (usesMui2()) {
@@ -642,7 +650,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return true;
     }
 
-    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {}
+    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (this instanceof IDataStickIntractable dsi) {
+            ItemStack stack = player.getHeldItemMainhand();
+            if (MetaItems.TOOL_DATA_STICK.isItemEqual(stack)) {
+                dsi.onDataStickLeftClick(player, stack);
+            }
+        }
+    }
 
     /**
      * @return true if the player must sneak to rotate this metatileentity, otherwise false
@@ -811,18 +826,20 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
-        if (!allowTickAcceleration()) {
+        if (!getWorld().isRemote && !allowTickAcceleration()) {
             int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
             if (currentTick == lastTick) {
                 return;
             }
             lastTick = currentTick;
         }
+
         for (MTETrait mteTrait : this.mteTraits.values()) {
             if (shouldUpdate(mteTrait)) {
                 mteTrait.update();
             }
         }
+
         if (!getWorld().isRemote) {
             updateCovers();
         } else {
