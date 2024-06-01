@@ -276,18 +276,15 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             if (this.fissionReactor.checkForMeltdown()) {
                 SoundManager.getInstance().startTileSound(GTSoundEvents.SUS_RECORD.getSoundName(), 1, this.getPos());
             }
-            /*
-             * if (this.fissionReactor.checkForMeltdown()) {
-             * this.performMeltdownEffects();
-             * }
-             *
-             * if (this.fissionReactor.checkForExplosion()) {
-             * this.performPrimaryExplosion();
-             * if (this.fissionReactor.accumulatedHydrogen > 1) {
-             * this.performSecondaryExplosion(fissionReactor.accumulatedHydrogen);
-             * }
-             * }
-             */
+            if (this.fissionReactor.checkForMeltdown()) {
+                this.performMeltdownEffects();
+            }
+            if (this.fissionReactor.checkForExplosion()) {
+                this.performPrimaryExplosion();
+                if (this.fissionReactor.accumulatedHydrogen > 1) {
+                    this.performSecondaryExplosion(fissionReactor.accumulatedHydrogen);
+                }
+            }
         }
     }
 
@@ -452,7 +449,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     IBlockState getCoolantChannelState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
     }
-
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {

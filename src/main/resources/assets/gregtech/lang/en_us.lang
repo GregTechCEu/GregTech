@@ -2388,6 +2388,9 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.research_station.name=Research Station
+recipemap.heat_exchanger.name=Heat Exchanger
+recipemap.gas_centrifuge.name=Gas Centrifuge
+
 
 gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -2648,7 +2651,7 @@ tile.panelling.yellow.name=Yellow Panelling
 tile.panelling.lime.name=Lime Panelling
 tile.panelling.pink.name=Pink Panelling
 tile.panelling.gray.name=Gray Panelling
-tile.panelling.silver.name=Light Gray Panelling
+tile.panelling.light_gray.name=Light Gray Panelling
 tile.panelling.cyan.name=Cyan Panelling
 tile.panelling.purple.name=Purple Panelling
 tile.panelling.blue.name=Blue Panelling
@@ -2801,8 +2804,8 @@ tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
 
 # Nuclear Blocks
 tile.nuclear_casing.spent_fuel_casing.name=Spent Fuel Casing
-tile.nuclear_casing.gas_centrigue_heater.name=Gas Centrifuge Heater
-tile.centrifuge_casing.gas_centrifuge_column.name=Gas Centrifuge Column
+tile.nuclear_casing.gas_centrifuge_heater.name=Gas Centrifuge Heater
+tile.gas_centrifuge_casing.gas_centrifuge_column.name=Gas Centrifuge Column
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -4985,6 +4988,11 @@ gregtech.machine.fission_reactor.name=Fission Reactor
 gregtech.machine.fission_reactor.tooltip.1=Check preview for allowed shapes.
 gregtech.machine.fission_reactor.tooltip.7=§cMay meltdown/explode if the temperature/pressure gets too high!
 
+gregtech.machine.heat_exchanger.name=Heat Exchanger
+gregtech.machine.spent_fuel_pool.name=Spent Fuel Pool
+gregtech.machine.gas_centrifuge.name=Gas Centrifuge
+
+
 # Multiblock Tooltips
 gregtech.machine.primitive_water_pump.tooltip=Endervoir at Home
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=Making your first Steel
@@ -5024,7 +5032,7 @@ gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
 gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
 gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
 gregtech.machine.fission_reactor.tooltip=Blowy-uppy yumyum generator
-
+gregtech.machine.heat_exchanger.tooltip=Molecular hot potato player
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks

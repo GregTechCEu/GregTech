@@ -51,7 +51,7 @@ public class FissionReactor {
     private double avgGeometricFactorFastNeutrons;
 
     // TODO: Make this configurable
-    private int geometricIntegrationSteps = 5;
+    private int geometricIntegrationSteps = 100;
 
     // Wtf is lSlow
     private double lSlow;
@@ -120,7 +120,7 @@ public class FissionReactor {
     public double envTemperature = roomTemperature; // maybe gotten from config per dim
     public double accumulatedHydrogen;
 
-    public double maxTemperature = 1000000;
+    public double maxTemperature = 2000;
     // Pascals
     public double maxPressure = 15000000;
     // In MW apparently
@@ -272,7 +272,7 @@ public class FissionReactor {
                     double[] pos = { .5, .5 };
                     pos[0] += (fuelRods.get(j).getPos()[0] - fuelRods.get(i).getPos()[0]) *
                             ((float) t / geometricIntegrationSteps) + fuelRods.get(i).getPos()[0];
-                    pos[1] += (fuelRods.get(j).getPos()[0] - fuelRods.get(i).getPos()[1]) *
+                    pos[1] += (fuelRods.get(j).getPos()[1] - fuelRods.get(i).getPos()[1]) *
                             ((float) t / geometricIntegrationSteps) + fuelRods.get(i).getPos()[1];
                     ReactorComponent component = reactorLayout[(int) Math.floor(pos[0])][(int) Math.floor(pos[1])];
 

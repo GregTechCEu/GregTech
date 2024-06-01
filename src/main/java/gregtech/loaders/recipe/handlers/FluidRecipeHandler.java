@@ -33,7 +33,7 @@ public class FluidRecipeHandler {
                 .buildAndRegister();
 
         RecipeMaps.HEAT_EXCHANGER_RECIPES.recipeBuilder().duration(1).circuitMeta(2)
-                .fluidInputs(coolant.getHotHPCoolant().getFluid(6), Materials.DistilledWater.getFluid(6))
+                .fluidInputs(coolant.getHotHPCoolant().getFluid(600), Materials.DistilledWater.getFluid(600))
                 .fluidOutputs(mat.getFluid(600), Materials.Steam.getFluid(96000))
                 .buildAndRegister();
     }
