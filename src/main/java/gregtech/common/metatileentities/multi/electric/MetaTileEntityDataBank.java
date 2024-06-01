@@ -172,8 +172,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                 .where('C', states(getFrontState())
                         .setMinGlobalLimited(4)
                         .or(autoAbilities())
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY)
-                                .setMinGlobalLimited(1).setMaxGlobalLimited(2).setPreviewCount(1)))
+                        .or(autoAbilityEnergyIn()))
                 .build();
     }
 

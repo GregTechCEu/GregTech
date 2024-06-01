@@ -173,24 +173,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                                                boolean checkFluidIn,
                                                boolean checkFluidOut,
                                                boolean checkMuffler) {
-        TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler);
-
-
-
-        if (checkEnergyIn) {
-            if (ConfigHolder.machines.allowLaserHatchesOnMultis) {
-                predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.INPUT_LASER)
-                        .setMinGlobalLimited(1)
-                        .setMaxGlobalLimited(2)
-                        .setPreviewCount(1));
-            }
-            else {
-                predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY)
-                        .setMinGlobalLimited(1)
-                        .setMaxGlobalLimited(2)
-                        .setPreviewCount(1));
-            }
-        }
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler, true, 2);
 
         if (checkItemIn) {
             if (recipeMap.getMaxInputs() > 0) {

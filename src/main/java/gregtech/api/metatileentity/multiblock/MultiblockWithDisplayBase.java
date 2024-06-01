@@ -338,10 +338,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     public TraceabilityPredicate autoAbilities() {
-        return autoAbilities(true, true);
+        return autoAbilities(true, true, true, 2);
     }
 
-    public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler) {
+    public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler, boolean checkEnergyIn, int maxHatchCount) {
         TraceabilityPredicate predicate = new TraceabilityPredicate();
         if (checkMaintenance && hasMaintenanceMechanics()) {
             predicate = predicate.or(maintenancePredicate());
@@ -350,7 +350,33 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             predicate = predicate
                     .or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
         }
+        if (checkEnergyIn) {
+            if (ConfigHolder.machines.allowLaserHatchesOnMultis) {
+                predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.INPUT_LASER)
+                        .setMinGlobalLimited(1)
+                        .setMaxGlobalLimited(maxHatchCount)
+                        .setPreviewCount(1));
+            }
+            else {
+                predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY)
+                        .setMinGlobalLimited(1)
+                        .setMaxGlobalLimited(maxHatchCount)
+                        .setPreviewCount(1));
+            }
+        }
         return predicate;
+    }
+
+    public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler) {
+        return autoAbilities(checkMaintenance, checkMuffler, false, 0);
+    }
+
+    public TraceabilityPredicate autoAbilityEnergyIn(int maxHatchCount) {
+        return autoAbilities(false, false, true, maxHatchCount);
+    }
+
+    public TraceabilityPredicate autoAbilityEnergyIn() {
+        return autoAbilities(false, false, true, 2);
     }
 
     protected TraceabilityPredicate maintenancePredicate() {

@@ -100,8 +100,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
         boolean checkedItemIn = false, checkedItemOut = false, checkedFluidIn = false, checkedFluidOut = false;
 
         TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler)
-                .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)
-                        .setMaxGlobalLimited(3).setPreviewCount(1) : new TraceabilityPredicate());
+                .or(checkEnergyIn ? autoAbilityEnergyIn() : new TraceabilityPredicate());
 
         for (RecipeMap<?> recipeMap : getAvailableRecipeMaps()) {
             if (!checkedItemIn && checkItemIn) {

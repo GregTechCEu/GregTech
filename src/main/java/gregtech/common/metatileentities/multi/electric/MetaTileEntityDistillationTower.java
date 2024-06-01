@@ -90,7 +90,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                                         !(mte instanceof MetaTileEntityMEOutputHatch))
                                 .toArray(MetaTileEntity[]::new))
                                         .setMinLayerLimited(1).setMaxLayerLimited(1))
-                        .or(autoAbilities(true, false)))
+                        .or(autoAbilities()))
                 .where('#', air())
                 .build();
     }
