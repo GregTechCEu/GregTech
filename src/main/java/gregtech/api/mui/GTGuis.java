@@ -1,6 +1,19 @@
 package gregtech.api.mui;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.TextWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
+
+import com.cleanroommc.modularui.widgets.layout.Row;
+
 import gregtech.api.cover.Cover;
+import gregtech.api.gui.Widget;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.factory.CoverGuiFactory;
@@ -14,8 +27,15 @@ import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
+
+import net.minecraftforge.items.IItemHandlerModifiable;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class GTGuis {
 
@@ -70,6 +90,61 @@ public class GTGuis {
 
     public static ModularPanel defaultPanel(MetaItem<?>.MetaValueItem valueItem) {
         return createPanel(valueItem.unlocalizedName);
+    }
+
+    public static ModularPanel createQuantumPanel(MetaTileEntity qstorage) {
+        return createPanel(qstorage, 176, 166)
+                .padding(4)
+                .child(IKey.lang(qstorage.getMetaFullName()).asWidget());
+    }
+
+    public static Column createQuantumDisplay(String lang,
+                                              Supplier<String> name, Predicate<TextWidget> condition,
+                                              Supplier<String> count) {
+        return new Column()
+                .background(GTGuiTextures.DISPLAY)
+                .padding(4)
+                .height(46)
+                .left(7).right(7)
+                .top(16)
+                .child(IKey.lang(lang)
+                        .alignment(Alignment.TopLeft)
+                        .color(Color.WHITE.main)
+                        .asWidget()
+                        .widthRel(0.5f)
+                        .left(4)
+                        .marginBottom(2))
+                .child(IKey.dynamic(name)
+                        .alignment(Alignment.TopLeft)
+                        .color(Color.WHITE.main)
+                        .asWidget()
+                        .setEnabledIf(condition)
+                        .widthRel(0.5f)
+                        .left(4)
+                        .height(20)
+                        .marginBottom(2))
+                .child(IKey.dynamic(count)
+                        .alignment(Alignment.TopLeft)
+                        .color(Color.WHITE.main)
+                        .asWidget()
+                        .widthRel(0.5f)
+                        .left(4));
+    }
+
+    public static ParentWidget<?> createQuantumIO(IItemHandlerModifiable importHandler, IItemHandlerModifiable exportHandler) {
+        return new Row()
+                .pos(79, 18 + 45)
+                .coverChildren()
+                .child(new ItemSlot()
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.IN_SLOT_OVERLAY)
+                        .slot(SyncHandlers.itemSlot(importHandler, 0)
+                                .accessibility(true, false)
+                                .singletonSlotGroup(200))
+                        .marginRight(18))
+                .child(new ItemSlot()
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.OUT_SLOT_OVERLAY)
+                        .slot(SyncHandlers.itemSlot(exportHandler, 0)
+                                .accessibility(false, true)));
     }
 
     public static PopupPanel createPopupPanel(String name, int width, int height) {
