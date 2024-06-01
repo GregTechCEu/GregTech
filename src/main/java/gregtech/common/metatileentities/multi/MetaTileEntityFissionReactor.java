@@ -93,7 +93,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private LockingState lockingState = LockingState.UNLOCKED;
 
     private double temperature;
+    private double maxTemperature;
     private double pressure;
+    private double maxPressure;
     private double power;
     private double maxPower;
     private double kEff;
@@ -110,10 +112,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 236).shouldColor(false)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 206, 236).shouldColor(false)
                 .widget(new ToggleButtonWidget(10, 10, 18, 18, this::isLocked, this::tryLocking))
                 .widget(new AdvancedTextWidget(35, 14, getLockingStateText(), getLockedTextColor()))
-                .widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 150,
+                .widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 165,
                         18, 0.0f, 1.0f,
                         (float) controlRodInsertionValue, this::setControlRodInsertionValue,
                         () -> (float) this.controlRodInsertionValue) {
@@ -124,10 +126,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                 String.format("%.2f%%", this.getSliderValue() * 100));
                     }
                 })
-                .widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 150, 18, 0.0f, 16000.f, flowRate,
+                .widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 165, 18, 0.0f, 16000.f, flowRate,
                         this::setFlowRate));
         builder.widget(new AdvancedTextWidget(10, 90, getStatsText(), 0x2020D0));
-        builder.bindPlayerInventory(entityPlayer.inventory, 148);
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 22, 148);
         return builder;
     }
 
@@ -178,9 +180,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private Consumer<List<ITextComponent>> getStatsText() {
         return (list) -> {
             list.add(new TextComponentTranslation("gregtech.gui.fission.temperature",
-                    String.format("%.1f", this.temperature)));
+                    String.format("%.1f", this.temperature) + " / " + String.format("%.1f", this.maxTemperature)));
             list.add(new TextComponentTranslation("gregtech.gui.fission.pressure",
-                    String.format("%.0f", this.pressure)));
+                    String.format("%.0f", this.pressure) + " / " + String.format("%.0f", this.maxPressure)));
             list.add(new TextComponentTranslation("gregtech.gui.fission.power", String.format("%.1f", this.power),
                     String.format("%.1f", this.maxPower)));
             list.add(new TextComponentTranslation("gregtech.gui.fission.k_eff", String.format("%.4f", this.kEff)));
@@ -199,7 +201,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             return true;
         }
 
-        return potentialTile instanceof IFissionReactorHatch || potentialTile instanceof IMaintenanceHatch;
+        return !(potentialTile instanceof IFissionReactorHatch || potentialTile instanceof IMaintenanceHatch);
     }
 
     /**
@@ -208,7 +210,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public int findDiameter(int heightAbove) {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), this.getPos().up(heightAbove), this.getFrontFacing().getOpposite(), i))
+            if (this.isBlockEdge(this.getWorld(), this.getPos().up(heightAbove), this.getFrontFacing().getOpposite(),
+                    i))
                 break;
             i++;
         }
@@ -314,10 +317,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         pos = pos.move(this.getFrontFacing().getOpposite(), diameter / 2);
         this.getWorld().newExplosion(null, pos.getX(), pos.getY() + heightTop + 3, pos.getZ(),
                 4.f + (float) Math.log(accumulatedHydrogen), true, true);
-    }
-
-    public boolean updateStructureDimensions() {
-        return false;
     }
 
     @NotNull
@@ -454,10 +453,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
     }
 
-    @NotNull
-    IBlockState getTopHatchState() {
-        return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
-    }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
@@ -506,9 +501,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             this.unlockAll();
             this.fissionReactor = null;
             this.temperature = 273;
+            this.maxTemperature = 273;
             this.power = 0;
             this.kEff = 0;
             this.pressure = 0;
+            this.maxPressure = 0;
             this.maxPower = 0;
         }
         super.invalidateStructure();
@@ -588,14 +585,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     // TODO: Abstract the stats into its own class
     public void syncReactorStats() {
         this.temperature = this.fissionReactor.temperature;
+        this.maxTemperature = this.fissionReactor.maxTemperature;
         this.pressure = this.fissionReactor.pressure;
+        this.maxPressure = this.fissionReactor.maxPressure;
         this.power = this.fissionReactor.power;
         this.maxPower = this.fissionReactor.maxPower;
         this.kEff = this.fissionReactor.kEff;
         this.controlRodInsertionValue = this.fissionReactor.controlRodInsertion;
         writeCustomData(GregtechDataCodes.SYNC_REACTOR_STATS, (packetBuffer -> {
             packetBuffer.writeDouble(this.fissionReactor.temperature);
+            packetBuffer.writeDouble(this.fissionReactor.maxTemperature);
             packetBuffer.writeDouble(this.fissionReactor.pressure);
+            packetBuffer.writeDouble(this.fissionReactor.maxPressure);
             packetBuffer.writeDouble(this.fissionReactor.power);
             packetBuffer.writeDouble(this.fissionReactor.maxPower);
             packetBuffer.writeDouble(this.fissionReactor.kEff);
@@ -609,7 +610,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
         if (dataId == GregtechDataCodes.SYNC_REACTOR_STATS) {
             this.temperature = buf.readDouble();
+            this.maxTemperature = buf.readDouble();
             this.pressure = buf.readDouble();
+            this.maxPressure = buf.readDouble();
             this.power = buf.readDouble();
             this.maxPower = buf.readDouble();
             this.kEff = buf.readDouble();
@@ -805,16 +808,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 interiorBuilder.setLength(0);
             }
 
-            // Second loop is to detect where to put walls, the controller and I/O, two fewer iterations are needed because
-            // two strings always represent two walls on opposite sides
+            // Second loop is to detect where to put walls, the controller and I/O
             for (int i = 0; i < diameter; i++) {
                 for (int j = 0; j < diameter; j++) {
                     if (interiorSlice[i].charAt(j) != 'A') {
                         continue;
                     }
 
-                    // The integer division is fine here, since we want an odd diameter (say, 5) to go to the middle value
-                    // (2 in this case)
                     int outerI = i + (int) Math.signum(i - (diameter / 2));
 
                     if (Math.pow(outerI - Math.floor(diameter / 2.), 2) +
@@ -837,13 +837,28 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             bottomSlice = interiorSlice.clone();
             controllerSlice[0] = controllerSlice[0].substring(0, (int) Math.floor(diameter / 2.)) + "SM" +
                     controllerSlice[0].substring((int) Math.floor(diameter / 2.) + 2);
+
+            // Example hatches
+            controllerSlice[1] = controllerSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "frc" +
+                    controllerSlice[1].substring((int) Math.floor(diameter / 2.) + 2);
+            controllerSlice[3] = controllerSlice[3].substring(0, (int) Math.floor(diameter / 2.)) + "r" +
+                    controllerSlice[3].substring((int) Math.floor(diameter / 2.) + 1);
+
+            topSlice[1] = topSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "eqb" +
+                    topSlice[1].substring((int) Math.floor(diameter / 2.) + 2);
+            topSlice[3] = topSlice[3].substring(0, (int) Math.floor(diameter / 2.)) + "m" +
+                    topSlice[3].substring((int) Math.floor(diameter / 2.) + 1);
+
+            bottomSlice[1] = bottomSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "gVd" +
+                    bottomSlice[1].substring((int) Math.floor(diameter / 2.) + 2);
+
             for (int i = 0; i < diameter; i++) {
                 topSlice[i] = topSlice[i].replace('A', 'V');
                 bottomSlice[i] = bottomSlice[i].replace('A', 'V');
             }
             MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder(RelativeDirection.RIGHT,
                     RelativeDirection.FRONT, RelativeDirection.UP);
-            builder.aisle(bottomSlice);
+            builder.aisle(topSlice);
             for (int i = 0; i < heightBottom - 1; i++) {
                 builder.aisle(interiorSlice);
             }
@@ -851,8 +866,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             for (int i = 0; i < heightTop - 1; i++) {
                 builder.aisle(interiorSlice);
             }
-            builder.aisle(topSlice);
-
+            builder.aisle(bottomSlice);
             shapes.add(builder.where('S', MetaTileEntities.FISSION_REACTOR, EnumFacing.NORTH)
                     // A for interior components, which are air here
                     .where('A', Blocks.AIR.getDefaultState())
@@ -860,6 +874,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     .where(' ', Blocks.AIR.getDefaultState())
                     // I for the inputs on the top
                     .where('V', this.getVesselState())
+                    .where('f', this.getFuelChannelState())
+                    .where('c', this.getCoolantChannelState())
+                    .where('r', this.getControlRodChannelState())
+                    .where('e', MetaTileEntities.FUEL_ROD_INPUT, EnumFacing.UP)
+                    .where('g', MetaTileEntities.FUEL_ROD_OUTPUT, EnumFacing.DOWN)
+                    .where('b', MetaTileEntities.COOLANT_INPUT, EnumFacing.DOWN)
+                    .where('d', MetaTileEntities.COOLANT_OUTPUT, EnumFacing.UP)
+                    .where('q', MetaTileEntities.CONTROL_ROD, EnumFacing.UP)
+                    .where('m', MetaTileEntities.CONTROL_ROD_MODERATED, EnumFacing.DOWN)
+
                     // B for the vessel blocks on the walls
                     .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
                             this.getVesselState(), EnumFacing.NORTH).build());
@@ -874,5 +898,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.4"));
+        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.5"));
+        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.6"));
+        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.7"));
     }
 }

@@ -120,7 +120,7 @@ public class FissionReactor {
     public double envTemperature = roomTemperature; // maybe gotten from config per dim
     public double accumulatedHydrogen;
 
-    public double maxTemperature = Double.MAX_VALUE;
+    public double maxTemperature = 1000000;
     // Pascals
     public double maxPressure = 15000000;
     // In MW apparently
