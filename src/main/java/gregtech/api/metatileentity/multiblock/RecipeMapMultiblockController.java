@@ -173,7 +173,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                                                boolean checkFluidIn,
                                                boolean checkFluidOut,
                                                boolean checkMuffler) {
-        TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler, checkEnergyIn, 2);
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler, checkEnergyIn, ConfigHolder.machines.energyHatchCount);
 
         if (checkItemIn) {
             if (recipeMap.getMaxInputs() > 0) {

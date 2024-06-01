@@ -338,7 +338,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     public TraceabilityPredicate autoAbilities() {
-        return autoAbilities(true, true, true, 2);
+        return autoAbilities(true, true, true, ConfigHolder.machines.energyHatchCount);
     }
 
     public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler, boolean checkEnergyIn, int maxHatchCount) {
@@ -376,7 +376,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     public TraceabilityPredicate autoAbilityEnergyIn() {
-        return autoAbilities(false, false, true, 2);
+        return autoAbilities(false, false, true, ConfigHolder.machines.energyHatchCount);
     }
 
     protected TraceabilityPredicate maintenancePredicate() {

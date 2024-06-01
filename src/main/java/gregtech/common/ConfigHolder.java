@@ -166,6 +166,12 @@ public class ConfigHolder {
                 "Default: false" })
         @Config.RequiresMcRestart
         public boolean allowLaserHatchesOnMultis = false;
+
+        @Config.Comment({ "Maximum number of allowed energy hatches on multiblocks.",
+                "Default: 2" })
+        @Config.RequiresMcRestart
+        @Config.RangeInt(min = 1, max = 5)
+        public int energyHatchCount = 2;
     }
 
     public static class WorldGenOptions {
