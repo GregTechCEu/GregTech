@@ -134,7 +134,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .where('V', states(getVentState()))
                 .where('A', states(getAdvancedState()))
                 .where('P', states(getCasingState())
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))
+                        .or(autoAbilityEnergyIn())
                         .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION).setExactLimit(1)))
                 .where('H', abilities(MultiblockAbility.OBJECT_HOLDER))
