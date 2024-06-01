@@ -125,8 +125,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.outputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
                 getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        if (ConfigHolder.machines.allowLaserHatches) {
-            inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+        if (ConfigHolder.machines.allowLaserHatchesOnMultis) {
             inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         }
         this.energyContainer = new EnergyContainerList(inputEnergy);
@@ -176,11 +175,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                                                boolean checkMuffler) {
         TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler);
 
+
+
         if (checkEnergyIn) {
-            if (ConfigHolder.machines.allowLaserHatches) {
-                predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY,
-                        MultiblockAbility.INPUT_LASER,
-                        MultiblockAbility.SUBSTATION_INPUT_ENERGY)
+            if (ConfigHolder.machines.allowLaserHatchesOnMultis) {
+                predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.INPUT_LASER)
                         .setMinGlobalLimited(1)
                         .setMaxGlobalLimited(2)
                         .setPreviewCount(1));

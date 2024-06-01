@@ -165,7 +165,7 @@ public class ConfigHolder {
         @Config.Comment({ "If laser target hatches should be allowed on multiblocks.",
                 "Default: false" })
         @Config.RequiresMcRestart
-        public boolean allowLaserHatches = false;
+        public boolean allowLaserHatchesOnMultis = false;
     }
 
     public static class WorldGenOptions {
