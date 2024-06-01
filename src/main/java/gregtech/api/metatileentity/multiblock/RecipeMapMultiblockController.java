@@ -124,7 +124,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
         this.outputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
                 getAbilities(MultiblockAbility.EXPORT_FLUIDS));
-        this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        if (ConfigHolder.machines.allowLaserHatches) {
+            inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+            inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
+        }
+        this.energyContainer = new EnergyContainerList(inputEnergy);
     }
 
     private void resetTileAbilities() {
@@ -172,9 +177,20 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler);
 
         if (checkEnergyIn) {
-            predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)
-                    .setMaxGlobalLimited(2)
-                    .setPreviewCount(1));
+            if (ConfigHolder.machines.allowLaserHatches) {
+                predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY,
+                        MultiblockAbility.INPUT_LASER,
+                        MultiblockAbility.SUBSTATION_INPUT_ENERGY)
+                        .setMinGlobalLimited(1)
+                        .setMaxGlobalLimited(2)
+                        .setPreviewCount(1));
+            }
+            else {
+                predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY)
+                        .setMinGlobalLimited(1)
+                        .setMaxGlobalLimited(2)
+                        .setPreviewCount(1));
+            }
         }
 
         if (checkItemIn) {

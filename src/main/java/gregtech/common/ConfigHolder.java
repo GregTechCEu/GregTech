@@ -161,6 +161,11 @@ public class ConfigHolder {
                 "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
                 "Default: true" })
         public boolean allowTickAcceleration = true;
+
+        @Config.Comment({ "If laser target hatches should be allowed on multiblocks.",
+                "Default: false" })
+        @Config.RequiresMcRestart
+        public boolean allowLaserHatches = false;
     }
 
     public static class WorldGenOptions {
