@@ -40,6 +40,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     private AENetworkProxy aeProxy;
     private int meUpdateTick;
     protected boolean isOnline;
+    protected boolean lastOnline;
 
     public MetaTileEntityAEHostablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch,
                                         Class<? extends IStorageChannel<T>> storageChannel) {
@@ -149,8 +150,9 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
         } else {
             this.isOnline = false;
         }
-        if (!getWorld().isRemote) {
+        if (!getWorld().isRemote && this.isOnline != this.lastOnline) {
             writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(this.isOnline));
+            this.lastOnline = this.isOnline;
         }
         return this.isOnline;
     }
