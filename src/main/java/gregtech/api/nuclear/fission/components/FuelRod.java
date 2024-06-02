@@ -7,9 +7,9 @@ public class FuelRod extends ReactorComponent {
     private final FissionFuelProperty fuel;
     private final double neutronSourceIntensity;
 
-    public FuelRod(double maxTemperature, double thermalConductivity, FissionFuelProperty fuel,
+    public FuelRod(double maxTemperature, double thermalConductivity, FissionFuelProperty fuel, double mass,
                    double neutronSourceIntensity) {
-        super(0, maxTemperature, thermalConductivity, true);
+        super(0, maxTemperature, thermalConductivity, mass, true);
         this.fuel = fuel;
         this.neutronSourceIntensity = neutronSourceIntensity;
     }

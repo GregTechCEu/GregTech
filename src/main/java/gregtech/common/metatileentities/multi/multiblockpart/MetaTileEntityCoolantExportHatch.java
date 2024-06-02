@@ -22,6 +22,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.IFluidTank;
@@ -115,6 +116,14 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     public void setLock(boolean isLocked) {
         fluidTank.setLock(isLocked);
         writeCustomData(LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == LOCK_UPDATE) {
+            this.fluidTank.setLock(buf.readBoolean());
+        }
     }
 
     @Override

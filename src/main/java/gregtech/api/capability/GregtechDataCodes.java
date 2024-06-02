@@ -174,6 +174,10 @@ public class GregtechDataCodes {
     public static final int UPDATE_SOUND = assignId();
     public static final int UPDATE_RADIUS = assignId();
 
+    // Fission Reactor
+    public static int SYNC_REACTOR_STATS = assignId();
+    public static int SYNC_LOCKING_STATE = assignId();
+
     // ME Parts
     public static final int UPDATE_AUTO_PULL = assignId();
     public static final int UPDATE_ONLINE_STATUS = assignId();

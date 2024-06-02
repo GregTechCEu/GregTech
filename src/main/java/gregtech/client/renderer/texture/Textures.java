@@ -188,6 +188,8 @@ public class Textures {
             "multiblock/network_switch");
     public static final OrientedOverlayRenderer POWER_SUBSTATION_OVERLAY = new OrientedOverlayRenderer(
             "multiblock/power_substation");
+    public static final OrientedOverlayRenderer FISSION_REACTOR_OVERLAY = new OrientedOverlayRenderer(
+            "multiblock/fission_reactor");
 
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer(
             "machines/alloy_smelter");
