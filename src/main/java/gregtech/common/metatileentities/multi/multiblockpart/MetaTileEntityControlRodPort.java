@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.capability.IControllable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -11,45 +10,44 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifiablePart
-                                          implements IControllable, IFissionReactorHatch,
-                                          IMultiblockAbilityPart<IControlRodPort>, IControlRodPort {
+                                          implements IFissionReactorHatch, IControlRodPort,
+                                          IMultiblockAbilityPart<IControlRodPort> {
 
-    private boolean workingEnabled;
-    private boolean valid;
+    private boolean hasModeratorTip;
 
-    private byte insertion;
-
-    public MetaTileEntityControlRodPort(ResourceLocation metaTileEntityId, boolean isExportHatch) {
+    public MetaTileEntityControlRodPort(ResourceLocation metaTileEntityId, boolean hasModeratorTip) {
         super(metaTileEntityId, 4, false);
         this.frontFacing = EnumFacing.UP;
-    }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return workingEnabled;
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean isWorkingAllowed) {
-        this.workingEnabled = isWorkingAllowed;
+        this.hasModeratorTip = hasModeratorTip;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityControlRodPort(metaTileEntityId, false);
+        return new MetaTileEntityControlRodPort(metaTileEntityId, hasModeratorTip);
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return null;
+    }
+
+    @Override
+    protected boolean openGUIOnRightClick() {
+        return false;
     }
 
     @Override
@@ -72,9 +70,7 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
+    public void setValid(boolean valid) {}
 
     @Override
     public MultiblockAbility<IControlRodPort> getAbility() {
@@ -86,8 +82,14 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
         abilityList.add(this);
     }
 
+    public boolean hasModeratorTip() {
+        return hasModeratorTip;
+    }
+
     @Override
-    public byte getInsertionAmount() {
-        return this.insertion;
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format(this.getMetaName() + "tooltip.1"));
     }
 }

@@ -1,6 +1,5 @@
 package gregtech.api.metatileentity.multiblock;
 
 public interface IControlRodPort {
-
-    byte getInsertionAmount();
+    // Allows for a special multiblock ability.
 }

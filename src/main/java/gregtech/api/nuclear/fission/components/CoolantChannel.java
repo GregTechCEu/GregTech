@@ -1,5 +1,6 @@
 package gregtech.api.nuclear.fission.components;
 
+import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 
@@ -15,11 +16,18 @@ public class CoolantChannel extends ReactorComponent {
     private double weight;
     private final List<Pair<FuelRod, FuelRod>> fuelRodPairs = new ObjectArrayList<>();
 
-    public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant) {
-        super(coolant.getProperty(PropertyKey.COOLANT).getModerationFactor(), maxTemperature, thermalConductivity,
+    private ICoolantHandler inputHandler;
+    private ICoolantHandler outputHandler;
+    public double partialCoolant;
+
+    public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant, double mass,
+                          ICoolantHandler inputHandler, ICoolantHandler outputHandler) {
+        super(coolant.getProperty(PropertyKey.COOLANT).getModerationFactor(), maxTemperature, thermalConductivity, mass,
                 true);
         this.coolant = coolant;
         this.weight = 0;
+        this.inputHandler = inputHandler;
+        this.outputHandler = outputHandler;
     }
 
     public static void normalizeWeights(ArrayList<CoolantChannel> effectiveCoolantChannels) {
@@ -54,5 +62,21 @@ public class CoolantChannel extends ReactorComponent {
 
     public void computeWeightFromFuelRodMap() {
         this.weight = fuelRodPairs.size() * 2;
+    }
+
+    public ICoolantHandler getInputHandler() {
+        return inputHandler;
+    }
+
+    public void setInputHandler(ICoolantHandler inputHandler) {
+        this.inputHandler = inputHandler;
+    }
+
+    public ICoolantHandler getOutputHandler() {
+        return outputHandler;
+    }
+
+    public void setOutputHandler(ICoolantHandler outputHandler) {
+        this.outputHandler = outputHandler;
     }
 }

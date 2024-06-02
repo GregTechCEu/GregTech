@@ -52,6 +52,14 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
+    public void update() {
+        super.update();
+        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+            pushItemsIntoNearbyHandlers(getFrontFacing());
+        }
+    }
+
+    @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         return new ItemStackHandler(1);
     }

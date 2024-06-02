@@ -564,6 +564,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem MULTIBLOCK_BUILDER;
 
+    public static MetaItem<?>.MetaValueItem ANODE_BASKET;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
 
     static {
@@ -609,6 +611,11 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.fuelRod);
         orePrefixes.add(OrePrefix.fuelRodDepleted);
         orePrefixes.add(OrePrefix.fuelRodHotDepleted);
+        orePrefixes.add(OrePrefix.fuelPellet);
+        orePrefixes.add(OrePrefix.fuelPelletDepleted);
+        orePrefixes.add(OrePrefix.dustSpentFuel);
+        orePrefixes.add(OrePrefix.dustBredFuel);
+        orePrefixes.add(OrePrefix.dustFissionByproduct);
     }
 
     public static void init() {

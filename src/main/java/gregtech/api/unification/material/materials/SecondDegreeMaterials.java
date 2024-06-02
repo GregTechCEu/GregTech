@@ -508,8 +508,8 @@ public class SecondDegreeMaterials {
                 .dust(3)
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(EnrichedUraniumDioxide, 1, DepletedUraniumDioxide, 20)
-                .fissionFuelProperties(2000, 1000, 100., 0., 1000., 0.)
+                .components(HighEnrichedUraniumDioxide, 1, DepletedUraniumDioxide, 20)
+                .fissionFuelProperties(2000, 1000, 55., 1., 1000., 0.)
                 .build()
                 .setFormula("UO2", true);
 
@@ -517,8 +517,8 @@ public class SecondDegreeMaterials {
                 .dust(3)
                 .color(0x242826).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(EnrichedUraniumDioxide, 1, DepletedUraniumDioxide, 5)
-                .fissionFuelProperties(2000, 1000, 10., 0., 2000., 0.)
+                .components(HighEnrichedUraniumDioxide, 1, DepletedUraniumDioxide, 5)
+                .fissionFuelProperties(2000, 1000, 40., 1., 1250., 0.)
                 .build()
                 .setFormula("UO2", true);
 
@@ -526,7 +526,7 @@ public class SecondDegreeMaterials {
                 .dust(3)
                 .color(0x62C032).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Plutonium239Dioxide, 1, Uraninite, 20)
+                .components(FissilePlutoniumDioxide, 1, Uraninite, 20)
                 .fissionFuelProperties(2000, 1500, 50., 10., 1500., 10.)
                 .build()
                 .setFormula("(U,Pu)O2", true);
@@ -535,8 +535,8 @@ public class SecondDegreeMaterials {
                 .dust(3)
                 .color(0x7EA432).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Plutonium239Dioxide, 1, Uraninite, 5)
-                .fissionFuelProperties(2000, 1500, 10., 10., 2000., 10.)
+                .components(FissilePlutoniumDioxide, 1, Uraninite, 5)
+                .fissionFuelProperties(2000, 1500, 35., 25., 2000., 25.)
                 .build()
                 .setFormula("(U,Pu)O2", true);
     }
