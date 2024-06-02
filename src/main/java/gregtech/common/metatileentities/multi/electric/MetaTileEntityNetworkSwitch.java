@@ -107,7 +107,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
                 .where('S', selfPredicate())
                 .where('A', states(getAdvancedState()))
                 .where('X', states(getCasingState()).setMinGlobalLimited(7)
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1, 1))
+                        .or(autoAbilityEnergyIn())
                         .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION).setMinGlobalLimited(1, 2))
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_TRANSMISSION).setMinGlobalLimited(1, 1)))

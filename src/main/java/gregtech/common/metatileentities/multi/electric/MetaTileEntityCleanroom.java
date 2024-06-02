@@ -364,8 +364,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         }
 
         TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
-        TraceabilityPredicate basePredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
-                .setMinGlobalLimited(1).setMaxGlobalLimited(3));
+        TraceabilityPredicate basePredicate = autoAbilities();
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()

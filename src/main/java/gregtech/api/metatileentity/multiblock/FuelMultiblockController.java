@@ -5,6 +5,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
@@ -34,7 +35,26 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     @Override
     protected void initializeAbilities() {
         super.initializeAbilities();
-        this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        if (ConfigHolder.machines.allowLaserHatchesOnMultis) {
+            inputEnergy.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
+        }
+        this.energyContainer = new EnergyContainerList(inputEnergy);
+    }
+
+    public TraceabilityPredicate autoAbilityEnergyOut() {
+        TraceabilityPredicate predicate = new TraceabilityPredicate();
+
+        if (ConfigHolder.machines.allowLaserHatchesOnMultis) {
+            predicate = predicate.or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.OUTPUT_LASER)
+                    .setExactLimit(1));
+        }
+        else {
+            predicate = predicate.or(abilities(MultiblockAbility.OUTPUT_ENERGY)
+                    .setExactLimit(1));
+        }
+
+        return predicate;
     }
 
     @Override

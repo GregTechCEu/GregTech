@@ -208,7 +208,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 .where('X', abilities(MultiblockAbility.HPCA_COMPONENT))
                 .where('C', states(getCasingState()).setMinGlobalLimited(5)
                         .or(maintenancePredicate())
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))
+                        .or(autoAbilityEnergyIn())
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1))
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_TRANSMISSION).setExactLimit(1)))
                 .build();
