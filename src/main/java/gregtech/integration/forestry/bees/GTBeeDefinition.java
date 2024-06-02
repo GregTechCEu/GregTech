@@ -10,7 +10,6 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.forestry.ForestryModule;
 import gregtech.integration.forestry.ForestryUtil;
-
 import gregtech.integration.forestry.mutation.MaterialMutationCondition;
 
 import net.minecraft.init.Blocks;
