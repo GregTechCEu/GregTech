@@ -33,8 +33,6 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMulti
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.core.sound.GTSoundEvents;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -57,6 +55,7 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
 import com.cleanroommc.modularui.utils.FluidTankHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
