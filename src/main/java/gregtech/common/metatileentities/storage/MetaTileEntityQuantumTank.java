@@ -6,9 +6,11 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -43,6 +45,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.QuantumFluidRendererWidget;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
@@ -372,6 +375,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                         textWidget -> fluidTank.getFluid() != null,
                         () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
                 .child(GTGuis.createQuantumIO(importItems, exportItems))
+                .child(new QuantumFluidRendererWidget(fluidTank)
+                        .pos(148, 41))
 //                .child(new Column()
 //                        .background(GTGuiTextures.DISPLAY)
 //                        .padding(4)
