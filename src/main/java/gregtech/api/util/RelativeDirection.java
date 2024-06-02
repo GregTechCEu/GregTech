@@ -194,7 +194,7 @@ public enum RelativeDirection {
     }
 
     public static BlockPos setActualRelativeOffset(int x, int y, int z, EnumFacing facing, EnumFacing upwardsFacing,
-                                             boolean isFlipped, RelativeDirection[] structureDir) {
+                                                   boolean isFlipped, RelativeDirection[] structureDir) {
         int[] c0 = new int[] { x, y, z }, c1 = new int[3];
         if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
             EnumFacing of = facing == EnumFacing.DOWN ? upwardsFacing : upwardsFacing.getOpposite();

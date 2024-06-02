@@ -1648,7 +1648,6 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("Ni50Cr20Fe20Ni5Mo3", true);
 
-
         HighEnrichedUraniumHexafluoride = new Material.Builder(464, gregtechId("high_enriched_uranium_hexafluoride"))
                 .gas()
                 .color(0x5BF93A)
@@ -1656,7 +1655,6 @@ public class FirstDegreeMaterials {
                 .components(Uranium235, 1, Fluorine, 6)
                 .build()
                 .setFormula("UF6", true);
-
 
         BoronTrioxide = new Material.Builder(465, gregtechId("boron_trioxide"))
                 .dust()

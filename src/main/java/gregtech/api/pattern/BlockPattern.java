@@ -166,7 +166,7 @@ public class BlockPattern {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
                         BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing,
-                                        isFlipped, structureDir)
+                                isFlipped, structureDir)
                                 .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         TileEntity tileEntity = worldState.getTileEntity();
@@ -252,8 +252,8 @@ public class BlockPattern {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
                         BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, facing,
-                                        controllerBase.getUpwardsFacing(),
-                                        controllerBase.isFlipped(), structureDir)
+                                controllerBase.getUpwardsFacing(),
+                                controllerBase.isFlipped(), structureDir)
                                 .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         if (!world.getBlockState(pos).getMaterial().isReplaceable()) {
@@ -271,10 +271,10 @@ public class BlockPattern {
                                     } else if (cacheLayer.get(limit) < limit.minLayerCount &&
                                             (limit.maxLayerCount == -1 ||
                                                     cacheLayer.get(limit) < limit.maxLayerCount)) {
-                                        cacheLayer.put(limit, cacheLayer.get(limit) + 1);
-                                    } else {
-                                        continue;
-                                    }
+                                                        cacheLayer.put(limit, cacheLayer.get(limit) + 1);
+                                                    } else {
+                                                        continue;
+                                                    }
                                 } else {
                                     continue;
                                 }
@@ -293,10 +293,10 @@ public class BlockPattern {
                                         } else if (cacheGlobal.get(limit) < limit.minGlobalCount &&
                                                 (limit.maxGlobalCount == -1 ||
                                                         cacheGlobal.get(limit) < limit.maxGlobalCount)) {
-                                            cacheGlobal.put(limit, cacheGlobal.get(limit) + 1);
-                                        } else {
-                                            continue;
-                                        }
+                                                            cacheGlobal.put(limit, cacheGlobal.get(limit) + 1);
+                                                        } else {
+                                                            continue;
+                                                        }
                                     } else {
                                         continue;
                                     }
@@ -345,9 +345,9 @@ public class BlockPattern {
                                         IBlockState blockState = info.getBlockState();
                                         MetaTileEntity metaTileEntity = info
                                                 .getTileEntity() instanceof IGregTechTileEntity ?
-                                                ((IGregTechTileEntity) info.getTileEntity())
-                                                        .getMetaTileEntity() :
-                                                null;
+                                                        ((IGregTechTileEntity) info.getTileEntity())
+                                                                .getMetaTileEntity() :
+                                                        null;
                                         if (metaTileEntity != null) {
                                             return metaTileEntity.getStackForm();
                                         } else {

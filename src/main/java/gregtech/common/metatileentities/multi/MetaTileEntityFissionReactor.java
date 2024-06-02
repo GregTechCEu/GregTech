@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.multi;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IFuelRodHandler;
@@ -72,13 +68,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 import java.util.function.Consumer;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase implements IDataInfoProvider {
@@ -882,7 +879,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
                     // B for the vessel blocks on the walls
                     .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
-                            this.getVesselState(), EnumFacing.NORTH).build());
+                            this.getVesselState(), EnumFacing.NORTH)
+                    .build());
         }
         return shapes;
     }

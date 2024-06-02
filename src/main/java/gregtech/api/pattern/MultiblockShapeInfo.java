@@ -9,7 +9,6 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
@@ -125,7 +124,7 @@ public class MultiblockShapeInfo {
             BlockPos end = RelativeDirection.setActualRelativeOffset(maxX, maxY, maxZ, EnumFacing.SOUTH, EnumFacing.UP,
                     true, structureDir);
             BlockPos addition = new BlockPos(end.getX() < 0 ? -end.getX() - 1 : 0, end.getY() < 0 ? -end.getY() - 1 : 0,
-                    end.getZ() < 0 ? -end.getZ() - 1: 0);
+                    end.getZ() < 0 ? -end.getZ() - 1 : 0);
             BlockPos bound = new BlockPos(Math.abs(end.getX()), Math.abs(end.getY()), Math.abs(end.getZ()));
             BlockInfo[][][] blockInfos = new BlockInfo[bound.getX()][bound.getY()][bound.getZ()];
             for (int z = 0; z < maxZ; z++) {
