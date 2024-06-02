@@ -36,5 +36,11 @@ public class FluidRecipeHandler {
                 .fluidInputs(coolant.getHotHPCoolant().getFluid(600), Materials.DistilledWater.getFluid(600))
                 .fluidOutputs(mat.getFluid(600), Materials.Steam.getFluid(96000))
                 .buildAndRegister();
+
+        // Radiator
+        RecipeMaps.HEAT_EXCHANGER_RECIPES.recipeBuilder().duration(10).circuitMeta(3)
+                .fluidInputs(coolant.getHotHPCoolant().getFluid(8000))
+                .fluidOutputs(mat.getFluid(8000))
+                .buildAndRegister();
     }
 }
