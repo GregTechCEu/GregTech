@@ -482,7 +482,7 @@ public class Materials {
     public static Material HighEnrichedUraniumDioxide;
     public static Material DepletedUraniumDioxide;
     public static Material HighPressureSteam;
-    public static Material Plutonium239Dioxide;
+    public static Material FissilePlutoniumDioxide;
     public static Material Zircaloy;
     public static Material Zircon;
     public static Material ZirconiumDioxide;
@@ -490,10 +490,6 @@ public class Materials {
     public static Material HafniumDioxide;
     public static Material HafniumTetrachloride;
     public static Material Inconel;
-    public static Material NButanol;
-    public static Material PhosphorusTrichloride;
-    public static Material PhosphorylChloride;
-    public static Material TributylPhosphate;
     public static Material BoronTrioxide;
     public static Material BoronCarbide;
 

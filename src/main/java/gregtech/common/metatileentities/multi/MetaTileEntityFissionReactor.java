@@ -894,9 +894,5 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.3"));
-        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.4"));
-        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.5"));
-        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.6"));
-        tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.7"));
     }
 }

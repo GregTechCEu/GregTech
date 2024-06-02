@@ -1554,9 +1554,9 @@ public class FirstDegreeMaterials {
                         .vacuumStats(VA[HV], 250))
                 .build();
 
-        HighEnrichedUraniumDioxide = new Material.Builder(452, gregtechId("enriched_uranium_dioxide"))
+        HighEnrichedUraniumDioxide = new Material.Builder(452, gregtechId("high_enriched_uranium_dioxide"))
                 .dust(3)
-                .color(0x232323).iconSet(DULL)
+                .color(0x53E353).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Oxygen, 2)
                 .build()
@@ -1564,7 +1564,7 @@ public class FirstDegreeMaterials {
 
         DepletedUraniumDioxide = new Material.Builder(453, gregtechId("depleted_uranium_dioxide"))
                 .dust(3)
-                .color(0x232323).iconSet(DULL)
+                .color(0x335323).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium, 1, Oxygen, 2)
                 .build()
@@ -1579,11 +1579,11 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        Plutonium239Dioxide = new Material.Builder(455, gregtechId("plutonium_239_dioxide"))
+        FissilePlutoniumDioxide = new Material.Builder(455, gregtechId("fissile_plutonium_dioxide"))
                 .dust(3)
                 .color(0xF03232).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium235, 1, Oxygen, 2)
+                .components(Plutonium239, 1, Oxygen, 2)
                 .build()
                 .setFormula("PuO2", true);
 
@@ -1597,7 +1597,7 @@ public class FirstDegreeMaterials {
 
         LowEnrichedUraniumDioxide = new Material.Builder(457, gregtechId("low_enriched_uranium_dioxide"))
                 .dust()
-                .color(0x4BF52A) // TODO Color
+                .color(0x43A333)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Oxygen, 2)
                 .build()
@@ -1605,35 +1605,35 @@ public class FirstDegreeMaterials {
 
         Zircon = new Material.Builder(458, gregtechId("zircon"))
                 .ore()
-                .color(0x4BF52A) // TODO Color
+                .color(0x386F6F)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
                 .build();
 
         ZirconiumDioxide = new Material.Builder(459, gregtechId("zirconium_dioxide"))
                 .dust()
-                .color(0x4BF52A) // TODO Color
+                .color(0x689F9F)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Oxygen, 2)
                 .build();
 
         ZirconiumTetrachloride = new Material.Builder(460, gregtechId("zirconium_tetrachloride"))
                 .dust()
-                .color(0x4BF52A) // TODO Color
+                .color(0x689FBF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Chlorine, 4)
                 .build();
 
         HafniumDioxide = new Material.Builder(461, gregtechId("hafnium_dioxide"))
                 .dust()
-                .color(0x4BF52A) // TODO Color
+                .color(0x39393A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hafnium, 1, Oxygen, 2)
                 .build();
 
         HafniumTetrachloride = new Material.Builder(462, gregtechId("hafnium_tetrachloride"))
                 .dust()
-                .color(0x4BF52A) // TODO Color
+                .color(0x69699A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hafnium, 1, Chlorine, 4)
                 .build();
@@ -1648,49 +1648,27 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("Ni50Cr20Fe20Ni5Mo3", true);
 
-        NButanol = new Material.Builder(464, gregtechId("n_butanol"))
-                .fluid()
-                .color(0x7F8F75) // TODO Color
-                .components(Carbon, 4, Hydrogen, 10, Oxygen, 1)
-                .build();
 
-        PhosphorusTrichloride = new Material.Builder(465, gregtechId("phosphorus_trichloride"))
-                .fluid()
-                .color(0x7F8F75) // TODO Color
-                .components(Phosphorus, 1, Chlorine, 3)
-                .build();
-
-        PhosphorylChloride = new Material.Builder(466, gregtechId("phosphoryl_chloride"))
-                .fluid()
-                .color(0x7F8F75) // TODO Color
-                .components(Phosphorus, 1, Oxygen, 1, Chlorine, 3)
-                .build();
-
-        HighEnrichedUraniumHexafluoride = new Material.Builder(467, gregtechId("high_enriched_uranium_hexafluoride"))
+        HighEnrichedUraniumHexafluoride = new Material.Builder(464, gregtechId("high_enriched_uranium_hexafluoride"))
                 .gas()
-                .color(0x4BF52A) // TODO Color
+                .color(0x5BF93A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Fluorine, 6)
                 .build()
                 .setFormula("UF6", true);
 
-        TributylPhosphate = new Material.Builder(468, gregtechId("tributyl_phosphate"))
-                .fluid()
-                .color(0x7F8F75) // TODO Color
-                .components(Carbon, 12, Hydrogen, 27, Oxygen, 4, Phosphorus, 1)
-                .build();
 
-        BoronTrioxide = new Material.Builder(469, gregtechId("boron_trioxide"))
+        BoronTrioxide = new Material.Builder(465, gregtechId("boron_trioxide"))
                 .dust()
-                .color(0x7F8F75) // TODO Color
+                .color(0xC1E9E1)
                 .components(Boron, 2, Oxygen, 3)
                 .build();
 
-        BoronCarbide = new Material.Builder(470, gregtechId("boron_carbide"))
+        BoronCarbide = new Material.Builder(466, gregtechId("boron_carbide"))
                 .ingot()
                 .flags(GENERATE_ROD, DISABLE_DECOMPOSITION)
                 .blast(2620)
-                .color(0x7F8F75) // TODO Color
+                .color(0xC1E9C1)
                 .components(Boron, 4, Carbon, 1)
                 .build();
     }

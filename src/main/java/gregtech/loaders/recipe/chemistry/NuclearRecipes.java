@@ -17,19 +17,19 @@ public class NuclearRecipes {
          * .fluidInputs(Fluorine.getFluid(4000))
          * .output(dust, ThoriumTetrafluoride, 5)
          * .buildAndRegister();
-         * 
+         *
          * CHEMICAL_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
          * .input(dust, Lithium, 1)
          * .fluidInputs(Fluorine.getFluid(1000))
          * .output(dust, LithiumFluoride, 2)
          * .buildAndRegister();
-         * 
+         *
          * CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
          * .input(dust, Beryllium, 1)
          * .fluidInputs(Fluorine.getFluid(2000))
          * .output(dust, BerylliumFluoride, 3)
          * .buildAndRegister();
-         * 
+         *
          * BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1000)
          * .input(dust, ThoriumTetrafluoride, 5)
          * .input(dust, LithiumFluoride, 4)
@@ -44,7 +44,7 @@ public class NuclearRecipes {
                 .input(dust, Boron, 2)
                 .fluidInputs(Oxygen.getFluid(3000))
                 .output(dust, BoronTrioxide, 5)
-                        .buildAndRegister();
+                .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
                 .input(dust, BoronTrioxide, 2)
@@ -76,14 +76,14 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
-                .input(dust, Plutonium239Dioxide, 1)
+                .input(dust, FissilePlutoniumDioxide, 1)
                 .input(dust, Uraninite, 20)
                 .circuitMeta(1)
                 .output(dust, LowGradeMOX, 1)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
-                .input(dust, Plutonium239Dioxide, 1)
+                .input(dust, FissilePlutoniumDioxide, 1)
                 .input(dust, Uraninite, 5)
                 .circuitMeta(2)
                 .output(dust, HighGradeMOX, 1)
@@ -146,6 +146,14 @@ public class NuclearRecipes {
 
         // LEU-235 Dioxide
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(HighEnrichedUraniumHexafluoride.getFluid(1000))
+                .fluidInputs(Water.getFluid(2000))
+                .fluidInputs(Hydrogen.getFluid(2000))
+                .output(dust, HighEnrichedUraniumDioxide, 1)
+                .fluidOutputs(HydrofluoricAcid.getFluid(6000))
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .fluidInputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
                 .fluidInputs(Water.getFluid(2000))
                 .fluidInputs(Hydrogen.getFluid(2000))
@@ -161,33 +169,28 @@ public class NuclearRecipes {
                 .fluidOutputs(HydrofluoricAcid.getFluid(6000))
                 .buildAndRegister();
 
-        // Purex Mixture
-
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
-                .fluidInputs(Propene.getFluid(1000))
-                .fluidInputs(Water.getFluid(1000))
-                .fluidInputs(CarbonMonoxide.getFluid(2000))
-                .fluidOutputs(NButanol.getFluid(1000))
-                .fluidOutputs(CarbonDioxide.getFluid(1000))
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dust, HighEnrichedUraniumDioxide, 1)
+                .input(dust, DepletedUraniumDioxide, 5)
+                .output(dust, HEU235, 6)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(dust, Phosphorus, 1)
-                .fluidInputs(Chlorine.getFluid(3000))
-                .fluidOutputs(PhosphorusTrichloride.getFluid(1000))
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dust, HighEnrichedUraniumDioxide, 1)
+                .input(dust, DepletedUraniumDioxide, 20)
+                .output(dust, LEU235, 21)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .fluidInputs(PhosphorusTrichloride.getFluid(1000))
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(PhosphorylChloride.getFluid(1000))
+        CHEMICAL_RECIPES.recipeBuilder().duration(40).EUt(VA[ULV])
+                .input(dust, Plutonium239)
+                .fluidInputs(Oxygen.getFluid(2000))
+                .output(dust, FissilePlutoniumDioxide, 3)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .fluidInputs(PhosphorylChloride.getFluid(1000))
-                .fluidInputs(NButanol.getFluid(3000))
-                .fluidOutputs(HydrochloricAcid.getFluid(3000))
-                .fluidOutputs(TributylPhosphate.getFluid(1000))
+        CHEMICAL_RECIPES.recipeBuilder().duration(40).EUt(VA[ULV])
+                .input(dust, Plutonium241)
+                .fluidInputs(Oxygen.getFluid(2000))
+                .output(dust, FissilePlutoniumDioxide, 3)
                 .buildAndRegister();
 
         // U/Pu extraction
@@ -213,7 +216,7 @@ public class NuclearRecipes {
                 .input(fuelPelletDepleted, HEU235)
                 .output(dustSpentFuel, HEU235)
                 .output(dustBredFuel, HEU235)
-                .chancedOutput(dustFissionByproduct, LEU235, 266, 0)
+                .chancedOutput(dustFissionByproduct, HEU235, 301, 0)
                 .buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
@@ -222,7 +225,7 @@ public class NuclearRecipes {
                 .input(fuelPelletDepleted, LowGradeMOX)
                 .output(dustSpentFuel, LowGradeMOX)
                 .output(dustBredFuel, LowGradeMOX)
-                .chancedOutput(dustFissionByproduct, LowGradeMOX, 266, 0)
+                .chancedOutput(dustFissionByproduct, LowGradeMOX, 229, 0)
                 .buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
@@ -231,7 +234,7 @@ public class NuclearRecipes {
                 .input(fuelPelletDepleted, HighGradeMOX)
                 .output(dustSpentFuel, HighGradeMOX)
                 .output(dustBredFuel, HighGradeMOX)
-                .chancedOutput(dustFissionByproduct, HighGradeMOX, 266, 0)
+                .chancedOutput(dustFissionByproduct, HighGradeMOX, 443, 0)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
@@ -247,6 +250,14 @@ public class NuclearRecipes {
                 .fluidInputs(HydrofluoricAcid.getFluid(4000))
                 .fluidInputs(Fluorine.getFluid(2000))
                 .fluidOutputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
+                .fluidOutputs(Water.getFluid(2000))
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dustSpentFuel, LowGradeMOX, 1)
+                .fluidInputs(HydrofluoricAcid.getFluid(4000))
+                .fluidInputs(Fluorine.getFluid(2000))
+                .fluidOutputs(DepletedUraniumHexafluoride.getFluid(1000))
                 .fluidOutputs(Water.getFluid(2000))
                 .buildAndRegister();
 
@@ -267,36 +278,62 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dustBredFuel, LowGradeMOX)
+                .chancedOutput(dust, Plutonium240, 33, 0)
+                .chancedOutput(dust, Plutonium241, 1, 0)
+                .chancedOutput(dust, Neptunium239, 3, 0)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dustBredFuel, HighGradeMOX)
+                .chancedOutput(dust, Plutonium240, 724, 0)
+                .chancedOutput(dust, Plutonium241, 192, 0)
+                .chancedOutput(dust, Plutonium242, 59, 0)
+                .chancedOutput(dust, Neptunium239, 3, 0)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustFissionByproduct, LEU235)
-                .chancedOutput(dust, Zirconium, 1040, 0)
-                .chancedOutput(dust, Technetium, 1190, 0)
-                .chancedOutput(dust, Caesium, 1100, 0)
-                .chancedOutput(dust, Neodymium, 1110, 0)
-                .chancedOutput(dust, Ruthenium, 690, 0)
-                .chancedOutput(dust, Palladium, 370, 0)
-                .chancedFluidOutput(Xenon.getFluid(1000), 1270, 0)
+                .chancedOutput(dust, Molybdenum, 800, 0)
+                .chancedOutput(dust, Technetium, 755, 0)
+                .chancedOutput(dust, Caesium, 2390, 0)
+                .chancedOutput(dust, Barium, 1751, 0)
+                .chancedOutput(dust, Cerium, 778, 0)
+                .chancedOutput(dust, Praseodymium, 722, 0)
+                .chancedFluidOutput(Xenon.getFluid(1000), 881, 0)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dustFissionByproduct, HEU235)
+                .chancedOutput(dust, Strontium, 706, 0)
+                .chancedOutput(dust, Technetium, 755, 0)
+                .chancedOutput(dust, Caesium, 2390, 0)
+                .chancedOutput(dust, Barium, 1751, 0)
+                .chancedOutput(dust, Cerium, 777, 0)
+                .chancedOutput(dust, Praseodymium, 721, 0)
+                .chancedFluidOutput(Xenon.getFluid(1000), 881, 0)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustFissionByproduct, LowGradeMOX)
-                .chancedOutput(dust, Zirconium, 740, 0)
-                .chancedOutput(dust, Technetium, 1140, 0)
-                .chancedOutput(dust, Caesium, 1140, 0)
-                .chancedOutput(dust, Neodymium, 980, 0)
-                .chancedOutput(dust, Ruthenium, 890, 0)
-                .chancedOutput(dust, Palladium, 730, 0)
-                .chancedFluidOutput(Xenon.getFluid(1000), 1330, 0)
+                .chancedOutput(dust, Technetium, 750, 0)
+                .chancedOutput(dust, Caesium, 2490, 0)
+                .chancedOutput(dust, Neodymium, 519, 0)
+                .chancedOutput(dust, Praseodymium, 654, 0)
+                .chancedOutput(dust, Barium, 1874, 0)
+                .chancedOutput(dust, Palladium, 463, 0)
+                .chancedFluidOutput(Xenon.getFluid(1000), 1019, 0)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustFissionByproduct, HighGradeMOX)
-                .chancedOutput(dust, Zirconium, 740, 0)
-                .chancedOutput(dust, Molybdenum, 900, 0)
-                .chancedOutput(dust, Caesium, 1140, 0)
-                .chancedOutput(dust, Neodymium, 980, 0)
-                .chancedOutput(dust, Ruthenium, 890, 0)
-                .chancedOutput(dust, Palladium, 730, 0)
-                .chancedFluidOutput(Xenon.getFluid(1000), 1330, 0)
+                .chancedOutput(dust, Technetium, 744, 0)
+                .chancedOutput(dust, Caesium, 2497, 0)
+                .chancedOutput(dust, Barium, 1893, 0)
+                .chancedOutput(dust, Cerium, 693, 0)
+                .chancedOutput(dust, Praseodymium, 654, 0)
+                .chancedOutput(dust, Promethium, 265, 0)
+                .chancedFluidOutput(Xenon.getFluid(1000), 1025, 0)
                 .buildAndRegister();
     }
 }

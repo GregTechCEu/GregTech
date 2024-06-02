@@ -1855,12 +1855,8 @@ gregtech.material.high_enriched_uranium_hexafluoride=Highly Enriched Uranium Hex
 gregtech.material.high_enriched_uranium_dioxide=Highly Enriched Uranium Dioxide
 gregtech.material.low_enriched_uranium_dioxide=Low Enriched Uranium Dioxide
 gregtech.material.depleted_uranium_dioxide=Depleted Uranium Dioxide
-gregtech.material.plutonium_239_dioxide=Plutonium 239 Dioxide
+gregtech.material.fissile_plutonium_dioxide=Fissile Plutonium Dioxide
 gregtech.material.inconel=Inconel
-gregtech.material.n_butanol=N-Butanol
-gregtech.material.phosphorus_trichloride=Phosphorus Trichloride
-gregtech.material.phosphoryl_chloride=Phosphoryl Chloride
-gregtech.material.tributyl_phosphate=Tributyl Phosphate
 gregtech.material.corium=Corium
 gregtech.material.zircon=Zircon
 gregtech.material.zircaloy=Zircaloy
@@ -4986,7 +4982,9 @@ gregtech.machine.monitor_screen.name=Monitor Screen
 
 gregtech.machine.fission_reactor.name=Fission Reactor
 gregtech.machine.fission_reactor.tooltip.1=Check preview for allowed shapes.
-gregtech.machine.fission_reactor.tooltip.7=§cMay meltdown/explode if the temperature/pressure gets too high!
+gregtech.machine.fission_reactor.tooltip.2=§cMay meltdown/explode if the temperature/pressure gets too high!
+gregtech.machine.fission_reactor.tooltip.3=Please read the JEI info page!
+
 
 gregtech.machine.heat_exchanger.name=Heat Exchanger
 gregtech.machine.spent_fuel_pool.name=Spent Fuel Pool
@@ -5446,7 +5444,9 @@ gregtech.recipe.duration=Duration: %s secs
 gregtech.recipe.amperage=Amperage: %,d
 gregtech.recipe.not_consumed=Does not get consumed in the process
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
+gregtech.recipe.chance_no_boost=Chance: %s%%
 gregtech.recipe.chance_logic=Chance: %s%% +%s%%/tier (%s)
+gregtech.recipe.chance_logic_no_boost=Chance: %s%% (%s)
 gregtech.chance_logic.or=OR
 gregtech.chance_logic.and=AND
 gregtech.chance_logic.xor=XOR
