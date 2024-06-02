@@ -13,12 +13,15 @@ import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.gui.Widget;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.factory.CoverGuiFactory;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
+
+import gregtech.api.mui.widget.QuantumFluidRendererWidget;
+
+import gregtech.api.mui.widget.QuantumItemRendererWidget;
 
 import net.minecraft.item.ItemStack;
 
@@ -28,12 +31,13 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -145,6 +149,14 @@ public class GTGuis {
                         .background(GTGuiTextures.SLOT, GTGuiTextures.OUT_SLOT_OVERLAY)
                         .slot(SyncHandlers.itemSlot(exportHandler, 0)
                                 .accessibility(false, true)));
+    }
+
+    public static IWidget createQuantumRenderer(IItemHandlerModifiable handler) {
+        return new QuantumItemRendererWidget(handler);
+    }
+
+    public static IWidget createQuantumRenderer(FluidTank handler) {
+        return new QuantumFluidRendererWidget(handler);
     }
 
     public static PopupPanel createPopupPanel(String name, int width, int height) {
