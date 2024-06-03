@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.multiblock.IControlRodPort;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 
@@ -18,6 +19,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,5 +95,15 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
                                boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format(this.getMetaName() + "tooltip.1"));
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        if (!this.hasModeratorTip) {
+            Textures.CONTROL_ROD.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        } else {
+            Textures.CONTROL_ROD_MODERATED.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        }
     }
 }

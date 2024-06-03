@@ -504,6 +504,11 @@ public class Textures {
     public static final SimpleOverlayRenderer ME_INPUT_BUS_ACTIVE = new SimpleOverlayRenderer(
             "overlay/appeng/me_input_bus_active");
 
+    public static final SimpleOverlayRenderer CONTROL_ROD = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_control_rod");
+    public static final SimpleOverlayRenderer CONTROL_ROD_MODERATED = new SimpleOverlayRenderer(
+            "overlay/machine/overlay_control_rod_moderated");
+
     public static final ResourceLocation ACE_CAPE_TEXTURE = gregtechId("textures/capes/acecape.png");
     public static final ResourceLocation AGENDER_CAPE_TEXTURE = gregtechId("textures/capes/agendercape.png");
     public static final ResourceLocation AROMANTIC_CAPE_TEXTURE = gregtechId("textures/capes/aromanticcape.png");
