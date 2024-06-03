@@ -505,9 +505,15 @@ public class OrePrefix {
         stick.modifyMaterialAmount(Materials.Blaze, 4);
         stick.modifyMaterialAmount(Materials.Bone, 5);
 
+
+        fuelRod.radiationDamageFunction = (neutrons) -> neutrons / 1.5f;
+        fuelPellet.radiationDamageFunction = (neutrons) -> neutrons / 24f;
+
         fuelRodDepleted.radiationDamageFunction = (neutrons) -> neutrons / 2.f;
         fuelRodHotDepleted.radiationDamageFunction = (neutrons) -> neutrons / 1.5f;
         fuelRodHotDepleted.heatDamageFunction = (x) -> 2.0f;
+        fuelPelletDepleted.radiationDamageFunction = (neutrons) -> neutrons / 32f;
+
     }
 
     private static void excludeAllGems(Material material) {
