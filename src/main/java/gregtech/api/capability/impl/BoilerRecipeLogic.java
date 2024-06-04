@@ -351,12 +351,12 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     }
 
     @Override
-    public @NotNull RecipeMap<?>[] getJEIRecipeMapCategoryOverrides() {
+    public @NotNull RecipeMap<?> @NotNull [] getJEIRecipeMapCategoryOverrides() {
         return new RecipeMap<?>[] { RecipeMaps.COMBUSTION_GENERATOR_FUELS, RecipeMaps.SEMI_FLUID_GENERATOR_FUELS };
     }
 
     @Override
-    public @NotNull String[] getJEICategoryOverrides() {
+    public @NotNull String @NotNull [] getJEICategoryOverrides() {
         return new String[] { "minecraft.fuel" };
     }
 }

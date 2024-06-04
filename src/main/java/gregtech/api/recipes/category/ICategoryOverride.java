@@ -34,8 +34,7 @@ public interface ICategoryOverride {
      *
      * @return an array of recipe maps the mte should be associated with in JEI. Can be empty, but not null.
      */
-    @NotNull
-    default RecipeMap<?>[] getJEIRecipeMapCategoryOverrides() {
+    default @NotNull RecipeMap<?> @NotNull [] getJEIRecipeMapCategoryOverrides() {
         return new RecipeMap[] {};
     }
 
@@ -46,7 +45,7 @@ public interface ICategoryOverride {
      * @return an array of recipe category UUIDs that are valid for JEI's
      *         {@link mezz.jei.api.IModRegistry#addRecipeCatalyst(Object, String...)} method.
      */
-    default @NotNull String[] getJEICategoryOverrides() {
+    default @NotNull String @NotNull [] getJEICategoryOverrides() {
         return new String[] {};
     }
 }
