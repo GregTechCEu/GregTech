@@ -9,6 +9,7 @@ import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.ItemStackHandler;
 
+// todo remove
 public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
 
     protected CraftingRecipeLogic recipeResolver;
