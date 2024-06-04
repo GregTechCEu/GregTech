@@ -68,10 +68,6 @@ import java.util.function.Predicate;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
 
-    // todo move these to GregtechDataCodes
-    public static final int UPDATE_CLIENT_HANDLER = GregtechDataCodes.assignId();
-    public static final int SYNC_MEMORY = GregtechDataCodes.assignId();
-
     private static final IDrawable CHEST = new ItemDrawable(new ItemStack(Blocks.CHEST))
             .asIcon().size(16);
 
@@ -186,7 +182,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public void onNeighborChanged() {
         getCraftingRecipeLogic().updateInventory(getAvailableHandlers());
-        writeCustomData(UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
+        writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
     }
 
     public @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
@@ -271,7 +267,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         return SlotGroupWidget.builder()
                 .row("XXXXXXXXX")
                 .key('X', i -> new ItemSlot()
-                        .background(GTGuiTextures.SLOT, GTGuiTextures.INGOT_OVERLAY)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
                         .slot(SyncHandlers.itemSlot(this.toolInventory, i)
                                 .slotGroup(toolSlots)))
                 .build().marginTop(2);
@@ -298,7 +294,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .key('X', i -> new CraftingInputSlot(this.craftingGrid, i)
                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                             if (!init) {
-                                this.recipeLogic.updateCurrentRecipe();
+                                 this.recipeLogic.updateCurrentRecipe();
                             }
                         })
                         .background(GTGuiTextures.SLOT))
@@ -335,7 +331,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         var connected = new SlotGroup("connected_inventory", 8, true);
         syncManager.registerSlotGroup(connected);
 
-        // todo this needs to handle when inventories are removed/added
         List<IWidget> list = new ArrayList<>(this.connectedInventory.getSlots());
         Predicate<ItemSlot> checkSlotValid = itemSlot -> {
             int slot = itemSlot.getSlot().getSlotIndex();
@@ -353,7 +348,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         }
 
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
-            // todo maybe show what inventory a slot belongs to?
             var widget = new ItemSlot()
                     .setEnabledIf(checkSlotValid)
                     .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
@@ -382,7 +376,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == UPDATE_CLIENT_HANDLER) {
+        if (dataId == GregtechDataCodes.UPDATE_CLIENT_HANDLER) {
             int connected = buf.readVarInt();
 
             // resize and keep any existing items

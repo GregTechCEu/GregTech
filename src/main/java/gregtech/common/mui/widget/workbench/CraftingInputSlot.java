@@ -1,5 +1,9 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+
+import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+
 import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.item.ItemStack;
@@ -17,10 +21,13 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.slot.IOnSlotChanged;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable {
+public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable,
+                                                                             JeiGhostIngredientSlot<ItemStack>,
+                                                                             JeiIngredientProvider {
 
     private final InputSyncHandler syncHandler;
 
@@ -35,6 +42,11 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             if (stack.isEmpty()) return;
             tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
         });
+    }
+
+    @Override
+    public void onInit() {
+        getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
     }
 
     public CraftingInputSlot changeListener(IOnSlotChanged listener) {
@@ -75,6 +87,21 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         }
     }
 
+    @Override
+    public void setGhostIngredient(@NotNull ItemStack ingredient) {
+        syncHandler.setStack(ingredient);
+    }
+
+    @Override
+    public @Nullable ItemStack castGhostIngredientIfValid(@NotNull Object ingredient) {
+        return ingredient instanceof ItemStack ? (ItemStack) ingredient : null;
+    }
+
+    @Override
+    public @Nullable Object getIngredient() {
+        return syncHandler.getStack();
+    }
+
     @SuppressWarnings("OverrideOnly")
     protected static class InputSyncHandler extends SyncHandler {
 
@@ -109,7 +136,10 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
             if (id == 1) {
-                this.handler.setStackInSlot(this.index, readStackSafe(buf));
+                var b = buf.readBoolean();
+                var s = readStackSafe(buf);
+                this.handler.setStackInSlot(this.index, s);
+                this.listener.onChange(s, b, false, false);
             }
         }
 
@@ -137,14 +167,26 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         }
 
         public void syncStack() {
-            var s = getSyncManager().getCursorItem().copy();
-            s.setCount(1);
-            this.handler.setStackInSlot(this.index, s);
-            syncToServer(1, buffer -> buffer.writeItemStack(s));
+            final var cursorStack = getSyncManager().getCursorItem().copy();
+            cursorStack.setCount(1);
+            final var curStack = getStack();
+            final boolean onlyAmt = ItemHandlerHelper.canItemStacksStackRelaxed(curStack, cursorStack);
+
+            this.handler.setStackInSlot(this.index, cursorStack);
+            this.listener.onChange(cursorStack, onlyAmt, true, false);
+            syncToServer(1, buffer -> {
+                buffer.writeBoolean(onlyAmt);
+                buffer.writeItemStack(cursorStack);
+            });
         }
 
         public ItemStack getStack() {
             return this.handler.getStackInSlot(this.index);
+        }
+
+        public void setStack(ItemStack stack) {
+            this.handler.setStackInSlot(this.index, stack);
+            this.listener.onChange(stack, false, getSyncManager().isClient(), false);
         }
 
         private ItemStack readStackSafe(PacketBuffer buffer) {
