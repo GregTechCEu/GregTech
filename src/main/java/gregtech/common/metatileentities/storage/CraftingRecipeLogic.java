@@ -270,15 +270,20 @@ public class CraftingRecipeLogic extends SyncHandler {
 
         boolean extracted = false;
         for (var gathered : gatheredItems.entrySet()) {
-            var stack = availableHandlers.getStackInSlot(gathered.getKey());
-            if (stack.getItem().hasContainerItem(stack) && stack.isItemStackDamageable()) {
+            int slot = gathered.getKey(), amount = gathered.getValue();
+            var stack = availableHandlers.getStackInSlot(slot);
+
+            if (stack.isItemStackDamageable()) {
                 int damage = 1;
                 if (stack.getItem() instanceof IGTTool gtTool) {
                     damage = gtTool.getToolStats().getDamagePerCraftingAction(stack);
                 }
                 stack.damageItem(damage, getSyncManager().getPlayer());
+            } else if (stack.getItem().hasContainerItem(stack)) {
+                var newStack = stack.getItem().getContainerItem(stack);
+                availableHandlers.setStackInSlot(slot, newStack);
             } else {
-                availableHandlers.extractItem(gathered.getKey(), gathered.getValue(), false);
+                availableHandlers.extractItem(slot, amount, false);
             }
             extracted = true;
         }
