@@ -138,17 +138,20 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
         int firstY = this.getPos().getY() + 1;
         int exportIndex = 0;
         for (int y = firstY; y < firstY + this.layerCount; y++) {
-            if (fluidExportParts.size() <= exportIndex) break;
-            MetaTileEntityMultiblockPart first = fluidExportParts.get(exportIndex);
-            if (first.getPos().getY() == y) {
+            if (fluidExportParts.size() <= exportIndex) {
+                orderedHandlerList.add(null);
+                continue;
+            }
+            MetaTileEntityMultiblockPart part = fluidExportParts.get(exportIndex);
+            if (part.getPos().getY() == y) {
                 List<IFluidTank> hatchTanks = new ObjectArrayList<>();
                 // noinspection unchecked
-                ((IMultiblockAbilityPart<IFluidTank>) first).registerAbilities(hatchTanks);
+                ((IMultiblockAbilityPart<IFluidTank>) part).registerAbilities(hatchTanks);
                 if (hatchTanks.size() == 1)
                     orderedHandlerList.add(FluidTankHandler.getTankFluidHandler(hatchTanks.get(0)));
                 else orderedHandlerList.add(new FluidTankList(false, hatchTanks));
                 exportIndex++;
-            } else if (first.getPos().getY() > y) {
+            } else if (part.getPos().getY() > y) {
                 orderedHandlerList.add(null);
             } else {
                 GTLog.logger.error("The Distillation Tower at " + this.getPos() +
