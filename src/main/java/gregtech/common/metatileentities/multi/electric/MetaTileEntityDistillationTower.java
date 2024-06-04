@@ -118,7 +118,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
      * @return the number of layers that <b>could</b> hold output hatches
      */
     protected int determineLayerCount(@NotNull BlockPattern structurePattern) {
-        return structurePattern.formedRepetitionCount[1];
+        return structurePattern.formedRepetitionCount[1] + 1;
     }
 
     /**
