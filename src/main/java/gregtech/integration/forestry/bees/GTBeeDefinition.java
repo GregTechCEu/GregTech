@@ -1026,7 +1026,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IMutationBuilder mutation = dis.registerMutation(NAQUADRIA, AMERICIUM, 1).setIsSecret();
-                mutation.requireResource(new UnificationEntry(OrePrefix.block, Materials.Neutronium).toString());
+                mutation.addMutationCondition(new MaterialMutationCondition(Neutronium));
             }),
 
     // Noble Gases
