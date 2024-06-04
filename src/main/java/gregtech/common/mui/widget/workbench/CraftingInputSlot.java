@@ -1,9 +1,5 @@
 package gregtech.common.mui.widget.workbench;
 
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-
 import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.item.ItemStack;
@@ -12,6 +8,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
@@ -26,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable,
-                                                                             JeiGhostIngredientSlot<ItemStack>,
-                                                                             JeiIngredientProvider {
+                               JeiGhostIngredientSlot<ItemStack>,
+                               JeiIngredientProvider {
 
     private final InputSyncHandler syncHandler;
 

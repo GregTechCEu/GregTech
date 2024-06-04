@@ -297,7 +297,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .key('X', i -> new CraftingInputSlot(this.craftingGrid, i)
                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                             if (!init) {
-                                 this.recipeLogic.updateCurrentRecipe();
+                                this.recipeLogic.updateCurrentRecipe();
                             }
                         })
                         .background(GTGuiTextures.SLOT))
