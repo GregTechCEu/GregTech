@@ -261,9 +261,12 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                     .value(manualIOmode)
                     .lang("cover.generic.manual_io")
                     .overlay(new IDrawable[] {
-                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ? GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
-                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ? GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
-                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ? GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
                     })
                     .build());
 
