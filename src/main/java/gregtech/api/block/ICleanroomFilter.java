@@ -9,7 +9,7 @@ public interface ICleanroomFilter {
 
     /**
      * @return The {@link CleanroomType} this filter should provide,
-     * can be <code>null</code> if the block isn't a filter
+     *         can be <code>null</code> if the block isn't a filter
      */
     @Nullable
     CleanroomType getCleanroomType();
