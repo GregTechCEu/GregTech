@@ -164,6 +164,11 @@ public class ConfigHolder {
                 "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
                 "Default: true" })
         public boolean allowTickAcceleration = true;
+
+        @Config.Comment({ "The amount of water (in liters) that can be boiled by a single liter of hot coolant.", "Default: 1" })
+        @Config.RangeInt(min = 0)
+        public double coolantRecovery = 1;
+
     }
 
     public static class WorldGenOptions {
