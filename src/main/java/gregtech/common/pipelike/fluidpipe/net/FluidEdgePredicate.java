@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.StandardEdgePredicate;
+import gregtech.api.pipenet.FilteredEdgePredicate;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
@@ -8,12 +8,12 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
 
-public class FluidEdgePredicate extends StandardEdgePredicate<FluidEdgePredicate> {
+public class FluidEdgePredicate extends FilteredEdgePredicate<FluidEdgePredicate> {
 
     private final static String KEY = "Fluid";
 
     static {
-        PREDICATES.put(KEY, new FluidEdgePredicate());
+        PREDICATE_SUPPLIERS.put(KEY, FluidEdgePredicate::new);
     }
 
     @Override
@@ -24,17 +24,12 @@ public class FluidEdgePredicate extends StandardEdgePredicate<FluidEdgePredicate
     }
 
     @Override
-    public @NotNull FluidEdgePredicate createPredicate() {
-        return new FluidEdgePredicate();
-    }
-
-    @Override
     protected String predicateName() {
         return KEY;
     }
 
     @Override
-    protected BaseFilterContainer getDefaultFilterContainer() {
+    protected @NotNull BaseFilterContainer getDefaultFilterContainer() {
         return new FluidFilterContainer(DECOY);
     }
 }

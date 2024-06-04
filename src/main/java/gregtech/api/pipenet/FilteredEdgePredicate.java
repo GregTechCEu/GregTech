@@ -3,12 +3,13 @@ package gregtech.api.pipenet;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.BaseFilterContainer;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class StandardEdgePredicate<T extends StandardEdgePredicate<T>> extends AbstractEdgePredicate<T>
+public abstract class FilteredEdgePredicate<T extends FilteredEdgePredicate<T>> extends AbstractEdgePredicate<T>
                                            implements IShutteredEdgePredicate {
 
     protected static final IDirtyNotifiable DECOY = () -> {};
@@ -19,9 +20,9 @@ public abstract class StandardEdgePredicate<T extends StandardEdgePredicate<T>> 
     protected @NotNull BaseFilterContainer sourceFilter;
     protected @NotNull BaseFilterContainer targetFilter;
 
-    public StandardEdgePredicate() {
-        sourceFilter = ((StandardEdgePredicate<?>) PREDICATES.get(predicateName())).getDefaultFilterContainer();
-        targetFilter = ((StandardEdgePredicate<?>) PREDICATES.get(predicateName())).getDefaultFilterContainer();
+    public FilteredEdgePredicate() {
+        sourceFilter = this.getDefaultFilterContainer();
+        targetFilter = this.getDefaultFilterContainer();
     }
 
     @Override
@@ -57,7 +58,7 @@ public abstract class StandardEdgePredicate<T extends StandardEdgePredicate<T>> 
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(@NotNull NBTTagCompound nbt) {
         shutteredSource = nbt.getBoolean("ShutteredSource");
         shutteredTarget = nbt.getBoolean("ShutteredTarget");
         if (nbt.hasKey("SourceFilter")) {
@@ -69,5 +70,5 @@ public abstract class StandardEdgePredicate<T extends StandardEdgePredicate<T>> 
     }
 
     @Contract("-> new")
-    protected abstract BaseFilterContainer getDefaultFilterContainer();
+    protected abstract @NotNull BaseFilterContainer getDefaultFilterContainer();
 }

@@ -6,8 +6,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class BasicEdgePredicate extends AbstractEdgePredicate<BasicEdgePredicate> implements IShutteredEdgePredicate {
 
+    private final static String KEY = "Basic";
+
     static {
-        PREDICATES.put("Basic", new BasicEdgePredicate());
+        PREDICATE_SUPPLIERS.put(KEY, BasicEdgePredicate::new);
     }
 
     protected boolean shutteredSource;
@@ -37,18 +39,13 @@ public class BasicEdgePredicate extends AbstractEdgePredicate<BasicEdgePredicate
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
+    public void deserializeNBT(@NotNull NBTTagCompound nbt) {
         shutteredSource = nbt.getBoolean("ShutteredSource");
         shutteredTarget = nbt.getBoolean("ShutteredTarget");
     }
 
     @Override
-    public @NotNull BasicEdgePredicate createPredicate() {
-        return new BasicEdgePredicate();
-    }
-
-    @Override
     protected String predicateName() {
-        return "Basic";
+        return KEY;
     }
 }
