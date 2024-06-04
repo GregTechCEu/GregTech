@@ -43,7 +43,10 @@ public class CraftingRecipeLogic extends SyncHandler {
     private final World world;
     private IItemHandlerModifiable availableHandlers;
 
-    /** Used to lookup a list of slots for a given stack */
+    /**
+     * Used to lookup a list of slots for a given stack
+     * filled by {@link CraftingRecipeLogic#collectAvailableItems()}
+     **/
     private final Object2ObjectOpenCustomHashMap<ItemStack, List<Integer>> stackLookupMap = new Object2ObjectOpenCustomHashMap<>(
             ItemStackHashStrategy.comparingAllButCount());
 
@@ -64,7 +67,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     public CraftingRecipeLogic(World world, IItemHandlerModifiable handlers, IItemHandlerModifiable craftingMatrix) {
         this.world = world;
         this.availableHandlers = handlers;
-        this.craftingMatrix = new CraftingWrapper(craftingMatrix);
+        this.craftingMatrix = wrapHandler(craftingMatrix);
         this.cachedRecipeData = new CachedRecipeData();
     }
 
@@ -198,7 +201,8 @@ public class CraftingRecipeLogic extends SyncHandler {
     /**
      * Attempts to extract the given stack from connected inventories
      * 
-     * @param itemStack - stack from the crafting matrix
+     * @param itemStack stack from the crafting matrix
+     * @param extract the amount to extract
      * @return true if the item exists in available inventories
      */
     private boolean simulateExtractItem(ItemStack itemStack, int extract) {
@@ -382,29 +386,23 @@ public class CraftingRecipeLogic extends SyncHandler {
         buffer.writeCompoundTag(tag);
     }
 
-    private static class CraftingWrapper extends InventoryCrafting {
+    public static InventoryCrafting wrapHandler(IItemHandlerModifiable handler) {
+        return new InventoryCrafting(new DummyContainer(), 3, 3) {
+            @Override
+            public ItemStack getStackInRowAndColumn(int row, int column) {
+                int index = row + (3 * column);
+                return handler.getStackInSlot(index);
+            }
 
-        IItemHandlerModifiable craftingHandler;
+            @Override
+            public ItemStack getStackInSlot(int index) {
+                return handler.getStackInSlot(index);
+            }
 
-        public CraftingWrapper(IItemHandlerModifiable craftingHandler) {
-            super(new DummyContainer(), 3, 3);
-            this.craftingHandler = craftingHandler;
-        }
-
-        @Override
-        public ItemStack getStackInRowAndColumn(int row, int column) {
-            int index = row + (3 * column);
-            return this.craftingHandler.getStackInSlot(index);
-        }
-
-        @Override
-        public ItemStack getStackInSlot(int index) {
-            return craftingHandler.getStackInSlot(index);
-        }
-
-        @Override
-        public void setInventorySlotContents(int index, ItemStack stack) {
-            craftingHandler.setStackInSlot(index, GTUtility.copy(1, stack));
-        }
+            @Override
+            public void setInventorySlotContents(int index, ItemStack stack) {
+                handler.setStackInSlot(index, GTUtility.copy(1, stack));
+            }
+        };
     }
 }
