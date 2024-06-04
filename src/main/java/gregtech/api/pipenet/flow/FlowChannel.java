@@ -16,6 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
     }
 
     FlowChannel<PT, NDT> setManager(FlowChannelManager<PT, NDT> manager) {
+        if (this.manager != null) this.manager.removeChannel(this.getKey());
         this.manager = manager;
         return this;
     }
@@ -46,13 +48,13 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
      * Prime the edges to the super nodes to prepare for calculations.
      */
     protected void activate() {
-        for (NodeG<PT, NDT> source : activeSources) {
+        for (NodeG<PT, NDT> source : new ArrayList<>(activeSources)) {
             double v = getSourceValue(source);
             // TODO find source of random NPE crash where a source edge doesn't exist after world load (pls help)
             network.setEdgeWeight(this.manager.getSuperSource(), source, v);
             if (v == 0) removeSource(source);
         }
-        for (NodeG<PT, NDT> sink : this.manager.getActiveSinks()) {
+        for (NodeG<PT, NDT> sink : new ArrayList<>(this.manager.getActiveSinks())) {
             double v = getSinkValue(sink);
             network.setEdgeWeight(sink, this.manager.getSuperSink(), v);
         }
@@ -62,10 +64,10 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
      * Zero out the edges to the super nodes to prevent other calculations from using them.
      */
     protected void deactivate() {
-        for (NodeG<PT, NDT> source : activeSources) {
+        for (NodeG<PT, NDT> source : new ArrayList<>(activeSources)) {
             network.setEdgeWeight(this.manager.getSuperSource(), source, 0);
         }
-        for (NodeG<PT, NDT> sink : this.manager.getActiveSinks()) {
+        for (NodeG<PT, NDT> sink : new ArrayList<>(this.manager.getActiveSinks())) {
             network.setEdgeWeight(sink, this.manager.getSuperSink(), 0);
         }
     }
@@ -138,4 +140,6 @@ public abstract class FlowChannel<PT extends Enum<PT> & IPipeType<NDT>, NDT exte
         this.activeSources.remove(node);
         this.receiveSidesMap.remove(node);
     }
+
+    protected abstract Object getKey();
 }

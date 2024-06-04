@@ -160,8 +160,8 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
                                          extends SimpleWeightedGraph<NodeG<PT, NDT>, NetEdge>
                                          implements IFlowGraph<NDT, PT> {
 
-        Object testObject;
-        FlowChannel<PT, NDT> queryingChannel;
+        final ThreadLocal<Object> testObject = new ThreadLocal<>();
+        final ThreadLocal<FlowChannel<PT, NDT>> queryingChannel = new ThreadLocal<>();
 
         public FlowUndirected() {
             super(NetEdge.class);
@@ -171,19 +171,19 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
         @Override
         public double getEdgeWeight(NetEdge netEdge) {
             // Both source and target must support the channel, and the netEdge predicate must allow our object.
-            return ((NodeG<PT, NDT>) netEdge.getSource()).canSupportChannel(queryingChannel) &&
-                    ((NodeG<PT, NDT>) netEdge.getTarget()).canSupportChannel(queryingChannel) &&
-                    netEdge.getPredicate().test(testObject) ? super.getEdgeWeight(netEdge) : 0;
+            return ((NodeG<PT, NDT>) netEdge.getSource()).canSupportChannel(queryingChannel.get()) &&
+                    ((NodeG<PT, NDT>) netEdge.getTarget()).canSupportChannel(queryingChannel.get()) &&
+                    netEdge.getPredicate().test(testObject.get()) ? super.getEdgeWeight(netEdge) : 0;
         }
 
         @Override
         public void setTestObject(Object object) {
-            this.testObject = object;
+            this.testObject.set(object);
         }
 
         @Override
         public void setQueryingChannel(FlowChannel<PT, NDT> channel) {
-            this.queryingChannel = channel;
+            this.queryingChannel.set(channel);
         }
     }
 
@@ -191,8 +191,8 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
                                        extends SimpleDirectedWeightedGraph<NodeG<PT, NDT>, NetEdge>
                                        implements IFlowGraph<NDT, PT> {
 
-        Object testObject;
-        FlowChannel<PT, NDT> queryingChannel;
+        final ThreadLocal<Object> testObject = new ThreadLocal<>();
+        final ThreadLocal<FlowChannel<PT, NDT>> queryingChannel = new ThreadLocal<>();
 
         public FlowDirected() {
             super(NetEdge.class);
@@ -202,19 +202,19 @@ public abstract class WorldPipeFlowNetG<NodeDataType extends INodeData<NodeDataT
         @Override
         public double getEdgeWeight(NetEdge netEdge) {
             // Both source and target must support the channel, and the netEdge predicate must allow our object.
-            return ((NodeG<PT, NDT>) netEdge.getSource()).canSupportChannel(queryingChannel) &&
-                    ((NodeG<PT, NDT>) netEdge.getTarget()).canSupportChannel(queryingChannel) &&
-                    netEdge.getPredicate().test(testObject) ? super.getEdgeWeight(netEdge) : 0;
+            return ((NodeG<PT, NDT>) netEdge.getSource()).canSupportChannel(queryingChannel.get()) &&
+                    ((NodeG<PT, NDT>) netEdge.getTarget()).canSupportChannel(queryingChannel.get()) &&
+                    netEdge.getPredicate().test(testObject.get()) ? super.getEdgeWeight(netEdge) : 0;
         }
 
         @Override
         public void setTestObject(Object object) {
-            this.testObject = object;
+            this.testObject.set(object);
         }
 
         @Override
         public void setQueryingChannel(FlowChannel<PT, NDT> channel) {
-            this.queryingChannel = channel;
+            this.queryingChannel.set(channel);
         }
     }
 }

@@ -6,6 +6,7 @@ import gregtech.api.pipenet.block.IPipeType;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -104,7 +105,7 @@ public class FlowChannelManager<PipeType extends Enum<PipeType> & IPipeType<Node
         if (this.activeSinks.remove(sink)) this.net.getPipeGraph().removeEdge(sink, this.net.getSuperSink());
     }
 
-    public void setChannel(Object key, FlowChannel<PipeType, NodeDataType> channel) {
+    public void setChannel(Object key, @NotNull FlowChannel<PipeType, NodeDataType> channel) {
         this.channels.put(key, channel.setManager(this));
     }
 
