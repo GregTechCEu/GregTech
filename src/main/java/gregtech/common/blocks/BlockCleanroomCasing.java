@@ -67,6 +67,7 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
         }
 
         @Override
+        @Nullable
         public CleanroomType getCleanroomType() {
             return cleanroomType;
         }

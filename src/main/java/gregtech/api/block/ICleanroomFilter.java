@@ -3,11 +3,15 @@ package gregtech.api.block;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface ICleanroomFilter {
 
     /**
-     * @return The {@link CleanroomType} this filter should provide
+     * @return The {@link CleanroomType} this filter should provide,
+     * can be <code>null</code> if the block isn't a filter
      */
+    @Nullable
     CleanroomType getCleanroomType();
 
     /**
