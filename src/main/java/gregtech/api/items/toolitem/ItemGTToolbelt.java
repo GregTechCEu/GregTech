@@ -328,11 +328,6 @@ public class ItemGTToolbelt extends ItemGTTool {
         return true;
     }
 
-    @Override
-    public @NotNull ItemStack getContainerItem(@NotNull ItemStack stack) {
-        return stack.copy();
-    }
-
     public boolean damageAgainstMaintenanceProblem(ItemStack stack, String toolClass,
                                                    @Nullable EntityPlayer entityPlayer) {
         return getHandler(stack).checkMaintenanceAgainstTools(toolClass, true, entityPlayer);

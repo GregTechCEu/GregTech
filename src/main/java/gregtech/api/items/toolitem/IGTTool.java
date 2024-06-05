@@ -910,6 +910,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // Sound Playing
     default void playCraftingSound(EntityPlayer player, ItemStack stack) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         // player null check for things like auto-crafters
         if (ConfigHolder.client.toolCraftingSounds && getSound() != null && player != null) {
             if (canPlaySound(stack)) {
