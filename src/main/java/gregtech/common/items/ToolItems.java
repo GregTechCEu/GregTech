@@ -58,6 +58,7 @@ public final class ToolItems {
     public static IGTTool WIRECUTTER_LV;
     public static IGTTool WIRECUTTER_HV;
     public static IGTTool WIRECUTTER_IV;
+    public static ItemGTToolbelt TOOLBELT;
 
     private ToolItems() {/**/}
 
@@ -66,6 +67,8 @@ public final class ToolItems {
     }
 
     public static void init() {
+        TOOLBELT = (ItemGTToolbelt) register(new ItemGTToolbelt(GTValues.MODID, "toolbelt",
+                null));
         SWORD = register(ItemGTSword.Builder.of(GTValues.MODID, "sword")
                 .toolStats(b -> b.attacking()
                         .attackDamage(3.0F).attackSpeed(-2.4F))
@@ -379,8 +382,12 @@ public final class ToolItems {
             final ItemStack stack = new ItemStack(tool.get(), 1, GTValues.W);
             if (tool.getOreDictName() != null) {
                 OreDictUnifier.registerOre(stack, tool.getOreDictName());
+                TOOLBELT.registerValidOredict(tool.getOreDictName());
             }
-            tool.getSecondaryOreDicts().forEach(oreDict -> OreDictUnifier.registerOre(stack, oreDict));
+            tool.getSecondaryOreDicts().forEach(oreDict -> {
+                OreDictUnifier.registerOre(stack, oreDict);
+                TOOLBELT.registerValidOredict(oreDict);
+            });
         });
     }
 }
