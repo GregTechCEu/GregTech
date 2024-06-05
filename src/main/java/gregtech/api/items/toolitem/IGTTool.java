@@ -641,7 +641,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             ItemStack selected = toolbelt.getSelectedItem(stack);
             if (selected != null) stack = selected;
         }
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+        List<IToolBehavior> behaviors;
+        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
+        else behaviors = getToolStats().getBehaviors();
+        for (IToolBehavior behavior : behaviors) {
             if (behavior.onItemUseFirst(stack, player, world, pos, facing, hitX, hitY, hitZ, hand) ==
                     EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
@@ -658,7 +661,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             ItemStack selected = toolbelt.getSelectedItem(stack);
             if (selected != null) stack = selected;
         }
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+        List<IToolBehavior> behaviors;
+        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
+        else behaviors = getToolStats().getBehaviors();
+
+        for (IToolBehavior behavior : behaviors) {
             if (behavior.onItemUse(stack, player, world, pos, hand, facing, hitX, hitY, hitZ) ==
                     EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
@@ -682,8 +689,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 return ActionResult.newResult(EnumActionResult.SUCCESS, original);
             }
         }
+        List<IToolBehavior> behaviors;
+        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
+        else behaviors = getToolStats().getBehaviors();
 
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+        for (IToolBehavior behavior : behaviors) {
             if (behavior.onItemRightClick(stack, world, player, hand).getType() == EnumActionResult.SUCCESS) {
                 return ActionResult.newResult(EnumActionResult.SUCCESS, original);
             }
