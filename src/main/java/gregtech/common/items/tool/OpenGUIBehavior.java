@@ -1,7 +1,5 @@
 package gregtech.common.items.tool;
 
-import com.cleanroommc.modularui.factory.ItemGuiFactory;
-
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +10,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
+import com.cleanroommc.modularui.factory.ItemGuiFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class OpenGUIBehavior implements IToolBehavior {

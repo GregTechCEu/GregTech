@@ -1,9 +1,9 @@
 package gregtech.api.mui.sync;
 
-import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+
+import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
 
 import java.io.IOException;
 import java.util.Objects;

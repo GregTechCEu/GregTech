@@ -15,20 +15,16 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -44,7 +40,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.factory.HandGuiData;
-import com.cleanroommc.modularui.factory.ItemGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -74,7 +69,8 @@ public class ItemGTToolbelt extends ItemGTTool {
     private final ItemStack orestack;
 
     public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem, IToolBehavior... behaviors) {
-        super(domain, id, -1, new ToolDefinitionBuilder().behaviors(behaviors).cannotAttack().attackSpeed(-2.4F).build(),
+        super(domain, id, -1,
+                new ToolDefinitionBuilder().behaviors(behaviors).cannotAttack().attackSpeed(-2.4F).build(),
                 null, false, new HashSet<>(), "", new ArrayList<>(),
                 markerItem);
         this.orestack = new ItemStack(this, 1, GTValues.W);
@@ -111,8 +107,8 @@ public class ItemGTToolbelt extends ItemGTTool {
             int finalI = i;
             slotGroupWidget.child(new ItemSlot()
                     .slot(SyncHandlers.itemSlot(handler, i).slotGroup(group)
-                            .changeListener((newItem, onlyAmountChanged, client, init) ->
-                                    handler.onContentsChanged(finalI)))
+                            .changeListener(
+                                    (newItem, onlyAmountChanged, client, init) -> handler.onContentsChanged(finalI)))
                     .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
                     .pos(i % 9 * 18, i / 9 * 18)
                     .debugName("slot_" + i));
@@ -384,7 +380,7 @@ public class ItemGTToolbelt extends ItemGTTool {
                 selectedToolDisplay);
     }
 
-    //TODO BEWLR for dynamic display of selected item?
+    // TODO BEWLR for dynamic display of selected item?
 
     protected static class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
 
