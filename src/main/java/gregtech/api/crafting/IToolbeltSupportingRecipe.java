@@ -35,7 +35,7 @@ public interface IToolbeltSupportingRecipe extends IRecipe {
                 ItemStack stack = ret.get(i);
                 Ingredient ingredient = this.getIngredients().get(matches[i]);
                 if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-                    toolbelt.damageTools(stack, ingredient);
+                    toolbelt.craftDamageTools(stack, ingredient);
                 }
                 ret.set(i, ForgeHooks.getContainerItem(stack));
             }

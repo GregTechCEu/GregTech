@@ -254,58 +254,63 @@ public final class ToolHelper {
      * @param damage how much damage the stack will take
      */
     public static void damageItem(@NotNull ItemStack stack, @Nullable EntityLivingBase entity, int damage) {
-        if (!(stack.getItem() instanceof IGTTool)) {
+        if (!(stack.getItem() instanceof IGTTool tool)) {
             if (entity != null) stack.damageItem(damage, entity);
-        } else {
-            if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean(UNBREAKABLE_KEY)) {
+            return;
+        } else if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selectedStack = toolbelt.getSelectedItem(stack);
+            if (selectedStack != null) {
+                damageItem(selectedStack, entity, damage);
                 return;
             }
-            IGTTool tool = (IGTTool) stack.getItem();
-            if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
-                Random random = entity == null ? GTValues.RNG : entity.getRNG();
-                if (tool.isElectric()) {
-                    int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
-                    IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
-                            null);
-                    if (electricItem != null) {
-                        electricItem.discharge(electricDamage, tool.getElectricTier(), true, false, false);
-                        if (electricItem.getCharge() > 0 &&
-                                random.nextInt(100) >= ConfigHolder.tools.rngDamageElectricTools) {
-                            return;
-                        }
-                    } else {
-                        throw new IllegalStateException(
-                                "Electric tool does not have an attached electric item capability.");
+        }
+        if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean(UNBREAKABLE_KEY)) {
+            return;
+        }
+        if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
+            Random random = entity == null ? GTValues.RNG : entity.getRNG();
+            if (tool.isElectric()) {
+                int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
+                IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
+                        null);
+                if (electricItem != null) {
+                    electricItem.discharge(electricDamage, tool.getElectricTier(), true, false, false);
+                    if (electricItem.getCharge() > 0 &&
+                            random.nextInt(100) >= ConfigHolder.tools.rngDamageElectricTools) {
+                        return;
+                    }
+                } else {
+                    throw new IllegalStateException(
+                            "Electric tool does not have an attached electric item capability.");
+                }
+            }
+            int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+            int negated = 0;
+            for (int k = 0; unbreakingLevel > 0 && k < damage; k++) {
+                if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, random)) {
+                    negated++;
+                }
+            }
+            damage -= negated;
+            if (damage <= 0) {
+                return;
+            }
+            int newDurability = stack.getItemDamage() + damage;
+            if (entity instanceof EntityPlayerMP) {
+                CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
+            }
+            stack.setItemDamage(newDurability);
+            if (newDurability > stack.getMaxDamage()) {
+                if (entity instanceof EntityPlayer) {
+                    StatBase stat = StatList.getObjectBreakStats(stack.getItem());
+                    if (stat != null) {
+                        ((EntityPlayer) entity).addStat(stat);
                     }
                 }
-                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
-                int negated = 0;
-                for (int k = 0; unbreakingLevel > 0 && k < damage; k++) {
-                    if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, random)) {
-                        negated++;
-                    }
+                if (entity != null) {
+                    entity.renderBrokenItemStack(stack);
                 }
-                damage -= negated;
-                if (damage <= 0) {
-                    return;
-                }
-                int newDurability = stack.getItemDamage() + damage;
-                if (entity instanceof EntityPlayerMP) {
-                    CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
-                }
-                stack.setItemDamage(newDurability);
-                if (newDurability > stack.getMaxDamage()) {
-                    if (entity instanceof EntityPlayer) {
-                        StatBase stat = StatList.getObjectBreakStats(stack.getItem());
-                        if (stat != null) {
-                            ((EntityPlayer) entity).addStat(stat);
-                        }
-                    }
-                    if (entity != null) {
-                        entity.renderBrokenItemStack(stack);
-                    }
-                    stack.shrink(1);
-                }
+                stack.shrink(1);
             }
         }
     }
