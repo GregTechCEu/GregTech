@@ -1,5 +1,7 @@
 package gregtech.api.items.toolitem;
 
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.mui.GTGuiTextures;
@@ -97,6 +99,9 @@ public class ItemGTToolbelt extends ItemGTTool {
 
         ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack().getDisplayName(), 176, 120 + heightBonus);
 
+        SlotGroup group = new SlotGroup("toolbelt_inventory", 9);
+        guiSyncManager.registerSlotGroup(group);
+
         SlotGroupWidget slotGroupWidget = new SlotGroupWidget();
         slotGroupWidget.flex()
                 .coverChildren()
@@ -107,7 +112,7 @@ public class ItemGTToolbelt extends ItemGTTool {
         slotGroupWidget.debugName("toolbelt_inventory");
         for (int i = 0; i < handler.getSlots(); i++) {
             slotGroupWidget.child(new ItemSlot()
-                    .slot(SyncHandlers.itemSlot(handler, i))
+                    .slot(SyncHandlers.itemSlot(handler, i).slotGroup(group))
                     .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
                     .pos(i % 9 * 18, i / 9 * 18)
                     .debugName("slot_" + i));
