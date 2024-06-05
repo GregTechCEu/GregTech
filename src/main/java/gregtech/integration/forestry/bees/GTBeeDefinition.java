@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.Mods;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
