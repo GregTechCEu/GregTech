@@ -32,6 +32,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GTShapedOreRecipe extends ShapedOreRecipe implements IToolbeltSupportingRecipe {
 
@@ -40,19 +41,29 @@ public class GTShapedOreRecipe extends ShapedOreRecipe implements IToolbeltSuppo
     public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class,
             ItemStack.class);
 
-    public GTShapedOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
-        super(group, result, parseShaped(isClearing, recipe));
+    private GTShapedOreRecipe(AtomicBoolean toolbeltHandling, boolean isClearing, ResourceLocation group,
+                              @NotNull ItemStack result, Object... recipe) {
+        super(group, result, parseShaped(toolbeltHandling, isClearing, recipe));
         this.isClearing = isClearing;
-        this.toolbeltHandling = initNeedsToolbeltHandlingHelper.get();
-        initNeedsToolbeltHandlingHelper.set(false);
+    }
+
+    public static GTShapedOreRecipe create(boolean isClearing, ResourceLocation group, @NotNull ItemStack result,
+                                           Object... recipe) {
+        AtomicBoolean toolbeltHandling = new AtomicBoolean(false);
+        GTShapedOreRecipe out = new GTShapedOreRecipe(toolbeltHandling, isClearing, group, result, recipe);
+        return out.setToolbeltHandling(toolbeltHandling.get());
+    }
+
+    private GTShapedOreRecipe setToolbeltHandling(boolean toolbeltHandling) {
+        this.toolbeltHandling = toolbeltHandling;
+        return this;
     }
 
     // a copy of the CraftingHelper.ShapedPrimer.parseShaped method.
     // the only difference is calling getIngredient of this class.
 
-    public static CraftingHelper.ShapedPrimer parseShaped(boolean isClearing, Object... recipe) {
-        initNeedsToolbeltHandlingHelper.set(false);
-
+    public static CraftingHelper.ShapedPrimer parseShaped(AtomicBoolean toolbeltHandling, boolean isClearing,
+                                                          Object... recipe) {
         CraftingHelper.ShapedPrimer ret = new CraftingHelper.ShapedPrimer();
         StringBuilder shape = new StringBuilder();
         int idx = 0;
@@ -95,7 +106,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe implements IToolbeltSuppo
         for (; idx < recipe.length; idx += 2) {
             Character chr = (Character) recipe[idx];
             Object in = recipe[idx + 1];
-            Ingredient ing = getIngredient(isClearing, in);
+            Ingredient ing = getIngredient(toolbeltHandling, isClearing, in);
 
             if (' ' == chr) throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
 
@@ -133,7 +144,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe implements IToolbeltSuppo
         return ret;
     }
 
-    protected static Ingredient getIngredient(boolean isClearing, Object obj) {
+    protected static Ingredient getIngredient(AtomicBoolean toolbeltHandling, boolean isClearing, Object obj) {
         if (obj instanceof Ingredient ing) return ing;
         else if (obj instanceof ItemStack stk) {
             if (stk.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
@@ -161,7 +172,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe implements IToolbeltSuppo
             return Ingredient.fromStacks(new ItemStack(blk, 1, OreDictionary.WILDCARD_VALUE));
         else if (obj instanceof String str) {
             if (ItemGTToolbelt.isToolbeltableOredict(str))
-                initNeedsToolbeltHandlingHelper.set(true);
+                toolbeltHandling.set(true);
             return new OreIngredient(str);
         } else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");

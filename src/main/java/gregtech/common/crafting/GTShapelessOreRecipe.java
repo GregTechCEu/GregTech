@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GTShapelessOreRecipe extends ShapelessOreRecipe implements IToolbeltSupportingRecipe {
 
@@ -24,11 +25,10 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe implements IToolbel
     public GTShapelessOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result,
                                 Object... recipe) {
         super(group, result);
-        initNeedsToolbeltHandlingHelper.set(false);
-
         this.isClearing = isClearing;
+        AtomicBoolean needsToolbelt = new AtomicBoolean(false);
         for (Object in : recipe) {
-            Ingredient ing = GTShapedOreRecipe.getIngredient(isClearing, in);
+            Ingredient ing = GTShapedOreRecipe.getIngredient(needsToolbelt, isClearing, in);
             if (ing != null) {
                 input.add(ing);
                 this.isSimple = this.isSimple && ing.isSimple();
@@ -41,8 +41,7 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe implements IToolbel
                 throw new RuntimeException(ret.toString());
             }
         }
-        this.toolbeltHandling = initNeedsToolbeltHandlingHelper.get();
-        initNeedsToolbeltHandlingHelper.set(false);
+        this.toolbeltHandling = needsToolbelt.get();
     }
 
     @Override

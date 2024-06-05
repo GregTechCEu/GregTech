@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IToolbeltSupportingRecipe extends IRecipe {
 
-    ThreadLocal<Boolean> initNeedsToolbeltHandlingHelper = new ThreadLocal<>();
-
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean toolbeltIngredientCheck(Ingredient ingredient, ItemStack stack) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt)
