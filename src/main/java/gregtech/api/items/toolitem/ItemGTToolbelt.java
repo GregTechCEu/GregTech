@@ -100,8 +100,11 @@ public class ItemGTToolbelt extends ItemGTTool {
         slotGroupWidget.flex().endDefaultMode();
         slotGroupWidget.debugName("toolbelt_inventory");
         for (int i = 0; i < handler.getSlots(); i++) {
+            int finalI = i;
             slotGroupWidget.child(new ItemSlot()
-                    .slot(SyncHandlers.itemSlot(handler, i).slotGroup(group))
+                    .slot(SyncHandlers.itemSlot(handler, i).slotGroup(group)
+                            .changeListener((newItem, onlyAmountChanged, client, init) ->
+                                    handler.onContentsChanged(finalI)))
                     .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
                     .pos(i % 9 * 18, i / 9 * 18)
                     .debugName("slot_" + i));
@@ -526,6 +529,7 @@ public class ItemGTToolbelt extends ItemGTTool {
 
         @Override
         protected void onContentsChanged(int slot) {
+            if (this.selectedSlot != null && this.selectedSlot == slot) this.selectedSlot = null;
             this.updateSlot(slot);
             this.update();
 
