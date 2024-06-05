@@ -141,6 +141,11 @@ public class ItemGTToolbelt extends ItemGTTool {
         return stack.copy();
     }
 
+    public boolean damageAgainstMaintenanceProblem(ItemStack stack, String toolClass,
+                                                   @Nullable EntityPlayer entityPlayer) {
+        return getHandler(stack).checkMaintenanceAgainstTools(toolClass, true, entityPlayer);
+    }
+
     public boolean supportsIngredient(ItemStack stack, Ingredient ingredient) {
         return getHandler(stack).checkIngredientAgainstTools(ingredient, false);
     }
@@ -344,6 +349,18 @@ public class ItemGTToolbelt extends ItemGTTool {
             for (int i = 0; i < this.getSlots(); i++) {
                 if (tools[i] != null) this.toolClasses.addAll(tools[i].getToolClasses(stacks.get(i)));
             }
+        }
+
+        public boolean checkMaintenanceAgainstTools(String toolClass, boolean doCraftingDamage,
+                                                    @Nullable EntityPlayer entityPlayer) {
+            for (int i = 0; i < this.getSlots(); i++) {
+                ItemStack stack = this.getStackInSlot(i);
+                if (ToolHelper.isTool(stack, toolClass)) {
+                    if (doCraftingDamage) ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
+                    return true;
+                }
+            }
+            return false;
         }
 
         public boolean checkIngredientAgainstTools(Ingredient ingredient, boolean doCraftingDamage) {

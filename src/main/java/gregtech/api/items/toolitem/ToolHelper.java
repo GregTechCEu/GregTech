@@ -220,6 +220,13 @@ public final class ToolHelper {
      * @param entity entity that has damaged this stack
      */
     public static void damageItemWhenCrafting(@NotNull ItemStack stack, @Nullable EntityLivingBase entity) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selectedStack = toolbelt.getSelectedItem(stack);
+            if (selectedStack != null) {
+                damageItemWhenCrafting(selectedStack, entity);
+                return;
+            }
+        }
         int damage = 2;
         if (stack.getItem() instanceof IGTTool) {
             damage = ((IGTTool) stack.getItem()).getToolStats().getToolDamagePerCraft(stack);
