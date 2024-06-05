@@ -43,34 +43,15 @@ public class FissionReactor {
     private ArrayList<ControlRod> effectiveControlRods;
     private ArrayList<CoolantChannel> effectiveCoolantChannels;
 
-    // TODO: Verify usefulness of the following things
-    private int numberOfComponents;
-
-    private double totNeutronSources;
-    private double avgGeometricFactorSlowNeutrons;
-    private double avgGeometricFactorFastNeutrons;
-
-    // TODO: Make this configurable
-    private int geometricIntegrationSteps = 100;
-
-    // Wtf is lSlow
-    private double lSlow;
-    private double lFast;
     private double kSlow;
     private double kFast;
     private double k;
 
-    private double avgCoolantTemperature;
     private double controlRodFactor;
 
-    // TODO: Determine tolerance range from config
     public double kEff; // criticality value, based on k
 
-    // Is this still needed?
-    private double avgBoilingPoint;
-    private double avgAbsorption;
     private double avgPressure;
-    private double avgModeration;
 
     /**
      * Thresholds important for determining the evolution of the reactor ^^^ This is a very epic comment
@@ -223,7 +204,6 @@ public class FissionReactor {
                  */
                 if (reactorLayout[i][j] != null && reactorLayout[i][j].isValid()) {
                     reactorLayout[i][j].setPos(i, j);
-                    numberOfComponents++;
                     maxTemperature = Double.min(maxTemperature, reactorLayout[i][j].getMaxTemperature());
                     structuralMass += reactorLayout[i][j].getMass();
                     if (reactorLayout[i][j] instanceof FuelRod) {
@@ -249,6 +229,7 @@ public class FissionReactor {
     }
 
     public void computeGeometry() {
+        moderatorTipped = false;
         double[][] geometricMatrixSlowNeutrons = new double[fuelRods.size()][fuelRods.size()];
         double[][] geometricMatrixFastNeutrons = new double[fuelRods.size()][fuelRods.size()];
 
@@ -268,12 +249,12 @@ public class FissionReactor {
                  * Geometric factor calculation is done by (rough) numerical integration along a straight path between
                  * the two cells
                  */
-                for (int t = 0; t < geometricIntegrationSteps; t++) {
+                for (int t = 0; t < ConfigHolder.machines.fissionReactorResolution; t++) {
                     double[] pos = { .5, .5 };
                     pos[0] += (fuelRods.get(j).getPos()[0] - fuelRods.get(i).getPos()[0]) *
-                            ((float) t / geometricIntegrationSteps) + fuelRods.get(i).getPos()[0];
+                            ((float) t / ConfigHolder.machines.fissionReactorResolution) + fuelRods.get(i).getPos()[0];
                     pos[1] += (fuelRods.get(j).getPos()[1] - fuelRods.get(i).getPos()[1]) *
-                            ((float) t / geometricIntegrationSteps) + fuelRods.get(i).getPos()[1];
+                            ((float) t / ConfigHolder.machines.fissionReactorResolution) + fuelRods.get(i).getPos()[1];
                     ReactorComponent component = reactorLayout[(int) Math.floor(pos[0])][(int) Math.floor(pos[1])];
 
                     if (component == null) {
@@ -298,6 +279,9 @@ public class FissionReactor {
                     if (component instanceof ControlRod) {
                         if (!controlRodsHit.contains(component)) {
                             controlRodsHit.add((ControlRod) component);
+                            if (((ControlRod) component).hasModeratorTip()) {
+                                moderatorTipped = true;
+                            }
                         }
                     } else if (component instanceof CoolantChannel) {
                         if (!coolantChannelsHit.contains(component)) {
@@ -314,7 +298,7 @@ public class FissionReactor {
                  * The fraction of fast neutrons is simply one minus the fraction of slow neutrons
                  */
                 if (pathIsClear) {
-                    mij /= geometricIntegrationSteps;
+                    mij /= ConfigHolder.machines.fissionReactorResolution;
                     geometricMatrixSlowNeutrons[i][j] = geometricMatrixSlowNeutrons[j][i] = (1. -
                             Math.exp(-mij * fuelRods.get(i).getDistance(fuelRods.get(j)))) /
                             fuelRods.get(i).getDistance(fuelRods.get(j));
@@ -352,8 +336,6 @@ public class FissionReactor {
 
                 avgFuelRodDistance += i.getDistance(j);
             }
-            totNeutronSources += i.getNeutronSourceIntensity();
-
             avgHighEnergyFissionFactor += i.getHEFissionFactor();
             avgLowEnergyFissionFactor += i.getLEFissionFactor();
             avgHighEnergyCaptureFactor += i.getHECaptureFactor();
@@ -370,9 +352,6 @@ public class FissionReactor {
         avgLowEnergyCaptureFactor /= fuelRods.size();
 
         avgFuelRodDistance /= 2. * fuelRods.size();
-
-        lSlow = avgFuelRodDistance / (2200. * avgLowEnergyCaptureFactor);
-        lFast = avgFuelRodDistance / (15000000. * avgHighEnergyCaptureFactor);
 
         kSlow = avgLowEnergyFissionFactor / avgLowEnergyCaptureFactor * avgGeometricFactorSlowNeutrons;
         kFast = avgHighEnergyFissionFactor / avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
@@ -394,7 +373,6 @@ public class FissionReactor {
                 ConfigHolder.machines.nuclearPowerMultiplier;
 
         controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
-        avgCoolantTemperature /= coolantChannels.size();
 
         this.prepareInitialConditions();
 
@@ -432,8 +410,6 @@ public class FissionReactor {
     public void prepareInitialConditions() {
         coolantBaseTemperature = 0;
         coolantBoilingPointStandardPressure = 0;
-        avgAbsorption = 0;
-        avgModeration = 0;
         avgPressure = 0;
         coolantHeatOfVaporization = 0;
         for (CoolantChannel channel : effectiveCoolantChannels) {
@@ -443,10 +419,6 @@ public class FissionReactor {
             coolantBaseTemperature += channel.getCoolant().getFluid().getTemperature() *
                     channel.getWeight();
             coolantBoilingPointStandardPressure += prop.getBoilingPoint() *
-                    channel.getWeight();
-            avgAbsorption += prop.getAbsorption() *
-                    channel.getWeight();
-            avgModeration += prop.getModerationFactor() *
                     channel.getWeight();
             avgPressure += prop.getPressure() *
                     channel.getWeight();
