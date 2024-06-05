@@ -8,8 +8,13 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
@@ -19,10 +24,14 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -35,6 +44,7 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -59,36 +70,8 @@ public class ItemGTToolbelt extends ItemGTTool {
         this.orestack = new ItemStack(this, 1, GTValues.W);
     }
 
-    @Override
-    public int getDamage(@NotNull ItemStack stack) {
-        ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
-            selected.getItemDamage();
-        }
-        return super.getDamage(stack);
-    }
-
-    @Override
-    public void setDamage(@NotNull ItemStack stack, int damage) {
-        ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
-            selected.setItemDamage(damage);
-        } else super.setDamage(stack, damage);
-    }
-
     public @Nullable ItemStack getSelectedItem(@NotNull ItemStack stack) {
         return getHandler(stack).getSelectedStack();
-    }
-
-    @Override
-    public @NotNull ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player,
-                                                             @NotNull EnumHand hand) {
-        if (player.isSneaking()) {
-            if (!world.isRemote) {
-                ItemGuiFactory.open((EntityPlayerMP) player, hand);
-            }
-            return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-        } else return definition$onItemRightClick(world, player, hand);
     }
 
     @Override
@@ -131,8 +114,211 @@ public class ItemGTToolbelt extends ItemGTTool {
     }
 
     @Override
-    public @NotNull Set<String> getToolClasses(@NotNull ItemStack stack) {
+    public float getDestroySpeed(@NotNull ItemStack stack, @NotNull IBlockState state) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().getDestroySpeed(selected, state);
+        } else return definition$getDestroySpeed(stack, state);
+    }
+
+    @Override
+    public boolean hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
+                             @NotNull EntityLivingBase attacker) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().hitEntity(selected, target, attacker);
+        } else return definition$hitEntity(stack, target, attacker);
+    }
+
+    @Override
+    public boolean onBlockStartBreak(@NotNull ItemStack itemstack, @NotNull BlockPos pos,
+                                     @NotNull EntityPlayer player) {
+        ItemStack selected = getHandler(itemstack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().onBlockStartBreak(selected, pos, player);
+        } else return definition$onBlockStartBreak(itemstack, pos, player);
+    }
+
+    @Override
+    public boolean onBlockDestroyed(@NotNull ItemStack stack, @NotNull World worldIn, @NotNull IBlockState state,
+                                    @NotNull BlockPos pos, @NotNull EntityLivingBase entityLiving) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().onBlockDestroyed(selected, worldIn, state, pos, entityLiving);
+        } else return definition$onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
+    }
+
+    @Override
+    public boolean getIsRepairable(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
+        // I think this lets repairs go through to the selected tool, in combination with the setDamage passthroughs?
+        // Idk testing required.
+        ItemStack selected = getHandler(toRepair).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().getIsRepairable(selected, repair);
+        } else return definition$getIsRepairable(toRepair, repair);
+    }
+
+    @NotNull
+    @Override
+    public Multimap<String, AttributeModifier> getAttributeModifiers(@NotNull EntityEquipmentSlot slot,
+                                                                     @NotNull ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().getAttributeModifiers(slot, selected);
+        } else return definition$getAttributeModifiers(slot, stack);
+    }
+
+    @Override
+    public int getHarvestLevel(@NotNull ItemStack stack, @NotNull String toolClass, @Nullable EntityPlayer player,
+                               @Nullable IBlockState blockState) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().getHarvestLevel(stack, toolClass, player, blockState);
+        } else return super.getHarvestLevel(stack, toolClass, player, blockState);
+    }
+
+    @NotNull
+    @Override
+    public Set<String> getToolClasses(@NotNull ItemStack stack) {
         return getHandler(stack).getToolClasses(true);
+    }
+
+    @Override
+    public boolean canDisableShield(@NotNull ItemStack stack, @NotNull ItemStack shield,
+                                    @NotNull EntityLivingBase entity, @NotNull EntityLivingBase attacker) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().canDisableShield(selected, shield, entity, attacker);
+        } else return definition$canDisableShield(stack, shield, entity, attacker);
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(@NotNull ItemStack stack, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                      @NotNull EntityPlayer player) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().doesSneakBypassUse(selected, world, pos, player);
+        } else return definition$doesSneakBypassUse(stack, world, pos, player);
+    }
+
+    @Override
+    public boolean onEntitySwing(@NotNull EntityLivingBase entityLiving, @NotNull ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().onEntitySwing(entityLiving, selected);
+        } else return definition$onEntitySwing(entityLiving, stack);
+    }
+
+    @Override
+    public boolean canDestroyBlockInCreative(@NotNull World world, @NotNull BlockPos pos, @NotNull ItemStack stack,
+                                             @NotNull EntityPlayer player) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().canDestroyBlockInCreative(world, pos, selected, player);
+        } else return definition$canDestroyBlockInCreative(world, pos, stack, player);
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(@NotNull ItemStack oldStack, @NotNull ItemStack newStack,
+                                               boolean slotChanged) {
+        return false;
+    }
+
+    @Override
+    public boolean isDamaged(@NotNull ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().isDamaged(selected);
+        } else return definition$isDamaged(stack);
+    }
+
+    @Override
+    public int getDamage(@NotNull ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            selected.getItemDamage();
+        }
+        return super.getDamage(stack);
+    }
+
+    @Override
+    public int getMaxDamage(@NotNull ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().getMaxDamage(selected);
+        } else return definition$getMaxDamage(stack);
+    }
+
+    @Override
+    public void setDamage(@NotNull ItemStack stack, int damage) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            selected.setItemDamage(damage);
+        } else super.setDamage(stack, damage);
+    }
+
+    @Override
+    public double getDurabilityForDisplay(@NotNull ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().getDurabilityForDisplay(selected);
+        } else return definition$getDurabilityForDisplay(stack);
+    }
+
+    @NotNull
+    @Override
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                           @NotNull EnumFacing side, float hitX, float hitY, float hitZ,
+                                           @NotNull EnumHand hand) {
+        ItemStack selected = getHandler(player.getHeldItem(hand)).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+        } else return definition$onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+    }
+
+    @NotNull
+    @Override
+    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
+                                      float hitZ) {
+        ItemStack selected = getHandler(player.getHeldItem(hand)).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+        } else return definition$onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public @NotNull ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player,
+                                                             @NotNull EnumHand hand) {
+        if (player.isSneaking()) {
+            if (!world.isRemote) {
+                ItemGuiFactory.open((EntityPlayerMP) player, hand);
+            }
+            return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        } else {
+            ItemStack selected = getHandler(player.getHeldItem(hand)).getSelectedStack();
+            if (selected != null) {
+                return selected.getItem().onItemRightClick(world, player, hand);
+            } else return definition$onItemRightClick(world, player, hand);
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            selected.getItem().addInformation(selected, world, tooltip, flag);
+        } else definition$addInformation(stack, world, tooltip, flag);
+    }
+
+    @Override
+    public boolean canHarvestBlock(@NotNull IBlockState state, @NotNull ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            return selected.getItem().canHarvestBlock(state, selected);
+        } else return ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
     }
 
     @Override
