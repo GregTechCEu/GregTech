@@ -2,6 +2,7 @@ package gregtech.api.items.toolitem;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
@@ -13,6 +14,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -70,9 +72,9 @@ public class ItemGTToolbelt extends ItemGTTool {
 
     private final ItemStack orestack;
 
-    public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem) {
-        super(domain, id, -1, new ToolDefinitionBuilder().cannotAttack().attackSpeed(-2.4F).build(), null,
-                false, new HashSet<>(), "", new ArrayList<>(),
+    public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem, IToolBehavior... behaviors) {
+        super(domain, id, -1, new ToolDefinitionBuilder().behaviors(behaviors).cannotAttack().attackSpeed(-2.4F).build(),
+                null, false, new HashSet<>(), "", new ArrayList<>(),
                 markerItem);
         this.orestack = new ItemStack(this, 1, GTValues.W);
     }
@@ -277,44 +279,6 @@ public class ItemGTToolbelt extends ItemGTTool {
         } else return definition$getDurabilityForDisplay(stack);
     }
 
-    @NotNull
-    @Override
-    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                           @NotNull EnumFacing side, float hitX, float hitY, float hitZ,
-                                           @NotNull EnumHand hand) {
-        ItemStack selected = getHandler(player.getHeldItem(hand)).getSelectedStack();
-        if (selected != null) {
-            return selected.getItem().onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-        } else return definition$onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-    }
-
-    @NotNull
-    @Override
-    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
-                                      float hitZ) {
-        ItemStack selected = getHandler(player.getHeldItem(hand)).getSelectedStack();
-        if (selected != null) {
-            return selected.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-        } else return definition$onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-    }
-
-    @Override
-    public @NotNull ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player,
-                                                             @NotNull EnumHand hand) {
-        if (player.isSneaking()) {
-            if (!world.isRemote) {
-                ItemGuiFactory.open((EntityPlayerMP) player, hand);
-            }
-            return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-        } else {
-            ItemStack selected = getHandler(player.getHeldItem(hand)).getSelectedStack();
-            if (selected != null) {
-                return selected.getItem().onItemRightClick(world, player, hand);
-            } else return definition$onItemRightClick(world, player, hand);
-        }
-    }
-
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
@@ -413,6 +377,8 @@ public class ItemGTToolbelt extends ItemGTTool {
         return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(),
                 selectedToolDisplay);
     }
+
+    //TODO BEWLR for dynamic display of selected item?
 
     protected static class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
 

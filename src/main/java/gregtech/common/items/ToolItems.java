@@ -68,7 +68,7 @@ public final class ToolItems {
 
     public static void init() {
         TOOLBELT = (ItemGTToolbelt) register(new ItemGTToolbelt(GTValues.MODID, "toolbelt",
-                null));
+                null, OpenGUIBehavior.INSTANCE));
         SWORD = register(ItemGTSword.Builder.of(GTValues.MODID, "sword")
                 .toolStats(b -> b.attacking()
                         .attackDamage(3.0F).attackSpeed(-2.4F))
