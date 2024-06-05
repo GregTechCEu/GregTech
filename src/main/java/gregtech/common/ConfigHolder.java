@@ -170,7 +170,8 @@ public class ConfigHolder {
         @Config.RangeInt(min = 1)
         public double coolantRecovery = 1;
 
-        @Config.Comment({ "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
+        @Config.Comment({
+                "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
         @Config.RangeInt(min = 5, max = 10000)
         public double fissionReactorResolution = 100;
     }
