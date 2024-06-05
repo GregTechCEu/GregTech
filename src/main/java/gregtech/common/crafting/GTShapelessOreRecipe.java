@@ -1,7 +1,5 @@
 package gregtech.common.crafting;
 
-import com.google.common.collect.Lists;
-
 import gregtech.api.crafting.IToolbeltSupportingRecipe;
 
 import net.minecraft.inventory.InventoryCrafting;
@@ -13,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -53,11 +52,9 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe implements IToolbel
             int ingredientCount = 0;
             List<ItemStack> items = Lists.newArrayList();
 
-            for (int i = 0; i < inv.getSizeInventory(); ++i)
-            {
+            for (int i = 0; i < inv.getSizeInventory(); ++i) {
                 ItemStack itemstack = inv.getStackInSlot(i);
-                if (!itemstack.isEmpty())
-                {
+                if (!itemstack.isEmpty()) {
                     ++ingredientCount;
                     items.add(itemstack);
                 }

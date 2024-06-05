@@ -163,8 +163,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe implements IToolbeltSuppo
             if (ItemGTToolbelt.isToolbeltableOredict(str))
                 initNeedsToolbeltHandlingHelper.set(true);
             return new OreIngredient(str);
-        }
-        else if (obj instanceof JsonElement)
+        } else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
         return null;

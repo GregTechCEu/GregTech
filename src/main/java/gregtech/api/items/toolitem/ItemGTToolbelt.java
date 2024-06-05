@@ -1,27 +1,12 @@
 package gregtech.api.items.toolitem;
 
-import com.cleanroommc.modularui.factory.HandGuiData;
-import com.cleanroommc.modularui.factory.ItemGuiFactory;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.ItemSlot;
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-
-import com.google.common.collect.ImmutableSet;
-
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
-
 import gregtech.api.util.LocalizationUtils;
-
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -33,7 +18,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -42,6 +26,15 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.factory.ItemGuiFactory;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +63,8 @@ public class ItemGTToolbelt extends ItemGTTool {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (selected != null) {
             selected.getItemDamage();
-        }return super.getDamage(stack);
+        }
+        return super.getDamage(stack);
     }
 
     @Override
@@ -113,8 +107,8 @@ public class ItemGTToolbelt extends ItemGTTool {
         slotGroupWidget.debugName("toolbelt_inventory");
         for (int i = 0; i < handler.getSlots(); i++) {
             slotGroupWidget.child(new ItemSlot()
-                            .slot(SyncHandlers.itemSlot(handler, i))
-                            .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
+                    .slot(SyncHandlers.itemSlot(handler, i))
+                    .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
                     .pos(i % 9 * 18, i / 9 * 18)
                     .debugName("slot_" + i));
         }
@@ -185,7 +179,8 @@ public class ItemGTToolbelt extends ItemGTTool {
         if (tool != null) {
             selectedToolDisplay = " (" + tool.getDisplayName() + ")";
         }
-        return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(), selectedToolDisplay);
+        return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(),
+                selectedToolDisplay);
     }
 
     protected class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
