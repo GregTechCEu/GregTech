@@ -199,6 +199,14 @@ public final class ToolHelper {
         return stack.getOrCreateSubCompound(BEHAVIOURS_TAG_KEY);
     }
 
+    public static void setBehaviorsTag(ItemStack stack, NBTTagCompound tag) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
+        stack.setTagInfo(BEHAVIOURS_TAG_KEY, tag);
+    }
+
     public static ItemStack getAndSetToolData(IGTTool tool, Material material, int maxDurability, int harvestLevel,
                                               float toolSpeed, float attackDamage) {
         ItemStack stack = tool.getRaw();

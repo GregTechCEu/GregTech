@@ -2,6 +2,7 @@ package gregtech.api.items.toolitem;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -86,6 +87,11 @@ public class ItemGTToolbelt extends ItemGTTool {
     @Override
     public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
         ToolStackHandler handler = getHandler(guiData.getUsedItemStack());
+        ItemStack selected = handler.getSelectedStack();
+        if (selected != null && selected.getItem() instanceof ItemUIFactory factory) {
+            return factory.buildUI(guiData, guiSyncManager);
+        }
+
         int heightBonus = (handler.getSlots() / 9) * 18;
 
         ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack().getDisplayName(), 176, 120 + heightBonus);
