@@ -636,8 +636,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default EnumActionResult definition$onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
                                                        @NotNull BlockPos pos, @NotNull EnumFacing facing, float hitX,
                                                        float hitY, float hitZ, @NotNull EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand) ==
+            if (behavior.onItemUseFirst(stack, player, world, pos, facing, hitX, hitY, hitZ, hand) ==
                     EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
             }
@@ -648,8 +653,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                                   EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+            if (behavior.onItemUse(stack, player, world, pos, hand, facing, hitX, hitY, hitZ) ==
+                    EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
             }
         }
@@ -659,20 +670,25 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default ActionResult<ItemStack> definition$onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
+        ItemStack original = stack;
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         if (!world.isRemote) {
             // TODO: relocate to keybind action when keybind PR happens
             if (player.isSneaking() && getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
                 PlayerInventoryHolder.openHandItemUI(player, hand);
-                return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+                return ActionResult.newResult(EnumActionResult.SUCCESS, original);
             }
         }
 
         for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemRightClick(world, player, hand).getType() == EnumActionResult.SUCCESS) {
-                return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+            if (behavior.onItemRightClick(stack, world, player, hand).getType() == EnumActionResult.SUCCESS) {
+                return ActionResult.newResult(EnumActionResult.SUCCESS, original);
             }
         }
-        return ActionResult.newResult(EnumActionResult.PASS, stack);
+        return ActionResult.newResult(EnumActionResult.PASS, original);
     }
 
     default void definition$getSubItems(@NotNull NonNullList<ItemStack> items) {

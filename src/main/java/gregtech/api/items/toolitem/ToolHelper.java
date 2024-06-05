@@ -184,10 +184,18 @@ public final class ToolHelper {
     }
 
     public static NBTTagCompound getToolTag(ItemStack stack) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         return stack.getOrCreateSubCompound(TOOL_TAG_KEY);
     }
 
     public static NBTTagCompound getBehaviorsTag(ItemStack stack) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         return stack.getOrCreateSubCompound(BEHAVIOURS_TAG_KEY);
     }
 
@@ -332,6 +340,10 @@ public final class ToolHelper {
      */
     public static void onActionDone(@NotNull EntityPlayer player, @NotNull World world, @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         IGTTool tool = (IGTTool) stack.getItem();
         ToolHelper.damageItem(stack, player);
         if (tool.getSound() != null) {
@@ -375,6 +387,10 @@ public final class ToolHelper {
      * @return The level of Fortune or Looting that the tool is enchanted with, or zero
      */
     public static int getFortuneOrLootingLevel(ItemStack tool) {
+        if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(tool);
+            if (selected != null) tool = selected;
+        }
         if (tool.getItem() instanceof ItemGTSword) {
             return EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, tool);
         } else if (tool.getItem() instanceof IGTTool) {
@@ -396,6 +412,10 @@ public final class ToolHelper {
      * AoE Block Breaking Routine.
      */
     public static boolean areaOfEffectBlockBreakRoutine(ItemStack stack, EntityPlayerMP player) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         int currentDurability = getToolTag(stack).getInteger(DURABILITY_KEY);
         int maximumDurability = getToolTag(stack).getInteger(MAX_DURABILITY_KEY);
         int remainingUses = maximumDurability - currentDurability;
@@ -412,7 +432,11 @@ public final class ToolHelper {
                     return true;
                 }
                 // If the tool is an electric tool, catch the tool breaking and cancel the remaining AOE
-                else if (!player.getHeldItemMainhand().isItemEqualIgnoreDurability(stack)) {
+                ItemStack tool = player.getHeldItemMainhand();
+                if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
+                    ItemStack selected = toolbelt.getSelectedItem(tool);
+                    if (selected != null) tool = selected;
+                } else if (!tool.isItemEqualIgnoreDurability(stack)) {
                     return true;
                 }
             }
@@ -424,6 +448,10 @@ public final class ToolHelper {
     public static Set<BlockPos> iterateAoE(ItemStack stack, AoESymmetrical aoeDefinition, World world,
                                            EntityPlayer player, RayTraceResult rayTraceResult,
                                            QuintFunction<ItemStack, World, EntityPlayer, BlockPos, BlockPos, Boolean> function) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         if (aoeDefinition != AoESymmetrical.none() && rayTraceResult != null &&
                 rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
             int column = aoeDefinition.column;
@@ -671,9 +699,12 @@ public final class ToolHelper {
         }
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean breakBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
         // This is *not* a vanilla/forge convention, Forge never added "shears" to ItemShear's tool classes.
+        if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(tool);
+            if (selected != null) tool = selected;
+        }
         if (isTool(tool, ToolClasses.SHEARS) && shearBlockRoutine(player, tool, pos) == 0) {
             return false;
         }
@@ -722,6 +753,10 @@ public final class ToolHelper {
      */
     public static int shearBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
         if (!player.isCreative()) {
+            if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
+                ItemStack selected = toolbelt.getSelectedItem(tool);
+                if (selected != null) tool = selected;
+            }
             World world = player.world;
             IBlockState state = world.getBlockState(pos);
             if (state.getBlock() instanceof IShearable) {
@@ -780,6 +815,10 @@ public final class ToolHelper {
     }
 
     public static void playToolSound(ItemStack stack, EntityPlayer player) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         if (stack.getItem() instanceof IGTTool) {
             ((IGTTool) stack.getItem()).playSound(player);
         }
