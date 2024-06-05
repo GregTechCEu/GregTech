@@ -9,6 +9,8 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 
+import com.google.common.collect.ImmutableSet;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.mui.GTGuiTextures;
@@ -37,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -65,6 +66,26 @@ public class ItemGTToolbelt extends ItemGTTool {
     }
 
     @Override
+    public int getDamage(@NotNull ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            selected.getItemDamage();
+        }return super.getDamage(stack);
+    }
+
+    @Override
+    public void setDamage(@NotNull ItemStack stack, int damage) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected != null) {
+            selected.setItemDamage(damage);
+        } else super.setDamage(stack, damage);
+    }
+
+    public @Nullable ItemStack getSelectedItem(@NotNull ItemStack stack) {
+        return getHandler(stack).getSelectedStack();
+    }
+
+    @Override
     public @NotNull ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player,
                                                              @NotNull EnumHand hand) {
         if (player.isSneaking()) {
@@ -77,9 +98,10 @@ public class ItemGTToolbelt extends ItemGTTool {
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
-        ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack().getDisplayName(), 176, 192);
-
         ToolStackHandler handler = getHandler(guiData.getUsedItemStack());
+        int heightBonus = (handler.getSlots() / 9) * 18;
+
+        ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack().getDisplayName(), 176, 120 + heightBonus);
 
         SlotGroupWidget slotGroupWidget = new SlotGroupWidget();
         slotGroupWidget.flex()
@@ -89,8 +111,7 @@ public class ItemGTToolbelt extends ItemGTTool {
         slotGroupWidget.flex().top(7);
         slotGroupWidget.flex().endDefaultMode();
         slotGroupWidget.debugName("toolbelt_inventory");
-        String key = "toolbelt";
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < handler.getSlots(); i++) {
             slotGroupWidget.child(new ItemSlot()
                             .slot(SyncHandlers.itemSlot(handler, i))
                             .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
@@ -112,13 +133,8 @@ public class ItemGTToolbelt extends ItemGTTool {
     }
 
     @Override
-    public int getMaxDamage(@NotNull ItemStack stack) {
-        return -1;
-    }
-
-    @Override
     public @NotNull Set<String> getToolClasses(@NotNull ItemStack stack) {
-        return getHandler(stack).toolClasses;
+        return getHandler(stack).getToolClasses(true);
     }
 
     @Override
@@ -135,7 +151,7 @@ public class ItemGTToolbelt extends ItemGTTool {
         return getHandler(stack).checkIngredientAgainstTools(ingredient, false);
     }
 
-    public void damageTools(ItemStack stack, Ingredient ingredient) {
+    public void craftDamageTools(ItemStack stack, Ingredient ingredient) {
         getHandler(stack).checkIngredientAgainstTools(ingredient, true);
     }
 
@@ -145,7 +161,7 @@ public class ItemGTToolbelt extends ItemGTTool {
 
     @Override
     public ICapabilityProvider initCapabilities(@NotNull ItemStack stack, NBTTagCompound nbt) {
-        return new ToolbeltCapabilityProvider();
+        return new ToolbeltCapabilityProvider(stack);
     }
 
     public void changeSelectedTool(int direction, ItemStack stack) {
@@ -172,10 +188,15 @@ public class ItemGTToolbelt extends ItemGTTool {
         return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(), selectedToolDisplay);
     }
 
-    protected static class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
+    protected class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
 
+        protected final Supplier<Integer> slotCountSupplier;
 
-        private final ToolStackHandler handler = new ToolStackHandler();
+        private @Nullable ToolStackHandler handler;
+
+        public ToolbeltCapabilityProvider(ItemStack stack) {
+            slotCountSupplier = () -> (int) (ItemGTToolbelt.super.getTotalHarvestLevel(stack) * 5.4f);
+        }
 
         @Override
         public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
@@ -185,22 +206,33 @@ public class ItemGTToolbelt extends ItemGTTool {
         @SuppressWarnings("unchecked")
         @Override
         public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
-            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) handler;
+            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) this.getHandler(0);
             else return null;
         }
 
         @Override
         public NBTTagCompound serializeNBT() {
-            return this.handler.serializeNBT();
+            return this.getHandler(0).serializeNBT();
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            this.handler.deserializeNBT(nbt);
+            // make sure we can load all the slots, no matter what we're supposed to be limited to.
+            int minsize = nbt.hasKey("Size") ? nbt.getInteger("Size") : 0;
+            // .copy() prevents double damage ticks in singleplayer
+            this.getHandler(minsize).deserializeNBT(nbt.copy());
+        }
+
+        protected ToolStackHandler getHandler(int minsize) {
+            int slots = Math.max(slotCountSupplier.get(), minsize);
+            if (handler == null || handler.getSlots() != slots) handler = new ToolStackHandler(slots);
+            return handler;
         }
     }
 
     protected static class ToolStackHandler extends ItemStackHandler {
+
+        private static final Set<String> EMPTY = ImmutableSet.of();
 
         private @Nullable Integer selectedSlot = null;
 
@@ -209,8 +241,8 @@ public class ItemGTToolbelt extends ItemGTTool {
         protected final Set<String> toolClasses = new ObjectOpenHashSet<>();
         public final Set<String> oreDicts = new ObjectOpenHashSet<>();
 
-        public ToolStackHandler() {
-            super(27);
+        public ToolStackHandler(int size) {
+            super(size);
         }
 
         public void incrementSelectedSlot() {
@@ -235,14 +267,29 @@ public class ItemGTToolbelt extends ItemGTTool {
             return selectedSlot;
         }
 
-        public ItemStack getSelectedStack() {
+        public @Nullable ItemStack getSelectedStack() {
             if (getSelectedSlot() == null) return null;
             else return this.stacks.get(getSelectedSlot());
         }
 
+        public Set<String> getToolClasses(boolean defaultEmpty) {
+            ItemStack selectedStack = getSelectedStack();
+            if (selectedStack != null) {
+                if (selectedStack.getItem() instanceof ItemTool tool) {
+                    return tool.getToolClasses(selectedStack);
+                } else if (selectedStack.getItem() instanceof IGTTool tool) {
+                    return tool.getToolClasses(selectedStack);
+                }
+            }
+            if (defaultEmpty) return EMPTY;
+            return toolClasses;
+        }
+
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.getItem() instanceof ItemTool || stack.getItem() instanceof IGTTool;
+            Item item = stack.getItem();
+            if (item instanceof ItemGTToolbelt) return false;
+            return item instanceof ItemTool || item instanceof IGTTool;
         }
 
         @Override
