@@ -1,42 +1,35 @@
 package gregtech.common.crafting;
 
-import gregtech.api.util.GTLog;
-import gregtech.api.util.GTStringUtils;
+import com.google.common.collect.Lists;
 
-import net.minecraft.block.Block;
+import gregtech.api.crafting.IToolbeltSupportingRecipe;
+
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.crafting.IngredientNBT;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.OreIngredient;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import com.google.gson.JsonElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
-public class GTShapelessOreRecipe extends ShapelessOreRecipe {
+public class GTShapelessOreRecipe extends ShapelessOreRecipe implements IToolbeltSupportingRecipe {
 
     boolean isClearing;
-    public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class,
-            ItemStack.class);
+    boolean toolbeltHandling;
 
     public GTShapelessOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result,
                                 Object... recipe) {
         super(group, result);
+        initNeedsToolbeltHandlingHelper.set(false);
+
         this.isClearing = isClearing;
         for (Object in : recipe) {
-            Ingredient ing = getIngredient(isClearing, in);
+            Ingredient ing = GTShapedOreRecipe.getIngredient(isClearing, in);
             if (ing != null) {
                 input.add(ing);
                 this.isSimple = this.isSimple && ing.isSimple();
@@ -49,43 +42,41 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
                 throw new RuntimeException(ret.toString());
             }
         }
+        this.toolbeltHandling = initNeedsToolbeltHandlingHelper.get();
+        initNeedsToolbeltHandlingHelper.set(false);
     }
 
-    // a copy of the CraftingHelper getIngredient method.
-    // the only difference is checking for a filled bucket and making
-    // it an GTFluidCraftingIngredient
-    private static Ingredient getIngredient(boolean isClearing, Object obj) {
-        if (obj instanceof Ingredient) return (Ingredient) obj;
-        else if (obj instanceof ItemStack) {
-            ItemStack ing = (ItemStack) obj;
-            if (ing.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                IFluidHandlerItem handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
-                        null);
-                if (handler != null) {
-                    FluidStack drained = handler.drain(Integer.MAX_VALUE, false);
-                    if (drained != null && drained.amount > 0) {
-                        return new GTFluidCraftingIngredient(((ItemStack) obj).copy());
-                    }
-                    if (!isClearing) {
-                        ItemStack i = ((ItemStack) obj).copy();
-                        try {
-                            return ingredientNBT.newInstance(i);
-                        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                            GTLog.logger.error("Failure to instantiate an IngredientNBT of item {}",
-                                    GTStringUtils.prettyPrintItemStack(i));
-                        }
-                    }
+    @Override
+    public boolean matches(@NotNull InventoryCrafting inv, @NotNull World world) {
+        if (this.toolbeltHandling) {
+            // I can't wrap my head around the 'simple' shapeless logic, so no simple toolbelt handling.
+            int ingredientCount = 0;
+            List<ItemStack> items = Lists.newArrayList();
+
+            for (int i = 0; i < inv.getSizeInventory(); ++i)
+            {
+                ItemStack itemstack = inv.getStackInSlot(i);
+                if (!itemstack.isEmpty())
+                {
+                    ++ingredientCount;
+                    items.add(itemstack);
                 }
             }
-            return Ingredient.fromStacks(((ItemStack) obj).copy());
-        } else if (obj instanceof Item) return Ingredient.fromItem((Item) obj);
-        else if (obj instanceof Block)
-            return Ingredient.fromStacks(new ItemStack((Block) obj, 1, OreDictionary.WILDCARD_VALUE));
-        else if (obj instanceof String) return new OreIngredient((String) obj);
-        else if (obj instanceof JsonElement)
-            throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
-        return null;
+            if (ingredientCount != this.input.size())
+                return false;
+
+            int[] matches = RecipeMatcher.findMatches(items, this.input);
+            if (matches != null) {
+                for (int i = 0; i < items.size(); i++) {
+                    ItemStack stack = items.get(i);
+                    Ingredient ingredient = this.input.get(matches[i]);
+                    if (!IToolbeltSupportingRecipe.toolbeltIngredientCheck(ingredient, stack)) return false;
+                }
+                return true;
+            } else return false;
+
+        } else return super.matches(inv, world);
     }
 
     @Override
@@ -93,7 +84,7 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {
-            return super.getRemainingItems(inv);
+            return IToolbeltSupportingRecipe.super.getRemainingItems(inv);
         }
     }
 }

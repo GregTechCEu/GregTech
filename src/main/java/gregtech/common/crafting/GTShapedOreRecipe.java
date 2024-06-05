@@ -1,5 +1,7 @@
 package gregtech.common.crafting;
 
+import gregtech.api.crafting.IToolbeltSupportingRecipe;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
 
@@ -31,21 +33,26 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Set;
 
-public class GTShapedOreRecipe extends ShapedOreRecipe {
+public class GTShapedOreRecipe extends ShapedOreRecipe implements IToolbeltSupportingRecipe {
 
     boolean isClearing;
+    boolean toolbeltHandling;
     public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class,
             ItemStack.class);
 
     public GTShapedOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
         super(group, result, parseShaped(isClearing, recipe));
         this.isClearing = isClearing;
+        this.toolbeltHandling = initNeedsToolbeltHandlingHelper.get();
+        initNeedsToolbeltHandlingHelper.set(false);
     }
 
     // a copy of the CraftingHelper.ShapedPrimer.parseShaped method.
-    // the on difference is calling getIngredient of this class.
+    // the only difference is calling getIngredient of this class.
 
     public static CraftingHelper.ShapedPrimer parseShaped(boolean isClearing, Object... recipe) {
+        initNeedsToolbeltHandlingHelper.set(false);
+
         CraftingHelper.ShapedPrimer ret = new CraftingHelper.ShapedPrimer();
         StringBuilder shape = new StringBuilder();
         int idx = 0;
@@ -126,23 +133,19 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
         return ret;
     }
 
-    // a copy of the CraftingHelper getIngredient method.
-    // the only difference is checking for a filled bucket and making
-    // it an GTFluidCraftingIngredient
     protected static Ingredient getIngredient(boolean isClearing, Object obj) {
-        if (obj instanceof Ingredient) return (Ingredient) obj;
-        else if (obj instanceof ItemStack) {
-            ItemStack ing = (ItemStack) obj;
-            if (ing.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                IFluidHandlerItem handler = ing.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+        if (obj instanceof Ingredient ing) return ing;
+        else if (obj instanceof ItemStack stk) {
+            if (stk.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                IFluidHandlerItem handler = stk.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
                         null);
                 if (handler != null) {
                     FluidStack drained = handler.drain(Integer.MAX_VALUE, false);
                     if (drained != null && drained.amount > 0) {
-                        return new GTFluidCraftingIngredient(((ItemStack) obj).copy());
+                        return new GTFluidCraftingIngredient(stk.copy());
                     }
                     if (!isClearing) {
-                        ItemStack i = ((ItemStack) obj).copy();
+                        ItemStack i = (stk).copy();
                         try {
                             return ingredientNBT.newInstance(i);
                         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
@@ -152,11 +155,15 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
                     }
                 }
             }
-            return Ingredient.fromStacks(((ItemStack) obj).copy());
-        } else if (obj instanceof Item) return Ingredient.fromItem((Item) obj);
-        else if (obj instanceof Block)
-            return Ingredient.fromStacks(new ItemStack((Block) obj, 1, OreDictionary.WILDCARD_VALUE));
-        else if (obj instanceof String) return new OreIngredient((String) obj);
+            return Ingredient.fromStacks(stk.copy());
+        } else if (obj instanceof Item itm) return Ingredient.fromItem(itm);
+        else if (obj instanceof Block blk)
+            return Ingredient.fromStacks(new ItemStack(blk, 1, OreDictionary.WILDCARD_VALUE));
+        else if (obj instanceof String str) {
+            if (ItemGTToolbelt.isToolbeltableOredict(str))
+                initNeedsToolbeltHandlingHelper.set(true);
+            return new OreIngredient(str);
+        }
         else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
@@ -164,11 +171,36 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
     }
 
     @Override
+    protected boolean checkMatch(@NotNull InventoryCrafting inv, int startX, int startY, boolean mirror) {
+        if (this.toolbeltHandling) {
+            for (int x = 0; x < inv.getWidth(); x++) {
+                for (int y = 0; y < inv.getHeight(); y++) {
+                    int subX = x - startX;
+                    int subY = y - startY;
+                    Ingredient target = Ingredient.EMPTY;
+
+                    if (subX >= 0 && subY >= 0 && subX < width && subY < height) {
+                        if (mirror) {
+                            target = input.get(width - subX - 1 + subY * width);
+                        } else {
+                            target = input.get(subX + subY * width);
+                        }
+                    }
+
+                    if (!IToolbeltSupportingRecipe.toolbeltIngredientCheck(target, inv.getStackInRowAndColumn(x, y)))
+                        return false;
+                }
+            }
+            return true;
+        } else return super.checkMatch(inv, startX, startY, mirror);
+    }
+
+    @Override
     public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {
-            return super.getRemainingItems(inv);
+            return IToolbeltSupportingRecipe.super.getRemainingItems(inv);
         }
     }
 }

@@ -23,6 +23,8 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
 
     public FluidReplaceRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
         super(isClearing, group, result, recipe);
+        // there is no possible way that we require toolbelt handling, but make sure it isn't enabled.
+        this.toolbeltHandling = false;
     }
 
     @NotNull
