@@ -1,7 +1,5 @@
 package gregtech.api.items.toolitem;
 
-import com.cleanroommc.modularui.widgets.slot.SlotGroup;
-
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.mui.GTGuiTextures;
@@ -35,6 +33,7 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
