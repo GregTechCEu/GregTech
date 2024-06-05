@@ -16,13 +16,15 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * A recipe which inputs a single Fluid Container, and outputs the same Fluid Container with a new contained Fluid
  */
 public class FluidReplaceRecipe extends GTShapedOreRecipe {
 
     public FluidReplaceRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
-        super(isClearing, group, result, recipe);
+        super(new AtomicBoolean(false), isClearing, group, result, recipe);
         // there is no possible way that we require toolbelt handling, but make sure it isn't enabled.
         this.toolbeltHandling = false;
     }
