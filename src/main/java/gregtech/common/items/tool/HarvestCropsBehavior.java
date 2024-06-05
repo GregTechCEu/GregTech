@@ -36,13 +36,12 @@ public class HarvestCropsBehavior implements IToolBehavior {
 
     @NotNull
     @Override
-    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
-                                      float hitZ) {
+    public EnumActionResult onItemUse(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World world,
+                                      @NotNull BlockPos pos, @NotNull EnumHand hand, @NotNull EnumFacing facing,
+                                      float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             return EnumActionResult.PASS;
         }
-        ItemStack stack = player.getHeldItem(hand);
 
         AoESymmetrical aoeDefinition = ToolHelper.getAoEDefinition(stack);
 

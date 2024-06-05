@@ -5,6 +5,10 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
@@ -25,6 +29,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -56,6 +61,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+
+import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
 
 public class ItemGTToolbelt extends ItemGTTool {
 
@@ -236,9 +243,8 @@ public class ItemGTToolbelt extends ItemGTTool {
     public int getDamage(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (selected != null) {
-            selected.getItemDamage();
-        }
-        return super.getDamage(stack);
+            return selected.getItem().getDamage(selected);
+        } else return super.getDamage(stack);
     }
 
     @Override
@@ -253,7 +259,7 @@ public class ItemGTToolbelt extends ItemGTTool {
     public void setDamage(@NotNull ItemStack stack, int damage) {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (selected != null) {
-            selected.setItemDamage(damage);
+            selected.getItem().setDamage(selected, damage);
         } else super.setDamage(stack, damage);
     }
 
@@ -261,7 +267,10 @@ public class ItemGTToolbelt extends ItemGTTool {
     public double getDurabilityForDisplay(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (selected != null) {
-            return selected.getItem().getDurabilityForDisplay(selected);
+            double dis = selected.getItem().getDurabilityForDisplay(selected);
+            // vanillaesque tools need to be inverted
+            if (!(selected.getItem() instanceof IGTTool)) dis = 1 - dis;
+            return dis;
         } else return definition$getDurabilityForDisplay(stack);
     }
 
@@ -322,6 +331,30 @@ public class ItemGTToolbelt extends ItemGTTool {
     }
 
     @Override
+    public void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
+        ItemStack selected = getHandler(wrench).getSelectedStack();
+        if (selected != null && selected.getItem() instanceof IGTTool tool) {
+            tool.wrenchUsed(player, hand, selected, rayTrace);
+        } else super.wrenchUsed(player, hand, wrench, rayTrace);
+    }
+
+    @Override
+    public void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) {
+        ItemStack selected = getHandler(item).getSelectedStack();
+        if (selected != null && selected.getItem() instanceof IGTTool tool) {
+            tool.toolUsed(selected, user, pos);
+        } else super.toolUsed(item, user, pos);
+    }
+
+    @Override
+    public void used(@NotNull EnumHand hand, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
+        ItemStack selected = getHandler(player.getHeldItem(hand)).getSelectedStack();
+        if (selected != null && selected.getItem() instanceof IGTTool tool) {
+            tool.used(hand, player, pos);
+        } else super.used(hand, player, pos);
+    }
+
+    @Override
     public boolean hasContainerItem(@NotNull ItemStack stack) {
         return true;
     }
@@ -378,14 +411,23 @@ public class ItemGTToolbelt extends ItemGTTool {
                 selectedToolDisplay);
     }
 
-    protected class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
+    protected static class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
 
         protected final Supplier<Integer> slotCountSupplier;
 
         private @Nullable ToolStackHandler handler;
 
         public ToolbeltCapabilityProvider(ItemStack stack) {
-            slotCountSupplier = () -> (int) (ItemGTToolbelt.super.getTotalHarvestLevel(stack) * 5.4f);
+            slotCountSupplier = () -> {
+                NBTTagCompound toolTag = stack.getOrCreateSubCompound(ToolHelper.TOOL_TAG_KEY);
+                String string = toolTag.getString(MATERIAL_KEY);
+                Material material = GregTechAPI.materialManager.getMaterial(string);
+                if (material == null) {
+                    toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).toString());
+                }
+                ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
+                return (int) (toolProperty == null ? 5 : toolProperty.getToolHarvestLevel() * 5.4f);
+            };
         }
 
         @Override

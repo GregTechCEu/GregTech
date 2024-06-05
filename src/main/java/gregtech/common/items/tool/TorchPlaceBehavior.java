@@ -37,10 +37,9 @@ public class TorchPlaceBehavior implements IToolBehavior {
 
     @NotNull
     @Override
-    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
-                                      float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
+    public EnumActionResult onItemUse(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World world,
+                                      @NotNull BlockPos pos, @NotNull EnumHand hand, @NotNull EnumFacing facing,
+                                      float hitX, float hitY, float hitZ) {
         NBTTagCompound behaviourTag = ToolHelper.getBehaviorsTag(stack);
         if (behaviourTag.getBoolean(ToolHelper.TORCH_PLACING_KEY)) {
             int cachedTorchSlot;
