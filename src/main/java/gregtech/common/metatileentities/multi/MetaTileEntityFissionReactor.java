@@ -575,7 +575,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         }
     }
 
-    // TODO: Abstract the stats into its own class
     public void syncReactorStats() {
         this.temperature = this.fissionReactor.temperature;
         this.maxTemperature = this.fissionReactor.maxTemperature;
