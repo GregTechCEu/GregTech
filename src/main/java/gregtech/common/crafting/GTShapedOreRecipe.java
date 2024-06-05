@@ -41,8 +41,8 @@ public class GTShapedOreRecipe extends ShapedOreRecipe implements IToolbeltSuppo
     public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class,
             ItemStack.class);
 
-    private GTShapedOreRecipe(AtomicBoolean toolbeltHandling, boolean isClearing, ResourceLocation group,
-                              @NotNull ItemStack result, Object... recipe) {
+    protected GTShapedOreRecipe(AtomicBoolean toolbeltHandling, boolean isClearing, ResourceLocation group,
+                                @NotNull ItemStack result, Object... recipe) {
         super(group, result, parseShaped(toolbeltHandling, isClearing, recipe));
         this.isClearing = isClearing;
     }
