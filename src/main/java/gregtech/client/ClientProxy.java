@@ -1,7 +1,5 @@
 package gregtech.client;
 
-import com.cleanroommc.modularui.utils.math.functions.limit.Min;
-
 import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
