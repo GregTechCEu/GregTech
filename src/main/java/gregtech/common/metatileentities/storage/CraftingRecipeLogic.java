@@ -51,8 +51,8 @@ public class CraftingRecipeLogic extends SyncHandler {
             ItemStackHashStrategy.comparingAllButCount());
 
     /**
-     * List of items needed to complete the crafting recipe,
-     * filled by {@link CraftingRecipeLogic#getIngredientEquivalent(ItemStack, IntList)} )}
+     * List of items needed to complete the crafting recipe, filled by
+     * {@link CraftingRecipeLogic#getIngredientEquivalent(ItemStack, IntList)} )}
      **/
     private final Map<ItemStack, Integer> requiredItems = new Object2IntOpenCustomHashMap<>(
             ItemStackHashStrategy.comparingAllButCount());
@@ -62,7 +62,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     private final IInventory craftingResultInventory = new InventoryCraftResult();
     private final CachedRecipeData cachedRecipeData;
     public static short ALL_INGREDIENTS_PRESENT = 511;
-    private short tintLocation = ALL_INGREDIENTS_PRESENT;
+    private short presenceMatrix = ALL_INGREDIENTS_PRESENT;
 
     public CraftingRecipeLogic(World world, IItemHandlerModifiable handlers, IItemHandlerModifiable craftingMatrix) {
         this.world = world;
@@ -95,16 +95,19 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     /**
      * Attempts to match the crafting matrix against all available inventories
-     * 
-     * @return true if all items matched
+     *
+     * @return 511 if all items matched
      */
-    public boolean attemptMatchRecipe() {
+    public short attemptMatchRecipe() {
+        short presenceMatrix = 511;
         requiredItems.clear();
         for (var stack : compressMatrixToList(this.craftingMatrix).entrySet()) {
-            if (!getIngredientEquivalent(stack.getKey(), stack.getValue()))
-                return false;
+            int notFound = stack.getValue().size() - getIngredientEquivalent(stack.getKey(), stack.getValue());
+            for (int i = notFound - 1; i >= 0; i--) {
+                presenceMatrix -= (short) (1 << stack.getValue().get(i));
+            }
         }
-        return true;
+        return presenceMatrix;
     }
 
     private Map<ItemStack, IntList> compressMatrixToList(InventoryCrafting craftingMatrix) {
@@ -121,23 +124,23 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     /**
      * Searches all available inventories for an ingredient equivalent for a stack in the crafting matrix
-     * 
+     *
      * @param currentStack stack to find a substitute for
-     * @return true if a valid substitute exists for the stack in the slot
+     * @return number of slots for which a valid substitute exists
      */
-    public boolean getIngredientEquivalent(ItemStack currentStack, IntList slots) {
+    public int getIngredientEquivalent(ItemStack currentStack, IntList slots) {
         if (currentStack.isEmpty()) {
-            return true; // stack is empty, nothing to return
+            return slots.size(); // stack is empty, nothing to return
         }
 
-        if (simulateExtractItem(currentStack, slots.size())) {
-            return true;
+        if (simulateExtractItem(currentStack, slots.size()) == 0) {
+            return slots.size();
         }
 
         var recipe = getCachedRecipe();
 
         ItemStack previousStack = recipe.getCraftingResult(craftingMatrix);
-
+        int succeeded = 0;
         for (int slot : slots) {
 
             Object2BooleanMap<ItemStack> map = replaceAttemptMap.computeIfAbsent(slot,
@@ -185,8 +188,9 @@ public class CraftingRecipeLogic extends SyncHandler {
                             recipe instanceof ShapedOreEnergyTransferRecipe) {
                         map.put(itemStack, true);
                         // ingredient matched, attempt to extract it and return if successful
-                        if (simulateExtractItem(itemStack, slots.size())) {
-                            return true;
+                        succeeded += slots.size() - simulateExtractItem(itemStack, slots.size());
+                        if (succeeded == slots.size()) {
+                            return slots.size();
                         }
                     }
                     map.put(itemStack, false);
@@ -194,19 +198,18 @@ public class CraftingRecipeLogic extends SyncHandler {
                 }
             }
         }
-        // nothing matched, so return null
-        return false;
+        return succeeded;
     }
 
     /**
      * Attempts to extract the given stack from connected inventories
-     * 
+     *
      * @param itemStack stack from the crafting matrix
      * @param extract the amount to extract
-     * @return true if the item exists in available inventories
+     * @return number of items yet to be extracted
      */
-    private boolean simulateExtractItem(ItemStack itemStack, int extract) {
-        if (!stackLookupMap.containsKey(itemStack)) return false;
+    private int simulateExtractItem(ItemStack itemStack, int extract) {
+        if (!stackLookupMap.containsKey(itemStack)) return extract;
         int remaining = extract;
         for (int slot : stackLookupMap.get(itemStack)) {
             var slotStack = availableHandlers.extractItem(slot, remaining, true);
@@ -214,17 +217,17 @@ public class CraftingRecipeLogic extends SyncHandler {
                 remaining -= slotStack.getCount();
                 if (remaining == 0) {
                     requiredItems.put(itemStack, extract);
-                    return true;
+                    return 0;
                 }
             }
         }
-        return false;
+        return remaining;
     }
 
     public boolean performRecipe() {
         if (!isRecipeValid()) return false;
 
-        if (!attemptMatchRecipe() || !consumeRecipeItems()) {
+        if (attemptMatchRecipe() != ALL_INGREDIENTS_PRESENT || !consumeRecipeItems()) {
             return false;
         }
 
@@ -314,17 +317,26 @@ public class CraftingRecipeLogic extends SyncHandler {
         return this.cachedRecipeData.getRecipe();
     }
 
-    public void update() {
+    @Override
+    public void detectAndSendChanges(boolean init) {
+        super.detectAndSendChanges(init);
+        this.collectAvailableItems();
+        short newMatrix;
         if (getCachedRecipeData().getRecipe() != null) {
-            // todo fix tint location
-            // tintLocation = getCachedRecipeData().attemptMatchRecipe();
+            newMatrix = attemptMatchRecipe();
         } else {
-            tintLocation = ALL_INGREDIENTS_PRESENT;
+            newMatrix = ALL_INGREDIENTS_PRESENT;
+        }
+        if (init || newMatrix != this.presenceMatrix) {
+            this.presenceMatrix = newMatrix;
+            syncToClient(1, buffer -> {
+                buffer.writeShort(presenceMatrix);
+            });
         }
     }
 
     public short getTintLocations() {
-        return tintLocation;
+        return (short) (ALL_INGREDIENTS_PRESENT - presenceMatrix);
     }
 
     public CachedRecipeData getCachedRecipeData() {
@@ -344,6 +356,9 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
+        if (id == 1) {
+            this.presenceMatrix = buf.readShort();
+        }
         if (id == 4) {
             getSyncManager().setCursorItem(readStackSafe(buf));
         }

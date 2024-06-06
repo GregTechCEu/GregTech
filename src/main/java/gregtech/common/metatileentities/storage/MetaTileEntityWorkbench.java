@@ -175,14 +175,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (!getWorld().isRemote && recipeLogic != null) {
-            getCraftingRecipeLogic().update();
-        }
-    }
-
-    @Override
     public void onNeighborChanged() {
         getCraftingRecipeLogic().updateInventory(getAvailableHandlers());
         writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
@@ -294,7 +286,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .matrix("XXX",
                         "XXX",
                         "XXX")
-                .key('X', i -> new CraftingInputSlot(this.craftingGrid, i)
+                .key('X', i -> new CraftingInputSlot(this.recipeLogic, this.craftingGrid, i)
                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                             if (!init) {
                                 this.recipeLogic.updateCurrentRecipe();

@@ -49,11 +49,11 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         RenderUtil.renderItemInGUI(itemstack, 1, 1);
         itemstack.setCount(cachedCount);
 
-        guiScreen.getItemRenderer().zLevel = 0.0F;
-        guiScreen.setZ(0f);
-
         if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked())
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
+
+        guiScreen.getItemRenderer().zLevel = 0.0F;
+        guiScreen.setZ(0f);
     }
 
     @Override

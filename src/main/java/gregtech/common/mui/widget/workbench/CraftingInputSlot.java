@@ -2,6 +2,8 @@ package gregtech.common.mui.widget.workbench;
 
 import gregtech.client.utils.RenderUtil;
 
+import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -22,14 +24,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable,
                                JeiGhostIngredientSlot<ItemStack>,
                                JeiIngredientProvider {
 
     private final InputSyncHandler syncHandler;
+    private final CraftingRecipeLogic logic;
 
-    public CraftingInputSlot(IItemHandlerModifiable handler, int index) {
+    public CraftingInputSlot(CraftingRecipeLogic logic, IItemHandlerModifiable handler, int index) {
+        this.logic = logic;
         this.syncHandler = new InputSyncHandler(handler, index);
         setSyncHandler(this.syncHandler);
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
@@ -68,10 +73,11 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         ItemStack itemstack = this.syncHandler.getStack();
         if (itemstack.isEmpty()) return;
 
-        guiScreen.setZ(100f);
-        guiScreen.getItemRenderer().zLevel = 100.0F;
-
         RenderUtil.renderItemInGUI(itemstack, 1, 1);
+        int allTints = logic.getTintLocations();
+        if ((allTints & 1 << this.syncHandler.index) != 0) {
+            RenderUtil.renderRect(0, 0, 18, 18, 100, 0x80FF0000);
+        }
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);
