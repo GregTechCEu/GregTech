@@ -12,7 +12,6 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.BlockGasCentrifugeCasing;
-import gregtech.common.blocks.BlockNuclearCasing;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;
@@ -61,7 +60,8 @@ public class MetaTileEntityGasCentrifuge extends RecipeMapMultiblockController {
     }
 
     private IBlockState getHeaterState() {
-        return MetaBlocks.GAS_CENTRIFUGE_CASING.getState(BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_HEATER);
+        return MetaBlocks.GAS_CENTRIFUGE_CASING
+                .getState(BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_HEATER);
     }
 
     private IBlockState getCentrifugeState() {

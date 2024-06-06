@@ -48,10 +48,7 @@ import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantImportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportHatch;
-import gregtech.core.sound.GTSoundEvents;
-import gregtech.core.sound.internal.SoundManager;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;

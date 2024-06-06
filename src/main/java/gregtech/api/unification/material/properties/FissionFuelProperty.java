@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.properties;
 
 public class FissionFuelProperty implements IMaterialProperty {
+
     // The max temperature the fuel can handle before it liquefies.
     private int maxTemperature;
     // Scales how long the fuel rod lasts in the reactor.
