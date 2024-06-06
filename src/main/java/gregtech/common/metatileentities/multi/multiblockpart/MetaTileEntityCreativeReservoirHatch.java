@@ -51,7 +51,8 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
                                                   IMultiblockAbilityPart<IFluidTank> {
 
     private static final int FLUID_AMOUNT = 2_000_000_000;
-    private InfiniteTank fluidTank;
+    private FluidStack lockTank = new FluidStack(FluidRegistry.WATER, 1);
+    private final InfiniteTank fluidTank;
 
     public MetaTileEntityCreativeReservoirHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.MAX, false);
@@ -76,7 +77,8 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
 
         // Add input/output-specific widgets
         tankWidget = new PhantomTankWidget(fluidTank, 69, 52, 18, 18, () -> fluidTank.getFluid(), (f) -> {
-            this.fluidTank.setFluid(new FluidStack(f.getFluid(), FLUID_AMOUNT));
+            this.lockTank = new FluidStack(f, 1);
+            this.fluidTank.setFluid(new FluidStack(f, FLUID_AMOUNT));
         })
                 .setAlwaysShowFull(true).setDrawHoveringText(false).setContainerClicking(true, false);
 
@@ -128,7 +130,7 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            fillContainerFromInternalTank(fluidTank);
+            //fillContainerFromInternalTank(fluidTank);
             if (getOffsetTimer() % 20 == 0) {
                 fluidTank.refill();
             }
@@ -187,17 +189,13 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        if (fluidTank.getFluid() != null) {
-            data.setTag("FluidInventory", fluidTank.writeToNBT(new NBTTagCompound()));
-        }
+        data.setTag("FluidInventory", lockTank.writeToNBT(new NBTTagCompound()));
         return super.writeToNBT(data);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
-        if (data.hasKey("fluid")) {
-            this.fluidTank.readFromNBT(data.getCompoundTag("FluidInventory"));
-        }
+        this.lockTank = FluidStack.loadFluidStackFromNBT(data.getCompoundTag("FluidInventory"));
         super.readFromNBT(data);
     }
 
@@ -210,12 +208,10 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
         }
 
         public void refill() {
-            if (fluidTank.getFluid() != null) {
-                int fillAmount = Math.max(0, FLUID_AMOUNT - getFluidAmount());
-                if (fillAmount > 0) {
-                    // call super since our overrides don't allow any kind of filling
-                    super.fillInternal(new FluidStack(fluidTank.getFluid(), fillAmount), true);
-                }
+            int fillAmount = Math.max(0, FLUID_AMOUNT - getFluidAmount());
+            if (fillAmount > 0) {
+                // call super since our overrides don't allow any kind of filling
+                super.fillInternal(new FluidStack(lockTank.getFluid(), fillAmount), true);
             }
         }
 
