@@ -33,14 +33,12 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,7 +131,7 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            //fillContainerFromInternalTank(fluidTank);
+            // fillContainerFromInternalTank(fluidTank); -- I'm not sure what this is supposed to do (I copied it from the reservoir hatch), so I commented it out :3
             if (getOffsetTimer() % 20 == 0) {
                 fluidTank.refill();
             }
