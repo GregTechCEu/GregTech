@@ -124,8 +124,9 @@ public class CoolantProperty implements IMaterialProperty {
      * Used to adjust the amount of heat needed to heat the coolant from the ideal thermodynamic conditions; this is
      * really only for distilled water.
      * 
-     * @param specialCoolantAbsorption A divisor to the amount of heat needed to heat the coolant from the ideal thermodynamic
-     *                         conditions.
+     * @param specialCoolantAbsorption A divisor to the amount of heat needed to heat the coolant from the ideal
+     *                                 thermodynamic
+     *                                 conditions.
      * @return The property itself.
      */
     public CoolantProperty setSpecialCoolantAbsorption(double specialCoolantAbsorption) {
