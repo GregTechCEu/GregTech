@@ -69,14 +69,11 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     protected final static Set<String> VALID_OREDICTS = new ObjectOpenHashSet<>();
 
-    private final ItemStack orestack;
-
     public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem, IToolBehavior... behaviors) {
         super(domain, id, -1,
                 new ToolDefinitionBuilder().behaviors(behaviors).cannotAttack().attackSpeed(-2.4F).build(),
-                null, false, new HashSet<>(), "", new ArrayList<>(),
+                null, false, new HashSet<>(), "toolbelt", new ArrayList<>(),
                 markerItem);
-        this.orestack = new ItemStack(this, 1, GTValues.W);
     }
 
     public @Nullable ItemStack getSelectedItem(@NotNull ItemStack stack) {
@@ -127,7 +124,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     public void registerValidOredict(String oredict) {
         VALID_OREDICTS.add(oredict);
-        OreDictUnifier.registerOre(this.orestack, oredict);
     }
 
     @Override
@@ -331,6 +327,21 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         return true;
     }
 
+    @Override
+    public @NotNull ItemStack getContainerItem(@NotNull ItemStack stack) {
+        Ingredient nextCraftIngredient = getHandler(stack).nextCraftIngredient;
+        if (nextCraftIngredient != null) {
+            stack = stack.copy();
+            this.craftDamageTools(stack, nextCraftIngredient);
+            return stack;
+        }
+        return super.getContainerItem(stack);
+    }
+
+    public void setOnCraftIngredient(ItemStack stack, Ingredient ingredient) {
+        getHandler(stack).nextCraftIngredient = ingredient;
+    }
+
     public boolean damageAgainstMaintenanceProblem(ItemStack stack, String toolClass,
                                                    @Nullable EntityPlayer entityPlayer) {
         return getHandler(stack).checkMaintenanceAgainstTools(toolClass, true, entityPlayer);
@@ -469,6 +480,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     protected static class ToolStackHandler extends ItemStackHandler {
+
+        private Ingredient nextCraftIngredient;
 
         private static final Set<String> EMPTY = ImmutableSet.of();
 

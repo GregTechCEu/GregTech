@@ -317,7 +317,7 @@ public final class ModHandler {
 
     private static void addRecipe(@NotNull String regName, @NotNull ItemStack result, boolean isNBTClearing,
                                   boolean isMirrored, @NotNull Object... recipe) {
-        IRecipe shapedOreRecipe = GTShapedOreRecipe.create(isNBTClearing, null, result.copy(),
+        IRecipe shapedOreRecipe = new GTShapedOreRecipe(isNBTClearing, null, result.copy(),
                 finalizeShapedRecipeInput(recipe))
                 .setMirrored(isMirrored)
                 .setRegistryName(regName);

@@ -1,7 +1,15 @@
 package gregtech.asm;
 
-import net.minecraft.launchwrapper.IClassTransformer;
+import gregtech.asm.util.ObfMapping;
+import gregtech.asm.util.TargetClassVisitor;
+import gregtech.asm.visitors.*;
+import gregtech.common.ConfigHolder;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
+
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
 public class GregTechTransformer implements IClassTransformer, Opcodes {
@@ -222,6 +230,12 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             // 0);
             // return classWriter.toByteArray();
             // }
+            case OreIngredientVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(0);
+                classReader.accept(new TargetClassVisitor(classWriter, OreIngredientVisitor.TARGET_METHOD, OreIngredientVisitor::new), 0);
+                return classWriter.toByteArray();
+            }
         }
         /*
          * if (EnchantmentCanApplyVisitor.CLASS_TO_MAPPING_MAP.containsKey(internalName)) {
