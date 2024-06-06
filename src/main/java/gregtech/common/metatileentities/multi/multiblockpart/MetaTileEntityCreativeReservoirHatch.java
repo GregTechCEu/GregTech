@@ -155,10 +155,6 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
         return super.getCapability(capability, side);
     }
 
-    private int getInventorySize() {
-        return FLUID_AMOUNT;
-    }
-
     @Override
     protected FluidTankList createImportFluidHandler() {
         return new FluidTankList(false, fluidTank);
@@ -178,7 +174,7 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", getInventorySize()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", FLUID_AMOUNT));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
