@@ -74,9 +74,6 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public void setValid(boolean valid) {}
-
-    @Override
     public MultiblockAbility<IControlRodPort> getAbility() {
         return MultiblockAbility.CONTROL_ROD_PORT;
     }
