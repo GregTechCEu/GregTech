@@ -24,9 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FluidReplaceRecipe extends GTShapedOreRecipe {
 
     public FluidReplaceRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
-        super(new AtomicBoolean(false), isClearing, group, result, recipe);
-        // there is no possible way that we require toolbelt handling, but make sure it isn't enabled.
-        this.toolbeltHandling = false;
+        super(isClearing, group, result, recipe);
     }
 
     @NotNull

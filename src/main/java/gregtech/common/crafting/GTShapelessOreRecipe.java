@@ -1,13 +1,12 @@
 package gregtech.common.crafting;
 
-import gregtech.api.crafting.IToolbeltSupportingRecipe;
-
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -17,18 +16,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class GTShapelessOreRecipe extends ShapelessOreRecipe implements IToolbeltSupportingRecipe {
+public class GTShapelessOreRecipe extends ShapelessOreRecipe {
 
     boolean isClearing;
-    boolean toolbeltHandling;
 
     public GTShapelessOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result,
                                 Object... recipe) {
         super(group, result);
         this.isClearing = isClearing;
-        AtomicBoolean needsToolbelt = new AtomicBoolean(false);
         for (Object in : recipe) {
-            Ingredient ing = GTShapedOreRecipe.getIngredient(needsToolbelt, isClearing, in);
+            Ingredient ing = GTShapedOreRecipe.getIngredient(isClearing, in);
             if (ing != null) {
                 input.add(ing);
                 this.isSimple = this.isSimple && ing.isSimple();
@@ -41,38 +38,6 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe implements IToolbel
                 throw new RuntimeException(ret.toString());
             }
         }
-        this.toolbeltHandling = needsToolbelt.get();
-    }
-
-    @Override
-    public boolean matches(@NotNull InventoryCrafting inv, @NotNull World world) {
-        if (this.toolbeltHandling) {
-            // I can't wrap my head around the 'simple' shapeless logic, so no simple toolbelt handling.
-            int ingredientCount = 0;
-            List<ItemStack> items = Lists.newArrayList();
-
-            for (int i = 0; i < inv.getSizeInventory(); ++i) {
-                ItemStack itemstack = inv.getStackInSlot(i);
-                if (!itemstack.isEmpty()) {
-                    ++ingredientCount;
-                    items.add(itemstack);
-                }
-            }
-
-            if (ingredientCount != this.input.size())
-                return false;
-
-            int[] matches = RecipeMatcher.findMatches(items, this.input);
-            if (matches != null) {
-                for (int i = 0; i < items.size(); i++) {
-                    ItemStack stack = items.get(i);
-                    Ingredient ingredient = this.input.get(matches[i]);
-                    if (!IToolbeltSupportingRecipe.toolbeltIngredientCheck(ingredient, stack)) return false;
-                }
-                return true;
-            } else return false;
-
-        } else return super.matches(inv, world);
     }
 
     @Override
@@ -80,7 +45,7 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe implements IToolbel
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {
-            return IToolbeltSupportingRecipe.super.getRemainingItems(inv);
+            return ForgeHooks.defaultRecipeGetRemainingItems(inv);
         }
     }
 }
