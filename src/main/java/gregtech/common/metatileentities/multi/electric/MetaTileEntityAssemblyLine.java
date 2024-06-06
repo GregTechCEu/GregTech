@@ -18,6 +18,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.ResearchProperty;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.particle.GTLaserBeamParticle;
@@ -56,6 +57,7 @@ import codechicken.lib.vec.Vector3;
 import com.cleanroommc.modularui.utils.FluidTankHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -396,21 +398,19 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
     }
 
-    protected List<IFluidHandler> getOrderedFluidHatches() {
+    protected List<IMultipleTankHandler> getOrderedFluidHatches() {
         List<MetaTileEntityMultiblockPart> fluidExportParts = this.getMultiblockParts().stream()
                 .filter(iMultiblockPart -> iMultiblockPart instanceof IMultiblockAbilityPart<?>abilityPart &&
                         abilityPart.getAbility() == MultiblockAbility.EXPORT_FLUIDS &&
                         abilityPart instanceof MetaTileEntityMultiblockPart)
                 .map(iMultiblockPart -> (MetaTileEntityMultiblockPart) iMultiblockPart)
                 .collect(Collectors.toList());
-        List<IFluidHandler> orderedHandlerList = new ObjectArrayList<>();
+        List<IMultipleTankHandler> orderedHandlerList = new ObjectArrayList<>();
         for (MetaTileEntityMultiblockPart hatch : fluidExportParts) {
             List<IFluidTank> hatchTanks = new ObjectArrayList<>();
             // noinspection unchecked
             ((IMultiblockAbilityPart<IFluidTank>) hatch).registerAbilities(hatchTanks);
-            if (hatchTanks.size() == 1)
-                orderedHandlerList.add(FluidTankHandler.getTankFluidHandler(hatchTanks.get(0)));
-            else orderedHandlerList.add(new FluidTankList(false, hatchTanks));
+            orderedHandlerList.add(new FluidTankList(false, hatchTanks));
         }
         return orderedHandlerList;
     }
@@ -419,6 +419,98 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
         public AssemblyLineRecipeLogic(RecipeMapMultiblockController tileEntity) {
             super(tileEntity);
+        }
+
+        @Override
+        protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                      @NotNull IItemHandlerModifiable importInventory,
+                                                      @NotNull IMultipleTankHandler importFluids) {
+            this.overclockResults = calculateOverclock(recipe);
+
+            modifyOverclockPost(overclockResults, recipe.getRecipePropertyStorage());
+
+            if (!hasEnoughPower(overclockResults)) {
+                return false;
+            }
+
+            IItemHandlerModifiable exportInventory = getOutputInventory();
+            IMultipleTankHandler exportFluids = getOutputTank();
+
+            // We have already trimmed outputs and chanced outputs at this time
+            // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
+            if (!metaTileEntity.canVoidRecipeItemOutputs() &&
+                    !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
+                this.isOutputsFull = true;
+                return false;
+            }
+
+            // We have already trimmed fluid outputs at this time
+            if (!metaTileEntity.canVoidRecipeFluidOutputs() &&
+                    !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getAllFluidOutputs())) {
+                this.isOutputsFull = true;
+                return false;
+            }
+
+            this.isOutputsFull = false;
+            if (recipe.matches(false, importInventory, importFluids)) {
+                this.consumeInputs(recipe);
+                this.metaTileEntity.addNotifiedInput(importInventory);
+                return true;
+            }
+            return false;
+        }
+
+        protected void consumeInputs(Recipe recipe) {
+            if (!ConfigHolder.machines.orderedAssembly) {
+                recipe.matches(true, getImportItems(), getImportFluids());
+                return;
+            }
+            List<GTRecipeInput> ingredients = recipe.getInputs();
+            List<IItemHandlerModifiable> buses = getAbilities(MultiblockAbility.IMPORT_ITEMS);
+            for (int i = 0; i < Math.min(ingredients.size(), buses.size()); i++) {
+                IItemHandlerModifiable bus = buses.get(i);
+                GTRecipeInput ingredient = ingredients.get(i);
+                int amount = ingredient.getAmount();
+                for (int j = 0; j < bus.getSlots(); j++) {
+                    ItemStack stack = bus.getStackInSlot(j);
+                    if (ingredient.acceptsStack(stack)) {
+                        amount -= bus.extractItem(j, amount, false).getCount();
+                    }
+                    if (amount == 0) break;
+                }
+            }
+            if (!ConfigHolder.machines.orderedFluidAssembly) {
+                IMultipleTankHandler hatches = getInputTank();
+                ingredients = recipe.getFluidInputs();
+                for (int i = 0; i < ingredients.size(); i++) {
+                    GTRecipeInput ingredient = ingredients.get(i);
+                    int amount = ingredient.getAmount();
+                    for (int j = 0; j < hatches.getTanks(); j++) {
+                        FluidStack stack = hatches.getTankAt(i).getFluid();
+                        if (ingredient.acceptsFluid(stack)) {
+                            FluidStack drain = hatches.getTankAt(i).drain(amount, true);
+                            if (drain != null) amount -= drain.amount;
+                        }
+                        if (amount == 0) break;
+                    }
+                }
+                return;
+            }
+            ingredients = recipe.getFluidInputs();
+            List<IMultipleTankHandler> hatches = getOrderedFluidHatches();
+            for (int i = 0; i < Math.min(ingredients.size(), hatches.size()); i++) {
+                GTRecipeInput ingredient = ingredients.get(i);
+                IMultipleTankHandler hatch = hatches.get(i);
+                int amount = ingredient.getAmount();
+                for (int j = 0; j < hatch.getTanks(); j++) {
+                    FluidStack stack = hatch.getTankAt(j).getFluid();
+                    if (ingredient.acceptsFluid(stack)) {
+                        FluidStack drain = hatch.getTankAt(j).drain(amount, true);
+                        if (drain != null) amount -= drain.amount;
+                    }
+                    if (amount == 0) break;
+                }
+            }
         }
 
         @Override
