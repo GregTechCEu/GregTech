@@ -16,8 +16,6 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * A recipe which inputs a single Fluid Container, and outputs the same Fluid Container with a new contained Fluid
  */

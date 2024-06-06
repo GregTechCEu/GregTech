@@ -199,7 +199,8 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             case OreIngredientVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(0);
-                classReader.accept(new TargetClassVisitor(classWriter, OreIngredientVisitor.TARGET_METHOD, OreIngredientVisitor::new), 0);
+                classReader.accept(new TargetClassVisitor(classWriter, OreIngredientVisitor.TARGET_METHOD,
+                        OreIngredientVisitor::new), 0);
                 return classWriter.toByteArray();
             }
         }

@@ -319,8 +319,8 @@ public final class ModHandler {
                                   boolean isMirrored, @NotNull Object... recipe) {
         IRecipe shapedOreRecipe = new GTShapedOreRecipe(isNBTClearing, null, result.copy(),
                 finalizeShapedRecipeInput(recipe))
-                .setMirrored(isMirrored)
-                .setRegistryName(regName);
+                        .setMirrored(isMirrored)
+                        .setRegistryName(regName);
 
         registerRecipe(shapedOreRecipe);
     }
