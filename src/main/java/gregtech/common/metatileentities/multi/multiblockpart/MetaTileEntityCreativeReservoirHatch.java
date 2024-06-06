@@ -77,8 +77,11 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
 
         // Add input/output-specific widgets
         tankWidget = new PhantomTankWidget(fluidTank, 69, 52, 18, 18, () -> fluidTank.getFluid(), (f) -> {
-            this.lockTank = new FluidStack(f, 1);
-            this.fluidTank.setFluid(new FluidStack(f, FLUID_AMOUNT));
+            // Runs when the tank empties and f ends up null??
+            if (f != null) {
+                this.lockTank = new FluidStack(f, 1);
+                this.fluidTank.setFluid(new FluidStack(f, FLUID_AMOUNT));
+            }
         })
                 .setAlwaysShowFull(true).setDrawHoveringText(false).setContainerClicking(true, false);
 
