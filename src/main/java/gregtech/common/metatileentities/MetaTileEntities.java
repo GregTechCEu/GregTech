@@ -75,6 +75,7 @@ import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityL
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityAutoMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCleaningMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityComputationHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCreativeReservoirHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityDataAccessHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityEnergyHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
@@ -232,6 +233,7 @@ public class MetaTileEntities {
     public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
     public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
     public static MetaTileEntityReservoirHatch RESERVOIR_HATCH;
+    public static MetaTileEntityCreativeReservoirHatch CREATIVE_RESERVOIR_HATCH;
     public static MetaTileEntityDataAccessHatch DATA_ACCESS_HATCH;
     public static MetaTileEntityDataAccessHatch ADVANCED_DATA_ACCESS_HATCH;
     public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
@@ -935,7 +937,9 @@ public class MetaTileEntities {
                 new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
 
         RESERVOIR_HATCH = registerMetaTileEntity(1418, new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
-        // Free ID 1419
+        CREATIVE_RESERVOIR_HATCH = registerMetaTileEntity(1419,
+                new MetaTileEntityCreativeReservoirHatch(gregtechId("creative_reservoir_hatch")));
+
         endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 :
                 Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);
         for (int i = 0; i < endPos; i++) {
