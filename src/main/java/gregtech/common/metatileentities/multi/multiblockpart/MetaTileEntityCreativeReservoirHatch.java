@@ -131,7 +131,7 @@ public class MetaTileEntityCreativeReservoirHatch extends MetaTileEntityMultiblo
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            // fillContainerFromInternalTank(fluidTank); -- I'm not sure what this is supposed to do (I copied it from the reservoir hatch), so I commented it out :3
+            fillContainerFromInternalTank(fluidTank);
             if (getOffsetTimer() % 20 == 0) {
                 fluidTank.refill();
             }
