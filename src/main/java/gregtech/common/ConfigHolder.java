@@ -91,6 +91,7 @@ public class ConfigHolder {
         public double multiblockSteamToEU = 0.5;
 
         @Config.Comment({ "Nuclear Max Power multiplier for balancing purposes", "Default: 2.0" })
+        @Config.RangeDouble(min = 0, max = 10000)
         public double nuclearPowerMultiplier = 2.0;
 
         @Config.Comment({ "Whether machines or boilers damage the terrain when they explode.",

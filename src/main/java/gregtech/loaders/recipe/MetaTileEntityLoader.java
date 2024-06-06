@@ -1144,12 +1144,11 @@ public class MetaTileEntityLoader {
 
         ModHandler.addShapedRecipe(true, "fission_reactor", MetaTileEntities.FISSION_REACTOR.getStackForm(), "CSC",
                 "RHR", "CWC",
-                'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.EV), 'H',
-                MetaBlocks.FISSION_CASING.getItemVariant(
-                        BlockFissionCasing.FissionCasingType.REACTOR_VESSEL),
+                'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.EV),
+                'H', MetaBlocks.FISSION_CASING.getItemVariant(BlockFissionCasing.FissionCasingType.REACTOR_VESSEL),
                 'S', SENSOR.getIngredient(GTValues.EV),
-                'R', new UnificationEntry(OrePrefix.rotor, Materials.Steel), 'W',
-                CABLE_QUAD.getIngredient(GTValues.EV));
+                'R', new UnificationEntry(OrePrefix.rotor, Materials.Steel),
+                'W', CABLE_QUAD.getIngredient(GTValues.EV));
 
         ModHandler.addShapedRecipe(true, "heat_exchanger", MetaTileEntities.HEAT_EXCHANGER.getStackForm(), "FFF",
                 "PCP", "FFF",

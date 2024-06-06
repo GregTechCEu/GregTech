@@ -18,6 +18,8 @@ public class CoolantChannel extends ReactorComponent {
 
     private ICoolantHandler inputHandler;
     private ICoolantHandler outputHandler;
+
+    // Allows fission reactors to heat up less than a full liter of coolant.
     public double partialCoolant;
 
     public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant, double mass,

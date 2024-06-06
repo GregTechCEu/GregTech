@@ -865,8 +865,8 @@ public class MachineRecipeLoader {
                 .inputs(MetaBlocks.BOILER_CASING.getItemVariant(
                         BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE))
                 .input(wireGtSingle, Nichrome, 4)
-                .outputs(MetaBlocks.NUCLEAR_CASING.getItemVariant(
-                        BlockNuclearCasing.NuclearCasingType.GAS_CENTRIFUGE_HEATER))
+                .outputs(MetaBlocks.GAS_CENTRIFUGE_CASING.getItemVariant(
+                        BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_HEATER))
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(64).duration(200)

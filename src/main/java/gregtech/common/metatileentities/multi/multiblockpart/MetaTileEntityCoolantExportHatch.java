@@ -43,7 +43,6 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
                                               IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
-    private boolean valid;
     private LockableFluidTank fluidTank;
     private Material coolant;
 
@@ -148,11 +147,6 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     @Override
     public LockableFluidTank getFluidTank() {
         return this.fluidTank;
-    }
-
-    @Override
-    public void setValid(boolean valid) {
-        this.valid = valid;
     }
 
     @Override

@@ -1,5 +1,9 @@
 package gregtech.api.metatileentity.multiblock;
 
 public interface IControlRodPort {
-    // Allows for a special multiblock ability.
+
+    /**
+     * Whether it has a moderator tip, which would increase k_eff at certain control rod insertion values.
+     */
+    boolean hasModeratorTip();
 }

@@ -10,34 +10,6 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 public class NuclearRecipes {
 
     public static void init() {
-        // Thorium Fuel
-        /*
-         * CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-         * .input(dust, Thorium, 1)
-         * .fluidInputs(Fluorine.getFluid(4000))
-         * .output(dust, ThoriumTetrafluoride, 5)
-         * .buildAndRegister();
-         *
-         * CHEMICAL_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-         * .input(dust, Lithium, 1)
-         * .fluidInputs(Fluorine.getFluid(1000))
-         * .output(dust, LithiumFluoride, 2)
-         * .buildAndRegister();
-         *
-         * CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-         * .input(dust, Beryllium, 1)
-         * .fluidInputs(Fluorine.getFluid(2000))
-         * .output(dust, BerylliumFluoride, 3)
-         * .buildAndRegister();
-         *
-         * BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1000)
-         * .input(dust, ThoriumTetrafluoride, 5)
-         * .input(dust, LithiumFluoride, 4)
-         * .input(dust, BerylliumFluoride, 3)
-         * .fluidOutputs(ThoriumFLiBe.getFluid(4000))
-         * .buildAndRegister();
-         */
-
         // Boron carbide for spent fuel racks
 
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
@@ -79,14 +51,14 @@ public class NuclearRecipes {
                 .input(dust, FissilePlutoniumDioxide, 1)
                 .input(dust, Uraninite, 20)
                 .circuitMeta(1)
-                .output(dust, LowGradeMOX, 1)
+                .output(dust, LowGradeMOX, 21)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
                 .input(dust, FissilePlutoniumDioxide, 1)
                 .input(dust, Uraninite, 5)
                 .circuitMeta(2)
-                .output(dust, HighGradeMOX, 1)
+                .output(dust, HighGradeMOX, 6)
                 .buildAndRegister();
 
         // Zircaloy
@@ -129,9 +101,9 @@ public class NuclearRecipes {
 
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
                 .input(dust, Zirconium, 16)
-                .fluidInputs(Tin.getFluid(32))
-                .fluidInputs(Chrome.getFluid(2))
-                .output(dust, Zircaloy, 16)
+                .input(dust, Tin, 2)
+                .input(dust, Chrome, 1)
+                .output(dust, Zircaloy, 19)
                 .buildAndRegister();
 
         // Inconel 718
@@ -139,8 +111,8 @@ public class NuclearRecipes {
                 .input(dust, Nickel, 5)
                 .input(dust, Chrome, 2)
                 .input(dust, Iron, 2)
-                .fluidInputs(Niobium.getFluid(72))
-                .fluidInputs(Molybdenum.getFluid(48))
+                .input(dust, Niobium)
+                .input(dust, Molybdenum)
                 .output(dust, Inconel, 10)
                 .buildAndRegister();
 

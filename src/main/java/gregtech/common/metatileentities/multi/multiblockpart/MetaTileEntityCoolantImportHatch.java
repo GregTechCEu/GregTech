@@ -48,7 +48,6 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
                                               IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
-    private boolean valid;
     private LockableFluidTank fluidTank;
     private Material coolant;
 
@@ -131,11 +130,6 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
             return gtTe.getMetaTileEntity().metaTileEntityId.equals(MetaTileEntities.COOLANT_OUTPUT.metaTileEntityId);
         }
         return false;
-    }
-
-    @Override
-    public void setValid(boolean valid) {
-        this.valid = valid;
     }
 
     @Override

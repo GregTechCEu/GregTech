@@ -61,7 +61,7 @@ public class MetaTileEntityGasCentrifuge extends RecipeMapMultiblockController {
     }
 
     private IBlockState getHeaterState() {
-        return MetaBlocks.NUCLEAR_CASING.getState(BlockNuclearCasing.NuclearCasingType.GAS_CENTRIFUGE_HEATER);
+        return MetaBlocks.GAS_CENTRIFUGE_CASING.getState(BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_HEATER);
     }
 
     private IBlockState getCentrifugeState() {

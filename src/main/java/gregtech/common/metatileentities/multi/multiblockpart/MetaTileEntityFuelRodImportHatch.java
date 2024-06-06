@@ -39,7 +39,6 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
                                               IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
-    private boolean valid;
     private Material mat;
     public MetaTileEntityFuelRodExportHatch pairedHatch;
 
@@ -127,11 +126,6 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     public boolean checkValidity(int depth) {
         this.pairedHatch = getExportHatch(depth);
         return pairedHatch != null;
-    }
-
-    @Override
-    public void setValid(boolean valid) {
-        this.valid = valid;
     }
 
     @Override
