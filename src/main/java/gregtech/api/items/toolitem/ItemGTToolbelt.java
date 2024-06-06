@@ -2,6 +2,7 @@ package gregtech.api.items.toolitem;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.items.IDyeableItem;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.mui.GTGuiTextures;
@@ -14,6 +15,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
+import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -62,7 +65,7 @@ import java.util.function.Supplier;
 
 import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
 
-public class ItemGTToolbelt extends ItemGTTool {
+public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     protected final static Set<String> VALID_OREDICTS = new ObjectOpenHashSet<>();
 
@@ -373,6 +376,43 @@ public class ItemGTToolbelt extends ItemGTTool {
         }
         return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(),
                 selectedToolDisplay);
+    }
+
+    @Override
+    public @NotNull EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
+                                                    @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX,
+                                                    float hitY, float hitZ, @NotNull EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (this.hasColor(stack)) {
+            IBlockState iblockstate = world.getBlockState(pos);
+            if (iblockstate.getBlock() instanceof BlockCauldron cauldron) {
+                int water = iblockstate.getValue(BlockCauldron.LEVEL);
+                if (water > 0) {
+                    this.removeColor(stack);
+                    cauldron.setWaterLevel(world, pos, iblockstate, water - 1);
+                    return EnumActionResult.SUCCESS;
+                }
+            }
+        }
+        return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+    }
+
+    @Override
+    public int getColor(ItemStack stack, int tintIndex) {
+        if (tintIndex == 0) {
+            return this.getColor(stack);
+        }
+        return super.getColor(stack, tintIndex);
+    }
+
+    @Override
+    public int getDefaultColor(ItemStack stack) {
+        return 0xA06540;
+    }
+
+    @Override
+    public boolean shouldGetContainerItem() {
+        return false;
     }
 
     // TODO BEWLR for dynamic display of selected item?
