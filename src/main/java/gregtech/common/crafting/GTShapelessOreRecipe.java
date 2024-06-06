@@ -5,16 +5,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GTShapelessOreRecipe extends ShapelessOreRecipe {
 

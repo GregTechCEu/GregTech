@@ -1,6 +1,5 @@
 package gregtech.common.crafting;
 
-import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
 
@@ -31,7 +30,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GTShapedOreRecipe extends ShapedOreRecipe {
 
