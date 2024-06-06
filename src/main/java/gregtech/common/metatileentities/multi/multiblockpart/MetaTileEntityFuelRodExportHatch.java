@@ -29,7 +29,6 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
                                               IFissionReactorHatch {
 
     private boolean workingEnabled;
-    private boolean valid;
 
     public MetaTileEntityFuelRodExportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, true);
@@ -113,10 +112,5 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
     @Override
     public boolean checkValidity(int depth) {
         return true;
-    }
-
-    @Override
-    public void setValid(boolean valid) {
-        this.valid = valid;
     }
 }

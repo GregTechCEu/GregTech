@@ -56,7 +56,7 @@ gregtech.machine.control_rod.tooltip=Requires §fControl Rod Channels§7 below i
 gregtech.machine.control_rod.tooltip.1=Lowers neutron multiplication as it is inserted when placed between fuel rods!
 gregtech.machine.control_rod_moderated.name=Graphite-Tipped Control Rod Port
 gregtech.machine.control_rod_moderated.tooltip=Requires §fControl Rod Channels§7 below itself to function and form.
-gregtech.machine.control_rod_moderated.tooltip.1=Increases neutron multiplication when placed between fuel rods when inserted slightly!
+gregtech.machine.control_rod_moderated.tooltip.1=Increases neutron multiplication when placed between fuel rods when inserted around 30%!
 
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
@@ -169,7 +169,7 @@ gregtech.multiblock.primitive_water_pump.extra1=Biome Coefficient:/n  Ocean, Riv
 gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x/n/nWhile raining in the Pump's Biome, the total water production will be increased by 50%%.
 gregtech.multiblock.processing_array.description=The Processing Array combines up to 16 single block machine(s) in a single multiblock, effectively easing automation.
 gregtech.multiblock.advanced_processing_array.description=The Processing Array combines up to 64 single block machine(s) in a single multiblock, effectively easing automation.
-gregtech.multiblock.fission_reactor.description=Fission Reactors use fuel rods placed together to create a sustained chain of fission reactions. These reactions generate heat that may be soaked up by coolants, which can then be used inside turbines. The reactor can take on a variety of shapes. Its cross sections can be seen in JEI, and the reactor may extend 7 blocks up and down from the controller. Reactors can import and exports fuel rods/coolants through special pairs of hatches on the top and bottom layers, respectively. Control rod hatches may also be placed on the top layer, and they give users more control over the reactor. Inserting them more decreases the neutron multiplication rate k_eff, a factor by which the power is continually multiplied by. In fact, the reactor automatically shifts this over time, attempting to reach a stable equilibrium. This may be overridden manually. Control rods, fuel hatches, and coolant hatches all require special tubing beneath them to form correctly; check their tooltips to see which blocks to use. Once a reactor's hatches are filled, the reactor can be locked to begin operation, meaning that the types of items/fluids in the hatches can not be changed while the reactor operates.
+gregtech.multiblock.fission_reactor.description=Fission Reactors use fuel rods placed together to create a sustained chain of fission reactions. These reactions generate heat that may be soaked up by coolants, which can then be used inside turbines. The reactor can take on a variety of shapes. Its cross sections can be seen in JEI, and the reactor may extend 7 blocks up and down from the controller. Reactors can import and export fuel rods/coolants through special pairs of hatches on the top and bottom layers, respectively. Control rod hatches may also be placed on the top layer, and they give the user more control over the reactor. Inserting them more decreases the neutron multiplication rate "effective K", a factor by which the power is continually multiplied by. In fact, the reactor automatically shifts this over time, attempting to reach a stable equilibrium. This may be overridden manually. Control rods, fuel hatches, and coolant hatches all require special tubing beneath them to form correctly; check their tooltips to see which blocks to use. Once a reactor's hatches are filled, the reactor can be locked to begin operation, meaning that the types of items/fluids in the hatches can not be changed while the reactor operates.
 
 
 item.invalid.name=Invalid item
@@ -2798,7 +2798,7 @@ tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
 
 # Nuclear Blocks
 tile.nuclear_casing.spent_fuel_casing.name=Spent Fuel Casing
-tile.nuclear_casing.gas_centrifuge_heater.name=Gas Centrifuge Heater
+tile.gas_centrifuge_casing.gas_centrifuge_heater.name=Gas Centrifuge Heater
 tile.gas_centrifuge_casing.gas_centrifuge_column.name=Gas Centrifuge Column
 
 # Creative tabs

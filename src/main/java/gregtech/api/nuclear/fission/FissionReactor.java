@@ -456,7 +456,7 @@ public class FissionReactor {
 
                 double heatRemovedPerLiter = prop.getSpecificHeatCapacity() *
                         (prop.getHotHPCoolant().getFluid().getTemperature() - coolant.getFluid().getTemperature()) /
-                        prop.getSadgeCoefficient();
+                        prop.getSpecialCoolantAbsorption();
                 // Explained by:
                 // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa
                 double heatFluxPerAreaAndTemp = 1 /

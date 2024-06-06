@@ -1591,7 +1591,7 @@ public class FirstDegreeMaterials {
                 .ingot()
                 .color(0x566570).iconSet(METALLIC)
                 .flags(GENERATE_RING)
-                .components(Zirconium, 9, Tin, 1)
+                .components(Zirconium, 16, Tin, 2, Chrome, 1)
                 .blast(1700, GasTier.LOW)
                 .build();
 
@@ -1646,7 +1646,7 @@ public class FirstDegreeMaterials {
                 .blastTemp(1610, GasTier.MID, GTValues.VA[EV], 200)
                 .fluidPipeProperties(2010, 175, true, true, true, false)
                 .build()
-                .setFormula("Ni50Cr20Fe20Ni5Mo3", true);
+                .setFormula("Ni5Cr2Fe2NbMo", true);
 
         HighEnrichedUraniumHexafluoride = new Material.Builder(464, gregtechId("high_enriched_uranium_hexafluoride"))
                 .gas()

@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.IMaintenanceHatch;
@@ -15,6 +16,7 @@ import gregtech.api.gui.widgets.UpdatedSliderWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IControlRodPort;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -45,7 +47,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityControlRodPort;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantImportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportHatch;
@@ -270,9 +271,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             this.updateReactorState();
 
             this.syncReactorStats();
-            if (this.fissionReactor.checkForMeltdown()) {
-                SoundManager.getInstance().startTileSound(GTSoundEvents.SUS_RECORD.getSoundName(), 1, this.getPos());
-            }
             if (this.fissionReactor.checkForMeltdown()) {
                 this.performMeltdownEffects();
             }
@@ -678,11 +676,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     ReactorComponent component = null;
                     boolean foundPort = true;
 
-                    if (mte instanceof MetaTileEntityCoolantImportHatch coolantIn) {
-                        FluidStack containedFluid = coolantIn.getImportFluids().getTankAt(0).getFluid();
+                    if (mte instanceof ICoolantHandler coolantIn) {
+                        FluidStack containedFluid = coolantIn.getFluidTank().getFluid();
                         if (containedFluid != null) {
                             Material mat = GregTechAPI.materialManager.getMaterial(
-                                    coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
+                                    containedFluid.getFluid().getName());
                             if (mat != null && mat.hasProperty(PropertyKey.COOLANT)) {
                                 coolantIn.setCoolant(mat);
                                 BlockPos exportHatchPos = currentPos.offset(EnumFacing.DOWN, height - 1);
@@ -696,9 +694,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                 }
                             }
                         }
-                    } else if (mte instanceof MetaTileEntityFuelRodImportHatch fuelIn) {
-                        ItemStack lockedFuel = fuelIn.getImportItems().getStackInSlot(0);
-                        if (lockedFuel != null && !lockedFuel.isEmpty()) {
+                    } else if (mte instanceof IFuelRodHandler fuelIn) {
+                        ItemStack lockedFuel = fuelIn.getStackHandler().getStackInSlot(0);
+                        if (!lockedFuel.isEmpty()) {
                             MaterialStack mat = OreDictUnifier.getMaterial(lockedFuel);
                             if (mat != null && OreDictUnifier.getPrefix(lockedFuel) == OrePrefix.fuelRod) {
                                 FissionFuelProperty property = mat.material.getProperty(PropertyKey.FISSION_FUEL);
@@ -709,7 +707,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                 }
                             }
                         }
-                    } else if (mte instanceof MetaTileEntityControlRodPort controlIn) {
+                    } else if (mte instanceof IControlRodPort controlIn) {
                         component = new ControlRod(100000, controlIn.hasModeratorTip(), 1, 800);
                     } else {
                         foundPort = false;

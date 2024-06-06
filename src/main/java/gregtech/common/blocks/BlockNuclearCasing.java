@@ -23,8 +23,7 @@ public class BlockNuclearCasing extends VariantActiveBlock<BlockNuclearCasing.Nu
 
     public enum NuclearCasingType implements IStringSerializable, IStateHarvestLevel {
 
-        SPENT_FUEL_CASING("spent_fuel_casing", 2),
-        GAS_CENTRIFUGE_HEATER("gas_centrifuge_heater", 1);
+        SPENT_FUEL_CASING("spent_fuel_casing", 2);
 
         NuclearCasingType(String name, int harvestLevel) {
             this.name = name;

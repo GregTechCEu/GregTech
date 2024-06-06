@@ -22,7 +22,7 @@ public class CoolantProperty implements IMaterialProperty {
     private double heatOfVaporization;
     // in J/(kg*K)
     private double specificHeatCapacity;
-    private double sadgeCoefficient = 1;
+    private double specialCoolantAbsorption = 1;
     private boolean accumulatesHydrogen = false;
 
     public CoolantProperty(Material hotCoolant, Material hotHPCoolant, double moderatorFactor, double coolingFactor,
@@ -116,20 +116,20 @@ public class CoolantProperty implements IMaterialProperty {
         this.specificHeatCapacity = specificHeatCapacity;
     }
 
-    public double getSadgeCoefficient() {
-        return sadgeCoefficient;
+    public double getSpecialCoolantAbsorption() {
+        return specialCoolantAbsorption;
     }
 
     /**
      * Used to adjust the amount of heat needed to heat the coolant from the ideal thermodynamic conditions; this is
      * really only for distilled water.
      * 
-     * @param sadgeCoefficient A divisor to the amount of heat needed to heat the coolant from the ideal thermodynamic
+     * @param specialCoolantAbsorption A divisor to the amount of heat needed to heat the coolant from the ideal thermodynamic
      *                         conditions.
      * @return The property itself.
      */
-    public CoolantProperty setSadgeCoefficient(double sadgeCoefficient) {
-        this.sadgeCoefficient = sadgeCoefficient;
+    public CoolantProperty setSpecialCoolantAbsorption(double specialCoolantAbsorption) {
+        this.specialCoolantAbsorption = specialCoolantAbsorption;
         return this;
     }
 
