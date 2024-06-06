@@ -118,7 +118,6 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 var data = MouseData.readPacket(buf);
 
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
-                    recipeLogic.collectAvailableItems();
                     if (recipeLogic.performRecipe()) {
                         handleItemCraft(this.slot.getStack(), getSyncManager().getPlayer());
                         if (data.shift) {
