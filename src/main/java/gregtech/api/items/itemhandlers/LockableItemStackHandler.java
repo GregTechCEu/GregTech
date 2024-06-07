@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
 
-public class LockableItemStackHandler extends NotifiableItemStackHandler implements ILockableHandler {
+public class LockableItemStackHandler extends NotifiableItemStackHandler implements ILockableHandler<ItemStack> {
 
     protected boolean locked;
     protected ItemStack lockedItemStack;
@@ -37,5 +37,10 @@ public class LockableItemStackHandler extends NotifiableItemStackHandler impleme
             }
         }
         return super.insertItem(slot, stack, simulate);
+    }
+
+    @Override
+    public ItemStack getLockedObject() {
+        return lockedItemStack;
     }
 }

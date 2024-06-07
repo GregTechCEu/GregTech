@@ -67,6 +67,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -265,6 +266,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                     break;
                                 }
                     }
+                    if (canWork) {
+                        fissionReactor.needsOutput = true;
+                    }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
                         if (fissionReactor.needsOutput) {
@@ -277,7 +281,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                         if (canWork) {
                             fuelImport.getStackHandler().extractItem(0, 1, false);
                             this.fissionReactor.fuelMass += 60;
-                            fissionReactor.needsOutput = true;
                         }
                     }
                     if (!canWork) {
@@ -729,10 +732,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     boolean foundPort = true;
 
                     if (mte instanceof ICoolantHandler coolantIn) {
-                        FluidStack containedFluid = coolantIn.getFluidTank().getFluid();
-                        if (containedFluid != null && containedFluid.amount != 0) {
+                        Fluid lockedFluid = coolantIn.getLockedObject();
+                        if (lockedFluid != null) {
                             Material mat = GregTechAPI.materialManager.getMaterial(
-                                    containedFluid.getFluid().getName());
+                                    lockedFluid.getName());
                             if (mat != null && mat.hasProperty(PropertyKey.COOLANT)) {
                                 coolantIn.setCoolant(mat);
                                 BlockPos exportHatchPos = currentPos.offset(EnumFacing.DOWN, height - 1);
