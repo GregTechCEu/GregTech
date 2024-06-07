@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.handlers;
 
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
@@ -14,11 +15,11 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 public class NuclearRecipeHandler {
 
     public static void register() {
-        OrePrefix.fuelRod.addProcessingHandler(PropertyKey.ORE, NuclearRecipeHandler::processFuelRod);
+        OrePrefix.fuelRod.addProcessingHandler(PropertyKey.FISSION_FUEL, NuclearRecipeHandler::processFuelRod);
     }
 
-    private static void processFuelRod(OrePrefix orePrefix, Material material, OreProperty oreProperty) {
-        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(24000)
+    private static void processFuelRod(OrePrefix orePrefix, Material material, FissionFuelProperty oreProperty) {
+        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(10000).EUt(20) // This is fine, since it goes up to 320x parallel
                 .input(fuelRod, material)
                 .output(fuelRodDepleted, material)
                 .buildAndRegister();
@@ -28,7 +29,7 @@ public class NuclearRecipeHandler {
                 .output(dust, Zircaloy, 4)
                 .buildAndRegister();
 
-        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(400)
+        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(10000).EUt(20)
                 .input(fuelRodHotDepleted, material)
                 .output(fuelRodDepleted, material)
                 .buildAndRegister();

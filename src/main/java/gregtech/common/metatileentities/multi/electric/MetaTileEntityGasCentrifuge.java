@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -44,6 +45,12 @@ public class MetaTileEntityGasCentrifuge extends RecipeMapMultiblockController {
                 .where('E', states(getPipeState()).or(autoAbilities(true, true, false, false, false, false, false)))
                 .where('O', states(getPipeState()).or(autoAbilities(false, false, false, false, false, true, false)))
                 .build();
+    }
+
+    @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        this.recipeMapWorkable.setParallelLimit(structurePattern.formedRepetitionCount[0]);
     }
 
     @Override

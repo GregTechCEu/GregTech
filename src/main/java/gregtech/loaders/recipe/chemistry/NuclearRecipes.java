@@ -35,13 +35,13 @@ public class NuclearRecipes {
                 .fluidOutputs(Water.getFluid(2000))
                 .buildAndRegister();
 
-        GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
+        GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(VA[HV])
                 .fluidInputs(UraniumHexafluoride.getFluid(1000))
                 .fluidOutputs(LowEnrichedUraniumHexafluoride.getFluid(100))
                 .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
                 .buildAndRegister();
 
-        GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
+        GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(VA[HV])
                 .fluidInputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
                 .fluidOutputs(HighEnrichedUraniumHexafluoride.getFluid(100))
                 .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
