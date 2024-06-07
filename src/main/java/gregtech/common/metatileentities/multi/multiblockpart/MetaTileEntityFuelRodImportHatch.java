@@ -18,6 +18,7 @@ import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -161,6 +162,11 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     @Override
     public boolean isLocked() {
         return getLockedImport().isLocked();
+    }
+
+    @Override
+    public ItemStack getLockedObject() {
+        return getLockedImport().getLockedObject();
     }
 
     @Override

@@ -25,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -128,6 +129,11 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     @Override
     public boolean isLocked() {
         return fluidTank.isLocked();
+    }
+
+    @Override
+    public Fluid getLockedObject() {
+        return fluidTank.getLockedObject();
     }
 
     @Override
