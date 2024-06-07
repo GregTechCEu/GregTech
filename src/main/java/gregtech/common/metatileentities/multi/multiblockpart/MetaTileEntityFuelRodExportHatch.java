@@ -116,6 +116,4 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
     public boolean checkValidity(int depth) {
         return true;
     }
-
-
 }

@@ -80,6 +80,4 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
     private IBlockState getRodState() {
         return MetaBlocks.NUCLEAR_CASING.getState(BlockNuclearCasing.NuclearCasingType.SPENT_FUEL_CASING);
     }
-
-
 }

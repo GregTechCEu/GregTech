@@ -2,7 +2,6 @@ package gregtech.loaders.recipe.handlers;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
-import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
@@ -19,7 +18,8 @@ public class NuclearRecipeHandler {
     }
 
     private static void processFuelRod(OrePrefix orePrefix, Material material, FissionFuelProperty oreProperty) {
-        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(10000).EUt(20) // This is fine, since it goes up to 320x parallel
+        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(10000).EUt(20) // This is fine, since it goes up to 320x
+                                                                        // parallel
                 .input(fuelRod, material)
                 .output(fuelRodDepleted, material)
                 .buildAndRegister();
