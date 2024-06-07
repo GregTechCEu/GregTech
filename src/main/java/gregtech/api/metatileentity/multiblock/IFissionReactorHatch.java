@@ -1,5 +1,7 @@
 package gregtech.api.metatileentity.multiblock;
 
+import net.minecraft.util.math.BlockPos;
+
 public interface IFissionReactorHatch {
 
     /**
@@ -8,4 +10,6 @@ public interface IFissionReactorHatch {
      * @return If the channel directly below the hatch is valid or not
      */
     boolean checkValidity(int depth);
+
+    BlockPos getPos();
 }
