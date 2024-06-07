@@ -42,7 +42,7 @@ public class BlockPattern {
     protected final int fingerLength; // z size
     protected final int thumbLength; // y size
     protected final int palmLength; // x size
-    protected final BlockWorldState worldState = new BlockWorldState();
+    public final BlockWorldState worldState = new BlockWorldState();
     protected final PatternMatchContext matchContext = new PatternMatchContext();
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
