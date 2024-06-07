@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -60,6 +61,12 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
     }
 
     @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        this.recipeMapWorkable.setParallelLimit(structurePattern.formedRepetitionCount[0] * 32);
+    }
+
+    @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.CLEAN_STAINLESS_STEEL_CASING;
     }
@@ -73,4 +80,6 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
     private IBlockState getRodState() {
         return MetaBlocks.NUCLEAR_CASING.getState(BlockNuclearCasing.NuclearCasingType.SPENT_FUEL_CASING);
     }
+
+
 }

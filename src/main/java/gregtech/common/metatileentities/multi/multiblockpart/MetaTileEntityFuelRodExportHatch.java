@@ -65,7 +65,10 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1);
+        if (this.isExportHatch) {
+            return new ItemStackHandler(1);
+        }
+        return super.createImportItemHandler();
     }
 
     private ModularUI.Builder createUITemplate(EntityPlayer player) {
@@ -113,4 +116,6 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
     public boolean checkValidity(int depth) {
         return true;
     }
+
+
 }
