@@ -343,34 +343,39 @@ public class FissionReactor {
 
         }
 
-        avgGeometricFactorSlowNeutrons *= 0.125 / fuelRods.size();
-        avgGeometricFactorFastNeutrons *= 0.125 / fuelRods.size();
+        if (fuelRods.size() > 1) {
+            avgGeometricFactorSlowNeutrons *= 0.125 / fuelRods.size();
+            avgGeometricFactorFastNeutrons *= 0.125 / fuelRods.size();
 
-        avgHighEnergyFissionFactor /= fuelRods.size();
-        avgLowEnergyFissionFactor /= fuelRods.size();
-        avgHighEnergyCaptureFactor /= fuelRods.size();
-        avgLowEnergyCaptureFactor /= fuelRods.size();
+            avgHighEnergyFissionFactor /= fuelRods.size();
+            avgLowEnergyFissionFactor /= fuelRods.size();
+            avgHighEnergyCaptureFactor /= fuelRods.size();
+            avgLowEnergyCaptureFactor /= fuelRods.size();
 
-        avgFuelRodDistance /= 2. * fuelRods.size();
+            avgFuelRodDistance /= 2. * fuelRods.size();
 
-        kSlow = avgLowEnergyFissionFactor / avgLowEnergyCaptureFactor * avgGeometricFactorSlowNeutrons;
-        kFast = avgHighEnergyFissionFactor / avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
+            kSlow = avgLowEnergyFissionFactor / avgLowEnergyCaptureFactor * avgGeometricFactorSlowNeutrons;
+            kFast = avgHighEnergyFissionFactor / avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
 
-        k = (kSlow + kFast) * reactorDepth / (1. + reactorDepth);
+            k = (kSlow + kFast) * reactorDepth / (1. + reactorDepth);
+            double depthDiameterDifference = 0.5 * (reactorDepth - reactorRadius * 2) / reactorRadius;
+            double sigmoid = 1 / (1 + Math.exp(-depthDiameterDifference));
+            double fuelRodFactor = sigmoid * Math.pow(avgFuelRodDistance, -2) +
+                    (1 - sigmoid) * Math.pow(avgFuelRodDistance, -1);
 
+            maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) * fuelRodFactor *
+                    ConfigHolder.machines.nuclearPowerMultiplier;
+        } else {
+            // The calculations break down for the geometry, so we just do this instead.
+            k = 0.00001;
+            maxPower = 0.1 * ConfigHolder.machines.nuclearPowerMultiplier;
+        }
         /*
          * We give each control rod and coolant channel a weight depending on how many fuel rods they affect
          */
         this.computeControlRodWeights();
         this.computeCoolantChannelWeights();
 
-        double depthDiameterDifference = 0.5 * (reactorDepth - reactorRadius * 2) / reactorRadius;
-        double sigmoid = 1 / (1 + Math.exp(-depthDiameterDifference));
-        double fuelRodFactor = sigmoid * Math.pow(avgFuelRodDistance, -2) +
-                (1 - sigmoid) * Math.pow(avgFuelRodDistance, -1);
-
-        maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) * fuelRodFactor *
-                ConfigHolder.machines.nuclearPowerMultiplier;
 
         controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
 
