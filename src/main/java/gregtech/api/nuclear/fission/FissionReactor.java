@@ -376,7 +376,6 @@ public class FissionReactor {
         this.computeControlRodWeights();
         this.computeCoolantChannelWeights();
 
-
         controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
 
         this.prepareInitialConditions();
