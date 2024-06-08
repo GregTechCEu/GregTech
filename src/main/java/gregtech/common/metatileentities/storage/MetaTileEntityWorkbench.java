@@ -234,6 +234,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                 .debugName("crafting page")
                                 .coverChildrenWidth()
                                 .child(new Row()
+                                        // todo add clear crafting grid button
                                         .debugName("crafting row")
                                         .coverChildrenHeight()
                                         .widthRel(1f)
@@ -283,7 +284,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .matrix("XXX",
                         "XXX",
                         "XXX")
-                .key('X', i -> new CraftingInputSlot(this.recipeLogic, this.craftingGrid, i)
+                .key('X', i -> CraftingInputSlot.create(this.recipeLogic, this.craftingGrid, i)
                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                             if (!init) {
                                 this.recipeLogic.updateCurrentRecipe();
