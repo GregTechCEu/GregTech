@@ -16,14 +16,17 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -177,7 +180,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     private int getInventorySize() {
-        return INITIAL_INVENTORY_SIZE * (1 << Math.min(9, getTier()));
+        return INITIAL_INVENTORY_SIZE * Math.min(Integer.MAX_VALUE, 1 << getTier());
     }
 
     @Override
@@ -337,6 +340,21 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
         this.lockedFluid = null;
         fluidTank.onContentsChanged();
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        if (this == MetaTileEntities.FLUID_IMPORT_HATCH[0]) {
+            for (var hatch : MetaTileEntities.FLUID_IMPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+            for (var hatch : MetaTileEntities.FLUID_EXPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+        } else if (this.getClass() != MetaTileEntityFluidHatch.class) {
+            // let subclasses fall through this override
+            super.getSubItems(creativeTab, subItems);
+        }
     }
 
     private class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
