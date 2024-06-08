@@ -5,16 +5,14 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
 
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.NumberFormat;
-import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
 
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.NumberFormat;
+import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
 import org.jetbrains.annotations.NotNull;
 
 public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnergyContainer> {
@@ -41,9 +39,10 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
         long maxStorage = capability.getEnergyCapacity();
         long stored = capability.getEnergyStored();
         if (maxStorage == 0) return; // do not add empty max storage progress bar
-        probeInfo.progress(capability.getEnergyStored() , maxStorage, probeInfo.defaultProgressStyle()
+        probeInfo.progress(capability.getEnergyStored(), maxStorage, probeInfo.defaultProgressStyle()
                 .numberFormat(player.isSneaking() || stored < 10000 ? NumberFormat.FULL : NumberFormat.COMPACT)
-                .suffix(" / " + (player.isSneaking() || maxStorage < 10000 ? maxStorage + " EU" : ElementProgress.format(maxStorage, NumberFormat.COMPACT, "EU")))
+                .suffix(" / " + (player.isSneaking() || maxStorage < 10000 ? maxStorage + " EU" :
+                        ElementProgress.format(maxStorage, NumberFormat.COMPACT, "EU")))
                 .filledColor(0xFFEEE600)
                 .alternateFilledColor(0xFFEEE600)
                 .borderColor(0xFF555555));

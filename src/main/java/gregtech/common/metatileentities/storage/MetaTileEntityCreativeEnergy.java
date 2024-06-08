@@ -358,6 +358,4 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     public void setWorkingEnabled(boolean isWorkingAllowed) {
         setActive(isWorkingAllowed);
     }
-
-
 }
