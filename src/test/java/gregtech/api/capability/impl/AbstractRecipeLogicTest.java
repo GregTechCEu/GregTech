@@ -110,11 +110,13 @@ public class AbstractRecipeLogicTest {
         MatcherAssert.assertThat(arl.maxProgressTime, is((int) (initialDuration * 0.2)));
     }
 
+    private static int TEST_ID = 190;
+
     private static AbstractRecipeLogic createTestLogic(int testRecipeEUt, int testRecipeDuration) {
         World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
-        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("test_reactor",
+        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("test_reactor_"+TEST_ID,
                 2,
                 2,
                 3,
@@ -122,9 +124,9 @@ public class AbstractRecipeLogicTest {
                 new SimpleRecipeBuilder().EUt(30),
                 false);
 
-        MetaTileEntity at = MetaTileEntities.registerMetaTileEntity(190,
+        MetaTileEntity at = MetaTileEntities.registerMetaTileEntity(TEST_ID,
                 new SimpleMachineMetaTileEntity(
-                        GTUtility.gregtechId("chemical_reactor.lv"),
+                        GTUtility.gregtechId("chemical_reactor.lv_"+TEST_ID),
                         map,
                         null,
                         1, false));
@@ -135,6 +137,8 @@ public class AbstractRecipeLogicTest {
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(testRecipeEUt).duration(testRecipeDuration)
                 .buildAndRegister();
+
+        TEST_ID++;
 
         AbstractRecipeLogic arl = new AbstractRecipeLogic(atte, map) {
 
