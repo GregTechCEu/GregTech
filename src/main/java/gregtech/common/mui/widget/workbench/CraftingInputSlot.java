@@ -1,7 +1,6 @@
 package gregtech.common.mui.widget.workbench;
 
 import gregtech.client.utils.RenderUtil;
-
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 
 import net.minecraft.item.ItemStack;
@@ -24,17 +23,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable,
                                JeiGhostIngredientSlot<ItemStack>,
                                JeiIngredientProvider {
 
     private final InputSyncHandler syncHandler;
-    private final CraftingRecipeLogic logic;
+    public boolean hasIngredients = true;
 
-    public CraftingInputSlot(CraftingRecipeLogic logic, IItemHandlerModifiable handler, int index) {
-        this.logic = logic;
+    public CraftingInputSlot(IItemHandlerModifiable handler, int index) {
         this.syncHandler = new InputSyncHandler(handler, index);
         setSyncHandler(this.syncHandler);
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
@@ -45,6 +42,12 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             if (stack.isEmpty()) return;
             tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
         });
+    }
+
+    public static CraftingInputSlot create(CraftingRecipeLogic logic, IItemHandlerModifiable handler, int index) {
+        var slot = new CraftingInputSlot(handler, index);
+        logic.setInputSlot(slot, index);
+        return slot;
     }
 
     @Override
@@ -73,8 +76,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         ItemStack itemstack = this.syncHandler.getStack();
         if (itemstack.isEmpty()) return;
 
-        int allTints = logic.getTintLocations();
-        if ((allTints & 1 << this.syncHandler.index) != 0) {
+        if (!this.hasIngredients) {
             RenderUtil.renderRect(0, 0, 18, 18, 100, 0x80FF0000);
         }
 
@@ -104,8 +106,20 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     }
 
     @Override
-    public @Nullable Object getIngredient() {
+    public @NotNull ItemStack getIngredient() {
+        return this.getStack();
+    }
+
+    public ItemStack getStack() {
         return syncHandler.getStack();
+    }
+
+    public int getIndex() {
+        return syncHandler.index;
+    }
+
+    public void setStack(ItemStack stack) {
+        this.syncHandler.setStack(stack);
     }
 
     @SuppressWarnings("OverrideOnly")
@@ -190,6 +204,11 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             return this.handler.getStackInSlot(this.index);
         }
 
+        /**
+         * Sets the stack in this slot and calls the onChange listener.
+         * 
+         * @param stack stack to put into this slot
+         */
         public void setStack(ItemStack stack) {
             this.handler.setStackInSlot(this.index, stack);
             this.listener.onChange(stack, false, getSyncManager().isClient(), false);
