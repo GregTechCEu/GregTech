@@ -196,7 +196,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
             for (ResourceLocation metaTileEntityId : mteRegistry.getKeys()) {
-                MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
+                MetaTileEntity metaTileEntity = mteRegistry.getObject(metaTileEntityId);
                 assert metaTileEntity != null;
 
                 if (metaTileEntity instanceof ICategoryOverride override && override.shouldOverride()) {
