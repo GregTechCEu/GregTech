@@ -13,11 +13,13 @@ import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.DimensionProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -49,6 +51,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
     private final RecipeMap<?> recipeMap;
+
+    private double euDiscount = -1;
+    private double speedBonus = -1;
 
     protected Recipe previousRecipe;
     private boolean allowOverclocking = true;
@@ -457,6 +462,23 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
                 metaTileEntity.getFluidOutputLimit());
 
+        // apply EU/speed discount (if any) before parallel
+        if (euDiscount > 0 || speedBonus > 0) { // if-statement to avoid unnecessarily creating RecipeBuilder object
+            RecipeBuilder<?> builder = new RecipeBuilder<>(recipe, recipeMap);
+            if (euDiscount > 0) {
+                int newEUt = (int) (recipe.getEUt() * euDiscount);
+                if (newEUt <= 0) newEUt = 1;
+                builder.EUt(newEUt);
+            }
+            if (speedBonus > 0) {
+                int duration = recipe.getDuration();
+                int newDuration = (int) (duration - (duration * speedBonus));
+                if (newDuration <= 0) newDuration = 1;
+                builder.duration(newDuration);
+            }
+            recipe = builder.build().getResult();
+        }
+
         // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
                 recipe,
@@ -506,6 +528,48 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public void setParallelLimit(int amount) {
         parallelLimit = amount;
+    }
+
+    /**
+     * Sets an EU/t discount to apply to a machine when running recipes.<br>
+     * This does NOT affect recipe lookup voltage, even if the discount drops it to a lower voltage tier.<br>
+     * This discount is applied pre-parallel.
+     *
+     * @param discount The discount, must be greater than 0 and less than 1.
+     *                 If discount == 0.75, then the recipe will only require 75% of the listed power to run.
+     */
+    public void setEUDiscount(double discount) {
+        if (discount <= 0 || discount >= 1) {
+            GTLog.logger.warn("Cannot set EU discount for recipe logic to {}, discount must be 0<x<1", discount);
+            return;
+        }
+        euDiscount = discount;
+    }
+
+    /**
+     * @return the EU/t discount, or -1 if no discount.
+     */
+    public double getEUtDiscount() {
+        return euDiscount;
+    }
+
+    /**
+     *
+     * @param bonus
+     */
+    public void setSpeedBonus(double bonus) {
+        if (bonus <= 0 || bonus >= 1) {
+            GTLog.logger.warn("Cannot set speed bonus for recipe logic to {}, bonus must be 0<x<1", bonus);
+            return;
+        }
+        speedBonus = bonus;
+    }
+
+    /**
+     * @return the speed bonus, or -1 if no bonus.
+     */
+    public double getSpeedBonus() {
+        return speedBonus;
     }
 
     /**
