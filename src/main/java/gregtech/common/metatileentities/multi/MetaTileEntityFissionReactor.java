@@ -46,6 +46,7 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -93,6 +94,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private int heightBottom;
     private int height;
     private int flowRate = 1;
+    // Used for maintenance mechanics
+    private boolean isFlowingCorrectly = true;
     private double controlRodInsertionValue;
     private LockingState lockingState = LockingState.UNLOCKED;
 
@@ -193,6 +196,34 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             list.add(new TextComponentTranslation("gregtech.gui.fission.k_eff", String.format("%.4f", this.kEff)));
             list.add(new TextComponentTranslation("gregtech.gui.fission.depletion",
                     String.format("%.2f", this.fuelDepletionPercent * 100)));
+            if (this.getMaintenanceProblems() > 0) {
+                byte maintenanceProblems = this.getMaintenanceProblems();
+                if ((getMaintenanceProblems() & 1) == 0) {
+                    list.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.DARK_RED,
+                            "gregtech.multiblock.universal.problem.wrench"));
+                } else if (((maintenanceProblems >> 1) & 1) == 0) {
+                    list.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.DARK_RED,
+                            "gregtech.multiblock.universal.problem.screwdriver"));
+                } else if (((maintenanceProblems >> 2) & 1) == 0) {
+                    list.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.DARK_RED,
+                            "gregtech.multiblock.universal.problem.soft_mallet"));
+                } else if (((maintenanceProblems >> 3) & 1) == 0) {
+                    list.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.DARK_RED,
+                            "gregtech.multiblock.universal.problem.hard_hammer"));
+                } else if (((maintenanceProblems >> 4) & 1) == 0) {
+                    list.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.DARK_RED,
+                            "gregtech.multiblock.universal.problem.wire_cutter"));
+                } else if (((maintenanceProblems >> 5) & 1) == 0) {
+                    list.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.DARK_RED,
+                            "gregtech.multiblock.universal.problem.crowbar"));
+                }
+            }
         };
     }
 
@@ -245,7 +276,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         if (!this.getWorld().isRemote && this.getOffsetTimer() % 20 == 0) {
             if (this.lockingState == LockingState.LOCKED) {
                 // Coolant handling
-                this.fissionReactor.makeCoolantFlow(flowRate);
+                if (this.getOffsetTimer() % 100 == 0) {
+                    if (isFlowingCorrectly) {
+                        if (getWorld().rand.nextDouble() > (1 - 0.01 * this.getNumMaintenanceProblems())) {
+                            isFlowingCorrectly = false;
+                        }
+                    } else {
+                        if (getWorld().rand.nextDouble() > 0.12 * this.getNumMaintenanceProblems()) {
+                            isFlowingCorrectly = true;
+                        }
+                    }
+                }
+                this.fissionReactor.makeCoolantFlow(isFlowingCorrectly ? 0 : flowRate);
 
                 // Fuel handling
                 if (this.fissionReactor.isDepleted()) {
@@ -292,13 +334,17 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             this.updateReactorState();
 
             this.syncReactorStats();
-            if (this.fissionReactor.checkForMeltdown()) {
+
+            boolean melts = this.fissionReactor.checkForMeltdown();
+            boolean explodes = this.fissionReactor.checkForExplosion();
+            double hydrogen = this.fissionReactor.accumulatedHydrogen;
+            if (melts) {
                 this.performMeltdownEffects();
             }
-            if (this.fissionReactor.checkForExplosion()) {
+            if (explodes) {
                 this.performPrimaryExplosion();
-                if (this.fissionReactor.accumulatedHydrogen > 1) {
-                    this.performSecondaryExplosion(fissionReactor.accumulatedHydrogen);
+                if (hydrogen > 1) {
+                    this.performSecondaryExplosion(hydrogen);
                 }
             }
         }
@@ -686,8 +732,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     protected void unlockAll() {
         // Deal with any unused fuel rods
-        for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-            if (fissionReactor.needsOutput) {
+        if (fissionReactor.needsOutput) {
+            for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
                 ((MetaTileEntityFuelRodImportHatch) fuelImport).getExportHatch(this.height - 1)
                         .getExportItems().insertItem(0,
                                 OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), false);
