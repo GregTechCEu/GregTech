@@ -233,7 +233,6 @@ public class NuclearRecipes {
                 .fluidOutputs(Water.getFluid(2000))
                 .buildAndRegister();
 
-
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustSpentFuel, HighGradeMOX, 1)
                 .fluidInputs(HydrofluoricAcid.getFluid(4000))
@@ -241,7 +240,6 @@ public class NuclearRecipes {
                 .fluidOutputs(DepletedUraniumHexafluoride.getFluid(1000))
                 .fluidOutputs(Water.getFluid(2000))
                 .buildAndRegister();
-
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustBredFuel, LEU235)
