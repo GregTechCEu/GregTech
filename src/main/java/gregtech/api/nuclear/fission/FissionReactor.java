@@ -642,7 +642,7 @@ public class FissionReactor {
         double load = Math.max(temperature / maxTemperature, pressure / maxPressure);
         if (load > 1. / 40 && kEff > 1.02) {
             this.controlRodInsertion += 5f / 255;
-            this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
+            this.controlRodInsertion = Math.min(0, this.controlRodInsertion);
             this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
         }
         if (load < 3. / 4) {
