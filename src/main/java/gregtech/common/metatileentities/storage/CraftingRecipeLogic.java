@@ -7,6 +7,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
+import gregtech.common.mui.widget.workbench.CraftingInputSlot;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -24,10 +25,11 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
@@ -42,17 +44,17 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     private final World world;
     private IItemHandlerModifiable availableHandlers;
+    private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.comparingAllButCount();
 
     /**
      * Used to lookup a list of slots for a given stack
-     * filled by {@link CraftingRecipeLogic#collectAvailableItems()}
+     * filled by {@link CraftingRecipeLogic#handleCacheMiss(ItemStack)}
      **/
-    private final Object2ObjectOpenCustomHashMap<ItemStack, List<Integer>> stackLookupMap = new Object2ObjectOpenCustomHashMap<>(
-            ItemStackHashStrategy.comparingAllButCount());
+    private final Map<ItemStack, List<Integer>> stackLookupMap = new Object2ObjectOpenCustomHashMap<>(this.strategy);
 
     /**
      * List of items needed to complete the crafting recipe, filled by
-     * {@link CraftingRecipeLogic#getIngredientEquivalent(ItemStack, IntList)} )}
+     * {@link CraftingRecipeLogic#getIngredientEquivalent(CraftingInputSlot)} )}
      **/
     private final Map<ItemStack, Integer> requiredItems = new Object2IntOpenCustomHashMap<>(
             ItemStackHashStrategy.comparingAllButCount());
@@ -61,8 +63,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     private final InventoryCrafting craftingMatrix;
     private final IInventory craftingResultInventory = new InventoryCraftResult();
     private final CachedRecipeData cachedRecipeData;
-    public static short ALL_INGREDIENTS_PRESENT = 511;
-    private short presenceMatrix = ALL_INGREDIENTS_PRESENT;
+    private final CraftingInputSlot[] inputSlots = new CraftingInputSlot[9];
 
     public CraftingRecipeLogic(World world, IItemHandlerModifiable handlers, IItemHandlerModifiable craftingMatrix) {
         this.world = world;
@@ -93,163 +94,165 @@ public class CraftingRecipeLogic extends SyncHandler {
         }
     }
 
+    public void setInputSlot(CraftingInputSlot slot, int index) {
+        this.inputSlots[index] = slot;
+    }
+
     /**
      * Attempts to match the crafting matrix against all available inventories
      *
      * @return 511 if all items matched
      */
-    public short attemptMatchRecipe() {
-        short presenceMatrix = 511;
-        requiredItems.clear();
-        for (var stack : compressMatrixToList(this.craftingMatrix).entrySet()) {
-            int notFound = stack.getValue().size() - getIngredientEquivalent(stack.getKey(), stack.getValue());
-            for (int i = notFound - 1; i >= 0; i--) {
-                presenceMatrix -= (short) (1 << stack.getValue().get(i));
+    public boolean attemptMatchRecipe() {
+        this.requiredItems.clear();
+        boolean matched = true;
+        for (CraftingInputSlot slot : this.inputSlots) {
+            slot.hasIngredients = getIngredientEquivalent(slot);
+            if (!slot.hasIngredients) {
+                matched = false;
+                break;
             }
         }
-        return presenceMatrix;
-    }
-
-    private Map<ItemStack, IntList> compressMatrixToList(InventoryCrafting craftingMatrix) {
-        Map<ItemStack, IntList> map = new Object2ObjectOpenCustomHashMap<>(
-                ItemStackHashStrategy.comparingAllButCount());
-        for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
-            var stack = craftingMatrix.getStackInSlot(i).copy();
-            if (stack.isEmpty()) continue;
-            IntList slots = map.computeIfAbsent(stack, s -> new IntArrayList());
-            slots.add(i);
-        }
-        return map;
+        syncToClient(5, buffer -> {
+            for (CraftingInputSlot slot : this.inputSlots) {
+                buffer.writeBoolean(slot.hasIngredients);
+            }
+        });
+        return matched;
     }
 
     /**
      * Searches all available inventories for an ingredient equivalent for a stack in the crafting matrix
      *
-     * @param currentStack stack to find a substitute for
+     * @param slot slot whose current stack to find a substitute for
      * @return number of slots for which a valid substitute exists
      */
-    public int getIngredientEquivalent(ItemStack currentStack, IntList slots) {
+    public boolean getIngredientEquivalent(CraftingInputSlot slot) {
+        ItemStack currentStack = slot.getStack();
         if (currentStack.isEmpty()) {
-            return slots.size(); // stack is empty, nothing to return
+            return true; // stack is empty, nothing to return
         }
 
-        if (simulateExtractItem(currentStack, slots.size()) == 0) {
-            return slots.size();
+        if (simulateExtractItem(currentStack)) {
+            return true;
         }
 
-        var recipe = getCachedRecipe();
+        Object2BooleanMap<ItemStack> map = replaceAttemptMap.computeIfAbsent(slot.getIndex(),
+                (m) -> new Object2BooleanOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount()));
 
-        ItemStack previousStack = recipe.getCraftingResult(craftingMatrix);
-        int succeeded = 0;
-        for (int slot : slots) {
+        // iterate stored items to find equivalent
+        for (int i = 0; i < this.availableHandlers.getSlots(); i++) {
+            var itemStack = availableHandlers.getStackInSlot(i);
+            if (itemStack.isEmpty()) continue;
 
-            Object2BooleanMap<ItemStack> map = replaceAttemptMap.computeIfAbsent(slot,
-                    (m) -> new Object2BooleanOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount()));
+            var recipe = getCachedRecipe();
 
-            // iterate stored items to find equivalent
-            for (var entry : stackLookupMap.entrySet()) {
-                for (int i : entry.getValue()) {
-                    var itemStack = availableHandlers.getStackInSlot(i);
+            boolean matchedPreviously = false;
+            if (map.containsKey(itemStack)) {
+                if (!map.get(itemStack)) {
+                    continue;
+                }
+                // cant return here before checking if:
+                // The item is available for extraction
+                // The recipe output is still the same, as depending on
+                // the ingredient, the output NBT may change
+                matchedPreviously = true;
+            }
 
-                    boolean matchedPreviously = false;
-                    if (map.containsKey(itemStack)) {
-                        if (!map.get(itemStack)) {
-                            continue;
-                        } else {
-                            // cant return here before checking if:
-                            // The item is available for extraction
-                            // The recipe output is still the same, as depending on the ingredient, the output NBT may
-                            // change
-                            matchedPreviously = true;
-                        }
+            if (!matchedPreviously) {
+                boolean matched = false;
+                // Matching shapeless recipes actually is very bad for performance, as it checks the entire
+                // recipe ingredients recursively, so we fail early here if none of the recipes ingredients can
+                // take the stack
+                for (Ingredient in : recipe.getIngredients()) {
+                    if (in.apply(itemStack)) {
+                        matched = true;
+                        break;
                     }
-
-                    if (!matchedPreviously) {
-                        boolean matched = false;
-                        // Matching shapeless recipes actually is very bad for performance, as it checks the entire
-                        // recipe ingredients recursively, so we fail early here if none of the recipes ingredients can
-                        // take the stack
-                        for (Ingredient in : recipe.getIngredients()) {
-                            if (in.apply(itemStack)) {
-                                matched = true;
-                                break;
-                            }
-                        }
-                        if (!matched) {
-                            map.put(itemStack.copy(), false);
-                            continue;
-                        }
-                    }
-
-                    // update item in slot, and check that recipe matches and output item is equal to the expected one
-                    craftingMatrix.setInventorySlotContents(slot, itemStack);
-                    if ((cachedRecipeData.matches(craftingMatrix, world) &&
-                            ItemStack.areItemStacksEqual(recipe.getCraftingResult(craftingMatrix), previousStack)) ||
-                            recipe instanceof ShapedOreEnergyTransferRecipe) {
-                        map.put(itemStack, true);
-                        // ingredient matched, attempt to extract it and return if successful
-                        succeeded += slots.size() - simulateExtractItem(itemStack, slots.size());
-                        if (succeeded == slots.size()) {
-                            return slots.size();
-                        }
-                    }
-                    map.put(itemStack, false);
-                    craftingMatrix.setInventorySlotContents(slot, currentStack);
+                }
+                if (!matched) {
+                    map.put(itemStack.copy(), false);
+                    continue;
                 }
             }
+
+            ItemStack previousResult = recipe.getCraftingResult(craftingMatrix);
+
+            // update item in slot, and check that recipe matches and output item is equal to the expected one
+            craftingMatrix.setInventorySlotContents(slot.getIndex(), itemStack);
+            var newResult = recipe.getCraftingResult(craftingMatrix);
+            if ((cachedRecipeData.matches(craftingMatrix, world) &&
+                    ItemStack.areItemStacksEqual(newResult, previousResult)) ||
+                    recipe instanceof ShapedOreEnergyTransferRecipe) {
+                map.put(itemStack.copy(), true);
+                // ingredient matched, attempt to extract it and return if successful
+                if (simulateExtractItem(itemStack)) {
+                    craftingMatrix.setInventorySlotContents(slot.getIndex(), currentStack);
+                    return true;
+                }
+            }
+            map.put(itemStack.copy(), false);
+            craftingMatrix.setInventorySlotContents(slot.getIndex(), currentStack);
         }
-        return succeeded;
+        return false;
     }
 
     /**
      * Attempts to extract the given stack from connected inventories
      *
      * @param itemStack stack from the crafting matrix
-     * @param extract the amount to extract
-     * @return number of items yet to be extracted
+     * @return true if successfully extracted
      */
-    private int simulateExtractItem(ItemStack itemStack, int extract) {
-        if (!stackLookupMap.containsKey(itemStack)) return extract;
-        int remaining = extract;
-        for (int slot : stackLookupMap.get(itemStack)) {
-            var slotStack = availableHandlers.extractItem(slot, remaining, true);
-            if (slotStack.getCount() <= remaining) {
-                remaining -= slotStack.getCount();
-                if (remaining == 0) {
-                    requiredItems.put(itemStack, extract);
-                    return 0;
+    private boolean simulateExtractItem(ItemStack itemStack) {
+        if (stackLookupMap.containsKey(itemStack)) {
+            for (int slot : stackLookupMap.get(itemStack)) {
+                var slotStack = availableHandlers.extractItem(slot, 1, true);
+                if (slotStack.isEmpty() || !this.strategy.equals(slotStack, itemStack)) {
+                    // cache is not correct
+                    if (!handleCacheMiss(itemStack))
+                        return false;
                 }
+                int count = requiredItems.getOrDefault(itemStack, 0);
+                requiredItems.put(itemStack, ++count);
+                return true;
             }
         }
-        return remaining;
+        // todo handle cache miss
+        if (handleCacheMiss(itemStack)) {
+            int count = requiredItems.getOrDefault(itemStack, 0);
+            requiredItems.put(itemStack, ++count);
+            return true;
+        }
+        return false;
     }
 
     public boolean performRecipe() {
         if (!isRecipeValid()) return false;
 
-        if (attemptMatchRecipe() != ALL_INGREDIENTS_PRESENT || !consumeRecipeItems()) {
+        if (!attemptMatchRecipe() || !consumeRecipeItems()) {
             return false;
         }
 
-        var cachedRecipe = cachedRecipeData.getRecipe();
-        var player = getSyncManager().getPlayer();
-        ForgeHooks.setCraftingPlayer(player);
-        // todo right here is where tools get damaged (in UI)
-        NonNullList<ItemStack> remainingItems = cachedRecipe.getRemainingItems(craftingMatrix);
-        ForgeHooks.setCraftingPlayer(null);
-        for (ItemStack itemStack : remainingItems) {
-            if (itemStack.isEmpty()) {
-                continue;
-            }
-
-            int remainingAmount = GTTransferUtils.insertItem(this.availableHandlers, itemStack, true).getCount();
-            if (remainingAmount > 0) {
-                itemStack.setCount(remainingAmount);
-                if (!player.addItemStackToInventory(itemStack)) {
-                    player.dropItem(itemStack, false, false);
-                }
-            }
-        }
+        // todo is everything below actually necessary?
+//        var cachedRecipe = cachedRecipeData.getRecipe();
+//        var player = getSyncManager().getPlayer();
+//        ForgeHooks.setCraftingPlayer(player);
+//        // todo right here is where tools get damaged (in UI)
+//        NonNullList<ItemStack> remainingItems = cachedRecipe.getRemainingItems(craftingMatrix);
+//        ForgeHooks.setCraftingPlayer(null);
+//        for (ItemStack itemStack : remainingItems) {
+//            if (itemStack.isEmpty()) {
+//                continue;
+//            }
+//
+//            int remainingAmount = GTTransferUtils.insertItem(this.availableHandlers, itemStack, true).getCount();
+//            if (remainingAmount > 0) {
+//                itemStack.setCount(remainingAmount);
+//                if (!player.addItemStackToInventory(itemStack)) {
+//                    player.dropItem(itemStack, false, false);
+//                }
+//            }
+//        }
         return true;
     }
 
@@ -319,45 +322,74 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     @Override
     public void detectAndSendChanges(boolean init) {
-        super.detectAndSendChanges(init);
-        this.collectAvailableItems();
-        short newMatrix;
-        if (getCachedRecipeData().getRecipe() != null) {
-            newMatrix = attemptMatchRecipe();
-        } else {
-            newMatrix = ALL_INGREDIENTS_PRESENT;
+        var recipe = getCachedRecipe();
+        if (recipe == null) return;
+
+        final Map<Integer, Boolean> map = new Int2BooleanArrayMap();
+        for (CraftingInputSlot slot : this.inputSlots) {
+            final boolean old = slot.hasIngredients;
+            slot.hasIngredients = getIngredientEquivalent(slot);
+            if (old != slot.hasIngredients)
+                map.put(slot.getIndex(), slot.hasIngredients);
         }
-        if (init || newMatrix != this.presenceMatrix) {
-            this.presenceMatrix = newMatrix;
+
+        if (!map.isEmpty()) {
             syncToClient(1, buffer -> {
-                buffer.writeShort(presenceMatrix);
+                buffer.writeByte(map.size());
+                for (var set : map.entrySet()) {
+                    buffer.writeByte(set.getKey());
+                    buffer.writeBoolean(set.getValue());
+                }
             });
         }
     }
 
-    public short getTintLocations() {
-        return (short) (ALL_INGREDIENTS_PRESENT - presenceMatrix);
-    }
-
-    public CachedRecipeData getCachedRecipeData() {
-        return this.cachedRecipeData;
-    }
-
-    public void collectAvailableItems() {
-        this.stackLookupMap.clear();
-        for (int i = 0; i < this.availableHandlers.getSlots(); i++) {
-            var stack = this.availableHandlers.getStackInSlot(i);
-            if (stack.isEmpty()) continue;
-            this.stackLookupMap
-                    .computeIfAbsent(stack, k -> new IntArrayList())
-                    .add(i);
+    /**
+     * searches available handlers for the stack directly and
+     * adds the stack and slots the stack lookup map
+     *
+     * @param stack stack to check for in available handlers
+     * @return true if a suitable item was found
+     */
+    public boolean handleCacheMiss(ItemStack stack) {
+        if (this.stackLookupMap.containsKey(stack)) {
+            ItemStack check;
+            List<Integer> toRemove = new IntArrayList();
+            List<Integer> slots = this.stackLookupMap.get(stack);
+            for (int slot : slots) {
+                check = this.availableHandlers.getStackInSlot(slot);
+                if (!this.strategy.equals(stack, check)) {
+                    toRemove.add(slot);
+                }
+            }
+            if (toRemove.size() == slots.size()) {
+                this.stackLookupMap.remove(stack);
+            } else {
+                toRemove.forEach(slots::remove);
+            }
         }
+
+        for (int i = 0; i < this.availableHandlers.getSlots(); i++) {
+            var curStack = this.availableHandlers.getStackInSlot(i);
+            if (curStack.isEmpty()) continue;
+            // container items like buckets or tools might need special behavior
+            if (this.strategy.equals(stack, curStack)) {
+                this.stackLookupMap
+                        .computeIfAbsent(stack, k -> new IntArrayList())
+                        .add(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
         if (id == 1) {
-            this.presenceMatrix = buf.readShort();
+            int size = buf.readByte();
+            for (int i = 0; i < size; i++) {
+                this.inputSlots[buf.readByte()].hasIngredients = buf.readBoolean();
+            }
         }
         if (id == 4) {
             getSyncManager().setCursorItem(readStackSafe(buf));
