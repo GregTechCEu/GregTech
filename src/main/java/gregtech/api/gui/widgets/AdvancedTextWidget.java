@@ -43,7 +43,7 @@ public class AdvancedTextWidget extends Widget {
 
     protected final Consumer<List<ITextComponent>> textSupplier;
     protected BiConsumer<String, ClickData> clickHandler;
-    private List<ITextComponent> displayText = new ArrayList<>();
+    protected List<ITextComponent> displayText = new ArrayList<>();
     private final int color;
 
     public AdvancedTextWidget(int xPosition, int yPosition, Consumer<List<ITextComponent>> text, int color) {

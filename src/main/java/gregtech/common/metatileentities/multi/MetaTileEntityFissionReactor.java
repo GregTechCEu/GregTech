@@ -10,6 +10,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.RecolorableTextWidget;
 import gregtech.api.gui.widgets.SliderWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.gui.widgets.UpdatedSliderWidget;
@@ -118,7 +119,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 206, 236).shouldColor(false)
                 .widget(new ToggleButtonWidget(10, 10, 18, 18, this::isLocked, this::tryLocking))
-                .widget(new AdvancedTextWidget(35, 14, getLockingStateText(), getLockedTextColor()))
+                .widget(new RecolorableTextWidget(35, 14, getLockingStateText(), () -> getLockedTextColor()))
                 .widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 165,
                         18, 0.0f, 1.0f,
                         (float) controlRodInsertionValue, this::setControlRodInsertionValue,
@@ -161,7 +162,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             return 0x0050D0;
         if (lockingState == LockingState.SHOULD_LOCK)
             return 0x000000;
-        return getWorld().getWorldTime() % 2 == 0 ? 0xA00000 : 0xC08000;
+        return getWorld().getWorldTime() % 4 >= 2 ? 0xA00000 : 0xC08000;
     }
 
     private void tryLocking(boolean lock) {
@@ -723,7 +724,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     // radius^2 + radius + .25
                     continue;
                 BlockPos currentPos = reactorOrigin.offset(this.frontFacing.rotateYCCW(), i)
-                        .offset(this.frontFacing.getOpposite(), j).offset(EnumFacing.UP, height - 2);
+                        .offset(this.frontFacing.getOpposite(), j).offset(EnumFacing.UP, heightTop);
                 if (getWorld().getTileEntity(currentPos) instanceof IGregTechTileEntity gtTe) {
                     MetaTileEntity mte = gtTe.getMetaTileEntity();
                     ReactorComponent component;
