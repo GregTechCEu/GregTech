@@ -1590,7 +1590,7 @@ public class FirstDegreeMaterials {
         Zircaloy = new Material.Builder(456, gregtechId("zircaloy"))
                 .ingot()
                 .color(0x566570).iconSet(METALLIC)
-                .flags(GENERATE_RING)
+                .flags(GENERATE_RING, GENERATE_PLATE)
                 .components(Zirconium, 16, Tin, 2, Chrome, 1)
                 .blast(1700, GasTier.LOW)
                 .build();
