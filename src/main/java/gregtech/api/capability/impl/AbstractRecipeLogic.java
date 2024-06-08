@@ -472,7 +472,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             }
             if (speedBonus > 0) {
                 int duration = recipe.getDuration();
-                int newDuration = (int) (duration - (duration * speedBonus));
+                int newDuration = (int) (duration * speedBonus);
                 if (newDuration <= 0) newDuration = 1;
                 builder.duration(newDuration);
             }
@@ -533,7 +533,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Sets an EU/t discount to apply to a machine when running recipes.<br>
      * This does NOT affect recipe lookup voltage, even if the discount drops it to a lower voltage tier.<br>
-     * This discount is applied pre-parallel.
+     * This discount is applied pre-parallel/pre-overclock.
      *
      * @param discount The discount, must be greater than 0 and less than 1.
      *                 If discount == 0.75, then the recipe will only require 75% of the listed power to run.
@@ -554,8 +554,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
+     * Sets a speed multiplier to apply to a machine when running recipes.<br>
+     * This discount is applied pre-parallel/pre-overclock.
      *
-     * @param bonus
+     * @param bonus The bonus, must be greater than 0.
+     *              If bonus == 0.2, then the recipe will be 20% of the normal duration.
      */
     public void setSpeedBonus(double bonus) {
         if (bonus <= 0 || bonus >= 1) {

@@ -86,7 +86,7 @@ public class AbstractRecipeLogicTest {
 
         queryTestRecipe(arl);
         MatcherAssert.assertThat(arl.recipeEUt, is((int) (initialEUt * 0.75)));
-        MatcherAssert.assertThat(arl.maxProgressTime, is((int) (initialDuration - (initialDuration * 0.2))));
+        MatcherAssert.assertThat(arl.maxProgressTime, is((int) (initialDuration * 0.2)));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class AbstractRecipeLogicTest {
         // Because of the parallel, now the paralleled recipe EU/t should be back to 30 EU/t.
         MatcherAssert.assertThat(arl.recipeEUt, is(30));
         // Duration should be static regardless of parallels.
-        MatcherAssert.assertThat(arl.maxProgressTime, is((int) (initialDuration - (initialDuration * 0.2))));
+        MatcherAssert.assertThat(arl.maxProgressTime, is((int) (initialDuration * 0.2)));
     }
 
     private static AbstractRecipeLogic createTestLogic(int testRecipeEUt, int testRecipeDuration) {
