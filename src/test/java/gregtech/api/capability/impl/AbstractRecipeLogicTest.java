@@ -116,7 +116,7 @@ public class AbstractRecipeLogicTest {
         World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
-        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("test_reactor_"+TEST_ID,
+        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("test_reactor_" + TEST_ID,
                 2,
                 2,
                 3,
@@ -126,7 +126,7 @@ public class AbstractRecipeLogicTest {
 
         MetaTileEntity at = MetaTileEntities.registerMetaTileEntity(TEST_ID,
                 new SimpleMachineMetaTileEntity(
-                        GTUtility.gregtechId("chemical_reactor.lv_"+TEST_ID),
+                        GTUtility.gregtechId("chemical_reactor.lv_" + TEST_ID),
                         map,
                         null,
                         1, false));
