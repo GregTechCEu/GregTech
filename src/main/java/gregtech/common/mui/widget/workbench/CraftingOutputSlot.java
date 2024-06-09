@@ -1,5 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
@@ -29,6 +31,7 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable {
+public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable, JeiIngredientProvider {
 
     private final CraftingSlotSH syncHandler;
 
@@ -84,6 +87,11 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
             tooltip.draw(getContext(), this.syncHandler.getOutputStack());
         }
+    }
+
+    @Override
+    public @Nullable ItemStack getIngredient() {
+        return this.syncHandler.getOutputStack();
     }
 
     protected static class CraftingSlotSH extends SyncHandler {
@@ -139,7 +147,10 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             for (ModularSlot toSlot : this.shiftClickSlots) {
                 if (toSlot.isEnabled() && toSlot.isItemValid(fromStack)) {
                     ItemStack toStack = toSlot.getStack().copy();
-                    if (toStack.isEmpty()) emptySlots.add(toSlot);
+                    if (toStack.isEmpty()) {
+                        emptySlots.add(toSlot);
+                        continue;
+                    }
 
                     if (ItemHandlerHelper.canItemStacksStack(fromStack, toStack)) {
                         int j = toStack.getCount() + fromStack.getCount();
