@@ -121,7 +121,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                     if (recipeLogic.performRecipe()) {
                         handleItemCraft(this.slot.getStack(), getSyncManager().getPlayer());
                         if (data.shift) {
-                            // todo handle shift transfer
+                            // todo make shift transfer do more than one stack
                             GTTransferUtils.insertItem(this.shiftclickslots, this.slot.getStack(), false);
                         } else {
                             syncToClient(5, this::syncCraftedStack);
