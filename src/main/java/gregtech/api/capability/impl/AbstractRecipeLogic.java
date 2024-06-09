@@ -537,10 +537,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @param discount The discount, must be greater than 0 and less than 1.
      *                 If discount == 0.75, then the recipe will only require 75% of the listed power to run.
+     *                 If discount is > 1, then the recipe will require more than the listed power to run.
+     *                 <strong>Be careful as this may not always be possible within the EU/t maximums of the machine!
+     *                 </strong>
      */
     public void setEUDiscount(double discount) {
-        if (discount <= 0 || discount >= 1) {
-            GTLog.logger.warn("Cannot set EU discount for recipe logic to {}, discount must be 0<x<1", discount);
+        if (discount <= 0) {
+            GTLog.logger.warn("Cannot set EU discount for recipe logic to {}, discount must be > 0", discount);
             return;
         }
         euDiscount = discount;
@@ -559,10 +562,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @param bonus The bonus, must be greater than 0.
      *              If bonus == 0.2, then the recipe will be 20% of the normal duration.
+     *              If bonus is > 1, then the recipe will be slower than the normal duration.
      */
     public void setSpeedBonus(double bonus) {
-        if (bonus <= 0 || bonus >= 1) {
-            GTLog.logger.warn("Cannot set speed bonus for recipe logic to {}, bonus must be 0<x<1", bonus);
+        if (bonus <= 0) {
+            GTLog.logger.warn("Cannot set speed bonus for recipe logic to {}, bonus must be > 0", bonus);
             return;
         }
         speedBonus = bonus;
