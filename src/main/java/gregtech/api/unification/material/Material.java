@@ -294,6 +294,22 @@ public class Material implements Comparable<Material> {
         return false;
     }
 
+    // Assumes one mole per item and that it's always "starting to decay"
+    @ZenGetter("decaysPerSecond")
+    public double getDecaysPerSecond() {
+        if (!this.isRadioactive()) {
+            return 0;
+        }
+        if (materialInfo.element != null) {
+            return 6e23 * (Math.log(2) * Math.exp(-Math.log(2) / materialInfo.element.halfLifeSeconds));
+        }
+        double decaysPerSecond = 0;
+        for (MaterialStack material : materialInfo.componentList)
+            decaysPerSecond += material.material.getDecaysPerSecond();
+        return decaysPerSecond;
+    }
+
+
     @ZenGetter("protons")
     public long getProtons() {
         if (materialInfo.element != null)

@@ -187,7 +187,7 @@ public class MetaPrefixItem extends StandardMetaItem {
                 if (prefix.radiationDamageFunction != null) {
                     Material material = getMaterial(itemStack);
                     if (material != null) {
-                        float radiationDamage = prefix.radiationDamageFunction.apply(material.getNeutrons());
+                        double radiationDamage = prefix.radiationDamageFunction.apply(material.getDecaysPerSecond());
                         ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                         if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
                             ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem())
@@ -198,7 +198,7 @@ public class MetaPrefixItem extends StandardMetaItem {
                         }
                         if (radiationDamage > 0.0) {
                             entity.attackEntityFrom(DamageSources.getRadioactiveDamage().setDamageBypassesArmor(),
-                                    radiationDamage);
+                                    (float) radiationDamage);
                         }
                     }
                 }
