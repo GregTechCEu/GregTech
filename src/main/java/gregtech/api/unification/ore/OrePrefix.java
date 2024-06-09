@@ -505,13 +505,13 @@ public class OrePrefix {
         stick.modifyMaterialAmount(Materials.Blaze, 4);
         stick.modifyMaterialAmount(Materials.Bone, 5);
 
-        fuelRod.radiationDamageFunction = (neutrons) -> neutrons / 1.5f;
-        fuelPellet.radiationDamageFunction = (neutrons) -> neutrons / 24f;
+        fuelRod.radiationDamageFunction = (neutrons) -> neutrons / 1.5e23;
+        fuelPellet.radiationDamageFunction = (neutrons) -> neutrons / 24e23;
 
-        fuelRodDepleted.radiationDamageFunction = (neutrons) -> neutrons / 2.f;
-        fuelRodHotDepleted.radiationDamageFunction = (neutrons) -> neutrons / 1.5f;
-        fuelRodHotDepleted.heatDamageFunction = (x) -> 2.0f;
-        fuelPelletDepleted.radiationDamageFunction = (neutrons) -> neutrons / 32f;
+        fuelRodDepleted.radiationDamageFunction = (neutrons) -> neutrons / 20e23;
+        fuelRodHotDepleted.radiationDamageFunction = (neutrons) -> neutrons / 15e23;
+        fuelRodHotDepleted.heatDamageFunction = (x) -> 2f;
+        fuelPelletDepleted.radiationDamageFunction = (neutrons) -> neutrons / 32e23;
     }
 
     private static void excludeAllGems(Material material) {
@@ -554,7 +554,7 @@ public class OrePrefix {
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
     public Function<Integer, Float> heatDamageFunction = null; // Negative for Frost Damage
-    public Function<Long, Float> radiationDamageFunction = null;
+    public Function<Double, Double> radiationDamageFunction = null;
     public Function<Material, List<String>> tooltipFunc;
 
     private String alternativeOreName = null;
