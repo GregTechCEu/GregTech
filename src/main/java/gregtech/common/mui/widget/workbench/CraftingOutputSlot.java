@@ -1,7 +1,6 @@
 package gregtech.common.mui.widget.workbench;
 
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
@@ -9,7 +8,6 @@ import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -31,11 +29,13 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable {
@@ -93,7 +93,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         private final CraftingRecipeLogic recipeLogic;
         private final CraftingOutputMS slot;
 
-        private final List<ModularSlot> shiftclickslots = new ArrayList<>();
+        private final List<ModularSlot> shiftClickSlots = new ArrayList<>();
 
         public CraftingSlotSH(CraftingOutputMS slot) {
             this.slot = slot;
@@ -111,7 +111,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                     .forEach(slotGroup -> slotGroup.getSlots()
                             .forEach(slot1 -> {
                                 if (slot1 instanceof ModularSlot modularSlot) {
-                                    this.shiftclickslots.add(modularSlot);
+                                    this.shiftClickSlots.add(modularSlot);
                                 }
                             }));
         }
@@ -124,44 +124,55 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
                     if (recipeLogic.performRecipe()) {
                         ItemStack craftedStack = this.slot.getStack();
+
+                        if (data.shift) {
+                            quickTransfer(craftedStack);
+                        } else {
+                            syncToClient(5, this::syncCraftedStack);
+                        }
                         handleItemCraft(craftedStack, getSyncManager().getPlayer());
-                        syncToClient(5, this::syncCraftedStack);
-                            // todo make shift transfer do more than one stack and actually work
-//                        if (data.shift) {
-//                            List<ModularSlot> emptySlots = new ArrayList<>();
-//                            for (var slot : this.shiftclickslots) {
-//
-//                                ItemStack slotStack = slot.getStack().copy();
-//                                if (slotStack.isEmpty()) {
-//                                    emptySlots.add(slot);
-//                                } else if (ItemHandlerHelper.canItemStacksStack(craftedStack, slotStack)) {
-//                                    if (!slot.isItemValid(craftedStack)) continue;
-//
-//                                    int space = slot.getItemStackLimit(slotStack) - slotStack.getCount();
-//                                    if (space == 0) continue;
-//
-//                                    var split = craftedStack.splitStack(space);
-//
-//                                    slotStack.setCount(split.getCount() + slotStack.getCount());
-//                                    slot.putStack(slotStack);
-//                                    if (craftedStack.isEmpty())
-//                                        return;
-//                                }
-//                            }
-//
-//                            for (var slot : emptySlots) {
-//                                if (!slot.isItemValid(craftedStack)) continue;
-//
-//                                if (craftedStack.getCount() > slot.getSlotStackLimit()) {
-//                                    slot.putStack(craftedStack.splitStack(slot.getSlotStackLimit()));
-//                                } else {
-//                                    slot.putStack(craftedStack.splitStack(craftedStack.getCount()));
-//                                }
-//                                if (craftedStack.isEmpty())
-//                                    return;
-//                            }
-//                        } else {
-//                        }
+                    }
+                }
+            }
+        }
+
+        public void quickTransfer(ItemStack fromStack) {
+            List<ModularSlot> emptySlots = new ArrayList<>();
+            for (ModularSlot toSlot : this.shiftClickSlots) {
+                if (toSlot.isEnabled() && toSlot.isItemValid(fromStack)) {
+                    ItemStack toStack = toSlot.getStack().copy();
+                    if (toStack.isEmpty()) emptySlots.add(toSlot);
+
+                    if (ItemHandlerHelper.canItemStacksStack(fromStack, toStack)) {
+                        int j = toStack.getCount() + fromStack.getCount();
+                        int maxSize = Math.min(toSlot.getSlotStackLimit(), fromStack.getMaxStackSize());
+
+                        if (j <= maxSize) {
+                            fromStack.setCount(0);
+                            toStack.setCount(j);
+                            toSlot.putStack(toStack);
+                        } else if (toStack.getCount() < maxSize) {
+                            fromStack.shrink(maxSize - toStack.getCount());
+                            toStack.setCount(maxSize);
+                            toSlot.putStack(toStack);
+                        }
+
+                        if (fromStack.isEmpty()) {
+                            return;
+                        }
+                    }
+                }
+            }
+            for (ModularSlot emptySlot : emptySlots) {
+                ItemStack itemstack = emptySlot.getStack();
+                if (emptySlot.isEnabled() && itemstack.isEmpty() && emptySlot.isItemValid(fromStack)) {
+                    if (fromStack.getCount() > emptySlot.getSlotStackLimit()) {
+                        emptySlot.putStack(fromStack.splitStack(emptySlot.getSlotStackLimit()));
+                    } else {
+                        emptySlot.putStack(fromStack.splitStack(fromStack.getCount()));
+                    }
+                    if (fromStack.isEmpty()) {
+                        return;
                     }
                 }
             }
