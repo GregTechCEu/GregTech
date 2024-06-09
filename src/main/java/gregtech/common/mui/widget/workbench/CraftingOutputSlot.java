@@ -93,7 +93,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         private final CraftingRecipeLogic recipeLogic;
         private final CraftingOutputMS slot;
 
-        private IItemHandlerModifiable shiftclickslots;
+        private final List<ModularSlot> shiftclickslots = new ArrayList<>();
 
         public CraftingSlotSH(CraftingOutputMS slot) {
             this.slot = slot;
@@ -101,15 +101,19 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         }
 
         @Override
-        @SuppressWarnings("OverrideOnly")
+        @SuppressWarnings({ "OverrideOnly"})
         public void init(String key, GuiSyncManager syncManager) {
             super.init(key, syncManager);
-            List<Slot> list = new ArrayList<>();
             getSyncManager().getSlotGroups().stream()
+                    .filter(SlotGroup::allowShiftTransfer)
                     .sorted(Comparator.comparingInt(SlotGroup::getShiftClickPriority))
                     .collect(Collectors.toList())
-                    .forEach(slotGroup -> list.addAll(slotGroup.getSlots()));
-            shiftclickslots = listToHandler(list);
+                    .forEach(slotGroup -> slotGroup.getSlots()
+                            .forEach(slot1 -> {
+                                if (slot1 instanceof ModularSlot modularSlot) {
+                                    this.shiftclickslots.add(modularSlot);
+                                }
+                            }));
         }
 
         @Override
@@ -119,106 +123,48 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
                     if (recipeLogic.performRecipe()) {
-                        handleItemCraft(this.slot.getStack(), getSyncManager().getPlayer());
-                        if (data.shift) {
-                            // todo make shift transfer do more than one stack
-                            GTTransferUtils.insertItem(this.shiftclickslots, this.slot.getStack(), false);
-                        } else {
-                            syncToClient(5, this::syncCraftedStack);
-                        }
+                        ItemStack craftedStack = this.slot.getStack();
+                        handleItemCraft(craftedStack, getSyncManager().getPlayer());
+                        syncToClient(5, this::syncCraftedStack);
+                            // todo make shift transfer do more than one stack and actually work
+//                        if (data.shift) {
+//                            List<ModularSlot> emptySlots = new ArrayList<>();
+//                            for (var slot : this.shiftclickslots) {
+//
+//                                ItemStack slotStack = slot.getStack().copy();
+//                                if (slotStack.isEmpty()) {
+//                                    emptySlots.add(slot);
+//                                } else if (ItemHandlerHelper.canItemStacksStack(craftedStack, slotStack)) {
+//                                    if (!slot.isItemValid(craftedStack)) continue;
+//
+//                                    int space = slot.getItemStackLimit(slotStack) - slotStack.getCount();
+//                                    if (space == 0) continue;
+//
+//                                    var split = craftedStack.splitStack(space);
+//
+//                                    slotStack.setCount(split.getCount() + slotStack.getCount());
+//                                    slot.putStack(slotStack);
+//                                    if (craftedStack.isEmpty())
+//                                        return;
+//                                }
+//                            }
+//
+//                            for (var slot : emptySlots) {
+//                                if (!slot.isItemValid(craftedStack)) continue;
+//
+//                                if (craftedStack.getCount() > slot.getSlotStackLimit()) {
+//                                    slot.putStack(craftedStack.splitStack(slot.getSlotStackLimit()));
+//                                } else {
+//                                    slot.putStack(craftedStack.splitStack(craftedStack.getCount()));
+//                                }
+//                                if (craftedStack.isEmpty())
+//                                    return;
+//                            }
+//                        } else {
+//                        }
                     }
                 }
             }
-        }
-
-        private static IItemHandlerModifiable listToHandler(List<Slot> list) {
-            return new IItemHandlerModifiable() {
-
-                @Override
-                public void setStackInSlot(int slot, ItemStack stack) {
-                    list.get(slot).putStack(stack);
-                }
-
-                @Override
-                public int getSlots() {
-                    return list.size();
-                }
-
-                @Override
-                public ItemStack getStackInSlot(int slot) {
-                    return list.get(slot).getStack();
-                }
-
-                @Override
-                public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-                    if (stack.isEmpty())
-                        return ItemStack.EMPTY;
-
-                    var slot1 = list.get(slot);
-                    ItemStack existing = slot1.getStack();
-
-                    int limit = slot1.getItemStackLimit(stack);
-
-                    if (!existing.isEmpty()) {
-                        if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
-                            return stack;
-
-                        limit -= existing.getCount();
-                    }
-
-                    if (limit <= 0)
-                        return stack;
-
-                    boolean reachedLimit = stack.getCount() > limit;
-
-                    if (!simulate) {
-                        if (existing.isEmpty()) {
-                            ItemStack s = reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack;
-                            slot1.putStack(s);
-                        } else {
-                            existing.grow(reachedLimit ? limit : stack.getCount());
-                            slot1.putStack(existing);
-                        }
-                    }
-
-                    return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - limit) :
-                            ItemStack.EMPTY;
-                }
-
-                @Override
-                public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                    if (amount == 0)
-                        return ItemStack.EMPTY;
-
-                    var slot1 = list.get(slot);
-                    ItemStack existing = slot1.getStack();
-
-                    if (existing.isEmpty())
-                        return ItemStack.EMPTY;
-
-                    int toExtract = Math.min(amount, existing.getMaxStackSize());
-
-                    if (existing.getCount() <= toExtract) {
-                        if (!simulate) {
-                            slot1.putStack(ItemStack.EMPTY);
-                        }
-                        return existing;
-                    } else {
-                        if (!simulate) {
-                            ItemStack s = ItemHandlerHelper.copyStackWithSize(existing,
-                                    existing.getCount() - toExtract);
-                            slot1.putStack(s);
-                        }
-
-                        return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
-                    }
-                }
-
-                @Override
-                public int getSlotLimit(int slot) {
-                    return list.get(slot).getSlotStackLimit();
-                }
-            };
         }
 
         @Override
