@@ -342,14 +342,14 @@ public class CraftingRecipeLogic extends SyncHandler {
             }
 
             int count = requiredItems.getOrDefault(slotStack, 0);
-            requiredItems.put(slotStack, ++count);
+            requiredItems.put(slotStack.copy(), ++count);
             slot.hasIngredients = simulateExtractItem(slotStack, count);
 
             // check if substitute exists
             if (!slot.hasIngredients) {
                 ItemStack substitute = findSubstitute(slot.getIndex(), slotStack);
                 count = requiredItems.getOrDefault(substitute, 0);
-                requiredItems.put(substitute, ++count);
+                requiredItems.put(substitute.copy(), ++count);
                 slot.hasIngredients = !substitute.isEmpty() && simulateExtractItem(substitute, count);
             }
 
@@ -383,9 +383,9 @@ public class CraftingRecipeLogic extends SyncHandler {
             var curStack = this.availableHandlers.getStackInSlot(i);
             if (curStack.isEmpty()) continue;
 
-            var slots = this.stackLookupMap.computeIfAbsent(stack, k -> new IntArraySet());
-            // container items like buckets or tools might need special behavior maybe?
             if (this.strategy.equals(stack, curStack)) {
+                // container items like buckets or tools might need special behavior maybe?
+                var slots = this.stackLookupMap.computeIfAbsent(stack, k -> new IntArraySet());
                 if (slots.add(i)) return true;
             }
         }
