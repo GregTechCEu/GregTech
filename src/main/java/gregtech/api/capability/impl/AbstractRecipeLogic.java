@@ -466,13 +466,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (euDiscount > 0 || speedBonus > 0) { // if-statement to avoid unnecessarily creating RecipeBuilder object
             RecipeBuilder<?> builder = new RecipeBuilder<>(recipe, recipeMap);
             if (euDiscount > 0) {
-                int newEUt = (int) (recipe.getEUt() * euDiscount);
+                int newEUt = (int) Math.round(recipe.getEUt() * euDiscount);
                 if (newEUt <= 0) newEUt = 1;
                 builder.EUt(newEUt);
             }
             if (speedBonus > 0) {
                 int duration = recipe.getDuration();
-                int newDuration = (int) (duration * speedBonus);
+                int newDuration = (int) Math.round(duration * speedBonus);
                 if (newDuration <= 0) newDuration = 1;
                 builder.duration(newDuration);
             }
