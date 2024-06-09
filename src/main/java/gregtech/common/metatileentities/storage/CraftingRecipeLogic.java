@@ -226,7 +226,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         // iterate stored items to find equivalent
         for (int i = 0; i < this.availableHandlers.getSlots(); i++) {
             var itemStack = availableHandlers.getStackInSlot(i);
-            if (itemStack.isEmpty()) continue;
+            if (itemStack.isEmpty() || this.strategy.equals(itemStack, stack)) continue;
 
             var recipe = getCachedRecipe();
 
@@ -268,6 +268,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                     ItemStack.areItemStacksEqual(newResult, previousResult)) ||
                     recipe instanceof ShapedOreEnergyTransferRecipe) {
                 // ingredient matched, return the substitute
+                craftingMatrix.setInventorySlotContents(craftingIndex, stack);
                 map.put(itemStack.copy(), true);
                 substitute = itemStack;
                 break;
