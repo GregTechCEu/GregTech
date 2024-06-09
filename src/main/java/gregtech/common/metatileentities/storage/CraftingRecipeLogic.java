@@ -135,6 +135,11 @@ public class CraftingRecipeLogic extends SyncHandler {
             int extractedAmount = 0;
             for (int slot : slotList) {
                 var extracted = availableHandlers.extractItem(slot, requestedAmount, true);
+                // i don't know if this is necessary
+                if (!this.strategy.equals(extracted, stack)) {
+                    handleCacheMiss(stack);
+                    continue;
+                }
                 gatheredItems.put(slot, extracted.getCount());
                 extractedAmount += extracted.getCount();
                 requestedAmount -= extracted.getCount();
@@ -298,14 +303,14 @@ public class CraftingRecipeLogic extends SyncHandler {
                 toRemove.add(slot);
             } else {
                 toExtract -= slotStack.getCount();
-                if (toExtract <= 0) return true;
+                if (toExtract <= 0) break;
             }
         }
 
         if (!toRemove.isEmpty())
             toRemove.forEach(slots::remove);
 
-        return handleCacheMiss(itemStack);
+        return toExtract <= 0 || handleCacheMiss(itemStack);
     }
 
     public void updateCurrentRecipe() {
@@ -385,7 +390,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
             if (this.strategy.equals(stack, curStack)) {
                 // container items like buckets or tools might need special behavior maybe?
-                var slots = this.stackLookupMap.computeIfAbsent(stack, k -> new IntArraySet());
+                var slots = this.stackLookupMap.computeIfAbsent(stack.copy(), k -> new IntArraySet());
                 if (slots.add(i)) return true;
             }
         }
