@@ -42,7 +42,10 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     private final World world;
     private IItemHandlerModifiable availableHandlers;
-    private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.comparingAllButCount();
+    private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder()
+            .compareItem(true)
+            .compareDamage(true)
+            .build();
 
     /**
      * Used to lookup a list of slots for a given stack
@@ -55,7 +58,7 @@ public class CraftingRecipeLogic extends SyncHandler {
      * {@link CraftingRecipeLogic#getIngredientEquivalent(CraftingInputSlot)} )}
      **/
     private final Map<ItemStack, Integer> requiredItems = new Object2IntOpenCustomHashMap<>(
-            ItemStackHashStrategy.comparingAllButCount());
+            this.strategy);
 
     private final Map<Integer, Object2BooleanMap<ItemStack>> replaceAttemptMap = new Int2ObjectArrayMap<>();
     private final InventoryCrafting craftingMatrix;
