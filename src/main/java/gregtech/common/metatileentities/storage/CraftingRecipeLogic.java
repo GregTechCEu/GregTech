@@ -44,7 +44,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     private IItemHandlerModifiable availableHandlers;
     private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder()
             .compareItem(true)
-            .compareDamage(true)
+            .compareMetadata(true)
             .build();
 
     /**
