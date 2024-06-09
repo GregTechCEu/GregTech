@@ -29,13 +29,11 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable {
@@ -101,7 +99,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         }
 
         @Override
-        @SuppressWarnings({ "OverrideOnly"})
+        @SuppressWarnings({ "OverrideOnly" })
         public void init(String key, GuiSyncManager syncManager) {
             super.init(key, syncManager);
             getSyncManager().getSlotGroups().stream()
