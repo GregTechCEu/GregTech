@@ -9,8 +9,6 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 import gregtech.common.mui.widget.workbench.CraftingInputSlot;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -27,6 +25,7 @@ import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
@@ -113,8 +112,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     public boolean attemptMatchRecipe() {
         this.requiredItems.clear();
         for (CraftingInputSlot slot : this.inputSlots) {
-            slot.hasIngredients = getIngredientEquivalent(slot);
-            if (!slot.hasIngredients) {
+            if (!getIngredientEquivalent(slot)) {
                 return false;
             }
         }
@@ -290,12 +288,16 @@ public class CraftingRecipeLogic extends SyncHandler {
         if (itemStack.isEmpty()) return true;
         if (!stackLookupMap.containsKey(itemStack))
             return handleCacheMiss(itemStack);
+
+        if (stackLookupMap.get(itemStack).isEmpty()) {
+            stackLookupMap.remove(itemStack);
+            return handleCacheMiss(itemStack);
+        }
+
         int toExtract = count;
-
         Set<Integer> slots = stackLookupMap.get(itemStack);
-        List<Integer> toRemove = new IntArrayList();
-        if (slots.isEmpty()) stackLookupMap.remove(itemStack);
 
+        List<Integer> toRemove = new IntArrayList();
         for (int slot : slots) {
             var slotStack = availableHandlers.extractItem(slot, count, true);
             // cache is not correct
@@ -307,8 +309,10 @@ public class CraftingRecipeLogic extends SyncHandler {
             }
         }
 
-        if (!toRemove.isEmpty())
+        if (!toRemove.isEmpty()) {
             toRemove.forEach(slots::remove);
+            if (slots.isEmpty()) stackLookupMap.remove(itemStack);
+        }
 
         return toExtract <= 0 || handleCacheMiss(itemStack);
     }
