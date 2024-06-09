@@ -394,7 +394,6 @@ public class CraftingRecipeLogic extends SyncHandler {
             if (curStack.isEmpty()) continue;
 
             if (this.strategy.equals(stack, curStack)) {
-                // container items like buckets or tools might need special behavior maybe?
                 var slots = this.stackLookupMap.computeIfAbsent(stack.copy(), k -> new IntArraySet());
                 if (slots.add(i)) return true;
             }
