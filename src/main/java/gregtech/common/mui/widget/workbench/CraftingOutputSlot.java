@@ -1,7 +1,5 @@
 package gregtech.common.mui.widget.workbench;
 
-import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
@@ -18,6 +16,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
