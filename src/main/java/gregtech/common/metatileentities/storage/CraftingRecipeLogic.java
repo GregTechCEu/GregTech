@@ -361,9 +361,11 @@ public class CraftingRecipeLogic extends SyncHandler {
             // check if substitute exists
             if (!slot.hasIngredients) {
                 ItemStack substitute = findSubstitute(slot.getIndex(), slotStack);
-                count = requiredItems.getOrDefault(substitute, 0);
-                requiredItems.put(substitute.copy(), ++count);
-                slot.hasIngredients = !substitute.isEmpty() && simulateExtractItem(substitute, count);
+                if (!substitute.isEmpty()) {
+                    count = requiredItems.getOrDefault(substitute, 0);
+                    requiredItems.put(substitute.copy(), ++count);
+                    slot.hasIngredients = simulateExtractItem(substitute, count);
+                }
             }
 
             if (old != slot.hasIngredients)

@@ -51,9 +51,11 @@ public class CraftingRecipeMemory extends SyncHandler {
         for (int i = startIndex + 1; i < memorizedRecipes.length; i++) {
             MemorizedRecipe recipe = memorizedRecipes[i];
             if (recipe != null && recipe.recipeLocked) continue;
-            memorizedRecipes[i] = previousRecipe.copy();
+            memorizedRecipes[i] = previousRecipe;
             memorizedRecipes[i].index = i;
-            if (recipe == null) return null;
+            if (recipe == null)
+                return memorizedRecipes[startIndex] = null;
+
             previousRecipe = recipe;
         }
         return previousRecipe;
