@@ -133,6 +133,9 @@ public class MaterialFlagAddition {
         oreProp = Coal.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Coal, Coal, Thorium);
 
+        oreProp = LigniteCoal.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(LigniteCoal, Coal);
+
         oreProp = Cobaltite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Cobalt);
         oreProp.setWashedIn(SodiumPersulfate);

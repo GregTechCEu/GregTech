@@ -626,7 +626,12 @@ public class FirstDegreeMaterials {
                 .components(Antimony, 2, Sulfur, 3)
                 .build();
 
-        // Free ID 326
+        LigniteCoal = new Material.Builder(326, gregtechId("lignite_coal"))
+                .gem(2, 1200).ore() // Smelts 6 items
+                .color(0x644646).iconSet(LIGNITE)
+                .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE)
+                .components(Carbon, 3, Water, 1)
+                .build();
 
         Tetrahedrite = new Material.Builder(327, gregtechId("tetrahedrite"))
                 .dust().ore()

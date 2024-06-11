@@ -339,6 +339,7 @@ public class Materials {
     public static Material AluminiumSulfite;
     public static Material Tantalite;
     public static Material Coke;
+    public static Material LigniteCoal;
 
     public static Material SolderingAlloy;
     public static Material Spessartine;

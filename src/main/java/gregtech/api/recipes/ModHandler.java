@@ -105,6 +105,9 @@ public final class ModHandler {
             } else if (materialStack.material == Materials.Coke) {
                 remainder = OreDictUnifier.get(OrePrefix.dust, Materials.Ash);
                 remainderChance = 0.5f;
+            } else if (materialStack.material == Materials.LigniteCoal) {
+                remainder = OreDictUnifier.get(OrePrefix.dust, Materials.Ash);
+                remainderChance = 0.75f;
             } else return ItemStack.EMPTY;
         }
         return GTValues.RNG.nextFloat() <= remainderChance ? remainder : ItemStack.EMPTY;
