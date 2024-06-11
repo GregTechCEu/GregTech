@@ -1,24 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.PosGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.FluidSlot;
-import com.cleanroommc.modularui.widgets.ItemSlot;
-
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
-
-import com.cleanroommc.modularui.widgets.layout.Row;
-
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IFilter;
@@ -43,7 +24,6 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.widget.QuantumFluidRendererWidget;
 import gregtech.api.util.GTLog;
@@ -85,6 +65,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
