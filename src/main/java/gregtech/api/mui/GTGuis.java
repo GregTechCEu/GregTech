@@ -2,12 +2,13 @@ package gregtech.api.mui;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.TextWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -19,10 +20,6 @@ import gregtech.api.mui.factory.CoverGuiFactory;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 
-import gregtech.api.mui.widget.QuantumFluidRendererWidget;
-
-import gregtech.api.mui.widget.QuantumItemRendererWidget;
-
 import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.IPanelHandler;
@@ -31,8 +28,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -151,12 +146,20 @@ public class GTGuis {
                                 .accessibility(false, true)));
     }
 
-    public static IWidget createQuantumRenderer(IItemHandlerModifiable handler) {
-        return new QuantumItemRendererWidget(handler);
-    }
-
-    public static IWidget createQuantumRenderer(FluidTank handler) {
-        return new QuantumFluidRendererWidget(handler);
+    public static Row createQuantumButtonRow(boolean isFluid, BooleanSyncValue autoOutput,
+                                             BooleanSyncValue isLocked, BooleanSyncValue isVoiding) {
+        return new Row()
+                .coverChildren()
+                .pos(7, 63)
+                .child(new ToggleButton()
+                        .overlay(isFluid ? GTGuiTextures.BUTTON_FLUID_OUTPUT : GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                        .value(autoOutput))
+                .child(new ToggleButton()
+                        .overlay(GTGuiTextures.FLUID_LOCK_OVERLAY)
+                        .value(isLocked))
+                .child(new ToggleButton()
+                        .overlay(isFluid ? GTGuiTextures.FLUID_VOID_OVERLAY : GTGuiTextures.ITEM_VOID_OVERLAY)
+                        .value(isVoiding));
     }
 
     public static PopupPanel createPopupPanel(String name, int width, int height) {
