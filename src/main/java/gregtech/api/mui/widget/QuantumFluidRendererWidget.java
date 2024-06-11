@@ -1,31 +1,25 @@
 package gregtech.api.mui.widget;
 
-import com.cleanroommc.modularui.drawable.GuiDraw;
-import com.cleanroommc.modularui.drawable.TextRenderer;
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.utils.NumberFormat;
-
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.drawable.TextRenderer;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
-
-import net.minecraftforge.fluids.IFluidTank;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
 public class QuantumFluidRendererWidget extends Widget<QuantumFluidRendererWidget> implements Interactable,
-                                                                                              JeiGhostIngredientSlot<FluidStack> {
+                                        JeiGhostIngredientSlot<FluidStack> {
+
     private final QuentumFluidSH syncHandler;
     private final TextRenderer textRenderer = new TextRenderer();
 
@@ -48,22 +42,20 @@ public class QuantumFluidRendererWidget extends Widget<QuantumFluidRendererWidge
 
     @Override
     public void draw(GuiContext context, WidgetTheme widgetTheme) {
-        //draw stuff
+        // draw stuff
         FluidStack content = this.syncHandler.getFluidStack();
         if (content != null) {
             GuiDraw.drawFluidTexture(content, 0, 0, getArea().width, getArea().height, 0);
-//            String s = NumberFormat.formatWithMaxDigits(content.amount) + " L";
-//            this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width);
-//            this.textRenderer.setPos(0, 5);
-//            this.textRenderer.setColor(Color.WHITE.main);
-//            this.textRenderer.draw(s);
+            // String s = NumberFormat.formatWithMaxDigits(content.amount) + " L";
+            // this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width);
+            // this.textRenderer.setPos(0, 5);
+            // this.textRenderer.setColor(Color.WHITE.main);
+            // this.textRenderer.draw(s);
         }
     }
 
     @Override
-    public void setGhostIngredient(@NotNull FluidStack ingredient) {
-
-    }
+    public void setGhostIngredient(@NotNull FluidStack ingredient) {}
 
     @Override
     public @Nullable FluidStack castGhostIngredientIfValid(@NotNull Object ingredient) {
@@ -71,6 +63,7 @@ public class QuantumFluidRendererWidget extends Widget<QuantumFluidRendererWidge
     }
 
     private static class QuentumFluidSH extends SyncHandler {
+
         public final FluidTank fluidHandler;
 
         private QuentumFluidSH(FluidTank fluidHandler) {
@@ -83,13 +76,9 @@ public class QuantumFluidRendererWidget extends Widget<QuantumFluidRendererWidge
         }
 
         @Override
-        public void readOnClient(int id, PacketBuffer buf) throws IOException {
-
-        }
+        public void readOnClient(int id, PacketBuffer buf) throws IOException {}
 
         @Override
-        public void readOnServer(int id, PacketBuffer buf) throws IOException {
-
-        }
+        public void readOnServer(int id, PacketBuffer buf) throws IOException {}
     }
 }
