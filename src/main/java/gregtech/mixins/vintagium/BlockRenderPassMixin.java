@@ -1,4 +1,4 @@
-package gregtech.mixins.vintigium;
+package gregtech.mixins.vintagium;
 
 import gregtech.api.util.GTEnumHelper;
 import gregtech.client.utils.BloomEffectUtil;

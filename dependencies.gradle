@@ -67,7 +67,7 @@ dependencies {
             skipexisting: 'true')
     ant.unzip(src: "libs/Vintagium.zip",
               dest: "libs")
-    compileOnly(files("libs/vintagium-mc1.12.2-0.1-dev.jar"))
+    implementation(files("libs/vintagium-mc1.12.2-0.1-dev.jar"))
 
     compileOnly rfg.deobf("curse.maven:littletiles-257818:4750222") // LittleTiles 1.5.82-1.12.2
     compileOnly rfg.deobf("curse.maven:creativecore-257814:4722163") // Creative Core 1.10.71

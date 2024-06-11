@@ -18,7 +18,7 @@ public class GregTechLateMixinLoadingPlugin implements ILateMixinLoader {
         configs.add("mixins.gregtech.ctm.json");
         configs.add("mixins.gregtech.ccl.json");
         configs.add("mixins.gregtech.littletiles.json");
-        configs.add("mixins.gregtech.vintigium.json");
+        configs.add("mixins.gregtech.vintagium.json");
 
         return configs;
     }
@@ -30,7 +30,7 @@ public class GregTechLateMixinLoadingPlugin implements ILateMixinLoader {
             case "mixins.gregtech.jei.json" -> Mods.JustEnoughItems.isModLoaded();
             case "mixin.gregtech.ctm.json" -> Mods.CTM.isModLoaded();
             case "mixins.gregtech.littletiles.json" -> Mods.LittleTiles.isModLoaded();
-            case "mixins.gregtech.vintigium.json" -> Mods.Vintagium.isModLoaded();
+            case "mixins.gregtech.vintagium.json" -> Mods.Vintagium.isModLoaded();
             default -> true;
         };
     }
