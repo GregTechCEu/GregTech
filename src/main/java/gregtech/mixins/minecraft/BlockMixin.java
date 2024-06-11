@@ -1,6 +1,6 @@
 package gregtech.mixins.minecraft;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 import gregtech.asm.hooks.BlockHooks;
 
 import net.minecraft.block.Block;
@@ -13,9 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-// TODO, test to make sure this works when CTM is loaded
-// TODO, put into separate refmap, so it can queue when CTM is not loaded
-
 /**
  * Apply our block hooks for our custom models when CTM is not loaded
  */
@@ -24,7 +21,7 @@ public class BlockMixin {
 
     @Inject(method = "canRenderInLayer", at = @At("HEAD"), cancellable = true, remap = false)
     private void canRenderInLayer(IBlockState state, BlockRenderLayer layer, CallbackInfoReturnable<Boolean> cir) {
-        if (!Loader.instance().getIndexedModList().containsKey(GTValues.MODID_CTM)) {
+        if (!Loader.instance().getIndexedModList().containsKey(Mods.Names.CONNECTED_TEXTURES_MOD)) {
             Boolean result = BlockHooks.canRenderInLayer(state, layer);
 
             if (result != null) {

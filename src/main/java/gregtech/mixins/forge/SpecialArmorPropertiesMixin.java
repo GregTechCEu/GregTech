@@ -12,7 +12,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-// TODO, needs verification as transformed class dumps cannot see inner classes
 @Mixin(ISpecialArmor.ArmorProperties.class)
 public class SpecialArmorPropertiesMixin {
 
