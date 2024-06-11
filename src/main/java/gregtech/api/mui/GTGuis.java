@@ -1,18 +1,5 @@
 package gregtech.api.mui;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-
-import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
-import com.cleanroommc.modularui.widgets.TextWidget;
-import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
-
-import com.cleanroommc.modularui.widgets.layout.Row;
-
 import gregtech.api.cover.Cover;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -21,15 +8,23 @@ import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-
-import net.minecraftforge.items.IItemHandlerModifiable;
-
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.TextWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -130,7 +125,8 @@ public class GTGuis {
                         .left(4));
     }
 
-    public static ParentWidget<?> createQuantumIO(IItemHandlerModifiable importHandler, IItemHandlerModifiable exportHandler) {
+    public static ParentWidget<?> createQuantumIO(IItemHandlerModifiable importHandler,
+                                                  IItemHandlerModifiable exportHandler) {
         return new Row()
                 .pos(79, 18 + 45)
                 .coverChildren()
@@ -146,8 +142,10 @@ public class GTGuis {
                                 .accessibility(false, true)));
     }
 
-    public static Row createQuantumButtonRow(boolean isFluid, BooleanSyncValue autoOutput,
-                                             BooleanSyncValue isLocked, BooleanSyncValue isVoiding) {
+    public static Row createQuantumButtonRow(boolean isFluid,
+                                             @NotNull BooleanSyncValue autoOutput,
+                                             @NotNull BooleanSyncValue isLocked,
+                                             @NotNull BooleanSyncValue isVoiding) {
         return new Row()
                 .coverChildren()
                 .pos(7, 63)
