@@ -24,8 +24,7 @@ public abstract class BlockRenderManagerMixin implements VintugiumMapperAccessor
 
     @Unique
     @Inject(method = "createDefaultMappings",
-            at = @At(value = "RETURN",
-                     target = "Lme/jellysquid/mods/sodium/client/render/chunk/passes/BlockRenderPassManager;addMapping(Lnet/minecraft/util/BlockRenderLayer;Lme/jellysquid/mods/sodium/client/render/chunk/passes/BlockRenderPass;)V"),
+            at = @At(value = "RETURN"),
             remap = false)
     private static void gregtech$addMapping(CallbackInfoReturnable<BlockRenderPassManager> cir,
                                             @Local BlockRenderPassManager mapper) {
