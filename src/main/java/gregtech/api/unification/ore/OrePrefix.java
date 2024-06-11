@@ -724,4 +724,7 @@ public class OrePrefix {
     public String toString() {
         return name + "/" + id;
     }
+
+    // --------------------------------------------GTRMCore------------------------------------------------------------
+    public static final OrePrefix valve = new OrePrefix("valve", -1, null, null, ENABLE_UNIFICATION, null);
 }

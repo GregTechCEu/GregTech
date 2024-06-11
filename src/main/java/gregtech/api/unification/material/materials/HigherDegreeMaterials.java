@@ -100,7 +100,7 @@ public class HigherDegreeMaterials {
                 .ingot(0)
                 .liquid(new FluidBuilder().temperature(1400))
                 .color(0xC80000)
-                .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
+                .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, GENERATE_ROD)
                 .components(Copper, 1, Redstone, 4)
                 .cableProperties(V[ULV], 1, 0)
                 .build();

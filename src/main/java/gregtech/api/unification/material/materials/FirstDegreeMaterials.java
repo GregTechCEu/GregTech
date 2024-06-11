@@ -295,7 +295,7 @@ public class FirstDegreeMaterials {
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1916))
                 .color(0xB4B478).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FRAME, GENERATE_GEAR)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FRAME, GENERATE_GEAR, GENERATE_SMALL_GEAR)
                 .components(Iron, 2, Nickel, 1)
                 .toolStats(ToolProperty.Builder.of(4.0F, 3.0F, 384, 2)
                         .enchantability(18)
@@ -308,7 +308,7 @@ public class FirstDegreeMaterials {
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1708))
                 .color(0xC2D2DF).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_SPRING)
+                .flags(EXT_METAL, GENERATE_SPRING, GENERATE_FINE_WIRE)
                 .components(Iron, 1, Aluminium, 1, Chrome, 1)
                 .cableProperties(V[HV], 4, 3)
                 .blast(b -> b.temp(1800, GasTier.LOW).blastStats(VA[HV], 900))
@@ -703,7 +703,8 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(2011))
                 .color(0xC8B4B4).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD,
-                        GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE, GENERATE_DOUBLE_PLATE)
+                        GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE, GENERATE_DOUBLE_PLATE,
+                        GENERATE_SMALL_GEAR)
                 .components(Iron, 1)
                 .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 384, 2)
                         .attackSpeed(-0.2F).enchantability(5).build())
@@ -771,7 +772,7 @@ public class FirstDegreeMaterials {
         Graphene = new Material.Builder(342, gregtechId("graphene"))
                 .dust()
                 .color(0x808080).iconSet(SHINY)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, GENERATE_FINE_WIRE)
                 .components(Carbon, 1)
                 .cableProperties(V[IV], 1, 1)
                 .build();

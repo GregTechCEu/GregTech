@@ -6,9 +6,13 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
 
+import gregtech.common.items.MetaItems;
+
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -988,6 +992,24 @@ public class CircuitRecipes {
 
     private static void circuitRecipes() {
         int outputAmount = ConfigHolder.recipes.harderCircuitRecipes ? 1 : 2;
+        // T-1: valve ==============================================================================================
+
+        // LOW
+        ModHandler.addShapedRecipe(true, "steam_valve",
+                MetaItems.STEAM_VALVE.getStackForm(), "hGf", "SNS", "FPF",
+                'P', new UnificationEntry(pipeNormalFluid, Materials.Potin),
+                'F', new UnificationEntry(pipeSmallFluid, Materials.Potin),
+                'G', new UnificationEntry(gear, Materials.Bronze),
+                'S', new UnificationEntry(gearSmall, Materials.Bronze),
+                'N', Blocks.PISTON);
+        // HIGH
+
+        // T0: Electronic valve
+        // ==============================================================================================
+
+        // LOW
+
+        // HIGH
 
         // T1: Electronic ==============================================================================================
 

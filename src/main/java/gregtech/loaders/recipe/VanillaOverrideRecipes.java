@@ -28,6 +28,11 @@ import static gregtech.api.unification.ore.OrePrefix.slab;
 public class VanillaOverrideRecipes {
 
     public static void init() {
+        ModHandler.addShapelessRecipe("flint", new ItemStack(Items.FLINT, 1),
+                new ItemStack(Blocks.GRAVEL, 1),
+                new ItemStack(Blocks.GRAVEL, 1),
+                new ItemStack(Blocks.GRAVEL, 1));
+
         woodRecipes();
         if (ConfigHolder.recipes.hardGlassRecipes)
             glassRecipes();
@@ -973,5 +978,6 @@ public class VanillaOverrideRecipes {
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.LAPIS_ORE));
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.REDSTONE_ORE));
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.QUARTZ_ORE));
+        ModHandler.removeRecipeByName(new ResourceLocation(GTValues.MODID_VANILLA, "wooden_pickaxe"));
     }
 }

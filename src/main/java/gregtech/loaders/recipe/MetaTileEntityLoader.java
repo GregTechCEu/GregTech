@@ -19,6 +19,7 @@ import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.gtrmcore.GTRMItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.init.Blocks;
@@ -525,6 +526,9 @@ public class MetaTileEntityLoader {
                 new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze), 'D',
                 new UnificationEntry(OrePrefix.gem, Materials.Diamond), 'G',
                 new UnificationEntry(OrePrefix.gearSmall, Materials.Bronze));
+        ModHandler.addShapedRecipe(true, "steam_assembler_low",
+                MetaTileEntities.STEAM_ASSEMBLER_LOW.getStackForm(), "   ", "   ", " v ",
+                'v', new UnificationEntry(OrePrefix.valve, MarkerMaterials.Component.LOW));
 
         // MULTI BLOCK CONTROLLERS
         ModHandler.addShapedRecipe(true, "bronze_primitive_blast_furnace",
@@ -747,10 +751,11 @@ public class MetaTileEntityLoader {
                 new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'P',
                 new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.StainlessSteel));
 
-        ModHandler.addShapedRecipe(true, "workbench_bronze", MetaTileEntities.WORKBENCH.getStackForm(), "CSC", "PWP",
-                "PsP", 'C', OreDictNames.chestWood, 'W', new ItemStack(Blocks.CRAFTING_TABLE), 'S',
-                new UnificationEntry(OrePrefix.slab, Materials.Wood), 'P',
-                new UnificationEntry(OrePrefix.plank, Materials.Wood));
+        ModHandler.addShapedRecipe(true, "workbench_bronze",
+                MetaTileEntities.WORKBENCH.getStackForm(), "HP", "PS",
+                'H', GTRMItems.WOODEN_HARD_HAMMER,
+                'S', GTRMItems.COBBLESTONE_SAW,
+                'P', "plankWood");
 
         ModHandler.addShapedRecipe(true, "magic_energy_absorber", MetaTileEntities.MAGIC_ENERGY_ABSORBER.getStackForm(),
                 "PCP", "PMP", "PCP", 'M', MetaTileEntities.HULL[GTValues.EV].getStackForm(), 'P', MetaItems.SENSOR_EV,
@@ -803,8 +808,12 @@ public class MetaTileEntityLoader {
         // MACHINES
         registerMachineRecipe(MetaTileEntities.ALLOY_SMELTER, "ECE", "CMC", "WCW", 'M', HULL, 'E', CIRCUIT, 'W', CABLE,
                 'C', COIL_HEATING_DOUBLE);
-        registerMachineRecipe(MetaTileEntities.ASSEMBLER, "ACA", "VMV", "WCW", 'M', HULL, 'V', CONVEYOR, 'A', ROBOT_ARM,
-                'C', CIRCUIT, 'W', CABLE);
+        registerMachineRecipe(MetaTileEntities.ASSEMBLER, "ACA", "VMV", "WCW",
+                'M', HULL,
+                'V', CONVEYOR,
+                'A', ROBOT_ARM,
+                'C', CIRCUIT,
+                'W', CABLE);
         registerMachineRecipe(MetaTileEntities.BENDER, "PWP", "CMC", "EBE", 'M', HULL, 'E', MOTOR, 'P', PISTON, 'C',
                 CIRCUIT, 'W', CABLE, 'B', PLATE);
         registerMachineRecipe(MetaTileEntities.CANNER, "WPW", "CMC", "GGG", 'M', HULL, 'P', PUMP, 'C', CIRCUIT, 'W',

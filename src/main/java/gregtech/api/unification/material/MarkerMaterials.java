@@ -112,5 +112,7 @@ public class MarkerMaterials {
         public static final Material Capacitor = MarkerMaterial.create("capacitor");
         public static final Material Diode = MarkerMaterial.create("diode");
         public static final Material Inductor = MarkerMaterial.create("inductor");
+        public static final Material LOW = MarkerMaterial.create("low");
+        public static final Material HIGH = MarkerMaterial.create("high");
     }
 }

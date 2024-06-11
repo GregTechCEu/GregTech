@@ -525,7 +525,7 @@ public class UnknownCompositionMaterials {
                 .dust(0)
                 .color(0xFAFAFA).iconSet(FINE)
                 .flags(GENERATE_PLATE, FLAMMABLE, NO_SMELTING, NO_SMASHING,
-                        MORTAR_GRINDABLE, EXCLUDE_PLATE_COMPRESSOR_RECIPE)
+                        MORTAR_GRINDABLE, EXCLUDE_PLATE_COMPRESSOR_RECIPE, GENERATE_RING)
                 .build();
 
         FishOil = new Material.Builder(1619, gregtechId("fish_oil"))

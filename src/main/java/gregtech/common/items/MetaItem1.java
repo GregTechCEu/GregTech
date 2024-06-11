@@ -1145,5 +1145,80 @@ public class MetaItem1 extends StandardMetaItem {
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);
+        // -------------------------------------------------------------
+        // --------------------------gtrmcore---------------------------
+        // -------------------------------------------------------------
+        // GTRMCore 10000~
+
+        // GTRMparts 10001~10200
+
+        // First Age parts 10001~10100
+        WOODEN_HARD_HAMMER_HEAD = addItem(10001, "wooden.hard.hammer.head");
+        WOODEN_PICKAXE_HEAD = addItem(10002, "wooden.pickaxe.head");
+        COBBLESTONE_SAW_HEAD = addItem(10003, "cobblestone.saw.head");
+        WOOD_FIBER = addItem(10004, "wood.fiber");
+
+        // -----------------------------Gregtech parts 11001~------------------------------
+
+        // Circuits 11001~11100
+
+        // steam valves
+        STEAM_VALVE = addItem(11001, "valve.steam").setUnificationData(OrePrefix.valve,
+                MarkerMaterials.Component.LOW);
+        ELECTRIC_STEAM_VALVE = addItem(11002, "valve.electric").setUnificationData(OrePrefix.valve,
+                MarkerMaterials.Component.LOW);
+        // high steam valves
+        HIGH_STEAM_VALVE = addItem(11003, "valve.high_steam").setUnificationData(OrePrefix.valve,
+                MarkerMaterials.Component.HIGH);
+        ELECTRIC_HIGH_STEAM_VALVE = addItem(11004, "valve.high_electric").setUnificationData(OrePrefix.valve,
+                MarkerMaterials.Component.HIGH);
+
+        // Components 11101~11200
+        // low steam
+        ELECTRIC_MOTOR_LOW = addItem(11101, "electric.motor.low");
+        ELECTRIC_PUMP_LOW = addItem(11102, "electric.pump.low");
+        CONVEYOR_MODULE_LOW = addItem(11103, "conveyor.module.low");
+        ELECTRIC_PISTON_LOW = addItem(11104, "electric.piston.low");
+        ROBOT_ARM_LOW = addItem(11105, "robot.arm.low");
+        FIELD_GENERATOR_LOW = addItem(11106, "field.generator.low");
+        EMITTER_LOW = addItem(11107, "emitter.low");
+        SENSOR_LOW = addItem(11108, "sensor.low");
+
+        // high steam
+        ELECTRIC_MOTOR_HIGH = addItem(11109, "electric.motor.high");
+        ELECTRIC_PUMP_HIGH = addItem(11110, "electric.pump.high");
+        CONVEYOR_MODULE_HIGH = addItem(11111, "conveyor.module.high");
+        ELECTRIC_PISTON_HIGH = addItem(11112, "electric.piston.high");
+        ROBOT_ARM_HIGH = addItem(11113, "robot.arm.high");
+        FIELD_GENERATOR_HIGH = addItem(11114, "field.generator.high");
+        EMITTER_HIGH = addItem(11115, "emitter.high");
+        SENSOR_HIGH = addItem(11116, "sensor.high");
+
+        // ULV
+        ELECTRIC_MOTOR_ULV = addItem(11117, "electric.motor.ulv");
+        ELECTRIC_PUMP_ULV = addItem(11118, "electric.pump.ulv")
+                .addComponents(new TooltipBehavior(lines -> {
+                    lines.add(I18n.format("metaitem.electric.pump.tooltip"));
+                    lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 1280 / 4));
+                }));
+        CONVEYOR_MODULE_ULV = addItem(11119, "conveyor.module.ulv")
+                .addComponents(new TooltipBehavior(lines -> {
+                    lines.add(I18n.format("metaitem.conveyor.module.tooltip"));
+                    lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", 2));
+                }));
+        ELECTRIC_PISTON_ULV = addItem(11120, "electric.piston.ulv");
+        ROBOT_ARM_ULV = addItem(11121, "robot.arm.ulv")
+                .addComponents(new TooltipBehavior(lines -> {
+                    lines.add(I18n.format("metaitem.robot.arm.tooltip"));
+                    lines.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", 2));
+                }));
+        FLUID_REGULATOR_ULV = addItem(11122, "fluid.regulator.ulv")
+                .addComponents(new TooltipBehavior(lines -> {
+                    lines.add(I18n.format("metaitem.fluid.regulator.tooltip"));
+                    lines.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", 320 / 4));
+                }));
+        FIELD_GENERATOR_ULV = addItem(11123, "field.generator.ulv");
+        EMITTER_ULV = addItem(11124, "emitter.ulv");
+        SENSOR_ULV = addItem(11125, "sensor.ulv");
     }
 }

@@ -170,7 +170,9 @@ public class GTValues {
             MODID_PROJRED_CORE = "projectred-core",
             MODID_RC = "railcraft",
             MODID_CHISEL = "chisel",
-            MODID_RS = "refinedstorage";
+            MODID_RS = "refinedstorage",
+            MODID_VANILLA = "minecraft",
+            MODID_GCYM = "gcym";
 
     private static Boolean isClient;
 
