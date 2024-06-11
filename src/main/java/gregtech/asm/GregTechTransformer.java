@@ -205,23 +205,23 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
              * }
              */
             // TODO: Remove when vintagium has proper support for other rendering layers
-            case VintagiumPassManagerVisitor.TARGET_CLASS_NAME: {
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(
-                        new TargetClassVisitor(classWriter, VintagiumPassManagerVisitor.TARGET_METHOD,
-                                VintagiumPassManagerVisitor::new),
-                        ClassReader.EXPAND_FRAMES);
-                return classWriter.toByteArray();
-            }
-            case VintagiumManagerVistor.TARGET_CLASS_NAME: {
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(
-                        new VintagiumManagerVistor(classWriter),
-                        0);
-                return classWriter.toByteArray();
-            }
+            // case VintagiumPassManagerVisitor.TARGET_CLASS_NAME: {
+            // ClassReader classReader = new ClassReader(basicClass);
+            // ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+            // classReader.accept(
+            // new TargetClassVisitor(classWriter, VintagiumPassManagerVisitor.TARGET_METHOD,
+            // VintagiumPassManagerVisitor::new),
+            // ClassReader.EXPAND_FRAMES);
+            // return classWriter.toByteArray();
+            // }
+            // case VintagiumManagerVistor.TARGET_CLASS_NAME: {
+            // ClassReader classReader = new ClassReader(basicClass);
+            // ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+            // classReader.accept(
+            // new VintagiumManagerVistor(classWriter),
+            // 0);
+            // return classWriter.toByteArray();
+            // }
         }
         /*
          * if (EnchantmentCanApplyVisitor.CLASS_TO_MAPPING_MAP.containsKey(internalName)) {
