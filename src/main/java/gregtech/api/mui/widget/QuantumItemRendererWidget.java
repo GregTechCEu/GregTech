@@ -1,27 +1,24 @@
 package gregtech.api.mui.widget;
 
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.widget.Widget;
-
-import net.minecraft.item.ItemStack;
-
-import net.minecraftforge.fluids.FluidTank;
-
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class QuantumItemRendererWidget extends Widget<QuantumItemRendererWidget> implements Interactable,
-                                                                                             JeiGhostIngredientSlot<ItemStack>,
-                                                                                             JeiIngredientProvider {
-    private final IItemHandlerModifiable itemHandler;
+                                       JeiGhostIngredientSlot<ItemStack>,
+                                       JeiIngredientProvider {
 
-    public QuantumItemRendererWidget(IItemHandlerModifiable itemHandler) {
+    private final IItemHandler itemHandler;
+
+    public QuantumItemRendererWidget(IItemHandler itemHandler) {
         this.itemHandler = itemHandler;
     }
 
@@ -39,12 +36,12 @@ public class QuantumItemRendererWidget extends Widget<QuantumItemRendererWidget>
 
     @Override
     public void draw(GuiContext context, WidgetTheme widgetTheme) {
-        //draw stuff
+        // draw stuff
     }
 
     @Override
     public void setGhostIngredient(@NotNull ItemStack ingredient) {
-        itemHandler.setStackInSlot(0, ingredient);
+        // itemHandler.setStackInSlot(0, ingredient);
     }
 
     @Override
