@@ -1,0 +1,4 @@
+{
+  "parent": "block/cube_all",
+  "textures" : { "all" : "gregtech:blocks/compact_cobblestone"}
+}

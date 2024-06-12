@@ -32,6 +32,8 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 
+import gregtech.common.items.gtrmcore.GTRMItems;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -122,6 +124,8 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
         ToolItems.registerModels();
+        GTRMItems.registerItemModels();
+
     }
 
     @SubscribeEvent

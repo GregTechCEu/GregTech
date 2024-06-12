@@ -68,6 +68,9 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 import static gregtech.common.blocks.MetaBlocks.*;
+import static gregtech.common.items.gtrmcore.GTRMItems.COBBLESTONE_SAW;
+import static gregtech.common.items.gtrmcore.GTRMItems.WOODEN_HARD_HAMMER;
+import static gregtech.common.metatileentities.gtrmcore.GTRMMetaBlocks.COMPACT_COBBLESTONE;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class CommonProxy {
@@ -169,6 +172,7 @@ public class CommonProxy {
         for (BlockFrame block : FRAME_BLOCKS) registry.register(block);
         for (BlockSurfaceRock block : SURFACE_ROCK_BLOCKS) registry.register(block);
         for (BlockOre block : ORES) registry.register(block);
+        registry.register(COMPACT_COBBLESTONE);
     }
 
     private static void createOreBlock(Material material) {
@@ -290,6 +294,9 @@ public class CommonProxy {
         for (BlockOre block : ORES) {
             registry.register(createItemBlock(block, OreItemBlock::new));
         }
+        registry.register(createItemBlock(COMPACT_COBBLESTONE, ItemBlock::new));
+        registry.register(COBBLESTONE_SAW);
+        registry.register(WOODEN_HARD_HAMMER);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

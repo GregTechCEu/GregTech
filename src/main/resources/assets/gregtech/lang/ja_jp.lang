@@ -6214,3 +6214,69 @@ gregtech.scanner.forestry.larvae=§o解析済みの幼虫
 gregtech.scanner.forestry.serum=§o解析済みの漿液
 gregtech.scanner.forestry.caterpillar=§o解析済みの幼虫
 gregtech.scanner.forestry.pollen=§o解析済みの花粉
+
+
+
+# GTRMCore
+# singleblock
+# Primitive Machines
+gregtech.machine.primitive_mixer_bronze.name=初歩的なブロンズミキサー
+gregtech.machine.primitive_mixer_steel.name=初歩的なスチールミキサー
+gregtech.machine.primitive_mixer.tooltip=手で混ぜるよりはマシ
+gregtech.machine.primitive_assembler_bronze.name=初歩的なブロンズ組立機
+gregtech.machine.primitive_assembler_steel.name=初歩的なスチールア組立機
+gregtech.machine.primitive_assembler.tooltip=手で組み立てるよりはマシ
+gregtech.machine.primitive_circuit_assembler_bronze.name=初歩的なブロンズ回路作成機
+gregtech.machine.primitive_circuit_assembler_steel.name=初歩的なスチール回路作成機
+gregtech.machine.primitive_circuit_assembler.tooltip=手で回路を作るよりはマシ
+
+# item
+metaitem.wooden.hard.hammer.head.name=木の硬いハンマーのヘッドパーツ
+metaitem.wooden.pickaxe.head.name=木のツルハシのヘッドパーツ
+metaitem.cobblestone.saw.head.name=丸石ののこぎりのヘッドパーツ
+metaitem.wood.fiber.name=木の繊維
+item.cobblestone_saw.name=丸石ののこぎり
+item.wooden_hard_hammer.name=木の硬いハンマー
+
+# parts
+# Low Steam
+metaitem.valve.steam.name=蒸気バルブ
+metaitem.valve.steam.tooltip=低圧蒸気時代のバルブ
+metaitem.valve.electric.name=電動蒸気バルブ
+metaitem.valve.electric.tooltip=低圧蒸気時代のバルブ
+metaitem.electric.motor.low.name=蒸気式モーター
+metaitem.electric.pump.low.name=蒸気式ポンプ
+metaitem.conveyor.module.low.name=蒸気式コンベアーモジュール
+metaitem.electric.piston.low.name=蒸気式ピストン
+metaitem.robot.arm.low.name=蒸気式ロボットアーム
+metaitem.field.generator.low.name=蒸気式空間発生器
+metaitem.emitter.low.name=蒸気式エミッタ
+metaitem.sensor.low.name=蒸気式センサ
+
+# High Steam
+metaitem.valve.high_steam.name=高圧蒸気バルブ
+metaitem.valve.high_steam.tooltip=高圧蒸気時代のバルブ
+metaitem.valve.high_electric.name=電動高圧蒸気バルブ
+metaitem.valve.high_electric.tooltip=高圧蒸気時代のバルブ
+metaitem.electric.motor.high.name=高圧蒸気式モーター
+metaitem.electric.pump.high.name=高圧蒸気式ポンプ
+metaitem.conveyor.module.high.name=高圧蒸気式コンベアーモジュール
+metaitem.electric.piston.high.name=高圧蒸気式ピストン
+metaitem.robot.arm.high.name=高圧蒸気式ロボットアーム
+metaitem.field.generator.high.name=高圧蒸気式空間発生器
+metaitem.emitter.high.name=高圧蒸気式エミッタ
+metaitem.sensor.high.name=高圧蒸気式センサ
+
+# ULV
+metaitem.electric.motor.ulv.name=ULV電動モーター
+metaitem.electric.pump.ulv.name=ULV電動ポンプ
+metaitem.conveyor.module.ulv.name=ULVコンベアーモジュール
+metaitem.electric.piston.ulv.name=ULV電動ピストン
+metaitem.robot.arm.ulv.name=ULVロボットアーム
+metaitem.fluid.regulator.ulv.name=ULV流量制御器
+metaitem.field.generator.ulv.name=ULV空間発生器
+metaitem.emitter.ulv.name=ULVエミッタ
+metaitem.sensor.ulv.name=ULVセンサ
+
+# block
+tile.compact_cobblestone.name=圧縮した丸石

@@ -6292,3 +6292,68 @@ gregtech.scanner.forestry.pollen=§oScanned Pollen
 
 # Mutation
 gregtech.mutation.block_of=Block of %s
+
+# GTRMCore
+
+# singleblock
+# Primitive Machines
+gregtech.machine.primitive_mixer_bronze.name=Primitive Bronze Mixer
+gregtech.machine.primitive_mixer_steel.name=Primitive Steel Mixer
+gregtech.machine.primitive_mixer.tooltip=Better than mixing by hand
+gregtech.machine.primitive_assembler_bronze.name=Primitive Bronze Assembler
+gregtech.machine.primitive_assembler_steel.name=Primitive Steel Assembler
+gregtech.machine.primitive_assembler.tooltip=Better than assembling by hand
+gregtech.machine.primitive_circuit_assembler_bronze.name=Primitive Bronze Circuit Assembler
+gregtech.machine.primitive_circuit_assembler_steel.name=Primitive Steel Circuit Assembler
+gregtech.machine.primitive_circuit_assembler.tooltip=Better than making circuits by hand
+
+# item
+metaitem.wooden.hard.hammer.head.name=Wooden Hard Hammer Head
+metaitem.wooden.pickaxe.head.name=Wooden Pickaxe Head
+metaitem.cobblestone.saw.head.name=Cobblestone Saw head
+metaitem.wood.fiber.name=Wood Fiber
+item.cobblestone_saw.name=Cobblestone Saw
+item.wooden_hard_hammer.name=Wooden Hard Hammer
+
+# parts
+# Low Steam
+metaitem.valve.steam.name=Steam Valve
+metaitem.valve.steam.tooltip=Low-Steam-Tier Valve
+metaitem.valve.electric.name=Electric Steam Valve
+metaitem.valve.electric.tooltip=Low-Steam-Tier Valve
+metaitem.electric.motor.low.name=Steam Motor
+metaitem.electric.pump.low.name=Steam Pump
+metaitem.conveyor.module.low.name=Steam Conveyor Module
+metaitem.electric.piston.low.name=Steam Piston
+metaitem.robot.arm.low.name=Steam Robot Arm
+metaitem.field.generator.low.name=Steam Field Generator
+metaitem.emitter.low.name=Steam Emitter
+metaitem.sensor.low.name=Steam Sensor
+
+# High Steam
+metaitem.valve.high_steam.name=High Steam Valve
+metaitem.valve.high_steam.tooltip=High-Steam-Tier Valve
+metaitem.valve.high_electric.name=Electric High Steam Valve
+metaitem.valve.high_electric.tooltip=High-Steam-Tier Valve
+metaitem.electric.motor.high.name=High Steam Motor
+metaitem.electric.pump.high.name=High Steam Pump
+metaitem.conveyor.module.high.name=High Steam Conveyor Module
+metaitem.electric.piston.high.name=High Steam Piston
+metaitem.robot.arm.high.name=High Steam Robot Arm
+metaitem.field.generator.high.name=High Steam Field Generator
+metaitem.emitter.high.name=High Steam Emitter
+metaitem.sensor.high.name=High Steam Sensor
+
+# ULV
+metaitem.electric.motor.ulv.name=ULV Electric Motor
+metaitem.electric.pump.ulv.name=ULV Electric Pump
+metaitem.conveyor.module.ulv.name=ULV Conveyor Module
+metaitem.electric.piston.ulv.name=ULV Electric Piston
+metaitem.robot.arm.ulv.name=ULV Robot Arm
+metaitem.fluid.regulator.ulv.name=ULV Fluid Regulator
+metaitem.field.generator.ulv.name=ULV Field Generator
+metaitem.emitter.ulv.name=ULV Emitter
+metaitem.sensor.ulv.name=ULV Sensor
+
+# block
+tile.compact_cobblestone.name=Compact Cobblestone
