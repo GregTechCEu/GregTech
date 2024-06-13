@@ -8,7 +8,6 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.recipes.GTRMRecipeMaps;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.texture.Textures;
 
@@ -26,20 +25,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PrimitiveMixer extends SteamMetaTileEntity {
+public class SteamAssembler extends SteamMetaTileEntity {
 
-    public PrimitiveMixer(ResourceLocation metaTileEntityId, boolean isHighPressure) {
-        super(metaTileEntityId, GTRMRecipeMaps.STEAM_MIXER_RECIPES, Textures.MIXER_OVERLAY, isHighPressure);
+    public SteamAssembler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
+        super(metaTileEntityId, RecipeMaps.ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY, isHighPressure);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new PrimitiveMixer(metaTileEntityId, isHighPressure);
+        return new SteamAssembler(metaTileEntityId, isHighPressure);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(this, 6, this, false);
+        return new NotifiableItemStackHandler(this, 9, this, false);
     }
 
     @Override
@@ -56,9 +55,12 @@ public class PrimitiveMixer extends SteamMetaTileEntity {
                 .slot(this.importItems, 3, 16, 35, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .slot(this.importItems, 4, 34, 35, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .slot(this.importItems, 5, 52, 35, GuiTextures.SLOT_STEAM.get(isHighPressure))
-                .progressBar(workableHandler::getProgressPercent, 77, 35, 20, 20,
-                        GTRMGuiTextures.PROGRESS_BAR_PRIMITIVE_MIXER_STEAM.get(isHighPressure),
-                        ProgressWidget.MoveType.CIRCULAR,
+                .slot(this.importItems, 6, 16, 53, GuiTextures.SLOT_STEAM.get(isHighPressure))
+                .slot(this.importItems, 7, 34, 53, GuiTextures.SLOT_STEAM.get(isHighPressure))
+                .slot(this.importItems, 8, 52, 53, GuiTextures.SLOT_STEAM.get(isHighPressure))
+                .progressBar(workableHandler::getProgressPercent, 79, 34, 20, 20,
+                        GTRMGuiTextures.PROGRESS_BAR_PRIMITIVE_ASSEMBLER_STEAM.get(isHighPressure),
+                        ProgressWidget.MoveType.HORIZONTAL,
                         workableHandler.getRecipeMap())
                 .slot(this.exportItems, 0, 106, 35, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .slot(this.exportItems, 1, 124, 35, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
@@ -69,7 +71,7 @@ public class PrimitiveMixer extends SteamMetaTileEntity {
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gtrmcore.machine.primitive_mixer.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.steam_assembler.tooltip"));
     }
 
     @SideOnly(Side.CLIENT)

@@ -39,8 +39,8 @@ import gregtech.common.metatileentities.electric.MetaTileEntitySingleTurbine;
 import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
 import gregtech.common.metatileentities.electric.MetaTileEntityWorldAccelerator;
 import gregtech.common.metatileentities.electric.SimpleMachineMetaTileEntityResizable;
-import gregtech.common.metatileentities.gtrmcore.steam.PrimitiveAssembler;
-import gregtech.common.metatileentities.gtrmcore.steam.PrimitiveMixer;
+import gregtech.common.metatileentities.gtrmcore.steam.SteamAssembler;
+import gregtech.common.metatileentities.gtrmcore.steam.SteamMixer;
 import gregtech.common.metatileentities.multi.BoilerType;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOvenHatch;
@@ -375,10 +375,10 @@ public class MetaTileEntities {
 
     //---------------------------------------GTRMCore----------------------------------------------------------
 
-    public static PrimitiveMixer STEAM_MIXER_LOW;
-    public static PrimitiveMixer STEAM_MIXER_HIGH;
-    public static PrimitiveAssembler STEAM_ASSEMBLER_LOW;
-    public static PrimitiveAssembler STEAM_ASSEMBLER_HIGH;
+    public static SteamMixer STEAM_MIXER_LOW;
+    public static SteamMixer STEAM_MIXER_HIGH;
+    public static SteamAssembler STEAM_ASSEMBLER_LOW;
+    public static SteamAssembler STEAM_ASSEMBLER_HIGH;
     // public static PrimitiveCircuitAssembler PRIMITIVE_CIRCUIT_ASSEMBLER_BRONZE;
     // public static PrimitiveCircuitAssembler PRIMITIVE_CIRCUIT_ASSEMBLER_STEEL;
 
@@ -1213,17 +1213,17 @@ public class MetaTileEntities {
         // ----------------------------------------------GTRMCore----------------------------------------------------
         // Primitive machine 11000~11005
         STEAM_MIXER_LOW = registerMetaTileEntity(11000,
-                new PrimitiveMixer(gregtechId("primitive_mixer_bronze"), false));
+                new SteamMixer(gregtechId("steam_mixer_low"), false));
         STEAM_MIXER_HIGH = registerMetaTileEntity(11001,
-                new PrimitiveMixer(gregtechId("primitive_mixer_steel"), true));
+                new SteamMixer(gregtechId("steam_mixer_high"), true));
         STEAM_ASSEMBLER_LOW = registerMetaTileEntity(11002,
-                new PrimitiveAssembler(gregtechId("primitive_assembler_bronze"), false));
+                new SteamAssembler(gregtechId("steam_assembler_low"), false));
         STEAM_ASSEMBLER_HIGH = registerMetaTileEntity(11003,
-                new PrimitiveAssembler(gregtechId("primitive_assembler_steel"), true));
+                new SteamAssembler(gregtechId("steam_assembler_high"), true));
         // PRIMITIVE_CIRCUIT_ASSEMBLER_BRONZE = registerMetaTileEntity(11004,
-        // new PrimitiveCircuitAssembler(gregtechId("primitive_circuit_assembler_bronze"), false));
+        // new PrimitiveCircuitAssembler(gregtechId("steam_circuit)assembler_low"), false));
         // PRIMITIVE_CIRCUIT_ASSEMBLER_STEEL = registerMetaTileEntity(11005,
-        // new PrimitiveCircuitAssembler(gregtechId("primitive_circuit_assembler_steel"), true));
+        // new PrimitiveCircuitAssembler(gregtechId("steam_circuit_assembler_high"), true));
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,

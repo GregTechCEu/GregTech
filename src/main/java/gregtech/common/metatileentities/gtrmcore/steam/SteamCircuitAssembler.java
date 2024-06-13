@@ -8,7 +8,6 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.recipes.GTRMRecipeMaps;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.texture.Textures;
 
@@ -26,16 +25,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PrimitiveCircuitAssembler extends SteamMetaTileEntity {
+public class SteamCircuitAssembler extends SteamMetaTileEntity {
 
-    public PrimitiveCircuitAssembler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
-        super(metaTileEntityId, GTRMRecipeMaps.STEAM_CIRCUIT_ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY,
+    public SteamCircuitAssembler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
+        super(metaTileEntityId, RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY,
                 isHighPressure);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new PrimitiveCircuitAssembler(metaTileEntityId, isHighPressure);
+        return new SteamCircuitAssembler(metaTileEntityId, isHighPressure);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class PrimitiveCircuitAssembler extends SteamMetaTileEntity {
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gtrmcore.machine.primitive_circuit_assembler.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.steam_circuit_assembler.tooltip"));
     }
 
     @SideOnly(Side.CLIENT)

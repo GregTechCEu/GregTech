@@ -6297,15 +6297,15 @@ gregtech.mutation.block_of=Block of %s
 
 # singleblock
 # Primitive Machines
-gregtech.machine.primitive_mixer_bronze.name=Primitive Bronze Mixer
-gregtech.machine.primitive_mixer_steel.name=Primitive Steel Mixer
-gregtech.machine.primitive_mixer.tooltip=Better than mixing by hand
-gregtech.machine.primitive_assembler_bronze.name=Primitive Bronze Assembler
-gregtech.machine.primitive_assembler_steel.name=Primitive Steel Assembler
-gregtech.machine.primitive_assembler.tooltip=Better than assembling by hand
-gregtech.machine.primitive_circuit_assembler_bronze.name=Primitive Bronze Circuit Assembler
-gregtech.machine.primitive_circuit_assembler_steel.name=Primitive Steel Circuit Assembler
-gregtech.machine.primitive_circuit_assembler.tooltip=Better than making circuits by hand
+gregtech.machine.steam_mixer_low.name=Steam Mixer
+gregtech.machine.steam_mixer_high.name=High Pressure Steam Mixer
+gregtech.machine.steam_mixer.tooltip=Better than mixing by hand
+gregtech.machine.steam_assembler_low.name=Steam Assembler
+gregtech.machine.steam_assembler_high.name=High Pressure Steam Assembler
+gregtech.machine.steam_assembler.tooltip=Better than assembling by hand
+gregtech.machine.steam_circuit_assembler_low.name=Steam Circuit Assembler
+gregtech.machine.steam_circuit_assembler_high.name=High Pressure Steam Circuit Assembler
+gregtech.machine.steam_circuit_assembler.tooltip=Better than making circuits by hand
 
 # item
 metaitem.wooden.hard.hammer.head.name=Wooden Hard Hammer Head
