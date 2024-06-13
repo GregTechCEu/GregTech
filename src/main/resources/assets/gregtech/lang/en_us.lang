@@ -2081,7 +2081,8 @@ gregtech.material.acidic_naquadria_solution=Acidic Naquadria Solution
 gregtech.material.naquadria_waste=Naquadria Waste
 gregtech.material.lapotron=Lapotron
 gregtech.material.uu_matter=UU-Matter
-
+gregtech.material.spent_uranium_fuel_solution=Spent Uranium Fuel Solution
+gregtech.material.radon_rich_gas_mixture=Radon Rich Gas Mixture
 
 # Second Degree Materials
 gregtech.material.glass=Glass

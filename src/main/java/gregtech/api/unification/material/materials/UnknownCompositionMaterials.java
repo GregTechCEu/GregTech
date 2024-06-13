@@ -650,5 +650,9 @@ public class UnknownCompositionMaterials {
         SpentUraniumFuelSolution = new Material.Builder(1651, gregtechId("spent_uranium_fuel_solution"))
                 .liquid(new FluidBuilder())
                 .color(0x5B5B5B).build(); // TODO color
+
+        RadonRichGasMixture = new Material.Builder(1652, gregtechId("radon_rich_gas_mixture"))
+                .gas()
+                .color(0xd78dd9).build();
     }
 }
