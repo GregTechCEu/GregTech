@@ -12,7 +12,7 @@ import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.VirtualTankRegistry;
+import gregtech.api.util.virtualregistry.VirtualTankRegistry;
 import gregtech.common.terminal.component.SearchComponent;
 
 import net.minecraft.nbt.NBTTagCompound;

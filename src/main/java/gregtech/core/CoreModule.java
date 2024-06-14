@@ -26,7 +26,7 @@ import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.util.VirtualTankRegistry;
+import gregtech.api.util.virtualregistry.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
