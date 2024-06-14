@@ -28,6 +28,7 @@ import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
+import gregtech.api.util.virtualregistry.VirtualRegistryBase;
 import gregtech.api.util.Mods;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
@@ -347,7 +348,8 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void serverStopped(FMLServerStoppedEvent event) {
-        VirtualTankRegistry.clearMaps();
+        VirtualTankRegistry.clearMaps(); // todo remove
+        VirtualRegistryBase.clearMaps();
         CapesRegistry.clearMaps();
     }
 }
