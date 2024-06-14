@@ -1,13 +1,14 @@
 package gregtech.datafix;
 
 import gregtech.api.GTValues;
-import gregtech.datafix.fixes.Fix0PostMTERegistriesBlocks;
+import gregtech.datafix.fixes.Fix0PostMTERegistriesBlocksTEs;
 import gregtech.datafix.fixes.Fix0PostMTERegistriesItems;
 import gregtech.datafix.walker.WalkChunkSection;
 import gregtech.datafix.walker.WalkItemStackLike;
 
 import net.minecraft.util.datafix.FixTypes;
 import net.minecraft.util.datafix.IDataWalker;
+import net.minecraft.util.datafix.IFixableData;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.common.util.ModFixs;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -39,8 +40,11 @@ public final class GTDataFixers {
         forgeFixer.registerVanillaWalker(FixTypes.PLAYER, itemStackWalker);
         forgeFixer.registerVanillaWalker(FixTypes.CHUNK, new WalkChunkSection());
 
-        ModFixs gtFixer = forgeFixer.init(GTValues.MODID, V0_PRE_MTE);
-        gtFixer.registerFix(GTFixType.ITEM_STACK_LIKE, new Fix0PostMTERegistriesItems());
-        gtFixer.registerFix(GTFixType.CHUNK_SECTION, new Fix0PostMTERegistriesBlocks());
+        ModFixs gtFixer = forgeFixer.init(GTValues.MODID, DATA_VERSION);
+        IFixableData itemFixer = new Fix0PostMTERegistriesItems();
+        gtFixer.registerFix(FixTypes.BLOCK_ENTITY, itemFixer);
+        gtFixer.registerFix(FixTypes.ENTITY, itemFixer);
+        gtFixer.registerFix(FixTypes.PLAYER, itemFixer);
+        gtFixer.registerFix(FixTypes.CHUNK, new Fix0PostMTERegistriesBlocksTEs());
     }
 }

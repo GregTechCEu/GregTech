@@ -10,13 +10,15 @@ import net.minecraftforge.common.util.Constants;
 
 import org.jetbrains.annotations.NotNull;
 
+import static gregtech.datafix.util.DataFixConstants.*;
+
 public final class WalkItemStackLike implements IDataWalker {
 
     @Override
     public @NotNull NBTTagCompound process(@NotNull IDataFixer fixer, @NotNull NBTTagCompound compound, int versionIn) {
         DataFixHelper.rewriteCompoundTags(compound, tag -> {
-            if (tag.hasKey("id", Constants.NBT.TAG_STRING) && tag.hasKey("Count", Constants.NBT.TAG_BYTE) &&
-                    tag.hasKey("Damage", Constants.NBT.TAG_SHORT)) {
+            if (tag.hasKey(ITEM_ID, Constants.NBT.TAG_STRING) && tag.hasKey(ITEM_COUNT, Constants.NBT.TAG_BYTE) &&
+                    tag.hasKey(ITEM_DAMAGE, Constants.NBT.TAG_SHORT)) {
                 return fixer.process(GTFixType.ITEM_STACK_LIKE, tag, versionIn);
             }
             return null;

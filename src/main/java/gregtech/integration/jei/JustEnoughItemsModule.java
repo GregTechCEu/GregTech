@@ -224,7 +224,8 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
                     if (workableCapability instanceof AbstractRecipeLogic logic) {
                         if (metaTileEntity instanceof IMultipleRecipeMaps) {
-                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
+                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity)
+                                    .getAvailableRecipeMaps()) {
                                 registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                             }
                         } else if (logic.getRecipeMap() != null) {

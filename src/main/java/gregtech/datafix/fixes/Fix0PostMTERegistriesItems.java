@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class Fix0PostMTERegistriesItems implements IFixableData {
 
-    public static final String OLD_BLOCK_ID = "gregtech:machine";
-    public static final String NEW_BLOCK_ID_EXTENSION = ":mte";
+    private static final String OLD_BLOCK_ID = "gregtech:machine";
+    private static final String NEW_BLOCK_ID_EXTENSION = ":mte";
 
     private static final String NEW_GT_BLOCK_ID = GTValues.MODID + NEW_BLOCK_ID_EXTENSION;
 
