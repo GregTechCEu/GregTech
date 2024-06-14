@@ -6,6 +6,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.*;
+import gregtech.common.covers.ender.CoverEnderFluidLink;
 import gregtech.common.covers.filter.*;
 
 import net.minecraft.entity.player.EntityPlayer;

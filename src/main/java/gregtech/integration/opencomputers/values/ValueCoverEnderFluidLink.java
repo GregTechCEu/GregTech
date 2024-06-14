@@ -1,7 +1,7 @@
 package gregtech.integration.opencomputers.values;
 
 import gregtech.api.cover.Cover;
-import gregtech.common.covers.CoverEnderFluidLink;
+import gregtech.common.covers.ender.CoverEnderFluidLink;
 import gregtech.common.covers.CoverPump.PumpMode;
 import gregtech.integration.opencomputers.InputValidator;
 
