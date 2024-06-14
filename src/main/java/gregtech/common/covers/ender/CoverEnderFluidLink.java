@@ -10,7 +10,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.VirtualTankRegistry;
+import gregtech.api.util.virtualregistry.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.filter.FluidFilterContainer;
