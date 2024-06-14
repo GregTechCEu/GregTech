@@ -1,4 +1,4 @@
-package gregtech.common.covers;
+package gregtech.common.covers.ender;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -12,6 +12,7 @@ import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,8 +72,8 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     private final FluidTankSwitchShim linkedTank;
     protected final FluidFilterContainer fluidFilter;
 
-    protected CoverEnderFluidLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
-                                  @NotNull EnumFacing attachedSide) {
+    public CoverEnderFluidLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                               @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName(), null));
         this.fluidFilter = new FluidFilterContainer(this);

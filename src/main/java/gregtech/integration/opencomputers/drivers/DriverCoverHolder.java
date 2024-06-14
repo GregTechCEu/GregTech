@@ -5,6 +5,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.covers.*;
+import gregtech.common.covers.ender.CoverEnderFluidLink;
 import gregtech.integration.opencomputers.InputValidator;
 import gregtech.integration.opencomputers.values.*;
 
