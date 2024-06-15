@@ -125,30 +125,6 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         return new NotifiableItemStackHandler(this, getInventorySize(), getController(), false);
     }
 
-    /*
-     * @Override
-     * protected ModularUI createUI(EntityPlayer entityPlayer) {
-     * int rowSize = (int) Math.sqrt(getInventorySize());
-     * return createUITemplate(entityPlayer, rowSize)
-     * .build(getHolder(), entityPlayer);
-     * }
-     * 
-     * private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize) {
-     * ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 * rowSize + 94)
-     * .label(6, 6, getMetaFullName());
-     * 
-     * for (int y = 0; y < rowSize; y++) {
-     * for (int x = 0; x < rowSize; x++) {
-     * int index = y * rowSize + x;
-     * builder.widget(new SlotWidget(itemStackHandler, index,
-     * (88 - rowSize * 9 + x * 18), 18 + y * 18, true, true)
-     * .setBackgroundTexture(GuiTextures.SLOT));
-     * }
-     * }
-     * return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
-     * }
-     */
-
     @Override
     public boolean usesMui2() {
         return true;
