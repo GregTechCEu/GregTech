@@ -60,8 +60,8 @@ public interface IDyeableItem {
     }
 
     default @NotNull EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
-                                                    @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX,
-                                                    float hitY, float hitZ, @NotNull EnumHand hand) {
+                                                     @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX,
+                                                     float hitY, float hitZ, @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (this.hasColor(stack)) {
             IBlockState iblockstate = world.getBlockState(pos);

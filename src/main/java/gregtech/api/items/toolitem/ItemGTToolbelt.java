@@ -13,7 +13,6 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
-import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
