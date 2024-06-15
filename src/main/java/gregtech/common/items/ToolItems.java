@@ -4,17 +4,22 @@ import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.*;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.client.renderer.handler.ToolbeltRenderer;
 import gregtech.common.items.tool.*;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -370,6 +375,12 @@ public final class ToolItems {
 
     public static void registerModels() {
         TOOLS.forEach(tool -> ModelLoader.setCustomModelResourceLocation(tool.get(), 0, tool.getModelLocation()));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerBakedModels(ModelBakeEvent event) {
+        ModelResourceLocation loc = TOOLBELT.getModelLocation();
+        event.getModelRegistry().putObject(loc, new ToolbeltRenderer(event.getModelRegistry().getObject(loc)));
     }
 
     public static void registerColors() {

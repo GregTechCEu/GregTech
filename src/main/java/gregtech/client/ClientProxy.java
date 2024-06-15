@@ -10,6 +10,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.api.util.Mods;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
@@ -50,6 +51,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -127,6 +129,14 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
         ToolItems.registerModels();
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void registerBakedModels(ModelBakeEvent event) {
+        GTLog.logger.info("Registering special item models");
+        MetaItems.registerBakedModels(event);
+        ToolItems.registerBakedModels(event);
     }
 
     @SubscribeEvent
