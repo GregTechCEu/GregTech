@@ -1,6 +1,8 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -48,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch,
-                                                IMultiblockAbilityPart<IPassthroughHatch> {
+                                                IMultiblockAbilityPart<IPassthroughHatch>,
+                                                IControllable {
 
     private ItemStackHandler itemStackHandler;
 
@@ -92,6 +95,12 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         }
     }
 
+    @Override
+    public boolean isWorkingEnabled() {
+        return this.workingEnabled;
+    }
+
+    @Override
     public void setWorkingEnabled(boolean workingEnabled) {
         this.workingEnabled = workingEnabled;
         World world = getWorld();
@@ -240,6 +249,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
             } else if (side == getFrontFacing().getOpposite()) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(exportHandler);
             } else return null;
+        } else if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return super.getCapability(capability, side);
     }
