@@ -1,44 +1,19 @@
 package gregtech.api.util.virtualregistry;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public class VirtualEntry {
+import org.jetbrains.annotations.NotNull;
 
-    private static final String DEFAULT_COLOR = "FFFFFFFF";
-    private static final String NAME_KEY = "entry_name";
-    private static final String COLOR_KEY = "color";
-    private static final String TYPE_KEY = "entry_type";
-    private static final String ENTRY_KEY = "entry_tag";
-    private final NBTTagCompound entry;
+public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
 
-    private VirtualEntry(EntryType type, String name, String color, NBTTagCompound entry) {
-        var tag = new NBTTagCompound();
-        tag.setByte(TYPE_KEY, (byte) type.ordinal());
-        tag.setString(NAME_KEY, name);
-        tag.setString(COLOR_KEY, color);
-        tag.setTag(ENTRY_KEY, entry);
-        this.entry = tag;
-    }
+    protected static final String DEFAULT_COLOR = "FFFFFFFF";
+    protected static final String NAME_KEY = "entry_name";
+    protected static final String COLOR_KEY = "color";
+    protected static final String ENTRY_KEY = "entry_tag";
+    private @NotNull NBTTagCompound entry = new NBTTagCompound();
 
-    private VirtualEntry(NBTTagCompound entry) {
-        this.entry = entry;
-    }
-
-    public static VirtualEntry of(EntryType type, String name, String color, NBTTagCompound entry) {
-        return new VirtualEntry(type, name, color, entry);
-    }
-
-    public static VirtualEntry of(EntryType type, String name) {
-        return new VirtualEntry(type, name, DEFAULT_COLOR, new NBTTagCompound());
-    }
-
-    public static VirtualEntry fromNBT(NBTTagCompound entry) {
-        return new VirtualEntry(entry);
-    }
-
-    public EntryType getType() {
-        return EntryType.VALUES[this.entry.getByte(TYPE_KEY)];
-    }
+    public abstract EntryType getType();
 
     public String getColor() {
         return this.entry.getString(COLOR_KEY);
@@ -52,12 +27,19 @@ public class VirtualEntry {
         return this.entry.getString(NAME_KEY);
     }
 
-    public NBTTagCompound getEntry() {
+    protected void setName(String name) {
+        this.entry.setString(NAME_KEY, name);
+    }
+
+    public NBTTagCompound getData() {
+        if (!this.entry.hasKey(ENTRY_KEY))
+            setData(new NBTTagCompound());
+
         return this.entry.getCompoundTag(ENTRY_KEY);
     }
 
-    public void setEntry(NBTTagCompound entry) {
-        this.entry.setTag(ENTRY_KEY, entry == null ? new NBTTagCompound() : entry);
+    public void setData(NBTTagCompound entry) {
+        this.entry.setTag(ENTRY_KEY, entry != null ? entry : new NBTTagCompound());
     }
 
     @Override
@@ -66,5 +48,15 @@ public class VirtualEntry {
         return this.getType() == other.getType() &&
                 this.getName().equals(other.getName());
 
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        return this.entry;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        this.entry = nbt;
     }
 }
