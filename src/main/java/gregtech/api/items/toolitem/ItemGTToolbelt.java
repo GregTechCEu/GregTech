@@ -424,8 +424,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         return false;
     }
 
-    // TODO BEWLR for dynamic display of selected item?
-
     protected static class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
 
         protected final Supplier<Integer> slotCountSupplier;
