@@ -3,6 +3,8 @@ package gregtech.api.util.virtualregistry;
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
@@ -11,10 +13,13 @@ import net.minecraft.world.storage.WorldSavedData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
+@SuppressWarnings("SameParameterValue")
 public class VirtualRegistryBase extends WorldSavedData {
 
     private static final String DATA_ID = GTValues.MODID + ".virtual_entry_data";
@@ -23,38 +28,30 @@ public class VirtualRegistryBase extends WorldSavedData {
     private static final Map<UUID, VirtualRegistryMap> PRIVATE_REGISTRIES = new HashMap<>();
     private static final VirtualRegistryMap PUBLIC_REGISTRY = new VirtualRegistryMap();
 
+    private static final Map<EntryType, Supplier<? extends VirtualEntry>> factoryRegistry = new EnumMap<>(EntryType.class);
+
     public VirtualRegistryBase(String name) {
         super(name);
     }
 
-    public static VirtualEntry getEntry(@Nullable UUID owner, EntryType type, String name) {
+    protected static VirtualEntry getEntry(@Nullable UUID owner, EntryType type, String name) {
         if (owner == null)
             return PUBLIC_REGISTRY.getEntry(type, name);
 
         return PRIVATE_REGISTRIES.get(owner).getEntry(type, name);
     }
 
-    public static void addEntry(@Nullable UUID owner, EntryType type, String name) {
+    protected static void addEntry(@Nullable UUID owner, VirtualEntry entry) {
         if (owner == null)
-            PUBLIC_REGISTRY.addEntry(type, name);
+            PUBLIC_REGISTRY.addEntry(entry);
 
         PRIVATE_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap())
-                .addEntry(type, name);
+                .addEntry(entry);
     }
 
-    /**
-     * Retrieves a tank from the registry, creating it if it does not exist
-     *
-     * @param owner     The uuid of the player the tank is private to, or null if the tank is public
-     * @param type      The type of the entry
-     * @param name      The name of the entry
-     * @return The tank object
-     */
-    public static VirtualEntry getOrCreate(UUID owner, EntryType type, String name) {
-        if (!PRIVATE_REGISTRIES.containsKey(owner) && !PRIVATE_REGISTRIES.get(owner).contains(type, name)) {
-            addEntry(owner, type, name);
-        }
-        return getEntry(owner, type, name);
+    protected static boolean hasEntry(@Nullable UUID owner, EntryType type, String name) {
+        return owner == null ? PUBLIC_REGISTRY.contains(type, name) :
+                PRIVATE_REGISTRIES.containsKey(owner) && PRIVATE_REGISTRIES.get(owner).contains(type, name);
     }
 
     /**
@@ -64,7 +61,7 @@ public class VirtualRegistryBase extends WorldSavedData {
      * @param type         Type of the registry to remove from
      * @param name         The name of the entry
      */
-    public static void deleteEntry(@Nullable UUID owner, EntryType type, String name) {
+    protected static void deleteEntry(@Nullable UUID owner, EntryType type, String name) {
         if (owner == null && PUBLIC_REGISTRY.contains(type, name)) {
             PUBLIC_REGISTRY.deleteEntry(type, name);
         } else if (owner != null && PRIVATE_REGISTRIES.containsKey(owner)) {
@@ -83,8 +80,20 @@ public class VirtualRegistryBase extends WorldSavedData {
         PUBLIC_REGISTRY.clear();
     }
 
+    protected static void registerFactory(EntryType type, Supplier<? extends VirtualEntry> factory) {
+        if (!factoryRegistry.containsKey(type))
+            factoryRegistry.put(type, factory);
+    }
+
+    public static VirtualEntry createEntry(EntryType type) {
+        if (factoryRegistry.containsKey(type))
+            return factoryRegistry.get(type).get();
+
+        return null;
+    }
+
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public final void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(PUBLIC_KEY)) {
             NBTTagCompound publicEntries = nbt.getCompoundTag(PUBLIC_KEY);
             PUBLIC_REGISTRY.deserializeNBT(publicEntries);
@@ -100,7 +109,7 @@ public class VirtualRegistryBase extends WorldSavedData {
 
     @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound tag) {
+    public final NBTTagCompound writeToNBT(@NotNull NBTTagCompound tag) {
         var privateTag = new NBTTagCompound();
         for (var owner : PRIVATE_REGISTRIES.keySet()) {
             privateTag.setTag(owner.toString(), PRIVATE_REGISTRIES.get(owner).serializeNBT());
