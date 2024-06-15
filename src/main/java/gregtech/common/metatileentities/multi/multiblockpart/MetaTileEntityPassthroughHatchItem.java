@@ -204,6 +204,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         // Passthrough hatches before this change won't have workingEnabled at all, so we need to check if it exists
         if (tag.hasKey("workingEnabled")) {
             this.workingEnabled = tag.getBoolean("workingEnabled");
+        } else if (!tag.hasKey("workingEnabled")) {
+            this.workingEnabled = true;
         }
     }
 

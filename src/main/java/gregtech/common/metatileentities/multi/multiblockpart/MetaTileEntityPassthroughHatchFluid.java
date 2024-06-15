@@ -132,32 +132,6 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
         return new NotifiableItemStackHandler(this, TANK_SIZE, getController(), false);
     }
 
-    /*
-     * @Override
-     * protected ModularUI createUI(EntityPlayer entityPlayer) {
-     * int rowSize = (int) Math.sqrt(getTier() + 1);
-     * return createUITemplate(entityPlayer, rowSize)
-     * .build(getHolder(), entityPlayer);
-     * }
-     *
-     * private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize) {
-     * ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 * rowSize + 94)
-     * .label(6, 6, getMetaFullName());
-     *
-     * for (int y = 0; y < rowSize; y++) {
-     * for (int x = 0; x < rowSize; x++) {
-     * int index = y * rowSize + x;
-     * builder.widget(
-     * new TankWidget(fluidTankList.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
-     * .setBackgroundTexture(GuiTextures.FLUID_SLOT)
-     * .setContainerClicking(true, true)
-     * .setAlwaysShowFull(true));
-     * }
-     * }
-     * return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
-     * }
-     */
-
     @Override
     public boolean usesMui2() {
         return true;
@@ -224,6 +198,8 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
         // Passthrough hatches before this change won't have workingEnabled at all, so we need to check if it exists
         if (tag.hasKey("workingEnabled")) {
             this.workingEnabled = tag.getBoolean("workingEnabled");
+        } else if (!tag.hasKey("workingEnabled")) {
+            this.workingEnabled = true;
         }
     }
 
