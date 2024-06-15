@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 
@@ -30,13 +31,21 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart implements IPassthroughHatch,
@@ -157,14 +166,47 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     @Override
     public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
         int rowSize = (int) Math.sqrt(getTier() + 1);
+
         int backgroundWidth = Math.max(
                 9 * 18 + 18 + 14 + 5,   // Player Inv width
                 rowSize * 18 + 14); // Bus Inv width
         int backgroundHeight = 18 + 18 * rowSize + 94;
 
+        List<List<IWidget>> widgets = new ArrayList<>();
+        for (int i = 0; i < rowSize; i++) {
+            widgets.add(new ArrayList<>());
+            for (int j = 0; j < rowSize; j++) {
+                widgets.get(i)
+                        .add(new FluidSlot().syncHandler(fluidTankList.getTankAt(i * rowSize + j))
+                                .background(GTGuiTextures.FLUID_SLOT)
+                                .alwaysShowFull(true));
+            }
+        }
+        BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
+        guiSyncManager.syncValue("working_state", workingStateValue);
+
         return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget.playerInventory().left(7).bottom(7));
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(new Column()
+                        .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
+                        .width(18).height(18 * 4 + 5)
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget().size(17).top(18 * 3 + 5))
+                        .child(new ToggleButton()
+                                .top(18 * 2)
+                                .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
+                                        workingStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
+                                .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                        .addLine(workingStateValue.getBoolValue() ?
+                                                IKey.lang("gregtech.gui.fluid_passthrough.enabled") :
+                                                IKey.lang("gregtech.gui.fluid_passthrough.disabled")))))
+                .child(new Grid()
+                        .top(18).height(rowSize * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .alignX(0.5f)
+                        .matrix(widgets));
     }
 
     @Override

@@ -168,12 +168,6 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
-                .child(new Grid()
-                        .top(18).height(rowSize * 18)
-                        .minElementMargin(0, 0)
-                        .minColWidth(18).minRowHeight(18)
-                        .alignX(0.5f)
-                        .matrix(widgets))
                 .child(new Column()
                         .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
                         .width(18).height(18 * 4 + 5)
@@ -186,7 +180,13 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
                                         .addLine(workingStateValue.getBoolValue() ?
                                                 IKey.lang("gregtech.gui.item_passthrough.enabled") :
-                                                IKey.lang("gregtech.gui.item_passthrough.disabled")))));
+                                                IKey.lang("gregtech.gui.item_passthrough.disabled")))))
+                .child(new Grid()
+                        .top(18).height(rowSize * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .alignX(0.5f)
+                        .matrix(widgets));
     }
 
     @Override
