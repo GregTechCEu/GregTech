@@ -383,27 +383,21 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (tool != null) {
             selectedToolDisplay = " (" + tool.getDisplayName() + ")";
         }
-        return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(),
+        getHandler(stack).disablePassthrough();
+        String name = LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(),
                 selectedToolDisplay);
+        getHandler(stack).enablePassthrough();
+        return name;
     }
 
     @Override
     public @NotNull EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
                                                     @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX,
                                                     float hitY, float hitZ, @NotNull EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        if (this.hasColor(stack)) {
-            IBlockState iblockstate = world.getBlockState(pos);
-            if (iblockstate.getBlock() instanceof BlockCauldron cauldron) {
-                int water = iblockstate.getValue(BlockCauldron.LEVEL);
-                if (water > 0) {
-                    this.removeColor(stack);
-                    cauldron.setWaterLevel(world, pos, iblockstate, water - 1);
-                    return EnumActionResult.SUCCESS;
-                }
-            }
-        }
-        return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+        EnumActionResult result = IDyeableItem.super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+        if (result == EnumActionResult.PASS)
+            return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+        else return result;
     }
 
     @Override
@@ -411,7 +405,10 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (tintIndex == 0) {
             return this.getColor(stack);
         }
-        return super.getColor(stack, tintIndex);
+        getHandler(stack).disablePassthrough();
+        int color = super.getColor(stack, tintIndex);
+        getHandler(stack).enablePassthrough();
+        return color;
     }
 
     @Override
@@ -488,6 +485,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         protected final Set<String> toolClasses = new ObjectOpenHashSet<>();
         public final Set<String> oreDicts = new ObjectOpenHashSet<>();
 
+        private boolean passthrough = true;
+
         public ToolStackHandler(int size) {
             super(size);
         }
@@ -511,7 +510,16 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         public @Nullable Integer getSelectedSlot() {
-            return selectedSlot;
+            if (passthrough) return selectedSlot;
+            else return null;
+        }
+
+        public void enablePassthrough() {
+            this.passthrough = true;
+        }
+
+        public void disablePassthrough() {
+            this.passthrough = false;
         }
 
         public @Nullable ItemStack getSelectedStack() {

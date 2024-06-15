@@ -1,11 +1,18 @@
 package gregtech.api.items;
 
+import net.minecraft.block.BlockCauldron;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-/**
- * Note - users of this interface will have to deal with cauldron dye clearing on their own.
- */
+import org.jetbrains.annotations.NotNull;
+
 public interface IDyeableItem {
 
     default boolean hasColor(ItemStack stack) {
@@ -50,6 +57,24 @@ public interface IDyeableItem {
             nbttagcompound.setTag("display", nbttagcompound1);
         }
         nbttagcompound1.setInteger("color", color);
+    }
+
+    default @NotNull EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
+                                                    @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX,
+                                                    float hitY, float hitZ, @NotNull EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (this.hasColor(stack)) {
+            IBlockState iblockstate = world.getBlockState(pos);
+            if (iblockstate.getBlock() instanceof BlockCauldron cauldron) {
+                int water = iblockstate.getValue(BlockCauldron.LEVEL);
+                if (water > 0) {
+                    this.removeColor(stack);
+                    cauldron.setWaterLevel(world, pos, iblockstate, water - 1);
+                    return EnumActionResult.SUCCESS;
+                }
+            }
+        }
+        return EnumActionResult.PASS;
     }
 
     /**
