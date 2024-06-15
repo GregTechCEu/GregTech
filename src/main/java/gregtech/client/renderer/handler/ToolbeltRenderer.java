@@ -45,7 +45,7 @@ public class ToolbeltRenderer implements IItemRenderer {
 
     @Override
     public IModelState getTransforms() {
-        return TransformUtils.DEFAULT_ITEM;
+        return TransformUtils.DEFAULT_TOOL;
     }
 
     @Override
