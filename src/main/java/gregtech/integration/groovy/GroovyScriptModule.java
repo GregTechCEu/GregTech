@@ -17,6 +17,7 @@ import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
@@ -74,6 +75,8 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
 
     private static GroovyContainer<?> modSupportContainer;
     private static final Object2ObjectOpenHashMap<String, Map<String, ItemStack>> metaItems = new Object2ObjectOpenHashMap<>();
+
+    private static final ResourceLocation MODULE_ID = GTUtility.gregtechId(GregTechModules.MODULE_GRS);
 
     @NotNull
     @Override
@@ -323,5 +326,15 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         GroovyLog.get().error(
                 "Cannot {0} of a Material with no {1}! Try calling \"add{1}\" in your late material event first if this is intentional. Material: {2}",
                 cause, type, m.getUnlocalizedName());
+    }
+
+    /**
+     * @return the modid used in scripts
+     */
+    public static @NotNull String getPackId() {
+        if (GregTechAPI.moduleManager.isModuleEnabled(MODULE_ID)) {
+            return GroovyScript.getRunConfig().getPackOrModId();
+        }
+        return "";
     }
 }

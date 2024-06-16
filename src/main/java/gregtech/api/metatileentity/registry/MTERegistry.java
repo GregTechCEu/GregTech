@@ -1,8 +1,10 @@
 package gregtech.api.metatileentity.registry;
 
+import gregtech.api.GTValues;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTControlledRegistry;
+import gregtech.integration.groovy.GroovyScriptModule;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -20,6 +22,27 @@ public final class MTERegistry extends GTControlledRegistry<ResourceLocation, Me
         super(Short.MAX_VALUE);
         this.modid = modid;
         this.networkId = networkId;
+    }
+
+    @Override
+    public void register(int id, @NotNull ResourceLocation key, @NotNull MetaTileEntity value) {
+        if (!checkModid(key.getNamespace())) {
+            throw new IllegalArgumentException("Cannot register MTE to another mod's registry");
+        }
+        super.register(id, key, value);
+    }
+
+    /**
+     * @param modid the modid to test
+     * @return if the modid is allowed to register to this registry
+     */
+    private boolean checkModid(@NotNull String modid) {
+        if (!this.modid.equals(modid)) {
+            // if we are the GT registry, allow GroovyScript to register to it anyway
+            // otherwise allow no one to register to it
+            return this.modid.equals(GTValues.MODID) && modid.equals(GroovyScriptModule.getPackId());
+        }
+        return true;
     }
 
     /**
