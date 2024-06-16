@@ -312,9 +312,13 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                                         workingStateValue::setBoolValue))
                                 .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
                                 .tooltipBuilder(t -> t.setAutoUpdate(true)
-                                        .addLine(workingStateValue.getBoolValue() ?
-                                                IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
-                                                IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled"))))
+                                        .addLine(isExportHatch ?
+                                                (workingStateValue.getBoolValue() ?
+                                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
+                                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")) :
+                                                (workingStateValue.getBoolValue() ?
+                                                        IKey.lang("gregtech.gui.item_auto_input.tooltip.enabled") :
+                                                        IKey.lang("gregtech.gui.item_auto_input.tooltip.disabled")))))
                         .child(new ToggleButton()
                                 .top(18)
                                 .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,

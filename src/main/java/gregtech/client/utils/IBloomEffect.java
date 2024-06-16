@@ -9,8 +9,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 /**
- * Render callback interface for {@link BloomEffectUtil#registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}.
+ * Render callback interface for
+ * {@link BloomEffectUtil#registerBloomRender(IRenderSetup, BloomType, IBloomEffect, Predicate)}.
  */
 @FunctionalInterface
 public interface IBloomEffect {
@@ -26,8 +29,8 @@ public interface IBloomEffect {
 
     /**
      * @param context render context
-     * @return if this effect should be rendered; returning {@code false} skips {@link #renderBloomEffect(BufferBuilder,
-     *         EffectRenderContext)} call.
+     * @return if this effect should be rendered; returning {@code false} skips
+     *         {@link #renderBloomEffect(BufferBuilder, EffectRenderContext)} call.
      */
     @SideOnly(Side.CLIENT)
     default boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {

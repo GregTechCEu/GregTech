@@ -4,7 +4,9 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.persistence.PersistentData;
+import gregtech.api.util.Mods;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.BloomEffectVintagiumUtil;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 
@@ -27,7 +29,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 @Mod(modid = GTValues.MODID,
-     name = "GregTech",
+     name = GTValues.MOD_NAME,
      acceptedMinecraftVersions = "[1.12.2,1.13)",
      version = GTInternalTags.VERSION,
      dependencies = "required:forge@[14.23.5.2847,);" + "required-after:codechickenlib@[3.2.3,);" +
@@ -46,6 +48,9 @@ public class GregTechMod {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
             BloomEffectUtil.init();
+            if (Mods.Vintagium.isModLoaded()) {
+                BloomEffectVintagiumUtil.init();
+            }
         }
     }
 

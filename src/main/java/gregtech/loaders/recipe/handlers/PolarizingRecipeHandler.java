@@ -20,7 +20,7 @@ public class PolarizingRecipeHandler {
     private static final OrePrefix[] POLARIZING_PREFIXES = new OrePrefix[] {
             OrePrefix.stick, OrePrefix.stickLong, OrePrefix.plate, OrePrefix.ingot, OrePrefix.plateDense,
             OrePrefix.rotor,
-            OrePrefix.bolt, OrePrefix.screw, OrePrefix.wireFine, OrePrefix.foil, OrePrefix.ring };
+            OrePrefix.bolt, OrePrefix.screw, OrePrefix.wireFine, OrePrefix.foil, OrePrefix.ring, OrePrefix.block };
 
     public static void register() {
         for (OrePrefix orePrefix : POLARIZING_PREFIXES) {

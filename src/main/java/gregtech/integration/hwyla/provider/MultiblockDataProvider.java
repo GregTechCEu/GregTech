@@ -26,7 +26,7 @@ public class MultiblockDataProvider extends CapabilityDataProvider<IMultiblockCo
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.multiblock");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.multiblock");
     }
 
     @Override
