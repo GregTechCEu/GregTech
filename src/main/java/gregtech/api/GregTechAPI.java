@@ -54,6 +54,7 @@ public class GregTechAPI {
     public static MarkerMaterialRegistry markerMaterialRegistry;
     /** Will be available at the Pre-Initialization stage */
     public static MTEManager mteManager;
+    /** GT's data migrations API */
     public static final MigrationAPI MIGRATIONS = new MigrationAPI();
 
     /** Will be available at the Pre-Initialization stage */

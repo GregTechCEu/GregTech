@@ -19,8 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import static gregtech.datafix.GTDataVersion.currentVersion;
-
 public final class GTDataFixers {
 
     public static final Logger LOGGER = LogManager.getLogger("GregTech DataFixers");
@@ -42,8 +40,8 @@ public final class GTDataFixers {
     }
 
     private static void registerFixes(@NotNull CompoundDataFixer forgeFixer) {
-        LOGGER.info("GT data version is: {}", currentVersion());
-        ModFixs fixer = forgeFixer.init(GTValues.MODID, currentVersion().ordinal());
+        LOGGER.info("GT data version is: {}", GTDataVersion.currentVersion());
+        ModFixs fixer = forgeFixer.init(GTValues.MODID, GTDataVersion.currentVersion().ordinal());
 
         for (GTDataVersion version : GTDataVersion.VALUES) {
             registerFixes(version, fixer);

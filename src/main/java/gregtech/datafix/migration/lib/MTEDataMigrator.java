@@ -93,7 +93,7 @@ public final class MTEDataMigrator extends AbstractMTEMigrator {
      * @param preMeta  the original metadata for the MTE's ItemBlock
      * @param postMeta the new metadata for the MTE's ItemBlock
      */
-    public void migrateMTEItem(@NotNull String modid, int preMeta, int postMeta) {
+    public void migrateMTEMeta(@NotNull String modid, int preMeta, int postMeta) {
         itemBlockMeta.computeIfAbsent(modid, k -> {
             var map = new Short2ShortOpenHashMap();
             map.defaultReturnValue((short) -1);

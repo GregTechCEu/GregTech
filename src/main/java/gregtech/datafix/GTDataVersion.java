@@ -21,7 +21,7 @@ public enum GTDataVersion {
     /**
      * @return the current version of GT data
      */
-    static @NotNull GTDataVersion currentVersion() {
+    public static @NotNull GTDataVersion currentVersion() {
         return VALUES[VALUES.length - 1];
     }
 }

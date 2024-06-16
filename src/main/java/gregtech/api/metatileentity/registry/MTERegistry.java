@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MTERegistry extends GTControlledRegistry<ResourceLocation, MetaTileEntity> {
 
+    private final int MIN_GRS_ID = 32_000;
+
     private final String modid;
     private final int networkId;
 
@@ -26,7 +28,7 @@ public final class MTERegistry extends GTControlledRegistry<ResourceLocation, Me
 
     @Override
     public void register(int id, @NotNull ResourceLocation key, @NotNull MetaTileEntity value) {
-        if (!checkModid(key.getNamespace())) {
+        if (!canRegister(key.getNamespace(), id)) {
             throw new IllegalArgumentException("Cannot register MTE to another mod's registry");
         }
         super.register(id, key, value);
@@ -34,13 +36,17 @@ public final class MTERegistry extends GTControlledRegistry<ResourceLocation, Me
 
     /**
      * @param modid the modid to test
-     * @return if the modid is allowed to register to this registry
+     * @param id    the id to test
+     * @return if the mod and id is allowed to be registered to this registry
      */
-    private boolean checkModid(@NotNull String modid) {
+    private boolean canRegister(@NotNull String modid, int id) {
         if (!this.modid.equals(modid)) {
             // if we are the GT registry, allow GroovyScript to register to it anyway
             // otherwise allow no one to register to it
-            return this.modid.equals(GTValues.MODID) && modid.equals(GroovyScriptModule.getPackId());
+            if (this.modid.equals(GTValues.MODID) && modid.equals(GroovyScriptModule.getPackId())) {
+                return id >= MIN_GRS_ID;
+            }
+            return false;
         }
         return true;
     }
