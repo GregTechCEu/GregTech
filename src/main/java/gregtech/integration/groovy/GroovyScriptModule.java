@@ -252,25 +252,21 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     public void onCompatLoaded(GroovyContainer<?> container) {
         GroovyScriptModule.modSupportContainer = container;
         container.objectMapperBuilder("recipemap", RecipeMap.class)
-                .mod(GTValues.MODID)
                 .parser(IObjectParser.wrapStringGetter(RecipeMap::getByName))
                 .completerOfNamed(RecipeMap::getRecipeMaps, RecipeMap::getUnlocalizedName)
                 .register();
         container.objectMapperBuilder("material", Material.class)
-                .mod(GTValues.MODID)
                 .parser(GroovyScriptModule::parseMaterial)
                 .completerOfNamed(GregTechAPI.materialManager::getRegisteredMaterials,
                         GroovyScriptModule::getMaterialId)
                 .register();
 
         container.objectMapperBuilder("oreprefix", OrePrefix.class)
-                .mod(GTValues.MODID)
                 .parser(IObjectParser.wrapStringGetter(OrePrefix::getPrefix))
                 .completerOfNamed(OrePrefix::values, v -> v.name)
                 .register();
 
         container.objectMapperBuilder("metaitem", ItemStack.class)
-                .mod(GTValues.MODID)
                 .parser(IObjectParser.wrapStringGetter(GroovyScriptModule::getMetaItem))
                 .completer((paramIndex, items) -> {
                     if (paramIndex != 0) return;
@@ -287,7 +283,6 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
                 .register();
 
         container.objectMapperBuilder("element", Element.class)
-                .mod(GTValues.MODID)
                 .parser((s, args) -> {
                     Element element = Elements.get(s);
                     if (element != null) return Result.some(element);
