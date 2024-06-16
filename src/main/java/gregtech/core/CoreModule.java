@@ -206,7 +206,8 @@ public class CoreModule implements IGregTechModule {
         }
         logger.info("Registering GTCEu Meta Tile Entities");
         MetaTileEntities.init();
-        mteManager.registerDataFix("gcym", 1654, 2000);
+        // MTERegistriesDataFixer.fix(GTUtility.gregtechId("maintenance_hatch"), new ResourceLocation("gregtech",
+        // "maintenance_hatch_configurable"), 1654, 1655);
         /* End CEu MetaTileEntity Registration */
         /* Addons not done via an Event due to how much must be initialized for MTEs to register */
 

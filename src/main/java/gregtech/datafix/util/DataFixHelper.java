@@ -13,6 +13,12 @@ public final class DataFixHelper {
 
     private DataFixHelper() {}
 
+    /**
+     * Recursively rewrites NBTTagCompounds
+     *
+     * @param tag      the tag to rewrite
+     * @param rewriter the tag rewriter
+     */
     public static void rewriteCompoundTags(@NotNull NBTTagCompound tag,
                                            @NotNull UnaryOperator<NBTTagCompound> rewriter) {
         for (String key : tag.getKeySet()) {
@@ -32,6 +38,10 @@ public final class DataFixHelper {
         }
     }
 
+    /**
+     * @param tagList  recursively rewrites NBTTagCompounds in an NBTTagList
+     * @param rewriter the tag rewriter
+     */
     public static void rewriteCompoundTags(@NotNull NBTTagList tagList,
                                            @NotNull UnaryOperator<NBTTagCompound> rewriter) {
         for (int i = 0; i < tagList.tagCount(); i++) {

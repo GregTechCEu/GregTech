@@ -1,50 +1,77 @@
 package gregtech.datafix;
 
 import gregtech.api.GTValues;
-import gregtech.datafix.fixes.Fix0PostMTERegistriesBlocksTEs;
-import gregtech.datafix.fixes.Fix0PostMTERegistriesItems;
-import gregtech.datafix.walker.WalkChunkSection;
+import gregtech.api.GregTechAPI;
+import gregtech.api.metatileentity.registry.MTERegistry;
+import gregtech.datafix.migration.impl.MigrateMTEBlockTE;
+import gregtech.datafix.migration.impl.MigrateMTEItems;
+import gregtech.datafix.migration.lib.MTERegistriesMigrator;
 import gregtech.datafix.walker.WalkItemStackLike;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.FixTypes;
 import net.minecraft.util.datafix.IDataWalker;
-import net.minecraft.util.datafix.IFixableData;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.common.util.ModFixs;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+
+import static gregtech.datafix.GTDataVersion.currentVersion;
+
 public final class GTDataFixers {
 
-    /**
-     * Version of data before multiple MTE registries were possible
-     */
-    public static final int V0_PRE_MTE = 0;
-
-    /**
-     * Version of data after multiple MTE registries were possible
-     */
-    public static final int V1_POST_MTE = 1;
-
-    /**
-     * Current data version for GT
-     */
-    public static final int DATA_VERSION = V1_POST_MTE;
+    public static final Logger LOGGER = LogManager.getLogger("GregTech DataFixers");
+    private static final IDataWalker ITEM_STACK_WALKER = new WalkItemStackLike();
 
     private GTDataFixers() {}
 
     public static void init() {
-        CompoundDataFixer forgeFixer = FMLCommonHandler.instance().getDataFixer();
-        IDataWalker itemStackWalker = new WalkItemStackLike();
-        forgeFixer.registerVanillaWalker(FixTypes.BLOCK_ENTITY, itemStackWalker);
-        forgeFixer.registerVanillaWalker(FixTypes.ENTITY, itemStackWalker);
-        forgeFixer.registerVanillaWalker(FixTypes.PLAYER, itemStackWalker);
-        forgeFixer.registerVanillaWalker(FixTypes.CHUNK, new WalkChunkSection());
+        final CompoundDataFixer forgeFixer = FMLCommonHandler.instance().getDataFixer();
+        registerWalkers(forgeFixer);
+        registerFixes(forgeFixer);
+        migrateMTERegistries();
+    }
 
-        ModFixs gtFixer = forgeFixer.init(GTValues.MODID, DATA_VERSION);
-        IFixableData itemFixer = new Fix0PostMTERegistriesItems();
-        gtFixer.registerFix(FixTypes.BLOCK_ENTITY, itemFixer);
-        gtFixer.registerFix(FixTypes.ENTITY, itemFixer);
-        gtFixer.registerFix(FixTypes.PLAYER, itemFixer);
-        gtFixer.registerFix(FixTypes.CHUNK, new Fix0PostMTERegistriesBlocksTEs());
+    private static void registerWalkers(@NotNull CompoundDataFixer fixer) {
+        fixer.registerVanillaWalker(FixTypes.BLOCK_ENTITY, ITEM_STACK_WALKER);
+        fixer.registerVanillaWalker(FixTypes.ENTITY, ITEM_STACK_WALKER);
+        fixer.registerVanillaWalker(FixTypes.PLAYER, ITEM_STACK_WALKER);
+    }
+
+    private static void registerFixes(@NotNull CompoundDataFixer forgeFixer) {
+        LOGGER.info("GT data version is: {}", currentVersion());
+        ModFixs fixer = forgeFixer.init(GTValues.MODID, currentVersion().ordinal());
+
+        for (GTDataVersion version : GTDataVersion.VALUES) {
+            registerFixes(version, fixer);
+        }
+    }
+
+    private static void registerFixes(@NotNull GTDataVersion version, @NotNull ModFixs fixer) {
+        if (version != GTDataVersion.V0_PRE_MTE) {
+            LOGGER.info("Registering fixer for data version {}", version);
+        }
+        switch (version) {
+            case V1_POST_MTE -> {
+                MTERegistriesMigrator migrator = GregTechAPI.MIGRATIONS.registriesMigrator();
+                fixer.registerFix(GTFixType.ITEM_STACK_LIKE, new MigrateMTEItems(migrator));
+                fixer.registerFix(FixTypes.CHUNK, new MigrateMTEBlockTE(migrator));
+            }
+            default -> {}
+        }
+    }
+
+    /**
+     * Migrate all MTEs to the new blocks automatically
+     */
+    private static void migrateMTERegistries() {
+        MTERegistriesMigrator migrator = GregTechAPI.MIGRATIONS.registriesMigrator();
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(GTValues.MODID);
+        for (ResourceLocation key : registry.getKeys()) {
+            migrator.migrate(key.getNamespace(), (short) registry.getIdByObjectName(key));
+        }
     }
 }

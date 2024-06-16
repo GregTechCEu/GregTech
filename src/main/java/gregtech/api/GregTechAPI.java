@@ -20,6 +20,7 @@ import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.ConfigHolder;
+import gregtech.datafix.migration.lib.MigrationAPI;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -53,6 +54,7 @@ public class GregTechAPI {
     public static MarkerMaterialRegistry markerMaterialRegistry;
     /** Will be available at the Pre-Initialization stage */
     public static MTEManager mteManager;
+    public static final MigrationAPI MIGRATIONS = new MigrationAPI();
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;

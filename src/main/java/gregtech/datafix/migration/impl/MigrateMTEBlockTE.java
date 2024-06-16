@@ -1,12 +1,10 @@
-package gregtech.datafix.fixes;
+package gregtech.datafix.migration.impl;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
-import gregtech.api.util.GTUtility;
-import gregtech.datafix.GTDataFixers;
+import gregtech.datafix.migration.api.MTEMigrator;
 
-import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
@@ -15,8 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -26,9 +22,8 @@ import java.util.Map;
 
 import static gregtech.datafix.util.DataFixConstants.*;
 
-public class Fix0PostMTERegistriesBlocksTEs implements IFixableData {
+public class MigrateMTEBlockTE implements IFixableData {
 
-    private static final ResourceLocation OLD_NAME = GTUtility.gregtechId("machine");
     private static final String META_ID = "MetaId";
     private static final String META_TILE_ENTITY = "MetaTileEntity";
 
@@ -44,17 +39,19 @@ public class Fix0PostMTERegistriesBlocksTEs implements IFixableData {
 
     private static final int BLOCKS_PER_SECTION = 4096;
 
+    private final MTEMigrator migrator;
+
+    public MigrateMTEBlockTE(@NotNull MTEMigrator migrator) {
+        this.migrator = migrator;
+    }
+
     @Override
     public int getFixVersion() {
-        return GTDataFixers.V1_POST_MTE;
+        return migrator.fixVersion();
     }
 
     @Override
     public @NotNull NBTTagCompound fixTagCompound(@NotNull NBTTagCompound compound) {
-        if (!doesOldBlockExist()) {
-            return compound;
-        }
-
         if (!compound.hasKey(LEVEL_TAG, Constants.NBT.TAG_COMPOUND)) {
             return compound;
         }
@@ -64,11 +61,11 @@ public class Fix0PostMTERegistriesBlocksTEs implements IFixableData {
         return compound;
     }
 
-    private static boolean doesOldBlockExist() {
-        return ((ForgeRegistry<Block>) ForgeRegistries.BLOCKS).getID(OLD_NAME) >= 0;
-    }
-
-    private static @NotNull Map<BlockPos, ResourceLocation> gatherMTEs(@NotNull NBTTagCompound level) {
+    /**
+     * @param level the level tag
+     * @return the MTEs in the level
+     */
+    private @NotNull Map<BlockPos, ResourceLocation> gatherMTEs(@NotNull NBTTagCompound level) {
         Map<BlockPos, ResourceLocation> mteIds = new Object2ObjectOpenHashMap<>();
         NBTTagList tileEntityTagList = level.getTagList(TILE_ENTITIES_TAG, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tileEntityTagList.tagCount(); i++) {
@@ -77,12 +74,26 @@ public class Fix0PostMTERegistriesBlocksTEs implements IFixableData {
                     tileEntityTag.hasKey(META_TILE_ENTITY, Constants.NBT.TAG_COMPOUND)) {
                 BlockPos pos = new BlockPos(tileEntityTag.getInteger(X), tileEntityTag.getInteger(Y),
                         tileEntityTag.getInteger(Z));
-                mteIds.put(pos, new ResourceLocation(tileEntityTag.getString(META_ID)));
+                ResourceLocation mteId = new ResourceLocation(tileEntityTag.getString(META_ID));
+                migrator.fixMTEData(mteId, tileEntityTag.getCompoundTag(META_TILE_ENTITY));
+
+                ResourceLocation fixedId = migrator.fixMTEid(mteId);
+                if (fixedId != null) {
+                    tileEntityTag.setString(META_ID, fixedId.toString());
+                    mteId = fixedId;
+                }
+                mteIds.put(pos, mteId);
             }
         }
         return mteIds;
     }
 
+    /**
+     * Processes the chunk sections to remap blocks.
+     *
+     * @param level  the level tag
+     * @param mteIds the MTEs present in the chunk section
+     */
     private static void processChunkSections(@NotNull NBTTagCompound level,
                                              @NotNull Map<BlockPos, ResourceLocation> mteIds) {
         if (mteIds.isEmpty()) {
