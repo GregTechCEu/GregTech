@@ -28,11 +28,8 @@ public class VirtualTankRegistry extends VirtualRegistryBase {
 
     private static final int DEFAULT_CAPACITY = 64000; // 64B
 
-    // for some reason, MapStorage throws an error if this constructor is not present
-    @SuppressWarnings("unused")
     public VirtualTankRegistry(String name) {
         super(name);
-        registerFactory(EntryType.ENDER_FLUID, VirtualTank::new);
     }
 
     /**
