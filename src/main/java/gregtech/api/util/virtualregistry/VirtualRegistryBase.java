@@ -3,6 +3,8 @@ package gregtech.api.util.virtualregistry;
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 
+import gregtech.api.util.virtualregistry.entries.VirtualTank;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,6 +34,9 @@ public class VirtualRegistryBase extends WorldSavedData {
 
     public VirtualRegistryBase(String name) {
         super(name);
+        registerFactory(EntryType.ENDER_FLUID, VirtualTank::new);
+        // register virtual item
+        // register virtual energy
     }
 
     protected static VirtualEntry getEntry(@Nullable UUID owner, EntryType type, String name) {
