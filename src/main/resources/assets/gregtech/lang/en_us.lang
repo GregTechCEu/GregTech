@@ -190,6 +190,7 @@ metaitem.electric.discharge_mode.tooltip=Use while sneaking to toggle discharge 
 
 metaitem.dust.tooltip.purify=Throw into Cauldron to get clean Dust
 metaitem.crushed.tooltip.purify=Throw into Cauldron to get Purified Ore
+metaitem.nuclear.tooltip.radioactive=§cEmits dangerous radiation
 metaitem.int_circuit.configuration=§aConfigured Value: §f%d§7
 metaitem.credit.copper.name=Copper Credit
 metaitem.credit.copper.tooltip=0.125 Credits

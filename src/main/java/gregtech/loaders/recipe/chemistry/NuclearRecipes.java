@@ -49,16 +49,16 @@ public class NuclearRecipes {
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
                 .input(dust, FissilePlutoniumDioxide, 1)
-                .input(dust, Uraninite, 20)
+                .input(dust, Uraninite, 19)
                 .circuitMeta(1)
-                .output(dust, LowGradeMOX, 21)
+                .output(dust, LowGradeMOX, 20)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
                 .input(dust, FissilePlutoniumDioxide, 1)
-                .input(dust, Uraninite, 5)
+                .input(dust, Uraninite, 4)
                 .circuitMeta(2)
-                .output(dust, HighGradeMOX, 6)
+                .output(dust, HighGradeMOX, 5)
                 .buildAndRegister();
 
         // Zircaloy
@@ -143,14 +143,16 @@ public class NuclearRecipes {
 
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dust, HighEnrichedUraniumDioxide, 1)
-                .input(dust, DepletedUraniumDioxide, 5)
-                .output(dust, HEU235, 6)
+                .input(dust, DepletedUraniumDioxide, 19)
+                .circuitMeta(1)
+                .output(dust, LEU235, 20)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dust, HighEnrichedUraniumDioxide, 1)
-                .input(dust, DepletedUraniumDioxide, 20)
-                .output(dust, LEU235, 21)
+                .input(dust, DepletedUraniumDioxide, 4)
+                .circuitMeta(2)
+                .output(dust, HEU235, 5)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(40).EUt(VA[ULV])

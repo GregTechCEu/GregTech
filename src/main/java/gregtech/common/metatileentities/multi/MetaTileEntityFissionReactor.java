@@ -301,12 +301,12 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                 .getExportItems().insertItem(0,
                                         OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
                                 .isEmpty()) {
-                            // We still need to know if the output is blocked, even if the recipe doesn't start
-                            // yet
-                            canWork = false;
-                            this.lockingState = LockingState.FUEL_CLOGGED;
-                            break;
-                        }
+                                    // We still need to know if the output is blocked, even if the recipe doesn't start
+                                    // yet
+                                    canWork = false;
+                                    this.lockingState = LockingState.FUEL_CLOGGED;
+                                    break;
+                                }
                     }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
@@ -482,19 +482,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         MultiblockAbility<?>[] allowedAbilities = { MultiblockAbility.IMPORT_COOLANT, MultiblockAbility.IMPORT_FUEL_ROD,
                 MultiblockAbility.CONTROL_ROD_PORT };
         return tilePredicate((state, tile) -> {
-                    if (!(tile instanceof IMultiblockAbilityPart<?> &&
-                            ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
-                        return false;
-                    }
-                    if (tile instanceof IFissionReactorHatch hatchPart) {
-                        if (!hatchPart.checkValidity(height - 1)) {
-                            state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
-                            return false;
-                        }
-                        return true;
-                    }
+            if (!(tile instanceof IMultiblockAbilityPart<?> &&
+                    ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
+                return false;
+            }
+            if (tile instanceof IFissionReactorHatch hatchPart) {
+                if (!hatchPart.checkValidity(height - 1)) {
+                    state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
                     return false;
-                },
+                }
+                return true;
+            }
+            return false;
+        },
                 () -> Arrays.stream(allowedAbilities)
                         .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
                         .filter(Objects::nonNull).map(tile -> {
