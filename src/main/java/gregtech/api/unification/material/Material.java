@@ -312,7 +312,6 @@ public class Material implements Comparable<Material> {
         return decaysPerSecond;
     }
 
-
     @ZenGetter("protons")
     public long getProtons() {
         if (materialInfo.element != null)
