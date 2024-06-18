@@ -87,8 +87,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     @Override
     public void update() {
         super.update();
-        if (workingEnabled) {
-            if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+            if (workingEnabled) {
                 pushItemsIntoNearbyHandlers(getFrontFacing().getOpposite()); // outputs to back
                 pullItemsFromNearbyHandlers(getFrontFacing()); // inputs from front
             }

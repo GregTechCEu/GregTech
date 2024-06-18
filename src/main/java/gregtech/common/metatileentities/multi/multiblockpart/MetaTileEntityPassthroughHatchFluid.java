@@ -87,8 +87,8 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     @Override
     public void update() {
         super.update();
-        if (workingEnabled) {
-            if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+            if (workingEnabled) {
                 pushFluidsIntoNearbyHandlers(getFrontFacing().getOpposite()); // outputs to back
                 pullFluidsFromNearbyHandlers(getFrontFacing()); // inputs from front
             }
