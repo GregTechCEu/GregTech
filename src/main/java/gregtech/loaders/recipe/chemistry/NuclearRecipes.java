@@ -317,5 +317,27 @@ public class NuclearRecipes {
                 .chancedOutput(dust, Promethium, 265, 0)
                 .chancedFluidOutput(Xenon.getFluid(1000), 1025, 0)
                 .buildAndRegister();
+
+        // Radon from uranium bearing ores (TODO: Remove other route for radon?)
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(crushed, Uraninite)
+                .fluidInputs(DilutedHydrochloricAcid.getFluid(100))
+                .output(crushedPurified, Uraninite)
+                .fluidOutputs(RadonRichGasMixture.getFluid(1000))
+                .buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(crushed, Pitchblende)
+                .fluidInputs(DilutedHydrochloricAcid.getFluid(150))
+                .output(crushedPurified, Pitchblende)
+                .fluidOutputs(RadonRichGasMixture.getFluid(1500))
+                .buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder().duration(1000).EUt(VHA[HV])
+                .fluidInputs(RadonRichGasMixture.getFluid(3000))
+                .fluidOutputs(Radon.getFluid(1000))
+                .fluidOutputs(Helium.getFluid(2000))
+                .buildAndRegister();
     }
 }

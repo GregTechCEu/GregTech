@@ -709,6 +709,7 @@ public class Materials {
     public static Material PCBCoolant;
     public static Material Corium;
     public static Material SpentUraniumFuelSolution;
+    public static Material RadonRichGasMixture;
 
     /**
      * Second Degree Compounds

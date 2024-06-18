@@ -2080,7 +2080,8 @@ gregtech.material.acidic_naquadria_solution=Acidic Naquadria Solution
 gregtech.material.naquadria_waste=Naquadria Waste
 gregtech.material.lapotron=Lapotron
 gregtech.material.uu_matter=UU-Matter
-
+gregtech.material.spent_uranium_fuel_solution=Spent Uranium Fuel Solution
+gregtech.material.radon_rich_gas_mixture=Radon Rich Gas Mixture
 
 # Second Degree Materials
 gregtech.material.glass=Glass
@@ -2801,7 +2802,7 @@ tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
 
 # Nuclear Blocks
 tile.nuclear_casing.spent_fuel_casing.name=Spent Fuel Casing
-tile.gas_centrifuge_casing.gas_centrifuge_heater.name=Gas Centrifuge Heater
+tile.nuclear_casing.gas_centrifuge_heater.name=Gas Centrifuge Heater
 tile.gas_centrifuge_casing.gas_centrifuge_column.name=Gas Centrifuge Column
 
 # Creative tabs
