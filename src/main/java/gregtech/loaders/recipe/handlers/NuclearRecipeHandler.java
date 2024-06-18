@@ -18,17 +18,12 @@ public class NuclearRecipeHandler {
     }
 
     private static void processFuelRod(OrePrefix orePrefix, Material material, FissionFuelProperty oreProperty) {
-        SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(10000).EUt(20) // This is fine, since it goes up to 320x
-                                                                        // parallel
-                .input(fuelRod, material)
-                .output(fuelRodDepleted, material)
-                .buildAndRegister();
-
         MACERATOR_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(fuelRodDepleted, material)
                 .output(dust, Zircaloy, 4)
                 .buildAndRegister();
 
+        // This is fine, since it goes up to 320x parallel
         SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(10000).EUt(20)
                 .input(fuelRodHotDepleted, material)
                 .output(fuelRodDepleted, material)
