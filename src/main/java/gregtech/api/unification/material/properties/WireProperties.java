@@ -152,7 +152,7 @@ public class WireProperties implements IMaterialProperty, INodeData<WireProperti
 
     @Override
     public WireProperties getMinData(Set<WireProperties> datas) {
-        int amperage = Integer.MAX_VALUE;
+        int amperage = this.getAmperage();
         for (WireProperties data : datas) {
             amperage = Math.min(amperage, data.getAmperage());
         }

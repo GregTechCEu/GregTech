@@ -84,7 +84,7 @@ public class ItemPipeProperties implements IMaterialProperty, INodeData<ItemPipe
 
     @Override
     public ItemPipeProperties getMinData(Set<ItemPipeProperties> datas) {
-        float transferRate = Integer.MAX_VALUE;
+        float transferRate = this.getTransferRate();
         for (ItemPipeProperties data : datas) {
             transferRate = Math.min(transferRate, data.getTransferRate());
         }

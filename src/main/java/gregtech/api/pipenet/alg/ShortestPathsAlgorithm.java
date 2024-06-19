@@ -17,7 +17,7 @@ import java.util.List;
 
 public final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>,
         NDT extends INodeData<NDT>> extends CHManyToManyShortestPaths<NodeG<PT, NDT>, NetEdge>
-                                         implements NetAlgorithm<PT, NDT> {
+        implements INetAlgorithm<PT, NDT> {
 
     public ShortestPathsAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> graph) {
         super(graph);

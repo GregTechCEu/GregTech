@@ -1,8 +1,9 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.pipenet.flow.FlowChannel;
 import gregtech.api.pipenet.tile.IPipeTile;
+
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -13,22 +14,20 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
-public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NodeDataType extends INodeData<NodeDataType>>
                   implements INBTSerializable<NBTTagCompound> {
 
     public static final int DEFAULT_MARK = 0;
 
-    private final WorldPipeNetG<NodeDataType, PipeType> net;
+    private final WorldPipeNetSimple<NodeDataType, PipeType> net;
 
     private NodeDataType data;
     /**
@@ -57,15 +56,11 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     private NetGroup<PipeType, NodeDataType> group = null;
 
-    /**
-     * Stores the channels that this node is involved with. Used exclusively for flow graphs.
-     */
-    private final Set<FlowChannel<PipeType, NodeDataType>> channels = new ObjectOpenHashSet<>();
-
     private List<NetPath<PipeType, NodeDataType>> pathCache = null;
 
+
     public NodeG(NodeDataType data, IPipeTile<PipeType, NodeDataType> heldMTE,
-                 WorldPipeNetG<NodeDataType, PipeType> net) {
+                 WorldPipeNetSimple<NodeDataType, PipeType> net) {
         this.data = data;
         this.openConnections = 0;
         this.blockedConnections = 0;
@@ -91,22 +86,9 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     }
 
     /**
-     * Creates a dummy node for flow network calculations.
-     * Should never be required to reference its net, data, mte, or position.
-     */
-    public NodeG() {
-        this.nodePos = null;
-        this.net = null;
-        this.data = null;
-        this.heldMTE = new WeakReference<>(null);
-        this.openConnections = 0;
-        this.blockedConnections = 0;
-    }
-
-    /**
      * For construction during NBT reading only
      */
-    public NodeG(NBTTagCompound tag, WorldPipeNetG<NodeDataType, PipeType> net) {
+    public NodeG(NBTTagCompound tag, WorldPipeNetSimple<NodeDataType, PipeType> net) {
         this.nodePos = BlockPos.fromLong(tag.getLong("Pos"));
         deserializeNBT(tag);
         this.data = net.readNodeData(tag.getCompoundTag("Data"));
@@ -286,39 +268,6 @@ public class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     public void clearPathCache() {
         this.pathCache = null;
-    }
-
-    /**
-     * @param channel The channel to test. Can be null to check only if there is space for another channel.
-     * @return {@code true} if the provided channel can be supported by the node.
-     */
-    public boolean canSupportChannel(FlowChannel<PipeType, NodeDataType> channel) {
-        if (this.data == null) return true;
-        return this.channels.size() < this.data.getChannelMaxCount() || this.channels.contains(channel);
-    }
-
-    /**
-     * Adds a channel to a node's collection. Cannot go over the node's channel limit.
-     * 
-     * @param channel the channel to add.
-     * @return {@code true} if the channel was added or was already present.
-     */
-    public boolean addChannel(FlowChannel<PipeType, NodeDataType> channel) {
-        if (this.channels.size() < this.data.getChannelMaxCount()) {
-            this.channels.add(channel);
-            return true;
-        }
-        return this.channels.contains(channel);
-    }
-
-    /**
-     * Removes a channel from a node's collection.
-     * 
-     * @param channel the channel to remove.
-     * @return {@code true} if the channel was in the node's collection.
-     */
-    public boolean removeChannel(FlowChannel<PipeType, NodeDataType> channel) {
-        return this.channels.remove(channel);
     }
 
     @Override

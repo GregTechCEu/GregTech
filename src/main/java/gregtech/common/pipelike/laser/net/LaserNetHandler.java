@@ -2,6 +2,7 @@ package gregtech.common.pipelike.laser.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetGroup;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeG;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class LaserNetHandler implements ILaserContainer {
+public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
 
     private final WorldLaserPipeNet net;
     private final TileEntityLaserPipe pipe;
@@ -28,6 +29,16 @@ public class LaserNetHandler implements ILaserContainer {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
+    }
+
+    @Override
+    public WorldLaserPipeNet getNet() {
+        return net;
+    }
+
+    @Override
+    public EnumFacing getFacing() {
+        return facing;
     }
 
     private void setPipesActive() {
@@ -47,7 +58,7 @@ public class LaserNetHandler implements ILaserContainer {
             return null;
         }
 
-        List<NetPath<LaserPipeType, LaserPipeProperties>> data = net.getPaths(this.pipe);
+        List<NetPath<LaserPipeType, LaserPipeProperties>> data = net.getPaths(this.pipe, null);
         if (data == null || data.size() != 1) return null;
         Map<EnumFacing, TileEntity> connecteds = data.get(0).getTargetTEs();
         if (connecteds.size() != 1) return null;
@@ -108,10 +119,6 @@ public class LaserNetHandler implements ILaserContainer {
     @Override
     public long getInputVoltage() {
         return 0;
-    }
-
-    public WorldLaserPipeNet getNet() {
-        return net;
     }
 
     @Override

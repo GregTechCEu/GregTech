@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.GraphPath;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +37,10 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     public NetPath(NodeG<PipeType, NodeDataType> node) {
         this.sourceNode = node;
         this.targetNode = node;
-        this.nodeList = new ObjectArrayList<>(1);
-        this.nodeList.add(node);
+        this.nodeList = Collections.singletonList(node);
         this.weight = node.getData().getWeightFactor();
         this.edgeList = new ObjectArrayList<>(0);
+        assert this.nodeList.size() == this.edgeList.size() + 1;
     }
 
     /**
@@ -56,6 +57,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.nodeList = nodes;
         this.weight = weight;
         this.edgeList = edges;
+        assert this.nodeList.size() == this.edgeList.size() + 1;
     }
 
     /**
@@ -71,12 +73,17 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.weight = (path.getWeight() + sourceNode.getData().getWeightFactor() +
                 targetNode.getData().getWeightFactor()) / 2;
         this.edgeList = path.getEdgeList();
+        assert this.nodeList.size() == this.edgeList.size() + 1;
     }
 
     protected NetPath() {}
 
     public List<NodeG<PipeType, NodeDataType>> getNodeList() {
         return nodeList;
+    }
+
+    public List<NetEdge> getEdgeList() {
+        return edgeList;
     }
 
     public NodeG<PipeType, NodeDataType> getSourceNode() {
@@ -142,6 +149,10 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             return path.getNodeList();
         }
 
+        public List<NetEdge> getEdgeList() {
+            return path.getEdgeList();
+        }
+
         public NodeG<PT, NDT> getSourceNode() {
             return path.getSourceNode();
         }
@@ -158,7 +169,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             return path.getWeight();
         }
 
-        public NDT getData() {
+        public NDT getMinData() {
             return path.getMinData();
         }
 

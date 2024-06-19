@@ -1,14 +1,12 @@
 package gregtech.common.pipelike.itempipe.net;
 
-import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
-import gregtech.api.cover.CoverHolder;
+import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
-import gregtech.common.covers.*;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverItemFilter;
 import gregtech.common.covers.CoverRoboticArm;
@@ -18,9 +16,7 @@ import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -36,7 +32,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public class ItemNetHandler implements IItemHandler {
+public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
 
     private final WorldItemPipeNet net;
     private TileEntityItemPipe pipe;
@@ -55,10 +51,12 @@ public class ItemNetHandler implements IItemHandler {
         this.pipe = pipe;
     }
 
+    @Override
     public WorldItemPipeNet getNet() {
         return net;
     }
 
+    @Override
     public EnumFacing getFacing() {
         return facing;
     }
@@ -114,7 +112,7 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
-        for (NetPath<ItemPipeType, ItemPipeProperties> inv : net.getPaths(pipe)) {
+        for (NetPath<ItemPipeType, ItemPipeProperties> inv : net.getPaths(pipe, null)) {
             stack = insert(inv.firstFacing(), stack, simulate);
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
@@ -123,7 +121,7 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate, boolean global) {
-        List<NetPath<ItemPipeType, ItemPipeProperties>> routePaths = net.getPaths(pipe);
+        List<NetPath<ItemPipeType, ItemPipeProperties>> routePaths = net.getPaths(pipe, null);
         if (routePaths.isEmpty())
             return stack;
         if (routePaths.size() == 1 && routePaths.get(0).getTargetTEs().size() == 1) {
@@ -132,7 +130,7 @@ public class ItemNetHandler implements IItemHandler {
         List<NetPath<ItemPipeType, ItemPipeProperties>> routePathsCopy = new ArrayList<>(routePaths);
 
         if (global) {
-            stack = insertToHandlersEnhanced(routePathsCopy, stack, routePaths.size(), simulate);
+            stack = insertToHandlersEnhanced(routePathsCopy, stack, simulate);
         } else {
             stack = insertToHandlers(routePathsCopy, stack, simulate);
             if (!stack.isEmpty() && !routePathsCopy.isEmpty())
@@ -193,7 +191,7 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     private ItemStack insertToHandlersEnhanced(List<NetPath<ItemPipeType, ItemPipeProperties>> copy, ItemStack stack,
-                                               int dest, boolean simulate) {
+                                               boolean simulate) {
         List<EnhancedRoundRobinData> transferred = new ArrayList<>();
         IntList steps = new IntArrayList();
         int min = Integer.MAX_VALUE;
@@ -317,8 +315,11 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, ItemStack stack,
                             boolean simulate, boolean ignoreLimit) {
+        if (routePath.getTargetNode().getNodePos() == this.pipe.getPos() && routePath.facing == this.facing) {
+            return stack;
+        }
         int allowed = ignoreLimit ? stack.getCount() :
-                checkTransferable(routePath.getData().getTransferRate(), stack.getCount(), simulate);
+                checkTransferable(routePath.getMinData().getTransferRate(), stack.getCount(), simulate);
         if (allowed == 0 || !routePath.checkPredicate(stack)) {
             return stack;
         }
@@ -369,17 +370,6 @@ public class ItemNetHandler implements IItemHandler {
         ItemStack remainder = stack.copy();
         remainder.setCount(r + (stack.getCount() - toInsert.getCount()));
         return remainder;
-    }
-
-    public Cover getCoverOnNeighbour(BlockPos pos, EnumFacing facing) {
-        TileEntity tile = net.getNode(pos).getConnnected(facing);
-        if (tile != null) {
-            CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER,
-                    facing.getOpposite());
-            if (coverHolder == null) return null;
-            return coverHolder.getCoverAtSide(facing.getOpposite());
-        }
-        return null;
     }
 
     public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate,

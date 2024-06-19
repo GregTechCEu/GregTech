@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>>
-                                      implements NetAlgorithm<PT, NDT> {
+        implements INetAlgorithm<PT, NDT> {
 
     private final Graph<NodeG<PT, NDT>, NetEdge> graph;
     private final boolean isDirected;
@@ -50,7 +50,7 @@ public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT
             } else if (i.hasNext()) i.next();
             if (i.hasNext()) valid = false; // third edge detected - that's an invalid group
             lastNode = node;
-            node = (NodeG<PT, NDT>) (reversedEdge ? edge.getSource() : edge.getTarget());
+            node = reversedEdge ? edge.getCastSource() : edge.getCastTarget();
             edges.add(edge);
             nodes.add(node);
             sumWeight += node.getData().getWeightFactor();

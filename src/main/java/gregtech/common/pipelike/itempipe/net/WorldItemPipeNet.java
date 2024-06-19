@@ -2,7 +2,7 @@ package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.AbstractEdgePredicate;
-import gregtech.api.pipenet.WorldPipeNetG;
+import gregtech.api.pipenet.WorldPipeNetSimple;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.common.covers.CoverConveyor;
@@ -14,8 +14,12 @@ import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 
-public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipeType> {
+import net.minecraftforge.items.CapabilityItemHandler;
+
+// TODO move onto complex net
+public class WorldItemPipeNet extends WorldPipeNetSimple<ItemPipeProperties, ItemPipeType> {
 
     private static final String DATA_ID = "gregtech.item_pipe_net";
 
@@ -31,6 +35,11 @@ public class WorldItemPipeNet extends WorldPipeNetG<ItemPipeProperties, ItemPipe
 
     public WorldItemPipeNet(String name) {
         super(name, true, false);
+    }
+
+    @Override
+    protected Capability<?>[] getConnectionCapabilities() {
+        return new Capability[] { CapabilityItemHandler.ITEM_HANDLER_CAPABILITY };
     }
 
     @Override

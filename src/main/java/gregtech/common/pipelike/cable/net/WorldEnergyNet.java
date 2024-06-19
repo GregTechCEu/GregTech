@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.cable.net;
 
 import gregtech.api.pipenet.AbstractGroupData;
-import gregtech.api.pipenet.WorldPipeNetG;
+import gregtech.api.pipenet.WorldPipeNetSimple;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.common.pipelike.cable.Insulation;
@@ -9,8 +9,11 @@ import gregtech.common.pipelike.cable.tile.TileEntityCable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 
-public class WorldEnergyNet extends WorldPipeNetG<WireProperties, Insulation> {
+// TODO move onto complex net
+public class WorldEnergyNet extends WorldPipeNetSimple<WireProperties, Insulation> {
 
     private static final String DATA_ID_BASE = "gregtech.e_net";
 
@@ -27,6 +30,11 @@ public class WorldEnergyNet extends WorldPipeNetG<WireProperties, Insulation> {
 
     public WorldEnergyNet(String name) {
         super(name, false, false);
+    }
+
+    @Override
+    protected Capability<?>[] getConnectionCapabilities() {
+        return new Capability[] { CapabilityEnergy.ENERGY };
     }
 
     @Override

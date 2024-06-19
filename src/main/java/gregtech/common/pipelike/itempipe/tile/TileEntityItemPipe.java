@@ -57,7 +57,6 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-
             if (world.isRemote)
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
 

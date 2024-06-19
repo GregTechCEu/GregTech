@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
 import gregtech.api.capability.IOpticalDataAccessHatch;
+import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetGroup;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeG;
@@ -22,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationProvider {
+public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationProvider, IPipeNetHandler {
 
     private final TileEntityOpticalPipe pipe;
     private final EnumFacing facing;
@@ -36,8 +37,14 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
         this.facing = facing;
     }
 
+    @Override
     public WorldOpticalPipeNet getNet() {
         return net;
+    }
+
+    @Override
+    public EnumFacing getFacing() {
+        return facing;
     }
 
     @Override
@@ -88,7 +95,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     private boolean traverseRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
         if (isNetInvalidForTraversal()) return false;
 
-        List<NetPath<OpticalPipeType, OpticalPipeProperties>> inv = net.getPaths(this.pipe);
+        List<NetPath<OpticalPipeType, OpticalPipeProperties>> inv = net.getPaths(this.pipe, null);
         if (inv == null || inv.size() != 1) return false;
         Map<EnumFacing, TileEntity> connecteds = inv.get(0).getTargetTEs();
         if (connecteds.size() != 1) return false;
@@ -126,7 +133,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     private IOpticalComputationProvider getComputationProvider(@NotNull Collection<IOpticalComputationProvider> seen) {
         if (isNetInvalidForTraversal()) return null;
 
-        List<NetPath<OpticalPipeType, OpticalPipeProperties>> inv = net.getPaths(this.pipe);
+        List<NetPath<OpticalPipeType, OpticalPipeProperties>> inv = net.getPaths(this.pipe, null);
         if (inv == null || inv.size() != 1) return null;
         Map<EnumFacing, TileEntity> connecteds = inv.get(0).getTargetTEs();
         if (connecteds.size() != 1) return null;

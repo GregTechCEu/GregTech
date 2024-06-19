@@ -8,20 +8,20 @@ import gregtech.api.pipenet.block.IPipeType;
 import java.util.List;
 
 @FunctionalInterface
-public interface NetAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> {
+public interface INetAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> {
 
     List<NetPath<PT, NDT>> getPathsList(NodeG<PT, NDT> source);
 
     class NetAlgorithmWrapper<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             NodeDataType extends INodeData<NodeDataType>> {
 
-        NetAlgorithm<PipeType, NodeDataType> alg;
+        INetAlgorithm<PipeType, NodeDataType> alg;
 
-        public void setAlg(NetAlgorithm<PipeType, NodeDataType> alg) {
+        public void setAlg(INetAlgorithm<PipeType, NodeDataType> alg) {
             this.alg = alg;
         }
 
-        public NetAlgorithm<PipeType, NodeDataType> getAlg() {
+        public INetAlgorithm<PipeType, NodeDataType> getAlg() {
             return alg;
         }
 

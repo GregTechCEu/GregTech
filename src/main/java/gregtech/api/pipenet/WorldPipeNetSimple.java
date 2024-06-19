@@ -1,11 +1,10 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.pipenet.alg.NetAlgorithm;
+import gregtech.api.pipenet.alg.INetAlgorithm;
 import gregtech.api.pipenet.alg.ShortestPathsAlgorithm;
 import gregtech.api.pipenet.alg.SinglePathAlgorithm;
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.common.covers.CoverShutter;
@@ -17,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>,
+public abstract class WorldPipeNetSimple<NodeDataType extends INodeData<NodeDataType>,
         PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldSavedData {
 
     private final boolean isDirected;
@@ -45,15 +45,16 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     private Set<INBTBuilder> builders = null;
 
     private WeakReference<World> worldRef = new WeakReference<>(null);
-    // TODO move graph & algorithm into NetGroup to reduce unnecessary algorithm cost
     protected final Graph<NodeG<PipeType, NodeDataType>, NetEdge> pipeGraph;
     final Map<BlockPos, NodeG<PipeType, NodeDataType>> pipeMap = new Object2ObjectOpenHashMap<>();
 
-    final NetAlgorithm.NetAlgorithmWrapper<PipeType, NodeDataType> netAlgorithm;
+    final INetAlgorithm.NetAlgorithmWrapper<PipeType, NodeDataType> netAlgorithm;
 
     private boolean validAlgorithmInstance = false;
 
     /**
+     * Standard pipenet representation. Provides the base form of the pipenet abstraction.
+     *
      * @param isDirected   Determines whether this net needs directed graph handling.
      *                     Used to respect filter directions in the item net and fluid net, for example.
      *                     If the graph is not directed, pipes should not support blocked connections
@@ -61,28 +62,29 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
      * @param isSinglePath Determines whether this net allows only one source and one destination per group.
      *                     Allows for optimizations in path lookup and cache invalidation.
      */
-    public WorldPipeNetG(String name, boolean isDirected, boolean isSinglePath) {
+    public WorldPipeNetSimple(String name, boolean isDirected, boolean isSinglePath) {
         super(name);
         if (isDirected())
             this.pipeGraph = new SimpleDirectedWeightedGraph<>(NetEdge.class);
         else this.pipeGraph = new SimpleWeightedGraph<>(NetEdge.class);
-        this.netAlgorithm = new NetAlgorithm.NetAlgorithmWrapper<>();
+        this.netAlgorithm = new INetAlgorithm.NetAlgorithmWrapper<>();
         this.isDirected = isDirected;
         this.isSinglePath = isSinglePath;
         this.isFlow = false;
     }
 
-    /**
-     * Override only for use by {@link WorldPipeFlowNetG}
-     */
-    protected WorldPipeNetG(String name, boolean isDirected, boolean isSinglePath,
-                            Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph) {
+    protected WorldPipeNetSimple(String name, boolean isDirected, boolean isSinglePath,
+                                 Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph) {
         super(name);
         this.pipeGraph = graph;
-        this.netAlgorithm = null;
+        this.netAlgorithm = new INetAlgorithm.NetAlgorithmWrapper<>();
         this.isDirected = isDirected;
         this.isSinglePath = isSinglePath;
         this.isFlow = true;
+    }
+
+    public final Graph<NodeG<PipeType,NodeDataType>, NetEdge> getGraph() {
+        return this.pipeGraph;
     }
 
     public final boolean isDirected() {
@@ -124,7 +126,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
 
     public static String getDataID(final String baseID, final World world) {
         if (world == null || world.isRemote)
-            throw new RuntimeException("WorldPipeNetG should only be created on the server!");
+            throw new RuntimeException("WorldPipeNetSimple should only be created on the server!");
         int dimension = world.provider.getDimension();
         return dimension == 0 ? baseID : baseID + '.' + dimension;
     }
@@ -137,24 +139,28 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
      * Preferred override. Only collects a fresh TE from the server if the provided TE is invalid.
      * 
      * @param tile The {@link TileEntityPipeBase} that paths are being requested for
+     * @param testObject Can be null for simple nets. Complex nets need this for their behavior.
      * @return the ordered list of paths associated with the {@link TileEntityPipeBase}
      */
-    public List<NetPath<PipeType, NodeDataType>> getPaths(TileEntityPipeBase<PipeType, NodeDataType> tile) {
-        return getPaths(this.pipeMap.get(tile.getPipePos()), tile);
+    public List<NetPath<PipeType, NodeDataType>> getPaths(TileEntityPipeBase<PipeType, NodeDataType> tile,
+                                                          Object testObject) {
+        return getPaths(this.pipeMap.get(tile.getPipePos()), tile, testObject);
     }
 
     /**
      * Special-case override. Forces the collection of a fresh TE from the server.
      * 
      * @param pos The {@link BlockPos} that paths are being requested for
+     * @param testObject Can be null for simple nets. Complex nets need this for their behavior.
      * @return the ordered list of paths associated with the {@link BlockPos}
      */
-    public List<NetPath<PipeType, NodeDataType>> getPaths(BlockPos pos) {
-        return getPaths(this.pipeMap.get(pos), null);
+    public List<NetPath<PipeType, NodeDataType>> getPaths(BlockPos pos, Object testObject) {
+        return getPaths(this.pipeMap.get(pos), null, testObject);
     }
 
     public List<NetPath<PipeType, NodeDataType>> getPaths(@Nullable NodeG<PipeType, NodeDataType> node,
-                                                          @Nullable TileEntityPipeBase<PipeType, NodeDataType> tile) {
+                                                          @Nullable TileEntityPipeBase<PipeType, NodeDataType> tile,
+                                                          Object testObject) {
         if (node == null) return new ObjectArrayList<>();
 
         node.setHeldMTE(tile);
@@ -310,6 +316,8 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         }
     }
 
+    protected abstract Capability<?>[] getConnectionCapabilities();
+
     public boolean hasNode(BlockPos pos) {
         return pipeMap.containsKey(pos);
     }
@@ -338,7 +346,6 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
     public void addEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
                         @Nullable AbstractEdgePredicate<?> predicate) {
         addEdge(source, target, source.getData().getWeightFactor() + target.getData().getWeightFactor(), predicate);
-        this.markAlgInvalid();
     }
 
     public void addUndirectedEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target,
@@ -485,7 +492,7 @@ public abstract class WorldPipeNetG<NodeDataType extends INodeData<NodeDataType>
         NBTTagList allNetGroups = nbt.getTagList("NetGroups", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < allNetGroups.tagCount(); i++) {
             NBTTagCompound gTag = allNetGroups.getCompoundTagAt(i);
-            this.builders.add(new NetGroup.NBTBuilder<>(longPosMap, gTag, this.isFlow(), this.pipeGraph, this));
+            this.builders.add(new NetGroup.NBTBuilder<>(longPosMap, gTag, this.pipeGraph, this));
         }
     }
 

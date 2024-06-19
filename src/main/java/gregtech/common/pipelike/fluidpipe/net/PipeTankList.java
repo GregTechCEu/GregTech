@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
 
+// TODO implement old fluid handling for pipes
 public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
     private final TileEntityFluidPipe pipe;
@@ -77,7 +78,6 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             newFluid.amount = Math.min(pipe.getCapacityPerTank(), newFluid.amount);
             if (doFill) {
                 tank.setFluid(newFluid);
-                pipe.receivedFrom(newFluid.getFluid(), facing);
                 pipe.checkAndDestroy(newFluid);
             }
             return newFluid.amount;
@@ -87,7 +87,6 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             if (toAdd > 0) {
                 if (doFill) {
                     currentFluid.amount += toAdd;
-                    pipe.receivedFrom(currentFluid.getFluid(), facing);
                     pipe.checkAndDestroy(currentFluid);
                 }
                 return toAdd;

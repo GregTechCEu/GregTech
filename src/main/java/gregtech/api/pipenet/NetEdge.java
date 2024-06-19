@@ -3,18 +3,28 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.util.function.QuadConsumer;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import org.jetbrains.annotations.Nullable;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
+import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.function.Predicate;
 
 public final class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound> {
 
     private AbstractEdgePredicate<?> predicate;
     private boolean invertedPredicate;
+
+    public NetEdge() {}
 
     public void setPredicate(AbstractEdgePredicate<?> predicate) {
         this.predicate = predicate;
@@ -39,6 +49,16 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
     @Override
     public NodeG<?, ?> getTarget() {
         return (NodeG<?, ?>) super.getTarget();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> NodeG<PT, NDT> getCastSource() {
+        return (NodeG<PT, NDT>) getSource();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> NodeG<PT, NDT> getCastTarget() {
+        return (NodeG<PT, NDT>) getTarget();
     }
 
     @Override
@@ -90,6 +110,152 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
             if (buildable) {
                 edgeProducer.accept(node1, node2, weight, predicate);
             }
+        }
+    }
+
+    /// Complex graph related code ///
+
+    private int flowBufferTicks;
+    private ChannelsHolder channels;
+    private WeakHashMap<ChannelSimulator, ChannelsHolder> simulatedChannels;
+
+    private INodeData<? extends INodeData<?>> minData;
+
+    public NetEdge(int flowBufferTicks) {
+        this.flowBufferTicks = flowBufferTicks;
+        this.channels = new ChannelsHolder();
+        this.simulatedChannels = new WeakHashMap<>(9);
+    }
+
+    /**
+     * Claims a new, unique simulator instance for properly simulating flow edge limits without actually changing them.
+     * <br>
+     * This simulator must be discarded after use so that the garbage collector can clean up.
+     */
+    public static ChannelSimulator getNewSimulatorInstance() {
+        return new ChannelSimulator();
+    }
+
+    private ChannelsHolder getChannels(@Nullable ChannelSimulator simulator) {
+        if (simulator == null) return this.channels;
+        else {
+            ChannelsHolder channels = simulatedChannels.get(simulator);
+            if (channels == null) {
+                channels = new ChannelsHolder(this.channels);
+                simulatedChannels.put(simulator, channels);
+            }
+            return channels;
+        }
+    }
+
+    private INodeData<? extends INodeData<?>> getMinData() {
+        if (this.minData == null) this.minData = this.getCastSource().getData().getMinData(this.getCastTarget().getData());
+        return this.minData;
+    }
+
+    private int getAdjustedThroughput() {
+        return getMinData().getThroughput() * flowBufferTicks;
+    }
+
+    private boolean cannotSupportChannel(Object channel, long queryTick, @Nullable ChannelSimulator simulator) {
+        var channels = getChannels(simulator);
+        channels.recalculateFlowLimits(queryTick);
+        return channels.map.size() >= getMinData().getChannelMaxCount() && !channels.map.containsKey(channel);
+    }
+
+    public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> int getFlowLimit(
+            Object channel, Graph<NodeG<PT, NDT>, NetEdge> graph, long queryTick, @Nullable ChannelSimulator simulator) {
+        if (this.cannotSupportChannel(channel, queryTick, simulator)) {
+            return 0;
+        }
+        int limit = getChannels(simulator).map.getOrDefault(channel, getAdjustedThroughput());
+
+        NetEdge inverse = graph.getEdge(this.getCastTarget(), this.getCastSource());
+        if (inverse != null && inverse != this) {
+            if (inverse.cannotSupportChannel(channel, queryTick, simulator)) return 0;
+            limit += inverse.getConsumedLimit(channel, queryTick, simulator);
+        }
+
+        return limit;
+    }
+
+    public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> int getConsumedLimit(
+            Object channel, long queryTick, @Nullable ChannelSimulator simulator) {
+        var channels = getChannels(simulator);
+        channels.recalculateFlowLimits(queryTick);
+        int limit = getAdjustedThroughput();
+        return limit - channels.map.getOrDefault(channel, limit);
+    }
+
+    public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
+            Object channel, Graph<NodeG<PT, NDT>, NetEdge> graph, int amount, long queryTick, @Nullable ChannelSimulator simulator) {
+        if (amount == 0) return;
+        var channels = getChannels(simulator);
+        channels.recalculateFlowLimits(queryTick);
+
+        // check against reverse edge
+        NetEdge inverse = graph.getEdge(this.getCastTarget(), this.getCastSource());
+        if (inverse != null && inverse != this) {
+            int inverseConsumed = inverse.getConsumedLimit(channel, queryTick, simulator);
+            if (inverseConsumed != 0) {
+                int toFreeUp = Math.min(inverseConsumed, amount);
+                inverse.consumeFlowLimit(channel, graph, -toFreeUp, queryTick, simulator);
+                if (toFreeUp == amount) return;
+                amount -= toFreeUp;
+            }
+        }
+
+        int finalAmount = amount;
+        channels.map.compute(channel, (k, v) -> {
+            int d = getAdjustedThroughput();
+            if (v == null) v = d;
+            v -= finalAmount;
+            if (v >= d) return null;
+            return v;
+        });
+    }
+
+    private final class ChannelsHolder {
+        public final Object2IntOpenHashMap<Object> map;
+        public long lastQueryTick;
+
+        public ChannelsHolder() {
+            this.map = new Object2IntOpenHashMap<>(9);
+        }
+
+        public ChannelsHolder(ChannelsHolder prototype) {
+            this.map = prototype.map.clone();
+            this.lastQueryTick = prototype.lastQueryTick;
+        }
+
+        public void recalculateFlowLimits(long queryTick) {
+            int time = (int) (queryTick - this.lastQueryTick);
+            if (time < 0) {
+                this.map.clear();
+            } else {
+                List<Object> toRemove = new ObjectArrayList<>();
+                this.map.replaceAll((k, v) -> {
+                    v += time * getMinData().getThroughput();
+                    if (v >= getAdjustedThroughput()) toRemove.add(k);
+                    return v;
+                });
+                toRemove.forEach(this.map::removeInt);
+            }
+            this.lastQueryTick = queryTick;
+        }
+    }
+
+    public static final class ChannelSimulator {
+        private static int ID;
+        private final int id;
+        private ChannelSimulator() {
+            this.id = ID++;
+        }
+
+        @Override
+        public int hashCode() {
+            // enforcing hash uniqueness improves weak map performance
+            return id;
         }
     }
 }

@@ -3,7 +3,7 @@ package gregtech.integration.theoneprobe.provider.debug;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.NodeG;
-import gregtech.api.pipenet.WorldPipeNetG;
+import gregtech.api.pipenet.WorldPipeNetSimple;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -47,7 +47,7 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
             if (tileEntity instanceof TileEntityPipeBase) {
                 IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
                 BlockPipe<?, ?, ?> blockPipe = pipeTile.getPipeBlock();
-                WorldPipeNetG<?, ?> pipeNet = blockPipe.getWorldPipeNet(world);
+                WorldPipeNetSimple<?, ?> pipeNet = blockPipe.getWorldPipeNet(world);
                 if (pipeNet != null) {
                     probeInfo.text("Net: " + pipeNet.hashCode());
                     probeInfo.text("Node Info: ");

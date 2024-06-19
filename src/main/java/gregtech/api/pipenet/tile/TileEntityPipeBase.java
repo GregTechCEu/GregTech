@@ -7,7 +7,7 @@ import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NodeG;
-import gregtech.api.pipenet.WorldPipeNetG;
+import gregtech.api.pipenet.WorldPipeNetSimple;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
@@ -60,6 +60,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     private TileEntityPipeBase<PipeType, NodeDataType> tickingPipe;
 
     private boolean nbtLoad = false;
+    private boolean needsOldNetSetup = false;
 
     public TileEntityPipeBase() {
         super(false);
@@ -456,11 +457,17 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         this.nbtLoad = false;
 
-        if (!compound.hasKey("PipeNetVersion") && !compound.hasKey("PipeMaterial")) doOldNetSetup();
+        if (!compound.hasKey("PipeNetVersion") && !compound.hasKey("PipeMaterial")) markAsNeedingOldNetSetup();
+    }
+
+    protected void markAsNeedingOldNetSetup() {
+        this.needsOldNetSetup = true;
     }
 
     protected void doOldNetSetup() {
-        WorldPipeNetG<NodeDataType, PipeType> net = this.getPipeBlock().getWorldPipeNet(this.getPipeWorld());
+        // TODO inexplicable crash during world load when old net setup required
+        // something to do with removing the tile entities that the chunk is iterating over to load
+        WorldPipeNetSimple<NodeDataType, PipeType> net = this.getPipeBlock().getWorldPipeNet(this.getPipeWorld());
         net.markNodeAsOldData(this.getNode());
         for (EnumFacing facing : EnumFacing.VALUES) {
             NodeG<PipeType, NodeDataType> nodeOffset = net.getNode(this.getPipePos().offset(facing));
@@ -482,6 +489,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void onLoad() {
         super.onLoad();
+        if (this.needsOldNetSetup) doOldNetSetup();
     }
 
     protected void writePipeProperties(PacketBuffer buf) {

@@ -9,7 +9,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.INodeData;
-import gregtech.api.pipenet.WorldPipeNetG;
+import gregtech.api.pipenet.WorldPipeNetSimple;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -66,7 +66,7 @@ import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 @SuppressWarnings("deprecation")
 public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NodeDataType extends INodeData<NodeDataType>,
-        WorldPipeNetType extends WorldPipeNetG<NodeDataType, PipeType>> extends BuiltInRenderBlock
+        WorldPipeNetType extends WorldPipeNetSimple<NodeDataType, PipeType>> extends BuiltInRenderBlock
                                implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
     protected final ThreadLocal<IPipeTile<PipeType, NodeDataType>> tileEntities = new ThreadLocal<>();
@@ -239,7 +239,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                                        IPipeTile<PipeType, NodeDataType> pipeTile) {
         if (worldIn.isRemote) return;
 
-        WorldPipeNetG<NodeDataType, PipeType> pipeNet = getWorldPipeNet(worldIn);
+        WorldPipeNetSimple<NodeDataType, PipeType> pipeNet = getWorldPipeNet(worldIn);
         if (pipeNet != null && pipeTile != null) {
             int activeConnections = pipeTile.getConnections(); // remove blocked connections
             boolean isActiveNodeNow = activeConnections != 0;

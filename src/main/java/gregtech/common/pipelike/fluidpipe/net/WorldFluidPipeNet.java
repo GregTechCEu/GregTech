@@ -2,7 +2,8 @@ package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.AbstractEdgePredicate;
-import gregtech.api.pipenet.flow.WorldPipeFlowNetG;
+import gregtech.api.pipenet.NodeG;
+import gregtech.api.pipenet.WorldPipeNetComplex;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidFilter;
@@ -12,12 +13,18 @@ import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class WorldFluidPipeNet extends WorldPipeFlowNetG<FluidPipeProperties, FluidPipeType> {
+import java.util.Set;
+
+public class WorldFluidPipeNet extends WorldPipeNetComplex<FluidPipeProperties, FluidPipeType> {
+
+    // TODO handle fluids in old fluid pipes
 
     private static final String DATA_ID_BASE = "gregtech.fluid_pipe_net";
 
@@ -33,7 +40,12 @@ public class WorldFluidPipeNet extends WorldPipeFlowNetG<FluidPipeProperties, Fl
     }
 
     public WorldFluidPipeNet(String name) {
-        super(name, true);
+        super(name, true, false, 20);
+    }
+
+    @Override
+    protected Capability<?>[] getConnectionCapabilities() {
+        return new Capability[] { CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY };
     }
 
     @Override
@@ -68,11 +80,6 @@ public class WorldFluidPipeNet extends WorldPipeFlowNetG<FluidPipeProperties, Fl
         }
         // TODO should fluid regulators apply rate limits to edge predicates?
         return shutterify(predicate, thisCover, neighbourCover);
-    }
-
-    @Override
-    protected Capability<?> getSinkCapability() {
-        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
     }
 
     @Override

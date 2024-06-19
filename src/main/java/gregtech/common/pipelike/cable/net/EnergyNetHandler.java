@@ -3,6 +3,7 @@ package gregtech.common.pipelike.cable.net;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.AbstractGroupData;
+import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeG;
 import gregtech.api.unification.material.properties.WireProperties;
@@ -20,7 +21,7 @@ import net.minecraft.world.WorldServer;
 
 import java.util.Iterator;
 
-public class EnergyNetHandler implements IEnergyContainer {
+public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
 
     private final WorldEnergyNet net;
     private boolean transfer;
@@ -33,8 +34,14 @@ public class EnergyNetHandler implements IEnergyContainer {
         this.facing = facing;
     }
 
+    @Override
     public WorldEnergyNet getNet() {
         return net;
+    }
+
+    @Override
+    public EnumFacing getFacing() {
+        return facing;
     }
 
     @Override
@@ -66,7 +73,7 @@ public class EnergyNetHandler implements IEnergyContainer {
 
         long amperesUsed = 0L;
         mainloop:
-        for (NetPath<Insulation, WireProperties> routePath : net.getPaths(cable)) {
+        for (NetPath<Insulation, WireProperties> routePath : net.getPaths(cable, null)) {
             Iterator<EnumFacing> iterator = routePath.getFacingIterator();
             // weight = loss
             if (routePath.getWeight() >= voltage) {

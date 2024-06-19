@@ -7,22 +7,32 @@ import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
-import gregtech.common.pipelike.fluidpipe.net.FluidChannel;
+import gregtech.common.pipelike.fluidpipe.net.FluidNetHandler;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
+
+import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
+import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
+
+import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
+
+import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -36,7 +46,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,12 +60,18 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties>
-                                 implements IDataInfoProvider {
+public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> {
 
+    // old code to maintain compat with old worlds //
     private PipeTankList pipeTankList;
     private final EnumMap<EnumFacing, PipeTankList> tankLists = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
+    // ------------------------------------------- //
+
+    private final EnumMap<EnumFacing, FluidNetHandler> handlers = new EnumMap<>(EnumFacing.class);
+    private FluidNetHandler defaultHandler;
+    // the FluidNetHandler can only be created on the server so we have a empty placeholder for the client
+    private final IFluidHandler clientCapability = new FluidTank(0);
     private final int offset = GTValues.RNG.nextInt(20);
     private long lastSoundTime = 0;
 
@@ -62,15 +83,49 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            PipeTankList tankList = getTankList(facing);
-            if (tankList == null)
-                return null;
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(tankList);
+            if (world.isRemote)
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(clientCapability);
+
+            if (handlers.size() == 0)
+                initHandlers();
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
     }
 
+    private void initHandlers() {
+        WorldFluidPipeNet net = WorldFluidPipeNet.getWorldPipeNet(getPipeWorld());
+        for (EnumFacing facing : EnumFacing.values()) {
+            handlers.put(facing, new FluidNetHandler(net, this, facing));
+        }
+        defaultHandler = new FluidNetHandler(net, this, null);
+    }
+
+    @Override
+    public void transferDataFrom(IPipeTile<FluidPipeType, FluidPipeProperties> tileEntity) {
+        super.transferDataFrom(tileEntity);
+        TileEntityFluidPipe fluidPipe = (TileEntityFluidPipe) tileEntity;
+        // take handlers from old pipe
+        if (!fluidPipe.handlers.isEmpty()) {
+            this.handlers.clear();
+            for (FluidNetHandler handler : fluidPipe.handlers.values()) {
+                handler.updatePipe(this);
+                this.handlers.put(handler.getFacing(), handler);
+            }
+        }
+        if (fluidPipe.defaultHandler != null) {
+            fluidPipe.defaultHandler.updatePipe(this);
+            this.defaultHandler = fluidPipe.defaultHandler;
+        }
+    }
+
     public void checkAndDestroy(@NotNull FluidStack stack) {
+        var result = determineFluidPassthroughResult(stack.copy(), world, pos);
+        stack.amount *= result.getSecond();
+        result.getFirst().run();
+    }
+
+    public Tuple<Runnable, Double> determineFluidPassthroughResult(@NotNull FluidStack stack, World world, BlockPos pos) {
         Fluid fluid = stack.getFluid();
         FluidPipeProperties prop = getNodeData();
 
@@ -101,12 +156,22 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
 
         if (burning || leaking || corroding || shattering || melting) {
-            destroyPipe(stack, burning, leaking, corroding, shattering, melting);
-        }
+            return determineDestroyPipeResults(stack, burning, leaking, corroding, shattering, melting, world, pos);
+        } else return new Tuple<>(() -> {}, 1d);
     }
 
     public void destroyPipe(FluidStack stack, boolean isBurning, boolean isLeaking, boolean isCorroding,
                             boolean isShattering, boolean isMelting) {
+        var result = determineDestroyPipeResults(stack, isBurning, isLeaking, isCorroding, isShattering, isMelting, world, pos);
+        stack.amount *= result.getSecond();
+        result.getFirst().run();
+    }
+
+    public Tuple<Runnable, Double> determineDestroyPipeResults(FluidStack stack, boolean isBurning, boolean isLeaking,
+                                                               boolean isCorroding, boolean isShattering,
+                                                               boolean isMelting, World world, BlockPos pos) {
+        Runnable postAction = () -> {};
+        double mult = 1;
         // prevent the sound from spamming when filled from anything not a pipe
         if (getOffsetTimer() >= lastSoundTime + 10) {
             world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -118,7 +183,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                     7 + GTValues.RNG.nextInt(2));
 
             // voids 10%
-            stack.amount = Math.max(0, stack.amount * 9 / 10);
+            mult *= 0.9;
 
             // apply heat damage in area surrounding the pipe
             if (getOffsetTimer() % 20 == 0) {
@@ -141,7 +206,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                     3 + GTValues.RNG.nextInt(2));
 
             // voids 25%
-            stack.amount = Math.max(0, stack.amount * 3 / 4);
+            mult *= 0.75;
 
             // apply chemical damage in area surrounding the pipe
             if (getOffsetTimer() % 20 == 0) {
@@ -154,8 +219,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
             // 1/10 chance to void everything and destroy the pipe
             if (GTValues.RNG.nextInt(10) == 0) {
-                stack.amount = 0;
-                world.setBlockToAir(pos);
+                mult = 0;
+                postAction = () -> world.setBlockToAir(pos);
             }
         }
 
@@ -164,7 +229,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                     (isMelting ? 7 : 3) + GTValues.RNG.nextInt(2));
 
             // voids 75%
-            stack.amount = Math.max(0, stack.amount / 4);
+            mult *= 0.25;
 
             // 1/4 chance to burn everything around it
             if (GTValues.RNG.nextInt(4) == 0) {
@@ -183,8 +248,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
             // 1/10 chance to void everything and burn the pipe
             if (GTValues.RNG.nextInt(10) == 0) {
-                stack.amount = 0;
-                world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+                mult = 0;
+                postAction = () -> world.setBlockState(pos, Blocks.FIRE.getDefaultState());
             }
         }
 
@@ -193,7 +258,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                     3 + GTValues.RNG.nextInt(2));
 
             // voids 75%
-            stack.amount = Math.max(0, stack.amount / 4);
+            mult *= 0.75;
 
             // apply frost damage in area surrounding the pipe
             if (getOffsetTimer() % 20 == 0) {
@@ -207,19 +272,11 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
             // 1/10 chance to void everything and freeze the pipe
             if (GTValues.RNG.nextInt(10) == 0) {
-                stack.amount = 0;
-                world.setBlockToAir(pos);
+                mult = 0;
+                postAction = () -> world.setBlockToAir(pos);
             }
         }
-    }
-
-    public void receivedFrom(Fluid fluid, EnumFacing facing) {
-        // on fluid received, add us as a source to the proper channel
-        FluidChannel channel = FluidChannel.getChannelFromGroup(fluid, this.getNode().getGroupSafe());
-        channel.addSource(this.getNode());
-        if (facing != null) {
-            channel.addReceiveSide(this.getNode(), facing);
-        }
+        return new Tuple<>(postAction, mult);
     }
 
     public FluidStack getContainedFluid(int channel) {
@@ -329,6 +386,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     @Override
     public void readFromNBT(@NotNull NBTTagCompound nbt) {
         super.readFromNBT(nbt);
+        if (!nbt.hasKey("Fluids")) return;
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
         createTanksList();
         for (int i = 0; i < list.tagCount(); i++) {
@@ -336,42 +394,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             if (!tag.getBoolean("isNull")) {
                 FluidStack stack = FluidStack.loadFluidStackFromNBT(tag);
                 if (stack == null) continue;
-                fluidTanks[i].setFluid(stack);
-                // the best part is that this naturally gives us backwards compatibility.
-                FluidChannel channel = FluidChannel.getChannelFromGroup(stack.getFluid(),
-                        this.getNode().getGroupSafe());
-                channel.addSource(this.getNode());
+                // TODO old fluid in pipes handling
             }
         }
-    }
-
-    @NotNull
-    @Override
-    public List<ITextComponent> getDataInfo() {
-        List<ITextComponent> list = new ArrayList<>();
-
-        FluidStack[] fluids = this.getContainedFluids();
-        if (fluids != null) {
-            boolean allTanksEmpty = true;
-            for (int i = 0; i < fluids.length; i++) {
-                if (fluids[i] != null) {
-                    if (fluids[i].getFluid() == null)
-                        continue;
-
-                    allTanksEmpty = false;
-                    list.add(new TextComponentTranslation("behavior.tricorder.tank", i,
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(fluids[i].amount))
-                                    .setStyle(new Style().setColor(TextFormatting.GREEN)),
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getCapacityPerTank()))
-                                    .setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                            new TextComponentTranslation(fluids[i].getFluid().getLocalizedName(fluids[i]))
-                                    .setStyle(new Style().setColor(TextFormatting.GOLD))));
-                }
-            }
-
-            if (allTanksEmpty)
-                list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
-        }
-        return list;
     }
 }
