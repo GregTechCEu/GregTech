@@ -65,7 +65,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
         if (accessor.getNBTData().hasKey("gregtech.AbstractRecipeLogic")) {
             NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.AbstractRecipeLogic");
             if (tag.getBoolean("Working")) {
-                int eut = tag.getInteger("RecipeEUt");
+                long eut = tag.getLong("RecipeEUt");
                 boolean consumer = false;
                 String endText = null;
 

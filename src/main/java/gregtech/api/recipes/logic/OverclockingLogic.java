@@ -143,6 +143,7 @@ public final class OverclockingLogic {
         double eut = params.eut();
         int ocAmount = params.ocAmount();
         double parallel = 1;
+        int parallelIterAmount = 0;
         boolean shouldParallel = false;
 
         while (ocAmount-- > 0) {
@@ -154,11 +155,13 @@ public final class OverclockingLogic {
 
             if (shouldParallel) {
                 parallel /= durationFactor;
+                parallelIterAmount++;
             } else {
                 double potentialDuration = duration * durationFactor;
                 if (potentialDuration < 1) {
                     duration = 1;
-                    parallel *= voltageFactor;
+                    parallel /= durationFactor;
+                    parallelIterAmount++;
                     shouldParallel = true;
                 } else {
                     duration = potentialDuration;
@@ -166,7 +169,8 @@ public final class OverclockingLogic {
             }
         }
 
-        result.init((long) (eut / parallel), (int) duration, (int) parallel, (long) eut);
+        result.init((long) (eut / Math.pow(voltageFactor, parallelIterAmount)), (int) duration, (int) parallel,
+                (long) eut);
     }
 
     /**
@@ -198,6 +202,7 @@ public final class OverclockingLogic {
         double eut = params.eut();
         int ocAmount = params.ocAmount();
         double parallel = 1;
+        int parallelIterAmount = 0;
         boolean shouldParallel = false;
 
         while (ocAmount-- > 0) {
@@ -215,6 +220,7 @@ public final class OverclockingLogic {
                 } else {
                     parallel *= STD_DURATION_FACTOR_INV;
                 }
+                parallelIterAmount++;
             } else {
                 double potentialDuration;
                 if (perfect) {
@@ -231,6 +237,7 @@ public final class OverclockingLogic {
                         parallel *= STD_DURATION_FACTOR_INV;
                     }
 
+                    parallelIterAmount++;
                     shouldParallel = true;
                 } else {
                     duration = potentialDuration;
@@ -238,7 +245,8 @@ public final class OverclockingLogic {
             }
         }
 
-        result.init((long) (eut / parallel), (int) duration, (int) parallel, (long) eut);
+        result.init((long) (eut / Math.pow(STD_VOLTAGE_FACTOR, parallelIterAmount)), (int) duration, (int) parallel,
+                (long) eut);
     }
 
     /**

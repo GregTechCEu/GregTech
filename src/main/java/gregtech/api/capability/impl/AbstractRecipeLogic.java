@@ -712,7 +712,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * @param recipe the recipe to check
+     * @param recipe          the recipe to check
      * @param exportInventory the inventory to output to
      * @return if the recipe can be successfully output to the inventory
      */
@@ -728,7 +728,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * @param recipe the recipe to check
+     * @param recipe       the recipe to check
      * @param exportFluids the inventory to output to
      * @return if the recipe can be successfully output to the inventory
      */
@@ -782,7 +782,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         ocResult.setEut(builder.getEUt());
-        r = builder.EUt(recipe.getEUt())
+        r = builder.EUt(builder.getEUt())
                 .build()
                 .getResult();
 

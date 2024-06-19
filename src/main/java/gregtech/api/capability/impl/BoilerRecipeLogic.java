@@ -37,16 +37,16 @@ import static gregtech.api.capability.GregtechDataCodes.BOILER_LAST_TICK_STEAM;
 
 public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryOverride {
 
-    private static final long STEAM_PER_WATER = 160;
+    private static final int STEAM_PER_WATER = 160;
 
     private static final int FLUID_DRAIN_MULTIPLIER = 100;
     private static final int FLUID_BURNTIME_TO_EU = 800 / FLUID_DRAIN_MULTIPLIER;
 
     private int currentHeat;
-    private long lastTickSteamOutput;
-    private long excessWater;
-    private long excessFuel;
-    private long excessProjectedEU;
+    private int lastTickSteamOutput;
+    private int excessWater;
+    private int excessFuel;
+    private int excessProjectedEU;
 
     public BoilerRecipeLogic(MetaTileEntityLargeBoiler tileEntity) {
         super(tileEntity, null);
@@ -126,10 +126,10 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
                 if (fuelBurnTime / 80 > 0) { // try to ensure this fuel can burn for at least 1 tick
                     if (FluidUtil.getFluidHandler(stack) != null) continue;
                     this.excessFuel += fuelBurnTime % 80;
-                    long excessProgress = this.excessFuel / 80;
+                    int excessProgress = this.excessFuel / 80;
                     this.excessFuel %= 80;
-                    setMaxProgress(GTUtility.safeCastLongToInt(excessProgress +
-                            adjustBurnTimeForThrottle(boiler.boilerType.runtimeBoost(fuelBurnTime / 80))));
+                    setMaxProgress(excessProgress +
+                            adjustBurnTimeForThrottle(boiler.boilerType.runtimeBoost(fuelBurnTime / 80)));
                     stack.shrink(1);
                     didStartRecipe = true;
                     break;
@@ -152,20 +152,20 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     @Override
     protected void updateRecipeProgress() {
         if (canRecipeProgress) {
-            long generatedSteam = this.recipeEUt * getMaximumHeatFromMaintenance() / getMaximumHeat();
+            int generatedSteam = GTUtility
+                    .safeCastLongToInt(this.recipeEUt * getMaximumHeatFromMaintenance() / getMaximumHeat());
             if (generatedSteam > 0) {
-                long amount = (generatedSteam + STEAM_PER_WATER) / STEAM_PER_WATER;
+                int amount = (generatedSteam + STEAM_PER_WATER) / STEAM_PER_WATER;
                 excessWater += amount * STEAM_PER_WATER - generatedSteam;
                 amount -= excessWater / STEAM_PER_WATER;
                 excessWater %= STEAM_PER_WATER;
 
-                FluidStack drainedWater = getBoilerFluidFromContainer(getInputTank(),
-                        GTUtility.safeCastLongToInt(amount));
+                FluidStack drainedWater = getBoilerFluidFromContainer(getInputTank(), amount);
                 if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
                     getMetaTileEntity().explodeMultiblock((1.0f * currentHeat / getMaximumHeat()) * 8.0f);
                 } else {
                     setLastTickSteam(generatedSteam);
-                    getOutputTank().fill(Materials.Steam.getFluid(GTUtility.safeCastLongToInt(generatedSteam)), true);
+                    getOutputTank().fill(Materials.Steam.getFluid(generatedSteam), true);
                 }
             }
             if (currentHeat < getMaximumHeat()) {
@@ -185,20 +185,20 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
         } else return currentHeat;
     }
 
-    private long adjustEUtForThrottle(long rawEUt) {
+    private int adjustEUtForThrottle(int rawEUt) {
         int throttle = ((MetaTileEntityLargeBoiler) metaTileEntity).getThrottle();
-        return Math.max(25, (long) (rawEUt * (throttle / 100.0)));
+        return (int) Math.max(25, rawEUt * (throttle / 100.0));
     }
 
     private int adjustBurnTimeForThrottle(int rawBurnTime) {
         MetaTileEntityLargeBoiler boiler = (MetaTileEntityLargeBoiler) metaTileEntity;
-        long EUt = boiler.boilerType.steamPerTick();
-        long adjustedEUt = adjustEUtForThrottle(EUt);
-        long adjustedBurnTime = rawBurnTime * EUt / adjustedEUt;
-        this.excessProjectedEU += EUt * rawBurnTime - adjustedEUt * adjustedBurnTime;
+        int EUt = boiler.boilerType.steamPerTick();
+        int adjustedEUt = adjustEUtForThrottle(EUt);
+        int adjustedBurnTime = rawBurnTime * EUt / adjustedEUt;
+        this.excessProjectedEU += (EUt * rawBurnTime) - (adjustedEUt * adjustedBurnTime);
         adjustedBurnTime += this.excessProjectedEU / adjustedEUt;
         this.excessProjectedEU %= adjustedEUt;
-        return GTUtility.safeCastLongToInt(adjustedBurnTime);
+        return adjustedBurnTime;
     }
 
     private int getMaximumHeat() {
@@ -216,13 +216,13 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
         this.currentHeat = heat;
     }
 
-    public long getLastTickSteam() {
+    public int getLastTickSteam() {
         return lastTickSteamOutput;
     }
 
-    public void setLastTickSteam(long lastTickSteamOutput) {
+    public void setLastTickSteam(int lastTickSteamOutput) {
         if (lastTickSteamOutput != this.lastTickSteamOutput && !metaTileEntity.getWorld().isRemote) {
-            writeCustomData(BOILER_LAST_TICK_STEAM, b -> b.writeLong(lastTickSteamOutput));
+            writeCustomData(BOILER_LAST_TICK_STEAM, b -> b.writeInt(lastTickSteamOutput));
         }
         this.lastTickSteamOutput = lastTickSteamOutput;
     }
@@ -262,9 +262,9 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = super.serializeNBT();
         compound.setInteger("Heat", currentHeat);
-        compound.setLong("ExcessFuel", excessFuel);
-        compound.setLong("ExcessWater", excessWater);
-        compound.setLong("ExcessProjectedEU", excessProjectedEU);
+        compound.setInteger("ExcessFuel", excessFuel);
+        compound.setInteger("ExcessWater", excessWater);
+        compound.setInteger("ExcessProjectedEU", excessProjectedEU);
         return compound;
     }
 
@@ -272,23 +272,23 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     public void deserializeNBT(@NotNull NBTTagCompound compound) {
         super.deserializeNBT(compound);
         this.currentHeat = compound.getInteger("Heat");
-        this.excessFuel = compound.getLong("ExcessFuel");
-        this.excessWater = compound.getLong("ExcessWater");
-        this.excessProjectedEU = compound.getLong("ExcessProjectedEU");
+        this.excessFuel = compound.getInteger("ExcessFuel");
+        this.excessWater = compound.getInteger("ExcessWater");
+        this.excessProjectedEU = compound.getInteger("ExcessProjectedEU");
     }
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(currentHeat);
-        buf.writeLong(lastTickSteamOutput);
+        buf.writeInt(lastTickSteamOutput);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.currentHeat = buf.readVarInt();
-        this.lastTickSteamOutput = buf.readLong();
+        this.lastTickSteamOutput = buf.readInt();
     }
 
     @Override
@@ -297,7 +297,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
         if (dataId == BOILER_HEAT) {
             this.currentHeat = buf.readVarInt();
         } else if (dataId == BOILER_LAST_TICK_STEAM) {
-            this.lastTickSteamOutput = buf.readLong();
+            this.lastTickSteamOutput = buf.readInt();
         }
     }
 

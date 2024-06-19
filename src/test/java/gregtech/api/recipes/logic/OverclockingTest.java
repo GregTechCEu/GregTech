@@ -141,7 +141,7 @@ class OverclockingTest {
 
         assertThat(oc.eut(), is(recipeVoltage * 4));
         assertThat(oc.duration(), is(1));
-        assertThat(oc.parallel(), is(4));
+        assertThat(oc.parallel(), is(2));
         assertThat(oc.parallelEUt(), is(recipeVoltage * 4 * 4));
     }
 
