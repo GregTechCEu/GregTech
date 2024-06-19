@@ -98,7 +98,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    protected void setWorldCreate(World worldIn) {
+    protected void setWorldCreate(@NotNull World worldIn) {
         this.setWorld(worldIn);
     }
 
@@ -600,6 +600,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         return true;
     }
 
+    @Deprecated
     public void doExplosion(float explosionPower) {
         getWorld().setBlockToAir(getPos());
         if (!getWorld().isRemote) {

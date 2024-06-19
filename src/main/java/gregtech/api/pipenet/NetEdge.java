@@ -24,6 +24,7 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
     private AbstractEdgePredicate<?> predicate;
     private boolean invertedPredicate;
 
+    @SuppressWarnings("unused") // used via reflection
     public NetEdge() {}
 
     public void setPredicate(AbstractEdgePredicate<?> predicate) {
@@ -113,11 +114,11 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
         }
     }
 
-    /// Complex graph related code ///
+    /// Flow behavior related code ///
 
     private int flowBufferTicks;
     private ChannelsHolder channels;
-    private WeakHashMap<ChannelSimulator, ChannelsHolder> simulatedChannels;
+    private WeakHashMap<ChannelSimulatorKey, ChannelsHolder> simulatedChannels;
 
     private INodeData<? extends INodeData<?>> minData;
 
@@ -132,11 +133,11 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
      * <br>
      * This simulator must be discarded after use so that the garbage collector can clean up.
      */
-    public static ChannelSimulator getNewSimulatorInstance() {
-        return new ChannelSimulator();
+    public static ChannelSimulatorKey getNewSimulatorInstance() {
+        return new ChannelSimulatorKey();
     }
 
-    private ChannelsHolder getChannels(@Nullable ChannelSimulator simulator) {
+    private ChannelsHolder getChannels(@Nullable NetEdge.ChannelSimulatorKey simulator) {
         if (simulator == null) return this.channels;
         else {
             ChannelsHolder channels = simulatedChannels.get(simulator);
@@ -157,14 +158,14 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
         return getMinData().getThroughput() * flowBufferTicks;
     }
 
-    private boolean cannotSupportChannel(Object channel, long queryTick, @Nullable ChannelSimulator simulator) {
+    private boolean cannotSupportChannel(Object channel, long queryTick, @Nullable NetEdge.ChannelSimulatorKey simulator) {
         var channels = getChannels(simulator);
         channels.recalculateFlowLimits(queryTick);
         return channels.map.size() >= getMinData().getChannelMaxCount() && !channels.map.containsKey(channel);
     }
 
     public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> int getFlowLimit(
-            Object channel, Graph<NodeG<PT, NDT>, NetEdge> graph, long queryTick, @Nullable ChannelSimulator simulator) {
+            Object channel, Graph<NodeG<PT, NDT>, NetEdge> graph, long queryTick, @Nullable NetEdge.ChannelSimulatorKey simulator) {
         if (this.cannotSupportChannel(channel, queryTick, simulator)) {
             return 0;
         }
@@ -180,7 +181,7 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
     }
 
     public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> int getConsumedLimit(
-            Object channel, long queryTick, @Nullable ChannelSimulator simulator) {
+            Object channel, long queryTick, @Nullable NetEdge.ChannelSimulatorKey simulator) {
         var channels = getChannels(simulator);
         channels.recalculateFlowLimits(queryTick);
         int limit = getAdjustedThroughput();
@@ -188,7 +189,7 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
     }
 
     public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
-            Object channel, Graph<NodeG<PT, NDT>, NetEdge> graph, int amount, long queryTick, @Nullable ChannelSimulator simulator) {
+            Object channel, Graph<NodeG<PT, NDT>, NetEdge> graph, int amount, long queryTick, @Nullable NetEdge.ChannelSimulatorKey simulator) {
         if (amount == 0) return;
         var channels = getChannels(simulator);
         channels.recalculateFlowLimits(queryTick);
@@ -245,10 +246,10 @@ public final class NetEdge extends DefaultWeightedEdge implements INBTSerializab
         }
     }
 
-    public static final class ChannelSimulator {
+    public static final class ChannelSimulatorKey {
         private static int ID;
         private final int id;
-        private ChannelSimulator() {
+        private ChannelSimulatorKey() {
             this.id = ID++;
         }
 

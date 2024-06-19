@@ -134,6 +134,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
         if (pipe.getFrameMaterial() == null && pipe.getOffsetTimer() % 10 == 0) {
             if (entityIn instanceof EntityLivingBase) {
+                // TODO detection for what fluids have flowed through a pipe recently
                 if (pipe.getFluidTanks().length > 1) {
                     // apply temperature damage for the hottest and coldest pipe (multi fluid pipes)
                     int maxTemperature = Integer.MIN_VALUE;

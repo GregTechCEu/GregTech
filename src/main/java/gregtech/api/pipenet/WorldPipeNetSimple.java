@@ -184,7 +184,8 @@ public abstract class WorldPipeNetSimple<NodeDataType extends INodeData<NodeData
     protected List<NetPath<PipeType, NodeDataType>> verifyList(List<NetPath<PipeType, NodeDataType>> list,
                                                                NodeG<PipeType, NodeDataType> source) {
         if (!verifyNode(source)) return new ObjectArrayList<>();
-        return list.stream().filter(a -> verifyNode(a.getTargetNode())).collect(Collectors.toList());
+        return list.stream().filter(a -> verifyNode(a.getTargetNode()) && a.getWeight() != Double.POSITIVE_INFINITY)
+                .collect(Collectors.toList());
     }
 
     protected boolean verifyNode(NodeG<PipeType, NodeDataType> node) {

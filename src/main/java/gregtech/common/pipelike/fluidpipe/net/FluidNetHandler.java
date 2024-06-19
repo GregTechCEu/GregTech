@@ -11,6 +11,7 @@ import gregtech.common.covers.CoverPump;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -38,7 +40,9 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
 
     private final IFluidHandler testHandler = new FluidTank(Integer.MAX_VALUE);
 
-    private NetEdge.ChannelSimulator simulator;
+    private NetEdge.ChannelSimulatorKey simulatorKey;
+    private FluidStack lastFillResource;
+    private final Map<NodeG<FluidPipeType, FluidPipeProperties>, FluidPipeProperties.PipeLossResult> lossResultCache = new Object2ObjectOpenHashMap<>();
 
     public FluidNetHandler(WorldFluidPipeNet net, TileEntityFluidPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -70,14 +74,21 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
     public int fill(FluidStack resource, boolean doFill) {
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) return 0;
 
+        if (!resource.isFluidStackIdentical(this.lastFillResource)) {
+            // cache needs to persist through the entire 'try with doFill false then try with doFill true' process,
+            // but should not persist into a new fill attempt.
+            this.lossResultCache.clear();
+            this.lastFillResource = resource.copy();
+        }
+
         FluidTestObject testObject = new FluidTestObject(resource);
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
         // push flow through net
         List<NetPath<FluidPipeType, FluidPipeProperties>> paths =
                 this.getNet().getPaths(pipe, testObject);
         FluidStack helper = resource.copy();
-        if (!doFill) this.simulator = NetEdge.getNewSimulatorInstance();
-        else this.simulator = null;
+        if (!doFill) this.simulatorKey = NetEdge.getNewSimulatorInstance();
+        else this.simulatorKey = null;
         mainloop:
         for (NetPath<FluidPipeType, FluidPipeProperties> path : paths) {
             for (Iterator<EnumFacing> it = path.getFacingIterator(); it.hasNext(); ) {
@@ -87,7 +98,11 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
                 if (helper.amount <= 0) break mainloop;
             }
         }
-        if (!doFill) this.simulator = null;
+        if (!doFill) this.simulatorKey = null;
+        if (doFill && !this.lossResultCache.isEmpty()) {
+            this.lossResultCache.forEach((k, v) -> v.getPostAction().accept(k));
+            this.lossResultCache.clear();
+        }
         return resource.amount - helper.amount;
     }
 
@@ -180,20 +195,22 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         // iterate through path
         List<NodeG<FluidPipeType, FluidPipeProperties>> nodeList = routePath.getNodeList();
         List<NetEdge> edgeList = routePath.getEdgeList();
-        List<Consumer<Double>> flowLimitConsumers = new ObjectArrayList<>();
+        List<FlowConsumer> flowLimitConsumers = new ObjectArrayList<>();
         int inputAmount = resource.amount;
         int outputAmount = resource.amount;
         // always 1 less edge than nodes
         for (int i = 0; i < edgeList.size(); i++) {
-            NodeG<FluidPipeType, FluidPipeProperties> source = nodeList.get(i);
-            NodeG<FluidPipeType, FluidPipeProperties> target = nodeList.get(i + 1);
             NetEdge edge = edgeList.get(i);
-            int flow = Math.min(edge.getFlowLimit(testObject, getNet().getGraph(), tick, simulator), outputAmount);
+            if (!edge.getPredicate().test(resource)) return 0;
+            int flow = Math.min(edge.getFlowLimit(testObject, getNet().getGraph(), tick, simulatorKey), outputAmount);
             double ratio = (double) flow / outputAmount;
             inputAmount *= ratio;
-            flowLimitConsumers.add(finalRatio ->
-                    edge.consumeFlowLimit(testObject, getNet().getGraph(), (int) (finalRatio * flow), tick, simulator));
-            double loss = 1; // TODO fluid loss & pipe damage
+            flowLimitConsumers.forEach(c -> c.modifyRatio(ratio));
+            flowLimitConsumers.add(new FlowConsumer(edge, testObject, flow, tick));
+            // TODO undo loss when backflowing
+//            var sourceResult = getOrGenerateLossResult(nodeList.get(i), resource);
+            var targetResult = getOrGenerateLossResult(nodeList.get(i + 1), resource);
+            double loss = targetResult.getLossFunction();
             outputAmount = (int) (flow * loss);
         }
         // outputAmount is currently the maximum flow to the endpoint, and inputAmount is the requisite flow into the net
@@ -234,7 +251,43 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         return null;
     }
 
-    protected static class FluidTestObject {
+    protected FluidPipeProperties.PipeLossResult getOrGenerateLossResult(NodeG<FluidPipeType, FluidPipeProperties> node,
+                                                                         FluidStack resource) {
+        var cachedResult = this.lossResultCache.get(node);
+        if (cachedResult == null) {
+            cachedResult = node.getData().determineFluidPassthroughResult(resource, net.getWorld(), node.getNodePos());
+            this.lossResultCache.put(node, cachedResult);
+        }
+        return cachedResult;
+    }
+
+    protected final class FlowConsumer implements Consumer<Double> {
+
+        private final NetEdge edge;
+        private final FluidTestObject testObject;
+        private final int flow;
+        private final long tick;
+
+        private double ratio = 1;
+
+        public FlowConsumer(NetEdge edge, FluidTestObject testObject, int flow, long tick) {
+            this.edge = edge;
+            this.testObject = testObject;
+            this.flow = flow;
+            this.tick = tick;
+        }
+
+        public void modifyRatio(Double ratio) {
+            this.ratio *= ratio;
+        }
+
+        @Override
+        public void accept(Double finalRatio) {
+            edge.consumeFlowLimit(testObject, getNet().getGraph(), (int) (finalRatio * ratio * flow), tick, simulatorKey);
+        }
+    }
+
+    public static final class FluidTestObject {
 
         public final Fluid fluid;
         public final NBTTagCompound tag;
