@@ -655,6 +655,23 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @param recipe          The Recipe that will be consumed from the inputs and ran in the machine
      * @param importInventory The inventory that the recipe should be consumed from. Used mainly for Distinct bus
+     *                        implementation for multiblocks to specify a specific bus
+     * @return the recipe if the setup is successful, null if the setup is not successful
+     */
+    @MustBeInvokedByOverriders
+    protected @Nullable Recipe setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                           @NotNull IItemHandlerModifiable importInventory) {
+        return setupAndConsumeRecipeInputs(recipe, importInventory, this.getInputTank());
+    }
+
+    /**
+     * Determines if the provided recipe is possible to run from the provided inventory, or if there is anything
+     * preventing the Recipe from being completed.
+     * <p>
+     * Will consume the inputs of the Recipe if it is possible to run.
+     *
+     * @param recipe          The Recipe that will be consumed from the inputs and ran in the machine
+     * @param importInventory The inventory that the recipe should be consumed from. Used mainly for Distinct bus
      *                        implementation for multiblocks to specify a specific bus, or for addons to use external
      *                        inventories.
      * @param importFluids    The tanks that the recipe should be consumed from Used currently in addons to use
@@ -683,47 +700,46 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return null;
         }
 
-        IItemHandlerModifiable exportInventory = getOutputInventory();
-        IMultipleTankHandler exportFluids = getOutputTank();
+        if (checkOutputSpaceItems(recipe, getOutputInventory()) && checkOutputSpaceFluids(recipe, getOutputTank())) {
+            this.isOutputsFull = false;
+            if (recipe.matches(true, importInventory, importFluids)) {
+                this.metaTileEntity.addNotifiedInput(importInventory);
+                return recipe;
+            }
+        }
 
+        return null;
+    }
+
+    /**
+     * @param recipe the recipe to check
+     * @param exportInventory the inventory to output to
+     * @return if the recipe can be successfully output to the inventory
+     */
+    protected boolean checkOutputSpaceItems(@NotNull Recipe recipe, @NotNull IItemHandlerModifiable exportInventory) {
         // We have already trimmed outputs and chanced outputs at this time
         // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
         if (!metaTileEntity.canVoidRecipeItemOutputs() &&
                 !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
             this.isOutputsFull = true;
-            return null;
+            return false;
         }
+        return true;
+    }
 
+    /**
+     * @param recipe the recipe to check
+     * @param exportFluids the inventory to output to
+     * @return if the recipe can be successfully output to the inventory
+     */
+    protected boolean checkOutputSpaceFluids(@NotNull Recipe recipe, @NotNull IMultipleTankHandler exportFluids) {
         // We have already trimmed fluid outputs at this time
         if (!metaTileEntity.canVoidRecipeFluidOutputs() &&
                 !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getAllFluidOutputs())) {
             this.isOutputsFull = true;
-            return null;
+            return false;
         }
-
-        this.isOutputsFull = false;
-        if (recipe.matches(true, importInventory, importFluids)) {
-            this.metaTileEntity.addNotifiedInput(importInventory);
-            return recipe;
-        }
-        return null;
-    }
-
-    /**
-     * Determines if the provided recipe is possible to run from the provided inventory, or if there is anything
-     * preventing the Recipe from being completed.
-     * <p>
-     * Will consume the inputs of the Recipe if it is possible to run.
-     *
-     * @param recipe          The Recipe that will be consumed from the inputs and ran in the machine
-     * @param importInventory The inventory that the recipe should be consumed from. Used mainly for Distinct bus
-     *                        implementation for multiblocks to specify a specific bus
-     * @return the recipe if the setup is successful, null if the setup is not successful
-     */
-    @MustBeInvokedByOverriders
-    protected @Nullable Recipe setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
-                                                           @NotNull IItemHandlerModifiable importInventory) {
-        return setupAndConsumeRecipeInputs(recipe, importInventory, this.getInputTank());
+        return true;
     }
 
     /**
