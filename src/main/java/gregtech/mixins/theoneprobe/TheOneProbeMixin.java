@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -16,9 +17,12 @@ import mcjty.theoneprobe.network.PacketGetInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-// TODO, unsure if we actually need this one
+/**
+ * Makes TheOneProbe call {@link IBlockState#getActualState(IBlockAccess, BlockPos)} when
+ * looking at GT machines to show the correct harvest tool and level
+ */
 @Mixin(PacketGetInfo.class)
-@SuppressWarnings({ "unused", "deprecation" })
+@SuppressWarnings("deprecation")
 public class TheOneProbeMixin {
 
     @ModifyExpressionValue(method = "getProbeInfo",
