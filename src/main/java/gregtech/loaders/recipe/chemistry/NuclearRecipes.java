@@ -103,6 +103,7 @@ public class NuclearRecipes {
                 .input(dust, Zirconium, 16)
                 .input(dust, Tin, 2)
                 .input(dust, Chrome, 1)
+                .circuitMeta(1)
                 .output(dust, Zircaloy, 19)
                 .buildAndRegister();
 
@@ -113,7 +114,8 @@ public class NuclearRecipes {
                 .input(dust, Iron, 2)
                 .input(dust, Niobium)
                 .input(dust, Molybdenum)
-                .output(dust, Inconel, 10)
+                .circuitMeta(4)
+                .output(dust, Inconel, 11)
                 .buildAndRegister();
 
         // LEU-235 Dioxide
