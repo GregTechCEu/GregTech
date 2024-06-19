@@ -1,6 +1,5 @@
 package gregtech.mixins.vintagium;
 
-import gregtech.api.util.VintagiumMapperAccessor;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.BloomEffectVintagiumUtil;
 
@@ -17,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockRenderPassManager.class)
-public abstract class BlockRenderManagerMixin implements VintagiumMapperAccessor {
+public abstract class BlockRenderManagerMixin {
 
     @Shadow(remap = false)
     protected abstract void addMapping(BlockRenderLayer layer, BlockRenderPass type);
@@ -28,12 +27,7 @@ public abstract class BlockRenderManagerMixin implements VintagiumMapperAccessor
             remap = false)
     private static void gregtech$addMapping(CallbackInfoReturnable<BlockRenderPassManager> cir,
                                             @Local BlockRenderPassManager mapper) {
-        if (mapper instanceof VintagiumMapperAccessor accessor)
-            accessor.gregTech$addMapping(BloomEffectUtil.getBloomLayer(), BloomEffectVintagiumUtil.getBloomPass());
-    }
-
-    @Override
-    public void gregTech$addMapping(BlockRenderLayer layer, BlockRenderPass type) {
-        addMapping(layer, type);
+        ((BlockRenderManagerMixin) (Object) mapper).addMapping(BloomEffectUtil.getBloomLayer(),
+                BloomEffectVintagiumUtil.getBloomPass());
     }
 }
