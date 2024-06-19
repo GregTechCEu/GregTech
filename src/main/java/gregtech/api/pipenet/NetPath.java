@@ -1,6 +1,7 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.util.FacingPos;
 
 import net.minecraft.tileentity.TileEntity;
@@ -16,14 +17,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData<NodeDataType>> {
+        NodeDataType extends INodeData<NodeDataType>, E extends NetEdge> {
 
-    private List<NodeG<PipeType, NodeDataType>> nodeList;
-    private List<NetEdge> edgeList;
+    private List<NetNode<PipeType, NodeDataType, E>> nodeList;
+    private List<E> edgeList;
 
-    private NodeG<PipeType, NodeDataType> sourceNode;
+    private NetNode<PipeType, NodeDataType, E> sourceNode;
 
-    private NodeG<PipeType, NodeDataType> targetNode;
+    private NetNode<PipeType, NodeDataType, E> targetNode;
 
     private double weight;
 
@@ -34,7 +35,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * 
      * @param node the node to
      */
-    public NetPath(NodeG<PipeType, NodeDataType> node) {
+    public NetPath(NetNode<PipeType, NodeDataType, E> node) {
         this.sourceNode = node;
         this.targetNode = node;
         this.nodeList = Collections.singletonList(node);
@@ -51,7 +52,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @param edges  List of edges.
      * @param weight Sum weight of the path.
      */
-    public NetPath(List<NodeG<PipeType, NodeDataType>> nodes, List<NetEdge> edges, double weight) {
+    public NetPath(List<NetNode<PipeType, NodeDataType, E>> nodes, List<E> edges, double weight) {
         this.sourceNode = nodes.get(0);
         this.targetNode = nodes.get(nodes.size() - 1);
         this.nodeList = nodes;
@@ -65,7 +66,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * 
      * @param path the GraphPath
      */
-    public NetPath(GraphPath<NodeG<PipeType, NodeDataType>, NetEdge> path) {
+    public NetPath(GraphPath<NetNode<PipeType, NodeDataType, E>, E> path) {
         this.sourceNode = path.getStartVertex();
         this.targetNode = path.getEndVertex();
         this.nodeList = path.getVertexList();
@@ -78,19 +79,19 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     protected NetPath() {}
 
-    public List<NodeG<PipeType, NodeDataType>> getNodeList() {
+    public List<NetNode<PipeType, NodeDataType, E>> getNodeList() {
         return nodeList;
     }
 
-    public List<NetEdge> getEdgeList() {
+    public List<E> getEdgeList() {
         return edgeList;
     }
 
-    public NodeG<PipeType, NodeDataType> getSourceNode() {
+    public NetNode<PipeType, NodeDataType, E> getSourceNode() {
         return sourceNode;
     }
 
-    public NodeG<PipeType, NodeDataType> getTargetNode() {
+    public NetNode<PipeType, NodeDataType, E> getTargetNode() {
         return targetNode;
     }
 
@@ -98,11 +99,11 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return this.getTargetTEs().keySet().iterator();
     }
 
-    public FacedNetPath<PipeType, NodeDataType> firstFacing() {
+    public FacedNetPath<PipeType, NodeDataType, E> firstFacing() {
         return this.withFacing(this.getFacingIterator().next());
     }
 
-    public FacedNetPath<PipeType, NodeDataType> withFacing(EnumFacing facing) {
+    public FacedNetPath<PipeType, NodeDataType, E> withFacing(EnumFacing facing) {
         return new FacedNetPath<>(this, facing);
     }
 
@@ -118,7 +119,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         // generate min data on-demand and cache it, rather than generating for every path always
         if (this.data == null) {
             this.data = sourceNode.getData()
-                    .getMinData(this.nodeList.stream().map(NodeG::getData).collect(Collectors.toSet()));
+                    .getMinData(this.nodeList.stream().map(NetNode::getData).collect(Collectors.toSet()));
         }
         return data;
     }
@@ -130,13 +131,14 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return true;
     }
 
-    public static class FacedNetPath<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> {
+    public static class FacedNetPath<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>,
+            E extends NetEdge> {
 
-        public NetPath<PT, NDT> path;
+        public NetPath<PT, NDT, E> path;
 
         public EnumFacing facing;
 
-        public FacedNetPath(NetPath<PT, NDT> path, EnumFacing facing) {
+        public FacedNetPath(NetPath<PT, NDT, E> path, EnumFacing facing) {
             this.path = path;
             this.facing = facing;
         }
@@ -145,19 +147,19 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             return path.getTargetTEs().get(facing);
         }
 
-        public List<NodeG<PT, NDT>> getNodeList() {
+        public List<NetNode<PT, NDT, E>> getNodeList() {
             return path.getNodeList();
         }
 
-        public List<NetEdge> getEdgeList() {
+        public List<E> getEdgeList() {
             return path.getEdgeList();
         }
 
-        public NodeG<PT, NDT> getSourceNode() {
+        public NetNode<PT, NDT, E> getSourceNode() {
             return path.getSourceNode();
         }
 
-        public NodeG<PT, NDT> getTargetNode() {
+        public NetNode<PT, NDT, E> getTargetNode() {
             return path.getTargetNode();
         }
 

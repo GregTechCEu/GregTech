@@ -1,21 +1,22 @@
 package gregtech.api.pipenet.block.simple;
 
 import gregtech.api.pipenet.INodeData;
-import gregtech.api.pipenet.WorldPipeNetSimple;
+import gregtech.api.pipenet.WorldPipeNetBase;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 
 import net.minecraft.item.ItemStack;
 
 public abstract class BlockSimplePipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData<NodeDataType>,
-        WorldPipeNetType extends WorldPipeNetSimple<NodeDataType, PipeType>>
-                                     extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
+        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge,
+        WorldPipeNetType extends WorldPipeNetBase<NodeDataType, PipeType, Edge>>
+                                     extends BlockPipe<PipeType, NodeDataType, Edge, WorldPipeNetType> {
 
     @Override
-    public NodeDataType createProperties(IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public NodeDataType createProperties(IPipeTile<PipeType, NodeDataType, Edge> pipeTile) {
         return createProperties(pipeTile.getPipeType());
     }
 
@@ -27,7 +28,7 @@ public abstract class BlockSimplePipe<PipeType extends Enum<PipeType> & IPipeTyp
     protected abstract NodeDataType createProperties(PipeType pipeType);
 
     @Override
-    public ItemStack getDropItem(IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public ItemStack getDropItem(IPipeTile<PipeType, NodeDataType, Edge> pipeTile) {
         return new ItemStack(this, 1, pipeTile.getPipeType().ordinal());
     }
 
@@ -37,7 +38,7 @@ public abstract class BlockSimplePipe<PipeType extends Enum<PipeType> & IPipeTyp
     }
 
     @Override
-    public void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType> pipeTile, ItemStack itemStack) {
+    public void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType, Edge> pipeTile, ItemStack itemStack) {
         pipeTile.setPipeData(this, getItemPipeType(itemStack));
     }
 }

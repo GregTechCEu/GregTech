@@ -2,9 +2,10 @@ package gregtech.api.pipenet.tile;
 
 import gregtech.api.metatileentity.interfaces.INeighborCache;
 import gregtech.api.pipenet.INodeData;
-import gregtech.api.pipenet.NodeG;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.unification.material.Material;
 
 import net.minecraft.network.PacketBuffer;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData<NodeDataType>> extends INeighborCache {
+        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge> extends INeighborCache {
 
     World getPipeWorld();
 
@@ -39,9 +40,9 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         return getPipeWorld().getTotalWorldTime();
     }
 
-    BlockPipe<PipeType, NodeDataType, ?> getPipeBlock();
+    BlockPipe<PipeType, NodeDataType, Edge, ?> getPipeBlock();
 
-    void transferDataFrom(IPipeTile<PipeType, NodeDataType> sourceTile);
+    void transferDataFrom(IPipeTile<PipeType, NodeDataType, Edge> sourceTile);
 
     int getPaintingColor();
 
@@ -80,7 +81,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     NodeDataType getNodeData();
 
-    NodeG<PipeType, NodeDataType> getNode();
+    NetNode<PipeType, NodeDataType, Edge> getNode();
 
     @Nullable
     TileEntity getNonPipeNeighbour(EnumFacing facing);
@@ -92,7 +93,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     boolean supportsTicking();
 
-    IPipeTile<PipeType, NodeDataType> setSupportsTicking();
+    IPipeTile<PipeType, NodeDataType, Edge> setSupportsTicking();
 
     boolean canPlaceCoverOnSide(EnumFacing side);
 

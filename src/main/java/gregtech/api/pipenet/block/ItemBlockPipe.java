@@ -18,9 +18,9 @@ import org.jetbrains.annotations.NotNull;
 public class ItemBlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NodeDataType extends INodeData<NodeDataType>> extends ItemBlock {
 
-    protected final BlockPipe<PipeType, NodeDataType, ?> blockPipe;
+    protected final BlockPipe<PipeType, NodeDataType, ?, ?> blockPipe;
 
-    public ItemBlockPipe(BlockPipe<PipeType, NodeDataType, ?> block) {
+    public ItemBlockPipe(BlockPipe<PipeType, NodeDataType, ?, ?> block) {
         super(block);
         this.blockPipe = block;
         setHasSubtypes(true);

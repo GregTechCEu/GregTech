@@ -144,8 +144,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         event.getModelRegistry().putObject(modelLocation, this);
     }
 
-    public abstract void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe,
-                                       @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType,
+    public abstract void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?, ?> blockPipe,
+                                       @Nullable IPipeTile<?, ?, ?> pipeTile, IPipeType<?> pipeType,
                                        @Nullable Material material);
 
     @Override
@@ -158,9 +158,10 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         GlStateManager.enableBlend();
         renderState.reset();
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        BlockPipe<?, ?, ?> blockFluidPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stack.getItem()).getBlock();
+        BlockPipe<?, ?, ?, ?> blockFluidPipe = (BlockPipe<?, ?, ?, ?>) ((ItemBlockPipe<?, ?>) stack.getItem())
+                .getBlock();
         IPipeType<?> pipeType = blockFluidPipe.getItemPipeType(stack);
-        Material material = blockFluidPipe instanceof BlockMaterialPipe blockMaterialPipe ?
+        Material material = blockFluidPipe instanceof BlockMaterialPipe<?, ?, ?, ?>blockMaterialPipe ?
                 blockMaterialPipe.getItemMaterial(stack) : null;
         if (pipeType != null) {
             // 12 == 0b1100 is North and South connection (index 2 & 3)
@@ -180,8 +181,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.bind(buffer);
         renderState.setBrightness(world, pos);
 
-        BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) state.getBlock();
-        IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(world, pos);
+        BlockPipe<?, ?, ?, ?> blockPipe = (BlockPipe<?, ?, ?, ?>) state.getBlock();
+        IPipeTile<?, ?, ?> pipeTile = blockPipe.getPipeTileEntity(world, pos);
 
         if (pipeTile == null) {
             return false;
@@ -189,7 +190,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         IPipeType<?> pipeType = pipeTile.getPipeType();
         Material pipeMaterial = pipeTile instanceof TileEntityMaterialPipeBase ?
-                ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;
+                ((TileEntityMaterialPipeBase<?, ?, ?>) pipeTile).getPipeMaterial() : null;
         int paintingColor = pipeTile.getPaintingColor();
         int connectedSidesMap = pipeTile.getVisualConnections();
         int blockedConnections = pipeTile.getBlockedConnections();
@@ -223,7 +224,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         return true;
     }
 
-    private static void renderFrame(IPipeTile<?, ?> pipeTile, BlockPos pos, CCRenderState renderState,
+    private static void renderFrame(IPipeTile<?, ?, ?> pipeTile, BlockPos pos, CCRenderState renderState,
                                     int connections) {
         Material frameMaterial = pipeTile.getFrameMaterial();
         if (frameMaterial != null) {
@@ -377,8 +378,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.reset();
         renderState.bind(buffer);
         renderState.setPipeline(new Vector3(new Vec3d(pos)).translation(), new IconTransformation(sprite));
-        BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) state.getBlock();
-        IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(world, pos);
+        BlockPipe<?, ?, ?, ?> blockPipe = (BlockPipe<?, ?, ?, ?>) state.getBlock();
+        IPipeTile<?, ?, ?> pipeTile = blockPipe.getPipeTileEntity(world, pos);
         if (pipeTile == null) {
             return;
         }
@@ -426,13 +427,13 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         return true;
     }
 
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<?, ?> pipeTile) {
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<?, ?, ?> pipeTile) {
         if (pipeTile == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         IPipeType<?> pipeType = pipeTile.getPipeType();
         Material material = pipeTile instanceof TileEntityMaterialPipeBase ?
-                ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;
+                ((TileEntityMaterialPipeBase<?, ?, ?>) pipeTile).getPipeMaterial() : null;
         if (pipeType == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }

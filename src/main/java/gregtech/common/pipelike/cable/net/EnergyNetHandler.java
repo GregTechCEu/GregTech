@@ -4,8 +4,9 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.AbstractGroupData;
 import gregtech.api.pipenet.IPipeNetHandler;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
-import gregtech.api.pipenet.NodeG;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -73,7 +74,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
 
         long amperesUsed = 0L;
         mainloop:
-        for (NetPath<Insulation, WireProperties> routePath : net.getPaths(cable, null)) {
+        for (NetPath<Insulation, WireProperties, NetEdge> routePath : net.getPaths(cable, null)) {
             Iterator<EnumFacing> iterator = routePath.getFacingIterator();
             // weight = loss
             if (routePath.getWeight() >= voltage) {
@@ -81,7 +82,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                 continue;
             }
             while (iterator.hasNext()) {
-                NetPath.FacedNetPath<Insulation, WireProperties> path = routePath.withFacing(iterator.next());
+                NetPath.FacedNetPath<Insulation, WireProperties, NetEdge> path = routePath.withFacing(iterator.next());
 
                 EnumFacing facing = path.facing.getOpposite();
 
@@ -93,7 +94,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
 
                 long pathVoltage = voltage - (long) routePath.getWeight();
                 boolean cableBroken = false;
-                for (NodeG<Insulation, WireProperties> node : path.getNodeList()) {
+                for (NetNode<Insulation, WireProperties, NetEdge> node : path.getNodeList()) {
                     TileEntityCable cable = (TileEntityCable) node.getHeldMTE();
                     if (cable.getMaxVoltage() < voltage) {
                         int heat = (int) (Math.log(
@@ -123,7 +124,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                 amperesUsed += amps;
                 long voltageTraveled = voltage;
                 // TODO compress wire path operations into a single for loop
-                for (NodeG<Insulation, WireProperties> node : path.getNodeList()) {
+                for (NetNode<Insulation, WireProperties, NetEdge> node : path.getNodeList()) {
                     TileEntityCable cable = (TileEntityCable) node.getHeldMTE();
                     voltageTraveled -= cable.getNodeData().getLossPerBlock();
                     if (voltageTraveled <= 0) break;

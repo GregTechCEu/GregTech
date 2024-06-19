@@ -1,6 +1,6 @@
 package gregtech.api.pipenet.longdist;
 
-import gregtech.api.pipenet.WorldPipeNetSimple;
+import gregtech.api.pipenet.WorldPipeNetBase;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -331,7 +331,7 @@ public class LongDistanceNetwork {
             if (worldData != null) {
                 return worldData;
             }
-            String DATA_ID = WorldPipeNetSimple.getDataID("long_dist_pipe", world);
+            String DATA_ID = WorldPipeNetBase.getDataID("long_dist_pipe", world);
             WorldData netWorldData = (WorldData) world.loadData(WorldData.class, DATA_ID);
             if (netWorldData == null) {
                 netWorldData = new WorldData(DATA_ID);

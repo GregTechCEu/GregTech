@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.itempipe.tile;
 
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 
-public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
+public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties, NetEdge> {
 
     private final EnumMap<EnumFacing, ItemNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private final Object2IntMap<FacingPos> transferred = new Object2IntOpenHashMap<>();
@@ -76,7 +77,7 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     }
 
     @Override
-    public void transferDataFrom(IPipeTile<ItemPipeType, ItemPipeProperties> tileEntity) {
+    public void transferDataFrom(IPipeTile<ItemPipeType, ItemPipeProperties, NetEdge> tileEntity) {
         super.transferDataFrom(tileEntity);
         TileEntityItemPipe itemPipe = (TileEntityItemPipe) tileEntity;
         // take handlers from old pipe

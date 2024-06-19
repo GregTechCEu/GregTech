@@ -3,7 +3,6 @@ package gregtech.api.pipenet;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.filter.BaseFilterContainer;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import org.jetbrains.annotations.Contract;

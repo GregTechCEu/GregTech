@@ -4,8 +4,9 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetGroup;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
-import gregtech.api.pipenet.NodeG;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
 import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
@@ -42,9 +43,10 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
     }
 
     private void setPipesActive() {
-        NetGroup<LaserPipeType, LaserPipeProperties> group = getNet().getNode(this.pipe.getPipePos()).getGroupSafe();
+        NetGroup<LaserPipeType, LaserPipeProperties, NetEdge> group = getNet().getNode(this.pipe.getPipePos())
+                .getGroupSafe();
         if (group != null) {
-            for (NodeG<LaserPipeType, LaserPipeProperties> node : group.getNodes()) {
+            for (NetNode<LaserPipeType, LaserPipeProperties, NetEdge> node : group.getNodes()) {
                 if (node.getHeldMTE() instanceof TileEntityLaserPipe laserPipe) {
                     laserPipe.setActive(true, 100);
                 }
@@ -58,7 +60,7 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
             return null;
         }
 
-        List<NetPath<LaserPipeType, LaserPipeProperties>> data = net.getPaths(this.pipe, null);
+        List<NetPath<LaserPipeType, LaserPipeProperties, NetEdge>> data = net.getPaths(this.pipe, null);
         if (data == null || data.size() != 1) return null;
         Map<EnumFacing, TileEntity> connecteds = data.get(0).getTargetTEs();
         if (connecteds.size() != 1) return null;

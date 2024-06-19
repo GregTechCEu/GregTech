@@ -2,6 +2,7 @@ package gregtech.common.pipelike.laser.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.pipenet.WorldPipeNetSimple;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
 import gregtech.common.pipelike.laser.LaserPipeType;
@@ -9,7 +10,6 @@ import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public class WorldLaserPipeNet extends WorldPipeNetSimple<LaserPipeProperties, L
     }
 
     @Override
-    protected Class<? extends IPipeTile<LaserPipeType, LaserPipeProperties>> getBasePipeClass() {
+    protected Class<? extends IPipeTile<LaserPipeType, LaserPipeProperties, NetEdge>> getBasePipeClass() {
         return TileEntityLaserPipe.class;
     }
 

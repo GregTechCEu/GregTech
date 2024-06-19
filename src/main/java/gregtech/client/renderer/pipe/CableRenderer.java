@@ -40,7 +40,8 @@ public class CableRenderer extends PipeRenderer {
     }
 
     @Override
-    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, IPipeTile<?, ?> pipeTile,
+    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?, ?> blockPipe,
+                              IPipeTile<?, ?, ?> pipeTile,
                               IPipeType<?> pipeType, @Nullable Material material) {
         if (material == null || !(pipeType instanceof Insulation)) {
             return;
@@ -82,7 +83,7 @@ public class CableRenderer extends PipeRenderer {
     }
 
     @Override
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<?, ?> pipeTile) {
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<?, ?, ?> pipeTile) {
         if (pipeTile == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
@@ -91,7 +92,7 @@ public class CableRenderer extends PipeRenderer {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         Material material = pipeTile instanceof TileEntityMaterialPipeBase ?
-                ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;
+                ((TileEntityMaterialPipeBase<?, ?, ?>) pipeTile).getPipeMaterial() : null;
 
         TextureAtlasSprite atlasSprite;
         int particleColor;

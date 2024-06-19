@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
@@ -31,7 +32,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties, WorldLaserPipeNet> {
+public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties, NetEdge, WorldLaserPipeNet> {
 
     private final LaserPipeType pipeType;
     private final LaserPipeProperties properties;
@@ -59,12 +60,12 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public TileEntityPipeBase<LaserPipeType, LaserPipeProperties> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<LaserPipeType, LaserPipeProperties, NetEdge> createNewTileEntity(boolean supportsTicking) {
         return new TileEntityLaserPipe();
     }
 
     @Override
-    public LaserPipeProperties createProperties(IPipeTile<LaserPipeType, LaserPipeProperties> pipeTile) {
+    public LaserPipeProperties createProperties(IPipeTile<LaserPipeType, LaserPipeProperties, NetEdge> pipeTile) {
         LaserPipeType pipeType = pipeTile.getPipeType();
         if (pipeType == null) return getFallbackType();
         return this.pipeType.modifyProperties(properties);
@@ -79,7 +80,7 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public ItemStack getDropItem(IPipeTile<LaserPipeType, LaserPipeProperties> pipeTile) {
+    public ItemStack getDropItem(IPipeTile<LaserPipeType, LaserPipeProperties, NetEdge> pipeTile) {
         return new ItemStack(this, 1, pipeType.ordinal());
     }
 
@@ -97,7 +98,7 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public void setTileEntityData(TileEntityPipeBase<LaserPipeType, LaserPipeProperties> pipeTile,
+    public void setTileEntityData(TileEntityPipeBase<LaserPipeType, LaserPipeProperties, NetEdge> pipeTile,
                                   ItemStack itemStack) {
         pipeTile.setPipeData(this, pipeType);
     }
@@ -113,14 +114,14 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side,
-                                   IPipeTile<LaserPipeType, LaserPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<LaserPipeType, LaserPipeProperties, NetEdge> selfTile, EnumFacing side,
+                                   IPipeTile<LaserPipeType, LaserPipeProperties, NetEdge> sideTile) {
         return selfTile instanceof TileEntityLaserPipe && sideTile instanceof TileEntityLaserPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side,
-                                         @Nullable TileEntity tile) {
+    public boolean canPipeConnectToBlock(IPipeTile<LaserPipeType, LaserPipeProperties, NetEdge> selfTile,
+                                         EnumFacing side, @Nullable TileEntity tile) {
         return tile != null &&
                 tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, side.getOpposite()) != null;
     }

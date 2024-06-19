@@ -10,12 +10,12 @@ import net.minecraft.util.math.BlockPos;
 
 public interface IPipeNetHandler {
 
-    WorldPipeNetSimple<?, ?> getNet();
+    WorldPipeNetBase<?, ?, ?> getNet();
 
     EnumFacing getFacing();
 
     default Cover getCoverOnNeighbour(BlockPos pos, EnumFacing facing) {
-        NodeG<?, ?> node = getNet().getNode(pos);
+        NetNode<?, ?, ?> node = getNet().getNode(pos);
         if (node != null) {
             TileEntity tile = node.getConnnected(facing);
             if (tile != null) {

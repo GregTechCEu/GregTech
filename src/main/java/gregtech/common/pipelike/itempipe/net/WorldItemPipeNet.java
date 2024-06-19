@@ -3,6 +3,7 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.AbstractEdgePredicate;
 import gregtech.api.pipenet.WorldPipeNetSimple;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.common.covers.CoverConveyor;
@@ -15,7 +16,6 @@ import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-
 import net.minecraftforge.items.CapabilityItemHandler;
 
 // TODO move onto complex net
@@ -43,7 +43,7 @@ public class WorldItemPipeNet extends WorldPipeNetSimple<ItemPipeProperties, Ite
     }
 
     @Override
-    protected Class<? extends IPipeTile<ItemPipeType, ItemPipeProperties>> getBasePipeClass() {
+    protected Class<? extends IPipeTile<ItemPipeType, ItemPipeProperties, NetEdge>> getBasePipeClass() {
         return TileEntityItemPipe.class;
     }
 

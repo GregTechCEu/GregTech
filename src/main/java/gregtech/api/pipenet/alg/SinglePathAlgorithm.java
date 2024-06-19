@@ -1,10 +1,10 @@
 package gregtech.api.pipenet.alg;
 
 import gregtech.api.pipenet.INodeData;
-import gregtech.api.pipenet.NetEdge;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
-import gregtech.api.pipenet.NodeG;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.NetEdge;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
@@ -12,33 +12,33 @@ import org.jgrapht.Graph;
 import java.util.Iterator;
 import java.util.List;
 
-public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>>
-        implements INetAlgorithm<PT, NDT> {
+public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>,
+        E extends NetEdge> implements INetAlgorithm<PT, NDT, E> {
 
-    private final Graph<NodeG<PT, NDT>, NetEdge> graph;
+    private final Graph<NetNode<PT, NDT, E>, E> graph;
     private final boolean isDirected;
 
-    public SinglePathAlgorithm(Graph<NodeG<PT, NDT>, NetEdge> graph, boolean isDirected) {
+    public SinglePathAlgorithm(Graph<NetNode<PT, NDT, E>, E> graph, boolean isDirected) {
         this.graph = graph;
         this.isDirected = isDirected;
     }
 
     @Override
-    public List<NetPath<PT, NDT>> getPathsList(NodeG<PT, NDT> source) {
+    public List<NetPath<PT, NDT, E>> getPathsList(NetNode<PT, NDT, E> source) {
         if (!this.graph.containsVertex(source)) {
             throw new IllegalArgumentException("Graph must contain the source vertex");
         }
-        List<NetPath<PT, NDT>> paths = new ObjectArrayList<>();
-        List<NetEdge> edges = new ObjectArrayList<>();
-        List<NodeG<PT, NDT>> nodes = new ObjectArrayList<>();
+        List<NetPath<PT, NDT, E>> paths = new ObjectArrayList<>();
+        List<E> edges = new ObjectArrayList<>();
+        List<NetNode<PT, NDT, E>> nodes = new ObjectArrayList<>();
         nodes.add(source);
-        NodeG<PT, NDT> lastNode = null;
-        NodeG<PT, NDT> node = source;
-        NetEdge edge;
+        NetNode<PT, NDT, E> lastNode = null;
+        NetNode<PT, NDT, E> node = source;
+        E edge;
         double sumWeight = source.getData().getWeightFactor();
         boolean valid = true;
         while (valid) {
-            Iterator<NetEdge> i = this.graph.outgoingEdgesOf(node).iterator();
+            Iterator<E> i = this.graph.outgoingEdgesOf(node).iterator();
             if (!i.hasNext()) break; // we've reached the end, exit the loop while still valid
             edge = i.next();
             // if we are directed, we know that the target is the target.

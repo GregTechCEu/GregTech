@@ -3,6 +3,7 @@ package gregtech.common.pipelike.laser.tile;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.TaskScheduler;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 
-public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties> {
+public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties, NetEdge> {
 
     private final EnumMap<EnumFacing, LaserNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the LaserNetHandler can only be created on the server, so we have an empty placeholder for the client
@@ -74,7 +75,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     @Override
-    public void transferDataFrom(IPipeTile<LaserPipeType, LaserPipeProperties> tileEntity) {
+    public void transferDataFrom(IPipeTile<LaserPipeType, LaserPipeProperties, NetEdge> tileEntity) {
         super.transferDataFrom(tileEntity);
         if (getPipeBlock().getWorldPipeNet(getPipeWorld()) == null) {
             return;
@@ -103,7 +104,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
 
             // check the same for the targeted pipe
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
-            if (tile instanceof IPipeTile<?, ?>pipeTile &&
+            if (tile instanceof IPipeTile<?, ?, ?>pipeTile &&
                     pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
                 connections = pipeTile.getConnections();
                 connections &= ~(1 << side.getIndex());

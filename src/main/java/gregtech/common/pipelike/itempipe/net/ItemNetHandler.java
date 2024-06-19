@@ -3,6 +3,7 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetPath;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
@@ -112,7 +113,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
-        for (NetPath<ItemPipeType, ItemPipeProperties> inv : net.getPaths(pipe, null)) {
+        for (NetPath<ItemPipeType, ItemPipeProperties, NetEdge> inv : net.getPaths(pipe, null)) {
             stack = insert(inv.firstFacing(), stack, simulate);
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
@@ -121,13 +122,13 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
     }
 
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate, boolean global) {
-        List<NetPath<ItemPipeType, ItemPipeProperties>> routePaths = net.getPaths(pipe, null);
+        List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePaths = net.getPaths(pipe, null);
         if (routePaths.isEmpty())
             return stack;
         if (routePaths.size() == 1 && routePaths.get(0).getTargetTEs().size() == 1) {
             return insert(routePaths.get(0).firstFacing(), stack, simulate);
         }
-        List<NetPath<ItemPipeType, ItemPipeProperties>> routePathsCopy = new ArrayList<>(routePaths);
+        List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePathsCopy = new ArrayList<>(routePaths);
 
         if (global) {
             stack = insertToHandlersEnhanced(routePathsCopy, stack, simulate);
@@ -149,19 +150,19 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
      * @param simulate simulate
      * @return remainder
      */
-    private ItemStack insertToHandlers(List<NetPath<ItemPipeType, ItemPipeProperties>> copy, ItemStack stack,
+    private ItemStack insertToHandlers(List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> copy, ItemStack stack,
                                        boolean simulate) {
-        Iterator<NetPath<ItemPipeType, ItemPipeProperties>> routePathIterator = copy.listIterator();
+        Iterator<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePathIterator = copy.listIterator();
         int inserted = 0;
         int count = stack.getCount();
         int c = count / copy.size();
         int m = c == 0 ? count % copy.size() : 0;
         mainloop:
         while (routePathIterator.hasNext()) {
-            NetPath<ItemPipeType, ItemPipeProperties> routePath = routePathIterator.next();
+            NetPath<ItemPipeType, ItemPipeProperties, NetEdge> routePath = routePathIterator.next();
             Iterator<EnumFacing> iterator = routePath.getFacingIterator();
             while (iterator.hasNext()) {
-                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> facedNetPath = routePath
+                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> facedNetPath = routePath
                         .withFacing(iterator.next());
                 int amount = c;
                 if (m > 0) {
@@ -190,18 +191,19 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
         return remainder;
     }
 
-    private ItemStack insertToHandlersEnhanced(List<NetPath<ItemPipeType, ItemPipeProperties>> copy, ItemStack stack,
-                                               boolean simulate) {
+    private ItemStack insertToHandlersEnhanced(List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> copy,
+                                               ItemStack stack, boolean simulate) {
         List<EnhancedRoundRobinData> transferred = new ArrayList<>();
         IntList steps = new IntArrayList();
         int min = Integer.MAX_VALUE;
         ItemStack simStack;
 
         // find inventories that are not full and get the amount that was inserted in total
-        for (NetPath<ItemPipeType, ItemPipeProperties> inv : copy) {
+        for (NetPath<ItemPipeType, ItemPipeProperties, NetEdge> inv : copy) {
             Iterator<EnumFacing> iterator = inv.getFacingIterator();
             while (iterator.hasNext()) {
-                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> faceInv = inv.withFacing(iterator.next());
+                NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> faceInv = inv
+                        .withFacing(iterator.next());
                 simStack = stack.copy();
                 int ins = stack.getCount() - insert(faceInv, simStack, true, true).getCount();
                 if (ins <= 0)
@@ -308,12 +310,12 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
         return remainder;
     }
 
-    public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, ItemStack stack,
+    public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> routePath, ItemStack stack,
                             boolean simulate) {
         return insert(routePath, stack, simulate, false);
     }
 
-    public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, ItemStack stack,
+    public ItemStack insert(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> routePath, ItemStack stack,
                             boolean simulate, boolean ignoreLimit) {
         if (routePath.getTargetNode().getNodePos() == this.pipe.getPos() && routePath.facing == this.facing) {
             return stack;
@@ -465,7 +467,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
         return 64;
     }
 
-    private void transferTo(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, boolean simulate,
+    private void transferTo(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> routePath, boolean simulate,
                             int amount) {
         if (simulate)
             simulatedTransfersGlobalRoundRobin.merge(routePath.toFacingPos(), amount, Integer::sum);
@@ -473,12 +475,14 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
             pipe.getTransferred().merge(routePath.toFacingPos(), amount, Integer::sum);
     }
 
-    private boolean contains(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, boolean simulate) {
+    private boolean contains(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> routePath,
+                             boolean simulate) {
         return simulate ? simulatedTransfersGlobalRoundRobin.containsKey(routePath.toFacingPos()) :
                 pipe.getTransferred().containsKey(routePath.toFacingPos());
     }
 
-    private int didTransferTo(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath, boolean simulate) {
+    private int didTransferTo(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> routePath,
+                              boolean simulate) {
         if (simulate)
             return simulatedTransfersGlobalRoundRobin.getInt(routePath.toFacingPos());
         return pipe.getTransferred().getInt(routePath.toFacingPos());
@@ -499,12 +503,12 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
 
     private static class EnhancedRoundRobinData {
 
-        private final NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath;
+        private final NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> routePath;
         private final int maxInsertable;
         private int transferred;
         private int toTransfer = 0;
 
-        private EnhancedRoundRobinData(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties> routePath,
+        private EnhancedRoundRobinData(NetPath.FacedNetPath<ItemPipeType, ItemPipeProperties, NetEdge> routePath,
                                        int maxInsertable, int transferred) {
             this.maxInsertable = maxInsertable;
             this.transferred = transferred;

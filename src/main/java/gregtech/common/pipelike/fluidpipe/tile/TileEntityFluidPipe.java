@@ -2,12 +2,12 @@ package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.net.FluidNetHandler;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
-
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 
 import net.minecraft.block.state.IBlockState;
@@ -37,7 +37,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> {
+public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties, NetFlowEdge> {
 
     // old code to maintain compat with old worlds //
     private PipeTankList pipeTankList;
@@ -80,7 +80,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     @Override
-    public void transferDataFrom(IPipeTile<FluidPipeType, FluidPipeProperties> tileEntity) {
+    public void transferDataFrom(IPipeTile<FluidPipeType, FluidPipeProperties, NetFlowEdge> tileEntity) {
         super.transferDataFrom(tileEntity);
         TileEntityFluidPipe fluidPipe = (TileEntityFluidPipe) tileEntity;
         // take handlers from old pipe
@@ -105,7 +105,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public void destroyPipe(FluidStack stack, boolean isBurning, boolean isLeaking, boolean isCorroding,
                             boolean isShattering, boolean isMelting) {
-        var result = getNodeData().determineDestroyPipeResults(stack, isBurning, isLeaking, isCorroding, isShattering, isMelting, world, pos);
+        var result = getNodeData().determineDestroyPipeResults(stack, isBurning, isLeaking, isCorroding, isShattering,
+                isMelting, world, pos);
         stack.amount *= result.getLossFunction();
         result.getPostAction().accept(this.getNode());
     }

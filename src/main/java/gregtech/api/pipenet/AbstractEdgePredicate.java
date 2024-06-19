@@ -27,6 +27,14 @@ public abstract class AbstractEdgePredicate<T extends AbstractEdgePredicate<T>>
 
     protected abstract String predicateName();
 
+    public BlockPos getSourcePos() {
+        return sourcePos;
+    }
+
+    public BlockPos getTargetPos() {
+        return targetPos;
+    }
+
     private static Supplier<AbstractEdgePredicate<?>> getSupplier(String identifier) {
         return PREDICATE_SUPPLIERS.getOrDefault(identifier, () -> null);
     }

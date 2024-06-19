@@ -48,7 +48,7 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
         }
 
         if (ConfigHolder.misc.debug) {
-            BlockMaterialPipe<?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?>) blockPipe;
+            BlockMaterialPipe<?, ?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?, ?>) blockPipe;
             tooltip.add("MetaItem Id: " + blockMaterialPipe.getPrefix().name +
                     blockMaterialPipe.getItemMaterial(stack).toCamelCaseString());
         }

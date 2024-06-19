@@ -9,7 +9,7 @@ import it.unimi.dsi.fastutil.ints.*;
 import java.util.List;
 
 /**
- * Node-based, state-based evaluator for oreGlob.
+ * NetNode-based, state-based evaluator for oreGlob.
  * <p>
  * OreGlob nodes are evaluated by simulating match for each possible branch of states.
  * Each state corresponds to index of character the next match will start. All matches

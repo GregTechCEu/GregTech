@@ -128,7 +128,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         IGregTechTileEntity holder = getHolderFromPos(posFacing.getPos());
         if (holder == null) {
             TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.getPos());
-            if (te instanceof IPipeTile<?, ?>pipeTile) {
+            if (te instanceof IPipeTile<?, ?, ?>pipeTile) {
                 coverHolder = pipeTile.getCoverableImplementation();
             }
         } else {

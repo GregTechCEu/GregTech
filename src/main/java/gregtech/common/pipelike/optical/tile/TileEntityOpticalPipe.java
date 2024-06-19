@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.Recipe;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.EnumMap;
 
-public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> {
+public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties, NetEdge> {
 
     private final EnumMap<EnumFacing, OpticalNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the OpticalNetHandler can only be created on the server, so we have an empty placeholder for the client
@@ -85,7 +86,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     }
 
     @Override
-    public void transferDataFrom(IPipeTile<OpticalPipeType, OpticalPipeProperties> tileEntity) {
+    public void transferDataFrom(IPipeTile<OpticalPipeType, OpticalPipeProperties, NetEdge> tileEntity) {
         super.transferDataFrom(tileEntity);
         TileEntityOpticalPipe pipe = (TileEntityOpticalPipe) tileEntity;
         if (!pipe.handlers.isEmpty() && pipe.defaultHandler != null) {
@@ -107,7 +108,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
 
             // also check the other pipe
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
-            if (tile instanceof IPipeTile<?, ?>pipeTile &&
+            if (tile instanceof IPipeTile<?, ?, ?>pipeTile &&
                     pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
                 if (pipeTile.getNumConnections() >= 2) return;
             }

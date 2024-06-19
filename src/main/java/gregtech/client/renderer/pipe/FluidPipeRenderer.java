@@ -43,8 +43,8 @@ public class FluidPipeRenderer extends PipeRenderer {
     }
 
     @Override
-    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, IPipeTile<?, ?> pipeTile,
-                              IPipeType<?> pipeType, @Nullable Material material) {
+    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?, ?> blockPipe,
+                              IPipeTile<?, ?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material) {
         if (material == null || !(pipeType instanceof FluidPipeType)) {
             return;
         }

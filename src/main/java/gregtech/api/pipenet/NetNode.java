@@ -1,9 +1,8 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
-
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -21,13 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData<NodeDataType>>
-                  implements INBTSerializable<NBTTagCompound> {
+public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge>
+                          implements INBTSerializable<NBTTagCompound> {
 
     public static final int DEFAULT_MARK = 0;
 
-    private final WorldPipeNetSimple<NodeDataType, PipeType> net;
+    private final WorldPipeNetBase<NodeDataType, PipeType, Edge> net;
 
     private NodeDataType data;
     /**
@@ -50,17 +49,16 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
     public int mark;
     public boolean isActive;
 
-    private WeakReference<IPipeTile<PipeType, NodeDataType>> heldMTE;
+    private WeakReference<IPipeTile<PipeType, NodeDataType, Edge>> heldMTE;
 
     private final BlockPos nodePos;
 
-    private NetGroup<PipeType, NodeDataType> group = null;
+    private NetGroup<PipeType, NodeDataType, Edge> group = null;
 
-    private List<NetPath<PipeType, NodeDataType>> pathCache = null;
+    private List<NetPath<PipeType, NodeDataType, Edge>> pathCache = null;
 
-
-    public NodeG(NodeDataType data, IPipeTile<PipeType, NodeDataType> heldMTE,
-                 WorldPipeNetSimple<NodeDataType, PipeType> net) {
+    public NetNode(NodeDataType data, IPipeTile<PipeType, NodeDataType, Edge> heldMTE,
+                   WorldPipeNetBase<NodeDataType, PipeType, Edge> net) {
         this.data = data;
         this.openConnections = 0;
         this.blockedConnections = 0;
@@ -76,7 +74,7 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
      * Should never be required to reference its net, data, or position.
      */
     @SideOnly(Side.CLIENT)
-    public NodeG(IPipeTile<PipeType, NodeDataType> heldMTE) {
+    public NetNode(IPipeTile<PipeType, NodeDataType, Edge> heldMTE) {
         this.nodePos = null;
         this.net = null;
         this.data = null;
@@ -88,7 +86,7 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
     /**
      * For construction during NBT reading only
      */
-    public NodeG(NBTTagCompound tag, WorldPipeNetSimple<NodeDataType, PipeType> net) {
+    public NetNode(NBTTagCompound tag, WorldPipeNetBase<NodeDataType, PipeType, Edge> net) {
         this.nodePos = BlockPos.fromLong(tag.getLong("Pos"));
         deserializeNBT(tag);
         this.data = net.readNodeData(tag.getCompoundTag("Data"));
@@ -96,7 +94,7 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
         this.heldMTE = new WeakReference<>(null);
     }
 
-    public NetGroup<PipeType, NodeDataType> getGroupSafe() {
+    public NetGroup<PipeType, NodeDataType, Edge> getGroupSafe() {
         if (this.group == null) {
             new NetGroup<>(this.net.pipeGraph, this.net).addNodes(this);
             // addNodes automatically sets our group to the new group
@@ -105,11 +103,11 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
     }
 
     @Nullable
-    public NetGroup<PipeType, NodeDataType> getGroupUnsafe() {
+    public NetGroup<PipeType, NodeDataType, Edge> getGroupUnsafe() {
         return this.group;
     }
 
-    NetGroup<PipeType, NodeDataType> setGroup(NetGroup<PipeType, NodeDataType> group) {
+    NetGroup<PipeType, NodeDataType, Edge> setGroup(NetGroup<PipeType, NodeDataType, Edge> group) {
         this.group = group;
         return group;
     }
@@ -205,7 +203,7 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
         return nodePos.toLong();
     }
 
-    public void setHeldMTE(IPipeTile<PipeType, NodeDataType> heldMTE) {
+    public void setHeldMTE(IPipeTile<PipeType, NodeDataType, Edge> heldMTE) {
         if (this.heldMTE.get() != heldMTE)
             this.heldMTE = new WeakReference<>(heldMTE);
     }
@@ -214,15 +212,15 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
      * Performs no safety checks.
      */
     @Nullable
-    public IPipeTile<PipeType, NodeDataType> getHeldMTEUnsafe() {
+    public IPipeTile<PipeType, NodeDataType, Edge> getHeldMTEUnsafe() {
         return heldMTE.get();
     }
 
     /**
      * Ensures that the returned tile is not null.
      */
-    public IPipeTile<PipeType, NodeDataType> getHeldMTE() {
-        IPipeTile<PipeType, NodeDataType> te = getHeldMTEUnsafe();
+    public IPipeTile<PipeType, NodeDataType, Edge> getHeldMTE() {
+        IPipeTile<PipeType, NodeDataType, Edge> te = getHeldMTEUnsafe();
         if (te == null) {
             te = net.castTE(net.getWorld().getTileEntity(this.nodePos));
             setHeldMTE(te);
@@ -233,9 +231,9 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
     /**
      * Ensures that the returned tile is the correct one for this position.
      */
-    public IPipeTile<PipeType, NodeDataType> getHeldMTESafe() {
-        IPipeTile<PipeType, NodeDataType> te = getHeldMTEUnsafe();
-        IPipeTile<PipeType, NodeDataType> properTE = net.castTE(net.getWorld().getTileEntity(this.nodePos));
+    public IPipeTile<PipeType, NodeDataType, Edge> getHeldMTESafe() {
+        IPipeTile<PipeType, NodeDataType, Edge> te = getHeldMTEUnsafe();
+        IPipeTile<PipeType, NodeDataType, Edge> properTE = net.castTE(net.getWorld().getTileEntity(this.nodePos));
         if (te != properTE) {
             setHeldMTE(properTE);
         }
@@ -251,7 +249,7 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
     }
 
     @Nullable
-    public List<NetPath<PipeType, NodeDataType>> getPathCache() {
+    public List<NetPath<PipeType, NodeDataType, Edge>> getPathCache() {
         return pathCache;
     }
 
@@ -261,7 +259,7 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
      * @param pathCache The new cache.
      * @return The new cache.
      */
-    public List<NetPath<PipeType, NodeDataType>> setPathCache(List<NetPath<PipeType, NodeDataType>> pathCache) {
+    public List<NetPath<PipeType, NodeDataType, Edge>> setPathCache(List<NetPath<PipeType, NodeDataType, Edge>> pathCache) {
         this.pathCache = pathCache;
         return pathCache;
     }
@@ -293,8 +291,8 @@ public final class NodeG<PipeType extends Enum<PipeType> & IPipeType<NodeDataTyp
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NodeG<?, ?> nodeG = (NodeG<?, ?>) o;
-        return nodePos != null && Objects.equals(nodePos, nodeG.nodePos);
+        NetNode<?, ?, ?> node = (NetNode<?, ?, ?>) o;
+        return nodePos != null && Objects.equals(nodePos, node.nodePos);
     }
 
     @Override

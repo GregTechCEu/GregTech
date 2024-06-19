@@ -6,6 +6,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.TextFormattingUtil;
@@ -40,7 +41,7 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.CABLE_TEMPERATURE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONNECTIONS;
 
-public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties>
+public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties, NetEdge>
                              implements IDataInfoProvider {
 
     private static final int meltTemp = 3000;

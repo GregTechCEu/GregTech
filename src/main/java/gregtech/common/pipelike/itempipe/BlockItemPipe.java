@@ -2,6 +2,7 @@ package gregtech.common.pipelike.itempipe;
 
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -38,7 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipeProperties, WorldItemPipeNet> {
+public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipeProperties, NetEdge, WorldItemPipeNet> {
 
     private final Map<Material, ItemPipeProperties> enabledMaterials = new HashMap<>();
 
@@ -57,7 +58,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public TileEntityPipeBase<ItemPipeType, ItemPipeProperties> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<ItemPipeType, ItemPipeProperties, NetEdge> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityItemPipeTickable() : new TileEntityItemPipe();
     }
 
@@ -105,13 +106,13 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side,
-                                   IPipeTile<ItemPipeType, ItemPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties, NetEdge> selfTile, EnumFacing side,
+                                   IPipeTile<ItemPipeType, ItemPipeProperties, NetEdge> sideTile) {
         return selfTile instanceof TileEntityItemPipe && sideTile instanceof TileEntityItemPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side,
+    public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties, NetEdge> selfTile, EnumFacing side,
                                          TileEntity tile) {
         return tile != null &&
                 tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;

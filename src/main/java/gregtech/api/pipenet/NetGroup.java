@@ -1,6 +1,7 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.NetEdge;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -15,25 +16,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData<NodeDataType>> implements INBTSerializable<NBTTagCompound> {
+        NodeDataType extends INodeData<NodeDataType>, E extends NetEdge> implements INBTSerializable<NBTTagCompound> {
 
-    public final WorldPipeNetSimple<NodeDataType, PipeType> net;
+    public final WorldPipeNetBase<NodeDataType, PipeType, E> net;
 
-    private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph;
+    private final Graph<NetNode<PipeType, NodeDataType, E>, E> graph;
 
-    private final Set<NodeG<PipeType, NodeDataType>> nodes;
+    private final Set<NetNode<PipeType, NodeDataType, E>> nodes;
 
     private final AbstractGroupData<PipeType, NodeDataType> data;
 
-    public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetSimple<NodeDataType, PipeType> net) {
+    public NetGroup(Graph<NetNode<PipeType, NodeDataType, E>, E> graph,
+                    WorldPipeNetBase<NodeDataType, PipeType, E> net) {
         this.graph = graph;
         this.nodes = new ObjectOpenHashSet<>();
         this.net = net;
         this.data = net.getBlankGroupData();
     }
 
-    public NetGroup(Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetSimple<NodeDataType, PipeType> net,
-                    Set<NodeG<PipeType, NodeDataType>> nodes) {
+    public NetGroup(Graph<NetNode<PipeType, NodeDataType, E>, E> graph, WorldPipeNetBase<NodeDataType, PipeType, E> net,
+                    Set<NetNode<PipeType, NodeDataType, E>> nodes) {
         this.graph = graph;
         this.nodes = nodes;
         this.net = net;
@@ -45,13 +47,13 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.nodes.clear();
     }
 
-    protected void addNode(NodeG<PipeType, NodeDataType> node) {
+    protected void addNode(NetNode<PipeType, NodeDataType, E> node) {
         this.nodes.add(node);
         node.setGroup(this);
         this.connectionChange(node);
     }
 
-    protected void addNodes(Set<NodeG<PipeType, NodeDataType>> nodes) {
+    protected void addNodes(Set<NetNode<PipeType, NodeDataType, E>> nodes) {
         this.nodes.addAll(nodes);
         nodes.forEach(a -> {
             a.setGroup(this);
@@ -60,14 +62,14 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     }
 
     @SafeVarargs
-    protected final void addNodes(NodeG<PipeType, NodeDataType>... nodes) {
-        for (NodeG<PipeType, NodeDataType> node : nodes) {
+    protected final void addNodes(NetNode<PipeType, NodeDataType, E>... nodes) {
+        for (NetNode<PipeType, NodeDataType, E> node : nodes) {
             this.addNode(node);
             this.connectionChange(node);
         }
     }
 
-    public void connectionChange(NodeG<PipeType, NodeDataType> node) {
+    public void connectionChange(NetNode<PipeType, NodeDataType, E> node) {
         // TODO simplify path search by only checking nodes that have connections
         // use net's connection capabilities
     }
@@ -78,9 +80,12 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @param source the source node of the edge
      * @param target the target node of the edge
      */
-    public static void mergeEdge(NodeG<?, ?> source, NodeG<?, ?> target) {
-        NetGroup<?, ?> sourceGroup = source.getGroupUnsafe();
-        NetGroup<?, ?> targetGroup = target.getGroupUnsafe();
+    public static <PT extends Enum<PT> & IPipeType<NDT>,
+            NDT extends INodeData<NDT>, E extends NetEdge> void mergeEdge(
+                                                                          NetNode<PT, NDT, E> source,
+                                                                          NetNode<PT, NDT, E> target) {
+        NetGroup<PT, NDT, E> sourceGroup = source.getGroupUnsafe();
+        NetGroup<PT, NDT, E> targetGroup = target.getGroupUnsafe();
         if (sourceGroup == targetGroup) {
             if (sourceGroup == null) {
                 sourceGroup = source.getGroupSafe();
@@ -97,13 +102,12 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         }
     }
 
-    protected void mergeNode(NodeG<?, ?> node) {
-        NodeG<PipeType, NodeDataType> cast = (NodeG<PipeType, NodeDataType>) node;
-        NetGroup<PipeType, NodeDataType> group = cast.getGroupUnsafe();
+    protected void mergeNode(NetNode<PipeType, NodeDataType, E> node) {
+        NetGroup<PipeType, NodeDataType, E> group = node.getGroupUnsafe();
         if (group != null) {
             this.addNodes(group.getNodes());
             group.clear();
-        } else addNode(cast);
+        } else addNode(node);
         this.clearCaches();
     }
 
@@ -113,27 +117,26 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @param source node to remove
      * @return Whether the node existed in the graph
      */
-    public boolean splitNode(NodeG<PipeType, NodeDataType> source) {
+    public boolean splitNode(NetNode<PipeType, NodeDataType, E> source) {
         if (this.graph.containsVertex(source)) {
             this.clearCaches();
-            List<NodeG<?, ?>> targets = graph.outgoingEdgesOf(source).stream().map(a -> {
+            List<NetNode<?, ?, ?>> targets = graph.outgoingEdgesOf(source).stream().map(a -> {
                 // handling so undirected graphs don't throw an error
-                if (net.isDirected()) return a.getTarget();
-                if (a.getTarget().getNodePos() != source.getNodePos()) return a.getTarget();
+                if (net.isDirected() || a.getTarget().getNodePos() != source.getNodePos()) return a.getTarget();
                 return a.getSource();
             }).collect(Collectors.toList());
             this.graph.removeVertex(source);
             this.nodes.remove(source);
             while (!targets.isEmpty()) {
-                // get the lastmost target; if this throws a cast exception, something is very wrong with the graph.
+                // get the last target; if this throws a cast exception, something is very wrong with the graph.
                 @SuppressWarnings("unchecked")
-                NodeG<PipeType, NodeDataType> target = (NodeG<PipeType, NodeDataType>) targets
+                NetNode<PipeType, NodeDataType, E> target = (NetNode<PipeType, NodeDataType, E>) targets
                         .remove(targets.size() - 1);
 
-                Set<NodeG<PipeType, NodeDataType>> targetGroup = new ObjectOpenHashSet<>();
-                BreadthFirstIterator<NodeG<PipeType, NodeDataType>, NetEdge> i = new BreadthFirstIterator<>(graph,
+                Set<NetNode<PipeType, NodeDataType, E>> targetGroup = new ObjectOpenHashSet<>();
+                BreadthFirstIterator<NetNode<PipeType, NodeDataType, E>, E> i = new BreadthFirstIterator<>(graph,
                         target);
-                NodeG<PipeType, NodeDataType> temp;
+                NetNode<PipeType, NodeDataType, E> temp;
                 while (i.hasNext()) {
                     temp = i.next();
                     targetGroup.add(temp);
@@ -157,12 +160,12 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @param target target of the edge
      * @return Whether the edge existed in the graph
      */
-    public boolean splitEdge(NodeG<PipeType, NodeDataType> source, NodeG<PipeType, NodeDataType> target) {
+    public boolean splitEdge(NetNode<PipeType, NodeDataType, E> source, NetNode<PipeType, NodeDataType, E> target) {
         if (graph.removeEdge(source, target) != null) {
             this.clearCaches();
-            Set<NodeG<PipeType, NodeDataType>> targetGroup = new ObjectOpenHashSet<>();
-            BreadthFirstIterator<NodeG<PipeType, NodeDataType>, NetEdge> i = new BreadthFirstIterator<>(graph, target);
-            NodeG<PipeType, NodeDataType> temp;
+            Set<NetNode<PipeType, NodeDataType, E>> targetGroup = new ObjectOpenHashSet<>();
+            BreadthFirstIterator<NetNode<PipeType, NodeDataType, E>, E> i = new BreadthFirstIterator<>(graph, target);
+            NetNode<PipeType, NodeDataType, E> temp;
             while (i.hasNext()) {
                 temp = i.next();
                 // if there's a another complete path to the source node from the target node, there's no need to split
@@ -181,15 +184,15 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     /**
      * For memory considerations, returns the uncloned set. Do not modify this directly.
      */
-    public Set<NodeG<PipeType, NodeDataType>> getNodes() {
+    public Set<NetNode<PipeType, NodeDataType, E>> getNodes() {
         return nodes;
     }
 
     protected void clearCaches() {
-        this.nodes.forEach(NodeG::clearPathCache);
+        this.nodes.forEach(NetNode::clearPathCache);
     }
 
-    public Graph<NodeG<PipeType, NodeDataType>, NetEdge> getGraph() {
+    public Graph<NetNode<PipeType, NodeDataType, E>, E> getGraph() {
         return graph;
     }
 
@@ -201,7 +204,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
         int i = 0;
-        for (NodeG<PipeType, NodeDataType> node : this.nodes) {
+        for (NetNode<PipeType, NodeDataType, E> node : this.nodes) {
             tag.setLong(String.valueOf(i), node.getLongPos());
             i++;
         }
@@ -216,18 +219,19 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     @Deprecated
     public void deserializeNBT(NBTTagCompound nbt) {}
 
-    static final class NBTBuilder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-            NodeDataType extends INodeData<NodeDataType>> implements INBTBuilder {
+    public static final class NBTBuilder<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+            NodeDataType extends INodeData<NodeDataType>, E extends NetEdge> implements INBTBuilder {
 
-        private final Set<NodeG<PipeType, NodeDataType>> nodes;
-        private final Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph;
-        private final WorldPipeNetSimple<NodeDataType, PipeType> net;
+        private final Set<NetNode<PipeType, NodeDataType, E>> nodes;
+        private final Graph<NetNode<PipeType, NodeDataType, E>, E> graph;
+        private final WorldPipeNetBase<NodeDataType, PipeType, E> net;
 
-        NBTBuilder(Map<Long, NodeG<PipeType, NodeDataType>> longPosMap, NBTTagCompound tag,
-                   Graph<NodeG<PipeType, NodeDataType>, NetEdge> graph, WorldPipeNetSimple<NodeDataType, PipeType> net) {
+        public NBTBuilder(Map<Long, NetNode<PipeType, NodeDataType, E>> longPosMap, NBTTagCompound tag,
+                          Graph<NetNode<PipeType, NodeDataType, E>, E> graph,
+                          WorldPipeNetBase<NodeDataType, PipeType, E> net) {
             nodes = new ObjectOpenHashSet<>();
             for (int i = 0; i < tag.getInteger("NodeCount"); i++) {
-                NodeG<PipeType, NodeDataType> node = longPosMap.get(tag.getLong(String.valueOf(i)));
+                NetNode<PipeType, NodeDataType, E> node = longPosMap.get(tag.getLong(String.valueOf(i)));
                 nodes.add(node);
             }
             this.graph = graph;
@@ -236,7 +240,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
         @Override
         public void build() {
-            NetGroup<PipeType, NodeDataType> g = new NetGroup<>(graph, net, nodes);
+            NetGroup<PipeType, NodeDataType, E> g = new NetGroup<>(graph, net, nodes);
         }
     }
 }

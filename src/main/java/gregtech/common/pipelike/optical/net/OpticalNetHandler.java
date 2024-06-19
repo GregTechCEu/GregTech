@@ -6,8 +6,9 @@ import gregtech.api.capability.IOpticalComputationProvider;
 import gregtech.api.capability.IOpticalDataAccessHatch;
 import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetGroup;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
-import gregtech.api.pipenet.NodeG;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.recipes.Recipe;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
 import gregtech.common.pipelike.optical.OpticalPipeType;
@@ -77,10 +78,10 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     }
 
     private void setPipesActive() {
-        NetGroup<OpticalPipeType, OpticalPipeProperties> group = getNet().getNode(this.pipe.getPipePos())
+        NetGroup<OpticalPipeType, OpticalPipeProperties, NetEdge> group = getNet().getNode(this.pipe.getPipePos())
                 .getGroupSafe();
         if (group != null) {
-            for (NodeG<OpticalPipeType, OpticalPipeProperties> node : group.getNodes()) {
+            for (NetNode<OpticalPipeType, OpticalPipeProperties, NetEdge> node : group.getNodes()) {
                 if (node.getHeldMTE() instanceof TileEntityOpticalPipe opticalPipe) {
                     opticalPipe.setActive(true, 100);
                 }
@@ -95,7 +96,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     private boolean traverseRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
         if (isNetInvalidForTraversal()) return false;
 
-        List<NetPath<OpticalPipeType, OpticalPipeProperties>> inv = net.getPaths(this.pipe, null);
+        List<NetPath<OpticalPipeType, OpticalPipeProperties, NetEdge>> inv = net.getPaths(this.pipe, null);
         if (inv == null || inv.size() != 1) return false;
         Map<EnumFacing, TileEntity> connecteds = inv.get(0).getTargetTEs();
         if (connecteds.size() != 1) return false;
@@ -133,7 +134,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     private IOpticalComputationProvider getComputationProvider(@NotNull Collection<IOpticalComputationProvider> seen) {
         if (isNetInvalidForTraversal()) return null;
 
-        List<NetPath<OpticalPipeType, OpticalPipeProperties>> inv = net.getPaths(this.pipe, null);
+        List<NetPath<OpticalPipeType, OpticalPipeProperties, NetEdge>> inv = net.getPaths(this.pipe, null);
         if (inv == null || inv.size() != 1) return null;
         Map<EnumFacing, TileEntity> connecteds = inv.get(0).getTargetTEs();
         if (connecteds.size() != 1) return null;

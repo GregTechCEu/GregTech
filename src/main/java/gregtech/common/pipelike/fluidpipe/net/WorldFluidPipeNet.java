@@ -2,8 +2,8 @@ package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.AbstractEdgePredicate;
-import gregtech.api.pipenet.NodeG;
 import gregtech.api.pipenet.WorldPipeNetComplex;
+import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidFilter;
@@ -13,16 +13,12 @@ import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-import java.util.Set;
-
-public class WorldFluidPipeNet extends WorldPipeNetComplex<FluidPipeProperties, FluidPipeType> {
+public class WorldFluidPipeNet extends WorldPipeNetComplex<FluidPipeProperties, FluidPipeType, NetFlowEdge> {
 
     // TODO handle fluids in old fluid pipes
 
@@ -40,7 +36,7 @@ public class WorldFluidPipeNet extends WorldPipeNetComplex<FluidPipeProperties, 
     }
 
     public WorldFluidPipeNet(String name) {
-        super(name, true, false, 20);
+        super(name, true, false, () -> new NetFlowEdge(20));
     }
 
     @Override
@@ -49,7 +45,7 @@ public class WorldFluidPipeNet extends WorldPipeNetComplex<FluidPipeProperties, 
     }
 
     @Override
-    protected Class<? extends IPipeTile<FluidPipeType, FluidPipeProperties>> getBasePipeClass() {
+    protected Class<? extends IPipeTile<FluidPipeType, FluidPipeProperties, NetFlowEdge>> getBasePipeClass() {
         return TileEntityFluidPipe.class;
     }
 

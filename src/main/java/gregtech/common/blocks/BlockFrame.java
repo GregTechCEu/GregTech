@@ -123,15 +123,16 @@ public abstract class BlockFrame extends BlockMaterialBase {
 
     public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
                                          ItemStack stackInHand, EnumFacing facing) {
-        BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
+        BlockPipe<?, ?, ?, ?> blockPipe = (BlockPipe<?, ?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem())
+                .getBlock();
         if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
             ItemBlock itemBlock = (ItemBlock) stackInHand.getItem();
             IBlockState pipeState = blockPipe.getDefaultState();
             // these 0 values are not actually used by forge
             itemBlock.placeBlockAt(stackInHand, playerIn, worldIn, pos, facing, 0, 0, 0, pipeState);
-            IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
-            if (pipeTile instanceof TileEntityPipeBase) {
-                ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(state));
+            IPipeTile<?, ?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
+            if (pipeTile instanceof TileEntityPipeBase<?, ?, ?>tile) {
+                tile.setFrameMaterial(getGtMaterial(state));
             } else {
                 GTLog.logger.error("Pipe was not placed!");
                 return false;
@@ -149,8 +150,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
 
     public boolean removeFrame(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityPipeBase<?, ?>) {
-            TileEntityPipeBase<?, ?> pipeTile = (TileEntityPipeBase<?, ?>) te;
+        if (te instanceof TileEntityPipeBase<?, ?, ?>pipeTile) {
             Material frameMaterial = pipeTile.getFrameMaterial();
             if (frameMaterial != null) {
                 pipeTile.setFrameMaterial(null);
@@ -191,7 +191,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 continue;
             }
             TileEntity te = world.getTileEntity(blockPos);
-            if (te instanceof IPipeTile && ((IPipeTile<?, ?>) te).getFrameMaterial() != null) {
+            if (te instanceof IPipeTile && ((IPipeTile<?, ?, ?>) te).getFrameMaterial() != null) {
                 blockPos.move(EnumFacing.UP);
                 continue;
             }
@@ -206,8 +206,8 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 }
                 blockPos.release();
                 return true;
-            } else if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getFrameMaterial() == null) {
-                ((TileEntityPipeBase<?, ?>) te).setFrameMaterial(frameBlock.getGtMaterial(stack));
+            } else if (te instanceof TileEntityPipeBase<?, ?, ?>tile && tile.getFrameMaterial() == null) {
+                tile.setFrameMaterial(frameBlock.getGtMaterial(stack));
                 SoundType type = getSoundType(stack);
                 world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F,
                         type.getPitch() * 0.8F);

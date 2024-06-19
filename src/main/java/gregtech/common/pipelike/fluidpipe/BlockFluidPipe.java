@@ -2,6 +2,7 @@ package gregtech.common.pipelike.fluidpipe;
 
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -42,7 +43,8 @@ import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
+public class BlockFluidPipe extends
+                            BlockMaterialPipe<FluidPipeType, FluidPipeProperties, NetFlowEdge, WorldFluidPipeNet> {
 
     private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
 
@@ -105,13 +107,14 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side,
-                                   IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties, NetFlowEdge> selfTile, EnumFacing side,
+                                   IPipeTile<FluidPipeType, FluidPipeProperties, NetFlowEdge> sideTile) {
         return selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side,
+    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties, NetFlowEdge> selfTile,
+                                         EnumFacing side,
                                          TileEntity tile) {
         return tile != null &&
                 tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()) != null;
@@ -166,7 +169,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public TileEntityPipeBase<FluidPipeType, FluidPipeProperties> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<FluidPipeType, FluidPipeProperties, NetFlowEdge> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
     }
 
@@ -181,6 +184,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
-        return FluidPipeRenderer.INSTANCE.getParticleTexture((IPipeTile<?, ?>) world.getTileEntity(blockPos));
+        return FluidPipeRenderer.INSTANCE.getParticleTexture((IPipeTile<?, ?, ?>) world.getTileEntity(blockPos));
     }
 }

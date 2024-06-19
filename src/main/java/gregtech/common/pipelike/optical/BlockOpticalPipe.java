@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
@@ -29,7 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProperties, WorldOpticalPipeNet> {
+public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProperties, NetEdge, WorldOpticalPipeNet> {
 
     private final OpticalPipeType pipeType;
     private final OpticalPipeProperties properties;
@@ -57,12 +58,12 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties, NetEdge> createNewTileEntity(boolean supportsTicking) {
         return new TileEntityOpticalPipe();
     }
 
     @Override
-    public OpticalPipeProperties createProperties(@NotNull IPipeTile<OpticalPipeType, OpticalPipeProperties> pipeTile) {
+    public OpticalPipeProperties createProperties(@NotNull IPipeTile<OpticalPipeType, OpticalPipeProperties, NetEdge> pipeTile) {
         OpticalPipeType pipeType = pipeTile.getPipeType();
         if (pipeType == null) return getFallbackType();
         return this.pipeType.modifyProperties(properties);
@@ -77,7 +78,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public ItemStack getDropItem(IPipeTile<OpticalPipeType, OpticalPipeProperties> pipeTile) {
+    public ItemStack getDropItem(IPipeTile<OpticalPipeType, OpticalPipeProperties, NetEdge> pipeTile) {
         return new ItemStack(this, 1, pipeType.ordinal());
     }
 
@@ -95,7 +96,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public void setTileEntityData(@NotNull TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> pipeTile,
+    public void setTileEntityData(@NotNull TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties, NetEdge> pipeTile,
                                   ItemStack itemStack) {
         pipeTile.setPipeData(this, pipeType);
     }
@@ -111,14 +112,14 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side,
-                                   IPipeTile<OpticalPipeType, OpticalPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<OpticalPipeType, OpticalPipeProperties, NetEdge> selfTile, EnumFacing side,
+                                   IPipeTile<OpticalPipeType, OpticalPipeProperties, NetEdge> sideTile) {
         return selfTile instanceof TileEntityOpticalPipe && sideTile instanceof TileEntityOpticalPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side,
-                                         @Nullable TileEntity tile) {
+    public boolean canPipeConnectToBlock(IPipeTile<OpticalPipeType, OpticalPipeProperties, NetEdge> selfTile,
+                                         EnumFacing side, @Nullable TileEntity tile) {
         if (tile == null) return false;
         if (tile.hasCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, side.getOpposite())) return true;
         return tile.hasCapability(GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER, side.getOpposite());

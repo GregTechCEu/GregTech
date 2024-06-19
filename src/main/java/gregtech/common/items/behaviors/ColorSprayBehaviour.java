@@ -94,8 +94,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileCableBus) {
-                TileCableBus cable = (TileCableBus) te;
+            if (te instanceof TileCableBus cable) {
                 // do not try to recolor if it already is this color
                 if (cable.getColor().ordinal() != color.ordinal()) {
                     cable.recolourBlock(null, AEColor.values()[color.ordinal()], player);
@@ -136,8 +135,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
 
         // TileEntityPipeBase special case
-        if (te instanceof IPipeTile) {
-            IPipeTile<?, ?> pipe = (IPipeTile<?, ?>) te;
+        if (te instanceof IPipeTile<?, ?, ?>pipe) {
             if (pipe.isPainted()) {
                 pipe.setPaintingColor(-1);
                 return true;
@@ -146,8 +144,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
 
         // AE2 cable special case
         if (Mods.AppliedEnergistics2.isModLoaded()) {
-            if (te instanceof TileCableBus) {
-                TileCableBus cable = (TileCableBus) te;
+            if (te instanceof TileCableBus cable) {
                 // do not try to strip color if it is already colorless
                 if (cable.getColor() != AEColor.TRANSPARENT) {
                     cable.recolourBlock(null, AEColor.TRANSPARENT, player);

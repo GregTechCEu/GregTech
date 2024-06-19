@@ -2,6 +2,7 @@ package gregtech.common.pipelike.laser;
 
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.ItemBlockPipe;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.resources.I18n;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class ItemBlockLaserPipe extends ItemBlockPipe<LaserPipeType, LaserPipeProperties> {
 
-    public ItemBlockLaserPipe(BlockPipe<LaserPipeType, LaserPipeProperties, ?> block) {
+    public ItemBlockLaserPipe(BlockPipe<LaserPipeType, LaserPipeProperties, NetEdge, ?> block) {
         super(block);
     }
 

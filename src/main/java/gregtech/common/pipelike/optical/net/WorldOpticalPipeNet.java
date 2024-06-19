@@ -2,6 +2,7 @@ package gregtech.common.pipelike.optical.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.pipenet.WorldPipeNetSimple;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
 import gregtech.common.pipelike.optical.OpticalPipeType;
@@ -9,7 +10,6 @@ import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ public class WorldOpticalPipeNet extends WorldPipeNetSimple<OpticalPipePropertie
     }
 
     @Override
-    protected Class<? extends IPipeTile<OpticalPipeType, OpticalPipeProperties>> getBasePipeClass() {
+    protected Class<? extends IPipeTile<OpticalPipeType, OpticalPipeProperties, NetEdge>> getBasePipeClass() {
         return TileEntityOpticalPipe.class;
     }
 

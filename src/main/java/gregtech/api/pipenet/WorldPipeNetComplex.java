@@ -1,27 +1,22 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.pipenet.edge.NetEdge;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
-
-import org.jetbrains.annotations.Nullable;
-import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class WorldPipeNetComplex<NodeDataType extends INodeData<NodeDataType>,
-        PipeType extends Enum<PipeType> & IPipeType<NodeDataType>> extends WorldPipeNetSimple<NodeDataType, PipeType> {
+        PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        E extends NetEdge> extends WorldPipeNetBase<NodeDataType, PipeType, E> {
 
     /**
-     * Alternate pipenet representation. Disables node path caching and activates {@link NetEdge} flow behavior.
+     * Alternate pipenet representation. Allows for using children of the {@link NetEdge} class as edges.
      * <p>
-     * Note - undirected versions of this pipenet will treat flow in either direction along an edge towards its capacity,
+     * Note - undirected versions of this pipenet will treat flow in either direction along an edge towards its
+     * capacity,
      * while directed versions will cancel out reverse flow for improved behavior.
      *
      * @param isDirected   Determines whether this net needs directed graph handling.
@@ -30,27 +25,11 @@ public abstract class WorldPipeNetComplex<NodeDataType extends INodeData<NodeDat
      *                     or unidirectional covers.
      * @param isSinglePath Determines whether this net allows only one source and one destination per group.
      *                     Allows for optimizations in path lookup and cache invalidation.
-     * @param flowBufferTicks Determines how many ticks of 'buffer' flow capacity can be built up along edges.
-     *                      Allows for once-an-interval push/pull operations instead of needing them every tick for
-     *                      maximum throughput.
+     * @param edgeSupplier The supplier for the custom NetEdge child class.
      */
-    public WorldPipeNetComplex(String name, boolean isDirected, boolean isSinglePath, int flowBufferTicks) {
+    public WorldPipeNetComplex(String name, boolean isDirected, boolean isSinglePath, Supplier<E> edgeSupplier) {
         super(name, isDirected, isSinglePath,
-                isDirected ? new SimpleDirectedWeightedGraph<>(null, () -> new NetEdge(flowBufferTicks)) :
-                        new SimpleWeightedGraph<>(null, () -> new NetEdge(flowBufferTicks)));
-    }
-
-    @Override
-    public List<NetPath<PipeType, NodeDataType>> getPaths(@Nullable NodeG<PipeType, NodeDataType> node,
-                                                          @Nullable TileEntityPipeBase<PipeType, NodeDataType> tile,
-                                                          Object testObject) {
-        if (node == null) return new ObjectArrayList<>();
-
-        node.setHeldMTE(tile);
-
-        if (!this.hasValidAlg()) this.rebuildNetAlgorithm();
-
-        List<NetPath<PipeType, NodeDataType>> list = this.netAlgorithm.getPathsList(node);
-        return verifyList(list, node);
+                isDirected ? new SimpleDirectedWeightedGraph<>(null, edgeSupplier) :
+                        new SimpleWeightedGraph<>(null, edgeSupplier));
     }
 }
