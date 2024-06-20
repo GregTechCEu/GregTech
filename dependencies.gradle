@@ -69,6 +69,10 @@ dependencies {
               dest: "libs")
     compileOnly(files("libs/vintagium-mc1.12.2-0.1-dev.jar"))
 
+    compileOnly rfg.deobf("curse.maven:littletiles-257818:4750222") // LittleTiles 1.5.82-1.12.2
+    compileOnly rfg.deobf("curse.maven:creativecore-257814:4722163") // Creative Core 1.10.71
+
+
     // Mods with Soft compat but which have no need to be in code, such as isModLoaded() checks and getModItem() recipes.
     // Uncomment any of these to test them in-game.
 
@@ -78,21 +82,4 @@ dependencies {
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:magic-bees-65764:2855061") // Magic Bees 3.2.25
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:gendustry-70492:2516215") // Gendustry 1.6.5.8
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:bdlib-70496:2518031") // BdLib 1.14.3.12
-}
-
-minecraft {
-    injectedTags.put('DEP_VERSION_STRING', "required-after:gregtech@[${modVersion},);")
-}
-
-configurations {
-    compileOnly {
-        // exclude GNU trove, FastUtil is superior and still updated
-        exclude group: "net.sf.trove4j", module: "trove4j"
-        // exclude javax.annotation from findbugs, jetbrains annotations are superior
-        exclude group: "com.google.code.findbugs", module: "jsr305"
-        // exclude scala as we don't use it for anything and causes import confusion
-        exclude group: "org.scala-lang"
-        exclude group: "org.scala-lang.modules"
-        exclude group: "org.scala-lang.plugins"
-    }
 }
