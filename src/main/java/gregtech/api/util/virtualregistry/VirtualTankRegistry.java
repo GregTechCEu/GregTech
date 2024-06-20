@@ -1,30 +1,14 @@
 package gregtech.api.util.virtualregistry;
 
-import gregtech.api.GTValues;
-
-import gregtech.api.util.GTLog;
-
 import gregtech.api.util.virtualregistry.entries.VirtualTank;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.MapStorage;
-import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class VirtualTankRegistry extends VirtualRegistryBase {
+public final class VirtualTankRegistry extends VirtualRegistryBase {
 
     private static final int DEFAULT_CAPACITY = 64000; // 64B
 
@@ -40,7 +24,7 @@ public class VirtualTankRegistry extends VirtualRegistryBase {
      * @return The tank object
      */
     public static IFluidTank getTank(String key, UUID uuid) {
-        return (IFluidTank) getEntry(uuid, EntryType.ENDER_FLUID, key);
+        return getEntry(uuid, EntryTypes.ENDER_FLUID, key);
     }
 
     /**
@@ -61,7 +45,7 @@ public class VirtualTankRegistry extends VirtualRegistryBase {
      * @return The tank object
      */
     public static IFluidTank getTankCreate(String key, UUID uuid, int capacity) {
-        if (!hasEntry(uuid, EntryType.ENDER_FLUID, key))
+        if (!hasEntry(uuid, EntryTypes.ENDER_FLUID, key))
             addTank(key, uuid, capacity);
 
         return getTank(key, uuid);
@@ -113,8 +97,8 @@ public class VirtualTankRegistry extends VirtualRegistryBase {
     public static void delTank(String key, UUID uuid, boolean removeFluid) {
         var tank = getTank(key, uuid);
         if (removeFluid && tank.getFluidAmount() >= 0)
-            deleteEntry(uuid, EntryType.ENDER_FLUID, key);
+            deleteEntry(uuid, EntryTypes.ENDER_FLUID, key);
         else if (tank.getFluidAmount() == 0)
-            deleteEntry(uuid, EntryType.ENDER_FLUID, key);
+            deleteEntry(uuid, EntryTypes.ENDER_FLUID, key);
     }
 }

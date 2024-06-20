@@ -3,10 +3,6 @@ package gregtech.api.util.virtualregistry;
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 
-import gregtech.api.util.virtualregistry.entries.VirtualTank;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
@@ -15,48 +11,34 @@ import net.minecraft.world.storage.WorldSavedData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 @SuppressWarnings("SameParameterValue")
 public class VirtualRegistryBase extends WorldSavedData {
 
     private static final String DATA_ID = GTValues.MODID + ".virtual_entry_data";
+    private static final String OLD_DATA_ID = GTValues.MODID + ".vtank_data";
     private static final String PUBLIC_KEY = "Public";
     private static final String PRIVATE_KEY = "Private";
     private static final Map<UUID, VirtualRegistryMap> PRIVATE_REGISTRIES = new HashMap<>();
     private static final VirtualRegistryMap PUBLIC_REGISTRY = new VirtualRegistryMap();
 
-    private static final Map<EntryType, Supplier<? extends VirtualEntry>> factoryRegistry = new EnumMap<>(EntryType.class);
-
     public VirtualRegistryBase(String name) {
         super(name);
-        registerFactory(EntryType.ENDER_FLUID, VirtualTank::new);
-        // register virtual item
-        // register virtual energy
     }
 
-    protected static VirtualEntry getEntry(@Nullable UUID owner, EntryType type, String name) {
-        if (owner == null)
-            return PUBLIC_REGISTRY.getEntry(type, name);
-
-        return PRIVATE_REGISTRIES.get(owner).getEntry(type, name);
+    protected static <T extends VirtualEntry> T getEntry(@Nullable UUID owner, EntryTypes<T> type, String name) {
+        return getRegistry(owner).getEntry(type, name);
     }
 
     protected static void addEntry(@Nullable UUID owner, VirtualEntry entry) {
-        if (owner == null)
-            PUBLIC_REGISTRY.addEntry(entry);
-
-        PRIVATE_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap())
-                .addEntry(entry);
+        getRegistry(owner).addEntry(entry);
     }
 
-    protected static boolean hasEntry(@Nullable UUID owner, EntryType type, String name) {
-        return owner == null ? PUBLIC_REGISTRY.contains(type, name) :
-                PRIVATE_REGISTRIES.containsKey(owner) && PRIVATE_REGISTRIES.get(owner).contains(type, name);
+    protected static boolean hasEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {
+        return getRegistry(owner).contains(type, name);
     }
 
     /**
@@ -66,14 +48,14 @@ public class VirtualRegistryBase extends WorldSavedData {
      * @param type         Type of the registry to remove from
      * @param name         The name of the entry
      */
-    protected static void deleteEntry(@Nullable UUID owner, EntryType type, String name) {
-        if (owner == null && PUBLIC_REGISTRY.contains(type, name)) {
-            PUBLIC_REGISTRY.deleteEntry(type, name);
-        } else if (owner != null && PRIVATE_REGISTRIES.containsKey(owner)) {
-            PRIVATE_REGISTRIES.get(owner).deleteEntry(type, name);
+    protected static void deleteEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {
+        var registry = getRegistry(owner);
+        if (registry.contains(type, name)) {
+            registry.deleteEntry(type, name);
         } else {
             GTLog.logger.warn("Attempted to delete {} entry {} of type {}, which does not exist",
-                    owner == null ? "public" : String.format("private [%s]", owner), name, type);
+                    owner == null ? "public" : String.format("private [%s]", owner),
+                    name, type);
         }
     }
 
@@ -85,16 +67,8 @@ public class VirtualRegistryBase extends WorldSavedData {
         PUBLIC_REGISTRY.clear();
     }
 
-    protected static void registerFactory(EntryType type, Supplier<? extends VirtualEntry> factory) {
-        if (!factoryRegistry.containsKey(type))
-            factoryRegistry.put(type, factory);
-    }
-
-    public static VirtualEntry createEntry(EntryType type) {
-        if (factoryRegistry.containsKey(type))
-            return factoryRegistry.get(type).get();
-
-        return null;
+    public static VirtualRegistryMap getRegistry(UUID owner) {
+        return owner == null ? PUBLIC_REGISTRY : PRIVATE_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap());
     }
 
     @Override
@@ -133,13 +107,21 @@ public class VirtualRegistryBase extends WorldSavedData {
     /**
      * To be called on world load event
      */
+    @SuppressWarnings("DataFlowIssue")
     public static void initializeStorage(World world) {
         MapStorage storage = world.getMapStorage();
+
         VirtualRegistryBase instance = (VirtualRegistryBase) storage.getOrLoadData(VirtualRegistryBase.class, DATA_ID);
+        VirtualTankRegistry old = (VirtualTankRegistry) storage.getOrLoadData(VirtualTankRegistry.class, OLD_DATA_ID);
 
         if (instance == null) {
             instance = new VirtualRegistryBase(DATA_ID);
             storage.setData(DATA_ID, instance);
+        }
+
+        if (old != null) {
+            instance.readFromNBT(old.serializeNBT());
+            // todo remove old file? or mark it so as to not load it again
         }
     }
 }
