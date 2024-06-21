@@ -61,6 +61,7 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
     public IFluidTankProperties[] getTankProperties() {
         return this.props;
     }
+
     @Override
     public int fill(FluidStack fluidStack, boolean doFill) {
         var fluid = getFluid();
