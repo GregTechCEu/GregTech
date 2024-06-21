@@ -348,7 +348,6 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void serverStopped(FMLServerStoppedEvent event) {
-        VirtualTankRegistry.clearMaps(); // todo remove
         VirtualRegistryBase.clearMaps();
         CapesRegistry.clearMaps();
     }
