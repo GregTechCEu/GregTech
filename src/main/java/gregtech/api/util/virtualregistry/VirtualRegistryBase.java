@@ -11,6 +11,7 @@ import net.minecraft.world.storage.WorldSavedData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -44,9 +45,9 @@ public class VirtualRegistryBase extends WorldSavedData {
     /**
      * Removes an entry from the registry. Use with caution!
      *
-     * @param owner        The uuid of the player the entry is private to, or null if the entry is public
-     * @param type         Type of the registry to remove from
-     * @param name         The name of the entry
+     * @param owner The uuid of the player the entry is private to, or null if the entry is public
+     * @param type  Type of the registry to remove from
+     * @param name  The name of the entry
      */
     protected static void deleteEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {
         var registry = getRegistry(owner);
@@ -68,7 +69,8 @@ public class VirtualRegistryBase extends WorldSavedData {
     }
 
     public static VirtualRegistryMap getRegistry(UUID owner) {
-        return owner == null ? PUBLIC_REGISTRY : PRIVATE_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap());
+        return owner == null ? PUBLIC_REGISTRY :
+                PRIVATE_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap());
     }
 
     @Override
@@ -121,7 +123,18 @@ public class VirtualRegistryBase extends WorldSavedData {
 
         if (old != null) {
             instance.readFromNBT(old.serializeNBT());
-            // todo remove old file? or mark it so as to not load it again
+            var file = world.getSaveHandler().getMapFileFromName(OLD_DATA_ID);
+            var split = file.getName().split("\\.");
+            var stringBuilder = new StringBuilder(split[0])
+                    .append('.')
+                    .append(split[1])
+                    .append(".backup")
+                    .append('.')
+                    .append(split[2]);
+            if (file.renameTo(new File(file.getParent(), stringBuilder.toString()))) {
+                file.deleteOnExit();
+                GTLog.logger.warn("Moved Virtual Tank Data to new format, created backup!");
+            }
         }
     }
 }

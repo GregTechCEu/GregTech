@@ -14,9 +14,9 @@ public final class EntryTypes<T extends VirtualEntry> {
 
     private static final Map<String, EntryTypes<?>> TYPES_MAP = new HashMap<>();
     public static final EntryTypes<VirtualTank> ENDER_FLUID = new EntryTypes<>("ender_fluid", VirtualTank::new);
-//    ENDER_ITEM("ender_item", null),
-//    ENDER_ENERGY("ender_energy", null),
-//    ENDER_REDSTONE("ender_redstone", null);
+    // ENDER_ITEM("ender_item", null),
+    // ENDER_ENERGY("ender_energy", null),
+    // ENDER_REDSTONE("ender_redstone", null);
     private final String name;
     private final Supplier<T> factory;
 

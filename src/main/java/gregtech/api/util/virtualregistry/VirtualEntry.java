@@ -15,6 +15,9 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
     public abstract <T extends VirtualEntry> EntryTypes<T> getType();
 
     public String getColor() {
+        if (!this.data.hasKey(COLOR_KEY))
+            setColor(DEFAULT_COLOR);
+
         return this.data.getString(COLOR_KEY);
     }
 
@@ -27,7 +30,7 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
     }
 
     protected void setName(String name) {
-        this.data.setString(NAME_KEY, name == null ? "null" : name);
+        this.data.setString(NAME_KEY, name == null || name.isEmpty() ? "null" : name);
     }
 
     @NotNull
@@ -40,7 +43,6 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
         if (!(o instanceof VirtualEntry other)) return false;
         return this.getType() == other.getType() &&
                 this.getName().equals(other.getName());
-
     }
 
     @Override
