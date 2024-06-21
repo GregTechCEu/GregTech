@@ -1,6 +1,6 @@
 package gregtech.api.pipenet.edge;
 
-import gregtech.api.pipenet.AbstractEdgePredicate;
+import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
 import gregtech.api.pipenet.INBTBuilder;
 import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
@@ -15,11 +15,16 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound> {
+public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound>, IEdge<NetNode<?, ?, ?>> {
 
     private AbstractEdgePredicate<?> predicate;
     private boolean invertedPredicate;
 
+    private INodeData<? extends INodeData<?>> minData;
+
+    /**
+     * Most basic NetEdge that provides predicate handling & NBT storage capability
+     */
     @SuppressWarnings("unused") // used via reflection
     public NetEdge() {}
 
@@ -32,6 +37,12 @@ public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBT
         // if we don't have a predicate, just assume that we're good.
         if (predicate == null) return (a) -> true;
         return predicate;
+    }
+
+    public INodeData<? extends INodeData<?>> getMinData() {
+        if (this.minData == null)
+            this.minData = this.getCastSource().getData().getMinData(this.getCastTarget().getData());
+        return this.minData;
     }
 
     public boolean isPredicateInverted() {

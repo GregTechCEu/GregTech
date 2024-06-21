@@ -16,44 +16,44 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData<NodeDataType>, E extends NetEdge> implements INBTSerializable<NBTTagCompound> {
+        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge> implements INBTSerializable<NBTTagCompound> {
 
-    public final WorldPipeNetBase<NodeDataType, PipeType, E> net;
+    public final WorldPipeNetBase<NodeDataType, PipeType, Edge> net;
 
-    private final Graph<NetNode<PipeType, NodeDataType, E>, E> graph;
+    private final Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph;
 
-    private final Set<NetNode<PipeType, NodeDataType, E>> nodes;
+    private final Set<NetNode<PipeType, NodeDataType, Edge>> nodes;
 
     private final AbstractGroupData<PipeType, NodeDataType> data;
 
-    public NetGroup(Graph<NetNode<PipeType, NodeDataType, E>, E> graph,
-                    WorldPipeNetBase<NodeDataType, PipeType, E> net) {
+    public NetGroup(Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph,
+                    WorldPipeNetBase<NodeDataType, PipeType, Edge> net) {
         this.graph = graph;
         this.nodes = new ObjectOpenHashSet<>();
         this.net = net;
-        this.data = net.getBlankGroupData();
+        this.data = net.getBlankGroupData().withGroup(this);
     }
 
-    public NetGroup(Graph<NetNode<PipeType, NodeDataType, E>, E> graph, WorldPipeNetBase<NodeDataType, PipeType, E> net,
-                    Set<NetNode<PipeType, NodeDataType, E>> nodes) {
+    public NetGroup(Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph, WorldPipeNetBase<NodeDataType, PipeType, Edge> net,
+                    Set<NetNode<PipeType, NodeDataType, Edge>> nodes) {
         this.graph = graph;
         this.nodes = nodes;
         this.net = net;
         this.nodes.forEach(b -> b.setGroup(this));
-        this.data = net.getBlankGroupData();
+        this.data = net.getBlankGroupData().withGroup(this);
     }
 
     private void clear() {
         this.nodes.clear();
     }
 
-    protected void addNode(NetNode<PipeType, NodeDataType, E> node) {
+    protected void addNode(NetNode<PipeType, NodeDataType, Edge> node) {
         this.nodes.add(node);
         node.setGroup(this);
         this.connectionChange(node);
     }
 
-    protected void addNodes(Set<NetNode<PipeType, NodeDataType, E>> nodes) {
+    protected void addNodes(Set<NetNode<PipeType, NodeDataType, Edge>> nodes) {
         this.nodes.addAll(nodes);
         nodes.forEach(a -> {
             a.setGroup(this);
@@ -62,14 +62,14 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     }
 
     @SafeVarargs
-    protected final void addNodes(NetNode<PipeType, NodeDataType, E>... nodes) {
-        for (NetNode<PipeType, NodeDataType, E> node : nodes) {
+    protected final void addNodes(NetNode<PipeType, NodeDataType, Edge>... nodes) {
+        for (NetNode<PipeType, NodeDataType, Edge> node : nodes) {
             this.addNode(node);
             this.connectionChange(node);
         }
     }
 
-    public void connectionChange(NetNode<PipeType, NodeDataType, E> node) {
+    public void connectionChange(NetNode<PipeType, NodeDataType, Edge> node) {
         // TODO simplify path search by only checking nodes that have connections
         // use net's connection capabilities
     }
@@ -102,8 +102,8 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         }
     }
 
-    protected void mergeNode(NetNode<PipeType, NodeDataType, E> node) {
-        NetGroup<PipeType, NodeDataType, E> group = node.getGroupUnsafe();
+    protected void mergeNode(NetNode<PipeType, NodeDataType, Edge> node) {
+        NetGroup<PipeType, NodeDataType, Edge> group = node.getGroupUnsafe();
         if (group != null) {
             this.addNodes(group.getNodes());
             group.clear();
@@ -117,7 +117,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @param source node to remove
      * @return Whether the node existed in the graph
      */
-    public boolean splitNode(NetNode<PipeType, NodeDataType, E> source) {
+    public boolean splitNode(NetNode<PipeType, NodeDataType, Edge> source) {
         if (this.graph.containsVertex(source)) {
             this.clearCaches();
             List<NetNode<?, ?, ?>> targets = graph.outgoingEdgesOf(source).stream().map(a -> {
@@ -130,13 +130,13 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             while (!targets.isEmpty()) {
                 // get the last target; if this throws a cast exception, something is very wrong with the graph.
                 @SuppressWarnings("unchecked")
-                NetNode<PipeType, NodeDataType, E> target = (NetNode<PipeType, NodeDataType, E>) targets
+                NetNode<PipeType, NodeDataType, Edge> target = (NetNode<PipeType, NodeDataType, Edge>) targets
                         .remove(targets.size() - 1);
 
-                Set<NetNode<PipeType, NodeDataType, E>> targetGroup = new ObjectOpenHashSet<>();
-                BreadthFirstIterator<NetNode<PipeType, NodeDataType, E>, E> i = new BreadthFirstIterator<>(graph,
+                Set<NetNode<PipeType, NodeDataType, Edge>> targetGroup = new ObjectOpenHashSet<>();
+                BreadthFirstIterator<NetNode<PipeType, NodeDataType, Edge>, Edge> i = new BreadthFirstIterator<>(graph,
                         target);
-                NetNode<PipeType, NodeDataType, E> temp;
+                NetNode<PipeType, NodeDataType, Edge> temp;
                 while (i.hasNext()) {
                     temp = i.next();
                     targetGroup.add(temp);
@@ -160,12 +160,12 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @param target target of the edge
      * @return Whether the edge existed in the graph
      */
-    public boolean splitEdge(NetNode<PipeType, NodeDataType, E> source, NetNode<PipeType, NodeDataType, E> target) {
+    public boolean splitEdge(NetNode<PipeType, NodeDataType, Edge> source, NetNode<PipeType, NodeDataType, Edge> target) {
         if (graph.removeEdge(source, target) != null) {
             this.clearCaches();
-            Set<NetNode<PipeType, NodeDataType, E>> targetGroup = new ObjectOpenHashSet<>();
-            BreadthFirstIterator<NetNode<PipeType, NodeDataType, E>, E> i = new BreadthFirstIterator<>(graph, target);
-            NetNode<PipeType, NodeDataType, E> temp;
+            Set<NetNode<PipeType, NodeDataType, Edge>> targetGroup = new ObjectOpenHashSet<>();
+            BreadthFirstIterator<NetNode<PipeType, NodeDataType, Edge>, Edge> i = new BreadthFirstIterator<>(graph, target);
+            NetNode<PipeType, NodeDataType, Edge> temp;
             while (i.hasNext()) {
                 temp = i.next();
                 // if there's a another complete path to the source node from the target node, there's no need to split
@@ -184,7 +184,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     /**
      * For memory considerations, returns the uncloned set. Do not modify this directly.
      */
-    public Set<NetNode<PipeType, NodeDataType, E>> getNodes() {
+    public Set<NetNode<PipeType, NodeDataType, Edge>> getNodes() {
         return nodes;
     }
 
@@ -192,7 +192,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this.nodes.forEach(NetNode::clearPathCache);
     }
 
-    public Graph<NetNode<PipeType, NodeDataType, E>, E> getGraph() {
+    public Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> getGraph() {
         return graph;
     }
 
@@ -204,7 +204,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
         int i = 0;
-        for (NetNode<PipeType, NodeDataType, E> node : this.nodes) {
+        for (NetNode<PipeType, NodeDataType, Edge> node : this.nodes) {
             tag.setLong(String.valueOf(i), node.getLongPos());
             i++;
         }

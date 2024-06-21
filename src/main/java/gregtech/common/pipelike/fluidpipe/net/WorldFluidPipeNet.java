@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.pipenet.AbstractEdgePredicate;
+import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
 import gregtech.api.pipenet.WorldPipeNetComplex;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;

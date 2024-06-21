@@ -15,9 +15,7 @@ public abstract class WorldPipeNetComplex<NodeDataType extends INodeData<NodeDat
     /**
      * Alternate pipenet representation. Allows for using children of the {@link NetEdge} class as edges.
      * <p>
-     * Note - undirected versions of this pipenet will treat flow in either direction along an edge towards its
-     * capacity,
-     * while directed versions will cancel out reverse flow for improved behavior.
+     * Note - These child edges cannot be allowed to store information, they must only perform runtime behavior.
      *
      * @param isDirected   Determines whether this net needs directed graph handling.
      *                     Used to respect filter directions in the item net and fluid net, for example.

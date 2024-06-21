@@ -91,6 +91,12 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         return tanks;
     }
 
+    @Override
+    public double getWeightFactor() {
+        float factor = 100f / this.throughput;
+        return factor * factor;
+    }
+
     public int getThroughput() {
         return throughput;
     }

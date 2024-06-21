@@ -4,7 +4,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
-import gregtech.api.pipenet.edge.INetFlowEdge;
+import gregtech.api.pipenet.edge.AbstractNetFlowEdge;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.edge.util.FlowConsumer;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
@@ -39,7 +39,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
 
     private final IFluidHandler testHandler = new FluidTank(Integer.MAX_VALUE);
 
-    private INetFlowEdge.ChannelSimulatorKey simulatorKey;
+    private AbstractNetFlowEdge.ChannelSimulatorKey simulatorKey;
     private FluidStack lastFillResource;
     private final Map<NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge>, FluidPipeProperties.PipeLossResult> lossResultCache = new Object2ObjectOpenHashMap<>();
 
@@ -85,7 +85,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         // push flow through net
         List<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> paths = this.getNet().getPaths(pipe, testObject);
         FluidStack helper = resource.copy();
-        if (!doFill) this.simulatorKey = INetFlowEdge.getNewSimulatorInstance();
+        if (!doFill) this.simulatorKey = AbstractNetFlowEdge.getNewSimulatorInstance();
         else this.simulatorKey = null;
         mainloop:
         for (NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge> path : paths) {

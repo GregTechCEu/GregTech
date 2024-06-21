@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.FilteredEdgePredicate;
+import gregtech.api.pipenet.predicate.FilteredEdgePredicate;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 

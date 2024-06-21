@@ -1,4 +1,4 @@
-package gregtech.api.pipenet;
+package gregtech.api.pipenet.predicate;
 
 import net.minecraft.nbt.NBTTagCompound;
 

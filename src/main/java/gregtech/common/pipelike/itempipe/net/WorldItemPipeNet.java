@@ -1,9 +1,9 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.pipenet.AbstractEdgePredicate;
 import gregtech.api.pipenet.WorldPipeNetSimple;
 import gregtech.api.pipenet.edge.NetEdge;
+import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.common.covers.CoverConveyor;
@@ -18,7 +18,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-// TODO move onto complex net
 public class WorldItemPipeNet extends WorldPipeNetSimple<ItemPipeProperties, ItemPipeType> {
 
     private static final String DATA_ID = "gregtech.item_pipe_net";

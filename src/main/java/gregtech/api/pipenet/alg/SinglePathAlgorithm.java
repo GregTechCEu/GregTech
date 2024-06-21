@@ -9,6 +9,7 @@ import gregtech.api.pipenet.edge.NetEdge;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,7 +29,6 @@ public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT
         if (!this.graph.containsVertex(source)) {
             throw new IllegalArgumentException("Graph must contain the source vertex");
         }
-        List<NetPath<PT, NDT, E>> paths = new ObjectArrayList<>();
         List<E> edges = new ObjectArrayList<>();
         List<NetNode<PT, NDT, E>> nodes = new ObjectArrayList<>();
         nodes.add(source);
@@ -55,8 +55,7 @@ public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT
             nodes.add(node);
             sumWeight += node.getData().getWeightFactor();
         }
-        if (!valid) return paths;
-        paths.add(new NetPath<>(nodes, edges, sumWeight));
-        return paths;
+        if (!valid) return Collections.emptyList();
+        return List.of(new NetPath<>(nodes, edges, sumWeight));
     }
 }
