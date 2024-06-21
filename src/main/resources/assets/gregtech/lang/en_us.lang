@@ -5550,7 +5550,7 @@ gregtech.gui.me_bus.auto_pull_button=Click to toggle automatic item pulling from
 gregtech.gui.alarm.radius=Radius:
 
 gregtech.gui.fission.control_rod_insertion=Control rod insertion: %d
-gregtech.gui.fission.coolant_flow=Coolant flow rate: %d L
+gregtech.gui.fission.coolant_flow=Coolant flow rate: %d L/t/channel
 gregtech.gui.fission.temperature=Temperature: %.3f K
 gregtech.gui.fission.pressure=Pressure: %.3f Pa
 gregtech.gui.fission.power=Power: %.3f MW / %.3f MW

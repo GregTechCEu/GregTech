@@ -2,7 +2,10 @@ package gregtech.common.metatileentities.multi;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.ICoolantHandler;
+import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.IMaintenanceHatch;
@@ -10,6 +13,10 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.IndicatorImageWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.RecolorableTextWidget;
 import gregtech.api.gui.widgets.SliderWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -22,6 +29,7 @@ import gregtech.api.metatileentity.multiblock.IControlRodPort;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.nuclear.fission.FissionReactor;
@@ -86,7 +94,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase implements IDataInfoProvider {
+public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
+        implements IDataInfoProvider, IProgressBarMultiblock {
 
     private FissionReactor fissionReactor;
     private int diameter;
@@ -118,6 +127,101 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return new MetaTileEntityFissionReactor(metaTileEntityId);
     }
 
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 240, 208);
+
+        // Display
+        builder.image(4, 4, 190 + 42, 109, GuiTextures.DISPLAY);
+
+        // triple bar
+        ProgressWidget progressBar = new ProgressWidget(
+                () -> this.getFillPercentage(0),
+                4, 115, 62 + 14, 7,
+                GuiTextures.PROGRESS_BAR_FUSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
+                .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
+        builder.widget(progressBar);
+
+        progressBar = new ProgressWidget(
+                () -> this.getFillPercentage(1),
+                68 + 14, 115, 62 + 14, 7,
+                GuiTextures.PROGRESS_BAR_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
+                .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
+        builder.widget(progressBar);
+
+        progressBar = new ProgressWidget(
+                () -> this.getFillPercentage(2),
+                132 + 28, 115, 62 + 14, 7,
+                GuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW, ProgressWidget.MoveType.HORIZONTAL)
+                .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
+        builder.widget(progressBar);
+
+        builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
+
+        builder.widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 220,
+                18, 0.0f, 1.0f,
+                (float) controlRodInsertionValue, this::setControlRodInsertionValue,
+                () -> (float) this.controlRodInsertionValue) {
+
+            @Override
+            protected String getDisplayString() {
+                return I18n.format("gregtech.gui.fission.control_rod_insertion",
+                        String.format("%.2f%%", this.getSliderValue() * 100));
+            }
+        }.setBackground(GuiTextures.DARK_SLIDER_BACKGROUND).setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
+        builder.widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 220, 18, 0.0f, 16000.f, flowRate,
+                this::setFlowRate).setBackground(GuiTextures.DARK_SLIDER_BACKGROUND)
+                .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
+
+        builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
+                .setMaxWidthLimit(181)
+                .setClickHandler(this::handleDisplayClick));
+
+        // Power Button
+
+        builder.widget(new ToggleButtonWidget(173 + 42, 183, 18, 18, GuiTextures.BUTTON_LOCK,
+                this::isLocked, this::tryLocking).shouldUseBaseBackground());
+        builder.widget(new ImageWidget(173 + 42, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
+
+        // Voiding Mode Button
+        builder.widget(new ImageWidget(173 + 42, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
+                .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
+
+        builder.widget(new ImageWidget(173 + 42, 143, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
+                .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
+
+        // Flex Button
+        builder.widget(getFlexButton(173 + 42, 125, 18, 18));
+
+        builder.bindPlayerInventory(entityPlayer.inventory, 125);
+        return builder;
+    }
+
+    @Override
+    public double getFillPercentage(int index) {
+        if (index == 0) {
+            return fissionReactor.temperature / fissionReactor.maxTemperature;
+        } else if (index == 1) {
+            return fissionReactor.pressure / fissionReactor.maxPressure;
+        } else {
+            return fissionReactor.power / fissionReactor.maxPower;
+        }
+    }
+
+    @Override
+    public void addBarHoverText(List<ITextComponent> list, int index) {
+        if (index == 0) {
+            list.add(new TextComponentTranslation("gregtech.gui.fission.temperature",
+                    String.format("%.1f", this.temperature) + " / " + String.format("%.1f", this.maxTemperature)));
+        } else if (index == 1) {
+            list.add(new TextComponentTranslation("gregtech.gui.fission.pressure",
+                    String.format("%.0f", this.pressure) + " / " + String.format("%.0f", this.maxPressure)));
+        } else {
+            list.add(new TextComponentTranslation("gregtech.gui.fission.power", String.format("%.1f", this.power),
+                    String.format("%.1f", this.maxPower)));
+        }
+    }
+
+    /*
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 206, 236).shouldColor(false)
@@ -137,9 +241,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 165, 18, 0.0f, 16000.f, flowRate,
                         this::setFlowRate));
         builder.widget(new AdvancedTextWidget(10, 80, getStatsText(), 0x2020D0));
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 22, 148);
         return builder;
     }
+*/
 
     private void setFlowRate(float flowrate) {
         this.flowRate = (int) flowrate;
@@ -178,10 +282,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             unlockAll();
     }
 
-    private Consumer<List<ITextComponent>> getLockingStateText() {
+    @Override
+    protected void addErrorText(List<ITextComponent> list) {
+        if (lockingState != LockingState.LOCKED && lockingState != LockingState.UNLOCKED) {
+            list.add(
+                    new TextComponentTranslation("gregtech.gui.fission.lock." + lockingState.toString().toLowerCase()));
+        }
+    }
+
+    private Consumer<List<ITextComponent>> getDisplayText() {
         return (list) -> {
             list.add(
                     new TextComponentTranslation("gregtech.gui.fission.lock." + lockingState.toString().toLowerCase()));
+            list.add(new TextComponentTranslation("gregtech.gui.fission.k_eff", String.format("%.4f", this.kEff)));
+            list.add(new TextComponentTranslation("gregtech.gui.fission.depletion",
+                    String.format("%.2f", this.fuelDepletionPercent * 100)));
         };
     }
 
@@ -301,12 +416,12 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                                 .getExportItems().insertItem(0,
                                         OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
                                 .isEmpty()) {
-                                    // We still need to know if the output is blocked, even if the recipe doesn't start
-                                    // yet
-                                    canWork = false;
-                                    this.lockingState = LockingState.FUEL_CLOGGED;
-                                    break;
-                                }
+                            // We still need to know if the output is blocked, even if the recipe doesn't start
+                            // yet
+                            canWork = false;
+                            this.lockingState = LockingState.FUEL_CLOGGED;
+                            break;
+                        }
                     }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
@@ -482,19 +597,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         MultiblockAbility<?>[] allowedAbilities = { MultiblockAbility.IMPORT_COOLANT, MultiblockAbility.IMPORT_FUEL_ROD,
                 MultiblockAbility.CONTROL_ROD_PORT };
         return tilePredicate((state, tile) -> {
-            if (!(tile instanceof IMultiblockAbilityPart<?> &&
-                    ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
-                return false;
-            }
-            if (tile instanceof IFissionReactorHatch hatchPart) {
-                if (!hatchPart.checkValidity(height - 1)) {
-                    state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
+                    if (!(tile instanceof IMultiblockAbilityPart<?> &&
+                            ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
+                        return false;
+                    }
+                    if (tile instanceof IFissionReactorHatch hatchPart) {
+                        if (!hatchPart.checkValidity(height - 1)) {
+                            state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
+                            return false;
+                        }
+                        return true;
+                    }
                     return false;
-                }
-                return true;
-            }
-            return false;
-        },
+                },
                 () -> Arrays.stream(allowedAbilities)
                         .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
                         .filter(Objects::nonNull).map(tile -> {
@@ -699,14 +814,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         }
     }
 
-    @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        ITextComponent toggleText = null;
-        if (!this.isStructureFormed())
-            toggleText = new TextComponentTranslation("gregtech.multiblock.fission_reactor.structure_incomplete");
-        textList.add(toggleText);
-    }
+
 
     protected void lockAll() {
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
