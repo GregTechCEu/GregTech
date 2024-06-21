@@ -29,7 +29,6 @@ import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.virtualregistry.VirtualRegistryBase;
-import gregtech.api.util.virtualregistry.VirtualTankRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.api.worldgen.config.WorldGenRegistry;
