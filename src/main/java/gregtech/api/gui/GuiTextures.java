@@ -416,8 +416,12 @@ public class GuiTextures {
             .fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png");
     public static final TextureArea PROGRESS_BAR_FLUID_RIG_DEPLETION = TextureArea
             .fullImage("textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png");
-    public static final TextureArea PROGRESS_BAR_PRESSURE = TextureArea
-            .fullImage("textures/gui/progress_bar/progress_bar_pressure.png");
+    public static final TextureArea PROGRESS_BAR_FISSION_HEAT = TextureArea
+            .fullImage("textures/gui/progress_bar/progress_bar_fission_heat.png");
+    public static final TextureArea PROGRESS_BAR_FISSION_PRESSURE = TextureArea
+            .fullImage("textures/gui/progress_bar/progress_bar_fission_pressure.png");
+    public static final TextureArea PROGRESS_BAR_FISSION_ENERGY = TextureArea
+            .fullImage("textures/gui/progress_bar/progress_bar_fission_energy.png");
 
     // Fusion reactor diagram progress bar parts
     public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BL = TextureArea

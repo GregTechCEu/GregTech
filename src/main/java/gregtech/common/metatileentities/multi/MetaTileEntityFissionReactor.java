@@ -2,10 +2,7 @@ package gregtech.common.metatileentities.multi;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
 import gregtech.api.capability.ICoolantHandler;
-import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.IMaintenanceHatch;
@@ -13,11 +10,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.RecolorableTextWidget;
 import gregtech.api.gui.widgets.SliderWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.gui.widgets.UpdatedSliderWidget;
@@ -131,33 +125,33 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 240, 208);
 
         // Display
-        builder.image(4, 4, 190 + 42, 109, GuiTextures.DISPLAY);
+        builder.image(4, 4, 190 + 48, 109, GuiTextures.DISPLAY);
 
         // triple bar
         ProgressWidget progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(0),
                 4, 115, 62 + 14, 7,
-                GuiTextures.PROGRESS_BAR_FUSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
+                GuiTextures.PROGRESS_BAR_FISSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
                 .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(1),
                 68 + 14, 115, 62 + 14, 7,
-                GuiTextures.PROGRESS_BAR_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
+                GuiTextures.PROGRESS_BAR_FISSION_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
                 .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(2),
                 132 + 28, 115, 62 + 14, 7,
-                GuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW, ProgressWidget.MoveType.HORIZONTAL)
+                GuiTextures.PROGRESS_BAR_FISSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
                 .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
         builder.widget(progressBar);
 
         builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
 
-        builder.widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 220,
+        builder.widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 60, 220,
                 18, 0.0f, 1.0f,
                 (float) controlRodInsertionValue, this::setControlRodInsertionValue,
                 () -> (float) this.controlRodInsertionValue) {
@@ -168,18 +162,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         String.format("%.2f%%", this.getSliderValue() * 100));
             }
         }.setBackground(GuiTextures.DARK_SLIDER_BACKGROUND).setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
-        builder.widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 220, 18, 0.0f, 16000.f, flowRate,
+        builder.widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 80, 220, 18, 0.0f, 16000.f, flowRate,
                 this::setFlowRate).setBackground(GuiTextures.DARK_SLIDER_BACKGROUND)
                 .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
 
         builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(181)
+                .setMaxWidthLimit(200)
                 .setClickHandler(this::handleDisplayClick));
 
         // Power Button
 
         builder.widget(new ToggleButtonWidget(173 + 42, 183, 18, 18, GuiTextures.BUTTON_LOCK,
-                this::isLocked, this::tryLocking).shouldUseBaseBackground());
+                this::isLocked, this::tryLocking).shouldUseBaseBackground().setTooltipText("gregtech.gui.fission.lock"));
         builder.widget(new ImageWidget(173 + 42, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
 
         // Voiding Mode Button
@@ -252,7 +246,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
     private void setControlRodInsertionValue(float value) {
         this.controlRodInsertionValue = value;
-        if (lockingState == LockingState.LOCKED && fissionReactor != null)
+        if (fissionReactor != null)
             fissionReactor.updateControlRodInsertion(controlRodInsertionValue);
     }
 
@@ -260,16 +254,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         return lockingState == LockingState.LOCKED;
     }
 
-    private int getLockedTextColor() {
+    private TextFormatting getLockedTextColor() {
         if (lockingState == LockingState.LOCKED)
-            return 0x00A000;
+            return TextFormatting.GREEN;
         if (lockingState == LockingState.INVALID_COMPONENT)
-            return 0xC08000;
+            return TextFormatting.RED;
         if (lockingState == LockingState.UNLOCKED)
-            return 0x0050D0;
+            return TextFormatting.DARK_AQUA;
         if (lockingState == LockingState.SHOULD_LOCK)
-            return 0x000000;
-        return getWorld().getWorldTime() % 4 >= 2 ? 0xA00000 : 0xC08000;
+            return TextFormatting.BLACK;
+        return getWorld().getWorldTime() % 4 >= 2 ? TextFormatting.RED : TextFormatting.YELLOW;
     }
 
     private void tryLocking(boolean lock) {
@@ -290,14 +284,15 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         }
     }
 
-    private Consumer<List<ITextComponent>> getDisplayText() {
-        return (list) -> {
-            list.add(
-                    new TextComponentTranslation("gregtech.gui.fission.lock." + lockingState.toString().toLowerCase()));
-            list.add(new TextComponentTranslation("gregtech.gui.fission.k_eff", String.format("%.4f", this.kEff)));
-            list.add(new TextComponentTranslation("gregtech.gui.fission.depletion",
-                    String.format("%.2f", this.fuelDepletionPercent * 100)));
-        };
+    @Override
+    protected void addDisplayText(List<ITextComponent> list) {
+        super.addDisplayText(list);
+        list.add(
+                TextComponentUtil.setColor(new TextComponentTranslation(
+                        "gregtech.gui.fission.lock." + lockingState.toString().toLowerCase()), getLockedTextColor()));
+        list.add(new TextComponentTranslation("gregtech.gui.fission.k_eff", String.format("%.4f", this.kEff)));
+        list.add(new TextComponentTranslation("gregtech.gui.fission.depletion",
+                String.format("%.2f", this.fuelDepletionPercent * 100)));
     }
 
     private Consumer<List<ITextComponent>> getStatsText() {
@@ -814,8 +809,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         }
     }
 
-
-
     protected void lockAll() {
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
             handler.setLock(true);
@@ -843,13 +836,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         }
         this.fissionReactor.turnOff();
         setLockingState(LockingState.UNLOCKED);
-    }
-
-    @Override
-    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
-        super.handleDisplayClick(componentData, clickData);
-        if (componentData.equals("turn_on")) lockAndPrepareReactor();
-        else if (componentData.equals("turn_off")) unlockAll();
     }
 
     private void lockAndPrepareReactor() {

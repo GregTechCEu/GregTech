@@ -5565,6 +5565,7 @@ gregtech.gui.fission.lock.missing_coolant=A hatch is missing coolant!
 gregtech.gui.fission.lock.fuel_clogged=An output fuel bus is full!
 gregtech.gui.fission.lock.no_fuel_channels=There isn't a fuel channel!
 gregtech.gui.fission.lock.invalid_component=Erm, what the flip? Check your log file
+gregtech.gui.fission.lock=Lock/unlock fuel and coolant types and start/stop the reactor
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
