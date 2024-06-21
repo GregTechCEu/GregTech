@@ -91,10 +91,6 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
         return this.fluidFilter;
     }
 
-    public boolean isIOEnabled() {
-        return this.ioEnabled;
-    }
-
     @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         return coverable.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
@@ -330,8 +326,8 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
         return defaultValue;
     }
 
-    private boolean isIoEnabled() {
-        return ioEnabled;
+    public boolean isIOEnabled() {
+        return this.ioEnabled;
     }
 
     private void setIoEnabled(boolean ioEnabled) {
