@@ -22,7 +22,7 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
     }
 
     public void setColor(String color) {
-        this.data.setString(COLOR_KEY, color == null ? DEFAULT_COLOR : color);
+        this.data.setString(COLOR_KEY, color == null ? DEFAULT_COLOR : color.toUpperCase());
     }
 
     public String getName() {
