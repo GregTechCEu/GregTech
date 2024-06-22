@@ -125,6 +125,7 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         return t;
     }
 
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public static GroovyContainer<?> getInstance() {
         return modSupportContainer;
     }
@@ -243,11 +244,13 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         return GTValues.MOD_NAME;
     }
 
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     @Override
     public @Nullable GroovyPropertyContainer createGroovyPropertyContainer() {
         return new PropertyContainer();
     }
 
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     @Override
     public void onCompatLoaded(GroovyContainer<?> container) {
         GroovyScriptModule.modSupportContainer = container;
