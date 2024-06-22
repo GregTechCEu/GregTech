@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import codechicken.lib.vec.Vector3;
@@ -34,11 +35,20 @@ public class GTLaserBeamParticle extends GTParticle {
     private float emit;
     private boolean doubleVertical;
 
+    private int activeTime;
+    private final int fadeInTime;
+
     public GTLaserBeamParticle(@Nullable MetaTileEntity mte, @NotNull Vector3 startPos, @NotNull Vector3 endPos) {
+        this(mte, startPos, endPos, 0);
+    }
+
+    public GTLaserBeamParticle(@Nullable MetaTileEntity mte, @NotNull Vector3 startPos, @NotNull Vector3 endPos,
+                               int fadeInTime) {
         super(startPos.x, startPos.y, startPos.z);
         this.mte = mte;
         this.direction = endPos.copy().subtract(startPos);
         this.setRenderRange(64);
+        this.fadeInTime = fadeInTime;
     }
 
     @Override
@@ -99,6 +109,15 @@ public class GTLaserBeamParticle extends GTParticle {
         return this.alpha;
     }
 
+    public float getAlpha(float partialTicks) {
+        if (this.fadeInTime > this.activeTime) {
+            return (float) (this.alpha * MathHelper.clampedLerp(
+                    (double) this.activeTime / this.fadeInTime,
+                    (double) (this.activeTime + 1) / this.fadeInTime, partialTicks));
+        }
+        return this.alpha;
+    }
+
     /**
      * Set emit speed.
      *
@@ -131,9 +150,8 @@ public class GTLaserBeamParticle extends GTParticle {
         if (mte == null || mte.isValid() &&
                 mte.getWorld().isBlockLoaded(mte.getPos(), false) &&
                 mte.getWorld().getTileEntity(mte.getPos()) == mte.getHolder()) {
-            return;
-        }
-        setExpired();
+            this.activeTime++;
+        } else setExpired();
     }
 
     @Override
@@ -169,7 +187,7 @@ public class GTLaserBeamParticle extends GTParticle {
                 bodyTexture.getGlTextureId(),
                 headTexture == null ? -1 :
                         headTexture.getGlTextureId(),
-                direction, cameraDirection, beamHeight, headWidth, alpha, offset);
+                direction, cameraDirection, beamHeight, headWidth, this.getAlpha(context.partialTicks()), offset);
         GlStateManager.translate(context.cameraX() - posX, context.cameraY() - posY, context.cameraZ() - posZ);
     }
 
