@@ -211,11 +211,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     private void toggleControlRodRegulation(boolean b) {
-        this.fissionReactor.controlRodRegulationOn = b;
+        if (fissionReactor != null) {
+            this.fissionReactor.controlRodRegulationOn = b;
+        }
     }
 
     private boolean areControlRodsRegulated() {
-        return this.fissionReactor.controlRodRegulationOn;
+        return fissionReactor != null && this.fissionReactor.controlRodRegulationOn;
     }
 
     @Override
