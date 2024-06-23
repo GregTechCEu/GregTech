@@ -128,6 +128,7 @@ public class FissionReactor {
     public double fuelMass;
     public double structuralMass;
     public boolean needsOutput;
+    public boolean controlRodRegulationOn = true;
     public boolean isOn = false;
 
     protected static double responseFunction(double target, double value, double criticalRate, double rate) {
@@ -573,7 +574,7 @@ public class FissionReactor {
             this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.) / 1000;
         } else {
             this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff), this.power,
-                    controlRodInsertion, 1);
+                    1, 1);
         }
         this.decayProductsAmount *= decayProductRate;
     }
@@ -613,6 +614,7 @@ public class FissionReactor {
         tagCompound.setBoolean("NeedsOutput", this.needsOutput);
         tagCompound.setDouble("ControlRodInsertion", this.controlRodInsertion);
         tagCompound.setBoolean("IsOn", this.isOn);
+        tagCompound.setBoolean("ControlRodRegulationOn", this.controlRodRegulationOn);
 
         return tagCompound;
     }
@@ -629,6 +631,7 @@ public class FissionReactor {
         this.needsOutput = tagCompound.getBoolean("NeedsOutput");
         this.controlRodInsertion = tagCompound.getDouble("ControlRodInsertion");
         this.isOn = tagCompound.getBoolean("IsOn");
+        this.controlRodRegulationOn = tagCompound.getBoolean("ControlRodRegulationOn");
     }
 
     public void updateControlRodInsertion(double controlRodInsertion) {
@@ -637,12 +640,12 @@ public class FissionReactor {
     }
 
     public void regulateControlRods() {
-        if (!this.isOn)
+        if (!this.isOn || !this.controlRodRegulationOn)
             return;
         double load = Math.max(temperature / maxTemperature, pressure / maxPressure);
         if (load > 1. / 40 && kEff > 1.02) {
             this.controlRodInsertion += 5f / 255;
-            this.controlRodInsertion = Math.min(0, this.controlRodInsertion);
+            this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
             this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
         }
         if (load < 3. / 4) {

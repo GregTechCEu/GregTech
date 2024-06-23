@@ -89,7 +89,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
-        implements IDataInfoProvider, IProgressBarMultiblock {
+                                          implements IDataInfoProvider, IProgressBarMultiblock {
 
     private FissionReactor fissionReactor;
     private int diameter;
@@ -110,6 +110,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     private double maxPower;
     private double kEff;
     private double fuelDepletionPercent;
+
     private NBTTagCompound transientData;
 
     public MetaTileEntityFissionReactor(ResourceLocation metaTileEntityId) {
@@ -132,21 +133,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                 () -> this.getFillPercentage(0),
                 4, 115, 62 + 14, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
-                .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
+                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(1),
                 68 + 14, 115, 62 + 14, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
-                .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
+                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(2),
                 132 + 28, 115, 62 + 14, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
-                .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
+                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
         builder.widget(progressBar);
 
         builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
@@ -164,7 +165,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         }.setBackground(GuiTextures.DARK_SLIDER_BACKGROUND).setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
         builder.widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 80, 220, 18, 0.0f, 16000.f, flowRate,
                 this::setFlowRate).setBackground(GuiTextures.DARK_SLIDER_BACKGROUND)
-                .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
+                        .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
 
         builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(200)
@@ -173,7 +174,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         // Power Button
 
         builder.widget(new ToggleButtonWidget(173 + 42, 183, 18, 18, GuiTextures.BUTTON_LOCK,
-                this::isLocked, this::tryLocking).shouldUseBaseBackground().setTooltipText("gregtech.gui.fission.lock"));
+                this::isLocked, this::tryLocking).shouldUseBaseBackground()
+                        .setTooltipText("gregtech.gui.fission.lock"));
         builder.widget(new ImageWidget(173 + 42, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
 
         // Voiding Mode Button
@@ -202,6 +204,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     @Override
+    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
+        return new ToggleButtonWidget(x, y, width, height, this::areControlRodsRegulated,
+                this::toggleControlRodRegulation).setButtonTexture(GuiTextures.BUTTON_CONTROL_ROD_HELPER)
+                        .setTooltipText("gregtech.gui.fission.helper");
+    }
+
+    private void toggleControlRodRegulation(boolean b) {
+        this.fissionReactor.controlRodRegulationOn = b;
+    }
+
+    private boolean areControlRodsRegulated() {
+        return this.fissionReactor.controlRodRegulationOn;
+    }
+
+    @Override
     public void addBarHoverText(List<ITextComponent> list, int index) {
         if (index == 0) {
             list.add(new TextComponentTranslation("gregtech.gui.fission.temperature",
@@ -216,28 +233,28 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     /*
-    @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 206, 236).shouldColor(false)
-                .widget(new ToggleButtonWidget(10, 10, 18, 18, this::isLocked, this::tryLocking))
-                .widget(new RecolorableTextWidget(35, 14, getLockingStateText(), () -> getLockedTextColor()))
-                .widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 165,
-                        18, 0.0f, 1.0f,
-                        (float) controlRodInsertionValue, this::setControlRodInsertionValue,
-                        () -> (float) this.controlRodInsertionValue) {
-
-                    @Override
-                    protected String getDisplayString() {
-                        return I18n.format("gregtech.gui.fission.control_rod_insertion",
-                                String.format("%.2f%%", this.getSliderValue() * 100));
-                    }
-                })
-                .widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 165, 18, 0.0f, 16000.f, flowRate,
-                        this::setFlowRate));
-        builder.widget(new AdvancedTextWidget(10, 80, getStatsText(), 0x2020D0));
-        return builder;
-    }
-*/
+     * @Override
+     * protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+     * ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 206, 236).shouldColor(false)
+     * .widget(new ToggleButtonWidget(10, 10, 18, 18, this::isLocked, this::tryLocking))
+     * .widget(new RecolorableTextWidget(35, 14, getLockingStateText(), () -> getLockedTextColor()))
+     * .widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 165,
+     * 18, 0.0f, 1.0f,
+     * (float) controlRodInsertionValue, this::setControlRodInsertionValue,
+     * () -> (float) this.controlRodInsertionValue) {
+     * 
+     * @Override
+     * protected String getDisplayString() {
+     * return I18n.format("gregtech.gui.fission.control_rod_insertion",
+     * String.format("%.2f%%", this.getSliderValue() * 100));
+     * }
+     * })
+     * .widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 165, 18, 0.0f, 16000.f, flowRate,
+     * this::setFlowRate));
+     * builder.widget(new AdvancedTextWidget(10, 80, getStatsText(), 0x2020D0));
+     * return builder;
+     * }
+     */
 
     private void setFlowRate(float flowrate) {
         this.flowRate = (int) flowrate;
@@ -411,12 +428,12 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                 .getExportItems().insertItem(0,
                                         OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
                                 .isEmpty()) {
-                            // We still need to know if the output is blocked, even if the recipe doesn't start
-                            // yet
-                            canWork = false;
-                            this.lockingState = LockingState.FUEL_CLOGGED;
-                            break;
-                        }
+                                    // We still need to know if the output is blocked, even if the recipe doesn't start
+                                    // yet
+                                    canWork = false;
+                                    this.lockingState = LockingState.FUEL_CLOGGED;
+                                    break;
+                                }
                     }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
@@ -592,19 +609,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         MultiblockAbility<?>[] allowedAbilities = { MultiblockAbility.IMPORT_COOLANT, MultiblockAbility.IMPORT_FUEL_ROD,
                 MultiblockAbility.CONTROL_ROD_PORT };
         return tilePredicate((state, tile) -> {
-                    if (!(tile instanceof IMultiblockAbilityPart<?> &&
-                            ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
-                        return false;
-                    }
-                    if (tile instanceof IFissionReactorHatch hatchPart) {
-                        if (!hatchPart.checkValidity(height - 1)) {
-                            state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
-                            return false;
-                        }
-                        return true;
-                    }
+            if (!(tile instanceof IMultiblockAbilityPart<?> &&
+                    ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
+                return false;
+            }
+            if (tile instanceof IFissionReactorHatch hatchPart) {
+                if (!hatchPart.checkValidity(height - 1)) {
+                    state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
                     return false;
-                },
+                }
+                return true;
+            }
+            return false;
+        },
                 () -> Arrays.stream(allowedAbilities)
                         .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
                         .filter(Objects::nonNull).map(tile -> {
@@ -788,6 +805,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
             packetBuffer.writeDouble(this.fissionReactor.controlRodInsertion);
             packetBuffer.writeDouble(this.fuelDepletionPercent);
         }));
+        this.markDirty();
     }
 
     @Override
