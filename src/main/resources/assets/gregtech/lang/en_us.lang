@@ -5554,10 +5554,10 @@ gregtech.gui.fission.coolant_flow=Coolant flow rate: %d L/t per channel
 gregtech.gui.fission.temperature=Temperature: %.3f K
 gregtech.gui.fission.pressure=Pressure: %.3f Pa
 gregtech.gui.fission.power=Power: %.3f MW / %.3f MW
-gregtech.gui.fission.k_eff=Neutron multiplication factor (K eff): %f
-gregtech.gui.fission.depletion=Current fuel rods depletion: %f%%
+gregtech.gui.fission.k_eff=Neutron multiplication factor: %f
+gregtech.gui.fission.depletion=Current fuel rod depletion: %f%%
 
-gregtech.gui.fission.lock.locked=Reactor locked & active!
+gregtech.gui.fission.lock.locked=Reactor locked and active!
 gregtech.gui.fission.lock.unlocked=Reactor not active
 gregtech.gui.fission.lock.should_lock=Activating...
 gregtech.gui.fission.lock.missing_fuel=A bus is missing fuel!
