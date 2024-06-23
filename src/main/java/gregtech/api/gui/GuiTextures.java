@@ -123,6 +123,8 @@ public class GuiTextures {
             .fullImage("textures/gui/widget/button_throttle_minus.png");
     public static final TextureArea BUTTON_THROTTLE_PLUS = TextureArea
             .fullImage("textures/gui/widget/button_throttle_plus.png");
+    public static final TextureArea BUTTON_CONTROL_ROD_HELPER = TextureArea
+            .fullImage("textures/gui/widget/button_control_rod_helper.png");
 
     // INDICATORS & ICONS
     public static final TextureArea INDICATOR_NO_ENERGY = TextureArea
