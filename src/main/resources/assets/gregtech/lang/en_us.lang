@@ -2388,7 +2388,7 @@ recipemap.coke_oven.name=Coke Oven
 recipemap.research_station.name=Research Station
 recipemap.heat_exchanger.name=Heat Exchanger
 recipemap.gas_centrifuge.name=Gas Centrifuge
-
+recipemap.spent_fuel_pool.name=Spent Fuel Pool
 
 gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
