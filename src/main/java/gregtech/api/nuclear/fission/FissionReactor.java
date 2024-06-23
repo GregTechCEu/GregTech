@@ -94,7 +94,7 @@ public class FissionReactor {
      */
     public double coolantBaseTemperature;
     public double maxFuelDepletion = 1;
-    public double fuelDepletion = 1;
+    public double fuelDepletion = -1;
     public double prevFuelDepletion;
     public double heatRemoved;
     public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
@@ -406,7 +406,7 @@ public class FissionReactor {
     }
 
     public boolean isDepleted() {
-        return maxFuelDepletion <= fuelDepletion;
+        return maxFuelDepletion <= fuelDepletion || fuelDepletion < 0;
     }
 
     public void prepareInitialConditions() {
@@ -417,6 +417,9 @@ public class FissionReactor {
         maxFuelDepletion = 0;
         for (FuelRod rod : fuelRods) {
             maxFuelDepletion += rod.getFuel().getDuration();
+        }
+        if (fuelDepletion < 0) {
+            fuelDepletion = maxFuelDepletion;
         }
 
         for (CoolantChannel channel : effectiveCoolantChannels) {
