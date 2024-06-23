@@ -126,26 +126,26 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 240, 208);
 
         // Display
-        builder.image(4, 4, 190 + 48, 109, GuiTextures.DISPLAY);
+        builder.image(4, 4, 232, 109, GuiTextures.DISPLAY);
 
         // triple bar
         ProgressWidget progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(0),
-                4, 115, 62 + 14, 7,
+                4, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
                         .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(1),
-                68 + 14, 115, 62 + 14, 7,
+                82, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
                         .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(2),
-                132 + 28, 115, 62 + 14, 7,
+                160, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
                         .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
         builder.widget(progressBar);
@@ -168,25 +168,25 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
 
         builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(200)
+                .setMaxWidthLimit(220)
                 .setClickHandler(this::handleDisplayClick));
 
         // Power Button
 
-        builder.widget(new ToggleButtonWidget(173 + 42, 183, 18, 18, GuiTextures.BUTTON_LOCK,
+        builder.widget(new ToggleButtonWidget(215, 183, 18, 18, GuiTextures.BUTTON_LOCK,
                 this::isLocked, this::tryLocking).shouldUseBaseBackground()
                         .setTooltipText("gregtech.gui.fission.lock"));
-        builder.widget(new ImageWidget(173 + 42, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
+        builder.widget(new ImageWidget(215, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
 
         // Voiding Mode Button
-        builder.widget(new ImageWidget(173 + 42, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
+        builder.widget(new ImageWidget(215, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
                 .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
 
-        builder.widget(new ImageWidget(173 + 42, 143, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
+        builder.widget(new ImageWidget(215, 143, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
                 .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
 
         // Flex Button
-        builder.widget(getFlexButton(173 + 42, 125, 18, 18));
+        builder.widget(getFlexButton(215, 125, 18, 18));
 
         builder.bindPlayerInventory(entityPlayer.inventory, 125);
         return builder;
@@ -231,30 +231,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     String.format("%.1f", this.maxPower)));
         }
     }
-
-    /*
-     * @Override
-     * protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-     * ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 206, 236).shouldColor(false)
-     * .widget(new ToggleButtonWidget(10, 10, 18, 18, this::isLocked, this::tryLocking))
-     * .widget(new RecolorableTextWidget(35, 14, getLockingStateText(), () -> getLockedTextColor()))
-     * .widget(new UpdatedSliderWidget("gregtech.gui.fission.control_rod_insertion", 10, 30, 165,
-     * 18, 0.0f, 1.0f,
-     * (float) controlRodInsertionValue, this::setControlRodInsertionValue,
-     * () -> (float) this.controlRodInsertionValue) {
-     * 
-     * @Override
-     * protected String getDisplayString() {
-     * return I18n.format("gregtech.gui.fission.control_rod_insertion",
-     * String.format("%.2f%%", this.getSliderValue() * 100));
-     * }
-     * })
-     * .widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 50, 165, 18, 0.0f, 16000.f, flowRate,
-     * this::setFlowRate));
-     * builder.widget(new AdvancedTextWidget(10, 80, getStatsText(), 0x2020D0));
-     * return builder;
-     * }
-     */
 
     private void setFlowRate(float flowrate) {
         this.flowRate = (int) flowrate;
@@ -322,7 +298,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     String.format("%.1f", this.maxPower)));
             list.add(new TextComponentTranslation("gregtech.gui.fission.k_eff", String.format("%.4f", this.kEff)));
             list.add(new TextComponentTranslation("gregtech.gui.fission.depletion",
-                    String.format("%.2f", this.fuelDepletionPercent * 100)));
+                    String.format("%.2f", Math.min(100, this.fuelDepletionPercent * 100))));
             if (this.getMaintenanceProblems() > 0) {
                 byte maintenanceProblems = this.getMaintenanceProblems();
                 if ((getMaintenanceProblems() & 1) == 0) {
@@ -414,7 +390,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         }
                     }
                 }
-                this.fissionReactor.makeCoolantFlow(isFlowingCorrectly ? 0 : flowRate);
+                this.fissionReactor.makeCoolantFlow(isFlowingCorrectly ? flowRate : 0);
 
                 // Fuel handling
                 if (this.fissionReactor.isDepleted()) {
