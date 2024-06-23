@@ -86,7 +86,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                           implements IDataInfoProvider, IProgressBarMultiblock {
@@ -288,48 +287,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         list.add(new TextComponentTranslation("gregtech.gui.fission.k_eff", String.format("%.4f", this.kEff)));
         list.add(new TextComponentTranslation("gregtech.gui.fission.depletion",
                 String.format("%.2f", this.fuelDepletionPercent * 100)));
-    }
-
-    private Consumer<List<ITextComponent>> getStatsText() {
-        return (list) -> {
-            list.add(new TextComponentTranslation("gregtech.gui.fission.temperature",
-                    String.format("%.1f", this.temperature) + " / " + String.format("%.1f", this.maxTemperature)));
-            list.add(new TextComponentTranslation("gregtech.gui.fission.pressure",
-                    String.format("%.0f", this.pressure) + " / " + String.format("%.0f", this.maxPressure)));
-            list.add(new TextComponentTranslation("gregtech.gui.fission.power", String.format("%.1f", this.power),
-                    String.format("%.1f", this.maxPower)));
-            list.add(new TextComponentTranslation("gregtech.gui.fission.k_eff", String.format("%.4f", this.kEff)));
-            list.add(new TextComponentTranslation("gregtech.gui.fission.depletion",
-                    String.format("%.2f", Math.min(100, this.fuelDepletionPercent * 100))));
-            if (this.getMaintenanceProblems() > 0) {
-                byte maintenanceProblems = this.getMaintenanceProblems();
-                if ((getMaintenanceProblems() & 1) == 0) {
-                    list.add(TextComponentUtil.translationWithColor(
-                            TextFormatting.DARK_RED,
-                            "gregtech.multiblock.universal.problem.wrench"));
-                } else if (((maintenanceProblems >> 1) & 1) == 0) {
-                    list.add(TextComponentUtil.translationWithColor(
-                            TextFormatting.DARK_RED,
-                            "gregtech.multiblock.universal.problem.screwdriver"));
-                } else if (((maintenanceProblems >> 2) & 1) == 0) {
-                    list.add(TextComponentUtil.translationWithColor(
-                            TextFormatting.DARK_RED,
-                            "gregtech.multiblock.universal.problem.soft_mallet"));
-                } else if (((maintenanceProblems >> 3) & 1) == 0) {
-                    list.add(TextComponentUtil.translationWithColor(
-                            TextFormatting.DARK_RED,
-                            "gregtech.multiblock.universal.problem.hard_hammer"));
-                } else if (((maintenanceProblems >> 4) & 1) == 0) {
-                    list.add(TextComponentUtil.translationWithColor(
-                            TextFormatting.DARK_RED,
-                            "gregtech.multiblock.universal.problem.wire_cutter"));
-                } else if (((maintenanceProblems >> 5) & 1) == 0) {
-                    list.add(TextComponentUtil.translationWithColor(
-                            TextFormatting.DARK_RED,
-                            "gregtech.multiblock.universal.problem.crowbar"));
-                }
-            }
-        };
     }
 
     public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction, int steps) {
@@ -802,6 +759,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
             this.fuelDepletionPercent = buf.readDouble();
         } else if (dataId == GregtechDataCodes.SYNC_LOCKING_STATE) {
             this.lockingState = buf.readEnumValue(LockingState.class);
+            this.scheduleRenderUpdate();
         }
     }
 
