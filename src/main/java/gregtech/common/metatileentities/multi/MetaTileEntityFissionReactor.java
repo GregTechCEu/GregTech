@@ -728,7 +728,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         this.maxPower = this.fissionReactor.maxPower;
         this.kEff = this.fissionReactor.kEff;
         this.controlRodInsertionValue = this.fissionReactor.controlRodInsertion;
-        this.fuelDepletionPercent = this.fissionReactor.fuelDepletion / this.fissionReactor.maxFuelDepletion;
+        this.fuelDepletionPercent = Math.max(0, this.fissionReactor.fuelDepletion) / this.fissionReactor.maxFuelDepletion;
         writeCustomData(GregtechDataCodes.SYNC_REACTOR_STATS, (packetBuffer -> {
             packetBuffer.writeDouble(this.fissionReactor.temperature);
             packetBuffer.writeDouble(this.fissionReactor.maxTemperature);
