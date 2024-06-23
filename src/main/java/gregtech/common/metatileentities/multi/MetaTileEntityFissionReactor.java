@@ -195,11 +195,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     @Override
     public double getFillPercentage(int index) {
         if (index == 0) {
-            return fissionReactor.temperature / fissionReactor.maxTemperature;
+            return this.temperature / this.maxTemperature;
         } else if (index == 1) {
-            return fissionReactor.pressure / fissionReactor.maxPressure;
+            return this.pressure / this.maxPressure;
         } else {
-            return fissionReactor.power / fissionReactor.maxPower;
+            return this.power / this.maxPower;
         }
     }
 
