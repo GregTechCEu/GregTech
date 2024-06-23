@@ -30,8 +30,8 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
 
     public void setPipeData(BlockPipe<PipeType, NodeDataType, Edge, ?> pipeBlock, PipeType pipeType,
                             Material pipeMaterial) {
-        super.setPipeData(pipeBlock, pipeType);
         this.pipeMaterial = pipeMaterial;
+        super.setPipeData(pipeBlock, pipeType);
         if (!getWorld().isRemote) {
             writeCustomData(UPDATE_PIPE_MATERIAL, this::writePipeMaterial);
         }

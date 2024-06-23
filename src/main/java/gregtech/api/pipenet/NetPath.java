@@ -17,14 +17,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData<NodeDataType>, E extends NetEdge> {
+        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge> {
 
-    private List<NetNode<PipeType, NodeDataType, E>> nodeList;
-    private List<E> edgeList;
+    private List<NetNode<PipeType, NodeDataType, Edge>> nodeList;
+    private List<Edge> edgeList;
 
-    private NetNode<PipeType, NodeDataType, E> sourceNode;
+    private NetNode<PipeType, NodeDataType, Edge> sourceNode;
 
-    private NetNode<PipeType, NodeDataType, E> targetNode;
+    private NetNode<PipeType, NodeDataType, Edge> targetNode;
 
     private double weight;
 
@@ -35,7 +35,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * 
      * @param node the node to
      */
-    public NetPath(NetNode<PipeType, NodeDataType, E> node) {
+    public NetPath(NetNode<PipeType, NodeDataType, Edge> node) {
         this.sourceNode = node;
         this.targetNode = node;
         this.nodeList = Collections.singletonList(node);
@@ -46,13 +46,12 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     /**
      * Generates a NetPath from an ordered list of nodes, edges, and a weight.
-     * Used exclusively for single path generation.
      *
      * @param nodes  List of nodes.
      * @param edges  List of edges.
      * @param weight Sum weight of the path.
      */
-    public NetPath(List<NetNode<PipeType, NodeDataType, E>> nodes, List<E> edges, double weight) {
+    public NetPath(List<NetNode<PipeType, NodeDataType, Edge>> nodes, List<Edge> edges, double weight) {
         this.sourceNode = nodes.get(0);
         this.targetNode = nodes.get(nodes.size() - 1);
         this.nodeList = nodes;
@@ -66,7 +65,7 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * 
      * @param path the GraphPath
      */
-    public NetPath(GraphPath<NetNode<PipeType, NodeDataType, E>, E> path) {
+    public NetPath(GraphPath<NetNode<PipeType, NodeDataType, Edge>, Edge> path) {
         this.sourceNode = path.getStartVertex();
         this.targetNode = path.getEndVertex();
         this.nodeList = path.getVertexList();
@@ -79,19 +78,19 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     protected NetPath() {}
 
-    public List<NetNode<PipeType, NodeDataType, E>> getNodeList() {
+    public List<NetNode<PipeType, NodeDataType, Edge>> getNodeList() {
         return nodeList;
     }
 
-    public List<E> getEdgeList() {
+    public List<Edge> getEdgeList() {
         return edgeList;
     }
 
-    public NetNode<PipeType, NodeDataType, E> getSourceNode() {
+    public NetNode<PipeType, NodeDataType, Edge> getSourceNode() {
         return sourceNode;
     }
 
-    public NetNode<PipeType, NodeDataType, E> getTargetNode() {
+    public NetNode<PipeType, NodeDataType, Edge> getTargetNode() {
         return targetNode;
     }
 
@@ -99,11 +98,11 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return this.getTargetTEs().keySet().iterator();
     }
 
-    public FacedNetPath<PipeType, NodeDataType, E> firstFacing() {
+    public FacedNetPath<PipeType, NodeDataType, Edge> firstFacing() {
         return this.withFacing(this.getFacingIterator().next());
     }
 
-    public FacedNetPath<PipeType, NodeDataType, E> withFacing(EnumFacing facing) {
+    public FacedNetPath<PipeType, NodeDataType, Edge> withFacing(EnumFacing facing) {
         return new FacedNetPath<>(this, facing);
     }
 
@@ -181,6 +180,10 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
         public FacingPos toFacingPos() {
             return new FacingPos(path.getTargetNode().getNodePos(), this.facing);
+        }
+
+        public EnumFacing oppositeFacing() {
+            return facing.getOpposite();
         }
     }
 }

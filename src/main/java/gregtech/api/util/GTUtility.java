@@ -63,6 +63,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -886,5 +887,12 @@ public class GTUtility {
         DoubleSupplier supplier2 = () -> tracker.get() >= splitPoint ?
                 (1.0 / (1 - splitPoint)) * (tracker.get() - splitPoint) : 0;
         return Pair.of(supplier1, supplier2);
+    }
+
+    public static double geometricMean(double first, double... numbers) {
+        for (double number : numbers) {
+            first *= number;
+        }
+        return Math.pow(first, 1D / (1 + numbers.length));
     }
 }

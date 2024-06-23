@@ -5,4 +5,6 @@ public interface IEdge<V> {
     V getSource();
 
     V getTarget();
+
+    double getWeight();
 }

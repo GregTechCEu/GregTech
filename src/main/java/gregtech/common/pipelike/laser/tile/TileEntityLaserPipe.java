@@ -195,7 +195,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     private static class DefaultLaserContainer implements ILaserContainer {
 
         @Override
-        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
             return 0;
         }
 

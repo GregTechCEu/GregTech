@@ -1,8 +1,12 @@
 package gregtech.common.pipelike.cable.net;
 
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.pipenet.AbstractGroupData;
-import gregtech.api.pipenet.WorldPipeNetSimple;
-import gregtech.api.pipenet.edge.NetEdge;
+import gregtech.api.pipenet.WorldPipeNetComplex;
+import gregtech.api.pipenet.alg.AllPathsAlgorithm;
+import gregtech.api.pipenet.alg.ShortestPathsAlgorithm;
+import gregtech.api.pipenet.alg.SinglePathAlgorithm;
+import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.common.pipelike.cable.Insulation;
@@ -11,10 +15,8 @@ import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.CapabilityEnergy;
 
-// TODO move onto complex net
-public class WorldEnergyNet extends WorldPipeNetSimple<WireProperties, Insulation> {
+public class WorldEnergyNet extends WorldPipeNetComplex<WireProperties, Insulation, NetFlowEdge> {
 
     private static final String DATA_ID_BASE = "gregtech.e_net";
 
@@ -30,16 +32,16 @@ public class WorldEnergyNet extends WorldPipeNetSimple<WireProperties, Insulatio
     }
 
     public WorldEnergyNet(String name) {
-        super(name, false, false);
+        super(name, true, () -> new NetFlowEdge(1), AllPathsAlgorithm::new);
     }
 
     @Override
     protected Capability<?>[] getConnectionCapabilities() {
-        return new Capability[] { CapabilityEnergy.ENERGY };
+        return new Capability[] { GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER };
     }
 
     @Override
-    protected Class<? extends IPipeTile<Insulation, WireProperties, NetEdge>> getBasePipeClass() {
+    protected Class<? extends IPipeTile<Insulation, WireProperties, NetFlowEdge>> getBasePipeClass() {
         return TileEntityCable.class;
     }
 

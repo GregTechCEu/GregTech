@@ -5,6 +5,7 @@ import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.util.math.MathHelper;
@@ -25,7 +26,7 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
      *                        throughput.
      */
     public NetFlowSharedEdge(int flowBufferTicks) {
-        this.flowBufferTicks = flowBufferTicks;
+        this.flowBufferTicks = Math.max(flowBufferTicks, 1);
     }
 
     @Override
@@ -36,16 +37,16 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
 
     private final class ChannelsHolder extends AbstractChannelsHolder<NetFlowSharedEdge> {
 
-        private int maxCapacity;
-        private int sharedCapacity;
-        private final Object2IntOpenHashMap<Object> map;
+        private long maxCapacity;
+        private long sharedCapacity;
+        private final Object2LongOpenHashMap<Object> map;
         private long lastQueryTick;
+        private boolean init;
 
         public ChannelsHolder(ChannelSimulatorKey simulator) {
             super(simulator);
-            this.map = new Object2IntOpenHashMap<>(9);
+            this.map = new Object2LongOpenHashMap<>(9);
             this.map.defaultReturnValue(0);
-            this.maxCapacity = getMinData().getThroughput() * flowBufferTicks;
         }
 
         public ChannelsHolder(ChannelsHolder prototype, ChannelSimulatorKey simulator) {
@@ -62,7 +63,7 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
         }
 
         @Override
-        public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> int getFlowLimit(Object channel,
+        public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> long getFlowLimit(Object channel,
                                                                                                    Graph<NetNode<PT, NDT, NetFlowSharedEdge>, NetFlowSharedEdge> graph,
                                                                                                    long queryTick) {
             if (cannotSupportChannel(channel, queryTick)) return 0;
@@ -75,32 +76,32 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
         }
 
         @Override
-        int getConsumedLimit(Object channel, long queryTick) {
+        long getConsumedLimit(Object channel, long queryTick) {
             recalculateFlowLimits(queryTick);
-            return map.getInt(channel);
+            return map.getLong(channel);
         }
 
         @Override
         <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
-                Object channel, Graph<NetNode<PT, NDT, NetFlowSharedEdge>, NetFlowSharedEdge> graph, int amount, long queryTick) {
+                Object channel, Graph<NetNode<PT, NDT, NetFlowSharedEdge>, NetFlowSharedEdge> graph, long amount, long queryTick) {
             if (amount == 0) return;
             recalculateFlowLimits(queryTick);
 
             // check against reverse edge
             NetFlowSharedEdge inverse = graph.getEdge(getCastTarget(), getCastSource());
             if (inverse != null && inverse != NetFlowSharedEdge.this) {
-                int inverseConsumed = inverse.getConsumedLimit(channel, queryTick, getSimulator());
+                long inverseConsumed = inverse.getConsumedLimit(channel, queryTick, getSimulator());
                 if (inverseConsumed != 0) {
-                    int toFreeUp = Math.min(inverseConsumed, amount);
+                    long toFreeUp = Math.min(inverseConsumed, amount);
                     inverse.consumeFlowLimit(channel, graph, -toFreeUp, queryTick, getSimulator());
                     if (toFreeUp == amount) return;
                     amount -= toFreeUp;
                 }
             }
 
-            int finalAmount = amount;
+            long finalAmount = amount;
             map.compute(channel, (k, v) -> {
-                if (v == null) v = 0;
+                if (v == null) v = 0L;
                 v += finalAmount;
                 if (v <= 0) return null;
                 return v;
@@ -111,12 +112,16 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
 
         @Override
         public void recalculateFlowLimits(long queryTick) {
+            if (!this.init) {
+                this.maxCapacity = (long) getMinData().getThroughput() * flowBufferTicks;
+                this.init = true;
+            }
             int time = (int) (queryTick - this.lastQueryTick);
             if (time < 0) {
                 this.map.clear();
             } else {
                 List<Object> toRemove = new ObjectArrayList<>();
-                int regenerationPer = MathHelper.ceil((float) time * getMinData().getThroughput() / map.size());
+                long regenerationPer = MathHelper.ceil((double) time * getMinData().getThroughput() / map.size());
                 map.replaceAll((k, v) -> {
                     v -= regenerationPer;
                     if (v <= 0) toRemove.add(k);
@@ -124,7 +129,7 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
                 });
                 sharedCapacity += regenerationPer * map.size();
                 boundCapacity();
-                toRemove.forEach(map::removeInt);
+                toRemove.forEach(map::removeLong);
             }
             this.lastQueryTick = queryTick;
         }

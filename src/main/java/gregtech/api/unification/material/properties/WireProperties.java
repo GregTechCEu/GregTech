@@ -151,6 +151,11 @@ public class WireProperties implements IMaterialProperty, INodeData<WireProperti
     }
 
     @Override
+    public int getThroughput() {
+        return this.getAmperage();
+    }
+
+    @Override
     public WireProperties getMinData(Set<WireProperties> datas) {
         int amperage = this.getAmperage();
         for (WireProperties data : datas) {

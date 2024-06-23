@@ -96,7 +96,7 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     public NetGroup<PipeType, NodeDataType, Edge> getGroupSafe() {
         if (this.group == null) {
-            new NetGroup<>(this.net.pipeGraph, this.net).addNodes(this);
+            new NetGroup<>(this.net.pipeGraph, this.net).addNode(this);
             // addNodes automatically sets our group to the new group
         }
         return this.group;
@@ -246,6 +246,10 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     public NodeDataType getData() {
         return data;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     @Nullable

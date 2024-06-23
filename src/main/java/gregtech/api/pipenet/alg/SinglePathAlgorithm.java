@@ -1,8 +1,11 @@
 package gregtech.api.pipenet.alg;
 
+import com.google.common.collect.ImmutableList;
+
 import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
+import gregtech.api.pipenet.WorldPipeNetBase;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 
@@ -19,9 +22,9 @@ public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT
     private final Graph<NetNode<PT, NDT, E>, E> graph;
     private final boolean isDirected;
 
-    public SinglePathAlgorithm(Graph<NetNode<PT, NDT, E>, E> graph, boolean isDirected) {
-        this.graph = graph;
-        this.isDirected = isDirected;
+    public SinglePathAlgorithm(WorldPipeNetBase<NDT, PT, E> pipenet) {
+        this.graph = pipenet.getGraph();
+        this.isDirected = pipenet.isDirected();
     }
 
     @Override
@@ -56,6 +59,6 @@ public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT
             sumWeight += node.getData().getWeightFactor();
         }
         if (!valid) return Collections.emptyList();
-        return List.of(new NetPath<>(nodes, edges, sumWeight));
+        return ImmutableList.of(new NetPath<>(nodes, edges, sumWeight));
     }
 }

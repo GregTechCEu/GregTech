@@ -36,34 +36,33 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@ApiStatus.Internal
 public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataType>,
         PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, Edge extends NetEdge> extends WorldSavedData {
 
     private final boolean isDirected;
-    private final boolean isSinglePath;
-    private final boolean isFlow;
+    private final Function<WorldPipeNetBase<NodeDataType, PipeType, Edge>, INetAlgorithm<PipeType, NodeDataType, Edge>> algorithmBuilder;
 
     private Set<INBTBuilder> builders = null;
 
     private WeakReference<World> worldRef = new WeakReference<>(null);
     protected final Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> pipeGraph;
-    final Map<BlockPos, NetNode<PipeType, NodeDataType, Edge>> pipeMap = new Object2ObjectOpenHashMap<>();
+    protected final Map<BlockPos, NetNode<PipeType, NodeDataType, Edge>> pipeMap = new Object2ObjectOpenHashMap<>();
 
-    final INetAlgorithm.NetAlgorithmWrapper<PipeType, NodeDataType, Edge> netAlgorithm;
+    private final INetAlgorithm.NetAlgorithmWrapper<PipeType, NodeDataType, Edge> netAlgorithm;
 
     private boolean validAlgorithmInstance = false;
 
-    protected WorldPipeNetBase(String name, boolean isDirected, boolean isSinglePath,
+    WorldPipeNetBase(String name, boolean isDirected,
+                               Function<WorldPipeNetBase<NodeDataType, PipeType, Edge>, INetAlgorithm<PipeType, NodeDataType, Edge>> algorithmBuilder,
                                Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph) {
         super(name);
         this.pipeGraph = graph;
         this.netAlgorithm = new INetAlgorithm.NetAlgorithmWrapper<>();
         this.isDirected = isDirected;
-        this.isSinglePath = isSinglePath;
-        this.isFlow = true;
+        this.algorithmBuilder = algorithmBuilder;
     }
 
     public Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> getGraph() {
@@ -72,14 +71,6 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
 
     public final boolean isDirected() {
         return isDirected;
-    }
-
-    public final boolean isSinglePath() {
-        return isSinglePath;
-    }
-
-    public final boolean isFlow() {
-        return isFlow;
     }
 
     protected void markAlgInvalid() {
@@ -122,28 +113,24 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
      * Preferred override. Only collects a fresh TE from the server if the provided TE is invalid.
      * 
      * @param tile       The {@link TileEntityPipeBase} that paths are being requested for
-     * @param testObject Can be null for simple nets. Complex nets need this for their behavior.
      * @return the ordered list of paths associated with the {@link TileEntityPipeBase}
      */
-    public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(TileEntityPipeBase<PipeType, NodeDataType, Edge> tile,
-                                                                Object testObject) {
-        return getPaths(this.pipeMap.get(tile.getPipePos()), tile, testObject);
+    public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(TileEntityPipeBase<PipeType, NodeDataType, Edge> tile) {
+        return getPaths(this.pipeMap.get(tile.getPipePos()), tile);
     }
 
     /**
      * Special-case override. Forces the collection of a fresh TE from the server.
      * 
      * @param pos        The {@link BlockPos} that paths are being requested for
-     * @param testObject Can be null for simple nets. Complex nets need this for their behavior.
      * @return the ordered list of paths associated with the {@link BlockPos}
      */
-    public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(BlockPos pos, Object testObject) {
-        return getPaths(this.pipeMap.get(pos), null, testObject);
+    public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(BlockPos pos) {
+        return getPaths(this.pipeMap.get(pos), null);
     }
 
     public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(@Nullable NetNode<PipeType, NodeDataType, Edge> node,
-                                                                @Nullable TileEntityPipeBase<PipeType, NodeDataType, Edge> tile,
-                                                                Object testObject) {
+                                                                @Nullable TileEntityPipeBase<PipeType, NodeDataType, Edge> tile) {
         if (node == null) return new ObjectArrayList<>();
 
         node.setHeldMTE(tile);
@@ -151,12 +138,10 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
         if (!this.hasValidAlg()) this.rebuildNetAlgorithm();
 
         List<NetPath<PipeType, NodeDataType, Edge>> cache = node.getPathCache();
-        if (cache != null) {
-            return verifyList(cache, node);
-        }
+        if (cache != null) return cache;
 
         List<NetPath<PipeType, NodeDataType, Edge>> list = this.netAlgorithm.getPathsList(node);
-        return verifyList(node.setPathCache(list), node);
+        return node.setPathCache(list);
     }
 
     /**
@@ -188,7 +173,9 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
         return null;
     }
 
-    public void markNodeAsOldData(NetNode<PipeType, NodeDataType, Edge> node) {}
+    public void markNodeAsOldData(NetNode<PipeType, NodeDataType, Edge> node) {
+        markNodeAsActive(node, shouldNodeBeActive(node));
+    }
 
     protected abstract Class<? extends IPipeTile<PipeType, NodeDataType, Edge>> getBasePipeClass();
 
@@ -240,6 +227,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
         if (node == null || node.isConnected(side) == connect) return;
 
         node.setConnected(side, connect);
+        markNodeAsActive(node, shouldNodeBeActive(node));
 
         NetNode<PipeType, NodeDataType, Edge> nodeOffset = pipeMap.get(nodePos.offset(side));
         if (nodeOffset == null) return;
@@ -443,9 +431,21 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
         return node.setGroup(new NetGroup<>(this.pipeGraph, this));
     }
 
-    public boolean markNodeAsActive(BlockPos nodePos, boolean isActive) {
-        NetNode<PipeType, NodeDataType, Edge> node = this.pipeMap.get(nodePos);
+    public boolean shouldNodeBeActive(NetNode<PipeType, NodeDataType, Edge> node) {
+        var connecteds = node.getConnecteds();
+        if (connecteds != null) return connecteds.entrySet().stream().filter(entry -> {
+            if (entry.getValue() instanceof IPipeTile<?,?,?>) return false;
+            for (Capability<?> cap : this.getConnectionCapabilities()) {
+                if (entry.getValue().hasCapability(cap, entry.getKey())) return true;
+            }
+            return false;
+        }).toArray().length > 0;
+        return false;
+    }
+
+    public boolean markNodeAsActive(NetNode<PipeType, NodeDataType, Edge> node, boolean isActive) {
         if (node != null && node.isActive != isActive) {
+            node.getGroupSafe().clearPathCaches();
             node.isActive = isActive;
             this.markDirty();
             return true;
@@ -454,11 +454,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
     }
 
     protected void rebuildNetAlgorithm() {
-        if (!this.isSinglePath()) {
-            this.netAlgorithm.setAlg(new ShortestPathsAlgorithm<>(pipeGraph));
-        } else {
-            this.netAlgorithm.setAlg(new SinglePathAlgorithm<>(pipeGraph, isDirected()));
-        }
+        this.netAlgorithm.setAlg(algorithmBuilder.apply(this));
         this.markAlgValid();
     }
 

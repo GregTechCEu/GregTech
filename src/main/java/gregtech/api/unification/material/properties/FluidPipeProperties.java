@@ -8,7 +8,7 @@ import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.pipenet.INodeData;
-import gregtech.api.pipenet.NetNode;
+import gregtech.api.pipenet.NodeLossResult;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
@@ -16,7 +16,6 @@ import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -171,7 +170,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         return this.tanks;
     }
 
-    public PipeLossResult determineFluidPassthroughResult(@NotNull FluidStack stack, World world, BlockPos pos) {
+    public NodeLossResult determineFluidPassthroughResult(@NotNull FluidStack stack, World world, BlockPos pos) {
         Fluid fluid = stack.getFluid();
 
         boolean burning = this.getMaxFluidTemperature() < fluid.getTemperature(stack);
@@ -202,10 +201,10 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
 
         if (burning || leaking || corroding || shattering || melting) {
             return determineDestroyPipeResults(stack, burning, leaking, corroding, shattering, melting, world, pos);
-        } else return new PipeLossResult(n -> {}, 1d);
+        } else return new NodeLossResult(n -> {}, 1d);
     }
 
-    public PipeLossResult determineDestroyPipeResults(FluidStack stack, boolean isBurning, boolean isLeaking,
+    public NodeLossResult determineDestroyPipeResults(FluidStack stack, boolean isBurning, boolean isLeaking,
                                                       boolean isCorroding, boolean isShattering,
                                                       boolean isMelting, World world, BlockPos pos) {
         List<Runnable> particleActions = new ObjectArrayList<>();
@@ -296,7 +295,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
         }
         Runnable finalDestructionAction = destructionAction;
         Consumer<TileEntityFluidPipe> finalDamageAction = damageAction;
-        return new PipeLossResult(nodeG -> {
+        return new NodeLossResult(nodeG -> {
             // only do 'extra' actions if the node already holds its MTE.
             // don't go fetch it from the world as this 9 times out of 10 means loading a chunk unnecessarily.
             IPipeTile<?, ?, ?> tile = nodeG.getHeldMTEUnsafe();
@@ -358,20 +357,5 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
                 ", plasmaProof=" + plasmaProof +
                 ", containmentPredicate=" + containmentPredicate +
                 '}';
-    }
-
-    public static class PipeLossResult extends Tuple<Consumer<NetNode<?, ?, ?>>, Double> {
-
-        public PipeLossResult(Consumer<NetNode<?, ?, ?>> postAction, Double lossFunction) {
-            super(postAction, lossFunction);
-        }
-
-        public Consumer<NetNode<?, ?, ?>> getPostAction() {
-            return this.getFirst();
-        }
-
-        public Double getLossFunction() {
-            return this.getSecond();
-        }
     }
 }

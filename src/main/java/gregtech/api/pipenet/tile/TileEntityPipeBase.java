@@ -71,6 +71,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setPipeData(BlockPipe<PipeType, NodeDataType, Edge, ?> pipeBlock, PipeType pipeType) {
         this.pipeBlock = pipeBlock;
         this.pipeType = pipeType;
+        this.getNode().setData(getPipeBlock().createProperties(this));
         if (!getWorld().isRemote) {
             writeCustomData(UPDATE_PIPE_TYPE, this::writePipeProperties);
         }
@@ -81,6 +82,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.pipeType = tileEntity.getPipeType();
         this.paintingColor = tileEntity.getPaintingColor();
         this.netNode = tileEntity.getNode();
+        this.netNode.setData(getPipeBlock().createProperties(this));
         if (tileEntity instanceof SyncedTileEntityBase pipeBase) {
             addPacketsFrom(pipeBase);
         }
@@ -469,7 +471,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         // TODO inexplicable crash during world load when old net setup required
         // something to do with removing the tile entities that the chunk is iterating over to load
         WorldPipeNetBase<NodeDataType, PipeType, Edge> net = this.getPipeBlock().getWorldPipeNet(this.getPipeWorld());
-        net.markNodeAsOldData(this.getNode());
         for (EnumFacing facing : EnumFacing.VALUES) {
             NetNode<PipeType, NodeDataType, Edge> nodeOffset = net.getNode(this.getPipePos().offset(facing));
             if (nodeOffset == null) continue;
@@ -485,6 +486,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                 net.predicateEdge(this.getNode(), nodeOffset, facing);
             }
         }
+        net.markNodeAsOldData(this.getNode());
     }
 
     @Override
@@ -575,7 +577,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void notifyBlockUpdate() {
         getWorld().notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
-        getPipeBlock().updateActiveNodeStatus(getWorld(), getPos(), this);
     }
 
     @Override

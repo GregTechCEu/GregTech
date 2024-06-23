@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jgrapht.Graph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,45 +29,43 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
 
     public NetGroup(Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph,
                     WorldPipeNetBase<NodeDataType, PipeType, Edge> net) {
-        this.graph = graph;
-        this.nodes = new ObjectOpenHashSet<>();
-        this.net = net;
-        this.data = net.getBlankGroupData().withGroup(this);
+        this(graph, net, new ObjectOpenHashSet<>());
     }
 
     public NetGroup(Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph, WorldPipeNetBase<NodeDataType, PipeType, Edge> net,
                     Set<NetNode<PipeType, NodeDataType, Edge>> nodes) {
         this.graph = graph;
-        this.nodes = nodes;
         this.net = net;
-        this.nodes.forEach(b -> b.setGroup(this));
-        this.data = net.getBlankGroupData().withGroup(this);
-    }
-
-    private void clear() {
-        this.nodes.clear();
+        this.data = net.getBlankGroupData();
+        if (data != null) data.withGroup(this);
+        this.nodes = nodes;
+        nodes.forEach(this::onAddedToGroup);
     }
 
     protected void addNode(NetNode<PipeType, NodeDataType, Edge> node) {
         this.nodes.add(node);
-        node.setGroup(this);
-        this.connectionChange(node);
+        this.onAddedToGroup(node);
     }
 
-    protected void addNodes(Set<NetNode<PipeType, NodeDataType, Edge>> nodes) {
+    protected void addNodes(Collection<NetNode<PipeType, NodeDataType, Edge>> nodes) {
         this.nodes.addAll(nodes);
-        nodes.forEach(a -> {
-            a.setGroup(this);
-            this.connectionChange(a);
-        });
+        nodes.forEach(this::onAddedToGroup);
     }
 
-    @SafeVarargs
-    protected final void addNodes(NetNode<PipeType, NodeDataType, Edge>... nodes) {
-        for (NetNode<PipeType, NodeDataType, Edge> node : nodes) {
-            this.addNode(node);
-            this.connectionChange(node);
-        }
+    protected void removeNode(NetNode<PipeType, NodeDataType, Edge> node) {
+        this.nodes.remove(node);
+    }
+
+    protected void removeNodes(Collection<NetNode<PipeType, NodeDataType, Edge>> nodes) {
+        this.nodes.removeAll(nodes);
+    }
+
+    protected void clearNodes() {
+        this.nodes.clear();
+    }
+
+    protected void onAddedToGroup(NetNode<PipeType, NodeDataType, Edge> node) {
+        node.setGroup(this);
     }
 
     public void connectionChange(NetNode<PipeType, NodeDataType, Edge> node) {
@@ -90,7 +89,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             if (sourceGroup == null) {
                 sourceGroup = source.getGroupSafe();
             } else {
-                sourceGroup.clearCaches();
+                sourceGroup.clearPathCaches();
                 return;
             }
         }
@@ -106,9 +105,9 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         NetGroup<PipeType, NodeDataType, Edge> group = node.getGroupUnsafe();
         if (group != null) {
             this.addNodes(group.getNodes());
-            group.clear();
+            group.clearNodes();
         } else addNode(node);
-        this.clearCaches();
+        this.clearPathCaches();
     }
 
     /**
@@ -119,14 +118,14 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      */
     public boolean splitNode(NetNode<PipeType, NodeDataType, Edge> source) {
         if (this.graph.containsVertex(source)) {
-            this.clearCaches();
+            this.clearPathCaches();
             List<NetNode<?, ?, ?>> targets = graph.outgoingEdgesOf(source).stream().map(a -> {
                 // handling so undirected graphs don't throw an error
                 if (net.isDirected() || a.getTarget().getNodePos() != source.getNodePos()) return a.getTarget();
                 return a.getSource();
             }).collect(Collectors.toList());
             this.graph.removeVertex(source);
-            this.nodes.remove(source);
+            this.removeNode(source);
             while (!targets.isEmpty()) {
                 // get the last target; if this throws a cast exception, something is very wrong with the graph.
                 @SuppressWarnings("unchecked")
@@ -143,7 +142,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                     // if we find a target node in our search, remove it from the list
                     targets.remove(temp);
                 }
-                this.nodes.removeAll(targetGroup);
+                this.removeNodes(targetGroup);
                 if (targetGroup.size() != 0) {
                     new NetGroup<>(this.graph, this.net, targetGroup);
                 }
@@ -162,7 +161,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      */
     public boolean splitEdge(NetNode<PipeType, NodeDataType, Edge> source, NetNode<PipeType, NodeDataType, Edge> target) {
         if (graph.removeEdge(source, target) != null) {
-            this.clearCaches();
+            this.clearPathCaches();
             Set<NetNode<PipeType, NodeDataType, Edge>> targetGroup = new ObjectOpenHashSet<>();
             BreadthFirstIterator<NetNode<PipeType, NodeDataType, Edge>, Edge> i = new BreadthFirstIterator<>(graph, target);
             NetNode<PipeType, NodeDataType, Edge> temp;
@@ -172,7 +171,7 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
                 if (source == temp) return true;
                 targetGroup.add(temp);
             }
-            this.nodes.removeAll(targetGroup);
+            this.removeNodes(targetGroup);
             if (targetGroup.size() != 0) {
                 new NetGroup<>(this.graph, this.net, targetGroup);
             }
@@ -188,8 +187,8 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return nodes;
     }
 
-    protected void clearCaches() {
-        this.nodes.forEach(NetNode::clearPathCache);
+    protected void clearPathCaches() {
+        this.getNodes().forEach(NetNode::clearPathCache);
     }
 
     public Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> getGraph() {

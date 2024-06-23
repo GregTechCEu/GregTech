@@ -6,6 +6,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.edge.NetEdge;
+import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -48,7 +49,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, NetEdge, WorldEnergyNet>
+public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, NetFlowEdge, WorldEnergyNet>
                         implements ITileEntityProvider {
 
     private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
@@ -140,13 +141,13 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Ne
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<Insulation, WireProperties, NetEdge> selfTile, EnumFacing side,
-                                   IPipeTile<Insulation, WireProperties, NetEdge> sideTile) {
+    public boolean canPipesConnect(IPipeTile<Insulation, WireProperties, NetFlowEdge> selfTile, EnumFacing side,
+                                   IPipeTile<Insulation, WireProperties, NetFlowEdge> sideTile) {
         return selfTile instanceof TileEntityCable && sideTile instanceof TileEntityCable;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties, NetEdge> selfTile, EnumFacing side,
+    public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties, NetFlowEdge> selfTile, EnumFacing side,
                                          TileEntity tile) {
         return tile != null &&
                 tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side.getOpposite()) != null;
@@ -193,7 +194,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Ne
     }
 
     @Override
-    public TileEntityPipeBase<Insulation, WireProperties, NetEdge> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<Insulation, WireProperties, NetFlowEdge> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityCableTickable() : new TileEntityCable();
     }
 

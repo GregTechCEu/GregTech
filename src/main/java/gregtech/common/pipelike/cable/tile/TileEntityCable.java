@@ -4,9 +4,13 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.pipenet.NetNode;
+import gregtech.api.pipenet.NodeLossResult;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.edge.NetEdge;
+import gregtech.api.pipenet.edge.NetFlowEdge;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.TextFormattingUtil;
@@ -22,26 +26,30 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Cuboid6;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.CABLE_TEMPERATURE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONNECTIONS;
 
-public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties, NetEdge>
+public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties, NetFlowEdge>
                              implements IDataInfoProvider {
 
     private static final int meltTemp = 3000;
@@ -55,7 +63,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
     @SideOnly(Side.CLIENT)
     private GTOverheatParticle particle;
-    private int heatQueue;
     private int temperature = getDefaultTemp();
     private boolean isTicking = false;
 
@@ -97,67 +104,39 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         }
     }
 
-    /**
-     * Should only be called internally
-     *
-     * @return if the cable should be destroyed
-     */
-    public boolean incrementAmperage(long amps, long voltage) {
-        if (voltage > maxVoltageCounter.get(getWorld())) {
-            maxVoltageCounter.set(getWorld(), voltage);
-        }
-        averageVoltageCounter.increment(getWorld(), voltage);
-        averageAmperageCounter.increment(getWorld(), amps);
+    public NodeLossResult applyHeat(int amount, boolean simulate) {
+        double loss = 1;
+        Consumer<NetNode<?, ?, ?>> destructionResult = null;
 
-        int dif = (int) (averageAmperageCounter.getLast(getWorld()) - getMaxAmperage());
-        if (dif > 0) {
-            applyHeat(dif * 40);
-            return true;
+        if (temperature + amount >= meltTemp) {
+            // cable melted
+            destructionResult = node -> {
+                isTicking = false;
+                getWorld().setBlockState(pos, Blocks.FIRE.getDefaultState());
+                if (!getWorld().isRemote) {
+                    ((WorldServer) getWorld()).spawnParticle(EnumParticleTypes.SMOKE_LARGE,
+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            5 + getWorld().rand.nextInt(3), 0.0, 0.0, 0.0, 0.1);
+                }
+            };
+            loss = 0;
         }
-
-        return false;
-    }
-
-    public void applyHeat(int amount) {
-        heatQueue += amount;
-        if (!world.isRemote && !isTicking && temperature + heatQueue > getDefaultTemp()) {
-            TaskScheduler.scheduleTask(world, this::update);
-            isTicking = true;
-        }
+        if (!simulate) setTemperature(temperature + amount);
+        return new NodeLossResult(destructionResult == null ? node -> {} : destructionResult, loss);
     }
 
     private boolean update() {
-        if (heatQueue > 0) {
-            // if received heat from overvolting or overamping, add heat
-            setTemperature(temperature + heatQueue);
-        }
-
-        if (temperature >= meltTemp) {
-            // cable melted
-            world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-            isTicking = false;
-            return false;
-        }
-
         if (temperature <= getDefaultTemp()) {
             isTicking = false;
-            return false;
-        }
-
-        if (getPipeType().insulationLevel >= 0 && temperature >= 1500 && GTValues.RNG.nextFloat() < 0.1) {
+        } else if (getPipeType().insulationLevel >= 0 && temperature >= 1500 && GTValues.RNG.nextFloat() < 0.1) {
             // insulation melted
             uninsulate();
             isTicking = false;
-            return false;
         }
-
-        if (heatQueue == 0) {
-            // otherwise cool down
-            setTemperature((int) (temperature - Math.pow(temperature - getDefaultTemp(), 0.35)));
-        } else {
-            heatQueue = 0;
-        }
-        return true;
+        // thicker cables cool faster
+        setTemperature((int) (temperature - Math.pow(temperature - getDefaultTemp(), 0.35) *
+                        Math.sqrt(this.getPipeType().getThickness()) * 4));
+        return isTicking;
     }
 
     private void uninsulate() {
@@ -168,7 +147,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         world.setBlockState(pos, newBlock.getDefaultState());
         TileEntityCable newCable = (TileEntityCable) world.getTileEntity(pos);
         if (newCable != null) { // should never be null
-            // TODO: use transfer data method
+            newCable.transferDataFrom(this);
             newCable.setPipeData(newBlock, newBlock.getItemPipeType(null), getPipeMaterial());
             for (EnumFacing facing : EnumFacing.VALUES) {
                 if (isConnected(facing)) {
@@ -188,8 +167,14 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         world.checkLight(pos);
         if (!world.isRemote) {
             writeCustomData(CABLE_TEMPERATURE, buf -> buf.writeVarInt(temperature));
+            if (!isTicking && temperature > getDefaultTemp()) {
+                TaskScheduler.scheduleTask(getWorld(), this::update);
+                isTicking = true;
+            }
         } else {
+            // TODO fix particle sometimes not rendering after world load
             if (temperature <= getDefaultTemp()) {
+
                 if (isParticleAlive())
                     particle.setExpired();
             } else {
@@ -199,6 +184,11 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
                 particle.setTemperature(temperature);
             }
         }
+    }
+
+    @Override
+    public void transferDataFrom(IPipeTile<Insulation, WireProperties, NetFlowEdge> tileEntity) {
+        super.transferDataFrom(tileEntity);
     }
 
     public int getDefaultTemp() {
@@ -227,6 +217,15 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         }
     }
 
+    public void contributeAmperageFlow(long amperage) {
+        averageAmperageCounter.increment(getWorld(), amperage);
+    }
+
+    public void contributeVoltageFlow(long voltage) {
+        if (voltage > maxVoltageCounter.get(getWorld())) maxVoltageCounter.set(getWorld(), voltage);
+        averageVoltageCounter.set(getWorld(), maxVoltageCounter.get(getWorld()));
+    }
+
     public double getAverageAmperage() {
         return averageAmperageCounter.getAverage(getWorld());
     }
@@ -243,6 +242,8 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return getNodeData().getAmperage();
     }
 
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public long getMaxVoltage() {
         return getNodeData().getVoltage();
     }

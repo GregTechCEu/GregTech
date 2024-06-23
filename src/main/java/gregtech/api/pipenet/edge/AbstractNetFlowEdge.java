@@ -46,7 +46,7 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
         }
     }
 
-    public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> int getFlowLimit(
+    public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> long getFlowLimit(
             Object channel,
             Graph<NetNode<PT, NDT, E>, E> graph,
             long queryTick,
@@ -54,14 +54,14 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
         return getChannels(simulator).getFlowLimit(channel, graph, queryTick);
     }
 
-    public int getConsumedLimit(Object channel, long queryTick, @Nullable ChannelSimulatorKey simulator) {
+    public long getConsumedLimit(Object channel, long queryTick, @Nullable ChannelSimulatorKey simulator) {
         return getChannels(simulator).getConsumedLimit(channel, queryTick);
     }
 
     public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
             Object channel,
             Graph<NetNode<PT, NDT, E>, E> graph,
-            int amount, long queryTick,
+            long amount, long queryTick,
             @Nullable ChannelSimulatorKey simulator) {
         getChannels(simulator).consumeFlowLimit(channel, graph, amount, queryTick);
     }
@@ -84,17 +84,17 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
 
         abstract boolean cannotSupportChannel(Object channel, long queryTick);
 
-        abstract <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> int getFlowLimit(
+        abstract <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> long getFlowLimit(
                 Object channel,
                 Graph<NetNode<PT, NDT, E>, E> graph,
                 long queryTick);
 
-        abstract int getConsumedLimit(Object channel, long queryTick);
+        abstract long getConsumedLimit(Object channel, long queryTick);
 
         abstract <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
                 Object channel,
                 Graph<NetNode<PT, NDT, E>, E> graph,
-                int amount, long queryTick);
+                long amount, long queryTick);
     }
 
     public static final class ChannelSimulatorKey {

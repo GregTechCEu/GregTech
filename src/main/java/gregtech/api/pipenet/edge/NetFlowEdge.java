@@ -5,6 +5,7 @@ import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
 
@@ -22,7 +23,7 @@ public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
      *                        throughput.
      */
     public NetFlowEdge(int flowBufferTicks) {
-        this.flowBufferTicks = flowBufferTicks;
+        this.flowBufferTicks = Math.max(flowBufferTicks, 1);
     }
 
     @Override
@@ -33,13 +34,13 @@ public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
 
     private final class ChannelsHolder extends AbstractChannelsHolder<NetFlowEdge> {
 
-        private final Object2IntOpenHashMap<Object> map;
+        private final Object2LongOpenHashMap<Object> map;
         private long lastQueryTick;
+        private boolean init;
 
         public ChannelsHolder(ChannelSimulatorKey simulator) {
             super(simulator);
-            this.map = new Object2IntOpenHashMap<>(9);
-            this.map.defaultReturnValue(getMinData().getThroughput() * flowBufferTicks);
+            this.map = new Object2LongOpenHashMap<>(9);
         }
 
         public ChannelsHolder(ChannelsHolder prototype, ChannelSimulatorKey simulator) {
@@ -51,16 +52,16 @@ public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
         @Override
         public boolean cannotSupportChannel(Object channel, long queryTick) {
             recalculateFlowLimits(queryTick);
-            if (map.containsKey(channel)) return map.getInt(channel) <= 0;
+            if (map.containsKey(channel)) return map.getLong(channel) <= 0;
             else return map.size() >= getMinData().getChannelMaxCount();
         }
 
         @Override
-        public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> int getFlowLimit(Object channel,
+        public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> long getFlowLimit(Object channel,
                                                                                                    Graph<NetNode<PT, NDT, NetFlowEdge>, NetFlowEdge> graph,
                                                                                                    long queryTick) {
             if (cannotSupportChannel(channel, queryTick)) return 0;
-            int limit = map.getInt(channel);
+            long limit = map.getLong(channel);
 
             NetFlowEdge inverse = graph.getEdge(getCastTarget(), getCastSource());
             if (inverse != null && inverse != NetFlowEdge.this) {
@@ -72,33 +73,33 @@ public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
         }
 
         @Override
-        int getConsumedLimit(Object channel, long queryTick) {
+        long getConsumedLimit(Object channel, long queryTick) {
             recalculateFlowLimits(queryTick);
-            int limit = map.defaultReturnValue();
-            return limit - map.getInt(channel);
+            long limit = map.defaultReturnValue();
+            return limit - map.getLong(channel);
         }
 
         @Override
         <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
-                Object channel, Graph<NetNode<PT, NDT, NetFlowEdge>, NetFlowEdge> graph, int amount, long queryTick) {
+                Object channel, Graph<NetNode<PT, NDT, NetFlowEdge>, NetFlowEdge> graph, long amount, long queryTick) {
             if (amount == 0) return;
             recalculateFlowLimits(queryTick);
 
             // check against reverse edge
             NetFlowEdge inverse = graph.getEdge(getCastTarget(), getCastSource());
             if (inverse != null && inverse != NetFlowEdge.this) {
-                int inverseConsumed = inverse.getConsumedLimit(channel, queryTick, getSimulator());
+                long inverseConsumed = inverse.getConsumedLimit(channel, queryTick, getSimulator());
                 if (inverseConsumed != 0) {
-                    int toFreeUp = Math.min(inverseConsumed, amount);
+                    long toFreeUp = Math.min(inverseConsumed, amount);
                     inverse.consumeFlowLimit(channel, graph, -toFreeUp, queryTick, getSimulator());
                     if (toFreeUp == amount) return;
                     amount -= toFreeUp;
                 }
             }
 
-            int finalAmount = amount;
+            long finalAmount = amount;
             map.compute(channel, (k, v) -> {
-                int d = map.defaultReturnValue();
+                long d = map.defaultReturnValue();
                 if (v == null) v = d;
                 v -= finalAmount;
                 if (v >= d) return null;
@@ -108,17 +109,21 @@ public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
 
         @Override
         public void recalculateFlowLimits(long queryTick) {
+            if (!this.init) {
+                this.map.defaultReturnValue((long) getMinData().getThroughput() * flowBufferTicks);
+                this.init = true;
+            }
             int time = (int) (queryTick - this.lastQueryTick);
             if (time < 0) {
                 this.map.clear();
             } else {
                 List<Object> toRemove = new ObjectArrayList<>();
                 this.map.replaceAll((k, v) -> {
-                    v += time * getMinData().getThroughput();
+                    v += (long) time * getMinData().getThroughput();
                     if (v >= map.defaultReturnValue()) toRemove.add(k);
                     return v;
                 });
-                toRemove.forEach(this.map::removeInt);
+                toRemove.forEach(this.map::removeLong);
             }
             this.lastQueryTick = queryTick;
         }

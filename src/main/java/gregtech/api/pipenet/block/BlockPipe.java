@@ -9,6 +9,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.WorldPipeNetBase;
 import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -60,7 +61,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 
@@ -148,18 +148,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     @Override
-    public void updateTick(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
-                           @NotNull Random rand) {
-        IPipeTile<PipeType, NodeDataType, Edge> pipeTile = getPipeTileEntity(worldIn, pos);
-        if (pipeTile != null) {
-            if (worldIn.isRemote) return;
-            int activeConnections = pipeTile.getConnections();
-            boolean isActiveNode = activeConnections != 0;
-            onActiveModeChange(worldIn, pos, isActiveNode, true);
-        }
-    }
-
-    @Override
     public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                 @NotNull EntityLivingBase placer, @NotNull ItemStack stack) {
         IPipeTile<PipeType, NodeDataType, Edge> pipeTile = getPipeTileEntity(worldIn, pos);
@@ -199,7 +187,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     pipeTile.setConnection(facing, true, false);
                 if (open && !canConnect)
                     pipeTile.setConnection(facing, false, false);
-                updateActiveNodeStatus(worldIn, pos, pipeTile);
+                updateActiveNodeStatus(worldIn, pipeTile);
             }
         }
     }
@@ -237,18 +225,14 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return pipeTile == null ? 0 : pipeTile.getCoverableImplementation().getOutputRedstoneSignal(side.getOpposite());
     }
 
-    public void updateActiveNodeStatus(@NotNull World worldIn, BlockPos pos,
+    public void updateActiveNodeStatus(@NotNull World worldIn,
                                        IPipeTile<PipeType, NodeDataType, Edge> pipeTile) {
         if (worldIn.isRemote) return;
 
-        WorldPipeNetBase<NodeDataType, PipeType, ?> pipeNet = getWorldPipeNet(worldIn);
+        WorldPipeNetBase<NodeDataType, PipeType, Edge> pipeNet = getWorldPipeNet(worldIn);
         if (pipeNet != null && pipeTile != null) {
-            int activeConnections = pipeTile.getConnections(); // remove blocked connections
-            boolean isActiveNodeNow = activeConnections != 0;
-            boolean modeChanged = pipeNet.markNodeAsActive(pos, isActiveNodeNow);
-            if (modeChanged) {
-                onActiveModeChange(worldIn, pos, isActiveNodeNow, false);
-            }
+            NetNode<PipeType, NodeDataType, Edge> node = pipeTile.getNode();
+            pipeNet.markNodeAsActive(node, pipeNet.shouldNodeBeActive(node));
         }
     }
 
@@ -257,12 +241,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public TileEntity createNewTileEntity(@NotNull World worldIn, int meta) {
         return createNewTileEntity(false);
     }
-
-    /**
-     * Can be used to update tile entity to tickable when node becomes active
-     * usable for fluid pipes, as example
-     */
-    protected void onActiveModeChange(World world, BlockPos pos, boolean isActiveNow, boolean isInitialChange) {}
 
     @NotNull
     @Override

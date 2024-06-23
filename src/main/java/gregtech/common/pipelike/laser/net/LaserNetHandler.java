@@ -60,7 +60,7 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
             return null;
         }
 
-        List<NetPath<LaserPipeType, LaserPipeProperties, NetEdge>> data = net.getPaths(this.pipe, null);
+        List<NetPath<LaserPipeType, LaserPipeProperties, NetEdge>> data = net.getPaths(this.pipe);
         if (data == null || data.size() != 1) return null;
         Map<EnumFacing, TileEntity> connecteds = data.get(0).getTargetTEs();
         if (connecteds.size() != 1) return null;
@@ -70,11 +70,11 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
         setPipesActive();
-        return handler.acceptEnergyFromNetwork(side, voltage, amperage);
+        return handler.acceptEnergyFromNetwork(side, voltage, amperage, simulate);
     }
 
     @Override

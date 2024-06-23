@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
+import gregtech.api.pipenet.alg.AllPathsAlgorithm;
 import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
 import gregtech.api.pipenet.WorldPipeNetComplex;
 import gregtech.api.pipenet.edge.NetFlowEdge;
@@ -36,7 +37,7 @@ public class WorldFluidPipeNet extends WorldPipeNetComplex<FluidPipeProperties, 
     }
 
     public WorldFluidPipeNet(String name) {
-        super(name, true, false, () -> new NetFlowEdge(20));
+        super(name, true, () -> new NetFlowEdge(20), AllPathsAlgorithm::new);
     }
 
     @Override

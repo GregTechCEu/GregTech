@@ -4,9 +4,10 @@ import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
+import gregtech.api.pipenet.NodeLossResult;
 import gregtech.api.pipenet.edge.AbstractNetFlowEdge;
 import gregtech.api.pipenet.edge.NetFlowEdge;
-import gregtech.api.pipenet.edge.util.FlowConsumer;
+import gregtech.api.pipenet.edge.util.FlowConsumerList;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.FluidTestObject;
 import gregtech.common.covers.CoverFluidRegulator;
@@ -23,7 +24,6 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +41,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
 
     private AbstractNetFlowEdge.ChannelSimulatorKey simulatorKey;
     private FluidStack lastFillResource;
-    private final Map<NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge>, FluidPipeProperties.PipeLossResult> lossResultCache = new Object2ObjectOpenHashMap<>();
+    private final Map<NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge>, NodeLossResult> lossResultCache = new Object2ObjectOpenHashMap<>();
 
     public FluidNetHandler(WorldFluidPipeNet net, TileEntityFluidPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -83,7 +83,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         FluidTestObject testObject = new FluidTestObject(resource);
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
         // push flow through net
-        List<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> paths = this.getNet().getPaths(pipe, testObject);
+        List<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> paths = this.getNet().getPaths(pipe);
         FluidStack helper = resource.copy();
         if (!doFill) this.simulatorKey = AbstractNetFlowEdge.getNewSimulatorInstance();
         else this.simulatorKey = null;
@@ -114,7 +114,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         Cover pipeCover = routePath.getTargetNode().getHeldMTE().getCoverableImplementation()
                 .getCoverAtSide(routePath.facing);
         Cover tileCover = getCoverOnNeighbour(routePath.getTargetNode().getNodePos(),
-                routePath.facing.getOpposite());
+                routePath.oppositeFacing());
 
         if (pipeCover != null) {
             FluidStack helper;
@@ -130,7 +130,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
             testHandler.drain(Integer.MAX_VALUE, true);
         }
         IFluidHandler neighbourHandler = routePath.getTargetTE()
-                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, routePath.facing.getOpposite());
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, routePath.oppositeFacing());
         if (neighbourHandler == null) return 0;
 
         if (pipeCover instanceof CoverFluidRegulator &&
@@ -196,22 +196,27 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         // iterate through path
         List<NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge>> nodeList = routePath.getNodeList();
         List<NetFlowEdge> edgeList = routePath.getEdgeList();
-        List<FlowConsumer<FluidPipeType, FluidPipeProperties, NetFlowEdge>> flowLimitConsumers = new ObjectArrayList<>();
-        int inputAmount = resource.amount;
-        int outputAmount = resource.amount;
+        FlowConsumerList<FluidPipeType, FluidPipeProperties, NetFlowEdge> flowLimitConsumers = new FlowConsumerList<>();
+
+        // loss from the first input node
+        var targetResult = getOrGenerateLossResult(nodeList.get(0), resource);
+        double loss = targetResult.getLossFunction();
+        int inputAmount = (int) (resource.amount * loss);
+        int outputAmount = inputAmount;
+
         // always 1 less edge than nodes
         for (int i = 0; i < edgeList.size(); i++) {
             NetFlowEdge edge = edgeList.get(i);
             if (!edge.getPredicate().test(resource)) return 0;
-            int flow = Math.min(edge.getFlowLimit(testObject, getNet().getGraph(), tick, simulatorKey), outputAmount);
+            long flow = Math.min(edge.getFlowLimit(testObject, getNet().getGraph(), tick, simulatorKey), outputAmount);
             double ratio = (double) flow / outputAmount;
             inputAmount *= ratio;
-            flowLimitConsumers.forEach(c -> c.modifyRatio(ratio));
-            flowLimitConsumers.add(new FlowConsumer<>(edge, testObject, getNet().getGraph(), flow, tick, simulatorKey));
+            flowLimitConsumers.modifyRatios(ratio);
+            flowLimitConsumers.add(edge, testObject, getNet().getGraph(), flow, tick, simulatorKey);
             // TODO undo loss when backflowing
             // var sourceResult = getOrGenerateLossResult(nodeList.get(i), resource);
-            var targetResult = getOrGenerateLossResult(nodeList.get(i + 1), resource);
-            double loss = targetResult.getLossFunction();
+            targetResult = getOrGenerateLossResult(nodeList.get(i + 1), resource);
+            loss = targetResult.getLossFunction();
             outputAmount = (int) (flow * loss);
         }
         // outputAmount is currently the maximum flow to the endpoint, and inputAmount is the requisite flow into the
@@ -221,7 +226,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         helper.amount = allowed;
         allowed = handler.fill(helper, doFill);
         double ratio = (double) allowed / outputAmount;
-        flowLimitConsumers.forEach(a -> a.accept(ratio));
+        flowLimitConsumers.doConsumption(ratio);
 
         return (int) (inputAmount * ratio);
     }
@@ -253,8 +258,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         return null;
     }
 
-    protected FluidPipeProperties.PipeLossResult getOrGenerateLossResult(
-                                                                         NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge> node,
+    protected NodeLossResult getOrGenerateLossResult(NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge> node,
                                                                          FluidStack resource) {
         var cachedResult = this.lossResultCache.get(node);
         if (cachedResult == null) {

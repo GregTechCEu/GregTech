@@ -113,7 +113,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
-        for (NetPath<ItemPipeType, ItemPipeProperties, NetEdge> inv : net.getPaths(pipe, null)) {
+        for (NetPath<ItemPipeType, ItemPipeProperties, NetEdge> inv : net.getPaths(pipe)) {
             stack = insert(inv.firstFacing(), stack, simulate);
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
@@ -122,7 +122,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
     }
 
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate, boolean global) {
-        List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePaths = net.getPaths(pipe, null);
+        List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePaths = net.getPaths(pipe);
         if (routePaths.isEmpty())
             return stack;
         if (routePaths.size() == 1 && routePaths.get(0).getTargetTEs().size() == 1) {
@@ -327,7 +327,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
         }
         Cover pipeCover = routePath.getTargetNode().getHeldMTE().getCoverableImplementation()
                 .getCoverAtSide(routePath.facing);
-        Cover tileCover = getCoverOnNeighbour(routePath.getTargetNode().getNodePos(), routePath.facing.getOpposite());
+        Cover tileCover = getCoverOnNeighbour(routePath.getTargetNode().getNodePos(), routePath.oppositeFacing());
 
         if (pipeCover != null) {
             testHandler.setStackInSlot(0, stack.copy());
@@ -341,7 +341,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
             testHandler.setStackInSlot(0, ItemStack.EMPTY);
         }
         IItemHandler neighbourHandler = routePath.getTargetTE()
-                .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, routePath.facing.getOpposite());
+                .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, routePath.oppositeFacing());
         if (pipeCover instanceof CoverRoboticArm &&
                 ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
             return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed,

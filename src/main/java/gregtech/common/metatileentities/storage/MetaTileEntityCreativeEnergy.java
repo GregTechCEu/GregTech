@@ -234,20 +234,24 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         if (source || !active || ampsReceived >= amps) {
             return 0;
         }
         if (voltage > this.voltage) {
-            if (doExplosion)
-                return 0;
-            doExplosion = true;
+            if (!simulate) {
+                if (doExplosion)
+                    return 0;
+                doExplosion = true;
+            }
             return Math.min(amperage, getInputAmperage() - ampsReceived);
         }
         long amperesAccepted = Math.min(amperage, getInputAmperage() - ampsReceived);
         if (amperesAccepted > 0) {
-            ampsReceived += amperesAccepted;
-            energyIOPerSec += amperesAccepted * voltage;
+            if (!simulate) {
+                ampsReceived += amperesAccepted;
+                energyIOPerSec += amperesAccepted * voltage;
+            }
             return amperesAccepted;
         }
         return 0;

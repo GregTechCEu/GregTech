@@ -72,6 +72,11 @@ public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBT
     }
 
     @Override
+    public double getWeight() {
+        return super.getWeight();
+    }
+
+    @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setLong("SourceLongPos", getSource().getLongPos());
