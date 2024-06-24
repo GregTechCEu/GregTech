@@ -4,7 +4,7 @@ import gregtech.api.unification.material.properties.FissionFuelProperty;
 
 public class FuelRod extends ReactorComponent {
 
-    private final FissionFuelProperty fuel;
+    private FissionFuelProperty fuel;
     private final double neutronSourceIntensity;
 
     public FuelRod(double maxTemperature, double thermalConductivity, FissionFuelProperty fuel, double mass,
@@ -36,5 +36,10 @@ public class FuelRod extends ReactorComponent {
 
     public FissionFuelProperty getFuel() {
         return fuel;
+    }
+
+    public void setFuel(FissionFuelProperty property) {
+        this.fuel = property;
+        this.maxTemperature = property.getMaxTemperature();
     }
 }

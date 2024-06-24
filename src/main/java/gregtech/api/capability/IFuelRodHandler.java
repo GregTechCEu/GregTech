@@ -1,6 +1,7 @@
 package gregtech.api.capability;
 
 import gregtech.api.items.itemhandlers.LockableItemStackHandler;
+import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.unification.material.Material;
 
 import net.minecraft.item.ItemStack;
@@ -10,6 +11,14 @@ public interface IFuelRodHandler extends ILockableHandler<ItemStack> {
     Material getFuel();
 
     void setFuel(Material material);
+
+    Material getPartialFuel();
+
+    // Get the fuel type that's currently being processed by the reactor. Returns true if the partial fuel changed.
+    boolean setPartialFuel(Material material);
+
+    void setInternalFuelRod(FuelRod rod);
+
 
     LockableItemStackHandler getStackHandler();
 }

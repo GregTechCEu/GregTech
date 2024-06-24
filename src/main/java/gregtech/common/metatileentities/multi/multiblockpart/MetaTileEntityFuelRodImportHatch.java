@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.gui.GuiTextures;
@@ -11,7 +12,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.blocks.BlockFissionCasing;
@@ -42,6 +45,8 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     private boolean workingEnabled;
     private Material mat;
     public MetaTileEntityFuelRodExportHatch pairedHatch;
+    private Material partialFuel;
+    private FuelRod internalFuelRod;
 
     public MetaTileEntityFuelRodImportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, false);
@@ -133,11 +138,15 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         getLockedImport().setLock(data.getBoolean("locked"));
+        if (data.hasKey("partialFuel"))
+            this.partialFuel = GregTechAPI.materialManager.getMaterial(data.getString("partialFuel"));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setBoolean("locked", getLockedImport().isLocked());
+        if (partialFuel != null)
+            data.setString("partialFuel", this.partialFuel.toString());
         return super.writeToNBT(data);
     }
 
@@ -180,6 +189,26 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
+    public Material getPartialFuel() {
+        return this.partialFuel;
+    }
+
+    @Override
+    public boolean setPartialFuel(Material material) {
+        if (partialFuel != null && partialFuel.equals(material)) {
+            return false;
+        }
+        this.partialFuel = material;
+        this.internalFuelRod.setFuel(partialFuel.getProperty(PropertyKey.FISSION_FUEL));
+        return true;
+    }
+
+    @Override
+    public void setInternalFuelRod(FuelRod rod) {
+        this.internalFuelRod = rod;
+    }
+
+    @Override
     public LockableItemStackHandler getStackHandler() {
         return this.getLockedImport();
     }
@@ -200,4 +229,6 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
         }
         return null;
     }
+
+
 }

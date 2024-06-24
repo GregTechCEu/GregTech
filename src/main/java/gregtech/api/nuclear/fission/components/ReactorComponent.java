@@ -3,7 +3,7 @@ package gregtech.api.nuclear.fission.components;
 public class ReactorComponent {
 
     private final double moderationFactor;
-    private final double maxTemperature;
+    protected double maxTemperature;
     private final double thermalConductivity;
     private final double mass;
 
