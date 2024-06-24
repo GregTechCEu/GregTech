@@ -373,8 +373,6 @@ public class FissionReactor {
         controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
 
         this.prepareInitialConditions();
-
-        kEff = k;
     }
 
     /**
