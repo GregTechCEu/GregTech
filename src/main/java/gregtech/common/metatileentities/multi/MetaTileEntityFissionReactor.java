@@ -386,11 +386,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     }
                     if (canWork) {
                         fissionReactor.needsOutput = true;
+                        this.fissionReactor.fuelDepletion = 0.;
                     } else {
                         this.unlockAll();
                     }
 
-                    this.fissionReactor.fuelDepletion = 0.;
                 }
             }
             this.updateReactorState();
@@ -789,7 +789,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
             handler.setLock(false);
         }
         this.fissionReactor.turnOff();
-        setLockingState(LockingState.UNLOCKED);
+        if (this.lockingState == LockingState.LOCKED) { // Don't remove warnings
+            this.setLockingState(LockingState.UNLOCKED);
+        }
     }
 
     private void lockAndPrepareReactor() {
