@@ -1,7 +1,5 @@
 package gregtech.api.pipenet.alg;
 
-import com.google.common.collect.ImmutableList;
-
 import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
@@ -9,6 +7,7 @@ import gregtech.api.pipenet.WorldPipeNetBase;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
 

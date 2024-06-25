@@ -9,7 +9,6 @@ import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeLossResult;
 import gregtech.api.pipenet.edge.AbstractNetFlowEdge;
 import gregtech.api.pipenet.edge.NetFlowEdge;
-import gregtech.api.pipenet.edge.util.FlowConsumer;
 import gregtech.api.pipenet.edge.util.FlowConsumerList;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.FacingPos;
@@ -18,31 +17,25 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
+
+    protected static final NetNode<Insulation, WireProperties, NetFlowEdge> FAKE_SOURCE = new NetNode<>(
+            new WireProperties(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, false));
 
     private final WorldEnergyNet net;
     private boolean transfer;
@@ -50,11 +43,24 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
     private final EnumFacing facing;
     private final Map<NetNode<Insulation, WireProperties, NetFlowEdge>, NodeLossResult> lossResultCache = new Object2ObjectOpenHashMap<>();
     private Object2LongOpenHashMap<FacingPos> destSimulationCache;
+    private final NetFlowEdge inputEdge;
 
     public EnergyNetHandler(WorldEnergyNet net, TileEntityCable cable, EnumFacing facing) {
         this.net = net;
         this.cable = cable;
         this.facing = facing;
+        this.inputEdge = new NetFlowEdge(1) {
+
+            @Override
+            public NetNode<?, ?, ?> getSource() {
+                return FAKE_SOURCE;
+            }
+
+            @Override
+            public NetNode<?, ?, ?> getTarget() {
+                return EnergyNetHandler.this.cable.getNode();
+            }
+        };
     }
 
     @Override
@@ -100,7 +106,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
         AbstractNetFlowEdge.ChannelSimulatorKey key = simulate ? AbstractNetFlowEdge.getNewSimulatorInstance() : null;
         destSimulationCache = simulate ? new Object2LongOpenHashMap<>() : null;
 
-        List<NetPath<Insulation, WireProperties, NetFlowEdge>> paths = this.net.getPaths(cable);
+        List<NetPath<Insulation, WireProperties, NetFlowEdge>> paths = new ObjectArrayList<>(this.net.getPaths(cable));
         long amperesUsed = distributionRespectCapacity(side, voltage, amperage, queryTick, paths, key);
         if (amperesUsed < amperage) {
             // if we still have undistributed amps, attempt to distribute them while going over edge capacities.
@@ -119,48 +125,43 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
     private long distributionRespectCapacity(EnumFacing side, long voltage, long amperage, long queryTick,
                                              List<NetPath<Insulation, WireProperties, NetFlowEdge>> paths,
                                              AbstractNetFlowEdge.ChannelSimulatorKey simulator) {
-        List<NetPath<Insulation, WireProperties, NetFlowEdge>> pathsCopy = new ObjectArrayList<>(paths);
         long availableAmperage = amperage;
         mainloop:
-        for (int i = 0; i < pathsCopy.size(); i++) {
-            NetPath<Insulation, WireProperties, NetFlowEdge> path = pathsCopy.get(i);
+        for (int i = 0; i < paths.size(); i++) {
+            NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.get(i);
             // skip paths where loss exceeds available voltage
             if (path.getWeight() > voltage) continue;
             Iterator<EnumFacing> iterator = path.getFacingIterator();
             boolean pathDestThis = path.getTargetNode().getNodePos().equals(this.cable.getPipePos());
             while (iterator.hasNext()) {
-                NetPath.FacedNetPath<Insulation, WireProperties, NetFlowEdge> facedPath =
-                        path.withFacing(iterator.next());
+                NetPath.FacedNetPath<Insulation, WireProperties, NetFlowEdge> facedPath = path
+                        .withFacing(iterator.next());
                 if (pathDestThis && facedPath.facing == side) {
                     // do not distribute power back into our source
                     continue;
                 }
 
-                IEnergyContainer dest = facedPath.getTargetTE().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, facedPath.oppositeFacing());
+                IEnergyContainer dest = facedPath.getTargetTE()
+                        .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, facedPath.oppositeFacing());
                 if (dest == null || dest == this) continue;
                 if (!dest.inputsEnergy(facedPath.oppositeFacing()) || dest.getEnergyCanBeInserted() <= 0) continue;
 
                 List<NetNode<Insulation, WireProperties, NetFlowEdge>> nodeList = facedPath.getNodeList();
                 DoubleList voltageCaps = new DoubleArrayList();
                 long pathAmperage = availableAmperage;
-                // loss from the first node
-                NetNode<Insulation, WireProperties, NetFlowEdge> target = nodeList.get(0);
-                if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) {
-                    paths.remove(i);
-                    continue mainloop;
-                }
 
                 List<NetFlowEdge> edgeList = facedPath.getEdgeList();
                 FlowConsumerList<Insulation, WireProperties, NetFlowEdge> flowLimitConsumers = new FlowConsumerList<>();
-                for (int j = 0; j < edgeList.size(); j++) {
-                    NetFlowEdge edge = edgeList.get(j);
+                for (int j = 0; j < nodeList.size(); j++) {
+                    NetFlowEdge edge = j == 0 ? inputEdge : edgeList.get(j - 1);
+                    NetNode<Insulation, WireProperties, NetFlowEdge> target = nodeList.get(j);
                     // amperage capping
-                    long max = Math.min(pathAmperage, edge.getFlowLimit(null, this.net.getGraph(), queryTick, simulator));
+                    long max = Math.min(pathAmperage,
+                            edge.getFlowLimit(null, this.net.getGraph(), queryTick, simulator));
                     double ratio = (double) max / pathAmperage;
                     pathAmperage = max;
                     flowLimitConsumers.modifyRatios(ratio);
 
-                    target = nodeList.get(j + 1);
                     TileEntityCable tile = simulator == null ? (TileEntityCable) target.getHeldMTEUnsafe() : null;
                     flowLimitConsumers.add(edge, null, this.net.getGraph(), pathAmperage, queryTick,
                             simulator, tile != null ? amps -> {
@@ -178,10 +179,13 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                 // complete transfer
                 this.transfer = true;
                 // actual voltage that reaches the destination is the geometric mean of the input and all the caps
-                long finalVoltage = (long) GTUtility.geometricMean((double) voltage, voltageCaps.toArray(new double[]{}));
-                long accepted = dest.acceptEnergyFromNetwork(facedPath.oppositeFacing(), finalVoltage, pathAmperage, simulator != null);
+                long finalVoltage = (long) GTUtility.geometricMean((double) voltage,
+                        voltageCaps.toArray(new double[] {}));
+                long accepted = dest.acceptEnergyFromNetwork(facedPath.oppositeFacing(), finalVoltage, pathAmperage,
+                        simulator != null);
                 this.transfer = false;
-                if (simulator != null) accepted = getSimulatedAccepted(destSimulationCache, facedPath.toFacingPos(), accepted);
+                if (simulator != null)
+                    accepted = getSimulatedAccepted(destSimulationCache, facedPath.toFacingPos(), accepted);
                 flowLimitConsumers.doConsumption((double) accepted / pathAmperage);
                 availableAmperage -= accepted;
 
@@ -204,42 +208,37 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
             Iterator<EnumFacing> iterator = path.getFacingIterator();
             boolean pathDestThis = path.getTargetNode().getNodePos().equals(this.cable.getPipePos());
             while (iterator.hasNext()) {
-                NetPath.FacedNetPath<Insulation, WireProperties, NetFlowEdge> facedPath =
-                        path.withFacing(iterator.next());
+                NetPath.FacedNetPath<Insulation, WireProperties, NetFlowEdge> facedPath = path
+                        .withFacing(iterator.next());
                 if (pathDestThis && facedPath.facing == side) {
                     // do not distribute power back into our source
                     continue;
                 }
 
-                IEnergyContainer dest = facedPath.getTargetTE().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, facedPath.oppositeFacing());
+                IEnergyContainer dest = facedPath.getTargetTE()
+                        .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, facedPath.oppositeFacing());
                 if (dest == null || dest == this) continue;
                 if (!dest.inputsEnergy(facedPath.oppositeFacing()) || dest.getEnergyCanBeInserted() <= 0) continue;
 
                 List<NetNode<Insulation, WireProperties, NetFlowEdge>> nodeList = facedPath.getNodeList();
                 DoubleList voltageCaps = new DoubleArrayList();
                 long pathAmperage = availableAmperage;
-                // loss from the first node
-                NetNode<Insulation, WireProperties, NetFlowEdge> target = nodeList.get(0);
-                if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) continue;
 
                 List<NetFlowEdge> edgeList = facedPath.getEdgeList();
                 List<Consumer<Double>> flowLimitConsumers = new ObjectArrayList<>();
-                List<Consumer<Double>> amperageLoss = new ObjectArrayList<>();
-                for (int j = 0; j < edgeList.size(); j++) {
-                    NetFlowEdge edge = edgeList.get(j);
+                List<Consumer<Double>> amperageLossHeat = new ObjectArrayList<>();
+                for (int j = 0; j < nodeList.size(); j++) {
+                    NetFlowEdge edge = j == 0 ? inputEdge : edgeList.get(j - 1);
+                    NetNode<Insulation, WireProperties, NetFlowEdge> target = nodeList.get(j);
 
                     long flowLimit = edge.getFlowLimit(null, this.net.getGraph(), queryTick, simulator);
-                    NetNode<Insulation, WireProperties, NetFlowEdge> source = target;
-                    target = nodeList.get(j + 1);
-                    NetNode<Insulation, WireProperties, NetFlowEdge> finalTarget = target;
                     long finalPathAmperage = pathAmperage;
                     if (simulator == null && finalPathAmperage != 0) {
-                        amperageLoss.add((ratio) -> {
+                        amperageLossHeat.add((ratio) -> {
                             long adjustedAmperage = (long) (finalPathAmperage * ratio);
                             if (adjustedAmperage > flowLimit) {
-                                int heat = calculateHeat(adjustedAmperage - flowLimit, adjustedAmperage, 1) / 2;
-                                getOrGenerateLossResult(source, heat, false);
-                                getOrGenerateLossResult(finalTarget, heat, false);
+                                int heat = calculateHeat(adjustedAmperage - flowLimit, adjustedAmperage, 1);
+                                getOrGenerateLossResult(target, heat, false);
                             }
                         });
                     }
@@ -258,14 +257,18 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                     if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) continue mainloop;
                 }
 
-                long finalVoltage = (long) GTUtility.geometricMean((double) voltage, voltageCaps.toArray(new double[]{}));
-                long simulatedAccepted = dest.acceptEnergyFromNetwork(facedPath.oppositeFacing(), finalVoltage, availableAmperage, true);
-                simulatedAccepted = getSimulatedAccepted(localDestSimulationCache, facedPath.toFacingPos(), simulatedAccepted);
+                long finalVoltage = (long) GTUtility.geometricMean((double) voltage,
+                        voltageCaps.toArray(new double[] {}));
+                long simulatedAccepted = dest.acceptEnergyFromNetwork(facedPath.oppositeFacing(), finalVoltage,
+                        availableAmperage, true);
+                simulatedAccepted = getSimulatedAccepted(localDestSimulationCache, facedPath.toFacingPos(),
+                        simulatedAccepted);
                 if (simulator != null)
-                    simulatedAccepted = getSimulatedAccepted(destSimulationCache, facedPath.toFacingPos(), simulatedAccepted);
+                    simulatedAccepted = getSimulatedAccepted(destSimulationCache, facedPath.toFacingPos(),
+                            simulatedAccepted);
                 double ratio = (double) simulatedAccepted / availableAmperage;
                 flowLimitConsumers.forEach(consumer -> consumer.accept(ratio));
-                amperageLoss.forEach(consumer -> consumer.accept(ratio));
+                amperageLossHeat.forEach(consumer -> consumer.accept(ratio));
                 availableAmperage -= simulatedAccepted;
 
                 if (availableAmperage <= 0) return amperage;

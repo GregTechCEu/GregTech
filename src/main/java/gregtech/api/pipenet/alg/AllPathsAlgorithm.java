@@ -7,6 +7,7 @@ import gregtech.api.pipenet.WorldPipeNetBase;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 
 import java.util.Collections;
@@ -29,6 +30,6 @@ public class AllPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends
                 .filter(NetNode::isActive).collect(Collectors.toSet());
         return getAllPaths(Collections.singleton(source), searchSpace, true, (int) Short.MAX_VALUE)
                 .stream().map(NetPath::new).sorted(Comparator.comparingDouble(NetPath::getWeight))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ObjectArrayList::new));
     }
 }

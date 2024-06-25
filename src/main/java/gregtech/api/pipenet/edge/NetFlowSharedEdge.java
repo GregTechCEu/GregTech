@@ -4,12 +4,10 @@ import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.util.math.MathHelper;
 
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
 
 import java.util.List;
@@ -30,7 +28,8 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
     }
 
     @Override
-    protected AbstractChannelsHolder<NetFlowSharedEdge> getNewHolder(AbstractChannelsHolder<NetFlowSharedEdge> prototype, ChannelSimulatorKey simulator) {
+    protected AbstractChannelsHolder<NetFlowSharedEdge> getNewHolder(AbstractChannelsHolder<NetFlowSharedEdge> prototype,
+                                                                     ChannelSimulatorKey simulator) {
         if (prototype instanceof ChannelsHolder holder) return new ChannelsHolder(holder, simulator);
         return new ChannelsHolder(simulator);
     }
@@ -64,8 +63,8 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
 
         @Override
         public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> long getFlowLimit(Object channel,
-                                                                                                   Graph<NetNode<PT, NDT, NetFlowSharedEdge>, NetFlowSharedEdge> graph,
-                                                                                                   long queryTick) {
+                                                                                                    Graph<NetNode<PT, NDT, NetFlowSharedEdge>, NetFlowSharedEdge> graph,
+                                                                                                    long queryTick) {
             if (cannotSupportChannel(channel, queryTick)) return 0;
 
             NetFlowSharedEdge inverse = graph.getEdge(getCastTarget(), getCastSource());
@@ -83,7 +82,10 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
 
         @Override
         <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
-                Object channel, Graph<NetNode<PT, NDT, NetFlowSharedEdge>, NetFlowSharedEdge> graph, long amount, long queryTick) {
+                                                                                                 Object channel,
+                                                                                                 Graph<NetNode<PT, NDT, NetFlowSharedEdge>, NetFlowSharedEdge> graph,
+                                                                                                 long amount,
+                                                                                                 long queryTick) {
             if (amount == 0) return;
             recalculateFlowLimits(queryTick);
 

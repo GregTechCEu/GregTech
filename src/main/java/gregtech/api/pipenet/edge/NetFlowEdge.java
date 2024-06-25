@@ -4,14 +4,13 @@ import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
 
 import java.util.List;
 
-public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
+public class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
 
     private final int flowBufferTicks;
 
@@ -27,7 +26,8 @@ public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
     }
 
     @Override
-    protected AbstractChannelsHolder<NetFlowEdge> getNewHolder(AbstractChannelsHolder<NetFlowEdge> prototype, ChannelSimulatorKey simulator) {
+    protected AbstractChannelsHolder<NetFlowEdge> getNewHolder(AbstractChannelsHolder<NetFlowEdge> prototype,
+                                                               ChannelSimulatorKey simulator) {
         if (prototype instanceof ChannelsHolder holder) return new ChannelsHolder(holder, simulator);
         return new ChannelsHolder(simulator);
     }
@@ -58,8 +58,8 @@ public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
 
         @Override
         public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> long getFlowLimit(Object channel,
-                                                                                                   Graph<NetNode<PT, NDT, NetFlowEdge>, NetFlowEdge> graph,
-                                                                                                   long queryTick) {
+                                                                                                    Graph<NetNode<PT, NDT, NetFlowEdge>, NetFlowEdge> graph,
+                                                                                                    long queryTick) {
             if (cannotSupportChannel(channel, queryTick)) return 0;
             long limit = map.getLong(channel);
 
@@ -81,7 +81,10 @@ public final class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
 
         @Override
         <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
-                Object channel, Graph<NetNode<PT, NDT, NetFlowEdge>, NetFlowEdge> graph, long amount, long queryTick) {
+                                                                                                 Object channel,
+                                                                                                 Graph<NetNode<PT, NDT, NetFlowEdge>, NetFlowEdge> graph,
+                                                                                                 long amount,
+                                                                                                 long queryTick) {
             if (amount == 0) return;
             recalculateFlowLimits(queryTick);
 

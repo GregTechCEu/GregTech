@@ -31,6 +31,9 @@ import java.util.Map;
 
 public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
 
+    protected static final NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge> FAKE_SOURCE = new NetNode<>(
+            new FluidPipeProperties(Integer.MAX_VALUE, Integer.MAX_VALUE, true, true, true, true, Integer.MAX_VALUE));
+
     private static final IFluidTankProperties[] EMPTY = new IFluidTankProperties[0];
 
     private final WorldFluidPipeNet net;
@@ -43,10 +46,24 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
     private FluidStack lastFillResource;
     private final Map<NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge>, NodeLossResult> lossResultCache = new Object2ObjectOpenHashMap<>();
 
+    private final NetFlowEdge inputEdge;
+
     public FluidNetHandler(WorldFluidPipeNet net, TileEntityFluidPipe pipe, EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
+        this.inputEdge = new NetFlowEdge(1) {
+
+            @Override
+            public NetNode<?, ?, ?> getSource() {
+                return FAKE_SOURCE;
+            }
+
+            @Override
+            public NetNode<?, ?, ?> getTarget() {
+                return FluidNetHandler.this.pipe.getNode();
+            }
+        };
     }
 
     public void updatePipe(TileEntityFluidPipe pipe) {
@@ -84,6 +101,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
         // push flow through net
         List<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> paths = this.getNet().getPaths(pipe);
+        paths.forEach(path -> path.getEdgeList().add(0, inputEdge)); // add our fake edge for flow handling
         FluidStack helper = resource.copy();
         if (!doFill) this.simulatorKey = AbstractNetFlowEdge.getNewSimulatorInstance();
         else this.simulatorKey = null;
@@ -198,13 +216,9 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         List<NetFlowEdge> edgeList = routePath.getEdgeList();
         FlowConsumerList<FluidPipeType, FluidPipeProperties, NetFlowEdge> flowLimitConsumers = new FlowConsumerList<>();
 
-        // loss from the first input node
-        var targetResult = getOrGenerateLossResult(nodeList.get(0), resource);
-        double loss = targetResult.getLossFunction();
-        int inputAmount = (int) (resource.amount * loss);
-        int outputAmount = inputAmount;
+        int inputAmount = resource.amount;
+        int outputAmount = resource.amount;
 
-        // always 1 less edge than nodes
         for (int i = 0; i < edgeList.size(); i++) {
             NetFlowEdge edge = edgeList.get(i);
             if (!edge.getPredicate().test(resource)) return 0;
@@ -214,10 +228,8 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
             flowLimitConsumers.modifyRatios(ratio);
             flowLimitConsumers.add(edge, testObject, getNet().getGraph(), flow, tick, simulatorKey);
             // TODO undo loss when backflowing
-            // var sourceResult = getOrGenerateLossResult(nodeList.get(i), resource);
-            targetResult = getOrGenerateLossResult(nodeList.get(i + 1), resource);
-            loss = targetResult.getLossFunction();
-            outputAmount = (int) (flow * loss);
+            NodeLossResult targetResult = getOrGenerateLossResult(nodeList.get(i), resource);
+            outputAmount = (int) (flow * targetResult.getLossFunction());
         }
         // outputAmount is currently the maximum flow to the endpoint, and inputAmount is the requisite flow into the
         // net
@@ -259,7 +271,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
     }
 
     protected NodeLossResult getOrGenerateLossResult(NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge> node,
-                                                                         FluidStack resource) {
+                                                     FluidStack resource) {
         var cachedResult = this.lossResultCache.get(node);
         if (cachedResult == null) {
             cachedResult = node.getData().determineFluidPassthroughResult(resource, net.getWorld(), node.getNodePos());

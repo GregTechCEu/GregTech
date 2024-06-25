@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class FilteredEdgePredicate<T extends FilteredEdgePredicate<T>> extends AbstractEdgePredicate<T>
-        implements IShutteredEdgePredicate {
+                                           implements IShutteredEdgePredicate {
 
     protected static final IDirtyNotifiable DECOY = () -> {};
 

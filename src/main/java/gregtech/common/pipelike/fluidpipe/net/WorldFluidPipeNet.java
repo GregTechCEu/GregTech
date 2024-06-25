@@ -1,10 +1,10 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.pipenet.alg.AllPathsAlgorithm;
-import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
 import gregtech.api.pipenet.WorldPipeNetComplex;
+import gregtech.api.pipenet.alg.AllPathsAlgorithm;
 import gregtech.api.pipenet.edge.NetFlowEdge;
+import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidFilter;

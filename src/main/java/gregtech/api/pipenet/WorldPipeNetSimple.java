@@ -32,10 +32,10 @@ public abstract class WorldPipeNetSimple<NodeDataType extends INodeData<NodeData
     /**
      * Standard pipenet representation. Provides the base form of the pipenet abstraction.
      *
-     * @param isDirected   Determines whether this net needs directed graph handling.
-     *                     Used to respect filter directions in the item net and fluid net, for example.
-     *                     If the graph is not directed, pipes should not support blocked connections
-     *                     or unidirectional covers.
+     * @param isDirected       Determines whether this net needs directed graph handling.
+     *                         Used to respect filter directions in the item net and fluid net, for example.
+     *                         If the graph is not directed, pipes should not support blocked connections
+     *                         or unidirectional covers.
      * @param algorithmBuilder custom function to construct a new algorithm when the old one is invalidated.
      */
     public WorldPipeNetSimple(String name, boolean isDirected,

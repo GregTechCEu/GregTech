@@ -8,7 +8,6 @@ import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NodeLossResult;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;
@@ -126,16 +125,15 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     private boolean update() {
-        if (temperature <= getDefaultTemp()) {
-            isTicking = false;
-        } else if (getPipeType().insulationLevel >= 0 && temperature >= 1500 && GTValues.RNG.nextFloat() < 0.1) {
+        // thicker cables cool faster
+        setTemperature((int) (temperature - Math.pow(temperature - getDefaultTemp(), 0.35) *
+                Math.sqrt(this.getPipeType().getThickness()) * 4));
+
+        if (getPipeType().insulationLevel >= 0 && temperature >= 1500 && GTValues.RNG.nextFloat() < 0.1) {
             // insulation melted
             uninsulate();
             isTicking = false;
         }
-        // thicker cables cool faster
-        setTemperature((int) (temperature - Math.pow(temperature - getDefaultTemp(), 0.35) *
-                        Math.sqrt(this.getPipeType().getThickness()) * 4));
         return isTicking;
     }
 
@@ -168,13 +166,14 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         if (!world.isRemote) {
             writeCustomData(CABLE_TEMPERATURE, buf -> buf.writeVarInt(temperature));
             if (!isTicking && temperature > getDefaultTemp()) {
-                TaskScheduler.scheduleTask(getWorld(), this::update);
                 isTicking = true;
+                TaskScheduler.scheduleTask(getWorld(), this::update);
+            } else if (isTicking && temperature <= getDefaultTemp()) {
+                isTicking = false;
             }
         } else {
             // TODO fix particle sometimes not rendering after world load
             if (temperature <= getDefaultTemp()) {
-
                 if (isParticleAlive())
                     particle.setExpired();
             } else {

@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 
 import java.util.Collections;
@@ -72,7 +73,9 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         // convert weight to the true value of the involved nodes
         this.weight = (path.getWeight() + sourceNode.getData().getWeightFactor() +
                 targetNode.getData().getWeightFactor()) / 2;
-        this.edgeList = path.getEdgeList();
+
+        Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> g = path.getGraph();
+        this.edgeList = new ObjectArrayList<>(path.getEdgeList());
         assert this.nodeList.size() == this.edgeList.size() + 1;
     }
 

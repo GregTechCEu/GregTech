@@ -55,6 +55,7 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     private NetGroup<PipeType, NodeDataType, Edge> group = null;
 
+    @Nullable
     private List<NetPath<PipeType, NodeDataType, Edge>> pathCache = null;
 
     public NetNode(NodeDataType data, IPipeTile<PipeType, NodeDataType, Edge> heldMTE,
@@ -79,6 +80,19 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         this.net = null;
         this.data = null;
         this.heldMTE = new WeakReference<>(heldMTE);
+        this.openConnections = 0;
+        this.blockedConnections = 0;
+    }
+
+    /**
+     * Creates a dummy node for fake flow edges.
+     * Should never be required to reference its net, mte, or position.
+     */
+    public NetNode(NodeDataType data) {
+        this.nodePos = null;
+        this.net = null;
+        this.data = data;
+        this.heldMTE = null;
         this.openConnections = 0;
         this.blockedConnections = 0;
     }
@@ -265,7 +279,7 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
      */
     public List<NetPath<PipeType, NodeDataType, Edge>> setPathCache(List<NetPath<PipeType, NodeDataType, Edge>> pathCache) {
         this.pathCache = pathCache;
-        return pathCache;
+        return getPathCache();
     }
 
     public void clearPathCache() {

@@ -17,7 +17,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
-        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge> implements INBTSerializable<NBTTagCompound> {
+        NodeDataType extends INodeData<NodeDataType>,
+        Edge extends NetEdge> implements INBTSerializable<NBTTagCompound> {
 
     public final WorldPipeNetBase<NodeDataType, PipeType, Edge> net;
 
@@ -32,7 +33,8 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         this(graph, net, new ObjectOpenHashSet<>());
     }
 
-    public NetGroup(Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph, WorldPipeNetBase<NodeDataType, PipeType, Edge> net,
+    public NetGroup(Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph,
+                    WorldPipeNetBase<NodeDataType, PipeType, Edge> net,
                     Set<NetNode<PipeType, NodeDataType, Edge>> nodes) {
         this.graph = graph;
         this.net = net;
@@ -159,11 +161,13 @@ public class NetGroup<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
      * @param target target of the edge
      * @return Whether the edge existed in the graph
      */
-    public boolean splitEdge(NetNode<PipeType, NodeDataType, Edge> source, NetNode<PipeType, NodeDataType, Edge> target) {
+    public boolean splitEdge(NetNode<PipeType, NodeDataType, Edge> source,
+                             NetNode<PipeType, NodeDataType, Edge> target) {
         if (graph.removeEdge(source, target) != null) {
             this.clearPathCaches();
             Set<NetNode<PipeType, NodeDataType, Edge>> targetGroup = new ObjectOpenHashSet<>();
-            BreadthFirstIterator<NetNode<PipeType, NodeDataType, Edge>, Edge> i = new BreadthFirstIterator<>(graph, target);
+            BreadthFirstIterator<NetNode<PipeType, NodeDataType, Edge>, Edge> i = new BreadthFirstIterator<>(graph,
+                    target);
             NetNode<PipeType, NodeDataType, Edge> temp;
             while (i.hasNext()) {
                 temp = i.next();

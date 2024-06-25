@@ -2,8 +2,6 @@ package gregtech.api.pipenet;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.alg.INetAlgorithm;
-import gregtech.api.pipenet.alg.ShortestPathsAlgorithm;
-import gregtech.api.pipenet.alg.SinglePathAlgorithm;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
@@ -27,7 +25,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
@@ -56,8 +53,8 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
     private boolean validAlgorithmInstance = false;
 
     WorldPipeNetBase(String name, boolean isDirected,
-                               Function<WorldPipeNetBase<NodeDataType, PipeType, Edge>, INetAlgorithm<PipeType, NodeDataType, Edge>> algorithmBuilder,
-                               Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph) {
+                     Function<WorldPipeNetBase<NodeDataType, PipeType, Edge>, INetAlgorithm<PipeType, NodeDataType, Edge>> algorithmBuilder,
+                     Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph) {
         super(name);
         this.pipeGraph = graph;
         this.netAlgorithm = new INetAlgorithm.NetAlgorithmWrapper<>();
@@ -112,7 +109,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
     /**
      * Preferred override. Only collects a fresh TE from the server if the provided TE is invalid.
      * 
-     * @param tile       The {@link TileEntityPipeBase} that paths are being requested for
+     * @param tile The {@link TileEntityPipeBase} that paths are being requested for
      * @return the ordered list of paths associated with the {@link TileEntityPipeBase}
      */
     public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(TileEntityPipeBase<PipeType, NodeDataType, Edge> tile) {
@@ -122,7 +119,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
     /**
      * Special-case override. Forces the collection of a fresh TE from the server.
      * 
-     * @param pos        The {@link BlockPos} that paths are being requested for
+     * @param pos The {@link BlockPos} that paths are being requested for
      * @return the ordered list of paths associated with the {@link BlockPos}
      */
     public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(BlockPos pos) {
@@ -434,7 +431,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
     public boolean shouldNodeBeActive(NetNode<PipeType, NodeDataType, Edge> node) {
         var connecteds = node.getConnecteds();
         if (connecteds != null) return connecteds.entrySet().stream().filter(entry -> {
-            if (entry.getValue() instanceof IPipeTile<?,?,?>) return false;
+            if (entry.getValue() instanceof IPipeTile<?, ?, ?>) return false;
             for (Capability<?> cap : this.getConnectionCapabilities()) {
                 if (entry.getValue().hasCapability(cap, entry.getKey())) return true;
             }

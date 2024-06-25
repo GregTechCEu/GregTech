@@ -29,7 +29,6 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
         return new ChannelSimulatorKey();
     }
 
-
     public boolean cannotSupportChannel(Object channel, long queryTick, @Nullable ChannelSimulatorKey simulator) {
         return getChannels(simulator).cannotSupportChannel(channel, queryTick);
     }
@@ -47,10 +46,10 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
     }
 
     public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> long getFlowLimit(
-            Object channel,
-            Graph<NetNode<PT, NDT, E>, E> graph,
-            long queryTick,
-            @Nullable ChannelSimulatorKey simulator) {
+                                                                                                Object channel,
+                                                                                                Graph<NetNode<PT, NDT, E>, E> graph,
+                                                                                                long queryTick,
+                                                                                                @Nullable ChannelSimulatorKey simulator) {
         return getChannels(simulator).getFlowLimit(channel, graph, queryTick);
     }
 
@@ -59,14 +58,16 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
     }
 
     public <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
-            Object channel,
-            Graph<NetNode<PT, NDT, E>, E> graph,
-            long amount, long queryTick,
-            @Nullable ChannelSimulatorKey simulator) {
+                                                                                                    Object channel,
+                                                                                                    Graph<NetNode<PT, NDT, E>, E> graph,
+                                                                                                    long amount,
+                                                                                                    long queryTick,
+                                                                                                    @Nullable ChannelSimulatorKey simulator) {
         getChannels(simulator).consumeFlowLimit(channel, graph, amount, queryTick);
     }
 
-    protected abstract AbstractChannelsHolder<E> getNewHolder(AbstractChannelsHolder<E> prototype, ChannelSimulatorKey simulator);
+    protected abstract AbstractChannelsHolder<E> getNewHolder(AbstractChannelsHolder<E> prototype,
+                                                              ChannelSimulatorKey simulator);
 
     protected abstract static class AbstractChannelsHolder<E extends AbstractNetFlowEdge<E>> {
 
@@ -85,16 +86,17 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
         abstract boolean cannotSupportChannel(Object channel, long queryTick);
 
         abstract <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> long getFlowLimit(
-                Object channel,
-                Graph<NetNode<PT, NDT, E>, E> graph,
-                long queryTick);
+                                                                                                      Object channel,
+                                                                                                      Graph<NetNode<PT, NDT, E>, E> graph,
+                                                                                                      long queryTick);
 
         abstract long getConsumedLimit(Object channel, long queryTick);
 
         abstract <PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>> void consumeFlowLimit(
-                Object channel,
-                Graph<NetNode<PT, NDT, E>, E> graph,
-                long amount, long queryTick);
+                                                                                                          Object channel,
+                                                                                                          Graph<NetNode<PT, NDT, E>, E> graph,
+                                                                                                          long amount,
+                                                                                                          long queryTick);
     }
 
     public static final class ChannelSimulatorKey {

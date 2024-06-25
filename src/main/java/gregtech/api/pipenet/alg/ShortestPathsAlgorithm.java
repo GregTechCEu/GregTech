@@ -8,8 +8,6 @@ import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.CHManyToManyShortestPaths;
 
 import java.util.Collections;
@@ -39,6 +37,7 @@ public final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>,
         ManyToManyShortestPaths<NetNode<PT, NDT, E>, E> manyToManyPaths = getManyToManyPaths(
                 Collections.singleton(source), searchSpace);
         return searchSpace.stream().map(node -> manyToManyPaths.getPath(source, node)).map(NetPath::new)
-                .sorted(Comparator.comparingDouble(NetPath::getWeight)).collect(Collectors.toList());
+                .sorted(Comparator.comparingDouble(NetPath::getWeight))
+                .collect(Collectors.toCollection(ObjectArrayList::new));
     }
 }

@@ -38,16 +38,16 @@ public abstract class WorldPipeNetComplex<NodeDataType extends INodeData<NodeDat
      * <p>
      * Note - These child edges cannot be allowed to store information, they must only perform runtime behavior.
      *
-     * @param isDirected   Determines whether this net needs directed graph handling.
-     *                     Used to respect filter directions in the item net and fluid net, for example.
-     *                     If the graph is not directed, pipes should not support blocked connections
-     *                     or unidirectional covers.
-     * @param edgeSupplier The supplier for the custom NetEdge child class.
+     * @param isDirected       Determines whether this net needs directed graph handling.
+     *                         Used to respect filter directions in the item net and fluid net, for example.
+     *                         If the graph is not directed, pipes should not support blocked connections
+     *                         or unidirectional covers.
+     * @param edgeSupplier     The supplier for the custom NetEdge child class.
      * @param algorithmBuilder custom function to construct a new algorithm when the old one is invalidated.
      */
     public WorldPipeNetComplex(String name, boolean isDirected, Supplier<Edge> edgeSupplier,
                                Function<WorldPipeNetBase<NodeDataType, PipeType, Edge>, INetAlgorithm<PipeType, NodeDataType, Edge>> algorithmBuilder) {
         super(name, isDirected, algorithmBuilder, isDirected ? new SimpleDirectedWeightedGraph<>(null, edgeSupplier) :
-                        new SimpleWeightedGraph<>(null, edgeSupplier));
+                new SimpleWeightedGraph<>(null, edgeSupplier));
     }
 }

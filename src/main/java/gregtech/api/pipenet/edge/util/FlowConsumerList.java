@@ -4,7 +4,6 @@ import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.AbstractNetFlowEdge;
-
 import gregtech.api.util.FluidTestObject;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

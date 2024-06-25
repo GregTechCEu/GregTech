@@ -33,6 +33,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+// TODO exploit flow edges for itemnet
 public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
 
     private final WorldItemPipeNet net;

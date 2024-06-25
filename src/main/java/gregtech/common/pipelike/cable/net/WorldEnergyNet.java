@@ -4,8 +4,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.pipenet.AbstractGroupData;
 import gregtech.api.pipenet.WorldPipeNetComplex;
 import gregtech.api.pipenet.alg.AllPathsAlgorithm;
-import gregtech.api.pipenet.alg.ShortestPathsAlgorithm;
-import gregtech.api.pipenet.alg.SinglePathAlgorithm;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;

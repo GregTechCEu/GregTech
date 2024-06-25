@@ -5,7 +5,6 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
-import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
