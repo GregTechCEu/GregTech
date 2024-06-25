@@ -146,8 +146,7 @@ public class WireProperties implements IMaterialProperty, INodeData<WireProperti
 
     @Override
     public double getWeightFactor() {
-        // aren't weighted graphs great?
-        return this.getLossPerBlock();
+        return this.getLossPerBlock() + 0.001 / this.getAmperage();
     }
 
     @Override

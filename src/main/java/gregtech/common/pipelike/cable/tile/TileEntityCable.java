@@ -10,6 +10,7 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.TextFormattingUtil;
@@ -45,13 +46,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static gregtech.api.capability.GregtechDataCodes.CABLE_TEMPERATURE;
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONNECTIONS;
+import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties, NetFlowEdge>
                              implements IDataInfoProvider {
 
-    private static final int meltTemp = 3000;
+    private int meltTemp = 3000;
 
     private final EnumMap<EnumFacing, EnergyNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter();
@@ -266,6 +266,13 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     @Override
+    public void setPipeData(BlockPipe<Insulation, WireProperties, NetFlowEdge, ?> pipeBlock, Insulation insulation,
+                            Material pipeMaterial) {
+        super.setPipeData(pipeBlock, insulation, pipeMaterial);
+        updateMeltTemperature();
+    }
+
+    @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
         if (discriminator == CABLE_TEMPERATURE) {
             setTemperature(buf.readVarInt());
@@ -274,7 +281,13 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
             if (isParticleAlive() && discriminator == UPDATE_CONNECTIONS) {
                 particle.updatePipeBoxes(getPipeBoxes());
             }
+            if (discriminator == UPDATE_PIPE_MATERIAL) updateMeltTemperature();
         }
+    }
+
+    protected void updateMeltTemperature() {
+        this.meltTemp = this.getPipeMaterial().getBlastTemperature();
+        if (this.meltTemp == 0) this.meltTemp = 1000;
     }
 
     @SideOnly(Side.CLIENT)
