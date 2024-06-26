@@ -47,6 +47,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected T activeEntry = null;
 
+    protected String entryName = createName();
+
     private UUID playerUUID = null;
     private boolean isPrivate = false;
     private boolean workingEnabled = true;
@@ -55,20 +57,29 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     public CoverAbstractEnderLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                   @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
-        this.activeEntry = createEntry(createName(), this.playerUUID);
+        this.activeEntry = createEntry(getName(), null);
     }
 
     protected abstract T createEntry(String name, UUID owner);
 
     protected void updateLink() {
         // todo use string variable for name checking instead of the old way
-        this.activeEntry = createEntry(createName(), getOwner());
+        this.activeEntry = createEntry(getName(), getOwner());
         markDirty();
     }
 
     protected final String createName() {
         String s = this.activeEntry == null ? VirtualEntry.DEFAULT_COLOR : this.activeEntry.getColor();
         return identifier() + s;
+    }
+
+    protected final String getName() {
+        return this.entryName;
+    }
+
+    protected final void setName(String name) {
+        this.entryName = name;
+        updateLink();
     }
 
     protected abstract String identifier();

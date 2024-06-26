@@ -56,14 +56,17 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     public CoverEnderFluidLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
-        this.linkedTank = new FluidTankSwitchShim(createEntry(createName(), getOwner()));
+        this.linkedTank = new FluidTankSwitchShim(this.activeEntry);
         this.fluidFilter = new FluidFilterContainer(this);
     }
 
     @Override
     protected VirtualTank createEntry(String name, UUID owner) {
         var tank = VirtualTankRegistry.getTankCreate(name, owner);
-        this.linkedTank.changeTank(tank);
+
+        if (this.linkedTank != null)
+            this.linkedTank.changeTank(tank);
+
         return tank;
     }
 
@@ -126,8 +129,8 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
-        var color = new StringSyncValue(activeEntry::getColor, this::updateColor);
-        color.updateCacheFromSource(true);
+
+        var name = new StringSyncValue(this::getName, this::setName);
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
         syncManager.syncValue("pump_mode", pumpMode);
@@ -143,10 +146,12 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                         .child(createPrivateButton())
                         .child(createColorIcon())
                         .child(new TextFieldWidget().height(18)
-                                .value(color)
-                                .setPattern(COLOR_INPUT_PATTERN)
-                                .widthRel(0.5f).marginRight(2))
-                        .child(new FluidSlot().size(18)
+                                .value(name)
+//                                .setPattern(COLOR_INPUT_PATTERN)
+                                .widthRel(0.5f)
+                                .marginRight(2))
+                        .child(new FluidSlot()
+                                .size(18)
                                 .syncHandler(fluidTank)))
                 .child(createIoRow())
                 .child(getFluidFilterContainer().initUI(panel, syncManager))
