@@ -35,8 +35,8 @@ public class VirtualRegistryBase extends WorldSavedData {
         return getRegistry(owner).getEntry(type, name);
     }
 
-    protected static void addEntry(@Nullable UUID owner, VirtualEntry entry) {
-        getRegistry(owner).addEntry(entry);
+    protected static void addEntry(@Nullable UUID owner, String name, VirtualEntry entry) {
+        getRegistry(owner).addEntry(name, entry);
     }
 
     protected static boolean hasEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {

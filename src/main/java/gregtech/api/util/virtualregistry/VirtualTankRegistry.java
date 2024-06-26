@@ -71,10 +71,7 @@ public final class VirtualTankRegistry extends VirtualRegistryBase {
      * @param capacity The initial capacity of the tank
      */
     public static void addTank(String key, UUID uuid, int capacity) {
-        var tank = new VirtualTank();
-        tank.setName(key);
-        tank.setCapacity(capacity);
-        addEntry(uuid, tank);
+        addEntry(uuid, key, new VirtualTank(capacity));
     }
 
     /**

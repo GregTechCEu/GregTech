@@ -20,6 +20,12 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
             new VirtualTankProperties(this)
     };
 
+    public VirtualTank(Integer capacity) {
+        setCapacity(capacity);
+    }
+
+    public VirtualTank() {}
+
     @Override
     public EntryTypes<VirtualTank> getType() {
         return EntryTypes.ENDER_FLUID;
