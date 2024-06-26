@@ -16,6 +16,10 @@ public final class FluidTestObject {
         this.tag = stack.tag;
     }
 
+    public FluidStack recombine() {
+        return new FluidStack(fluid, 1, tag);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

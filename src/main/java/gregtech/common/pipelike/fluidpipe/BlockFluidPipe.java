@@ -1,6 +1,8 @@
 package gregtech.common.pipelike.fluidpipe;
 
+import gregtech.api.fluids.FluidConstants;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -9,12 +11,15 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.EntityDamageUtil;
+import gregtech.api.util.FluidTestObject;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
+
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -29,8 +34,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -136,34 +144,25 @@ public class BlockFluidPipe extends
         if (worldIn.isRemote) return;
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
         if (pipe.getFrameMaterial() == null && pipe.getOffsetTimer() % 10 == 0) {
-            if (entityIn instanceof EntityLivingBase) {
-                // TODO detection for what fluids have flowed through a pipe recently
-                if (pipe.getFluidTanks().length > 1) {
-                    // apply temperature damage for the hottest and coldest pipe (multi fluid pipes)
-                    int maxTemperature = Integer.MIN_VALUE;
-                    int minTemperature = Integer.MAX_VALUE;
-                    for (FluidTank tank : pipe.getFluidTanks()) {
-                        if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                            maxTemperature = Math.max(maxTemperature,
-                                    tank.getFluid().getFluid().getTemperature(tank.getFluid()));
-                            minTemperature = Math.min(minTemperature,
-                                    tank.getFluid().getFluid().getTemperature(tank.getFluid()));
-                        }
-                    }
-                    if (maxTemperature != Integer.MIN_VALUE) {
-                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, maxTemperature, 1.0F, 5);
-                    }
-                    if (minTemperature != Integer.MAX_VALUE) {
-                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, minTemperature, 1.0F, 5);
-                    }
-                } else {
-                    FluidTank tank = pipe.getFluidTanks()[0];
-                    if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                        // Apply temperature damage for the pipe (single fluid pipes)
-                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn,
-                                tank.getFluid().getFluid().getTemperature(), 1.0F, 5);
+            if (entityIn instanceof EntityLivingBase living) {
+                NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge> node = pipe.getNode();
+                var net = node.getGroupSafe().net;
+                Set<FluidTestObject> fluids = new ObjectOpenHashSet<>();
+                for (NetFlowEdge edge : net.getGraph().edgesOf(node)) {
+                    for (Object obj : edge.getActiveChannels(null,
+                            FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())) {
+                        if (obj instanceof FluidTestObject tester) fluids.add(tester);
                     }
                 }
+                int maxTemp = FluidConstants.ROOM_TEMPERATURE;
+                int minTemp = FluidConstants.ROOM_TEMPERATURE;
+                for (FluidTestObject fluid : fluids) {
+                    int temp = fluid.fluid.getTemperature(fluid.recombine());
+                    maxTemp = Math.max(temp, maxTemp);
+                    minTemp = Math.min(temp, minTemp);
+                }
+                EntityDamageUtil.applyTemperatureDamage(living, maxTemp, 1.0F, 5);
+                EntityDamageUtil.applyTemperatureDamage(living, minTemp, 1.0F, 5);
             }
         }
     }

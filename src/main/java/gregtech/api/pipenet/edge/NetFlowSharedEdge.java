@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
 
 import java.util.List;
+import java.util.Set;
 
 public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
 
@@ -139,6 +140,12 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
         private void boundCapacity() {
             if (this.sharedCapacity > this.maxCapacity) this.sharedCapacity = this.maxCapacity;
             else if (this.sharedCapacity < 0) this.sharedCapacity = 0;
+        }
+
+        @Override
+        Set<Object> getActiveChannels(long queryTick) {
+            recalculateFlowLimits(queryTick);
+            return map.keySet();
         }
     }
 }

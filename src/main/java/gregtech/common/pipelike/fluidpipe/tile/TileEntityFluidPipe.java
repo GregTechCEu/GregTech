@@ -5,9 +5,9 @@ import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.util.TaskScheduler;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.net.FluidNetHandler;
-import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 
 import net.minecraft.block.state.IBlockState;
@@ -39,11 +39,7 @@ import java.util.function.Consumer;
 
 public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties, NetFlowEdge> {
 
-    // old code to maintain compat with old worlds //
-    private PipeTankList pipeTankList;
-    private final EnumMap<EnumFacing, PipeTankList> tankLists = new EnumMap<>(EnumFacing.class);
-    private FluidTank[] fluidTanks;
-    // ------------------------------------------- //
+    private FluidTank[] fluidTanks = null;
 
     private final EnumMap<EnumFacing, FluidNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private FluidNetHandler defaultHandler;
@@ -97,21 +93,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
     }
 
-    public void checkAndDestroy(@NotNull FluidStack stack) {
-        var result = getNodeData().determineFluidPassthroughResult(stack.copy(), world, pos);
-        stack.amount *= result.getLossFunction();
-        result.getPostAction().accept(this.getNode());
-    }
-
-    public void destroyPipe(FluidStack stack, boolean isBurning, boolean isLeaking, boolean isCorroding,
-                            boolean isShattering, boolean isMelting) {
-        var result = getNodeData().determineDestroyPipeResults(stack, isBurning, isLeaking, isCorroding, isShattering,
-                isMelting, world, pos);
-        stack.amount *= result.getLossFunction();
-        result.getPostAction().accept(this.getNode());
-    }
-
-    public void playDamageSound() {
+    public void playLossSound() {
         long timer = getOffsetTimer();
         if (timer >= this.nextSoundTime) {
             getPipeWorld().playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -119,7 +101,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
     }
 
-    public void dealDamage(int size, Consumer<EntityLivingBase> damageFunction) {
+    public void dealAreaDamage(int size, Consumer<EntityLivingBase> damageFunction) {
         long timer = getOffsetTimer();
         if (timer >= this.nextDamageTime) {
             List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class,
@@ -127,51 +109,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             entities.forEach(damageFunction);
             this.nextDamageTime = timer + 20;
         }
-    }
-
-    public FluidStack getContainedFluid(int channel) {
-        if (channel < 0 || channel >= getFluidTanks().length) return null;
-        return getFluidTanks()[channel].getFluid();
-    }
-
-    private void createTanksList() {
-        fluidTanks = new FluidTank[getNodeData().getTanks()];
-        for (int i = 0; i < getNodeData().getTanks(); i++) {
-            fluidTanks[i] = new FluidTank(getCapacityPerTank());
-        }
-        pipeTankList = new PipeTankList(this, null, fluidTanks);
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            tankLists.put(facing, new PipeTankList(this, facing, fluidTanks));
-        }
-    }
-
-    public PipeTankList getTankList() {
-        if (pipeTankList == null || fluidTanks == null) {
-            createTanksList();
-        }
-        return pipeTankList;
-    }
-
-    public PipeTankList getTankList(EnumFacing facing) {
-        if (tankLists.isEmpty() || fluidTanks == null) {
-            createTanksList();
-        }
-        return tankLists.getOrDefault(facing, pipeTankList);
-    }
-
-    public FluidTank[] getFluidTanks() {
-        if (pipeTankList == null || fluidTanks == null) {
-            createTanksList();
-        }
-        return fluidTanks;
-    }
-
-    public FluidStack[] getContainedFluids() {
-        FluidStack[] fluids = new FluidStack[getFluidTanks().length];
-        for (int i = 0; i < fluids.length; i++) {
-            fluids[i] = fluidTanks[i].getFluid();
-        }
-        return fluids;
     }
 
     @Override
@@ -219,9 +156,10 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     @Override
     public NBTTagCompound writeToNBT(@NotNull NBTTagCompound nbt) {
         super.writeToNBT(nbt);
+        if (fluidTanks == null) return nbt;
         NBTTagList list = new NBTTagList();
-        for (int i = 0; i < getFluidTanks().length; i++) {
-            FluidStack stack1 = getContainedFluid(i);
+        for (FluidTank fluidTank : fluidTanks) {
+            FluidStack stack1 = fluidTank.getFluid();
             NBTTagCompound fluidTag = new NBTTagCompound();
             if (stack1 == null || stack1.amount <= 0)
                 fluidTag.setBoolean("isNull", true);
@@ -237,15 +175,32 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public void readFromNBT(@NotNull NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         if (!nbt.hasKey("Fluids")) return;
+        fluidTanks = new FluidTank[getNodeData().getTanks()];
+        for (int i = 0; i < getNodeData().getTanks(); i++) {
+            fluidTanks[i] = new FluidTank(getCapacityPerTank());
+        }
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
-        createTanksList();
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
             if (!tag.getBoolean("isNull")) {
                 FluidStack stack = FluidStack.loadFluidStackFromNBT(tag);
                 if (stack == null) continue;
-                // TODO old fluid in pipes handling
+                fluidTanks[i].setFluid(stack);
             }
         }
+        TaskScheduler.scheduleTask(world, this::pushFluids);
+    }
+
+    private boolean pushFluids() {
+        boolean remaining = false;
+        for (FluidTank tank : fluidTanks) {
+            if (tank == null || tank.getFluidAmount() == 0) continue;
+            assert tank.getFluid() != null;
+            int fill = defaultHandler.fill(tank.getFluid(), true);
+            if (fill <= tank.getFluidAmount()) remaining = true;
+            tank.getFluid().amount -= fill;
+        }
+        if (!remaining) fluidTanks = null;
+        return remaining;
     }
 }

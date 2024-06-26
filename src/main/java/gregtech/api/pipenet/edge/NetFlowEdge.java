@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
 
 import java.util.List;
+import java.util.Set;
 
 public class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
 
@@ -129,6 +130,12 @@ public class NetFlowEdge extends AbstractNetFlowEdge<NetFlowEdge> {
                 toRemove.forEach(this.map::removeLong);
             }
             this.lastQueryTick = queryTick;
+        }
+
+        @Override
+        Set<Object> getActiveChannels(long queryTick) {
+            recalculateFlowLimits(queryTick);
+            return map.keySet();
         }
     }
 }

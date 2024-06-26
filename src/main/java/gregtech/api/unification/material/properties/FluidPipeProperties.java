@@ -220,7 +220,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
             mult *= 0.9;
 
             // apply heat damage in area surrounding the pipe
-            damageAction = tile -> tile.dealDamage(2, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
+            damageAction = tile -> tile.dealAreaDamage(2, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
                     stack.getFluid().getTemperature(stack), 2.0F, 10));
 
             // chance to do a small explosion
@@ -244,7 +244,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
             mult *= 0.75;
 
             // apply chemical damage in area surrounding the pipe
-            damageAction = tile -> tile.dealDamage(1, entity -> EntityDamageUtil.applyChemicalDamage(entity, 2));
+            damageAction = tile -> tile.dealAreaDamage(1, entity -> EntityDamageUtil.applyChemicalDamage(entity, 2));
 
             // 1/10 chance to void everything and destroy the pipe
             if (GTValues.RNG.nextInt(10) == 0) {
@@ -266,7 +266,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
             }
 
             // apply heat damage in area surrounding the pipe
-            damageAction = tile -> tile.dealDamage(2, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
+            damageAction = tile -> tile.dealAreaDamage(2, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
                     stack.getFluid().getTemperature(stack), 2.0F, 10));
 
             // 1/10 chance to void everything and burn the pipe
@@ -284,7 +284,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
             mult *= 0.75;
 
             // apply frost damage in area surrounding the pipe
-            damageAction = tile -> tile.dealDamage(2, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
+            damageAction = tile -> tile.dealAreaDamage(2, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
                     stack.getFluid().getTemperature(stack), 2.0F, 10));
 
             // 1/10 chance to void everything and freeze the pipe
@@ -300,7 +300,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
             // don't go fetch it from the world as this 9 times out of 10 means loading a chunk unnecessarily.
             IPipeTile<?, ?, ?> tile = nodeG.getHeldMTEUnsafe();
             if (tile instanceof TileEntityFluidPipe pipe) {
-                pipe.playDamageSound();
+                pipe.playLossSound();
                 particleActions.forEach(Runnable::run);
                 finalDamageAction.accept(pipe);
             }

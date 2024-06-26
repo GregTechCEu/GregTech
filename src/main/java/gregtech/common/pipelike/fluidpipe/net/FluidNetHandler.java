@@ -99,9 +99,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
 
         FluidTestObject testObject = new FluidTestObject(resource);
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-        // push flow through net
         List<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> paths = this.getNet().getPaths(pipe);
-        paths.forEach(path -> path.getEdgeList().add(0, inputEdge)); // add our fake edge for flow handling
         FluidStack helper = resource.copy();
         if (!doFill) this.simulatorKey = AbstractNetFlowEdge.getNewSimulatorInstance();
         else this.simulatorKey = null;
@@ -210,6 +208,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
                      FluidTestObject testObject, long tick, FluidStack resource, int allowed, boolean doFill) {
         FluidStack helper = new FluidStack(resource, allowed);
         allowed = handler.fill(helper, false);
+        if (allowed == 0) return 0;
 
         // iterate through path
         List<NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge>> nodeList = routePath.getNodeList();
@@ -219,8 +218,8 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         int inputAmount = resource.amount;
         int outputAmount = resource.amount;
 
-        for (int i = 0; i < edgeList.size(); i++) {
-            NetFlowEdge edge = edgeList.get(i);
+        for (int i = 0; i < nodeList.size(); i++) {
+            NetFlowEdge edge = i == 0 ? inputEdge : edgeList.get(i - 1);
             if (!edge.getPredicate().test(resource)) return 0;
             long flow = Math.min(edge.getFlowLimit(testObject, getNet().getGraph(), tick, simulatorKey), outputAmount);
             double ratio = (double) flow / outputAmount;
@@ -230,14 +229,20 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
             // TODO undo loss when backflowing
             NodeLossResult targetResult = getOrGenerateLossResult(nodeList.get(i), resource);
             outputAmount = (int) (flow * targetResult.getLossFunction());
+            if (outputAmount == 0) break;
         }
         // outputAmount is currently the maximum flow to the endpoint, and inputAmount is the requisite flow into the
         // net
         allowed = Math.min(allowed, outputAmount);
 
         helper.amount = allowed;
-        allowed = handler.fill(helper, doFill);
-        double ratio = (double) allowed / outputAmount;
+        double ratio;
+        if (outputAmount == 0) {
+            ratio = 1;
+        } else {
+            allowed = handler.fill(helper, doFill);
+            ratio = (double) allowed / outputAmount;
+        }
         flowLimitConsumers.doConsumption(ratio);
 
         return (int) (inputAmount * ratio);

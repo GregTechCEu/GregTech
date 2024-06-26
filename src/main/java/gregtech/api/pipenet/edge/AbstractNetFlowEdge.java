@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 
 import java.lang.ref.WeakReference;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> extends NetEdge {
@@ -66,6 +67,10 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
         getChannels(simulator).consumeFlowLimit(channel, graph, amount, queryTick);
     }
 
+    public Set<Object> getActiveChannels(@Nullable ChannelSimulatorKey simulator, long queryTick) {
+        return getChannels(simulator).getActiveChannels(queryTick);
+    }
+
     protected abstract AbstractChannelsHolder<E> getNewHolder(AbstractChannelsHolder<E> prototype,
                                                               ChannelSimulatorKey simulator);
 
@@ -97,6 +102,8 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
                                                                                                           Graph<NetNode<PT, NDT, E>, E> graph,
                                                                                                           long amount,
                                                                                                           long queryTick);
+
+        abstract Set<Object> getActiveChannels(long queryTick);
     }
 
     public static final class ChannelSimulatorKey {
