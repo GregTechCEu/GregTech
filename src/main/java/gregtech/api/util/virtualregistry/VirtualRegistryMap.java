@@ -24,9 +24,9 @@ public class VirtualRegistryMap implements INBTSerializable<NBTTagCompound> {
         return (T) registryMap.get(type).get(name);
     }
 
-    public <T extends VirtualEntry> void addEntry(T entry) {
+    public <T extends VirtualEntry> void addEntry(String name, T entry) {
         registryMap.computeIfAbsent(entry.getType(), k -> new HashMap<>())
-                .put(entry.getName(), entry);
+                .put(name, entry);
     }
 
     public <T extends VirtualEntry> boolean contains(EntryTypes<T> type, String name) {
@@ -71,7 +71,7 @@ public class VirtualRegistryMap implements INBTSerializable<NBTTagCompound> {
             var virtualEntries = nbt.getCompoundTag(entryType);
             for (var name : virtualEntries.getKeySet()) {
                 var entry = virtualEntries.getCompoundTag(name);
-                addEntry(type.createInstance(entry));
+                addEntry(name, type.createInstance(entry));
             }
         }
     }

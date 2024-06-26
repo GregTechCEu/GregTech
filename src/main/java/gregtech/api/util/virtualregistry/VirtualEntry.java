@@ -7,12 +7,11 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
 
-    protected static final String DEFAULT_COLOR = "FFFFFFFF";
-    protected static final String NAME_KEY = "entry_name";
+    public static final String DEFAULT_COLOR = "FFFFFFFF";
     protected static final String COLOR_KEY = "color";
     private final @NotNull NBTTagCompound data = new NBTTagCompound();
 
-    public abstract <T extends VirtualEntry> EntryTypes<T> getType();
+    public abstract EntryTypes<? extends VirtualEntry> getType();
 
     public String getColor() {
         if (!this.data.hasKey(COLOR_KEY))
@@ -25,16 +24,8 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
         this.data.setString(COLOR_KEY, color == null ? DEFAULT_COLOR : color.toUpperCase());
     }
 
-    public String getName() {
-        return this.data.getString(NAME_KEY);
-    }
-
-    protected void setName(String name) {
-        this.data.setString(NAME_KEY, name == null || name.isEmpty() ? "null" : name);
-    }
-
     @NotNull
-    public final NBTTagCompound getData() {
+    protected final NBTTagCompound getData() {
         return this.data;
     }
 
@@ -42,7 +33,7 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
     public final boolean equals(Object o) {
         if (!(o instanceof VirtualEntry other)) return false;
         return this.getType() == other.getType() &&
-                this.getName().equals(other.getName());
+                this.getData().equals(other.getData());
     }
 
     @Override
@@ -52,8 +43,6 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
 
     @Override
     public final void deserializeNBT(NBTTagCompound nbt) {
-        for (var key : nbt.getKeySet()) {
-            this.data.setTag(key, nbt.getTag(key));
-        }
+        this.data.merge(nbt);
     }
 }
