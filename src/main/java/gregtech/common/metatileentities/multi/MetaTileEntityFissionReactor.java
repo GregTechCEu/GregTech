@@ -837,14 +837,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             if (mat != null && OreDictUnifier.getPrefix(lockedFuel) == OrePrefix.fuelRod) {
                                 FissionFuelProperty property = mat.material.getProperty(PropertyKey.FISSION_FUEL);
                                 if (property != null) {
-                                    FuelRod component = new FuelRod(property.getMaxTemperature(), 1, property, 650, 3);
+                                    FuelRod component;
                                     fuelIn.setFuel(mat.material);
                                     foundFuel = true;
-                                    fissionReactor.addComponent(component, i + radius, j + radius);
-                                    fuelIn.setInternalFuelRod(component);
                                     if (fissionReactor.fuelDepletion == 0 || fuelIn.getPartialFuel() == null) {
                                         fuelIn.setPartialFuel(mat.material);
+                                        component = new FuelRod(property.getMaxTemperature(), 1, property, 650, 3);
+                                    } else {
+                                        // It's guaranteed to have this property (if the implementation is correct).
+                                        FissionFuelProperty partialProp = fuelIn.getPartialFuel().getProperty(PropertyKey.FISSION_FUEL);
+                                        component = new FuelRod(partialProp.getMaxTemperature(), 1, partialProp, 650, 3);
                                     }
+                                    fuelIn.setInternalFuelRod(component);
+                                    fissionReactor.addComponent(component, i + radius, j + radius);
                                     continue;
                                 }
                             }

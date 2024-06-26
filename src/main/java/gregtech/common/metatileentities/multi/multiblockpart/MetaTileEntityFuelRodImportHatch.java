@@ -198,6 +198,9 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
         if (partialFuel != null && partialFuel.equals(material)) {
             return false;
         }
+        if (!partialFuel.hasProperty(PropertyKey.FISSION_FUEL)) {
+            return false;
+        }
         this.partialFuel = material;
         this.internalFuelRod.setFuel(partialFuel.getProperty(PropertyKey.FISSION_FUEL));
         return true;
