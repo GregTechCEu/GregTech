@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings("SameParameterValue")
@@ -58,6 +59,10 @@ public class VirtualRegistryBase extends WorldSavedData {
                     owner == null ? "public" : String.format("private [%s]", owner),
                     name, type);
         }
+    }
+
+    public static Set<String> getEntryNames(UUID owner, EntryTypes<?> type) {
+        return getRegistry(owner).getEntryNames(type);
     }
 
     /**
