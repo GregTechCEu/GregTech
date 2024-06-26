@@ -260,8 +260,8 @@ public class FissionReactor {
                      * For simplicity, we pretend that fuel rods are completely opaque to neutrons, paths that hit fuel
                      * rods are ignored as obstructed
                      */
-                    if (component instanceof FuelRod && component.samePositionAs(fuelRods.get(i)) &&
-                            component.samePositionAs(fuelRods.get(j))) {
+                    if (component instanceof FuelRod && !component.samePositionAs(fuelRods.get(i)) &&
+                            !component.samePositionAs(fuelRods.get(j))) {
                         pathIsClear = false;
                         break;
                     }
