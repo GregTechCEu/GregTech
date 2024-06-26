@@ -23,7 +23,7 @@ public final class VirtualTankRegistry extends VirtualRegistryBase {
      * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @return The tank object
      */
-    public static IFluidTank getTank(String key, UUID uuid) {
+    public static VirtualTank getTank(String key, UUID uuid) {
         return getEntry(uuid, EntryTypes.ENDER_FLUID, key);
     }
 
@@ -44,7 +44,7 @@ public final class VirtualTankRegistry extends VirtualRegistryBase {
      * @param capacity The initial capacity of the tank
      * @return The tank object
      */
-    public static IFluidTank getTankCreate(String key, UUID uuid, int capacity) {
+    public static VirtualTank getTankCreate(String key, UUID uuid, int capacity) {
         if (!hasEntry(uuid, EntryTypes.ENDER_FLUID, key))
             addTank(key, uuid, capacity);
 
@@ -59,7 +59,7 @@ public final class VirtualTankRegistry extends VirtualRegistryBase {
      * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @return The tank object
      */
-    public static IFluidTank getTankCreate(String key, UUID uuid) {
+    public static VirtualTank getTankCreate(String key, UUID uuid) {
         return getTankCreate(key, uuid, DEFAULT_CAPACITY);
     }
 
