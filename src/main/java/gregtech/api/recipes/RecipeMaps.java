@@ -1289,7 +1289,7 @@ public class RecipeMaps {
 
     public static final RecipeMap<SimpleRecipeBuilder> GAS_CENTRIFUGE_RECIPES = new RecipeMap<>("gas_centrifuge", 0, 0,
             1, 2, new SimpleRecipeBuilder(), false)
-                    .setProgressBar(GuiTextures.CENTRIFUGE_OVERLAY, MoveType.CIRCULAR);
+                    .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR);
 
     //////////////////////////////////////
     // Fuel Recipe Maps //
