@@ -4,6 +4,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -49,8 +50,11 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         RenderUtil.renderItemInGUI(itemstack, 1, 1);
         itemstack.setCount(cachedCount);
 
-        if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked())
+        if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked()) {
+            GlStateManager.disableDepth();
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
+            GlStateManager.enableDepth();
+        }
 
         guiScreen.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);

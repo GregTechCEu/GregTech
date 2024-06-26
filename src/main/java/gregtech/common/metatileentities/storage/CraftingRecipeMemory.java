@@ -185,6 +185,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             buf.writeByte(recipe.index);
             buf.writeItemStack(recipe.recipeResult);
             buf.writeInt(recipe.timesUsed);
+            buf.writeBoolean(recipe.isRecipeLocked());
         }
     }
 
@@ -197,6 +198,7 @@ public class CraftingRecipeMemory extends SyncHandler {
 
             memorizedRecipes[index].recipeResult = readStackSafe(buf);
             memorizedRecipes[index].timesUsed = buf.readInt();
+            memorizedRecipes[index].recipeLocked = buf.readBoolean();
         }
     }
 
