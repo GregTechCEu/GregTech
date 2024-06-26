@@ -235,14 +235,13 @@ public class CraftingRecipeLogic extends SyncHandler {
 
             boolean matchedPreviously = false;
             if (map.containsKey(itemStack)) {
-                if (!map.get(itemStack)) {
-                    continue;
+                if (map.get(itemStack)) {
+                    // cant return here before checking if:
+                    // The item is available for extraction
+                    // The recipe output is still the same, as depending on
+                    // the ingredient, the output NBT may change
+                    matchedPreviously = true;
                 }
-                // cant return here before checking if:
-                // The item is available for extraction
-                // The recipe output is still the same, as depending on
-                // the ingredient, the output NBT may change
-                matchedPreviously = true;
             }
 
             if (!matchedPreviously) {
@@ -351,6 +350,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             var slotStack = slot.getStack();
             if (slotStack.isEmpty()) {
                 slot.hasIngredients = true;
+                map.put(slot.getIndex(), slot.hasIngredients);
                 continue;
             }
 
@@ -427,6 +427,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                 try {
                     this.craftingMatrix.setInventorySlotContents(i, buf.readItemStack());
                 } catch (IOException ignore) {}
+                this.updateCurrentRecipe();
             }
         } else if (id == 4) {
             int slot = buf.readVarInt();
