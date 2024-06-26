@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class VirtualRegistryMap implements INBTSerializable<NBTTagCompound> {
 
@@ -41,6 +42,10 @@ public class VirtualRegistryMap implements INBTSerializable<NBTTagCompound> {
 
     public void clear() {
         registryMap.clear();
+    }
+
+    public Set<String> getEntryNames(EntryTypes<?> type) {
+        return registryMap.get(type).keySet();
     }
 
     @Override
