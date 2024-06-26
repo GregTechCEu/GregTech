@@ -76,15 +76,13 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         ItemStack itemstack = this.syncHandler.getStack();
         if (itemstack.isEmpty()) return;
 
-        if (!this.hasIngredients) {
-            RenderUtil.renderRect(0, 0, 18, 18, 100, 0x80FF0000);
-        }
-
-        guiScreen.setZ(100f);
-        guiScreen.getItemRenderer().zLevel = 100f;
-        RenderUtil.renderItemInGUI(itemstack, 1, 1);
         guiScreen.getItemRenderer().zLevel = 0.0F;
         guiScreen.setZ(0f);
+        RenderUtil.renderItemInGUI(itemstack, 1, 1);
+
+        if (!this.hasIngredients) {
+            RenderUtil.renderRect(0, 0, 18, 18, 200, 0x80FF0000);
+        }
     }
 
     @Override
