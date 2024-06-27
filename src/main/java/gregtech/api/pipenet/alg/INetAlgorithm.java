@@ -7,7 +7,6 @@ import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 
 import java.util.Iterator;
-import java.util.List;
 
 public interface INetAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge> {
 

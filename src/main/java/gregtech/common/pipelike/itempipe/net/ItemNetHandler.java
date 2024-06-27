@@ -17,8 +17,6 @@ import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -29,6 +27,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -117,7 +116,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
-        for (Iterator<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> it = net.getPaths(pipe); it.hasNext(); ) {
+        for (Iterator<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> it = net.getPaths(pipe); it.hasNext();) {
             NetPath<ItemPipeType, ItemPipeProperties, NetEdge> inv = it.next();
             stack = insert(inv.firstFacing(), stack, simulate);
             if (stack.isEmpty())

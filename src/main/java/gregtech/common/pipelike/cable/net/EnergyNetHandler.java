@@ -7,8 +7,8 @@ import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeLossResult;
-import gregtech.api.pipenet.edge.SimulatorKey;
 import gregtech.api.pipenet.edge.NetFlowEdge;
+import gregtech.api.pipenet.edge.SimulatorKey;
 import gregtech.api.pipenet.edge.util.FlowConsumerList;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.FacingPos;
@@ -107,10 +107,12 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
         destSimulationCache = simulate ? new Object2LongOpenHashMap<>() : null;
 
         this.getNet().getGraph().prepareForDynamicWeightAlgorithmRun(null, simulator, queryTick);
-        long amperesUsed = distributionRespectCapacity(side, voltage, amperage, queryTick, this.getNet().getPaths(cable), simulator);
+        long amperesUsed = distributionRespectCapacity(side, voltage, amperage, queryTick,
+                this.getNet().getPaths(cable), simulator);
         if (amperesUsed < amperage) {
             // if we still have undistributed amps, attempt to distribute them while going over edge capacities.
-            amperesUsed += distributionIgnoreCapacity(side, voltage, amperage - amperesUsed, queryTick, this.getNet().getPaths(cable), simulator);
+            amperesUsed += distributionIgnoreCapacity(side, voltage, amperage - amperesUsed, queryTick,
+                    this.getNet().getPaths(cable), simulator);
         }
         this.lossResultCache.forEach((k, v) -> v.getPostAction().accept(k));
         this.lossResultCache.clear();

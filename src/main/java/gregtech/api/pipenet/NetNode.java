@@ -282,7 +282,7 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
      * @return The new cache.
      */
     public Iterator<NetPath<PipeType, NodeDataType, Edge>> setPathCache(
-            ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>> pathCache) {
+                                                                        ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>> pathCache) {
         this.pathCache = pathCache;
         return getPathCache();
     }

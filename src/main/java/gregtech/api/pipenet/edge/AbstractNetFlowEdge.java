@@ -3,7 +3,6 @@ package gregtech.api.pipenet.edge;
 import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
-
 import gregtech.api.pipenet.predicate.IPredicateTestObject;
 
 import org.jetbrains.annotations.Nullable;

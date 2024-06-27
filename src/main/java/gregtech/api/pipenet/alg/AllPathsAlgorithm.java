@@ -18,7 +18,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AllPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge> extends DijkstraManyToManyShortestPaths<NetNode<PT, NDT, E>, E> implements INetAlgorithm<PT, NDT, E> {
+public class AllPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge>
+                              extends DijkstraManyToManyShortestPaths<NetNode<PT, NDT, E>, E>
+                              implements INetAlgorithm<PT, NDT, E> {
 
     public AllPathsAlgorithm(WorldPipeNetBase<NDT, PT, E> pipenet) {
         super(pipenet.getGraph());

@@ -6,9 +6,6 @@ import gregtech.api.pipenet.alg.SinglePathAlgorithm;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.graph.SimpleWeightedGraph;
-
 import java.util.function.Function;
 import java.util.function.Supplier;
 

@@ -5,11 +5,11 @@ import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeLossResult;
-import gregtech.api.pipenet.edge.SimulatorKey;
 import gregtech.api.pipenet.edge.NetFlowEdge;
+import gregtech.api.pipenet.edge.SimulatorKey;
 import gregtech.api.pipenet.edge.util.FlowConsumerList;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.pipenet.predicate.FluidTestObject;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidRegulator;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
@@ -104,7 +104,8 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         else this.simulatorKey = null;
         this.getNet().getGraph().prepareForDynamicWeightAlgorithmRun(testObject, simulatorKey, queryTick);
         mainloop:
-        for (Iterator<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> iter = this.getNet().getPaths(pipe); iter.hasNext(); ) {
+        for (Iterator<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> iter = this.getNet()
+                .getPaths(pipe); iter.hasNext();) {
             NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge> path = iter.next();
             for (Iterator<EnumFacing> it = path.getFacingIterator(); it.hasNext();) {
                 EnumFacing facing = it.next();

@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public abstract class AbstractEdgePredicate<T extends AbstractEdgePredicate<T>> implements Predicate<IPredicateTestObject>, INBTSerializable<NBTTagCompound> {
+public abstract class AbstractEdgePredicate<T extends AbstractEdgePredicate<T>> implements
+                                           Predicate<IPredicateTestObject>, INBTSerializable<NBTTagCompound> {
 
     protected static final Map<String, Supplier<AbstractEdgePredicate<?>>> PREDICATE_SUPPLIERS = new Object2ObjectOpenHashMap<>();
 

@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationProvider, IPipeNetHandler {

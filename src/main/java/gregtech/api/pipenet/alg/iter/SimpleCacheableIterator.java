@@ -1,11 +1,7 @@
 package gregtech.api.pipenet.alg.iter;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class SimpleCacheableIterator<T> implements ICacheableIterator<T> {
 
