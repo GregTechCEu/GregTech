@@ -9,7 +9,6 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.INodeData;
-import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.WorldPipeNetBase;
 import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -187,7 +186,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     pipeTile.setConnection(facing, true, false);
                 if (open && !canConnect)
                     pipeTile.setConnection(facing, false, false);
-                updateActiveNodeStatus(worldIn, pipeTile);
             }
         }
     }
@@ -223,17 +221,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                             @NotNull EnumFacing side) {
         IPipeTile<PipeType, NodeDataType, Edge> pipeTile = getPipeTileEntity(blockAccess, pos);
         return pipeTile == null ? 0 : pipeTile.getCoverableImplementation().getOutputRedstoneSignal(side.getOpposite());
-    }
-
-    public void updateActiveNodeStatus(@NotNull World worldIn,
-                                       IPipeTile<PipeType, NodeDataType, Edge> pipeTile) {
-        if (worldIn.isRemote) return;
-
-        WorldPipeNetBase<NodeDataType, PipeType, Edge> pipeNet = getWorldPipeNet(worldIn);
-        if (pipeNet != null && pipeTile != null) {
-            NetNode<PipeType, NodeDataType, Edge> node = pipeTile.getNode();
-            pipeNet.markNodeAsActive(node, pipeNet.shouldNodeBeActive(node));
-        }
     }
 
     @Nullable

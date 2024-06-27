@@ -173,6 +173,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void onNeighborChanged(@NotNull EnumFacing facing) {
         super.onNeighborChanged(facing);
         this.nonPipeNeighbors[facing.getIndex()] = this;
+        if (!this.getPipeWorld().isRemote) this.getNode().net.updateActiveNodeStatus(this.getNode());
     }
 
     @Override

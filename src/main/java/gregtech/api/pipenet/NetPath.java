@@ -12,10 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
@@ -132,6 +129,11 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             if (!edge.getPredicate().test(testObject)) return false;
         }
         return true;
+    }
+
+    public boolean matches(NetPath<PipeType, NodeDataType, Edge> other) {
+        // if the edge list and node list match content and order, then we definitely match.
+        return Objects.equals(nodeList, other.nodeList) && Objects.equals(edgeList, other.edgeList);
     }
 
     public static class FacedNetPath<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>,

@@ -27,7 +27,7 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     public static final int DEFAULT_MARK = 0;
 
-    private final WorldPipeNetBase<NodeDataType, PipeType, Edge> net;
+    public final WorldPipeNetBase<NodeDataType, PipeType, Edge> net;
 
     private NodeDataType data;
     /**
@@ -263,9 +263,7 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         return data;
     }
 
-    public boolean validTarget() {
-        if (!isActive) return false;
-        this.net.markNodeAsActive(this, this.net.shouldNodeBeActive(this));
+    public boolean isActive() {
         return isActive;
     }
 

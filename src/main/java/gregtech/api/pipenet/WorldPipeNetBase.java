@@ -148,8 +148,8 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
         if (cache != null) return cache;
 
         Iterator<NetPath<PipeType, NodeDataType, Edge>> iter = this.netAlgorithm.getPathsIterator(node);
-        if (iter instanceof ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>>cacheable) {
-            return node.setPathCache(cacheable);
+        if (iter instanceof ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>>) {
+            return node.setPathCache((ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>>) iter);
         } else return iter;
     }
 
@@ -183,7 +183,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
     }
 
     public void markNodeAsOldData(NetNode<PipeType, NodeDataType, Edge> node) {
-        markNodeAsActive(node, shouldNodeBeActive(node));
+        updateActiveNodeStatus(node);
     }
 
     protected abstract Class<? extends IPipeTile<PipeType, NodeDataType, Edge>> getBasePipeClass();
@@ -236,7 +236,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
         if (node == null || node.isConnected(side) == connect) return;
 
         node.setConnected(side, connect);
-        markNodeAsActive(node, shouldNodeBeActive(node));
+        updateActiveNodeStatus(node);
 
         NetNode<PipeType, NodeDataType, Edge> nodeOffset = pipeMap.get(nodePos.offset(side));
         if (nodeOffset == null) return;
@@ -438,6 +438,10 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
         if (node == null) return null;
         if (node.getGroupSafe() != null) return node.getGroupSafe();
         return node.setGroup(new NetGroup<>(this.pipeGraph, this));
+    }
+
+    public boolean updateActiveNodeStatus(NetNode<PipeType, NodeDataType, Edge> node) {
+        return markNodeAsActive(node, shouldNodeBeActive(node));
     }
 
     public boolean shouldNodeBeActive(NetNode<PipeType, NodeDataType, Edge> node) {

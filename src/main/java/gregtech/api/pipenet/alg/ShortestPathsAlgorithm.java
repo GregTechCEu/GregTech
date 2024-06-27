@@ -34,7 +34,7 @@ public final class ShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>,
         if (source.getGroupUnsafe() == null) return Collections.singletonList(new NetPath<>(source)).iterator();
 
         Set<NetNode<PT, NDT, E>> searchSpace = source.getGroupSafe().getNodes().stream()
-                .filter(NetNode::validTarget).collect(Collectors.toSet());
+                .filter(NetNode::isActive).collect(Collectors.toSet());
         ManyToManyShortestPaths<NetNode<PT, NDT, E>, E> manyToManyPaths = getManyToManyPaths(
                 Collections.singleton(source), searchSpace);
         return new SimpleCacheableIterator<>(searchSpace.stream().map(node -> manyToManyPaths.getPath(source, node))
