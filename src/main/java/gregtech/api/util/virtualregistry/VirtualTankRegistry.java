@@ -4,8 +4,12 @@ import gregtech.api.util.virtualregistry.entries.VirtualTank;
 
 import net.minecraftforge.fluids.IFluidTank;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public final class VirtualTankRegistry extends VirtualRegistryBase {
@@ -37,6 +41,15 @@ public final class VirtualTankRegistry extends VirtualRegistryBase {
     @Deprecated
     public static Map<UUID, Map<String, IFluidTank>> getTankMap() {
         return new HashMap<>();
+    }
+
+    public static List<String> collectTanks(UUID owner) {
+        Set<String> publicTanks = getEntryNames(null, EntryTypes.ENDER_FLUID);
+        Set<String> privateTanks = owner == null ? Collections.emptySet() :
+                getEntryNames(owner, EntryTypes.ENDER_FLUID);
+        List<String> map = new ArrayList<>(publicTanks);
+        map.addAll(privateTanks);
+        return map;
     }
 
     /**
