@@ -1,6 +1,8 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.pipenet.predicate.FilteredEdgePredicate;
+import gregtech.api.pipenet.predicate.IPredicateTestObject;
+import gregtech.api.pipenet.predicate.ItemTestObject;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
@@ -17,9 +19,10 @@ public class ItemEdgePredicate extends FilteredEdgePredicate<ItemEdgePredicate> 
     }
 
     @Override
-    public boolean test(Object o) {
+    public boolean test(IPredicateTestObject o) {
         if (shutteredSource || shutteredTarget) return false;
-        if (!(o instanceof ItemStack stack)) return false;
+        if (!(o instanceof ItemTestObject tester)) return false;
+        ItemStack stack = tester.recombine();
         return sourceFilter.test(stack) && targetFilter.test(stack);
     }
 

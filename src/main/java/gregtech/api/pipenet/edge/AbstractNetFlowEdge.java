@@ -4,6 +4,8 @@ import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
 
+import gregtech.api.pipenet.predicate.IPredicateTestObject;
+
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
 
@@ -14,27 +16,26 @@ import java.util.WeakHashMap;
 public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> extends NetEdge {
 
     private final AbstractChannelsHolder<E> channels;
-    private final WeakHashMap<ChannelSimulatorKey, AbstractChannelsHolder<E>> simulatedChannels;
+    private final WeakHashMap<SimulatorKey, AbstractChannelsHolder<E>> simulatedChannels;
 
     public AbstractNetFlowEdge() {
         this.channels = getNewHolder(null, null);
         this.simulatedChannels = new WeakHashMap<>(9);
     }
 
-    /**
-     * Claims a new, unique simulator instance for properly simulating flow edge limits without actually changing them.
-     * <br>
-     * This simulator must be discarded after use so that the garbage collector can clean up.
-     */
-    public static ChannelSimulatorKey getNewSimulatorInstance() {
-        return new ChannelSimulatorKey();
+    @Override
+    public double getWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick) {
+        if (channel == NBT || !cannotSupportChannel(channel, queryTick, simulator)) {
+            return super.getWeight();
+        }
+        return Double.POSITIVE_INFINITY;
     }
 
-    public boolean cannotSupportChannel(Object channel, long queryTick, @Nullable ChannelSimulatorKey simulator) {
+    public boolean cannotSupportChannel(Object channel, long queryTick, @Nullable SimulatorKey simulator) {
         return getChannels(simulator).cannotSupportChannel(channel, queryTick);
     }
 
-    protected AbstractChannelsHolder<E> getChannels(@Nullable ChannelSimulatorKey simulator) {
+    protected AbstractChannelsHolder<E> getChannels(@Nullable SimulatorKey simulator) {
         if (simulator == null) return this.channels;
         else {
             AbstractChannelsHolder<E> channels = simulatedChannels.get(simulator);
@@ -50,11 +51,11 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
                                                                                                 Object channel,
                                                                                                 Graph<NetNode<PT, NDT, E>, E> graph,
                                                                                                 long queryTick,
-                                                                                                @Nullable ChannelSimulatorKey simulator) {
+                                                                                                @Nullable SimulatorKey simulator) {
         return getChannels(simulator).getFlowLimit(channel, graph, queryTick);
     }
 
-    public long getConsumedLimit(Object channel, long queryTick, @Nullable ChannelSimulatorKey simulator) {
+    public long getConsumedLimit(Object channel, long queryTick, @Nullable SimulatorKey simulator) {
         return getChannels(simulator).getConsumedLimit(channel, queryTick);
     }
 
@@ -63,26 +64,26 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
                                                                                                     Graph<NetNode<PT, NDT, E>, E> graph,
                                                                                                     long amount,
                                                                                                     long queryTick,
-                                                                                                    @Nullable ChannelSimulatorKey simulator) {
+                                                                                                    @Nullable SimulatorKey simulator) {
         getChannels(simulator).consumeFlowLimit(channel, graph, amount, queryTick);
     }
 
-    public Set<Object> getActiveChannels(@Nullable ChannelSimulatorKey simulator, long queryTick) {
+    public Set<Object> getActiveChannels(@Nullable SimulatorKey simulator, long queryTick) {
         return getChannels(simulator).getActiveChannels(queryTick);
     }
 
     protected abstract AbstractChannelsHolder<E> getNewHolder(AbstractChannelsHolder<E> prototype,
-                                                              ChannelSimulatorKey simulator);
+                                                              SimulatorKey simulator);
 
     protected abstract static class AbstractChannelsHolder<E extends AbstractNetFlowEdge<E>> {
 
-        private final WeakReference<ChannelSimulatorKey> simulator;
+        private final WeakReference<SimulatorKey> simulator;
 
-        public AbstractChannelsHolder(ChannelSimulatorKey simulator) {
+        public AbstractChannelsHolder(SimulatorKey simulator) {
             this.simulator = new WeakReference<>(simulator);
         }
 
-        public ChannelSimulatorKey getSimulator() {
+        public SimulatorKey getSimulator() {
             return simulator.get();
         }
 
@@ -104,21 +105,5 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
                                                                                                           long queryTick);
 
         abstract Set<Object> getActiveChannels(long queryTick);
-    }
-
-    public static final class ChannelSimulatorKey {
-
-        private static int ID;
-        private final int id;
-
-        private ChannelSimulatorKey() {
-            this.id = ID++;
-        }
-
-        @Override
-        public int hashCode() {
-            // enforcing hash uniqueness improves weak map performance
-            return id;
-        }
     }
 }

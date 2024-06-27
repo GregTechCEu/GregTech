@@ -40,7 +40,7 @@ public abstract class WorldPipeNetSimple<NodeDataType extends INodeData<NodeData
      */
     public WorldPipeNetSimple(String name, boolean isDirected,
                               Function<WorldPipeNetBase<NodeDataType, PipeType, NetEdge>, INetAlgorithm<PipeType, NodeDataType, NetEdge>> algorithmBuilder) {
-        super(name, isDirected, algorithmBuilder, isDirected ? new SimpleDirectedWeightedGraph<>(NetEdge.class) :
-                new SimpleWeightedGraph<>(NetEdge.class));
+        super(name, isDirected, algorithmBuilder, isDirected ? new CustomDirectedGraph<>(NetEdge.class) :
+                new CustomUndirectedGraph<>(NetEdge.class));
     }
 }

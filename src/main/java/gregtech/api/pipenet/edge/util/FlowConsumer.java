@@ -4,7 +4,8 @@ import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.AbstractNetFlowEdge;
-import gregtech.api.util.FluidTestObject;
+import gregtech.api.pipenet.edge.SimulatorKey;
+import gregtech.api.pipenet.predicate.FluidTestObject;
 
 import org.jgrapht.Graph;
 
@@ -18,18 +19,18 @@ public class FlowConsumer<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INod
     private final Graph<NetNode<PT, NDT, E>, E> graph;
     private final long flow;
     private final long tick;
-    private final AbstractNetFlowEdge.ChannelSimulatorKey simulatorKey;
+    private final SimulatorKey simulatorKey;
     private final Consumer<Long> extra;
 
     private double ratio = 1;
 
     public FlowConsumer(E edge, FluidTestObject testObject, Graph<NetNode<PT, NDT, E>, E> graph, long flow,
-                        long tick, AbstractNetFlowEdge.ChannelSimulatorKey simulatorKey) {
+                        long tick, SimulatorKey simulatorKey) {
         this(edge, testObject, graph, flow, tick, simulatorKey, null);
     }
 
     public FlowConsumer(E edge, FluidTestObject testObject, Graph<NetNode<PT, NDT, E>, E> graph, long flow,
-                        long tick, AbstractNetFlowEdge.ChannelSimulatorKey simulatorKey, Consumer<Long> extra) {
+                        long tick, SimulatorKey simulatorKey, Consumer<Long> extra) {
         this.edge = edge;
         this.testObject = testObject;
         this.graph = graph;

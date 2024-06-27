@@ -1,4 +1,4 @@
-package gregtech.api.util;
+package gregtech.api.pipenet.predicate;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
@@ -6,7 +6,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Objects;
 
-public final class FluidTestObject {
+public final class FluidTestObject implements IPredicateTestObject {
 
     public final Fluid fluid;
     public final NBTTagCompound tag;

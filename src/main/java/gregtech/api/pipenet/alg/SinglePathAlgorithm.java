@@ -4,6 +4,7 @@ import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.WorldPipeNetBase;
+import gregtech.api.pipenet.alg.iter.SimpleCacheableIterator;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 
@@ -27,7 +28,7 @@ public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT
     }
 
     @Override
-    public List<NetPath<PT, NDT, E>> getPathsList(NetNode<PT, NDT, E> source) {
+    public Iterator<NetPath<PT, NDT, E>> getPathsIterator(NetNode<PT, NDT, E> source) {
         if (!this.graph.containsVertex(source)) {
             throw new IllegalArgumentException("Graph must contain the source vertex");
         }
@@ -57,7 +58,7 @@ public final class SinglePathAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT
             nodes.add(node);
             sumWeight += node.getData().getWeightFactor();
         }
-        if (!valid) return Collections.emptyList();
-        return ImmutableList.of(new NetPath<>(nodes, edges, sumWeight));
+        if (!valid) return Collections.emptyIterator();
+        return new SimpleCacheableIterator<>(ImmutableList.of(new NetPath<>(nodes, edges, sumWeight)));
     }
 }

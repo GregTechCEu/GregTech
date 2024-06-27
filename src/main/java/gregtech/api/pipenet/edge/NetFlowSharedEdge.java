@@ -30,7 +30,7 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
 
     @Override
     protected AbstractChannelsHolder<NetFlowSharedEdge> getNewHolder(AbstractChannelsHolder<NetFlowSharedEdge> prototype,
-                                                                     ChannelSimulatorKey simulator) {
+                                                                     SimulatorKey simulator) {
         if (prototype instanceof ChannelsHolder holder) return new ChannelsHolder(holder, simulator);
         return new ChannelsHolder(simulator);
     }
@@ -43,13 +43,13 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge<NetFlowSharedEdge> {
         private long lastQueryTick;
         private boolean init;
 
-        public ChannelsHolder(ChannelSimulatorKey simulator) {
+        public ChannelsHolder(SimulatorKey simulator) {
             super(simulator);
             this.map = new Object2LongOpenHashMap<>(9);
             this.map.defaultReturnValue(0);
         }
 
-        public ChannelsHolder(ChannelsHolder prototype, ChannelSimulatorKey simulator) {
+        public ChannelsHolder(ChannelsHolder prototype, SimulatorKey simulator) {
             super(simulator);
             this.map = prototype.map.clone();
             this.lastQueryTick = prototype.lastQueryTick;

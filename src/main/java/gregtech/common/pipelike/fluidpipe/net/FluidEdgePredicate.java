@@ -1,6 +1,8 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.pipenet.predicate.FilteredEdgePredicate;
+import gregtech.api.pipenet.predicate.FluidTestObject;
+import gregtech.api.pipenet.predicate.IPredicateTestObject;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
@@ -17,9 +19,10 @@ public class FluidEdgePredicate extends FilteredEdgePredicate<FluidEdgePredicate
     }
 
     @Override
-    public boolean test(Object o) {
+    public boolean test(IPredicateTestObject o) {
         if (shutteredSource || shutteredTarget) return false;
-        if (!(o instanceof FluidStack stack)) return false;
+        if (!(o instanceof FluidTestObject tester)) return false;
+        FluidStack stack = tester.recombine();
         return sourceFilter.test(stack) && targetFilter.test(stack);
     }
 

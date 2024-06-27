@@ -1,5 +1,6 @@
 package gregtech.api.pipenet;
 
+import gregtech.api.pipenet.alg.iter.ICacheableIterator;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -16,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -56,7 +57,7 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     private NetGroup<PipeType, NodeDataType, Edge> group = null;
 
     @Nullable
-    private List<NetPath<PipeType, NodeDataType, Edge>> pathCache = null;
+    private ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>> pathCache = null;
 
     public NetNode(NodeDataType data, IPipeTile<PipeType, NodeDataType, Edge> heldMTE,
                    WorldPipeNetBase<NodeDataType, PipeType, Edge> net) {
@@ -262,22 +263,26 @@ public final class NetNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         return data;
     }
 
-    public boolean isActive() {
+    public boolean validTarget() {
+        if (!isActive) return false;
+        this.net.markNodeAsActive(this, this.net.shouldNodeBeActive(this));
         return isActive;
     }
 
     @Nullable
-    public List<NetPath<PipeType, NodeDataType, Edge>> getPathCache() {
-        return pathCache;
+    public Iterator<NetPath<PipeType, NodeDataType, Edge>> getPathCache() {
+        if (pathCache == null) return null;
+        return pathCache.newIterator();
     }
 
     /**
-     * Sets the path cache to the provided cache. Returns the provided cache for convenience.
+     * Sets the path cache to the provided cache. Returns a new iterator from the cache for convenience.
      * 
      * @param pathCache The new cache.
      * @return The new cache.
      */
-    public List<NetPath<PipeType, NodeDataType, Edge>> setPathCache(List<NetPath<PipeType, NodeDataType, Edge>> pathCache) {
+    public Iterator<NetPath<PipeType, NodeDataType, Edge>> setPathCache(
+            ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>> pathCache) {
         this.pathCache = pathCache;
         return getPathCache();
     }

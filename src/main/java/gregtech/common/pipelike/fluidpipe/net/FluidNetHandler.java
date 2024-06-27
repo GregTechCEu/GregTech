@@ -5,11 +5,11 @@ import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeLossResult;
-import gregtech.api.pipenet.edge.AbstractNetFlowEdge;
+import gregtech.api.pipenet.edge.SimulatorKey;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.edge.util.FlowConsumerList;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.util.FluidTestObject;
+import gregtech.api.pipenet.predicate.FluidTestObject;
 import gregtech.common.covers.CoverFluidRegulator;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
@@ -42,7 +42,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
 
     private final IFluidHandler testHandler = new FluidTank(Integer.MAX_VALUE);
 
-    private AbstractNetFlowEdge.ChannelSimulatorKey simulatorKey;
+    private SimulatorKey simulatorKey;
     private FluidStack lastFillResource;
     private final Map<NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge>, NodeLossResult> lossResultCache = new Object2ObjectOpenHashMap<>();
 
@@ -98,18 +98,19 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         }
 
         FluidTestObject testObject = new FluidTestObject(resource);
-        long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-        List<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> paths = this.getNet().getPaths(pipe);
+        long queryTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
         FluidStack helper = resource.copy();
-        if (!doFill) this.simulatorKey = AbstractNetFlowEdge.getNewSimulatorInstance();
+        if (!doFill) this.simulatorKey = SimulatorKey.getNewSimulatorInstance();
         else this.simulatorKey = null;
+        this.getNet().getGraph().prepareForDynamicWeightAlgorithmRun(testObject, simulatorKey, queryTick);
         mainloop:
-        for (NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge> path : paths) {
+        for (Iterator<NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> iter = this.getNet().getPaths(pipe); iter.hasNext(); ) {
+            NetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge> path = iter.next();
             for (Iterator<EnumFacing> it = path.getFacingIterator(); it.hasNext();) {
                 EnumFacing facing = it.next();
                 NetPath.FacedNetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge> routePath = path
                         .withFacing(facing);
-                helper.amount -= this.fill(routePath, testObject, tick, helper, doFill);
+                helper.amount -= this.fill(routePath, testObject, queryTick, helper, doFill);
                 if (helper.amount <= 0) break mainloop;
             }
         }
@@ -220,7 +221,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
 
         for (int i = 0; i < nodeList.size(); i++) {
             NetFlowEdge edge = i == 0 ? inputEdge : edgeList.get(i - 1);
-            if (!edge.getPredicate().test(resource)) return 0;
+            if (!edge.getPredicate().test(testObject)) return 0;
             long flow = Math.min(edge.getFlowLimit(testObject, getNet().getGraph(), tick, simulatorKey), outputAmount);
             double ratio = (double) flow / outputAmount;
             inputAmount *= ratio;

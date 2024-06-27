@@ -2,6 +2,7 @@ package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
+import gregtech.api.pipenet.predicate.IPredicateTestObject;
 import gregtech.api.util.FacingPos;
 
 import net.minecraft.tileentity.TileEntity;
@@ -126,9 +127,9 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return data;
     }
 
-    public boolean checkPredicate(Object o) {
+    public boolean checkPredicate(IPredicateTestObject testObject) {
         for (NetEdge edge : this.edgeList) {
-            if (!edge.getPredicate().test(o)) return false;
+            if (!edge.getPredicate().test(testObject)) return false;
         }
         return true;
     }
@@ -177,8 +178,8 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             return path.getMinData();
         }
 
-        public boolean checkPredicate(Object o) {
-            return path.checkPredicate(o);
+        public boolean checkPredicate(IPredicateTestObject testObject) {
+            return path.checkPredicate(testObject);
         }
 
         public FacingPos toFacingPos() {

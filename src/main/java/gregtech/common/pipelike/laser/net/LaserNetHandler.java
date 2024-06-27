@@ -17,6 +17,7 @@ import net.minecraft.util.EnumFacing;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -60,9 +61,10 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
             return null;
         }
 
-        List<NetPath<LaserPipeType, LaserPipeProperties, NetEdge>> data = net.getPaths(this.pipe);
-        if (data == null || data.size() != 1) return null;
-        Map<EnumFacing, TileEntity> connecteds = data.get(0).getTargetTEs();
+        Iterator<NetPath<LaserPipeType, LaserPipeProperties, NetEdge>> data = net.getPaths(this.pipe);
+        if (data == null || !data.hasNext()) return null;
+        Map<EnumFacing, TileEntity> connecteds = data.next().getTargetTEs();
+        if (data.hasNext()) return null;
         if (connecteds.size() != 1) return null;
         EnumFacing facing = connecteds.keySet().iterator().next();
 

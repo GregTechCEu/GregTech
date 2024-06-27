@@ -26,7 +26,7 @@ public class BasicEdgePredicate extends AbstractEdgePredicate<BasicEdgePredicate
     }
 
     @Override
-    public boolean test(Object o) {
+    public boolean test(IPredicateTestObject o) {
         return !(shutteredSource || shutteredTarget);
     }
 

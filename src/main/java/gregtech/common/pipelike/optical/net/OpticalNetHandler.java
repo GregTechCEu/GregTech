@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -96,9 +97,10 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     private boolean traverseRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
         if (isNetInvalidForTraversal()) return false;
 
-        List<NetPath<OpticalPipeType, OpticalPipeProperties, NetEdge>> inv = net.getPaths(this.pipe);
-        if (inv == null || inv.size() != 1) return false;
-        Map<EnumFacing, TileEntity> connecteds = inv.get(0).getTargetTEs();
+        Iterator<NetPath<OpticalPipeType, OpticalPipeProperties, NetEdge>> inv = net.getPaths(this.pipe);
+        if (inv == null || !inv.hasNext()) return false;
+        Map<EnumFacing, TileEntity> connecteds = inv.next().getTargetTEs();
+        if (inv.hasNext()) return false;
         if (connecteds.size() != 1) return false;
         EnumFacing facing = connecteds.keySet().iterator().next();
 
@@ -134,9 +136,10 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     private IOpticalComputationProvider getComputationProvider(@NotNull Collection<IOpticalComputationProvider> seen) {
         if (isNetInvalidForTraversal()) return null;
 
-        List<NetPath<OpticalPipeType, OpticalPipeProperties, NetEdge>> inv = net.getPaths(this.pipe);
-        if (inv == null || inv.size() != 1) return null;
-        Map<EnumFacing, TileEntity> connecteds = inv.get(0).getTargetTEs();
+        Iterator<NetPath<OpticalPipeType, OpticalPipeProperties, NetEdge>> inv = net.getPaths(this.pipe);
+        if (inv == null || !inv.hasNext()) return null;
+        Map<EnumFacing, TileEntity> connecteds = inv.next().getTargetTEs();
+        if (inv.hasNext()) return null;
         if (connecteds.size() != 1) return null;
         EnumFacing facing = connecteds.keySet().iterator().next();
 

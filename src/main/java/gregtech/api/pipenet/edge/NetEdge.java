@@ -5,6 +5,7 @@ import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
+import gregtech.api.pipenet.predicate.IPredicateTestObject;
 import gregtech.api.util.function.QuadConsumer;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound>, IEdge<NetNode<?, ?, ?>> {
+
+    protected static final IPredicateTestObject NBT = new IPredicateTestObject() {};
 
     private AbstractEdgePredicate<?> predicate;
     private boolean invertedPredicate;
@@ -33,7 +36,7 @@ public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBT
         this.invertedPredicate = predicate.getSourcePos() != this.getSource().getNodePos();
     }
 
-    public Predicate<Object> getPredicate() {
+    public Predicate<IPredicateTestObject> getPredicate() {
         // if we don't have a predicate, just assume that we're good.
         if (predicate == null) return (a) -> true;
         return predicate;
@@ -71,8 +74,7 @@ public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBT
         return (NetNode<PT, NDT, E>) getTarget();
     }
 
-    @Override
-    public double getWeight() {
+    public double getWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick) {
         return super.getWeight();
     }
 
@@ -81,7 +83,7 @@ public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBT
         NBTTagCompound tag = new NBTTagCompound();
         tag.setLong("SourceLongPos", getSource().getLongPos());
         tag.setLong("TargetLongPos", getTarget().getLongPos());
-        tag.setDouble("Weight", getWeight());
+        tag.setDouble("Weight", getWeight(NBT, null, 0));
         if (predicate != null) tag.setTag("Predicate", AbstractEdgePredicate.toNBT(predicate));
         tag.setBoolean("InvertedPredicate", isPredicateInverted());
         return tag;

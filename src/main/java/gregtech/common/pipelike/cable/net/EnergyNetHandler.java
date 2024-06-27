@@ -7,7 +7,7 @@ import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.NodeLossResult;
-import gregtech.api.pipenet.edge.AbstractNetFlowEdge;
+import gregtech.api.pipenet.edge.SimulatorKey;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.edge.util.FlowConsumerList;
 import gregtech.api.unification.material.properties.WireProperties;
@@ -103,14 +103,14 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
             return 0;
 
         long queryTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-        AbstractNetFlowEdge.ChannelSimulatorKey key = simulate ? AbstractNetFlowEdge.getNewSimulatorInstance() : null;
+        SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
         destSimulationCache = simulate ? new Object2LongOpenHashMap<>() : null;
 
-        List<NetPath<Insulation, WireProperties, NetFlowEdge>> paths = new ObjectArrayList<>(this.net.getPaths(cable));
-        long amperesUsed = distributionRespectCapacity(side, voltage, amperage, queryTick, paths, key);
+        this.getNet().getGraph().prepareForDynamicWeightAlgorithmRun(null, simulator, queryTick);
+        long amperesUsed = distributionRespectCapacity(side, voltage, amperage, queryTick, this.getNet().getPaths(cable), simulator);
         if (amperesUsed < amperage) {
             // if we still have undistributed amps, attempt to distribute them while going over edge capacities.
-            amperesUsed += distributionIgnoreCapacity(side, voltage, amperage - amperesUsed, queryTick, paths, key);
+            amperesUsed += distributionIgnoreCapacity(side, voltage, amperage - amperesUsed, queryTick, this.getNet().getPaths(cable), simulator);
         }
         this.lossResultCache.forEach((k, v) -> v.getPostAction().accept(k));
         this.lossResultCache.clear();
@@ -123,12 +123,12 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
     }
 
     private long distributionRespectCapacity(EnumFacing side, long voltage, long amperage, long queryTick,
-                                             List<NetPath<Insulation, WireProperties, NetFlowEdge>> paths,
-                                             AbstractNetFlowEdge.ChannelSimulatorKey simulator) {
+                                             Iterator<NetPath<Insulation, WireProperties, NetFlowEdge>> paths,
+                                             SimulatorKey simulator) {
         long availableAmperage = amperage;
         mainloop:
-        for (int i = 0; i < paths.size(); i++) {
-            NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.get(i);
+        while (paths.hasNext()) {
+            NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.next();
             // skip paths where loss exceeds available voltage
             if (path.getWeight() > voltage) continue;
             Iterator<EnumFacing> iterator = path.getFacingIterator();
@@ -169,10 +169,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                                 tile.contributeVoltageFlow(voltage);
                             } : null);
                     // voltage loss
-                    if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) {
-                        paths.remove(i);
-                        continue mainloop;
-                    }
+                    if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) continue mainloop;
                 }
                 // skip paths where we can't transfer amperage
                 if (pathAmperage <= 0) continue;
@@ -196,13 +193,14 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
     }
 
     private long distributionIgnoreCapacity(EnumFacing side, long voltage, long amperage, long queryTick,
-                                            List<NetPath<Insulation, WireProperties, NetFlowEdge>> paths,
-                                            AbstractNetFlowEdge.ChannelSimulatorKey simulator) {
+                                            Iterator<NetPath<Insulation, WireProperties, NetFlowEdge>> paths,
+                                            SimulatorKey simulator) {
         Object2LongOpenHashMap<FacingPos> localDestSimulationCache = new Object2LongOpenHashMap<>();
 
         long availableAmperage = amperage;
         mainloop:
-        for (NetPath<Insulation, WireProperties, NetFlowEdge> path : paths) {
+        while (paths.hasNext()) {
+            NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.next();
             // skip paths where loss exceeds available voltage
             if (path.getWeight() > voltage) continue;
             Iterator<EnumFacing> iterator = path.getFacingIterator();
@@ -289,7 +287,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
         return atomicAccepted.get();
     }
 
-    private boolean calculateVoltageLoss(long voltage, AbstractNetFlowEdge.ChannelSimulatorKey simulator,
+    private boolean calculateVoltageLoss(long voltage, SimulatorKey simulator,
                                          DoubleList voltageCaps, long pathAmperage,
                                          NetNode<Insulation, WireProperties, NetFlowEdge> target) {
         // TODO undo loss & heating on backflow

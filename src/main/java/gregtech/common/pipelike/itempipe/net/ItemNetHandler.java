@@ -4,6 +4,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.IPipeNetHandler;
 import gregtech.api.pipenet.NetPath;
 import gregtech.api.pipenet.edge.NetEdge;
+import gregtech.api.pipenet.predicate.ItemTestObject;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
@@ -15,6 +16,8 @@ import gregtech.common.covers.DistributionMode;
 import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -114,7 +117,8 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
-        for (NetPath<ItemPipeType, ItemPipeProperties, NetEdge> inv : net.getPaths(pipe)) {
+        for (Iterator<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> it = net.getPaths(pipe); it.hasNext(); ) {
+            NetPath<ItemPipeType, ItemPipeProperties, NetEdge> inv = it.next();
             stack = insert(inv.firstFacing(), stack, simulate);
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
@@ -123,13 +127,10 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
     }
 
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate, boolean global) {
-        List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePaths = net.getPaths(pipe);
-        if (routePaths.isEmpty())
-            return stack;
-        if (routePaths.size() == 1 && routePaths.get(0).getTargetTEs().size() == 1) {
-            return insert(routePaths.get(0).firstFacing(), stack, simulate);
-        }
-        List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePathsCopy = new ArrayList<>(routePaths);
+        Iterator<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePaths = net.getPaths(pipe);
+        if (!routePaths.hasNext()) return stack;
+        List<NetPath<ItemPipeType, ItemPipeProperties, NetEdge>> routePathsCopy = new ObjectArrayList<>();
+        routePaths.forEachRemaining(routePathsCopy::add);
 
         if (global) {
             stack = insertToHandlersEnhanced(routePathsCopy, stack, simulate);
@@ -323,7 +324,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
         }
         int allowed = ignoreLimit ? stack.getCount() :
                 checkTransferable(routePath.getMinData().getTransferRate(), stack.getCount(), simulate);
-        if (allowed == 0 || !routePath.checkPredicate(stack)) {
+        if (allowed == 0 || !routePath.checkPredicate(new ItemTestObject(stack))) {
             return stack;
         }
         Cover pipeCover = routePath.getTargetNode().getHeldMTE().getCoverableImplementation()

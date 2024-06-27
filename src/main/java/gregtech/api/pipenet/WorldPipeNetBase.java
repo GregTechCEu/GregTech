@@ -1,11 +1,14 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.cover.Cover;
+import gregtech.api.pipenet.alg.iter.ICacheableIterator;
 import gregtech.api.pipenet.alg.INetAlgorithm;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.SimulatorKey;
 import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
 import gregtech.api.pipenet.predicate.BasicEdgePredicate;
+import gregtech.api.pipenet.predicate.IPredicateTestObject;
 import gregtech.api.pipenet.predicate.IShutteredEdgePredicate;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -25,15 +28,21 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataType>,
@@ -45,7 +54,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
     private Set<INBTBuilder> builders = null;
 
     private WeakReference<World> worldRef = new WeakReference<>(null);
-    protected final Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> pipeGraph;
+    protected final ICustomGraph<PipeType, NodeDataType, Edge> pipeGraph;
     protected final Map<BlockPos, NetNode<PipeType, NodeDataType, Edge>> pipeMap = new Object2ObjectOpenHashMap<>();
 
     private final INetAlgorithm.NetAlgorithmWrapper<PipeType, NodeDataType, Edge> netAlgorithm;
@@ -54,15 +63,16 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
 
     WorldPipeNetBase(String name, boolean isDirected,
                      Function<WorldPipeNetBase<NodeDataType, PipeType, Edge>, INetAlgorithm<PipeType, NodeDataType, Edge>> algorithmBuilder,
-                     Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> graph) {
+                     ICustomGraph<PipeType, NodeDataType, Edge> graph) {
         super(name);
+        graph.setOwningNet(this);
         this.pipeGraph = graph;
         this.netAlgorithm = new INetAlgorithm.NetAlgorithmWrapper<>();
         this.isDirected = isDirected;
         this.algorithmBuilder = algorithmBuilder;
     }
 
-    public Graph<NetNode<PipeType, NodeDataType, Edge>, Edge> getGraph() {
+    public ICustomGraph<PipeType, NodeDataType, Edge> getGraph() {
         return this.pipeGraph;
     }
 
@@ -112,7 +122,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
      * @param tile The {@link TileEntityPipeBase} that paths are being requested for
      * @return the ordered list of paths associated with the {@link TileEntityPipeBase}
      */
-    public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(TileEntityPipeBase<PipeType, NodeDataType, Edge> tile) {
+    public Iterator<NetPath<PipeType, NodeDataType, Edge>> getPaths(TileEntityPipeBase<PipeType, NodeDataType, Edge> tile) {
         return getPaths(this.pipeMap.get(tile.getPipePos()), tile);
     }
 
@@ -122,23 +132,25 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
      * @param pos The {@link BlockPos} that paths are being requested for
      * @return the ordered list of paths associated with the {@link BlockPos}
      */
-    public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(BlockPos pos) {
+    public Iterator<NetPath<PipeType, NodeDataType, Edge>> getPaths(BlockPos pos) {
         return getPaths(this.pipeMap.get(pos), null);
     }
 
-    public List<NetPath<PipeType, NodeDataType, Edge>> getPaths(@Nullable NetNode<PipeType, NodeDataType, Edge> node,
+    public Iterator<NetPath<PipeType, NodeDataType, Edge>> getPaths(@Nullable NetNode<PipeType, NodeDataType, Edge> node,
                                                                 @Nullable TileEntityPipeBase<PipeType, NodeDataType, Edge> tile) {
-        if (node == null) return new ObjectArrayList<>();
+        if (node == null) return Collections.emptyIterator();
 
         node.setHeldMTE(tile);
 
         if (!this.hasValidAlg()) this.rebuildNetAlgorithm();
 
-        List<NetPath<PipeType, NodeDataType, Edge>> cache = node.getPathCache();
+        Iterator<NetPath<PipeType, NodeDataType, Edge>> cache = node.getPathCache();
         if (cache != null) return cache;
 
-        List<NetPath<PipeType, NodeDataType, Edge>> list = this.netAlgorithm.getPathsList(node);
-        return node.setPathCache(list);
+        Iterator<NetPath<PipeType, NodeDataType, Edge>> iter = this.netAlgorithm.getPathsIterator(node);
+        if (iter instanceof ICacheableIterator<NetPath<PipeType,NodeDataType,Edge>> cacheable) {
+            return node.setPathCache(cacheable);
+        } else return iter;
     }
 
     /**
@@ -522,4 +534,88 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
      * Used for reading persistent node data
      */
     protected abstract NodeDataType readNodeData(NBTTagCompound tagCompound);
+
+    public interface ICustomGraph<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge> extends Graph<NetNode<PT, NDT, E>, E> {
+
+        @ApiStatus.Internal
+        void setOwningNet(WorldPipeNetBase<NDT, PT, E> net);
+
+        void prepareForDynamicWeightAlgorithmRun(IPredicateTestObject testObject, SimulatorKey simulator, long queryTick);
+    }
+
+    static class CustomDirectedGraph<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge> extends SimpleDirectedWeightedGraph<NetNode<PT, NDT, E>, E> implements ICustomGraph<PT, NDT, E> {
+
+        private WorldPipeNetBase<NDT, PT, E> net = null;
+
+        private IPredicateTestObject testObject;
+        private SimulatorKey simulator;
+        private long queryTick;
+
+        @Override
+        public void setOwningNet(WorldPipeNetBase<NDT, PT, E> net) {
+            if (this.net != null) throw new IllegalStateException("Tried to set the owning net of an already initialized graph!");
+            this.net = net;
+        }
+
+        @Override
+        public void prepareForDynamicWeightAlgorithmRun(IPredicateTestObject testObject, SimulatorKey simulator,
+                                                        long queryTick) {
+            this.testObject = testObject;
+            this.simulator = simulator;
+            this.queryTick = queryTick;
+        }
+
+        public CustomDirectedGraph(Class<? extends E> edgeClass) {
+            super(edgeClass);
+        }
+
+        public CustomDirectedGraph(Supplier<NetNode<PT, NDT, E>> vertexSupplier, Supplier<E> edgeSupplier) {
+            super(vertexSupplier, edgeSupplier);
+        }
+
+        @Override
+        public double getEdgeWeight(E edge) {
+            if (net.netAlgorithm.supportsDynamicWeights()) {
+                return edge.getPredicate().test(testObject) ? edge.getWeight(testObject, simulator, queryTick) : Double.POSITIVE_INFINITY;
+            } else return super.getEdgeWeight(edge);
+        }
+    }
+
+    static class CustomUndirectedGraph<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge> extends SimpleWeightedGraph<NetNode<PT, NDT, E>, E> implements ICustomGraph<PT, NDT, E> {
+
+        private WorldPipeNetBase<NDT, PT, E> net = null;
+
+        private IPredicateTestObject testObject;
+        private SimulatorKey simulator;
+        private long queryTick;
+
+        @Override
+        public void setOwningNet(WorldPipeNetBase<NDT, PT, E> net) {
+            if (this.net != null) throw new IllegalStateException("Tried to set the owning net of an already initialized graph!");
+            this.net = net;
+        }
+
+        @Override
+        public void prepareForDynamicWeightAlgorithmRun(IPredicateTestObject testObject, SimulatorKey simulator,
+                                                        long queryTick) {
+            this.testObject = testObject;
+            this.simulator = simulator;
+            this.queryTick = queryTick;
+        }
+
+        public CustomUndirectedGraph(Class<? extends E> edgeClass) {
+            super(edgeClass);
+        }
+
+        public CustomUndirectedGraph(Supplier<NetNode<PT, NDT, E>> vertexSupplier, Supplier<E> edgeSupplier) {
+            super(vertexSupplier, edgeSupplier);
+        }
+
+        @Override
+        public double getEdgeWeight(E edge) {
+            if (net.netAlgorithm.supportsDynamicWeights()) {
+                return edge.getPredicate().test(testObject) ? edge.getWeight(testObject, simulator, queryTick) : Double.POSITIVE_INFINITY;
+            } else return super.getEdgeWeight(edge);
+        }
+    }
 }
