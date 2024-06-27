@@ -176,11 +176,24 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                             .alignment(Alignment.CenterLeft)
                                             .color(Color.WHITE.darker(1))
                                             .asWidget()
-                                            .tooltipBuilder(tooltip -> tooltip.addLine(tank.getDescription()))
-                                            .width(84)
+                                            .tooltipBuilder(tooltip -> {
+                                                String desc = tank.getDescription();
+                                                if (!desc.isEmpty())
+                                                    tooltip.addLine(desc);
+                                            })
+                                            .width(64)
                                             .height(16)
                                             .top(1)
                                             .marginRight(4))
+                                    .child(new ButtonWidget<>()
+                                            .overlay(GuiTextures.GEAR)
+                                            // todo lang
+                                            .tooltipBuilder(tooltip -> tooltip.addLine("Set Description"))
+                                            .onMousePressed(i -> {
+                                                // open entry settings
+                                                Interactable.playButtonClickSound();
+                                                return true;
+                                            }))
                                     .child(new FluidSlot()
                                             .syncHandler(new FluidSlotSyncHandler(tank)
                                                     .canDrainSlot(false)
@@ -188,8 +201,10 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                             .marginRight(2))
                                     .child(new ButtonWidget<>()
                                             .overlay(GTGuiTextures.BUTTON_CROSS)
+                                            // todo lang
                                             .tooltipBuilder(tooltip -> tooltip.addLine("Delete Entry"))
                                             .onMousePressed(i -> {
+                                                // todo option to force delete, maybe as a popup?
                                                 VirtualTankRegistry.delTank(name, getOwner(), false);
                                                 Interactable.playButtonClickSound();
                                                 return true;
