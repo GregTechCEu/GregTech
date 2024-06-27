@@ -9,6 +9,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualTankRegistry;
 import gregtech.api.util.virtualregistry.entries.VirtualTank;
 import gregtech.client.renderer.texture.Textures;
@@ -155,7 +156,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                 .color(UI_TITLE_COLOR).asWidget()
                                 .top(6)
                                 .left(4))
-                        .child(createEntryList(VirtualTankRegistry.collectTanks(getOwner()), name -> {
+                        .child(createEntryList(VirtualTankRegistry.getEntryNames(getOwner(), EntryTypes.ENDER_FLUID), name -> {
                             VirtualTank tank = VirtualTankRegistry.getTank(name, getOwner());
 
                             return new Row()
