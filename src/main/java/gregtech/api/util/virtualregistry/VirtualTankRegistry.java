@@ -28,10 +28,13 @@ public final class VirtualTankRegistry extends VirtualRegistryBase {
     }
 
     /**
+     * Deprecated, use {@link VirtualRegistryBase#getEntryNames(UUID, EntryTypes)} to get a list of names to display.
+     * This now returns an empty map.
+     *
      * @return the internal Map of tanks.
      *         Do not use to modify the map!
      */
-    // todo remove
+    @Deprecated
     public static Map<UUID, Map<String, IFluidTank>> getTankMap() {
         return new HashMap<>();
     }
@@ -45,10 +48,21 @@ public final class VirtualTankRegistry extends VirtualRegistryBase {
      * @return The tank object
      */
     public static VirtualTank getTankCreate(String key, UUID uuid, int capacity) {
-        if (!hasEntry(uuid, EntryTypes.ENDER_FLUID, key))
+        if (!hasTank(key, uuid))
             addTank(key, uuid, capacity);
 
         return getTank(key, uuid);
+    }
+
+    /**
+     * Checks if the tank exists in the registry
+     *
+     * @param key  The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
+     * @return true if the tank exists, otherwise false
+     */
+    public static boolean hasTank(String key, UUID uuid) {
+        return hasEntry(uuid, EntryTypes.ENDER_FLUID, key);
     }
 
     /**

@@ -29,7 +29,6 @@ import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
@@ -42,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("SameParameterValue")
@@ -181,33 +181,17 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .value(isPrivate);
     }
 
-    protected IWidget createEntryList(EntryTypes<T> type) {
+    protected IWidget createEntryList(EntryTypes<T> type, Function<String, IWidget> widgetFunction) {
         var names = VirtualRegistryBase.getEntryNames(getOwner(), type);
 
-        return ListWidget.builder(new ArrayList<>(names), name -> {
-            var entry = VirtualRegistryBase.getRegistry(getOwner()).getEntry(type, name);
-            return new Row()
-                    .paddingTop(4)
-                    .left(6)
-                    .marginBottom(2)
-                    .height(16)
-                    .widthRel(0.98f)
-                    .child(new Rectangle()
-                            .setColor(parseColor(entry.getColor()))
-                            .asWidget()
-                            .marginRight(4)
-                            .size(16))
-                    .child(IKey.str(name)
-                            .alignment(Alignment.CenterLeft)
-                            .asWidget()
-                            .height(16));
-        })
+        return ListWidget.builder(new ArrayList<>(names), widgetFunction)
                 .background(GTGuiTextures.DISPLAY.asIcon()
-                        .width(130 - 8)
-                        .height(90 - 20))
-                .size(130 - 12, 90 - 24)
+                        .width(168 - 8)
+                        .height(112 - 20))
+                .paddingTop(1)
+                .size(168 - 12, 112 - 24)
                 .left(4)
-                .bottom(4);
+                .bottom(6);
     }
 
     protected IWidget createIoRow() {
