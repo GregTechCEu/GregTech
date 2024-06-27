@@ -9,6 +9,7 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
 
     public static final String DEFAULT_COLOR = "FFFFFFFF";
     protected static final String COLOR_KEY = "color";
+    protected static final String DESC_KEY = "description";
     private final @NotNull NBTTagCompound data = new NBTTagCompound();
 
     public abstract EntryTypes<? extends VirtualEntry> getType();
@@ -22,6 +23,17 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
 
     public void setColor(String color) {
         this.data.setString(COLOR_KEY, color == null ? DEFAULT_COLOR : color.toUpperCase());
+    }
+
+    public String getDescription() {
+        if (!this.data.hasKey(DESC_KEY))
+            setDescription("");
+
+        return this.data.getString(DESC_KEY);
+    }
+
+    public void setDescription(String desc) {
+        this.data.setString(DESC_KEY, desc);
     }
 
     @NotNull

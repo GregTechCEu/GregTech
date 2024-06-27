@@ -137,7 +137,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
-        var name = new StringSyncValue(this::getName, this::setName);
+        var name = new StringSyncValue(activeEntry::getColor, this::updateColor);
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
         syncManager.syncValue("pump_mode", pumpMode);
@@ -151,16 +151,12 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 return GTGuis.createPopupPanel("entry_selector", 168, 112)
-                        .child(IKey.str("Known Channels")
+                        .child(IKey.str("Known Channels") // todo lang
                                 .color(UI_TITLE_COLOR).asWidget()
                                 .top(6)
                                 .left(4))
                         .child(createEntryList(VirtualTankRegistry.collectTanks(getOwner()), name -> {
                             VirtualTank tank = VirtualTankRegistry.getTank(name, getOwner());
-
-                            String display = name;
-                            if (name.length() > 16)
-                                display = name.substring(0, 14) + "...";
 
                             return new Row()
                                     .left(4)
@@ -175,11 +171,11 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                             .size(16)
                                             .background(GTGuiTextures.SLOT.asIcon().size(18))
                                             .top(1))
-                                    .child(IKey.str(display)
+                                    .child(IKey.str(tank.getColor())
                                             .alignment(Alignment.CenterLeft)
                                             .color(Color.WHITE.darker(1))
                                             .asWidget()
-                                            .tooltipBuilder(tooltip -> tooltip.addLine(name))
+                                            .tooltipBuilder(tooltip -> tooltip.addLine(tank.getDescription()))
                                             .width(84)
                                             .height(16)
                                             .top(1)
@@ -190,6 +186,8 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                                     .canFillSlot(false))
                                             .marginRight(2))
                                     .child(new ButtonWidget<>()
+                                            .overlay(GTGuiTextures.BUTTON_CROSS)
+                                            .tooltipBuilder(tooltip -> tooltip.addLine("Delete Entry"))
                                             .onMousePressed(i -> {
                                                 VirtualTankRegistry.delTank(name, getOwner(), false);
                                                 Interactable.playButtonClickSound();
@@ -209,7 +207,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                         .child(createColorIcon())
                         .child(new TextFieldWidget().height(18)
                                 .value(name)
-                                // .setPattern(COLOR_INPUT_PATTERN)
+                                .setPattern(COLOR_INPUT_PATTERN)
                                 .widthRel(0.5f)
                                 .marginRight(2))
                         .child(new FluidSlot()
@@ -258,23 +256,6 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
         this.activeEntry = createEntry(identifier() + Integer.toHexString(color).toUpperCase(), this.getOwner());
         this.activeEntry.setColor(Integer.toHexString(color).toUpperCase());
     }
-
-    // @Override
-    // public void writeInitialSyncData(PacketBuffer packetBuffer) {
-    // super.writeInitialSyncData(packetBuffer);
-    // packetBuffer.writeInt(this.color);
-    //// packetBuffer.writeString(this.playerUUID == null ? "null" : this.playerUUID.toString());
-    // }
-    //
-    // @Override
-    // public void readInitialSyncData(PacketBuffer packetBuffer) {
-    // super.readInitialSyncData(packetBuffer);
-    // this.color = packetBuffer.readInt();
-    // // does client even need uuid info? just in case
-    //// String uuidStr = packetBuffer.readString(36);
-    //// this.playerUUID = uuidStr.equals("null") ? null : UUID.fromString(uuidStr);
-    // // client does not need the actual tank reference, the default one will do just fine
-    // }
 
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
