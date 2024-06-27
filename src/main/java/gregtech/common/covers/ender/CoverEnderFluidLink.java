@@ -9,7 +9,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualTankRegistry;
 import gregtech.api.util.virtualregistry.entries.VirtualTank;
 import gregtech.client.renderer.texture.Textures;
@@ -39,6 +38,7 @@ import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -151,11 +151,17 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
                 return GTGuis.createPopupPanel("entry_selector", 168, 112)
-                        .child(IKey.str("Known Channels").asWidget()
+                        .child(IKey.str("Known Channels")
+                                .color(UI_TITLE_COLOR).asWidget()
                                 .top(6)
                                 .left(4))
-                        .child(createEntryList(EntryTypes.ENDER_FLUID, name -> {
-                            var entry = VirtualTankRegistry.getTank(name, getOwner());
+                        .child(createEntryList(VirtualTankRegistry.collectTanks(getOwner()), name -> {
+                            VirtualTank tank = VirtualTankRegistry.getTank(name, getOwner());
+
+                            String display = name;
+                            if (name.length() > 16)
+                                display = name.substring(0, 14) + "...";
+
                             return new Row()
                                     .left(4)
                                     .marginBottom(2)
@@ -163,20 +169,23 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                     .widthRel(0.98f)
                                     .setEnabledIf(row -> VirtualTankRegistry.hasTank(name, getOwner()))
                                     .child(new Rectangle()
-                                            .setColor(parseColor(entry.getColor()))
+                                            .setColor(parseColor(tank.getColor()))
                                             .asWidget()
                                             .marginRight(4)
                                             .size(16)
+                                            .background(GTGuiTextures.SLOT.asIcon().size(18))
                                             .top(1))
-                                    .child(IKey.str(name)
+                                    .child(IKey.str(display)
                                             .alignment(Alignment.CenterLeft)
+                                            .color(Color.WHITE.darker(1))
                                             .asWidget()
+                                            .tooltipBuilder(tooltip -> tooltip.addLine(name))
                                             .width(84)
                                             .height(16)
                                             .top(1)
                                             .marginRight(4))
                                     .child(new FluidSlot()
-                                            .syncHandler(new FluidSlotSyncHandler(entry)
+                                            .syncHandler(new FluidSlotSyncHandler(tank)
                                                     .canDrainSlot(false)
                                                     .canFillSlot(false))
                                             .marginRight(2))

@@ -8,9 +8,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualEntry;
-import gregtech.api.util.virtualregistry.VirtualRegistryBase;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -39,7 +37,7 @@ import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -55,7 +53,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected String entryName = createName();
 
-    private UUID playerUUID = null;
+    protected UUID playerUUID = null;
     private boolean isPrivate = false;
     private boolean workingEnabled = true;
     private boolean ioEnabled = false;
@@ -181,10 +179,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .value(isPrivate);
     }
 
-    protected IWidget createEntryList(EntryTypes<T> type, Function<String, IWidget> widgetFunction) {
-        var names = VirtualRegistryBase.getEntryNames(getOwner(), type);
-
-        return ListWidget.builder(new ArrayList<>(names), widgetFunction)
+    protected IWidget createEntryList(List<String> names, Function<String, IWidget> widgetFunction) {
+        return ListWidget.builder(names, widgetFunction)
                 .background(GTGuiTextures.DISPLAY.asIcon()
                         .width(168 - 8)
                         .height(112 - 20))
