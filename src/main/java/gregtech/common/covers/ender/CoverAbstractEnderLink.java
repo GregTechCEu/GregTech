@@ -8,7 +8,9 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualEntry;
+import gregtech.api.util.virtualregistry.VirtualRegistryBase;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,18 +29,22 @@ import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("SameParameterValue")
 public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends CoverBase
                                             implements CoverWithUI, ITickable, IControllable {
 
@@ -173,6 +179,35 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         "cover.ender_fluid_link.private.tooltip.disabled")))
                 .marginRight(2)
                 .value(isPrivate);
+    }
+
+    protected IWidget createEntryList(EntryTypes<T> type) {
+        var names = VirtualRegistryBase.getEntryNames(getOwner(), type);
+
+        return ListWidget.builder(new ArrayList<>(names), name -> {
+            var entry = VirtualRegistryBase.getRegistry(getOwner()).getEntry(type, name);
+            return new Row()
+                    .paddingTop(4)
+                    .left(6)
+                    .marginBottom(2)
+                    .height(16)
+                    .widthRel(0.98f)
+                    .child(new Rectangle()
+                            .setColor(parseColor(entry.getColor()))
+                            .asWidget()
+                            .marginRight(4)
+                            .size(16))
+                    .child(IKey.str(name)
+                            .alignment(Alignment.CenterLeft)
+                            .asWidget()
+                            .height(16));
+        })
+                .background(GTGuiTextures.DISPLAY.asIcon()
+                        .width(130 - 8)
+                        .height(90 - 20))
+                .size(130 - 12, 90 - 24)
+                .left(4)
+                .bottom(4);
     }
 
     protected IWidget createIoRow() {
