@@ -24,8 +24,7 @@ public class VirtualRegistryBase extends WorldSavedData {
     private static final String OLD_DATA_ID = GTValues.MODID + ".vtank_data";
     private static final String PUBLIC_KEY = "Public";
     private static final String PRIVATE_KEY = "Private";
-    private static final Map<UUID, VirtualRegistryMap> PRIVATE_REGISTRIES = new HashMap<>();
-    private static final VirtualRegistryMap PUBLIC_REGISTRY = new VirtualRegistryMap();
+    private static final Map<UUID, VirtualRegistryMap> VIRTUAL_REGISTRIES = new HashMap<>();
 
     public VirtualRegistryBase(String name) {
         super(name);
@@ -69,26 +68,23 @@ public class VirtualRegistryBase extends WorldSavedData {
      * To be called on server stopped event
      */
     public static void clearMaps() {
-        PRIVATE_REGISTRIES.clear();
-        PUBLIC_REGISTRY.clear();
+        VIRTUAL_REGISTRIES.clear();
     }
 
     public static VirtualRegistryMap getRegistry(UUID owner) {
-        return owner == null ? PUBLIC_REGISTRY :
-                PRIVATE_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap());
+        return VIRTUAL_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap());
     }
 
     @Override
     public final void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(PUBLIC_KEY)) {
-            NBTTagCompound publicEntries = nbt.getCompoundTag(PUBLIC_KEY);
-            PUBLIC_REGISTRY.deserializeNBT(publicEntries);
+            VIRTUAL_REGISTRIES.put(null, new VirtualRegistryMap(nbt.getCompoundTag(PUBLIC_KEY)));
         }
         if (nbt.hasKey(PRIVATE_KEY)) {
             NBTTagCompound privateEntries = nbt.getCompoundTag(PRIVATE_KEY);
             for (String owner : privateEntries.getKeySet()) {
                 var privateMap = privateEntries.getCompoundTag(owner);
-                PRIVATE_REGISTRIES.put(UUID.fromString(owner), new VirtualRegistryMap(privateMap));
+                VIRTUAL_REGISTRIES.put(UUID.fromString(owner), new VirtualRegistryMap(privateMap));
             }
         }
     }
@@ -97,11 +93,15 @@ public class VirtualRegistryBase extends WorldSavedData {
     @Override
     public final NBTTagCompound writeToNBT(@NotNull NBTTagCompound tag) {
         var privateTag = new NBTTagCompound();
-        for (var owner : PRIVATE_REGISTRIES.keySet()) {
-            privateTag.setTag(owner.toString(), PRIVATE_REGISTRIES.get(owner).serializeNBT());
+        for (var owner : VIRTUAL_REGISTRIES.keySet()) {
+            var mapTag = VIRTUAL_REGISTRIES.get(owner).serializeNBT();
+            if (owner != null) {
+                privateTag.setTag(owner.toString(), mapTag);
+            } else {
+                tag.setTag(PUBLIC_KEY, mapTag);
+            }
         }
         tag.setTag(PRIVATE_KEY, privateTag);
-        tag.setTag(PUBLIC_KEY, PUBLIC_REGISTRY.serializeNBT());
         return tag;
     }
 
