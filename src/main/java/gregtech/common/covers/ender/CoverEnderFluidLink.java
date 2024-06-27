@@ -35,8 +35,10 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -148,11 +150,43 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
             @Override
             public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                return GTGuis.createPopupPanel("entry_selector", 130, 90)
+                return GTGuis.createPopupPanel("entry_selector", 168, 112)
                         .child(IKey.str("Known Channels").asWidget()
                                 .top(6)
                                 .left(4))
-                        .child(createEntryList(EntryTypes.ENDER_FLUID));
+                        .child(createEntryList(EntryTypes.ENDER_FLUID, name -> {
+                            var entry = VirtualTankRegistry.getTank(name, getOwner());
+                            return new Row()
+                                    .left(4)
+                                    .marginBottom(2)
+                                    .height(18)
+                                    .widthRel(0.98f)
+                                    .setEnabledIf(row -> VirtualTankRegistry.hasTank(name, getOwner()))
+                                    .child(new Rectangle()
+                                            .setColor(parseColor(entry.getColor()))
+                                            .asWidget()
+                                            .marginRight(4)
+                                            .size(16)
+                                            .top(1))
+                                    .child(IKey.str(name)
+                                            .alignment(Alignment.CenterLeft)
+                                            .asWidget()
+                                            .width(84)
+                                            .height(16)
+                                            .top(1)
+                                            .marginRight(4))
+                                    .child(new FluidSlot()
+                                            .syncHandler(new FluidSlotSyncHandler(entry)
+                                                    .canDrainSlot(false)
+                                                    .canFillSlot(false))
+                                            .marginRight(2))
+                                    .child(new ButtonWidget<>()
+                                            .onMousePressed(i -> {
+                                                VirtualTankRegistry.delTank(name, getOwner(), false);
+                                                Interactable.playButtonClickSound();
+                                                return true;
+                                            }));
+                        }));
             }
         };
 
