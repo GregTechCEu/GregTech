@@ -34,6 +34,11 @@ public class WorldEnergyNet extends WorldPipeNetComplex<WireProperties, Insulati
     }
 
     @Override
+    protected boolean needsDynamicWeights() {
+        return true;
+    }
+
+    @Override
     protected Capability<?>[] getConnectionCapabilities() {
         return new Capability[] { GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER };
     }

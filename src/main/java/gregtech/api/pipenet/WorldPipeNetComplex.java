@@ -5,6 +5,8 @@ import gregtech.api.pipenet.alg.ShortestPathsAlgorithm;
 import gregtech.api.pipenet.alg.SinglePathAlgorithm;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.edge.NetEdge;
+import gregtech.api.pipenet.graph.CustomDirectedGraph;
+import gregtech.api.pipenet.graph.CustomUndirectedGraph;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

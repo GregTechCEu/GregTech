@@ -8,5 +8,5 @@ public interface IEdge<V> {
 
     V getTarget();
 
-    double getWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick);
+    double getDynamicWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick);
 }

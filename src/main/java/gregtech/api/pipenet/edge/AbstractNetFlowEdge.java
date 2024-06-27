@@ -23,9 +23,9 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
     }
 
     @Override
-    public double getWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick) {
-        if (channel == NBT || !cannotSupportChannel(channel, queryTick, simulator)) {
-            return super.getWeight();
+    public double getDynamicWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick) {
+        if (!cannotSupportChannel(channel, queryTick, simulator)) {
+            return getWeight();
         }
         return Double.POSITIVE_INFINITY;
     }

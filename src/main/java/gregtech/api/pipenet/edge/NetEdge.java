@@ -18,8 +18,6 @@ import java.util.function.Predicate;
 
 public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBTTagCompound>, IEdge<NetNode<?, ?, ?>> {
 
-    protected static final IPredicateTestObject NBT = new IPredicateTestObject() {};
-
     private AbstractEdgePredicate<?> predicate;
     private boolean invertedPredicate;
 
@@ -74,8 +72,13 @@ public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBT
         return (NetNode<PT, NDT, E>) getTarget();
     }
 
-    public double getWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick) {
+    @Override
+    protected final double getWeight() {
         return super.getWeight();
+    }
+
+    public double getDynamicWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick) {
+        return getWeight();
     }
 
     @Override
@@ -83,7 +86,7 @@ public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBT
         NBTTagCompound tag = new NBTTagCompound();
         tag.setLong("SourceLongPos", getSource().getLongPos());
         tag.setLong("TargetLongPos", getTarget().getLongPos());
-        tag.setDouble("Weight", getWeight(NBT, null, 0));
+        tag.setDouble("Weight", getWeight());
         if (predicate != null) tag.setTag("Predicate", AbstractEdgePredicate.toNBT(predicate));
         tag.setBoolean("InvertedPredicate", isPredicateInverted());
         return tag;

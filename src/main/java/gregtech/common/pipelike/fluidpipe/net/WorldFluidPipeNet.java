@@ -41,6 +41,11 @@ public class WorldFluidPipeNet extends WorldPipeNetComplex<FluidPipeProperties, 
     }
 
     @Override
+    protected boolean needsDynamicWeights() {
+        return true;
+    }
+
+    @Override
     protected Capability<?>[] getConnectionCapabilities() {
         return new Capability[] { CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY };
     }
