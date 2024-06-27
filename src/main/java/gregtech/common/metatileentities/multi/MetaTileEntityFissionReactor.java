@@ -30,7 +30,6 @@ import gregtech.api.nuclear.fission.FissionReactor;
 import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
-import gregtech.api.nuclear.fission.components.ReactorComponent;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -376,7 +375,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         if (fissionReactor.needsOutput) {
                             ((MetaTileEntityFuelRodImportHatch) fuelImport).getExportHatch(this.height - 1)
                                     .getExportItems().insertItem(0,
-                                            OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getPartialFuel()),
+                                            OreDictUnifier.get(OrePrefix.fuelRodHotDepleted,
+                                                    fuelImport.getPartialFuel()),
                                             false);
                             this.fissionReactor.fuelMass -= 60;
                         }
@@ -734,7 +734,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         this.maxPower = this.fissionReactor.maxPower;
         this.kEff = this.fissionReactor.kEff;
         this.controlRodInsertionValue = this.fissionReactor.controlRodInsertion;
-        this.fuelDepletionPercent = Math.max(0, this.fissionReactor.fuelDepletion) / this.fissionReactor.maxFuelDepletion;
+        this.fuelDepletionPercent = Math.max(0, this.fissionReactor.fuelDepletion) /
+                this.fissionReactor.maxFuelDepletion;
         writeCustomData(GregtechDataCodes.SYNC_REACTOR_STATS, (packetBuffer -> {
             packetBuffer.writeDouble(this.fissionReactor.temperature);
             packetBuffer.writeDouble(this.fissionReactor.maxTemperature);
@@ -820,7 +821,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                     MetaTileEntity coolantOutMTE = coolantOutCandidate.getMetaTileEntity();
                                     if (coolantOutMTE instanceof MetaTileEntityCoolantExportHatch coolantOut) {
                                         coolantOut.setCoolant(mat);
-                                        CoolantChannel component = new CoolantChannel(100050, 0, mat, 1000, coolantIn, coolantOut);
+                                        CoolantChannel component = new CoolantChannel(100050, 0, mat, 1000, coolantIn,
+                                                coolantOut);
                                         fissionReactor.addComponent(component, i + radius, j + radius);
                                         continue;
                                     }
@@ -845,8 +847,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                         component = new FuelRod(property.getMaxTemperature(), 1, property, 650, 3);
                                     } else {
                                         // It's guaranteed to have this property (if the implementation is correct).
-                                        FissionFuelProperty partialProp = fuelIn.getPartialFuel().getProperty(PropertyKey.FISSION_FUEL);
-                                        component = new FuelRod(partialProp.getMaxTemperature(), 1, partialProp, 650, 3);
+                                        FissionFuelProperty partialProp = fuelIn.getPartialFuel()
+                                                .getProperty(PropertyKey.FISSION_FUEL);
+                                        component = new FuelRod(partialProp.getMaxTemperature(), 1, partialProp, 650,
+                                                3);
                                     }
                                     fuelIn.setInternalFuelRod(component);
                                     fissionReactor.addComponent(component, i + radius, j + radius);

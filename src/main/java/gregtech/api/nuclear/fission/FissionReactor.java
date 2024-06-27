@@ -37,14 +37,12 @@ public class FissionReactor {
     public static final double airBoilingPoint = 78.8;
 
     private ReactorComponent[][] reactorLayout;
-    private ArrayList<FuelRod> fuelRods;
-    private ArrayList<ControlRod> controlRods;
-    private ArrayList<CoolantChannel> coolantChannels;
-    private ArrayList<ControlRod> effectiveControlRods;
-    private ArrayList<CoolantChannel> effectiveCoolantChannels;
+    private final ArrayList<FuelRod> fuelRods;
+    private final ArrayList<ControlRod> controlRods;
+    private final ArrayList<CoolantChannel> coolantChannels;
+    private final ArrayList<ControlRod> effectiveControlRods;
+    private final ArrayList<CoolantChannel> effectiveCoolantChannels;
 
-    private double kSlow;
-    private double kFast;
     private double k;
 
     private double controlRodFactor;
@@ -71,7 +69,6 @@ public class FissionReactor {
      * Megawatts
      */
     public double power;
-    public double prevPower;
     /**
      * Temperature of the reactor
      */
@@ -131,16 +128,16 @@ public class FissionReactor {
     public boolean controlRodRegulationOn = true;
     public boolean isOn = false;
 
-    protected static double responseFunction(double target, double value, double criticalRate, double rate) {
-        if (value <= 0) {
-            if (rate > criticalRate) {
+    protected static double responseFunction(double target, double current, double criticalRate) {
+        if (current <= 0) {
+            if (criticalRate < 1) {
                 return 0;
             } else {
-                value = 0.1;
+                current = 0.1;
             }
         }
-        double expDecay = Math.exp(-criticalRate / rate);
-        return value * expDecay + target * (1 - expDecay);
+        double expDecay = Math.exp(-criticalRate);
+        return current * expDecay + target * (1 - expDecay);
     }
 
     protected double responseFunctionTemperature(double envTemperature, double currentTemperature, double heatAdded,
@@ -348,8 +345,8 @@ public class FissionReactor {
 
             avgFuelRodDistance /= 2. * fuelRods.size();
 
-            kSlow = avgLowEnergyFissionFactor / avgLowEnergyCaptureFactor * avgGeometricFactorSlowNeutrons;
-            kFast = avgHighEnergyFissionFactor / avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
+            double kSlow = avgLowEnergyFissionFactor / avgLowEnergyCaptureFactor * avgGeometricFactorSlowNeutrons;
+            double kFast = avgHighEnergyFissionFactor / avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
 
             k = (kSlow + kFast) * reactorDepth / (1. + reactorDepth);
             double depthDiameterDifference = 0.5 * (reactorDepth - reactorRadius * 2) / reactorRadius;
@@ -535,7 +532,7 @@ public class FissionReactor {
         this.pressure = responseFunction(
                 this.temperature <= this.coolantBoilingPoint() || !this.isOn ? this.exteriorPressure :
                         1000. * R * this.temperature,
-                this.pressure, 0.2, 1.);
+                this.pressure, 0.2);
     }
 
     public void updateNeutronPoisoning() {
@@ -563,19 +560,18 @@ public class FissionReactor {
             this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower) +
                     neutronPoisonAmount * crossSectionRatio / surfaceArea);
             this.kEff = Math.max(0, this.kEff);
-            this.prevPower = this.power;
             this.prevFuelDepletion = this.fuelDepletion;
             // maps (1, 1.1) to (1, 15); this value basically sets how quickly kEff operates
             this.criticalRodInsertion = (int) Math.max(1, Math.min(15, (kEff - 1) * 150.));
 
             this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff + 0.0001), this.power,
-                    this.criticalRodInsertion, 1);
+                    this.criticalRodInsertion);
             this.fuelDepletion += this.power;
 
             this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.) / 1000;
         } else {
             this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff), this.power,
-                    1, 1);
+                    1);
         }
         this.decayProductsAmount *= decayProductRate;
     }
@@ -649,7 +645,7 @@ public class FissionReactor {
             this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
             this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
         }
-        if (load < 3. / 4) {
+        if (load < 9. / 10) {
             if (kEff < 1) {
                 this.controlRodInsertion -= 1f / 255;
                 this.controlRodInsertion = Math.max(0, this.controlRodInsertion);

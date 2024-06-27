@@ -14,11 +14,11 @@ public interface IFuelRodHandler extends ILockableHandler<ItemStack> {
 
     Material getPartialFuel();
 
-    // Set the fuel type that's currently being processed by the reactor, and succeeds in doing so only if it is a fission fuel. Returns true if the partial fuel changed.
+    // Set the fuel type that's currently being processed by the reactor, and succeeds in doing so only if it is a
+    // fission fuel. Returns true if the partial fuel changed.
     boolean setPartialFuel(Material material);
 
     void setInternalFuelRod(FuelRod rod);
-
 
     LockableItemStackHandler getStackHandler();
 }
