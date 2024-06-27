@@ -37,7 +37,8 @@ import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -166,8 +167,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .value(isPrivate);
     }
 
-    protected IWidget createEntryList(List<String> names, Function<String, IWidget> widgetFunction) {
-        return ListWidget.builder(names, widgetFunction)
+    protected IWidget createEntryList(Set<String> names, Function<String, IWidget> widgetFunction) {
+        return ListWidget.builder(new ArrayList<>(names), widgetFunction)
                 .background(GTGuiTextures.DISPLAY.asIcon()
                         .width(168 - 8)
                         .height(112 - 20))

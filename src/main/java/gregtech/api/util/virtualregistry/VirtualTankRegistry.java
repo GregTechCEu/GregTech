@@ -43,15 +43,6 @@ public final class VirtualTankRegistry extends VirtualRegistryBase {
         return new HashMap<>();
     }
 
-    public static List<String> collectTanks(UUID owner) {
-        Set<String> publicTanks = getEntryNames(null, EntryTypes.ENDER_FLUID);
-        Set<String> privateTanks = owner == null ? Collections.emptySet() :
-                getEntryNames(owner, EntryTypes.ENDER_FLUID);
-        List<String> map = new ArrayList<>(publicTanks);
-        map.addAll(privateTanks);
-        return map;
-    }
-
     /**
      * Retrieves a tank from the registry, creating it if it does not exist
      * 
