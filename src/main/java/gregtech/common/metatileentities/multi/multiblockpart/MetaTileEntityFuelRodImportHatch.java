@@ -232,6 +232,4 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
         }
         return null;
     }
-
-
 }
