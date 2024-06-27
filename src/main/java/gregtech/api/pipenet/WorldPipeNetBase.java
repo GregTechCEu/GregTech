@@ -148,7 +148,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
         if (cache != null) return cache;
 
         Iterator<NetPath<PipeType, NodeDataType, Edge>> iter = this.netAlgorithm.getPathsIterator(node);
-        if (iter instanceof ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>>) {
+        if (iter instanceof ICacheableIterator) {
             return node.setPathCache((ICacheableIterator<NetPath<PipeType, NodeDataType, Edge>>) iter);
         } else return iter;
     }
