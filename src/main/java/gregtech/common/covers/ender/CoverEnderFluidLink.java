@@ -6,8 +6,10 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualTankRegistry;
 import gregtech.api.util.virtualregistry.entries.VirtualTank;
 import gregtech.client.renderer.texture.Textures;
@@ -30,12 +32,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -129,7 +135,6 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
-
         var name = new StringSyncValue(this::getName, this::setName);
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
@@ -139,6 +144,20 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
         var fluidTank = new FluidSlotSyncHandler(this.linkedTank);
         fluidTank.updateCacheFromSource(true);
 
+        var panelSH = new PanelSyncHandler(panel) {
+
+            @Override
+            public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+                return GTGuis.createPopupPanel("entry_selector", 130, 90)
+                        .child(IKey.str("Known Channels").asWidget()
+                                .top(6)
+                                .left(4))
+                        .child(createEntryList(EntryTypes.ENDER_FLUID));
+            }
+        };
+
+        syncManager.syncValue("entry_selector", panelSH);
+
         return new Column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
                 .child(new Row().marginBottom(2)
@@ -147,12 +166,25 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                         .child(createColorIcon())
                         .child(new TextFieldWidget().height(18)
                                 .value(name)
-//                                .setPattern(COLOR_INPUT_PATTERN)
+                                // .setPattern(COLOR_INPUT_PATTERN)
                                 .widthRel(0.5f)
                                 .marginRight(2))
                         .child(new FluidSlot()
                                 .size(18)
-                                .syncHandler(fluidTank)))
+                                .syncHandler(fluidTank)
+                                .marginRight(2))
+                        .child(new ButtonWidget<>()
+                                .background(GTGuiTextures.MC_BUTTON)
+                                .hoverBackground(GuiTextures.MC_BUTTON_HOVERED)
+                                .onMousePressed(i -> {
+                                    if (!panelSH.isPanelOpen()) {
+                                        panelSH.openPanel();
+                                    } else {
+                                        panelSH.closePanel();
+                                    }
+                                    Interactable.playButtonClickSound();
+                                    return true;
+                                })))
                 .child(createIoRow())
                 .child(getFluidFilterContainer().initUI(panel, syncManager))
                 .child(new EnumRowBuilder<>(CoverPump.PumpMode.class)
