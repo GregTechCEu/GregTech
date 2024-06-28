@@ -542,5 +542,4 @@ public abstract class WorldPipeNetBase<NodeDataType extends INodeData<NodeDataTy
      * Used for reading persistent node data
      */
     protected abstract NodeDataType readNodeData(NBTTagCompound tagCompound);
-
 }

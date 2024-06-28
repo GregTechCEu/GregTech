@@ -1038,7 +1038,8 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature) {
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, meltTemperature));
+            properties.setProperty(PropertyKey.WIRE,
+                    new WireProperties((int) voltage, amperage, loss, meltTemperature));
             return this;
         }
 
@@ -1047,7 +1048,8 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature, boolean isSuperCon) {
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, meltTemperature, isSuperCon));
+            properties.setProperty(PropertyKey.WIRE,
+                    new WireProperties((int) voltage, amperage, loss, meltTemperature, isSuperCon));
             return this;
         }
 
@@ -1059,7 +1061,8 @@ public class Material implements Comparable<Material> {
         public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature, boolean isSuperCon,
                                        int criticalTemperature) {
             properties.setProperty(PropertyKey.WIRE,
-                    new WireProperties((int) voltage, amperage, loss, meltTemperature, isSuperCon, criticalTemperature));
+                    new WireProperties((int) voltage, amperage, loss, meltTemperature, isSuperCon,
+                            criticalTemperature));
             return this;
         }
 

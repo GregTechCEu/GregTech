@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class CustomDirectedGraph<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>,
         E extends NetEdge> extends SimpleDirectedWeightedGraph<NetNode<PT, NDT, E>, E>
-        implements ICustomGraph<PT, NDT, E> {
+                                implements ICustomGraph<PT, NDT, E> {
 
     private WorldPipeNetBase<NDT, PT, E> net = null;
 

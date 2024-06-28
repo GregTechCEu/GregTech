@@ -19,9 +19,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DynamicWeightsShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge>
-                              extends DefaultManyToManyShortestPaths<NetNode<PT, NDT, E>, E>
-                              implements INetAlgorithm<PT, NDT, E> {
+public class DynamicWeightsShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>,
+        E extends NetEdge>
+                                                 extends DefaultManyToManyShortestPaths<NetNode<PT, NDT, E>, E>
+                                                 implements INetAlgorithm<PT, NDT, E> {
 
     private final WorldPipeNetBase<NDT, PT, E> pipenet;
 
@@ -94,7 +95,8 @@ public class DynamicWeightsShortestPathsAlgorithm<PT extends Enum<PT> & IPipeTyp
                 next = new NetPath<>(source);
                 return;
             }
-            ManyToManyShortestPaths<NetNode<PT, NDT, E>, E> paths = getManyToManyPaths(Collections.singleton(source), searchSpace);
+            ManyToManyShortestPaths<NetNode<PT, NDT, E>, E> paths = getManyToManyPaths(Collections.singleton(source),
+                    searchSpace);
             var iter = searchSpace.stream().map(node -> paths.getPath(source, node)).filter(Objects::nonNull)
                     .map(NetPath::new).sorted(Comparator.comparingDouble(NetPath::getWeight)).iterator();
             while (iter.hasNext()) {

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jgrapht.Graph;
 
 public interface ICustomGraph<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge>
-        extends Graph<NetNode<PT, NDT, E>, E> {
+                             extends Graph<NetNode<PT, NDT, E>, E> {
 
     @ApiStatus.Internal
     void setOwningNet(WorldPipeNetBase<NDT, PT, E> net);

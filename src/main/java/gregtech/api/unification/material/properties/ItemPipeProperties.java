@@ -4,7 +4,6 @@ import gregtech.api.pipenet.INodeData;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class ItemPipeProperties implements IMaterialProperty, INodeData<ItemPipeProperties> {
 

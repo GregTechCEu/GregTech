@@ -31,7 +31,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter, INodeData<FluidPipeProperties> {
