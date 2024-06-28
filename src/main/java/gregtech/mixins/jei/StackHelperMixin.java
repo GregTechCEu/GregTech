@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(StackHelper.class)
 public class StackHelperMixin {
 
-    @Inject(method = "isEquivalent", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
+    @Inject(method = "isEquivalent", at = @At(value = "RETURN", ordinal = 2), cancellable = true, remap = false)
     private void toolbeltIsEquivalent(ItemStack lhs, ItemStack rhs, CallbackInfoReturnable<Boolean> cir) {
         if (ItemGTToolbelt.checkToolAgainstToolbelt(rhs, lhs)) {
             cir.setReturnValue(true);

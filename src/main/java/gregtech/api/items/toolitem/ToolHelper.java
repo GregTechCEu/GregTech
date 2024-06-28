@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.stats.StatBase;
@@ -376,6 +377,13 @@ public final class ToolHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * @return if the itemstack should be considered a tool
+     */
+    public static boolean isTool(ItemStack tool) {
+        return tool.getItem() instanceof ItemTool || tool.getItem() instanceof IGTTool;
     }
 
     /**

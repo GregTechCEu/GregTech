@@ -439,7 +439,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     public static boolean checkToolAgainstToolbelt(@NotNull ItemStack toolbelt, @NotNull ItemStack tool) {
-        if (toolbelt.getItem() instanceof ItemGTToolbelt belt) {
+        if (toolbelt.getItem() instanceof ItemGTToolbelt belt && ToolHelper.isTool(tool)) {
             return belt.supportsTool(toolbelt, tool);
         }
         return false;
@@ -568,7 +568,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             Item item = stack.getItem();
             if (item instanceof ItemGTToolbelt) return false;
-            return item instanceof ItemTool || item instanceof IGTTool;
+            return ToolHelper.isTool(stack);
         }
 
         @Override
@@ -657,7 +657,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         public boolean checkToolAgainstTools(ItemStack tool, boolean doCraftingDamage) {
-            if (!this.isItemValid(0, tool)) return false;
             for (int i = 0; i < this.getSlots(); i++) {
                 ItemStack stack = this.getStackInSlot(i);
                 if (OreDictionary.itemMatches(stack, tool, false)) {
