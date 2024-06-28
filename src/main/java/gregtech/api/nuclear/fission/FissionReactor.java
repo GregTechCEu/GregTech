@@ -577,7 +577,7 @@ public class FissionReactor {
     }
 
     public double realMaxPower() {
-        if (this.moderatorTipped && (this.controlRodInsertion <= 9 && this.controlRodInsertion >= 7)) {
+        if (this.moderatorTipped && (this.controlRodInsertion <= 9. / 16 && this.controlRodInsertion >= 7. / 16)) {
             return this.maxPower * 1.1;
         } else if (this.controlRodInsertion > this.criticalRodInsertion || this.isDepleted() || !this.isOn) {
             return this.getDecayHeat();
