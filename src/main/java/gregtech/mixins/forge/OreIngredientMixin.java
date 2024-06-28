@@ -1,5 +1,6 @@
 package gregtech.mixins.forge;
 
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.asm.hooks.OreIngredientHooks;
 
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,7 @@ public abstract class OreIngredientMixin {
 
     @Inject(method = "apply(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
     private void checkToolbelt(ItemStack input, CallbackInfoReturnable<Boolean> cir) {
-        if (OreIngredientHooks.checkToolbelt(input, (OreIngredient) (Object) this)) {
+        if (ItemGTToolbelt.checkIngredientAgainstToolbelt(input, (OreIngredient) (Object) this)) {
             cir.setReturnValue(true);
         }
     }

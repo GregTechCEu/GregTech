@@ -49,6 +49,10 @@ import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.OreIngredient;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -348,6 +352,10 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         return getHandler(stack).checkIngredientAgainstTools(ingredient, false);
     }
 
+    public boolean supportsTool(ItemStack stack, ItemStack tool) {
+        return getHandler(stack).checkToolAgainstTools(tool, false);
+    }
+
     public void craftDamageTools(ItemStack stack, Ingredient ingredient) {
         getHandler(stack).checkIngredientAgainstTools(ingredient, true);
     }
@@ -417,6 +425,23 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     @Override
     public boolean shouldGetContainerItem() {
+        return false;
+    }
+
+    public static boolean checkIngredientAgainstToolbelt(@NotNull ItemStack input, @NotNull OreIngredient ingredient) {
+        if (input.getItem() instanceof ItemGTToolbelt toolbelt) {
+            if (toolbelt.supportsIngredient(input, ingredient)) {
+                toolbelt.setOnCraftIngredient(input, ingredient);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkToolAgainstToolbelt(@NotNull ItemStack toolbelt, @NotNull ItemStack tool) {
+        if (toolbelt.getItem() instanceof ItemGTToolbelt belt) {
+            return belt.supportsTool(toolbelt, tool);
+        }
         return false;
     }
 
@@ -622,6 +647,20 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             for (int i = 0; i < this.getSlots(); i++) {
                 ItemStack stack = this.getStackInSlot(i);
                 if (ingredient.test(stack)) {
+                    if (doCraftingDamage && stack.getItem().hasContainerItem(stack)) {
+                        this.setStackInSlot(i, stack.getItem().getContainerItem(stack));
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean checkToolAgainstTools(ItemStack tool, boolean doCraftingDamage) {
+            if (!this.isItemValid(0, tool)) return false;
+            for (int i = 0; i < this.getSlots(); i++) {
+                ItemStack stack = this.getStackInSlot(i);
+                if (OreDictionary.itemMatches(stack, tool, false)) {
                     if (doCraftingDamage && stack.getItem().hasContainerItem(stack)) {
                         this.setStackInSlot(i, stack.getItem().getContainerItem(stack));
                     }
