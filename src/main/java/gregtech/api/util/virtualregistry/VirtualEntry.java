@@ -10,51 +10,70 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
     public static final String DEFAULT_COLOR = "FFFFFFFF";
     protected static final String COLOR_KEY = "color";
     protected static final String DESC_KEY = "description";
-    private final @NotNull NBTTagCompound data = new NBTTagCompound();
+
+    private int color = 0xFFFFFFFF;
+    private String colorStr = DEFAULT_COLOR;
+    private String description = null;
 
     public abstract EntryTypes<? extends VirtualEntry> getType();
 
-    public String getColor() {
-        if (!this.data.hasKey(COLOR_KEY))
-            setColor(DEFAULT_COLOR);
+    public String getColorStr() {
+        return colorStr;
+    }
 
-        return this.data.getString(COLOR_KEY);
+    public int getColor() {
+        return this.color;
     }
 
     public void setColor(String color) {
-        this.data.setString(COLOR_KEY, color == null ? DEFAULT_COLOR : color.toUpperCase());
+        this.color = parseColor(color);
+        this.colorStr = color.toUpperCase();
+    }
+
+    public void setColor(int color) {
+        setColor(Integer.toHexString(color));
+    }
+
+    private int parseColor(String s) {
+        // stupid java not having actual unsigned ints
+        long tmp = Long.parseLong(s, 16);
+        if (tmp > 0x7FFFFFFF) {
+            tmp -= 0x100000000L;
+        }
+        return (int) tmp;
     }
 
     public String getDescription() {
-        if (!this.data.hasKey(DESC_KEY))
-            setDescription("");
-
-        return this.data.getString(DESC_KEY);
+        return this.description;
     }
 
     public void setDescription(String desc) {
-        this.data.setString(DESC_KEY, desc);
-    }
-
-    @NotNull
-    protected final NBTTagCompound getData() {
-        return this.data;
+        this.description = desc;
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (!(o instanceof VirtualEntry other)) return false;
         return this.getType() == other.getType() &&
-                this.getData().equals(other.getData());
+                this.color == other.color;
     }
 
     @Override
-    public final NBTTagCompound serializeNBT() {
-        return this.data;
+    public NBTTagCompound serializeNBT() {
+        var tag = new NBTTagCompound();
+        tag.setString(COLOR_KEY, this.colorStr);
+
+        if (description != null && !description.isEmpty())
+            tag.setString(DESC_KEY, this.description);
+
+        return tag;
     }
 
     @Override
-    public final void deserializeNBT(NBTTagCompound nbt) {
-        this.data.merge(nbt);
+    public void deserializeNBT(NBTTagCompound nbt) {
+        setColor(nbt.getString(COLOR_KEY));
+
+        if (nbt.hasKey(DESC_KEY))
+            setDescription(nbt.getString(DESC_KEY));
     }
 }
