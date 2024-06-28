@@ -33,6 +33,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -50,8 +51,6 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties, NetFlowEdge>
                              implements IDataInfoProvider {
-
-    private int meltTemp = 3000;
 
     private final EnumMap<EnumFacing, EnergyNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter();
@@ -107,7 +106,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         double loss = 1;
         Consumer<NetNode<?, ?, ?>> destructionResult = null;
 
-        if (temperature + amount >= meltTemp) {
+        if (temperature + amount >= getMeltTemp()) {
             // cable melted
             destructionResult = node -> {
                 isTicking = false;
@@ -199,12 +198,12 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     public int getMeltTemp() {
-        return meltTemp;
+        return this.getNodeData().getMeltTemperature();
     }
 
     @SideOnly(Side.CLIENT)
     public void createParticle() {
-        particle = new GTOverheatParticle(this, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
+        particle = new GTOverheatParticle(this, getMeltTemp(), getPipeBoxes(), getPipeType().insulationLevel >= 0);
         GTParticleManager.INSTANCE.addEffect(particle);
     }
 
@@ -266,13 +265,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     @Override
-    public void setPipeData(BlockPipe<Insulation, WireProperties, NetFlowEdge, ?> pipeBlock, Insulation insulation,
-                            Material pipeMaterial) {
-        super.setPipeData(pipeBlock, insulation, pipeMaterial);
-        updateMeltTemperature();
-    }
-
-    @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
         if (discriminator == CABLE_TEMPERATURE) {
             setTemperature(buf.readVarInt());
@@ -281,13 +273,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
             if (isParticleAlive() && discriminator == UPDATE_CONNECTIONS) {
                 particle.updatePipeBoxes(getPipeBoxes());
             }
-            if (discriminator == UPDATE_PIPE_MATERIAL) updateMeltTemperature();
         }
-    }
-
-    protected void updateMeltTemperature() {
-        this.meltTemp = this.getPipeMaterial().getBlastTemperature();
-        if (this.meltTemp == 0) this.meltTemp = 1000;
     }
 
     @SideOnly(Side.CLIENT)

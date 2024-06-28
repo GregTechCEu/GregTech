@@ -37,7 +37,7 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
             tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));
         tooltip.add(I18n.format("gregtech.cable.voltage", wireProperties.getVoltage(), GTValues.VNF[tier]));
         tooltip.add(I18n.format("gregtech.cable.amperage", wireProperties.getAmperage()));
-        tooltip.add(I18n.format("gregtech.cable.loss_per_block", wireProperties.getLossPerBlock()));
+        tooltip.add(I18n.format("gregtech.cable.loss_per_block", wireProperties.getLoss()));
 
         if (TooltipHelper.isShiftDown()) {
             tooltip.add(I18n.format("gregtech.tool_action.wire_cutter.connect"));

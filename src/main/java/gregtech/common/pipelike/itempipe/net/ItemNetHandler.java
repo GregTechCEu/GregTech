@@ -322,7 +322,7 @@ public class ItemNetHandler implements IItemHandler, IPipeNetHandler {
             return stack;
         }
         int allowed = ignoreLimit ? stack.getCount() :
-                checkTransferable(routePath.getMinData().getTransferRate(), stack.getCount(), simulate);
+                checkTransferable(routePath.getSumData().getTransferRate(), stack.getCount(), simulate);
         if (allowed == 0 || !routePath.checkPredicate(new ItemTestObject(stack))) {
             return stack;
         }

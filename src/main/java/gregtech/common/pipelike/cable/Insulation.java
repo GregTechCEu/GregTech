@@ -61,12 +61,13 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
     @Override
     public WireProperties modifyProperties(WireProperties baseProperties) {
         int lossPerBlock;
-        if (!baseProperties.isSuperconductor() && baseProperties.getLossPerBlock() == 0)
+        if (!baseProperties.isSuperconductor() && baseProperties.getLoss() == 0)
             lossPerBlock = (int) (0.75 * lossMultiplier);
-        else lossPerBlock = baseProperties.getLossPerBlock() * lossMultiplier;
+        else lossPerBlock = baseProperties.getLoss() * lossMultiplier;
 
         return new WireProperties(baseProperties.getVoltage(), baseProperties.getAmperage() * amperage, lossPerBlock,
-                baseProperties.isSuperconductor());
+                baseProperties.getMeltTemperature(), baseProperties.isSuperconductor(),
+                baseProperties.getSuperconductorCriticalTemperature());
     }
 
     @Override

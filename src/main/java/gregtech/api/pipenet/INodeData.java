@@ -1,7 +1,7 @@
 package gregtech.api.pipenet;
 
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 public interface INodeData<T extends INodeData<?>> {
 
@@ -17,12 +17,9 @@ public interface INodeData<T extends INodeData<?>> {
         return 1;
     }
 
-    /**
-     * Note - since datas is a set, no summative operations are allowed.
-     */
-    T getMinData(Set<T> datas);
+    T getSumData(List<T> datas);
 
-    default T getMinData(Object data) {
-        return getMinData(Collections.singleton((T) data));
+    default T getSumData(Object data) {
+        return getSumData(Collections.singletonList((T) data));
     }
 }

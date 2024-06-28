@@ -309,7 +309,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
     }
 
     @Override
-    public FluidPipeProperties getMinData(Set<FluidPipeProperties> datas) {
+    public FluidPipeProperties getSumData(List<FluidPipeProperties> datas) {
         int maxFluidTemperature = this.getMaxFluidTemperature();
         int throughput = this.getThroughput();
         boolean gasProof = this.isGasProof();

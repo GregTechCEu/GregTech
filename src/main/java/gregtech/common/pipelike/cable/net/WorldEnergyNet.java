@@ -57,7 +57,8 @@ public class WorldEnergyNet extends WorldPipeNetComplex<WireProperties, Insulati
     protected void writeNodeData(WireProperties nodeData, NBTTagCompound tagCompound) {
         tagCompound.setInteger("voltage", nodeData.getVoltage());
         tagCompound.setInteger("amperage", nodeData.getAmperage());
-        tagCompound.setInteger("loss", nodeData.getLossPerBlock());
+        tagCompound.setInteger("loss", nodeData.getLoss());
+        tagCompound.setInteger("meltTemperature", nodeData.getMeltTemperature());
         tagCompound.setInteger("critical", nodeData.getSuperconductorCriticalTemperature());
         tagCompound.setBoolean("supercond", nodeData.isSuperconductor());
     }
@@ -67,8 +68,9 @@ public class WorldEnergyNet extends WorldPipeNetComplex<WireProperties, Insulati
         int voltage = tagCompound.getInteger("voltage");
         int amperage = tagCompound.getInteger("amperage");
         int lossPerBlock = tagCompound.getInteger("loss");
+        int meltTemperature = tagCompound.getInteger("meltTemperature");
         int critical = tagCompound.getInteger("critical");
         boolean supercond = tagCompound.getBoolean("supercond");
-        return new WireProperties(voltage, amperage, lossPerBlock, supercond, critical);
+        return new WireProperties(voltage, amperage, lossPerBlock, meltTemperature, supercond, critical);
     }
 }

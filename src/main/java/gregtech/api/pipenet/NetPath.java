@@ -115,11 +115,11 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
         return weight;
     }
 
-    public NodeDataType getMinData() {
+    public NodeDataType getSumData() {
         // generate min data on-demand and cache it, rather than generating for every path always
         if (this.data == null) {
             this.data = sourceNode.getData()
-                    .getMinData(this.nodeList.stream().map(NetNode::getData).collect(Collectors.toSet()));
+                    .getSumData(this.nodeList.stream().map(NetNode::getData).collect(Collectors.toList()));
         }
         return data;
     }
@@ -176,8 +176,8 @@ public class NetPath<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
             return path.getWeight();
         }
 
-        public NDT getMinData() {
-            return path.getMinData();
+        public NDT getSumData() {
+            return path.getSumData();
         }
 
         public boolean checkPredicate(IPredicateTestObject testObject) {

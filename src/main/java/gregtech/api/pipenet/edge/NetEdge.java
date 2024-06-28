@@ -42,7 +42,7 @@ public class NetEdge extends DefaultWeightedEdge implements INBTSerializable<NBT
 
     public INodeData<? extends INodeData<?>> getMinData() {
         if (this.minData == null)
-            this.minData = this.getCastSource().getData().getMinData(this.getCastTarget().getData());
+            this.minData = this.getCastSource().getData().getSumData(this.getCastTarget().getData());
         return this.minData;
     }
 

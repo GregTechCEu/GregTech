@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
 
     protected static final NetNode<Insulation, WireProperties, NetFlowEdge> FAKE_SOURCE = new NetNode<>(
-            new WireProperties(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, false));
+            new WireProperties(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, Integer.MAX_VALUE, false));
 
     private final WorldEnergyNet net;
     private boolean transfer;
@@ -132,7 +132,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
         while (paths.hasNext()) {
             NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.next();
             // skip paths where loss exceeds available voltage
-            if (path.getWeight() > voltage) continue;
+            if (path.getSumData().getLoss() > voltage) continue;
             Iterator<EnumFacing> iterator = path.getFacingIterator();
             boolean pathDestThis = path.getTargetNode().getNodePos().equals(this.cable.getPipePos());
             while (iterator.hasNext()) {
@@ -165,12 +165,14 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                     flowLimitConsumers.modifyRatios(ratio);
 
                     TileEntityCable tile = simulator == null ? (TileEntityCable) target.getHeldMTEUnsafe() : null;
+                    long finalVoltage = voltage;
                     flowLimitConsumers.add(edge, null, this.net.getGraph(), pathAmperage, queryTick,
                             simulator, tile != null ? amps -> {
                                 tile.contributeAmperageFlow(amps);
-                                tile.contributeVoltageFlow(voltage);
+                                tile.contributeVoltageFlow(finalVoltage);
                             } : null);
                     // voltage loss
+                    voltage -= target.getData().getLoss();
                     if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) continue mainloop;
                 }
                 // skip paths where we can't transfer amperage
@@ -178,8 +180,8 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                 // complete transfer
                 this.transfer = true;
                 // actual voltage that reaches the destination is the geometric mean of the input and all the caps
-                long finalVoltage = (long) GTUtility.geometricMean((double) voltage,
-                        voltageCaps.toArray(new double[] {}));
+                long finalVoltage = Math.min((long) GTUtility.geometricMean((double) voltage,
+                        voltageCaps.toArray(new double[] {})), voltage);
                 long accepted = dest.acceptEnergyFromNetwork(facedPath.oppositeFacing(), finalVoltage, pathAmperage,
                         simulator != null);
                 this.transfer = false;
@@ -203,6 +205,8 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
         mainloop:
         while (paths.hasNext()) {
             NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.next();
+            // skip paths where loss exceeds available voltage
+            if (path.getSumData().getLoss() > voltage) continue;
             Iterator<EnumFacing> iterator = path.getFacingIterator();
             boolean pathDestThis = path.getTargetNode().getNodePos().equals(this.cable.getPipePos());
             while (iterator.hasNext()) {
@@ -228,7 +232,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                 for (int j = 0; j < nodeList.size(); j++) {
                     NetFlowEdge edge = j == 0 ? inputEdge : edgeList.get(j - 1);
                     NetNode<Insulation, WireProperties, NetFlowEdge> target = nodeList.get(j);
-
+                    // amperage capping
                     long flowLimit = edge.getFlowLimit(null, this.net.getGraph(), queryTick, simulator);
                     long finalPathAmperage = pathAmperage;
                     if (simulator == null && finalPathAmperage != 0) {
@@ -242,23 +246,29 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
                     }
 
                     TileEntityCable tile = simulator == null ? (TileEntityCable) target.getHeldMTEUnsafe() : null;
+                    long finalVoltage = voltage;
                     flowLimitConsumers.add((ratio) -> {
                         long consumption = Math.min((long) (finalPathAmperage * ratio), flowLimit);
                         if (consumption == 0) return;
                         edge.consumeFlowLimit(null, getNet().getGraph(), consumption, queryTick, simulator);
                         if (tile != null) {
                             tile.contributeAmperageFlow(consumption);
-                            tile.contributeVoltageFlow(voltage);
+                            tile.contributeVoltageFlow(finalVoltage);
                         }
                     });
                     pathAmperage = Math.min(pathAmperage, flowLimit);
+                    // voltage loss
+                    voltage -= target.getData().getLoss();
                     if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) continue mainloop;
                 }
 
-                long finalVoltage = (long) GTUtility.geometricMean((double) voltage,
-                        voltageCaps.toArray(new double[] {}));
+                // actual voltage that reaches the destination is the geometric mean of the input and all the caps
+                this.transfer = true;
+                long finalVoltage = Math.min((long) GTUtility.geometricMean((double) voltage,
+                        voltageCaps.toArray(new double[] {})), voltage);
                 long simulatedAccepted = dest.acceptEnergyFromNetwork(facedPath.oppositeFacing(), finalVoltage,
                         availableAmperage, true);
+                this.transfer = false;
                 simulatedAccepted = getSimulatedAccepted(localDestSimulationCache, facedPath.toFacingPos(),
                         simulatedAccepted);
                 if (simulator != null)

@@ -1033,19 +1033,33 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss) {
-            cableProperties((int) voltage, amperage, loss, false);
+            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss));
+            return this;
+        }
+
+        public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature) {
+            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, meltTemperature));
             return this;
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
+            return cableProperties(voltage, amperage, loss, 0, isSuperCon);
+        }
+
+        public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature, boolean isSuperCon) {
+            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, meltTemperature, isSuperCon));
             return this;
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon,
                                        int criticalTemperature) {
+            return cableProperties(voltage, amperage, loss, 0, isSuperCon, criticalTemperature);
+        }
+
+        public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature, boolean isSuperCon,
+                                       int criticalTemperature) {
             properties.setProperty(PropertyKey.WIRE,
-                    new WireProperties((int) voltage, amperage, loss, isSuperCon, criticalTemperature));
+                    new WireProperties((int) voltage, amperage, loss, meltTemperature, isSuperCon, criticalTemperature));
             return this;
         }
 
