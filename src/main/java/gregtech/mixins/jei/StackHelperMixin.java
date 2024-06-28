@@ -2,10 +2,9 @@ package gregtech.mixins.jei;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 
-import mezz.jei.startup.StackHelper;
-
 import net.minecraft.item.ItemStack;
 
+import mezz.jei.startup.StackHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

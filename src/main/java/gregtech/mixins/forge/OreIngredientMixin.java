@@ -1,7 +1,6 @@
 package gregtech.mixins.forge;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
-import gregtech.asm.hooks.OreIngredientHooks;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreIngredient;

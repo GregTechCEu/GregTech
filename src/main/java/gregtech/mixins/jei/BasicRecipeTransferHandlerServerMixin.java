@@ -2,14 +2,13 @@ package gregtech.mixins.jei;
 
 import gregtech.api.items.toolitem.ToolHelper;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import mezz.jei.transfer.BasicRecipeTransferHandlerServer;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import mezz.jei.transfer.BasicRecipeTransferHandlerServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,17 +23,17 @@ public class BasicRecipeTransferHandlerServerMixin {
     /**
      * @author M_W_K
      * @reason The modification required to make tools only be needed once on a max-transfer event is best done through
-     * an overwrite, due to being spread out throughout the method.
+     *         an overwrite, due to being spread out throughout the method.
      */
     @Overwrite(remap = false)
     private static Map<Integer, ItemStack> removeItemsFromInventory(
-            EntityPlayer player,
-            Container container,
-            Map<Integer, ItemStack> required,
-            List<Integer> craftingSlots,
-            List<Integer> inventorySlots,
-            boolean transferAsCompleteSets,
-            boolean maxTransfer) {
+                                                                    EntityPlayer player,
+                                                                    Container container,
+                                                                    Map<Integer, ItemStack> required,
+                                                                    List<Integer> craftingSlots,
+                                                                    List<Integer> inventorySlots,
+                                                                    boolean transferAsCompleteSets,
+                                                                    boolean maxTransfer) {
         List<Map.Entry<Integer, ItemStack>> orderedRequired = new ObjectArrayList<>(required.entrySet());
 
         // This map becomes populated with the resulting items to transfer and is returned by this method.
@@ -73,7 +72,8 @@ public class BasicRecipeTransferHandlerServerMixin {
 
                 boolean itemFound = (slot != null) && !slot.getStack().isEmpty() && slot.canTakeStack(player);
                 ItemStack resultItemStack = result.get(entry.getKey());
-                boolean resultItemStackLimitReached = (resultItemStack != null) && (resultItemStack.getCount() == resultItemStack.getMaxStackSize());
+                boolean resultItemStackLimitReached = (resultItemStack != null) &&
+                        (resultItemStack.getCount() == resultItemStack.getMaxStackSize());
 
                 if (!itemFound || resultItemStackLimitReached) {
                     // We can't find any more items to fulfill the requirements or the maximum stack size for this item
