@@ -3,7 +3,6 @@ package gregtech.integration.theoneprobe.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
-import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -12,6 +11,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.NumberFormat;
+import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
 import org.jetbrains.annotations.NotNull;
 
 public class LaserContainerInfoProvider extends CapabilityInfoProvider<ILaserContainer> {
@@ -31,12 +31,15 @@ public class LaserContainerInfoProvider extends CapabilityInfoProvider<ILaserCon
     protected void addProbeInfo(ILaserContainer capability, IProbeInfo probeInfo, EntityPlayer player,
                                 TileEntity tileEntity, IProbeHitData data) {
         long maxStorage = capability.getEnergyCapacity();
+        long stored = capability.getEnergyStored();
         if (maxStorage == 0) return; // do not add empty max storage progress bar
-        probeInfo.progress(capability.getEnergyStored(), maxStorage, probeInfo.defaultProgressStyle()
-                .suffix(" / " + TextFormattingUtil.formatNumbers(maxStorage) + " EU")
+        probeInfo.progress(stored, maxStorage, probeInfo.defaultProgressStyle()
+                .numberFormat(player.isSneaking() || stored < 10000 ? NumberFormat.FULL : NumberFormat.COMPACT)
+                .suffix(" / " + (player.isSneaking() || maxStorage < 10000 ? maxStorage + " EU" :
+                        ElementProgress.format(maxStorage, NumberFormat.COMPACT, "EU")))
                 .filledColor(0xFFEEE600)
                 .alternateFilledColor(0xFFEEE600)
-                .borderColor(0xFF555555).numberFormat(NumberFormat.COMMAS));
+                .borderColor(0xFF555555));
     }
 
     @Override

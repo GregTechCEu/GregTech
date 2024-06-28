@@ -176,7 +176,9 @@ public class GTGuiTextures {
     public static final UITexture OREDICT_WAITING = fullImage("textures/gui/widget/ore_filter/waiting.png");
     public static final UITexture OREDICT_WARN = fullImage("textures/gui/widget/ore_filter/warn.png");
 
-    public static final UITexture[] MANUAL_IO_OVERLAY = slice("textures/gui/overlay/manual_io_overlay.png",
+    public static final UITexture[] MANUAL_IO_OVERLAY_IN = slice("textures/gui/overlay/manual_io_overlay_in.png",
+            18, 18 * 3, 18, 18, true);
+    public static final UITexture[] MANUAL_IO_OVERLAY_OUT = slice("textures/gui/overlay/manual_io_overlay_out.png",
             18, 18 * 3, 18, 18, true);
     public static final UITexture[] CONVEYOR_MODE_OVERLAY = slice("textures/gui/overlay/conveyor_mode_overlay.png",
             18, 18 * 2, 18, 18, true);
