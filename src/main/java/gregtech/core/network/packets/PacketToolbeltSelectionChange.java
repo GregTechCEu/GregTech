@@ -3,11 +3,14 @@ package gregtech.core.network.packets;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
+import gregtech.core.sound.GTSoundEvents;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.SoundCategory;
 
 public class PacketToolbeltSelectionChange implements IPacket, IServerExecutor {
 
@@ -31,9 +34,12 @@ public class PacketToolbeltSelectionChange implements IPacket, IServerExecutor {
 
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
-        ItemStack stack = handler.player.getHeldItemMainhand();
+        EntityPlayerMP player = handler.player;
+        ItemStack stack = player.getHeldItemMainhand();
         Item item = stack.getItem();
         if (item instanceof ItemGTToolbelt toolbelt) {
+            player.getServerWorld().playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.CLICK,
+                    SoundCategory.PLAYERS, 2F, 1F);
             toolbelt.setSelectedTool(slot, stack);
         }
     }
