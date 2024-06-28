@@ -70,7 +70,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     protected final String createName() {
-        String color = this.activeEntry == null ? VirtualEntry.DEFAULT_COLOR : this.activeEntry.getColor();
+        String color = this.activeEntry == null ? VirtualEntry.DEFAULT_COLOR : this.activeEntry.getColorStr();
         return identifier() + color;
     }
 
@@ -142,7 +142,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected IWidget createColorIcon() {
         // todo color selector popup panel
         return new DynamicDrawable(() -> new Rectangle()
-                .setColor(parseColor(this.activeEntry.getColor()))
+                .setColor(this.activeEntry.getColor())
                 .asIcon().size(16))
                         .asWidget()
                         .background(GTGuiTextures.SLOT)
