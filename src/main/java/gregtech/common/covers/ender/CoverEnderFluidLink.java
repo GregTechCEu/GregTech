@@ -138,7 +138,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
-        var name = new StringSyncValue(activeEntry::getColor, this::updateColor);
+        var name = new StringSyncValue(activeEntry::getColorStr, this::updateColor);
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
         syncManager.syncValue("pump_mode", pumpMode);
@@ -166,19 +166,19 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                     .widthRel(0.98f)
                                     .setEnabledIf(row -> VirtualTankRegistry.hasTank(name, getOwner()))
                                     .child(new Rectangle()
-                                            .setColor(parseColor(tank.getColor()))
+                                            .setColor(parseColor(tank.getColorStr()))
                                             .asWidget()
                                             .marginRight(4)
                                             .size(16)
                                             .background(GTGuiTextures.SLOT.asIcon().size(18))
                                             .top(1))
-                                    .child(IKey.str(tank.getColor())
+                                    .child(IKey.str(tank.getColorStr())
                                             .alignment(Alignment.CenterLeft)
                                             .color(Color.WHITE.darker(1))
                                             .asWidget()
                                             .tooltipBuilder(tooltip -> {
                                                 String desc = tank.getDescription();
-                                                if (!desc.isEmpty())
+                                                if (desc != null && !desc.isEmpty())
                                                     tooltip.addLine(desc);
                                             })
                                             .width(64)
@@ -252,13 +252,13 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     public String getColorStr() {
-        return this.activeEntry.getColor();
+        return this.activeEntry.getColorStr();
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("Frequency", parseColor(this.activeEntry.getColor()));
+        tagCompound.setInteger("Frequency", activeEntry.getColor());
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
     }
@@ -270,7 +270,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         int color = tagCompound.getInteger("Frequency");
         this.activeEntry = createEntry(identifier() + Integer.toHexString(color).toUpperCase(), this.getOwner());
-        this.activeEntry.setColor(Integer.toHexString(color).toUpperCase());
+        this.activeEntry.setColor(Integer.toHexString(color));
     }
 
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
@@ -281,54 +281,5 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return defaultValue;
-    }
-
-    private static class SwitchableEntry implements IFluidTank, IFluidHandler {
-
-        private VirtualTank tank;
-
-        public void updateTank(VirtualTank tank) {
-            this.tank = tank;
-        }
-
-        @Override
-        public FluidStack getFluid() {
-            return tank.getFluid();
-        }
-
-        @Override
-        public int getFluidAmount() {
-            return tank.getFluidAmount();
-        }
-
-        @Override
-        public int getCapacity() {
-            return tank.getCapacity();
-        }
-
-        @Override
-        public FluidTankInfo getInfo() {
-            return tank.getInfo();
-        }
-
-        @Override
-        public IFluidTankProperties[] getTankProperties() {
-            return tank.getTankProperties();
-        }
-
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            return tank.fill(resource, doFill);
-        }
-
-        @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
-            return tank.drain(resource, doDrain);
-        }
-
-        @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
-            return tank.drain(maxDrain, doDrain);
-        }
     }
 }

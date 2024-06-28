@@ -16,12 +16,17 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
 
     protected static final String CAPACITY_KEY = "capacity";
     protected static final String FLUID_KEY = "fluid";
+    private static final int DEFAULT_CAPACITY = 64000; // 64B
+
+    @Nullable
+    private FluidStack fluidStack = null;
+    private int capacity = DEFAULT_CAPACITY;
     private final IFluidTankProperties[] props = new IFluidTankProperties[] {
             new VirtualTankProperties(this)
     };
 
     public VirtualTank(Integer capacity) {
-        setCapacity(capacity);
+        this.capacity = capacity;
     }
 
     public VirtualTank() {}
@@ -31,31 +36,23 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
         return EntryTypes.ENDER_FLUID;
     }
 
-    public void setCapacity(int capacity) {
-        getData().setInteger(CAPACITY_KEY, capacity);
-    }
-
     @Override
     public FluidStack getFluid() {
-        return !getData().hasKey(FLUID_KEY) ? null :
-                FluidStack.loadFluidStackFromNBT(getData().getCompoundTag(FLUID_KEY));
+        return this.fluidStack;
     }
 
     public void setFluid(FluidStack fluid) {
-        if (fluid == null)
-            getData().removeTag(FLUID_KEY);
-        else
-            getData().setTag(FLUID_KEY, fluid.writeToNBT(new NBTTagCompound()));
+        this.fluidStack = fluid;
     }
 
     @Override
     public int getFluidAmount() {
-        return !getData().hasKey(FLUID_KEY) ? 0 : getFluid().amount;
+        return fluidStack == null ? 0 : fluidStack.amount;
     }
 
     @Override
     public int getCapacity() {
-        return getData().getInteger(CAPACITY_KEY);
+        return this.capacity;
     }
 
     @Override
@@ -69,11 +66,45 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof VirtualTank other)) return false;
+        if (this.fluidStack == null && other.fluidStack == null)
+            return super.equals(o);
+        if (this.fluidStack == null || other.fluidStack == null)
+            return false;
+        if (this.fluidStack.isFluidStackIdentical(other.fluidStack))
+            return super.equals(o);
+
+        return false;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        var tag = super.serializeNBT();
+        tag.setInteger(CAPACITY_KEY, this.capacity);
+
+        if (this.fluidStack != null)
+            tag.setTag(FLUID_KEY, this.fluidStack.writeToNBT(new NBTTagCompound()));
+
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        super.deserializeNBT(nbt);
+        this.capacity = nbt.getInteger(CAPACITY_KEY);
+
+        if (nbt.hasKey(FLUID_KEY))
+            setFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag(FLUID_KEY)));
+    }
+
+    @Override
     public int fill(FluidStack fluidStack, boolean doFill) {
-        var fluid = getFluid();
         if (fluidStack == null || fluidStack.amount <= 0 ||
-                (fluid != null && !fluidStack.isFluidEqual(fluid)))
+                (this.fluidStack != null && !fluidStack.isFluidEqual(this.fluidStack)))
             return 0;
+
+        var fluid = this.fluidStack.copy();
 
         int fillAmt = Math.min(fluidStack.amount, getCapacity() - this.getFluidAmount());
         if (doFill) {
@@ -90,16 +121,16 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
     @Nullable
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain) {
-        var fluid = getFluid();
-        return resource == null || !resource.isFluidEqual(fluid) ? null : drain(resource.amount, doDrain);
+        return resource == null || !resource.isFluidEqual(this.fluidStack) ? null : drain(resource.amount, doDrain);
     }
 
     @Nullable
     @Override
     public FluidStack drain(int amount, boolean doDrain) {
-        var fluid = getFluid();
-        if (fluid == null || amount <= 0)
+        if (this.fluidStack == null || amount <= 0)
             return null;
+
+        var fluid = this.fluidStack.copy();
 
         int drainAmt = Math.min(this.getFluidAmount(), amount);
         FluidStack drainedFluid = new FluidStack(fluid, drainAmt);
