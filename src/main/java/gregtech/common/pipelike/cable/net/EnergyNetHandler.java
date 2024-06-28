@@ -203,8 +203,6 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
         mainloop:
         while (paths.hasNext()) {
             NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.next();
-            // skip paths where loss exceeds available voltage
-            if (path.getWeight() > voltage) continue;
             Iterator<EnumFacing> iterator = path.getFacingIterator();
             boolean pathDestThis = path.getTargetNode().getNodePos().equals(this.cable.getPipePos());
             while (iterator.hasNext()) {

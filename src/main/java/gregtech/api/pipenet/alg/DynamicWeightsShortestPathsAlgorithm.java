@@ -19,13 +19,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AllPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge>
+public class DynamicWeightsShortestPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends INodeData<NDT>, E extends NetEdge>
                               extends DefaultManyToManyShortestPaths<NetNode<PT, NDT, E>, E>
                               implements INetAlgorithm<PT, NDT, E> {
 
     private final WorldPipeNetBase<NDT, PT, E> pipenet;
 
-    public AllPathsAlgorithm(WorldPipeNetBase<NDT, PT, E> pipenet) {
+    public DynamicWeightsShortestPathsAlgorithm(WorldPipeNetBase<NDT, PT, E> pipenet) {
         super(pipenet.getGraph());
         this.pipenet = pipenet;
     }
@@ -49,8 +49,6 @@ public class AllPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends
         private final NetNode<PT, NDT, E> source;
         private final Set<NetNode<PT, NDT, E>> searchSpace;
 
-        private final ManyToManyShortestPaths<NetNode<PT, NDT, E>, E> manyToManyShortestPaths;
-
         private int iterationCount = 0;
         private final ObjectArrayList<NetPath<PT, NDT, E>> visited = new ObjectArrayList<>();
         private NetPath<PT, NDT, E> next;
@@ -58,19 +56,17 @@ public class AllPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends
         public LimitedIterator(NetNode<PT, NDT, E> source, Set<NetNode<PT, NDT, E>> searchSpace) {
             this.source = source;
             this.searchSpace = searchSpace;
-            this.manyToManyShortestPaths = pipenet.usesDynamicWeights() ? null : getManyToManyPaths(Collections.singleton(source), searchSpace);
         }
 
         public LimitedIterator(NetNode<PT, NDT, E> source, Set<NetNode<PT, NDT, E>> searchSpace,
                                ManyToManyShortestPaths<NetNode<PT, NDT, E>, E> manyToManyShortestPaths) {
             this.source = source;
             this.searchSpace = searchSpace;
-            this.manyToManyShortestPaths = manyToManyShortestPaths;
         }
 
         @Override
         public ICacheableIterator<NetPath<PT, NDT, E>> newCacheableIterator() {
-            return new LimitedIterator(source, searchSpace, manyToManyShortestPaths);
+            return new LimitedIterator(source, searchSpace);
         }
 
         @Override
@@ -98,8 +94,7 @@ public class AllPathsAlgorithm<PT extends Enum<PT> & IPipeType<NDT>, NDT extends
                 next = new NetPath<>(source);
                 return;
             }
-            ManyToManyShortestPaths<NetNode<PT, NDT, E>, E> paths = manyToManyShortestPaths != null ?
-                    manyToManyShortestPaths : getManyToManyPaths(Collections.singleton(source), searchSpace);
+            ManyToManyShortestPaths<NetNode<PT, NDT, E>, E> paths = getManyToManyPaths(Collections.singleton(source), searchSpace);
             var iter = searchSpace.stream().map(node -> paths.getPath(source, node)).filter(Objects::nonNull)
                     .map(NetPath::new).sorted(Comparator.comparingDouble(NetPath::getWeight)).iterator();
             while (iter.hasNext()) {

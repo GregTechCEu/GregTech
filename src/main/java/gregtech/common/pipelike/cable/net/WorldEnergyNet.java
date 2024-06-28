@@ -3,7 +3,7 @@ package gregtech.common.pipelike.cable.net;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.pipenet.AbstractGroupData;
 import gregtech.api.pipenet.WorldPipeNetComplex;
-import gregtech.api.pipenet.alg.AllPathsAlgorithm;
+import gregtech.api.pipenet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;
@@ -30,7 +30,7 @@ public class WorldEnergyNet extends WorldPipeNetComplex<WireProperties, Insulati
     }
 
     public WorldEnergyNet(String name) {
-        super(name, true, () -> new NetFlowEdge(1), AllPathsAlgorithm::new);
+        super(name, true, () -> new NetFlowEdge(1), DynamicWeightsShortestPathsAlgorithm::new);
     }
 
     @Override

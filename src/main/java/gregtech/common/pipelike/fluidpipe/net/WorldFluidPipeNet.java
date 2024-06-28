@@ -2,7 +2,7 @@ package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.WorldPipeNetComplex;
-import gregtech.api.pipenet.alg.AllPathsAlgorithm;
+import gregtech.api.pipenet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.predicate.AbstractEdgePredicate;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -37,7 +37,7 @@ public class WorldFluidPipeNet extends WorldPipeNetComplex<FluidPipeProperties, 
     }
 
     public WorldFluidPipeNet(String name) {
-        super(name, true, () -> new NetFlowEdge(20), AllPathsAlgorithm::new);
+        super(name, true, () -> new NetFlowEdge(20), DynamicWeightsShortestPathsAlgorithm::new);
     }
 
     @Override

@@ -27,7 +27,7 @@ public abstract class AbstractNetFlowEdge<E extends AbstractNetFlowEdge<E>> exte
         if (!cannotSupportChannel(channel, queryTick, simulator)) {
             return getWeight();
         }
-        return Double.POSITIVE_INFINITY;
+        return getWeight() * 1000000;
     }
 
     public boolean cannotSupportChannel(Object channel, long queryTick, @Nullable SimulatorKey simulator) {
