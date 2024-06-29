@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
@@ -19,6 +20,8 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+
+import gregtech.api.util.SmallDigits;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -112,14 +115,28 @@ public class RecyclingRecipes {
                 RecipeMaps.MACERATOR_RECIPES.getMaxOutputs(),
                 OreDictUnifier::getDust);
 
+        int mult = 1;
+        long matAmount = materials.get(0).amount;
+        if(matAmount < M) {
+            if((matAmount * 9) >= M && materials.get(0).material.hasFlag(GENERATE_TINY_DUST))
+                mult = 1;
+            else if ((matAmount * 4) % M == 0 && materials.get(0).material.hasFlag(GENERATE_SMALL_DUST))
+                mult = 1;
+            else
+                mult = (int) M / (int) matAmount;
+        }
+
         // Exit if no valid Materials exist for this recycling Recipe.
         if (outputs.size() == 0) return;
 
+        ItemStack in = input.copy();
+        in.setCount(input.getCount() * mult);
+
         // Build the final Recipe.
         RecipeBuilder<SimpleRecipeBuilder> recipe = RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(input.copy())
+                .inputs(in)
                 .outputs(outputs)
-                .duration(calculateDuration(outputs))
+                .duration(calculateDuration(outputs) * mult)
                 .EUt(2 * multiplier)
                 .category(RecipeCategories.MACERATOR_RECYCLING);
 

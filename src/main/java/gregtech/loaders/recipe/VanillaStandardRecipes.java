@@ -382,14 +382,14 @@ public class VanillaStandardRecipes {
         LATHE_RECIPES.recipeBuilder()
                 .input("treeSapling")
                 .outputs(new ItemStack(Items.STICK))
-                .output(dustTiny, Wood)
+                .chancedOutput(dust, Wood, 1111, 0)
                 .duration(16).EUt(VA[ULV])
                 .buildAndRegister();
 
         LATHE_RECIPES.recipeBuilder()
                 .input(slab, Wood)
                 .outputs(new ItemStack(Items.BOWL))
-                .output(dustSmall, Wood)
+                .chancedOutput(dust, Wood, 2500, 0)
                 .duration(50).EUt(VA[ULV])
                 .buildAndRegister();
 
@@ -1223,13 +1223,13 @@ public class VanillaStandardRecipes {
             LATHE_RECIPES.recipeBuilder()
                     .inputs(new ItemStack(Blocks.COBBLESTONE))
                     .output(OrePrefix.stick, Materials.Stone, 1)
-                    .output(dustSmall, Stone, 2)
+                    .chancedOutput(dust, Stone, 5000, 0)
                     .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
             LATHE_RECIPES.recipeBuilder()
                     .inputs(new ItemStack(Blocks.STONE))
                     .output(OrePrefix.stick, Materials.Stone, 1)
-                    .output(dustSmall, Stone, 2)
+                    .chancedOutput(dust, Stone, 5000, 0)
                     .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
         } else {
