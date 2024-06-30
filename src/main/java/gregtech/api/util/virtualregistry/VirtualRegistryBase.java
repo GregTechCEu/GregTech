@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 @SuppressWarnings("SameParameterValue")
 public class VirtualRegistryBase extends WorldSavedData {
@@ -49,16 +50,22 @@ public class VirtualRegistryBase extends WorldSavedData {
      * @param type  Type of the registry to remove from
      * @param name  The name of the entry
      */
-    protected static void deleteEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {
+    public static void deleteEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {
         var registry = getRegistry(owner);
         if (registry.contains(type, name)) {
             registry.deleteEntry(type, name);
-        } else {
-            GTLog.logger.warn("Attempted to delete {} entry {} of type {}, which does not exist",
-                    owner == null ? "public" : String.format("private [%s]", owner),
-                    name, type);
+            return;
         }
+        GTLog.logger.warn("Attempted to delete {} entry {} of type {}, which does not exist",
+                owner == null ? "public" : String.format("private [%s]", owner), name, type);
     }
+
+    public static <T extends VirtualEntry> void deleteEntry(@Nullable UUID owner, EntryTypes<T> type, String name, Predicate<T> shouldDelete) {
+        T entry = getEntry(owner, type, name);
+        if (shouldDelete.test(entry))
+            deleteEntry(owner, type, name);
+    }
+
 
     public static Set<String> getEntryNames(UUID owner, EntryTypes<?> type) {
         return getRegistry(owner).getEntryNames(type);
