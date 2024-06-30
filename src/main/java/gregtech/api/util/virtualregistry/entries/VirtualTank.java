@@ -22,7 +22,7 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
     private FluidStack fluidStack = null;
     private int capacity = DEFAULT_CAPACITY;
     private final IFluidTankProperties[] props = new IFluidTankProperties[] {
-            new VirtualTankProperties(this)
+            createProperty(this)
     };
 
     public VirtualTank(Integer capacity) {
@@ -144,44 +144,41 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
         return drainedFluid;
     }
 
-    private static class VirtualTankProperties implements IFluidTankProperties {
+    private static IFluidTankProperties createProperty(VirtualTank tank) {
+        return new IFluidTankProperties() {
 
-        protected final VirtualTank tank;
+            @Nullable
+            @Override
+            public FluidStack getContents() {
+                FluidStack contents = tank.getFluid();
+                return contents == null ? null : contents.copy();
+            }
 
-        private VirtualTankProperties(VirtualTank tank) {
-            this.tank = tank;
-        }
+            @Override
+            public int getCapacity() {
+                return tank.getCapacity();
+            }
 
-        @Nullable
-        @Override
-        public FluidStack getContents() {
-            FluidStack contents = tank.getFluid();
-            return contents == null ? null : contents.copy();
-        }
+            @Override
+            public boolean canFill() {
+                return true;
+            }
 
-        @Override
-        public int getCapacity() {
-            return tank.getCapacity();
-        }
+            @Override
+            public boolean canDrain() {
+                return true;
+            }
 
-        @Override
-        public boolean canFill() {
-            return true;
-        }
+            @Override
+            public boolean canFillFluidType(FluidStack fluidStack) {
+                return true;
+            }
 
-        @Override
-        public boolean canDrain() {
-            return true;
-        }
+            @Override
+            public boolean canDrainFluidType(FluidStack fluidStack) {
+                return true;
+            }
 
-        @Override
-        public boolean canFillFluidType(FluidStack fluidStack) {
-            return true;
-        }
-
-        @Override
-        public boolean canDrainFluidType(FluidStack fluidStack) {
-            return true;
-        }
+        };
     }
 }
