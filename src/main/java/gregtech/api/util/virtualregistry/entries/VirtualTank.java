@@ -178,7 +178,6 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
             public boolean canDrainFluidType(FluidStack fluidStack) {
                 return true;
             }
-
         };
     }
 }

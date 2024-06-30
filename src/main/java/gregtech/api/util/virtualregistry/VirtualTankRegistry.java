@@ -4,12 +4,8 @@ import gregtech.api.util.virtualregistry.entries.VirtualTank;
 
 import net.minecraftforge.fluids.IFluidTank;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 public final class VirtualTankRegistry extends VirtualRegistryBase {

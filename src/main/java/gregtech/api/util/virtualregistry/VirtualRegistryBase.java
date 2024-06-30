@@ -30,7 +30,7 @@ public class VirtualRegistryBase extends WorldSavedData {
         super(name);
     }
 
-    protected static <T extends VirtualEntry> T getEntry(@Nullable UUID owner, EntryTypes<T> type, String name) {
+    public static <T extends VirtualEntry> T getEntry(@Nullable UUID owner, EntryTypes<T> type, String name) {
         return getRegistry(owner).getEntry(type, name);
     }
 
@@ -38,7 +38,7 @@ public class VirtualRegistryBase extends WorldSavedData {
         getRegistry(owner).addEntry(name, entry);
     }
 
-    protected static boolean hasEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {
+    public static boolean hasEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {
         return getRegistry(owner).contains(type, name);
     }
 
@@ -71,7 +71,7 @@ public class VirtualRegistryBase extends WorldSavedData {
         VIRTUAL_REGISTRIES.clear();
     }
 
-    public static VirtualRegistryMap getRegistry(UUID owner) {
+    private static VirtualRegistryMap getRegistry(UUID owner) {
         return VIRTUAL_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap());
     }
 

@@ -10,7 +10,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualEntry;
-
 import gregtech.api.util.virtualregistry.VirtualRegistryBase;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,13 +25,18 @@ import net.minecraft.util.ITickable;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -40,10 +44,10 @@ import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("SameParameterValue")
@@ -170,23 +174,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .value(isPrivate);
     }
 
-    protected IWidget createEntryList(EntryTypes<T> type, WidgetCreator<T> widgetFunction) {
-        return ListWidget.builder(new ArrayList<>(VirtualRegistryBase.getEntryNames(getOwner(), type)),
-                        name -> widgetFunction.create(name, VirtualRegistryBase.getRegistry(getOwner()).getEntry(type, name)))
-                .background(GTGuiTextures.DISPLAY.asIcon()
-                        .width(168 - 8)
-                        .height(112 - 20))
-                .paddingTop(1)
-                .size(168 - 12, 112 - 24)
-                .left(4)
-                .bottom(6);
-    }
-
-    @FunctionalInterface
-    protected interface WidgetCreator<T> {
-        IWidget create(String name, T entry);
-    }
-
     protected IWidget createIoRow() {
         var ioEnabled = new BooleanSyncValue(this::isIoEnabled, this::setIoEnabled);
 
@@ -261,5 +248,108 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         nbt.setBoolean("Private", isPrivate);
         nbt.setBoolean("WorkingAllowed", workingEnabled);
         nbt.setString("PlacedUUID", playerUUID.toString());
+    }
+
+    protected abstract class EntrySelectorSH extends PanelSyncHandler {
+
+        private final EntryTypes<T> type;
+        private final List<String> names;
+
+        protected EntrySelectorSH(ModularPanel mainPanel, EntryTypes<T> type) {
+            super(mainPanel);
+            this.type = type;
+            this.names = new ArrayList<>(VirtualRegistryBase.getEntryNames(getOwner(), type));
+        }
+
+        @Override
+        public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+            return GTGuis.createPopupPanel("entry_selector", 168, 112)
+                    .child(IKey.str("Known Channels") // todo lang
+                            .color(UI_TITLE_COLOR).asWidget()
+                            .top(6)
+                            .left(4))
+                    .child(ListWidget.builder(this.names, this::createRow)
+                            .background(GTGuiTextures.DISPLAY.asIcon()
+                                    .width(168 - 8)
+                                    .height(112 - 20))
+                            .paddingTop(1)
+                            .size(168 - 12, 112 - 24)
+                            .left(4)
+                            .bottom(6));
+        }
+
+        protected IWidget createRow(String name) {
+            T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
+            return new Row()
+                    .left(4)
+                    .marginBottom(2)
+                    .height(18)
+                    .widthRel(0.98f)
+                    .setEnabledIf(row -> VirtualRegistryBase.hasEntry(getOwner(), this.type, name))
+                    .child(new Rectangle()
+                            .setColor(entry.getColor())
+                            .asWidget()
+                            .marginRight(4)
+                            .size(16)
+                            .background(GTGuiTextures.SLOT.asIcon().size(18))
+                            .top(1))
+                    .child(IKey.str(entry.getColorStr())
+                            .alignment(Alignment.CenterLeft)
+                            .color(Color.WHITE.darker(1))
+                            .asWidget()
+                            .tooltipBuilder(tooltip -> {
+                                String desc = entry.getDescription();
+                                if (desc != null && !desc.isEmpty())
+                                    tooltip.addLine(desc);
+                            })
+                            .width(64)
+                            .height(16)
+                            .top(1)
+                            .marginRight(4))
+                    .child(new ButtonWidget<>()
+                            .overlay(GuiTextures.GEAR)
+                            // todo lang
+                            .tooltipBuilder(tooltip -> tooltip.addLine("Set Description"))
+                            .onMousePressed(i -> {
+                                // open entry settings
+                                Interactable.playButtonClickSound();
+                                return true;
+                            }))
+                    .child(createSlotWidget(entry))
+                    .child(new ButtonWidget<>()
+                            .overlay(GTGuiTextures.BUTTON_CROSS)
+                            // todo lang
+                            .tooltipBuilder(tooltip -> tooltip.addLine("Delete Entry"))
+                            .onMousePressed(i -> {
+                                // todo option to force delete, maybe as a popup?
+                                deleteEntry(name, entry);
+                                syncToServer(1, buffer -> {
+                                    buffer.writeByte(name.length());
+                                    buffer.writeString(name);
+                                });
+                                Interactable.playButtonClickSound();
+                                return true;
+                            }));
+        }
+
+        @Override
+        public void readOnClient(int i, PacketBuffer packetBuffer) throws IOException {
+            super.readOnClient(i, packetBuffer);
+        }
+
+        @Override
+        public void readOnServer(int i, PacketBuffer packetBuffer) throws IOException {
+            super.readOnServer(i, packetBuffer);
+            if (i == 1) {
+                int len = packetBuffer.readByte();
+                String name = packetBuffer.readString(len);
+                T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
+                deleteEntry(name, entry);
+            }
+        }
+
+        protected abstract IWidget createSlotWidget(T entry);
+
+        protected abstract void deleteEntry(String name, T entry);
     }
 }
