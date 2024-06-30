@@ -3,8 +3,6 @@ package gregtech.api.util.virtualregistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import org.jetbrains.annotations.NotNull;
-
 public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
 
     public static final String DEFAULT_COLOR = "FFFFFFFF";
