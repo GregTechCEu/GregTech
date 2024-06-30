@@ -156,60 +156,57 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                 .color(UI_TITLE_COLOR).asWidget()
                                 .top(6)
                                 .left(4))
-                        .child(createEntryList(VirtualTankRegistry.getEntryNames(getOwner(), EntryTypes.ENDER_FLUID), name -> {
-                            VirtualTank tank = VirtualTankRegistry.getTank(name, getOwner());
-
-                            return new Row()
-                                    .left(4)
-                                    .marginBottom(2)
-                                    .height(18)
-                                    .widthRel(0.98f)
-                                    .setEnabledIf(row -> VirtualTankRegistry.hasTank(name, getOwner()))
-                                    .child(new Rectangle()
-                                            .setColor(parseColor(tank.getColorStr()))
-                                            .asWidget()
-                                            .marginRight(4)
-                                            .size(16)
-                                            .background(GTGuiTextures.SLOT.asIcon().size(18))
-                                            .top(1))
-                                    .child(IKey.str(tank.getColorStr())
-                                            .alignment(Alignment.CenterLeft)
-                                            .color(Color.WHITE.darker(1))
-                                            .asWidget()
-                                            .tooltipBuilder(tooltip -> {
-                                                String desc = tank.getDescription();
-                                                if (desc != null && !desc.isEmpty())
-                                                    tooltip.addLine(desc);
-                                            })
-                                            .width(64)
-                                            .height(16)
-                                            .top(1)
-                                            .marginRight(4))
-                                    .child(new ButtonWidget<>()
-                                            .overlay(GuiTextures.GEAR)
-                                            // todo lang
-                                            .tooltipBuilder(tooltip -> tooltip.addLine("Set Description"))
-                                            .onMousePressed(i -> {
-                                                // open entry settings
-                                                Interactable.playButtonClickSound();
-                                                return true;
-                                            }))
-                                    .child(new FluidSlot()
-                                            .syncHandler(new FluidSlotSyncHandler(tank)
-                                                    .canDrainSlot(false)
-                                                    .canFillSlot(false))
-                                            .marginRight(2))
-                                    .child(new ButtonWidget<>()
-                                            .overlay(GTGuiTextures.BUTTON_CROSS)
-                                            // todo lang
-                                            .tooltipBuilder(tooltip -> tooltip.addLine("Delete Entry"))
-                                            .onMousePressed(i -> {
-                                                // todo option to force delete, maybe as a popup?
-                                                VirtualTankRegistry.delTank(name, getOwner(), false);
-                                                Interactable.playButtonClickSound();
-                                                return true;
-                                            }));
-                        }));
+                        .child(createEntryList(EntryTypes.ENDER_FLUID,
+                                (name, entry) -> new Row()
+                                        .left(4)
+                                        .marginBottom(2)
+                                        .height(18)
+                                        .widthRel(0.98f)
+                                        .setEnabledIf(row -> VirtualTankRegistry.hasTank(name, getOwner()))
+                                        .child(new Rectangle()
+                                                .setColor(entry.getColor())
+                                                .asWidget()
+                                                .marginRight(4)
+                                                .size(16)
+                                                .background(GTGuiTextures.SLOT.asIcon().size(18))
+                                                .top(1))
+                                        .child(IKey.str(entry.getColorStr())
+                                                .alignment(Alignment.CenterLeft)
+                                                .color(Color.WHITE.darker(1))
+                                                .asWidget()
+                                                .tooltipBuilder(tooltip -> {
+                                                    String desc = entry.getDescription();
+                                                    if (desc != null && !desc.isEmpty())
+                                                        tooltip.addLine(desc);
+                                                })
+                                                .width(64)
+                                                .height(16)
+                                                .top(1)
+                                                .marginRight(4))
+                                        .child(new ButtonWidget<>()
+                                                .overlay(GuiTextures.GEAR)
+                                                // todo lang
+                                                .tooltipBuilder(tooltip -> tooltip.addLine("Set Description"))
+                                                .onMousePressed(i -> {
+                                                    // open entry settings
+                                                    Interactable.playButtonClickSound();
+                                                    return true;
+                                                }))
+                                        .child(new FluidSlot()
+                                                .syncHandler(new FluidSlotSyncHandler(entry)
+                                                        .canDrainSlot(false)
+                                                        .canFillSlot(false))
+                                                .marginRight(2))
+                                        .child(new ButtonWidget<>()
+                                                .overlay(GTGuiTextures.BUTTON_CROSS)
+                                                // todo lang
+                                                .tooltipBuilder(tooltip -> tooltip.addLine("Delete Entry"))
+                                                .onMousePressed(i -> {
+                                                    // todo option to force delete, maybe as a popup?
+                                                    VirtualTankRegistry.delTank(name, getOwner(), false);
+                                                    Interactable.playButtonClickSound();
+                                                    return true;
+                                                }))));
             }
         };
 
