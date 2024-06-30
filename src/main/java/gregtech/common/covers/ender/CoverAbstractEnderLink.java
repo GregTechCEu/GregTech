@@ -8,7 +8,10 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualEntry;
+
+import gregtech.api.util.virtualregistry.VirtualRegistryBase;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -167,8 +170,9 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .value(isPrivate);
     }
 
-    protected IWidget createEntryList(Set<String> names, Function<String, IWidget> widgetFunction) {
-        return ListWidget.builder(new ArrayList<>(names), widgetFunction)
+    protected IWidget createEntryList(EntryTypes<T> type, WidgetCreator<T> widgetFunction) {
+        return ListWidget.builder(new ArrayList<>(VirtualRegistryBase.getEntryNames(getOwner(), type)),
+                        name -> widgetFunction.create(name, VirtualRegistryBase.getRegistry(getOwner()).getEntry(type, name)))
                 .background(GTGuiTextures.DISPLAY.asIcon()
                         .width(168 - 8)
                         .height(112 - 20))
@@ -176,6 +180,11 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .size(168 - 12, 112 - 24)
                 .left(4)
                 .bottom(6);
+    }
+
+    @FunctionalInterface
+    protected interface WidgetCreator<T> {
+        IWidget create(String name, T entry);
     }
 
     protected IWidget createIoRow() {
