@@ -845,12 +845,14 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                     if (fissionReactor.fuelDepletion == 0 || fuelIn.getPartialFuel() == null) {
                                         fuelIn.setPartialFuel(mat.material);
                                         component = new FuelRod(property.getMaxTemperature(), 1, property, 650, 3);
+                                        fuelIn.setInternalFuelRod(component);
                                     } else {
                                         // It's guaranteed to have this property (if the implementation is correct).
                                         FissionFuelProperty partialProp = fuelIn.getPartialFuel()
                                                 .getProperty(PropertyKey.FISSION_FUEL);
                                         component = new FuelRod(partialProp.getMaxTemperature(), 1, partialProp, 650,
                                                 3);
+                                        fuelIn.setInternalFuelRod(component);
                                     }
                                     fuelIn.setInternalFuelRod(component);
                                     fissionReactor.addComponent(component, i + radius, j + radius);
