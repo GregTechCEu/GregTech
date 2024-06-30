@@ -6,7 +6,6 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.mui.GTGuis;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.virtualregistry.EntryTypes;
@@ -21,25 +20,18 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
-import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -147,70 +139,24 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
         var fluidTank = new FluidSlotSyncHandler(this.linkedTank);
         fluidTank.updateCacheFromSource(true);
 
-        var panelSH = new PanelSyncHandler(panel) {
+        var entrySelectorSH = new EntrySelectorSH(panel, EntryTypes.ENDER_FLUID) {
 
             @Override
-            public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                return GTGuis.createPopupPanel("entry_selector", 168, 112)
-                        .child(IKey.str("Known Channels") // todo lang
-                                .color(UI_TITLE_COLOR).asWidget()
-                                .top(6)
-                                .left(4))
-                        .child(createEntryList(EntryTypes.ENDER_FLUID,
-                                (name, entry) -> new Row()
-                                        .left(4)
-                                        .marginBottom(2)
-                                        .height(18)
-                                        .widthRel(0.98f)
-                                        .setEnabledIf(row -> VirtualTankRegistry.hasTank(name, getOwner()))
-                                        .child(new Rectangle()
-                                                .setColor(entry.getColor())
-                                                .asWidget()
-                                                .marginRight(4)
-                                                .size(16)
-                                                .background(GTGuiTextures.SLOT.asIcon().size(18))
-                                                .top(1))
-                                        .child(IKey.str(entry.getColorStr())
-                                                .alignment(Alignment.CenterLeft)
-                                                .color(Color.WHITE.darker(1))
-                                                .asWidget()
-                                                .tooltipBuilder(tooltip -> {
-                                                    String desc = entry.getDescription();
-                                                    if (desc != null && !desc.isEmpty())
-                                                        tooltip.addLine(desc);
-                                                })
-                                                .width(64)
-                                                .height(16)
-                                                .top(1)
-                                                .marginRight(4))
-                                        .child(new ButtonWidget<>()
-                                                .overlay(GuiTextures.GEAR)
-                                                // todo lang
-                                                .tooltipBuilder(tooltip -> tooltip.addLine("Set Description"))
-                                                .onMousePressed(i -> {
-                                                    // open entry settings
-                                                    Interactable.playButtonClickSound();
-                                                    return true;
-                                                }))
-                                        .child(new FluidSlot()
-                                                .syncHandler(new FluidSlotSyncHandler(entry)
-                                                        .canDrainSlot(false)
-                                                        .canFillSlot(false))
-                                                .marginRight(2))
-                                        .child(new ButtonWidget<>()
-                                                .overlay(GTGuiTextures.BUTTON_CROSS)
-                                                // todo lang
-                                                .tooltipBuilder(tooltip -> tooltip.addLine("Delete Entry"))
-                                                .onMousePressed(i -> {
-                                                    // todo option to force delete, maybe as a popup?
-                                                    VirtualTankRegistry.delTank(name, getOwner(), false);
-                                                    Interactable.playButtonClickSound();
-                                                    return true;
-                                                }))));
+            protected IWidget createSlotWidget(VirtualTank entry) {
+                return new FluidSlot()
+                        .syncHandler(new FluidSlotSyncHandler(entry)
+                                .canDrainSlot(false)
+                                .canFillSlot(false))
+                        .marginRight(2);
+            }
+
+            @Override
+            protected void deleteEntry(String name, VirtualTank entry) {
+                VirtualTankRegistry.delTank(name, getOwner(), false);
             }
         };
 
-        syncManager.syncValue("entry_selector", panelSH);
+        syncManager.syncValue("entry_selector", entrySelectorSH);
 
         return new Column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
@@ -231,10 +177,10 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                 .background(GTGuiTextures.MC_BUTTON)
                                 .hoverBackground(GuiTextures.MC_BUTTON_HOVERED)
                                 .onMousePressed(i -> {
-                                    if (!panelSH.isPanelOpen()) {
-                                        panelSH.openPanel();
+                                    if (!entrySelectorSH.isPanelOpen()) {
+                                        entrySelectorSH.openPanel();
                                     } else {
-                                        panelSH.closePanel();
+                                        entrySelectorSH.closePanel();
                                     }
                                     Interactable.playButtonClickSound();
                                     return true;
