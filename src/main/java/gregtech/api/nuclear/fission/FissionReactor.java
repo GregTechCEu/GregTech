@@ -566,7 +566,7 @@ public class FissionReactor {
 
             this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff + 0.0001), this.power,
                     this.criticalRodInsertion);
-            this.fuelDepletion += this.power * 1000;
+            this.fuelDepletion += this.power;
 
             this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.) / 1000;
         } else {
