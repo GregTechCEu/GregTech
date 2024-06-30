@@ -241,12 +241,12 @@ public class FissionReactor {
                  * the two cells
                  */
                 for (int t = 0; t < ConfigHolder.machines.fissionReactorResolution; t++) {
-                    double[] pos = { .5, .5 };
-                    pos[0] += (fuelRods.get(j).getPos()[0] - fuelRods.get(i).getPos()[0]) *
+                    double[] pos = new double[2];
+                    pos[0] = (fuelRods.get(j).getPos()[0] - fuelRods.get(i).getPos()[0]) *
                             ((float) t / ConfigHolder.machines.fissionReactorResolution) + fuelRods.get(i).getPos()[0];
-                    pos[1] += (fuelRods.get(j).getPos()[1] - fuelRods.get(i).getPos()[1]) *
+                    pos[1] = (fuelRods.get(j).getPos()[1] - fuelRods.get(i).getPos()[1]) *
                             ((float) t / ConfigHolder.machines.fissionReactorResolution) + fuelRods.get(i).getPos()[1];
-                    ReactorComponent component = reactorLayout[(int) Math.floor(pos[0])][(int) Math.floor(pos[1])];
+                    ReactorComponent component = reactorLayout[(int) Math.round(pos[0])][(int) Math.round(pos[1])];
 
                     if (component == null) {
                         continue;
