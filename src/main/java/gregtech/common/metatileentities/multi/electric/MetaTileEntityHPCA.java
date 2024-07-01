@@ -167,7 +167,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     private void consumeEnergy() {
-        int energyToConsume = hpcaHandler.getCurrentEUt();
+        long energyToConsume = hpcaHandler.getCurrentEUt();
         boolean hasMaintenance = ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics();
         if (hasMaintenance) {
             // 10% more energy per maintenance problem
@@ -377,7 +377,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(true, hpcaHandler.getAllocatedCWUt() > 0) // transform into two-state system for
-                                                                            // display
+                // display
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
@@ -580,7 +580,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
         // cached gui info
         // holding these values past the computation clear because GUI is too "late" to read the state in time
-        private int cachedEUt;
+        private long cachedEUt;
         private int cachedCWUt;
 
         public HPCAGridHandler(@Nullable MetaTileEntityHPCA controller) {
@@ -760,10 +760,10 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
         }
 
         /** The current EU/t this HPCA should use, considering passive drain, current computation, etc.. */
-        public int getCurrentEUt() {
+        public long getCurrentEUt() {
             int maximumCWUt = Math.max(1, getMaxCWUt()); // behavior is no different setting this to 1 if it is 0
-            int maximumEUt = getMaxEUt();
-            int upkeepEUt = getUpkeepEUt();
+            long maximumEUt = getMaxEUt();
+            long upkeepEUt = getUpkeepEUt();
 
             if (maximumEUt == upkeepEUt) {
                 return maximumEUt;
@@ -775,8 +775,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
         }
 
         /** The amount of EU/t this HPCA uses just to stay on with 0 output computation. */
-        public int getUpkeepEUt() {
-            int upkeepEUt = 0;
+        public long getUpkeepEUt() {
+            long upkeepEUt = 0;
             for (var component : components) {
                 upkeepEUt += component.getUpkeepEUt();
             }
@@ -784,8 +784,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
         }
 
         /** The maximum EU/t that this HPCA could ever use with the given configuration. */
-        public int getMaxEUt() {
-            int maximumEUt = 0;
+        public long getMaxEUt() {
+            long maximumEUt = 0;
             for (var component : components) {
                 maximumEUt += component.getMaxEUt();
             }

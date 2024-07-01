@@ -30,8 +30,8 @@ public class HPCATest {
                         .coolingAmount(4)));
 
         final int maxCWUt = handler.getMaxCWUt();
-        final int upkeepEUt = handler.getUpkeepEUt();
-        final int maxEUt = handler.getMaxEUt();
+        final long upkeepEUt = handler.getUpkeepEUt();
+        final long maxEUt = handler.getMaxEUt();
         final int maxCoolingDemand = handler.getMaxCoolantDemand();
         final int maxCoolingAmount = handler.getMaxCoolingAmount();
         int allocated;
@@ -69,8 +69,8 @@ public class HPCATest {
                         .coolingAmount(2)));
 
         final int maxCWUt = handler.getMaxCWUt();
-        final int upkeepEUt = handler.getUpkeepEUt();
-        final int maxEUt = handler.getMaxEUt();
+        final long upkeepEUt = handler.getUpkeepEUt();
+        final long maxEUt = handler.getMaxEUt();
         final int maxCoolingDemand = handler.getMaxCoolingDemand();
         final int maxCoolingAmount = handler.getMaxCoolingAmount();
         int allocated, requested;
@@ -115,12 +115,13 @@ public class HPCATest {
                             .EUt(() -> r.nextInt(128))
                             .coolingAmount(() -> r.nextInt(128))));
 
-            final int maxEUt = handler.getMaxEUt();
-            final int upkeepEUt = handler.getUpkeepEUt();
+            final long maxEUt = handler.getMaxEUt();
+            final long upkeepEUt = handler.getUpkeepEUt();
             final int maxCWUt = handler.getMaxCWUt();
             final int maxCoolingDemand = handler.getMaxCoolingDemand();
             final int maxCoolingAmount = handler.getMaxCoolingAmount();
-            int allocated, requested, currentEUt;
+            int allocated, requested;
+            long currentEUt;
             double temperatureChange;
 
             // exit, we unit test these edge cases elsewhere
