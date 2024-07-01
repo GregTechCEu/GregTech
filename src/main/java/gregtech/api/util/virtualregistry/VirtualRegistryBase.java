@@ -60,12 +60,12 @@ public class VirtualRegistryBase extends WorldSavedData {
                 owner == null ? "public" : String.format("private [%s]", owner), name, type);
     }
 
-    public static <T extends VirtualEntry> void deleteEntry(@Nullable UUID owner, EntryTypes<T> type, String name, Predicate<T> shouldDelete) {
+    public static <T extends VirtualEntry> void deleteEntry(@Nullable UUID owner, EntryTypes<T> type, String name,
+                                                            Predicate<T> shouldDelete) {
         T entry = getEntry(owner, type, name);
         if (shouldDelete.test(entry))
             deleteEntry(owner, type, name);
     }
-
 
     public static Set<String> getEntryNames(UUID owner, EntryTypes<?> type) {
         return getRegistry(owner).getEntryNames(type);
