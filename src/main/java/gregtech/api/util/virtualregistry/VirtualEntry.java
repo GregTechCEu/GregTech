@@ -3,6 +3,8 @@ package gregtech.api.util.virtualregistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
 
     public static final String DEFAULT_COLOR = "FFFFFFFF";
@@ -11,7 +13,7 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
 
     private int color = 0xFFFFFFFF;
     private String colorStr = DEFAULT_COLOR;
-    private String description = null;
+    private @NotNull String description = "";
 
     public abstract EntryTypes<? extends VirtualEntry> getType();
 
@@ -41,11 +43,11 @@ public abstract class VirtualEntry implements INBTSerializable<NBTTagCompound> {
         return (int) tmp;
     }
 
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return this.description;
     }
 
-    public void setDescription(String desc) {
+    public void setDescription(@NotNull String desc) {
         this.description = desc;
     }
 
