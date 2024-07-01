@@ -60,7 +60,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     public static final int UPDATE_PRIVATE = GregtechDataCodes.assignId();
 
     protected T activeEntry = null;
-    private String color = VirtualEntry.DEFAULT_COLOR;
+    protected String color = VirtualEntry.DEFAULT_COLOR;
     protected UUID playerUUID = null;
     private boolean isPrivate = false;
     private boolean workingEnabled = true;
@@ -76,7 +76,12 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected void updateLink() {
         this.activeEntry = createEntry(createName(), getOwner());
+        this.activeEntry.setColor(this.color);
         markDirty();
+    }
+
+    public String getColorStr() {
+        return this.color;
     }
 
     protected final String createName() {;
@@ -118,9 +123,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     public void updateColor(String str) {
         if (str.length() == 8) {
-            this.color = str;
+            this.color = str.toUpperCase();
             updateLink();
-            this.activeEntry.setColor(this.color);
         }
     }
 
@@ -279,7 +283,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         protected IWidget createRow(String name, ModularPanel mainPanel, GuiSyncManager syncManager) {
             T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
             var entryDescriptionSH = new EntryDescriptionSH(mainPanel, entry);
-            syncManager.syncValue("entry_description_panel", entryDescriptionSH);
+            syncManager.syncValue(String.format("entry#%s_description", entry.getColorStr()), isPrivate ? 1 : 0, entryDescriptionSH);
 
             return new Row()
                     .left(4)
@@ -374,8 +378,13 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                     .child(new TextFieldWidget()
                             .widthRel(0.95f)
                             .height(18)
-                            .value(new StringSyncValue(entry::getDescription, entry::setDescription))
+                            .value(new StringSyncValue(entry::getDescription, this::updateDescription))
                             .align(Alignment.Center));
+        }
+
+        private void updateDescription(String desc) {
+            this.entry.setDescription(desc);
+            closePanel();
         }
     }
 }

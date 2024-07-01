@@ -130,7 +130,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
-        var name = new StringSyncValue(activeEntry::getColorStr, this::updateColor);
+        var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
         syncManager.syncValue("pump_mode", pumpMode);
@@ -192,10 +192,6 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                         .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
                         .lang("cover.pump.mode")
                         .build());
-    }
-
-    public String getColorStr() {
-        return this.activeEntry.getColorStr();
     }
 
     @Override
