@@ -36,11 +36,13 @@ import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +60,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     public static final int UPDATE_PRIVATE = GregtechDataCodes.assignId();
 
     protected T activeEntry = null;
+    private String color = VirtualEntry.DEFAULT_COLOR;
     protected UUID playerUUID = null;
     private boolean isPrivate = false;
     private boolean workingEnabled = true;
@@ -76,9 +79,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         markDirty();
     }
 
-    protected final String createName() {
-        String color = this.activeEntry == null ? VirtualEntry.DEFAULT_COLOR : this.activeEntry.getColorStr();
-        return identifier() + color;
+    protected final String createName() {;
+        return identifier() + this.color;
     }
 
     protected abstract String identifier();
@@ -116,18 +118,10 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     public void updateColor(String str) {
         if (str.length() == 8) {
-            this.activeEntry.setColor(str);
+            this.color = str;
             updateLink();
+            this.activeEntry.setColor(this.color);
         }
-    }
-
-    public int parseColor(String s) {
-        // stupid java not having actual unsigned ints
-        long tmp = Long.parseLong(s, 16);
-        if (tmp > 0x7FFFFFFF) {
-            tmp -= 0x100000000L;
-        }
-        return (int) tmp;
     }
 
     @Override
@@ -239,6 +233,9 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         this.isPrivate = nbt.getBoolean("Private");
         this.workingEnabled = nbt.getBoolean("WorkingAllowed");
         this.playerUUID = UUID.fromString(nbt.getString("PlacedUUID"));
+        int color = nbt.getInteger("Frequency");
+        this.color = Integer.toHexString(color).toUpperCase();
+        updateLink();
     }
 
     @Override
@@ -248,6 +245,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         nbt.setBoolean("Private", isPrivate);
         nbt.setBoolean("WorkingAllowed", workingEnabled);
         nbt.setString("PlacedUUID", playerUUID.toString());
+        nbt.setInteger("Frequency", activeEntry.getColor());
     }
 
     protected abstract class EntrySelectorSH extends PanelSyncHandler {
@@ -268,7 +266,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .color(UI_TITLE_COLOR).asWidget()
                             .top(6)
                             .left(4))
-                    .child(ListWidget.builder(this.names, this::createRow)
+                    .child(ListWidget.builder(this.names, name -> createRow(name, mainPanel, syncManager))
                             .background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
                                     .height(112 - 20))
@@ -278,8 +276,11 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .bottom(6));
         }
 
-        protected IWidget createRow(String name) {
+        protected IWidget createRow(String name, ModularPanel mainPanel, GuiSyncManager syncManager) {
             T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
+            var entryDescriptionSH = new EntryDescriptionSH(mainPanel, entry);
+            syncManager.syncValue("entry_description_panel", entryDescriptionSH);
+
             return new Row()
                     .left(4)
                     .marginBottom(2)
@@ -299,7 +300,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .asWidget()
                             .tooltipBuilder(tooltip -> {
                                 String desc = entry.getDescription();
-                                if (desc != null && !desc.isEmpty())
+                                if (!desc.isEmpty())
                                     tooltip.addLine(desc);
                             })
                             .width(64)
@@ -312,6 +313,11 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .tooltipBuilder(tooltip -> tooltip.addLine("Set Description"))
                             .onMousePressed(i -> {
                                 // open entry settings
+                                if (entryDescriptionSH.isPanelOpen()) {
+                                    entryDescriptionSH.closePanel();
+                                } else {
+                                    entryDescriptionSH.openPanel();
+                                }
                                 Interactable.playButtonClickSound();
                                 return true;
                             }))
@@ -351,5 +357,25 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         protected abstract IWidget createSlotWidget(T entry);
 
         protected abstract void deleteEntry(String name, T entry);
+    }
+
+    private static class EntryDescriptionSH extends PanelSyncHandler {
+
+        private final VirtualEntry entry;
+
+        protected EntryDescriptionSH(ModularPanel mainPanel, VirtualEntry entry) {
+            super(mainPanel);
+            this.entry = entry;
+        }
+
+        @Override
+        public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+            return GTGuis.createPopupPanel("entry_description", 168, 36)
+                    .child(new TextFieldWidget()
+                            .widthRel(0.95f)
+                            .height(18)
+                            .value(new StringSyncValue(entry::getDescription, entry::setDescription))
+                            .align(Alignment.Center));
+        }
     }
 }

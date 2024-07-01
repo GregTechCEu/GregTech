@@ -177,10 +177,10 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                 .background(GTGuiTextures.MC_BUTTON)
                                 .hoverBackground(GuiTextures.MC_BUTTON_HOVERED)
                                 .onMousePressed(i -> {
-                                    if (!entrySelectorSH.isPanelOpen()) {
-                                        entrySelectorSH.openPanel();
-                                    } else {
+                                    if (entrySelectorSH.isPanelOpen()) {
                                         entrySelectorSH.closePanel();
+                                    } else {
+                                        entrySelectorSH.openPanel();
                                     }
                                     Interactable.playButtonClickSound();
                                     return true;
@@ -201,7 +201,6 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("Frequency", activeEntry.getColor());
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
     }
@@ -211,9 +210,6 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
         super.readFromNBT(tagCompound);
         this.pumpMode = CoverPump.PumpMode.values()[tagCompound.getInteger("PumpMode")];
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
-        int color = tagCompound.getInteger("Frequency");
-        this.activeEntry = createEntry(identifier() + Integer.toHexString(color).toUpperCase(), this.getOwner());
-        this.activeEntry.setColor(Integer.toHexString(color));
     }
 
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
