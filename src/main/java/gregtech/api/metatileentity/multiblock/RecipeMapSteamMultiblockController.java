@@ -102,7 +102,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addCustom(tl -> {
                     // custom steam tank line

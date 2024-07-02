@@ -7,6 +7,7 @@ import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 
 import java.util.List;
@@ -20,14 +21,33 @@ public class MultiblockDisplayText {
      * Construct a new Multiblock Display Text builder.
      * <br>
      * Automatically adds the "Invalid Structure" line if the structure is not formed.
+     * <br>
+     * If your multiblock does not explicitly allow wallsharing, use the {@link #builder(List, boolean, BlockPos)}
+     * override instead.
+     * <br>
+     * <br>
+     * This WILL NOT BE REMOVED due to deprecation,
+     * the deprecation tag is merely encouragement to instead use the new preferred override.
      */
+    @Deprecated
     public static Builder builder(List<ITextComponent> textList, boolean isStructureFormed) {
         return builder(textList, isStructureFormed, true);
     }
 
     public static Builder builder(List<ITextComponent> textList, boolean isStructureFormed,
                                   boolean showIncompleteStructureWarning) {
-        return new Builder(textList, isStructureFormed, showIncompleteStructureWarning);
+        return new Builder(textList, isStructureFormed, showIncompleteStructureWarning, null);
+    }
+
+    /**
+     * Construct a new Multiblock Display Text builder.
+     * <br>
+     * Automatically adds the "Invalid Structure" line if the structure is not formed.
+     * <br>
+     * Alternatively, adds the "Blocked Structure" line if the structure has been wallshare blocked.
+     */
+    public static Builder builder(List<ITextComponent> textList, boolean isStructureFormed, BlockPos wallshareBlocker) {
+        return new Builder(textList, isStructureFormed, true, wallshareBlocker);
     }
 
     public static class Builder {
@@ -43,15 +63,24 @@ public class MultiblockDisplayText {
         private String runningKey = "gregtech.multiblock.running";
 
         private Builder(List<ITextComponent> textList, boolean isStructureFormed,
-                        boolean showIncompleteStructureWarning) {
+                        boolean showIncompleteStructureWarning, BlockPos wallshareBlocker) {
             this.textList = textList;
             this.isStructureFormed = isStructureFormed;
 
             if (!isStructureFormed && showIncompleteStructureWarning) {
-                ITextComponent base = TextComponentUtil.translationWithColor(TextFormatting.RED,
-                        "gregtech.multiblock.invalid_structure");
-                ITextComponent hover = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                        "gregtech.multiblock.invalid_structure.tooltip");
+                ITextComponent base;
+                ITextComponent hover;
+                if (wallshareBlocker == null) {
+                    base = TextComponentUtil.translationWithColor(TextFormatting.RED,
+                            "gregtech.multiblock.invalid_structure");
+                    hover = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                            "gregtech.multiblock.invalid_structure.tooltip");
+                } else {
+                    base = TextComponentUtil.translationWithColor(TextFormatting.RED,
+                            "gregtech.multiblock.blocked_wallshare");
+                    hover = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                            "gregtech.multiblock.blocked_wallshare.tooltip", wallshareBlocker);
+                }
                 textList.add(TextComponentUtil.setHover(base, hover));
             }
         }

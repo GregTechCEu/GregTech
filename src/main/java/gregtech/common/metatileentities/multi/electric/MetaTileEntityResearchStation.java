@@ -222,7 +222,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",

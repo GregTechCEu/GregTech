@@ -367,7 +367,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * to use translation, use TextComponentTranslation
      */
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed());
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker());
     }
 
     /**
@@ -522,7 +522,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
      */
     protected void addErrorText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker())
                 .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
     }
 

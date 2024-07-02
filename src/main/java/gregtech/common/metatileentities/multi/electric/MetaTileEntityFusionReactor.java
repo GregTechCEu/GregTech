@@ -562,7 +562,9 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                         x, y, width, height, texture, moveType)
                                 .setIgnoreColor(true)
                                 .setHoverTextConsumer(
-                                        tl -> MultiblockDisplayText.builder(tl, instance.isStructureFormed())
+                                        tl -> MultiblockDisplayText
+                                                .builder(tl, instance.isStructureFormed(),
+                                                        instance.getWallshareBlocker())
                                                 .setWorkingStatus(instance.recipeMapWorkable.isWorkingEnabled(),
                                                         instance.recipeMapWorkable.isActive())
                                                 .addWorkingStatusLine());

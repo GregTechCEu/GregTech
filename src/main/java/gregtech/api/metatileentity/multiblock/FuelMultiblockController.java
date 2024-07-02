@@ -41,7 +41,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
 
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
                 .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())

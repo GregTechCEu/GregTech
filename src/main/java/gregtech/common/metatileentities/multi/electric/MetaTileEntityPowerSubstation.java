@@ -327,7 +327,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker())
                 .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",

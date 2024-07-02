@@ -108,7 +108,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     protected void addDisplayText(List<ITextComponent> textList) {
         ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
 
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
                 .addEnergyTierLine(logic.currentMachineStack == ItemStack.EMPTY ? -1 : logic.machineTier)

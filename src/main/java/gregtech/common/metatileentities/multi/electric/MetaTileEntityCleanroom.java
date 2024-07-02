@@ -481,7 +481,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker())
                 .setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
                 .addCustom(tl -> {

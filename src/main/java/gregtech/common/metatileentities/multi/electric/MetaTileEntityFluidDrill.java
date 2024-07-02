@@ -160,7 +160,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), getWallshareBlocker())
                 .setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",

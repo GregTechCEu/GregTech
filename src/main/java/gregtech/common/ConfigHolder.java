@@ -161,6 +161,19 @@ public class ConfigHolder {
                 "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
                 "Default: true" })
         public boolean allowTickAcceleration = true;
+
+        @Config.Comment({ "Whether to allow wallsharing for multiblocks as default behavior.",
+                "Warning - disabling this requires extra checks to be performed, impacting performance.",
+                "Default: true" })
+        @Config.RequiresWorldRestart
+        public boolean allowWallsharing = true;
+
+        @Config.Comment({ "Whether to allow extended facing for multiblocks as default behavior.",
+                "Disabling this prevents multiblocks from facing vertically or rotating.",
+                "Does not apply to all multiblocks.",
+                "Default: true" })
+        @Config.RequiresWorldRestart
+        public boolean allowExtendedFacing = true;
     }
 
     public static class WorldGenOptions {
