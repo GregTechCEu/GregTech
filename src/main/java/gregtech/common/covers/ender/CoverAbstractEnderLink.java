@@ -147,7 +147,46 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .bindPlayerInventory();
     }
 
-    protected abstract Column createWidgets(ModularPanel panel, GuiSyncManager guiSyncManager);
+    protected Column createWidgets(ModularPanel panel, GuiSyncManager syncManager) {
+        var name = new StringSyncValue(this::getColorStr, this::updateColor);
+
+        var entrySelectorSH = createEntrySelector(panel);
+        syncManager.syncValue("entry_selector", entrySelectorSH);
+
+        return new Column().coverChildrenHeight().top(24)
+                .margin(7, 0).widthRel(1f)
+                .child(new Row().marginBottom(2)
+                        .coverChildrenHeight()
+                        .child(createPrivateButton())
+                        .child(createColorIcon())
+                        .child(new TextFieldWidget()
+                                .height(18)
+                                .value(name)
+                                .setPattern(COLOR_INPUT_PATTERN)
+                                .widthRel(0.5f)
+                                .marginRight(2))
+                        .child(createEntrySlot())
+                        .child(new ButtonWidget<>()
+                                // .overlay() todo add overlay, maybe a menu-like icon?
+                                .background(GTGuiTextures.MC_BUTTON)
+                                .hoverBackground(GuiTextures.MC_BUTTON_HOVERED)
+                                // todo lang
+                                .tooltip(tooltip -> tooltip.addLine("Open Entry Selector"))
+                                .onMousePressed(i -> {
+                                    if (entrySelectorSH.isPanelOpen()) {
+                                        entrySelectorSH.closePanel();
+                                    } else {
+                                        entrySelectorSH.openPanel();
+                                    }
+                                    Interactable.playButtonClickSound();
+                                    return true;
+                                })))
+                .child(createIoRow());
+    }
+
+    protected abstract EntrySelectorSH createEntrySelector(ModularPanel panel);
+
+    protected abstract IWidget createEntrySlot();
 
     protected IWidget createColorIcon() {
         // todo color selector popup panel

@@ -28,9 +28,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.drawable.GuiTextures;
-import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
@@ -39,8 +36,6 @@ import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -124,22 +119,8 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        getFluidFilterContainer().setMaxTransferSize(1);
-        return super.buildUI(guiData, guiSyncManager);
-    }
-
-    protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
-        var name = new StringSyncValue(this::getColorStr, this::updateColor);
-
-        var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
-        syncManager.syncValue("pump_mode", pumpMode);
-        pumpMode.updateCacheFromSource(true);
-
-        var fluidTank = new FluidSlotSyncHandler(this.linkedTank);
-        fluidTank.updateCacheFromSource(true);
-
-        var entrySelectorSH = new EntrySelectorSH(panel, EntryTypes.ENDER_FLUID) {
+    protected CoverAbstractEnderLink<VirtualTank>.EntrySelectorSH createEntrySelector(ModularPanel panel) {
+        return new EntrySelectorSH(panel, EntryTypes.ENDER_FLUID) {
 
             @Override
             protected IWidget createSlotWidget(VirtualTank entry) {
@@ -155,41 +136,27 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                 VirtualTankRegistry.delTank(name, getOwner(), false);
             }
         };
+    }
 
-        syncManager.syncValue("entry_selector", entrySelectorSH);
+    @Override
+    protected IWidget createEntrySlot() {
+        var fluidTank = new FluidSlotSyncHandler(this.linkedTank);
+        fluidTank.updateCacheFromSource(true);
 
-        return new Column().coverChildrenHeight().top(24)
-                .margin(7, 0).widthRel(1f)
-                .child(new Row().marginBottom(2)
-                        .coverChildrenHeight()
-                        .child(createPrivateButton())
-                        .child(createColorIcon())
-                        .child(new TextFieldWidget()
-                                .height(18)
-                                .value(name)
-                                .setPattern(COLOR_INPUT_PATTERN)
-                                .widthRel(0.5f)
-                                .marginRight(2))
-                        .child(new FluidSlot()
-                                .size(18)
-                                .syncHandler(fluidTank)
-                                .marginRight(2))
-                        .child(new ButtonWidget<>()
-                                // .overlay() todo add overlay, maybe a menu-like icon?
-                                .background(GTGuiTextures.MC_BUTTON)
-                                .hoverBackground(GuiTextures.MC_BUTTON_HOVERED)
-                                // todo lang
-                                .tooltip(tooltip -> tooltip.addLine("Open Entry Selector"))
-                                .onMousePressed(i -> {
-                                    if (entrySelectorSH.isPanelOpen()) {
-                                        entrySelectorSH.closePanel();
-                                    } else {
-                                        entrySelectorSH.openPanel();
-                                    }
-                                    Interactable.playButtonClickSound();
-                                    return true;
-                                })))
-                .child(createIoRow())
+        return new FluidSlot()
+                .size(18)
+                .syncHandler(fluidTank)
+                .marginRight(2);
+    }
+
+    protected Column createWidgets(ModularPanel panel, GuiSyncManager syncManager) {
+        getFluidFilterContainer().setMaxTransferSize(1);
+
+        var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
+        syncManager.syncValue("pump_mode", pumpMode);
+        pumpMode.updateCacheFromSource(true);
+
+        return super.createWidgets(panel, syncManager)
                 .child(getFluidFilterContainer().initUI(panel, syncManager))
                 .child(new EnumRowBuilder<>(CoverPump.PumpMode.class)
                         .value(pumpMode)
