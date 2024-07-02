@@ -38,8 +38,8 @@ public class HPCATest {
         double temperatureChange;
 
         assertThat(maxCWUt, is(0));
-        assertThat(upkeepEUt, is(32 * 4));
-        assertThat(maxEUt, is(128 * 4));
+        assertThat(upkeepEUt, is(32L * 4L));
+        assertThat(maxEUt, is(128L * 4L));
         assertThat(maxCoolingDemand, is(0));
         assertThat(maxCoolingAmount, is(4 * 4));
 
@@ -76,7 +76,7 @@ public class HPCATest {
         int allocated, requested;
         double temperatureChange;
 
-        final int FIXED_EUT = 32 * 8;
+        final long FIXED_EUT = 32 * 8;
         assertThat(maxCWUt, is(4 * 4));
         assertThat(upkeepEUt, is(FIXED_EUT));
         assertThat(maxEUt, is(FIXED_EUT));
