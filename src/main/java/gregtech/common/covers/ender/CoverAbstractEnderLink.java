@@ -1,5 +1,7 @@
 package gregtech.common.covers.ender;
 
+import com.cleanroommc.modularui.widgets.TextWidget;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
@@ -50,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("SameParameterValue")
@@ -252,6 +255,27 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         nbt.setInteger("Frequency", activeEntry.getColor());
     }
 
+    private static class InteractableText<T extends VirtualEntry> extends TextWidget implements Interactable {
+
+        private final T entry;
+        private final Consumer<String> setter;
+
+        public InteractableText(T entry, Consumer<String> setter) {
+            super(IKey.str(entry.getColorStr())
+                    .alignment(Alignment.CenterLeft)
+                    .color(Color.WHITE.darker(1)));
+            this.entry = entry;
+            this.setter = setter;
+        }
+
+        @NotNull
+        @Override
+        public Result onMousePressed(int mouseButton) {
+            this.setter.accept(this.entry.getColorStr());
+            return Result.SUCCESS;
+        }
+    }
+
     protected abstract class EntrySelectorSH extends PanelSyncHandler {
 
         private final EntryTypes<T> type;
@@ -298,10 +322,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .size(16)
                             .background(GTGuiTextures.SLOT.asIcon().size(18))
                             .top(1))
-                    .child(IKey.str(entry.getColorStr())
-                            .alignment(Alignment.CenterLeft)
-                            .color(Color.WHITE.darker(1))
-                            .asWidget()
+                    .child(new InteractableText<>(entry, CoverAbstractEnderLink.this::updateColor)
                             .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                             .tooltipBuilder(tooltip -> {
                                 String desc = entry.getDescription();
