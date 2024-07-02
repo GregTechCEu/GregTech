@@ -6,6 +6,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.*;
+import gregtech.common.covers.ender.CoverEnderFluidLink;
 import gregtech.common.covers.filter.*;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -182,7 +183,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      */
     private static void enderFluidLinkInfo(@NotNull IProbeInfo probeInfo, @NotNull CoverEnderFluidLink enderFluidLink) {
         transferRateText(probeInfo, enderFluidLink.getPumpMode(), " " + lang("cover.bucket.mode.milli_bucket_rate"),
-                enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
+                enderFluidLink.isIoEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
         fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
