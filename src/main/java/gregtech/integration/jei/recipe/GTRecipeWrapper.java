@@ -1,6 +1,7 @@
 package gregtech.integration.jei.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.items.metaitem.MetaItem;
@@ -28,6 +29,7 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
+import gregtech.integration.jei.utils.JeiInteractableText;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -50,7 +52,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
-
     private final List<GTRecipeInput> sortedInputs;
     private final List<GTRecipeInput> sortedFluidInputs;
 
@@ -62,6 +63,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         this.sortedInputs.sort(GTRecipeInput.RECIPE_INPUT_COMPARATOR);
         this.sortedFluidInputs = new ArrayList<>(recipe.getFluidInputs());
         this.sortedFluidInputs.sort(GTRecipeInput.RECIPE_INPUT_COMPARATOR);
+
+        initExtras();
     }
 
     public Recipe getRecipe() {
@@ -247,32 +250,38 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
 
+        // [EUt, duration, color]
+        long[] overclockResult = calculateJeiOverclock();
+
         // Default entries
         if (drawTotalEU) {
-            long eu = Math.abs((long) recipe.getEUt()) * recipe.getDuration();
             // sadly we still need a custom override here, since computation uses duration and EU/t very differently
             if (recipe.hasProperty(TotalComputationProperty.getInstance()) &&
                     recipe.hasProperty(ComputationProperty.getInstance())) {
+                long eu = Math.abs((long) recipe.getEUt()) * recipe.getDuration();
                 int minimumCWUt = recipe.getProperty(ComputationProperty.getInstance(), 1);
                 minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition,
                         0x111111);
             } else {
-                minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", eu), 0, yPosition, 0x111111);
+                minecraft.fontRenderer.drawString(
+                        I18n.format("gregtech.recipe.total", overclockResult[0] * overclockResult[1]), 0, yPosition,
+                        (int) overclockResult[2]);
             }
         }
         if (drawEUt) {
+            // scuffed way of dealing with 2 eu/t recipes, just recomputing instead of checking if eu/t <= 2
             minecraft.fontRenderer.drawString(
                     I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
-                            Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]),
-                    0, yPosition += LINE_HEIGHT, 0x111111);
+                            overclockResult[0],
+                            GTValues.VNF[GTUtility.getTierByVoltage(overclockResult[0])]),
+                    0, yPosition += LINE_HEIGHT, (int) overclockResult[2]);
         }
         if (drawDuration) {
             minecraft.fontRenderer.drawString(
                     I18n.format("gregtech.recipe.duration",
-                            TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)),
-                    0, yPosition += LINE_HEIGHT, 0x111111);
+                            TextFormattingUtil.formatNumbers(overclockResult[1] / 20D)),
+                    0, yPosition += LINE_HEIGHT, (int) overclockResult[2]);
         }
-
         // Property custom entries
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
             if (!propertyEntry.getKey().isHidden()) {
@@ -300,28 +309,82 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        // do not add the X button if no tweaker mod is present
-        if (!RecipeCompatUtil.isTweakerLoaded()) return;
+        // recipe is null on the first call of this method
+        if (recipe == null) return;
+        if (RecipeCompatUtil.isTweakerLoaded()) {
+            BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
+                    Minecraft.getMinecraft().player.isCreative();
+            buttons.add(new JeiButton(166, 2, 10, 10)
+                    .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
+                    .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() +
+                            " script, to remove this recipe, to the clipboard"))
+                    .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
+                        String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
+                        String output = RecipeCompatUtil.getFirstOutputString(recipe);
+                        if (!output.isEmpty()) {
+                            output = "// " + output + "\n";
+                        }
+                        String copyString = output + recipeLine + "\n";
+                        ClipboardUtil.copyToClipboard(copyString);
+                        Minecraft.getMinecraft().player.sendMessage(
+                                new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
+                        return true;
+                    })
+                    .setActiveSupplier(creativePlayerCtPredicate));
+        }
+        if (recipeMap.jeiOverclockButtonEnabled()) {
+            int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+            // just here because if highTier is disabled, if a recipe is (incorrectly) registering
+            // UIV+ recipes, this allows it to go up to the recipe tier for that recipe only
+            int maxTier = Math.max(recipeTier, GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX);
+            int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+            // scuffed positioning because we can't have good ui(until mui soontm)
+            jeiTexts.add(
+                    new JeiInteractableText(0, 90 - LINE_HEIGHT, GTValues.VNF[recipeTier], 0x111111, recipeTier, true)
+                            .setTooltipBuilder((state, tooltip) -> {
+                                tooltip.add(I18n.format("gregtech.jei.overclock_button", GTValues.VNF[state]));
+                                tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.jei.overclock_warn"));
+                            })
+                            .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
+                                int state = text.getState();
+                                if (mouseButton == 0) {
+                                    // increment tier if left click
+                                    if (++state > maxTier) state = minTier;
+                                } else if (mouseButton == 1) {
+                                    // decrement tier if right click
+                                    if (--state < minTier) state = maxTier;
+                                } else return false;
+                                text.setCurrentText(GTValues.VNF[state]);
+                                text.setState(state);
+                                return true;
+                            }));
+        }
+    }
 
-        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
-                Minecraft.getMinecraft().player.isCreative();
-        buttons.add(new JeiButton(166, 2, 10, 10)
-                .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() +
-                        " script, to remove this recipe, to the clipboard"))
-                .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
-                    String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
-                    String output = RecipeCompatUtil.getFirstOutputString(recipe);
-                    if (!output.isEmpty()) {
-                        output = "// " + output + "\n";
-                    }
-                    String copyString = output + recipeLine + "\n";
-                    ClipboardUtil.copyToClipboard(copyString);
-                    Minecraft.getMinecraft().player.sendMessage(
-                            new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
-                    return true;
-                })
-                .setActiveSupplier(creativePlayerCtPredicate));
+    public long[] calculateJeiOverclock() {
+        // simple case
+        if (!recipeMap.jeiOverclockButtonEnabled())
+            return new long[] { recipe.getEUt(), recipe.getDuration(), 0x111111 };
+
+        // ULV doesn't overclock to LV, so treat ULV recipes as LV
+        int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+        // tier difference *should* not be negative here since at least displayOCTier() == recipeTier
+        int tierDifference = jeiTexts.get(0).getState() - recipeTier;
+        // there isn't any overclocking
+        if (tierDifference == 0) return new long[] { recipe.getEUt(), recipe.getDuration(), 0x111111 };
+
+        long[] result = new long[3];
+        // if duration is less than 0.5, that means even with one less overclock, the recipe would still 1 tick
+        // so add the yellow warning
+        // LCR and fusion get manual overrides for now
+        double duration = Math.floor(recipe.getDuration() /
+                Math.pow(recipeMap == RecipeMaps.LARGE_CHEMICAL_RECIPES ? 4 : 2, tierDifference));
+        result[2] = duration <= 0.5 ? 0xFFFF55 : 0x111111;
+        result[0] = (long) Math.abs(recipe.getEUt()) *
+                (int) Math.pow(recipeMap == RecipeMaps.FUSION_RECIPES ? 2 : 4, tierDifference);
+        result[1] = Math.max(1, (int) duration);
+
+        return result;
     }
 
     public ChancedItemOutput getOutputChance(int slot) {
