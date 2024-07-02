@@ -37,12 +37,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import com.cleanroommc.groovyscript.GroovyScript;
 import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.GroovyPlugin;
-import com.cleanroommc.groovyscript.api.IGameObjectParser;
+import com.cleanroommc.groovyscript.api.IObjectParser;
 import com.cleanroommc.groovyscript.api.Result;
 import com.cleanroommc.groovyscript.compat.mods.GroovyContainer;
-import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
+import com.cleanroommc.groovyscript.compat.mods.GroovyPropertyContainer;
 import com.cleanroommc.groovyscript.event.ScriptRunEvent;
-import com.cleanroommc.groovyscript.gameobjects.GameObjectHandler;
 import com.cleanroommc.groovyscript.helper.EnumHelper;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import com.google.common.collect.ImmutableList;
@@ -118,6 +117,7 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         return t;
     }
 
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public static GroovyContainer<?> getInstance() {
         return modSupportContainer;
     }
@@ -238,34 +238,31 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
 
     @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     @Override
-    public @Nullable ModPropertyContainer createModPropertyContainer() {
+    public @Nullable GroovyPropertyContainer createGroovyPropertyContainer() {
         return new PropertyContainer();
     }
 
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     @Override
-    public void onCompatLoaded(GroovyContainer<?> groovyContainer) {
-        GroovyScriptModule.modSupportContainer = groovyContainer;
-        GameObjectHandler.builder("recipemap", RecipeMap.class)
-                .mod(GTValues.MODID)
-                .parser(IGameObjectParser.wrapStringGetter(RecipeMap::getByName))
+    public void onCompatLoaded(GroovyContainer<?> container) {
+        GroovyScriptModule.modSupportContainer = container;
+        container.objectMapperBuilder("recipemap", RecipeMap.class)
+                .parser(IObjectParser.wrapStringGetter(RecipeMap::getByName))
                 .completerOfNamed(RecipeMap::getRecipeMaps, RecipeMap::getUnlocalizedName)
                 .register();
-        GameObjectHandler.builder("material", Material.class)
-                .mod(GTValues.MODID)
-                .parser(IGameObjectParser.wrapStringGetter(GregTechAPI.materialManager::getMaterial))
+        container.objectMapperBuilder("material", Material.class)
+                .parser(IObjectParser.wrapStringGetter(GregTechAPI.materialManager::getMaterial))
                 .completerOfNamed(GregTechAPI.materialManager::getRegisteredMaterials,
                         mat -> mat.getResourceLocation().toString())
                 .register();
 
-        GameObjectHandler.builder("oreprefix", OrePrefix.class)
-                .mod(GTValues.MODID)
-                .parser(IGameObjectParser.wrapStringGetter(OrePrefix::getPrefix))
+        container.objectMapperBuilder("oreprefix", OrePrefix.class)
+                .parser(IObjectParser.wrapStringGetter(OrePrefix::getPrefix))
                 .completerOfNamed(OrePrefix::values, v -> v.name)
                 .register();
 
-        GameObjectHandler.builder("metaitem", ItemStack.class)
-                .mod(GTValues.MODID)
-                .parser(IGameObjectParser.wrapStringGetter(GroovyScriptModule::getMetaItem))
+        container.objectMapperBuilder("metaitem", ItemStack.class)
+                .parser(IObjectParser.wrapStringGetter(GroovyScriptModule::getMetaItem))
                 .completer((paramIndex, items) -> {
                     if (paramIndex != 0) return;
                     for (var iterator = metaItems.object2ObjectEntrySet().fastIterator(); iterator.hasNext();) {
@@ -280,8 +277,7 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
                 })
                 .register();
 
-        GameObjectHandler.builder("element", Element.class)
-                .mod(GTValues.MODID)
+        container.objectMapperBuilder("element", Element.class)
                 .parser((s, args) -> {
                     Element element = Elements.get(s);
                     if (element != null) return Result.some(element);
