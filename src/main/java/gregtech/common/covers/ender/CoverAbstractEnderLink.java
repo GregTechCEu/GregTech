@@ -1,5 +1,7 @@
 package gregtech.common.covers.ender;
 
+import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.TextWidget;
 
 import gregtech.api.capability.GregtechDataCodes;
@@ -258,21 +260,47 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     private static class InteractableText<T extends VirtualEntry> extends TextWidget implements Interactable {
 
         private final T entry;
-        private final Consumer<String> setter;
+        private final EntryColorSH syncHandler;
 
         public InteractableText(T entry, Consumer<String> setter) {
             super(IKey.str(entry.getColorStr())
                     .alignment(Alignment.CenterLeft)
                     .color(Color.WHITE.darker(1)));
             this.entry = entry;
-            this.setter = setter;
+            this.syncHandler = new EntryColorSH(setter);
+            setSyncHandler(this.syncHandler);
         }
 
         @NotNull
         @Override
         public Result onMousePressed(int mouseButton) {
-            this.setter.accept(this.entry.getColorStr());
+            this.syncHandler.setColor(this.entry.getColorStr());
+            this.syncHandler.syncToServer(1, buf -> NetworkUtils.writeStringSafe(buf, this.entry.getColorStr()));
             return Result.SUCCESS;
+        }
+    }
+
+    private static class EntryColorSH extends SyncHandler {
+        private final Consumer<String> setter;
+
+        private EntryColorSH(Consumer<String> setter) {
+            this.setter = setter;
+        }
+
+        public void setColor(String c) {
+            this.setter.accept(c);
+        }
+
+        @Override
+        public void readOnClient(int id, PacketBuffer buf) throws IOException {
+
+        }
+
+        @Override
+        public void readOnServer(int id, PacketBuffer buf) throws IOException {
+            if (id == 1) {
+                setColor(NetworkUtils.readStringSafe(buf));
+            }
         }
     }
 
