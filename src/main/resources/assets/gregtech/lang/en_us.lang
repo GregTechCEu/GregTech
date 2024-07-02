@@ -1828,6 +1828,7 @@ gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
 gregtech.material.rtm_alloy=RTM Alloy
+gregtech.material.ilmenite_slag=Ilmenite Slag
 
 
 # Organic Chemistry Materials
@@ -2041,6 +2042,11 @@ gregtech.material.acidic_naquadria_solution=Acidic Naquadria Solution
 gregtech.material.naquadria_waste=Naquadria Waste
 gregtech.material.lapotron=Lapotron
 gregtech.material.uu_matter=UU-Matter
+gregtech.material.bauxite_slurry=Bauxite Slurry
+gregtech.material.cracked_bauxite_slurry=Cracked Bauxite Slurry
+gregtech.material.bauxite_sludge=Bauxite Sludge
+gregtech.material.decalcified_bauxite_sludge=Decalcified Bauxite Sludge
+gregtech.material.bauxite_slag=Bauxite Slag
 
 
 # Second Degree Materials
