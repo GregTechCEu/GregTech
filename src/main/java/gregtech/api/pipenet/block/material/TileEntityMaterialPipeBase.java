@@ -1,6 +1,8 @@
 package gregtech.api.pipenet.block.material;
 
+import gregtech.api.pipenet.INodeData;
 import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -15,8 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_MATERIAL;
 
 public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>,
-        NodeDataType> extends TileEntityPipeBase<PipeType, NodeDataType>
-                                                implements IMaterialPipeTile<PipeType, NodeDataType> {
+        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge>
+                                                extends TileEntityPipeBase<PipeType, NodeDataType, Edge>
+                                                implements IMaterialPipeTile<PipeType, NodeDataType, Edge> {
 
     private Material pipeMaterial = Materials.Aluminium;
 
@@ -25,16 +28,17 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         return pipeMaterial;
     }
 
-    public void setPipeData(BlockPipe<PipeType, NodeDataType, ?> pipeBlock, PipeType pipeType, Material pipeMaterial) {
-        super.setPipeData(pipeBlock, pipeType);
+    public void setPipeData(BlockPipe<PipeType, NodeDataType, Edge, ?> pipeBlock, PipeType pipeType,
+                            Material pipeMaterial) {
         this.pipeMaterial = pipeMaterial;
+        super.setPipeData(pipeBlock, pipeType);
         if (!getWorld().isRemote) {
             writeCustomData(UPDATE_PIPE_MATERIAL, this::writePipeMaterial);
         }
     }
 
     @Override
-    public void setPipeData(BlockPipe<PipeType, NodeDataType, ?> pipeBlock, PipeType pipeType) {
+    public void setPipeData(BlockPipe<PipeType, NodeDataType, Edge, ?> pipeBlock, PipeType pipeType) {
         throw new UnsupportedOperationException("Unsupported for TileEntityMaterialMaterialPipeBase");
     }
 
@@ -44,14 +48,14 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
     }
 
     @Override
-    public BlockMaterialPipe<PipeType, NodeDataType, ?> getPipeBlock() {
-        return (BlockMaterialPipe<PipeType, NodeDataType, ?>) super.getPipeBlock();
+    public BlockMaterialPipe<PipeType, NodeDataType, Edge, ?> getPipeBlock() {
+        return (BlockMaterialPipe<PipeType, NodeDataType, Edge, ?>) super.getPipeBlock();
     }
 
     @Override
-    public void transferDataFrom(IPipeTile<PipeType, NodeDataType> tileEntity) {
+    public void transferDataFrom(IPipeTile<PipeType, NodeDataType, Edge> tileEntity) {
         super.transferDataFrom(tileEntity);
-        this.pipeMaterial = ((IMaterialPipeTile<PipeType, NodeDataType>) tileEntity).getPipeMaterial();
+        this.pipeMaterial = ((IMaterialPipeTile<PipeType, NodeDataType, Edge>) tileEntity).getPipeMaterial();
     }
 
     @NotNull
@@ -70,6 +74,8 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         if (this.pipeMaterial == null) {
             this.pipeMaterial = registry.getFallbackMaterial();
         }
+        this.getNode().setData(getPipeBlock().createProperties(this));
+        if (!compound.hasKey("PipeNetVersion")) markAsNeedingOldNetSetup();
     }
 
     private void writePipeMaterial(@NotNull PacketBuffer buf) {
@@ -97,7 +103,7 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         super.receiveCustomData(discriminator, buf);
         if (discriminator == UPDATE_PIPE_MATERIAL) {
             readPipeMaterial(buf);
-            scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 }

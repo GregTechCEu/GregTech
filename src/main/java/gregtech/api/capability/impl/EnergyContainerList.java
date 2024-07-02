@@ -138,11 +138,11 @@ public class EnergyContainerList implements IEnergyContainer {
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         long amperesUsed = 0L;
         List<IEnergyContainer> energyContainerList = this.energyContainerList;
         for (IEnergyContainer iEnergyContainer : energyContainerList) {
-            amperesUsed += iEnergyContainer.acceptEnergyFromNetwork(null, voltage, amperage);
+            amperesUsed += iEnergyContainer.acceptEnergyFromNetwork(null, voltage, amperage, simulate);
             if (amperage == amperesUsed) {
                 return amperesUsed;
             }

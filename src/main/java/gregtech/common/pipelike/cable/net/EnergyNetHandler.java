@@ -1,133 +1,321 @@
 package gregtech.common.pipelike.cable.net;
 
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.pipenet.AbstractGroupData;
+import gregtech.api.pipenet.IPipeNetHandler;
+import gregtech.api.pipenet.NetNode;
+import gregtech.api.pipenet.NetPath;
+import gregtech.api.pipenet.NodeLossResult;
+import gregtech.api.pipenet.edge.NetFlowEdge;
+import gregtech.api.pipenet.edge.SimulatorKey;
+import gregtech.api.pipenet.edge.util.FlowConsumerList;
+import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import java.util.Objects;
+import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import it.unimi.dsi.fastutil.doubles.DoubleList;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public class EnergyNetHandler implements IEnergyContainer {
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
-    private EnergyNet net;
+public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
+
+    protected static final NetNode<Insulation, WireProperties, NetFlowEdge> FAKE_SOURCE = new NetNode<>(
+            new WireProperties(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, Integer.MAX_VALUE, false));
+
+    private final WorldEnergyNet net;
     private boolean transfer;
     private final TileEntityCable cable;
     private final EnumFacing facing;
+    private final Map<NetNode<Insulation, WireProperties, NetFlowEdge>, NodeLossResult> lossResultCache = new Object2ObjectOpenHashMap<>();
+    private Object2LongOpenHashMap<FacingPos> destSimulationCache;
+    private final NetFlowEdge inputEdge;
 
-    public EnergyNetHandler(EnergyNet net, TileEntityCable cable, EnumFacing facing) {
-        this.net = Objects.requireNonNull(net);
-        this.cable = Objects.requireNonNull(cable);
-        this.facing = facing;
-    }
-
-    public void updateNetwork(EnergyNet net) {
+    public EnergyNetHandler(WorldEnergyNet net, TileEntityCable cable, EnumFacing facing) {
         this.net = net;
+        this.cable = cable;
+        this.facing = facing;
+        this.inputEdge = new NetFlowEdge(1) {
+
+            @Override
+            public NetNode<?, ?, ?> getSource() {
+                return FAKE_SOURCE;
+            }
+
+            @Override
+            public NetNode<?, ?, ?> getTarget() {
+                return EnergyNetHandler.this.cable.getNode();
+            }
+        };
     }
 
-    public EnergyNet getNet() {
+    @Override
+    public WorldEnergyNet getNet() {
         return net;
     }
 
     @Override
+    public EnumFacing getFacing() {
+        return facing;
+    }
+
+    @Override
     public long getInputPerSec() {
-        return net.getEnergyFluxPerSec();
+        AbstractGroupData<Insulation, WireProperties> data = net.getGroup(cable.getPipePos()).getData();
+        if (!(data instanceof EnergyGroupData e)) return 0;
+        return e.getEnergyFluxPerSec();
     }
 
     @Override
     public long getOutputPerSec() {
-        return net.getEnergyFluxPerSec();
+        AbstractGroupData<Insulation, WireProperties> data = net.getGroup(cable.getPipePos()).getData();
+        if (!(data instanceof EnergyGroupData e)) return 0;
+        return e.getEnergyFluxPerSec();
     }
 
     @Override
     public long getEnergyCanBeInserted() {
-        return transfer ? 0 : getEnergyCapacity();
+        return getEnergyCapacity();
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         if (transfer) return 0;
         if (side == null) {
             if (facing == null) return 0;
             side = facing;
         }
+        if (amperage <= 0 || voltage <= 0)
+            return 0;
 
-        long amperesUsed = 0L;
-        for (EnergyRoutePath path : net.getNetData(cable.getPos())) {
-            if (path.getMaxLoss() >= voltage) {
-                // Will lose all the energy with this path, so don't use it
-                continue;
-            }
+        long queryTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
+        destSimulationCache = simulate ? new Object2LongOpenHashMap<>() : null;
 
-            if (GTUtility.arePosEqual(cable.getPos(), path.getTargetPipePos()) && side == path.getTargetFacing()) {
-                // Do not insert into source handler
-                continue;
-            }
-
-            IEnergyContainer dest = path.getHandler();
-            if (dest == null) continue;
-
-            EnumFacing facing = path.getTargetFacing().getOpposite();
-            if (!dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
-
-            long pathVoltage = voltage - path.getMaxLoss();
-            boolean cableBroken = false;
-            for (TileEntityCable cable : path.getPath()) {
-                if (cable.getMaxVoltage() < voltage) {
-                    int heat = (int) (Math.log(
-                            GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) *
-                            45 + 36.5);
-                    cable.applyHeat(heat);
-
-                    cableBroken = cable.isInvalid();
-                    if (cableBroken) {
-                        // a cable burned away (or insulation melted)
-                        break;
-                    }
-
-                    // limit transfer to cables max and void rest
-                    pathVoltage = Math.min(cable.getMaxVoltage(), pathVoltage);
-                }
-            }
-
-            if (cableBroken) continue;
-
-            transfer = true;
-            long amps = dest.acceptEnergyFromNetwork(facing, pathVoltage, amperage - amperesUsed);
-            transfer = false;
-            if (amps == 0) continue;
-
-            amperesUsed += amps;
-            long voltageTraveled = voltage;
-            for (TileEntityCable cable : path.getPath()) {
-                voltageTraveled -= cable.getNodeData().getLossPerBlock();
-                if (voltageTraveled <= 0) break;
-
-                if (!cable.isInvalid()) {
-                    cable.incrementAmperage(amps, voltageTraveled);
-                }
-            }
-
-            if (amperage == amperesUsed) break;
+        this.getNet().getGraph().prepareForDynamicWeightAlgorithmRun(null, simulator, queryTick);
+        long amperesUsed = distributionRespectCapacity(side, voltage, amperage, queryTick,
+                this.getNet().getPaths(cable), simulator);
+        if (amperesUsed < amperage) {
+            // if we still have undistributed amps, attempt to distribute them while going over edge capacities.
+            amperesUsed += distributionIgnoreCapacity(side, voltage, amperage - amperesUsed, queryTick,
+                    this.getNet().getPaths(cable), simulator);
         }
+        this.lossResultCache.forEach((k, v) -> v.getPostAction().accept(k));
+        this.lossResultCache.clear();
 
-        net.addEnergyFluxPerSec(amperesUsed * voltage);
+        this.destSimulationCache = null;
+
+        if (this.cable.getNode().getGroupSafe().getData() instanceof EnergyGroupData data)
+            data.addEnergyFluxPerSec(amperesUsed * voltage);
         return amperesUsed;
     }
 
-    private void burnCable(World world, BlockPos pos) {
-        world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-        if (!world.isRemote) {
-            ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE,
-                    pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    5 + world.rand.nextInt(3), 0.0, 0.0, 0.0, 0.1);
+    private long distributionRespectCapacity(EnumFacing side, long voltage, long amperage, long queryTick,
+                                             Iterator<NetPath<Insulation, WireProperties, NetFlowEdge>> paths,
+                                             SimulatorKey simulator) {
+        long availableAmperage = amperage;
+        mainloop:
+        while (paths.hasNext()) {
+            NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.next();
+            // skip paths where loss exceeds available voltage
+            if (path.getSumData().getLoss() > voltage) continue;
+            Iterator<EnumFacing> iterator = path.getFacingIterator();
+            boolean pathDestThis = path.getTargetNode().getNodePos().equals(this.cable.getPipePos());
+            while (iterator.hasNext()) {
+                NetPath.FacedNetPath<Insulation, WireProperties, NetFlowEdge> facedPath = path
+                        .withFacing(iterator.next());
+                if (pathDestThis && facedPath.facing == side) {
+                    // do not distribute power back into our source
+                    continue;
+                }
+
+                IEnergyContainer dest = facedPath.getTargetTE()
+                        .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, facedPath.oppositeFacing());
+                if (dest == null || dest == this) continue;
+                if (!dest.inputsEnergy(facedPath.oppositeFacing()) || dest.getEnergyCanBeInserted() <= 0) continue;
+
+                List<NetNode<Insulation, WireProperties, NetFlowEdge>> nodeList = facedPath.getNodeList();
+                DoubleList voltageCaps = new DoubleArrayList();
+                long pathAmperage = availableAmperage;
+
+                List<NetFlowEdge> edgeList = facedPath.getEdgeList();
+                FlowConsumerList<Insulation, WireProperties, NetFlowEdge> flowLimitConsumers = new FlowConsumerList<>();
+                for (int j = 0; j < nodeList.size(); j++) {
+                    NetFlowEdge edge = j == 0 ? inputEdge : edgeList.get(j - 1);
+                    NetNode<Insulation, WireProperties, NetFlowEdge> target = nodeList.get(j);
+                    // amperage capping
+                    long max = Math.min(pathAmperage,
+                            edge.getFlowLimit(null, this.net.getGraph(), queryTick, simulator));
+                    double ratio = (double) max / pathAmperage;
+                    pathAmperage = max;
+                    flowLimitConsumers.modifyRatios(ratio);
+
+                    TileEntityCable tile = simulator == null ? (TileEntityCable) target.getHeldMTEUnsafe() : null;
+                    long finalVoltage = voltage;
+                    flowLimitConsumers.add(edge, null, this.net.getGraph(), pathAmperage, queryTick,
+                            simulator, tile != null ? amps -> {
+                                tile.contributeAmperageFlow(amps);
+                                tile.contributeVoltageFlow(finalVoltage);
+                            } : null);
+                    // voltage loss
+                    voltage -= target.getData().getLoss();
+                    if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) continue mainloop;
+                }
+                // skip paths where we can't transfer amperage
+                if (pathAmperage <= 0) continue;
+                // complete transfer
+                this.transfer = true;
+                // actual voltage that reaches the destination is the geometric mean of the input and all the caps
+                long finalVoltage = Math.min((long) GTUtility.geometricMean((double) voltage,
+                        voltageCaps.toArray(new double[] {})), voltage);
+                long accepted = dest.acceptEnergyFromNetwork(facedPath.oppositeFacing(), finalVoltage, pathAmperage,
+                        simulator != null);
+                this.transfer = false;
+                if (simulator != null)
+                    accepted = getSimulatedAccepted(destSimulationCache, facedPath.toFacingPos(), accepted);
+                flowLimitConsumers.doConsumption((double) accepted / pathAmperage);
+                availableAmperage -= accepted;
+
+                if (availableAmperage <= 0) return amperage;
+            }
         }
+        return amperage - availableAmperage;
+    }
+
+    private long distributionIgnoreCapacity(EnumFacing side, long voltage, long amperage, long queryTick,
+                                            Iterator<NetPath<Insulation, WireProperties, NetFlowEdge>> paths,
+                                            SimulatorKey simulator) {
+        Object2LongOpenHashMap<FacingPos> localDestSimulationCache = new Object2LongOpenHashMap<>();
+
+        long availableAmperage = amperage;
+        mainloop:
+        while (paths.hasNext()) {
+            NetPath<Insulation, WireProperties, NetFlowEdge> path = paths.next();
+            // skip paths where loss exceeds available voltage
+            if (path.getSumData().getLoss() > voltage) continue;
+            Iterator<EnumFacing> iterator = path.getFacingIterator();
+            boolean pathDestThis = path.getTargetNode().getNodePos().equals(this.cable.getPipePos());
+            while (iterator.hasNext()) {
+                NetPath.FacedNetPath<Insulation, WireProperties, NetFlowEdge> facedPath = path
+                        .withFacing(iterator.next());
+                if (pathDestThis && facedPath.facing == side) {
+                    // do not distribute power back into our source
+                    continue;
+                }
+
+                IEnergyContainer dest = facedPath.getTargetTE()
+                        .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, facedPath.oppositeFacing());
+                if (dest == null || dest == this) continue;
+                if (!dest.inputsEnergy(facedPath.oppositeFacing()) || dest.getEnergyCanBeInserted() <= 0) continue;
+
+                List<NetNode<Insulation, WireProperties, NetFlowEdge>> nodeList = facedPath.getNodeList();
+                DoubleList voltageCaps = new DoubleArrayList();
+                long pathAmperage = availableAmperage;
+
+                List<NetFlowEdge> edgeList = facedPath.getEdgeList();
+                List<Consumer<Double>> flowLimitConsumers = new ObjectArrayList<>();
+                List<Consumer<Double>> amperageLossHeat = new ObjectArrayList<>();
+                for (int j = 0; j < nodeList.size(); j++) {
+                    NetFlowEdge edge = j == 0 ? inputEdge : edgeList.get(j - 1);
+                    NetNode<Insulation, WireProperties, NetFlowEdge> target = nodeList.get(j);
+                    // amperage capping
+                    long flowLimit = edge.getFlowLimit(null, this.net.getGraph(), queryTick, simulator);
+                    long finalPathAmperage = pathAmperage;
+                    if (simulator == null && finalPathAmperage != 0) {
+                        amperageLossHeat.add((ratio) -> {
+                            long adjustedAmperage = (long) (finalPathAmperage * ratio);
+                            if (adjustedAmperage > flowLimit) {
+                                int heat = calculateHeat(adjustedAmperage - flowLimit, adjustedAmperage, 1);
+                                getOrGenerateLossResult(target, heat, false);
+                            }
+                        });
+                    }
+
+                    TileEntityCable tile = simulator == null ? (TileEntityCable) target.getHeldMTEUnsafe() : null;
+                    long finalVoltage = voltage;
+                    flowLimitConsumers.add((ratio) -> {
+                        long consumption = Math.min((long) (finalPathAmperage * ratio), flowLimit);
+                        if (consumption == 0) return;
+                        edge.consumeFlowLimit(null, getNet().getGraph(), consumption, queryTick, simulator);
+                        if (tile != null) {
+                            tile.contributeAmperageFlow(consumption);
+                            tile.contributeVoltageFlow(finalVoltage);
+                        }
+                    });
+                    pathAmperage = Math.min(pathAmperage, flowLimit);
+                    // voltage loss
+                    voltage -= target.getData().getLoss();
+                    if (calculateVoltageLoss(voltage, simulator, voltageCaps, pathAmperage, target)) continue mainloop;
+                }
+
+                // actual voltage that reaches the destination is the geometric mean of the input and all the caps
+                this.transfer = true;
+                long finalVoltage = Math.min((long) GTUtility.geometricMean((double) voltage,
+                        voltageCaps.toArray(new double[] {})), voltage);
+                long simulatedAccepted = dest.acceptEnergyFromNetwork(facedPath.oppositeFacing(), finalVoltage,
+                        availableAmperage, true);
+                this.transfer = false;
+                simulatedAccepted = getSimulatedAccepted(localDestSimulationCache, facedPath.toFacingPos(),
+                        simulatedAccepted);
+                if (simulator != null)
+                    simulatedAccepted = getSimulatedAccepted(destSimulationCache, facedPath.toFacingPos(),
+                            simulatedAccepted);
+                double ratio = (double) simulatedAccepted / availableAmperage;
+                flowLimitConsumers.forEach(consumer -> consumer.accept(ratio));
+                amperageLossHeat.forEach(consumer -> consumer.accept(ratio));
+                availableAmperage -= simulatedAccepted;
+
+                if (availableAmperage <= 0) return amperage;
+            }
+        }
+        return amperage - availableAmperage;
+    }
+
+    private long getSimulatedAccepted(Object2LongOpenHashMap<FacingPos> destSimulationCache,
+                                      FacingPos facingPos,
+                                      long accepted) {
+        AtomicLong atomicAccepted = new AtomicLong(accepted);
+        destSimulationCache.compute(facingPos, (k, v) -> {
+            if (v == null) return atomicAccepted.get();
+            atomicAccepted.set(Math.max(atomicAccepted.get() - v, 0));
+            return v + atomicAccepted.get();
+        });
+        return atomicAccepted.get();
+    }
+
+    private boolean calculateVoltageLoss(long voltage, SimulatorKey simulator,
+                                         DoubleList voltageCaps, long pathAmperage,
+                                         NetNode<Insulation, WireProperties, NetFlowEdge> target) {
+        // TODO undo loss & heating on backflow
+        if (target.getData().getVoltage() < voltage) {
+            int heat = calculateHeat(pathAmperage, voltage, target.getData().getVoltage());
+            NodeLossResult lossResult = getOrGenerateLossResult(target, heat, simulator != null);
+
+            if (lossResult.getLossFunction() == 0) {
+                // stop this path, a cable burned
+                return true;
+            }
+            voltageCaps.add(target.getData().getVoltage());
+        }
+        return false;
+    }
+
+    private int calculateHeat(long exceedingAmperage, long voltage, long maxVoltage) {
+        return (int) (exceedingAmperage * (Math.log1p(Math.log((double) voltage / maxVoltage)) * 45 + 36.5));
     }
 
     @Override
@@ -171,5 +359,16 @@ public class EnergyNetHandler implements IEnergyContainer {
     @Override
     public boolean isOneProbeHidden() {
         return true;
+    }
+
+    protected NodeLossResult getOrGenerateLossResult(NetNode<Insulation, WireProperties, NetFlowEdge> node,
+                                                     int heat, boolean simulate) {
+        var cachedResult = this.lossResultCache.get(node);
+        if (cachedResult == null) {
+            cachedResult = ((TileEntityCable) node.getHeldMTE()).applyHeat(heat, simulate);
+            if (cachedResult.getLossFunction() != 0) return cachedResult;
+            else this.lossResultCache.put(node, cachedResult);
+        }
+        return cachedResult;
     }
 }

@@ -303,7 +303,7 @@ public class ToolEventHandlers {
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@NotNull IBlockState state, @Nullable TileEntity tile,
                                                     ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
-        if (state.getBlock() instanceof BlockPipe<?, ?, ?>pipe) {
+        if (state.getBlock() instanceof BlockPipe<?, ?, ?, ?>pipe) {
             if (isSneaking &&
                     (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
                 return true;
@@ -316,7 +316,7 @@ public class ToolEventHandlers {
 
                 BooleanSupplier hasCover;
                 Predicate<CoverDefinition> canCover;
-                if (tile instanceof IPipeTile<?, ?>pipeTile) {
+                if (tile instanceof IPipeTile<?, ?, ?>pipeTile) {
                     final boolean hasAnyCover = pipeTile.getCoverableImplementation().hasAnyCover();
                     if (hasAnyCover) {
                         if (mainToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
@@ -384,8 +384,7 @@ public class ToolEventHandlers {
             rColour = gColour = bColour = 0.2F +
                     (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
 
-            if (tile instanceof TileEntityPipeBase) {
-                TileEntityPipeBase<?, ?> tepb = (TileEntityPipeBase<?, ?>) tile;
+            if (tile instanceof TileEntityPipeBase<?, ?, ?>tepb) {
                 drawGridOverlays(facing, box, face -> tepb.isConnected(face) ||
                         tepb.getCoverableImplementation().getCoverAtSide(face) != null);
             } else if (tile instanceof MetaTileEntityHolder) {

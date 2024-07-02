@@ -31,7 +31,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         if (amperage <= 0 || voltage <= 0)
             return 0;
 
@@ -43,7 +43,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
         if (side == null || inputsEnergy(side)) {
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
+                if (!simulate) metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
                 return usedAmps;
             }
 
@@ -51,6 +51,8 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             long internalAmps = Math.min(maxAmps, Math.max(0, getInternalStorage() / voltage));
 
             usedAmps = Math.min(usedAmps, maxAmps - internalAmps);
+            if (simulate) return usedAmps;
+
             amps += usedAmps;
             energyInputPerSec += usedAmps * voltage;
 
@@ -110,7 +112,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             long outAmps = 0L;
 
             if (genAmps > 0) {
-                outAmps = energyContainer.acceptEnergyFromNetwork(outFacing.getOpposite(), voltage, genAmps);
+                outAmps = energyContainer.acceptEnergyFromNetwork(outFacing.getOpposite(), voltage, genAmps, false);
                 if (outAmps == 0 && internalAmps == 0)
                     return;
                 energyOutputPerSec += outAmps * voltage;

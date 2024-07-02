@@ -1,58 +1,81 @@
 package gregtech.common.pipelike.laser.net;
 
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.pipenet.IPipeNetHandler;
+import gregtech.api.pipenet.NetGroup;
+import gregtech.api.pipenet.NetNode;
+import gregtech.api.pipenet.NetPath;
+import gregtech.api.pipenet.edge.NetEdge;
+import gregtech.common.pipelike.laser.LaserPipeProperties;
+import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LaserNetHandler implements ILaserContainer {
+import java.util.Iterator;
+import java.util.Map;
 
-    private LaserPipeNet net;
+public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
+
+    private final WorldLaserPipeNet net;
     private final TileEntityLaserPipe pipe;
     private final EnumFacing facing;
 
-    public LaserNetHandler(LaserPipeNet net, @NotNull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
+    public LaserNetHandler(WorldLaserPipeNet net, @NotNull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
     }
 
-    public void updateNetwork(LaserPipeNet net) {
-        this.net = net;
+    @Override
+    public WorldLaserPipeNet getNet() {
+        return net;
+    }
+
+    @Override
+    public EnumFacing getFacing() {
+        return facing;
     }
 
     private void setPipesActive() {
-        for (BlockPos pos : net.getAllNodes().keySet()) {
-            if (pipe.getWorld().getTileEntity(pos) instanceof TileEntityLaserPipe laserPipe) {
-                laserPipe.setActive(true, 100);
+        NetGroup<LaserPipeType, LaserPipeProperties, NetEdge> group = getNet().getNode(this.pipe.getPipePos())
+                .getGroupSafe();
+        if (group != null) {
+            for (NetNode<LaserPipeType, LaserPipeProperties, NetEdge> node : group.getNodes()) {
+                if (node.getHeldMTE() instanceof TileEntityLaserPipe laserPipe) {
+                    laserPipe.setActive(true, 100);
+                }
             }
         }
     }
 
     @Nullable
     private ILaserContainer getInnerContainer() {
-        if (net == null || pipe == null || pipe.isInvalid() || facing == null) {
+        if (net == null || pipe.isInvalid() || facing == null) {
             return null;
         }
 
-        LaserRoutePath data = net.getNetData(pipe.getPipePos(), facing);
-        if (data == null) {
-            return null;
-        }
+        Iterator<NetPath<LaserPipeType, LaserPipeProperties, NetEdge>> data = net.getPaths(this.pipe);
+        if (data == null || !data.hasNext()) return null;
+        Map<EnumFacing, TileEntity> connecteds = data.next().getTargetTEs();
+        if (data.hasNext()) return null;
+        if (connecteds.size() != 1) return null;
+        EnumFacing facing = connecteds.keySet().iterator().next();
 
-        return data.getHandler();
+        return connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_LASER, facing.getOpposite());
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
         setPipesActive();
-        return handler.acceptEnergyFromNetwork(side, voltage, amperage);
+        return handler.acceptEnergyFromNetwork(side, voltage, amperage, simulate);
     }
 
     @Override
@@ -99,10 +122,6 @@ public class LaserNetHandler implements ILaserContainer {
     @Override
     public long getInputVoltage() {
         return 0;
-    }
-
-    public LaserPipeNet getNet() {
-        return net;
     }
 
     @Override

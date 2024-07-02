@@ -5,6 +5,7 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.pipenet.edge.NetFlowEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -14,7 +15,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.creativetab.GTCreativeTabs;
-import gregtech.common.pipelike.cable.net.WorldENet;
+import gregtech.common.pipelike.cable.net.WorldEnergyNet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -47,7 +48,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldENet>
+public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, NetFlowEdge, WorldEnergyNet>
                         implements ITileEntityProvider {
 
     private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
@@ -95,8 +96,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public WorldENet getWorldPipeNet(World world) {
-        return WorldENet.getWorldENet(world);
+    public WorldEnergyNet getWorldPipeNet(World world) {
+        return WorldEnergyNet.getWorldEnergyNet(world);
     }
 
     @Override
@@ -139,13 +140,13 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side,
-                                   IPipeTile<Insulation, WireProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<Insulation, WireProperties, NetFlowEdge> selfTile, EnumFacing side,
+                                   IPipeTile<Insulation, WireProperties, NetFlowEdge> sideTile) {
         return selfTile instanceof TileEntityCable && sideTile instanceof TileEntityCable;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side,
+    public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties, NetFlowEdge> selfTile, EnumFacing side,
                                          TileEntity tile) {
         return tile != null &&
                 tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side.getOpposite()) != null;
@@ -169,7 +170,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
-            if (cable != null && cable.getFrameMaterial() == null && cable.getNodeData().getLossPerBlock() > 0) {
+            if (cable != null && cable.getFrameMaterial() == null && cable.getNodeData().getLoss() > 0) {
                 long voltage = cable.getCurrentMaxVoltage();
                 double amperage = cable.getAverageAmperage();
                 if (voltage > 0L && amperage > 0L) {
@@ -192,7 +193,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public TileEntityPipeBase<Insulation, WireProperties> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<Insulation, WireProperties, NetFlowEdge> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityCableTickable() : new TileEntityCable();
     }
 

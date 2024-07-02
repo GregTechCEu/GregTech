@@ -329,15 +329,21 @@ public class MaterialPropertyExpansion {
 
     public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon,
                                 int criticalTemp) {
+        addWires(m, voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp, 0);
+    }
+
+    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon,
+                                int criticalTemp, int meltTemperature) {
         if (checkFrozen("add Wires to a material")) return;
         if (m.hasProperty(PropertyKey.WIRE)) {
             m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
             m.getProperty(PropertyKey.WIRE).setAmperage(baseAmperage);
             m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
+            m.getProperty(PropertyKey.WIRE).setMeltTemperature(meltTemperature);
             m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
             m.getProperty(PropertyKey.WIRE).setSuperconductorCriticalTemperature(criticalTemp);
         } else m.setProperty(PropertyKey.WIRE,
-                new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp));
+                new WireProperties(voltage, baseAmperage, lossPerBlock, meltTemperature, isSuperCon, criticalTemp));
     }
 
     public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock) {

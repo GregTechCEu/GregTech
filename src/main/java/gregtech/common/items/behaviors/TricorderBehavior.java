@@ -263,9 +263,8 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.addAll(provider.getDataInfo());
             }
 
-        } else if (tileEntity instanceof IPipeTile) {
+        } else if (tileEntity instanceof IPipeTile<?, ?, ?>pipeTile) {
             // pipes need special name handling
-            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
 
             if (pipeTile.getPipeBlock().getRegistryName() != null) {
                 list.add(new TextComponentTranslation("behavior.tricorder.block_name",
@@ -278,8 +277,7 @@ public class TricorderBehavior implements IItemBehaviour {
             }
 
             // pipe-specific info
-            if (tileEntity instanceof IDataInfoProvider) {
-                IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
+            if (tileEntity instanceof IDataInfoProvider provider) {
 
                 list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 

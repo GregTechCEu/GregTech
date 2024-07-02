@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.Recipe;
@@ -11,7 +12,6 @@ import gregtech.api.util.TaskScheduler;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
 import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.net.OpticalNetHandler;
-import gregtech.common.pipelike.optical.net.OpticalPipeNet;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
 
 import net.minecraft.network.PacketBuffer;
@@ -22,17 +22,15 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.EnumMap;
 
-public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> {
+public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties, NetEdge> {
 
     private final EnumMap<EnumFacing, OpticalNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the OpticalNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final IDataAccessHatch clientDataHandler = new DefaultDataHandler();
     private final IOpticalComputationProvider clientComputationHandler = new DefaultComputationHandler();
-    private WeakReference<OpticalPipeNet> currentPipeNet = new WeakReference<>(null);
     private OpticalNetHandler defaultHandler;
 
     private int ticksActive = 0;
@@ -54,8 +52,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     }
 
     private void initHandlers() {
-        OpticalPipeNet net = getOpticalPipeNet();
-        if (net == null) return;
+        WorldOpticalPipeNet net = WorldOpticalPipeNet.getWorldPipeNet(getPipeWorld());
         for (EnumFacing facing : EnumFacing.VALUES) {
             handlers.put(facing, new OpticalNetHandler(net, this, facing));
         }
@@ -72,62 +69,31 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
 
             if (handlers.isEmpty()) initHandlers();
 
-            checkNetwork();
             return GregtechTileCapabilities.CAPABILITY_DATA_ACCESS.cast(handlers.getOrDefault(facing, defaultHandler));
         }
 
-        if (capability == GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER) {
             if (world.isRemote) {
-                return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER.cast(clientComputationHandler);
+                return GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER.cast(clientComputationHandler);
             }
 
             if (handlers.isEmpty()) initHandlers();
 
-            checkNetwork();
-            return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER
+            return GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER
                     .cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
     }
 
-    public void checkNetwork() {
-        if (defaultHandler != null) {
-            OpticalPipeNet current = getOpticalPipeNet();
-            if (defaultHandler.getNet() != current) {
-                defaultHandler.updateNetwork(current);
-                for (OpticalNetHandler handler : handlers.values()) {
-                    handler.updateNetwork(current);
-                }
-            }
-        }
-    }
-
-    public OpticalPipeNet getOpticalPipeNet() {
-        if (world == null || world.isRemote)
-            return null;
-        OpticalPipeNet currentPipeNet = this.currentPipeNet.get();
-        if (currentPipeNet != null && currentPipeNet.isValid() && currentPipeNet.containsNode(getPipePos()))
-            return currentPipeNet; // if current net is valid and does contain position, return it
-        WorldOpticalPipeNet worldNet = (WorldOpticalPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
-        currentPipeNet = worldNet.getNetFromPos(getPipePos());
-        if (currentPipeNet != null) {
-            this.currentPipeNet = new WeakReference<>(currentPipeNet);
-        }
-        return currentPipeNet;
-    }
-
     @Override
-    public void transferDataFrom(IPipeTile<OpticalPipeType, OpticalPipeProperties> tileEntity) {
+    public void transferDataFrom(IPipeTile<OpticalPipeType, OpticalPipeProperties, NetEdge> tileEntity) {
         super.transferDataFrom(tileEntity);
-        if (getOpticalPipeNet() == null)
-            return;
         TileEntityOpticalPipe pipe = (TileEntityOpticalPipe) tileEntity;
         if (!pipe.handlers.isEmpty() && pipe.defaultHandler != null) {
             // take handlers from old pipe
             handlers.clear();
             handlers.putAll(pipe.handlers);
             defaultHandler = pipe.defaultHandler;
-            checkNetwork();
         } else {
             // create new handlers
             initHandlers();
@@ -142,7 +108,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
 
             // also check the other pipe
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
-            if (tile instanceof IPipeTile<?, ?>pipeTile &&
+            if (tile instanceof IPipeTile<?, ?, ?>pipeTile &&
                     pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
                 if (pipeTile.getNumConnections() >= 2) return;
             }
@@ -190,14 +156,8 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         super.receiveCustomData(discriminator, buf);
         if (discriminator == GregtechDataCodes.PIPE_OPTICAL_ACTIVE) {
             this.isActive = buf.readBoolean();
-            scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
-    }
-
-    @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
-        this.handlers.clear();
     }
 
     private static class DefaultDataHandler implements IDataAccessHatch {

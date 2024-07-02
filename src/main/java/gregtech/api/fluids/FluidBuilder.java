@@ -21,6 +21,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 import com.google.common.base.Preconditions;
 import io.github.drmanganese.topaddons.reference.Colors;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,6 +98,11 @@ public class FluidBuilder {
         Preconditions.checkArgument(temperature > 0, "temperature must be > 0");
         this.temperature = temperature;
         return this;
+    }
+
+    @ApiStatus.Internal
+    public int currentTemp() {
+        return this.temperature;
     }
 
     /**

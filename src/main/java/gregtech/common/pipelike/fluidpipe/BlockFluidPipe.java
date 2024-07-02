@@ -1,7 +1,11 @@
 package gregtech.common.pipelike.fluidpipe;
 
+import gregtech.api.fluids.FluidConstants;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.pipenet.edge.NetFlowEdge;
+import gregtech.api.pipenet.predicate.FluidTestObject;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -28,21 +32,24 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
+public class BlockFluidPipe extends
+                            BlockMaterialPipe<FluidPipeType, FluidPipeProperties, NetFlowEdge, WorldFluidPipeNet> {
 
     private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
 
@@ -105,13 +112,14 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side,
-                                   IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties, NetFlowEdge> selfTile, EnumFacing side,
+                                   IPipeTile<FluidPipeType, FluidPipeProperties, NetFlowEdge> sideTile) {
         return selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side,
+    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties, NetFlowEdge> selfTile,
+                                         EnumFacing side,
                                          TileEntity tile) {
         return tile != null &&
                 tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()) != null;
@@ -132,42 +140,33 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         super.onEntityCollision(worldIn, pos, state, entityIn);
         if (worldIn.isRemote) return;
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-        if (pipe instanceof TileEntityFluidPipeTickable && pipe.getFrameMaterial() == null &&
-                ((TileEntityFluidPipeTickable) pipe).getOffsetTimer() % 10 == 0) {
-            if (entityIn instanceof EntityLivingBase) {
-                if (((TileEntityFluidPipeTickable) pipe).getFluidTanks().length > 1) {
-                    // apply temperature damage for the hottest and coldest pipe (multi fluid pipes)
-                    int maxTemperature = Integer.MIN_VALUE;
-                    int minTemperature = Integer.MAX_VALUE;
-                    for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
-                        if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                            maxTemperature = Math.max(maxTemperature,
-                                    tank.getFluid().getFluid().getTemperature(tank.getFluid()));
-                            minTemperature = Math.min(minTemperature,
-                                    tank.getFluid().getFluid().getTemperature(tank.getFluid()));
-                        }
-                    }
-                    if (maxTemperature != Integer.MIN_VALUE) {
-                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, maxTemperature, 1.0F, 5);
-                    }
-                    if (minTemperature != Integer.MAX_VALUE) {
-                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, minTemperature, 1.0F, 5);
-                    }
-                } else {
-                    FluidTank tank = ((TileEntityFluidPipeTickable) pipe).getFluidTanks()[0];
-                    if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                        // Apply temperature damage for the pipe (single fluid pipes)
-                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn,
-                                tank.getFluid().getFluid().getTemperature(), 1.0F, 5);
+        if (pipe.getFrameMaterial() == null && pipe.getOffsetTimer() % 10 == 0) {
+            if (entityIn instanceof EntityLivingBase living) {
+                NetNode<FluidPipeType, FluidPipeProperties, NetFlowEdge> node = pipe.getNode();
+                var net = node.getGroupSafe().net;
+                Set<FluidTestObject> fluids = new ObjectOpenHashSet<>();
+                for (NetFlowEdge edge : net.getGraph().edgesOf(node)) {
+                    for (Object obj : edge.getActiveChannels(null,
+                            FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())) {
+                        if (obj instanceof FluidTestObject tester) fluids.add(tester);
                     }
                 }
+                int maxTemp = FluidConstants.ROOM_TEMPERATURE;
+                int minTemp = FluidConstants.ROOM_TEMPERATURE;
+                for (FluidTestObject fluid : fluids) {
+                    int temp = fluid.fluid.getTemperature(fluid.recombine());
+                    maxTemp = Math.max(temp, maxTemp);
+                    minTemp = Math.min(temp, minTemp);
+                }
+                EntityDamageUtil.applyTemperatureDamage(living, maxTemp, 1.0F, 5);
+                EntityDamageUtil.applyTemperatureDamage(living, minTemp, 1.0F, 5);
             }
         }
     }
 
     @Override
-    public TileEntityPipeBase<FluidPipeType, FluidPipeProperties> createNewTileEntity(boolean supportsTicking) {
-        return new TileEntityFluidPipeTickable(); // fluid pipes are always ticking
+    public TileEntityPipeBase<FluidPipeType, FluidPipeProperties, NetFlowEdge> createNewTileEntity(boolean supportsTicking) {
+        return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
     }
 
     @Override
@@ -181,6 +180,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
-        return FluidPipeRenderer.INSTANCE.getParticleTexture((IPipeTile<?, ?>) world.getTileEntity(blockPos));
+        return FluidPipeRenderer.INSTANCE.getParticleTexture((IPipeTile<?, ?, ?>) world.getTileEntity(blockPos));
     }
 }
