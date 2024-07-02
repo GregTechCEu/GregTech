@@ -40,7 +40,11 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
@@ -249,7 +253,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         // Default entries
         if (drawTotalEU) {
-            long eu = Math.abs((long) recipe.getEUt()) * recipe.getDuration();
+            long eu = recipe.getEUt() * recipe.getDuration();
             // sadly we still need a custom override here, since computation uses duration and EU/t very differently
             if (recipe.hasProperty(TotalComputationProperty.getInstance()) &&
                     recipe.hasProperty(ComputationProperty.getInstance())) {
@@ -262,14 +266,16 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
         if (drawEUt) {
             minecraft.fontRenderer.drawString(
-                    I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
-                            Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]),
+                    I18n.format(
+                            recipeMap.getRecipeMapUI().isGenerator() ? "gregtech.recipe.eu_inverted" :
+                                    "gregtech.recipe.eu",
+                            recipe.getEUt(), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]),
                     0, yPosition += LINE_HEIGHT, 0x111111);
         }
         if (drawDuration) {
             minecraft.fontRenderer.drawString(
                     I18n.format("gregtech.recipe.duration",
-                            TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)),
+                            TextFormattingUtil.formatNumbers(recipe.getDuration() / 20.0)),
                     0, yPosition += LINE_HEIGHT, 0x111111);
         }
 

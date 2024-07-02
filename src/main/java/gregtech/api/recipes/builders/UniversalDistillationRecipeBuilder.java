@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.Nullable;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR;
+import static gregtech.api.recipes.logic.OverclockingLogic.STD_DURATION_FACTOR_INV;
 
 public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalDistillationRecipeBuilder> {
 
@@ -45,7 +45,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
             int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i),
                     !this.outputs.isEmpty() ? this.outputs.get(0) : null);
 
-            int recipeDuration = (int) (this.duration * STANDARD_OVERCLOCK_DURATION_DIVISOR);
+            int recipeDuration = (int) (this.duration * STD_DURATION_FACTOR_INV);
 
             boolean shouldDivide = ratio != 1;
 

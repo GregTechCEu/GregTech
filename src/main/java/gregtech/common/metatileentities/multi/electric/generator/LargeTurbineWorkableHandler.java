@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     private final int BASE_EU_OUTPUT;
 
-    private int excessVoltage;
+    private long excessVoltage;
 
     public LargeTurbineWorkableHandler(RecipeMapMultiblockController metaTileEntity, int tier) {
         super(metaTileEntity);
@@ -83,9 +84,9 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         return 0;
     }
 
-    private int getParallel(Recipe recipe, double totalHolderEfficiencyCoefficient, int turbineMaxVoltage) {
+    private int getParallel(@NotNull Recipe recipe, double totalHolderEfficiencyCoefficient, long turbineMaxVoltage) {
         return MathHelper.ceil((turbineMaxVoltage - this.excessVoltage) /
-                (Math.abs(recipe.getEUt()) * totalHolderEfficiencyCoefficient));
+                (recipe.getEUt() * totalHolderEfficiencyCoefficient));
     }
 
     private boolean canDoRecipeWithParallel(Recipe recipe) {
@@ -93,7 +94,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         if (rotorHolder == null || !rotorHolder.hasRotor())
             return false;
         double totalHolderEfficiencyCoefficient = rotorHolder.getTotalEfficiency() / 100.0;
-        int turbineMaxVoltage = (int) getMaxVoltage();
+        long turbineMaxVoltage = getMaxVoltage();
         int parallel = getParallel(recipe, totalHolderEfficiencyCoefficient, turbineMaxVoltage);
 
         FluidStack recipeFluidStack = recipe.getFluidInputs().get(0).getInputFluidStack();
@@ -136,7 +137,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         if (rotorHolder == null || !rotorHolder.hasRotor())
             return false;
 
-        int turbineMaxVoltage = (int) getMaxVoltage();
+        long turbineMaxVoltage = getMaxVoltage();
         FluidStack recipeFluidStack = recipe.getFluidInputs().get(0).getInputFluidStack();
         int parallel = 0;
 
@@ -154,7 +155,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             }
 
             // this is necessary to prevent over-consumption of fuel
-            this.excessVoltage += (int) (parallel * Math.abs(recipe.getEUt()) * holderEfficiency - turbineMaxVoltage);
+            this.excessVoltage += (long) (parallel * recipe.getEUt() * holderEfficiency - turbineMaxVoltage);
         }
 
         // rebuild the recipe and adjust voltage to match the turbine
@@ -164,17 +165,20 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         applyParallelBonus(recipeBuilder);
         recipe = recipeBuilder.build().getResult();
 
-        if (recipe != null && setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
-            setupRecipe(recipe);
-            return true;
+        if (recipe != null) {
+            recipe = setupAndConsumeRecipeInputs(recipe, getInputInventory());
+            if (recipe != null) {
+                setupRecipe(recipe);
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public void invalidate() {
-        excessVoltage = 0;
         super.invalidate();
+        excessVoltage = 0;
     }
 
     public void updateTanks() {

@@ -58,7 +58,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void setupRecipe(Recipe recipe) {
+    protected void setupRecipe(@NotNull Recipe recipe) {
         super.setupRecipe(recipe);
         this.recipeCWUt = recipe.getProperty(ComputationProperty.getInstance(), 0);
         this.isDurationTotalCWU = recipe.hasProperty(TotalComputationProperty.getInstance());

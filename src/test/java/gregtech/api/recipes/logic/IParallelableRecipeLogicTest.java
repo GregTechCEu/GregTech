@@ -237,7 +237,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(120));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(120L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
@@ -290,7 +290,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(60));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(60L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
@@ -346,7 +346,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(1920));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(1920L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(10));
@@ -399,7 +399,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(960));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(960L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(10));
@@ -446,7 +446,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
         // Check that the EUt of the recipe was not modified
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30L));
 
         // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(400));
@@ -493,7 +493,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
         // Check that the EUt of the recipe was not modified
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30L));
 
         // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(200));
@@ -525,7 +525,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -568,7 +568,7 @@ public class IParallelableRecipeLogicTest {
                 exportFluidBus.getExportFluids(), 128, parallelLimit);
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(outputRecipe.getEUt(), is(120));
+        MatcherAssert.assertThat(outputRecipe.getEUt(), is(120L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(outputRecipe.getDuration(), is(100));
@@ -600,7 +600,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -665,7 +665,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -732,7 +732,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -775,7 +775,7 @@ public class IParallelableRecipeLogicTest {
                 exportFluidBus.getExportFluids(), 128, parallelLimit);
 
         // Check that the EUt of the recipe was not modified
-        MatcherAssert.assertThat(outputRecipe.getEUt(), is(1));
+        MatcherAssert.assertThat(outputRecipe.getEUt(), is(1L));
 
         // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(outputRecipe.getDuration(), is(50));

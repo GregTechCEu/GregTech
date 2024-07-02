@@ -78,7 +78,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected ChancedOutputLogic chancedOutputLogic = ChancedOutputLogic.OR;
     protected ChancedOutputLogic chancedFluidOutputLogic = ChancedOutputLogic.OR;
 
-    protected int duration, EUt;
+    protected int duration;
+    protected long EUt;
     protected boolean hidden = false;
     protected GTRecipeCategory category;
     protected boolean isCTRecipe = false;
@@ -819,7 +820,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
         this.EUt(multiplyDuration ? recipe.getEUt() : this.EUt + recipe.getEUt() * multiplier);
         this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
-        this.parallel += multiplier;
+        if (this.parallel == 0) {
+            this.parallel = multiplier;
+        } else {
+            this.parallel *= multiplier;
+        }
 
         return (R) this;
     }
@@ -874,7 +879,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R EUt(int EUt) {
+    public R EUt(long EUt) {
         this.EUt = EUt;
         return (R) this;
     }
@@ -1057,7 +1062,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return fluidOutputs;
     }
 
-    public int getEUt() {
+    public long getEUt() {
         return EUt;
     }
 
