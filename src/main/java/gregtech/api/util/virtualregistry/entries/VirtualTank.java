@@ -104,10 +104,11 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
                 (this.fluidStack != null && !fluidStack.isFluidEqual(this.fluidStack)))
             return 0;
 
-        var fluid = this.fluidStack.copy();
-
         int fillAmt = Math.min(fluidStack.amount, getCapacity() - this.getFluidAmount());
+
         if (doFill) {
+            var fluid = this.fluidStack == null ? null : this.fluidStack.copy();
+
             if (fluid == null) {
                 fluid = new FluidStack(fluidStack, fillAmt);
             } else {
