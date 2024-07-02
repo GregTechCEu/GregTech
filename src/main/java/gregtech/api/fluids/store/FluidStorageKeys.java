@@ -4,6 +4,8 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
 
+import net.minecraftforge.fluids.FluidRegistry;
+
 import java.util.function.UnaryOperator;
 
 import static gregtech.api.util.GTUtility.gregtechId;
@@ -18,12 +20,14 @@ public final class FluidStorageKeys {
 
     public static final FluidStorageKey GAS = new FluidStorageKey(gregtechId("gas"),
             MaterialIconType.gas,
-            UnaryOperator.identity(),
+            s -> FluidRegistry.getFluid(s) == null ? s : "gas." + s,
             m -> {
                 if (m.hasProperty(PropertyKey.DUST)) {
                     return "gregtech.fluid.gas_vapor";
                 }
-                if (m.isElement()) {
+                if (m.isElement() || (m.hasProperty(PropertyKey.FLUID) &&
+                        m.getProperty(PropertyKey.FLUID).getStorage().getQueuedBuilder(FluidStorageKeys.LIQUID) !=
+                                null)) {
                     return "gregtech.fluid.gas_generic";
                 }
                 return "gregtech.fluid.generic";
