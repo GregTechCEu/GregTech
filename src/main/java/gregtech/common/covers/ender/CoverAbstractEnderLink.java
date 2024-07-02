@@ -346,16 +346,17 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected abstract class EntrySelectorSH extends PanelSyncHandler {
 
         private final EntryTypes<T> type;
-        private final List<String> names;
+        private final List<String> names = new ArrayList<>();
 
         protected EntrySelectorSH(ModularPanel mainPanel, EntryTypes<T> type) {
             super(mainPanel);
             this.type = type;
-            this.names = new ArrayList<>(VirtualRegistryBase.getEntryNames(getOwner(), type));
         }
 
         @Override
         public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+            this.names.clear();
+            this.names.addAll(VirtualRegistryBase.getEntryNames(getOwner(), type));
             return GTGuis.createPopupPanel("entry_selector", 168, 112)
                     .child(IKey.str("Known Channels") // todo lang
                             .color(UI_TITLE_COLOR).asWidget()
