@@ -302,6 +302,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .alignment(Alignment.CenterLeft)
                             .color(Color.WHITE.darker(1))
                             .asWidget()
+                            .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                             .tooltipBuilder(tooltip -> {
                                 String desc = entry.getDescription();
                                 if (!desc.isEmpty())
@@ -374,12 +375,19 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         @Override
         public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-            return GTGuis.createPopupPanel("entry_description", 168, 36)
+            return GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
+                    .child(IKey.str(String.format("Set Description [%s]", entry.getColorStr()))
+                            .color(UI_TITLE_COLOR)
+                            .asWidget()
+                            .left(4)
+                            .top(6))
                     .child(new TextFieldWidget()
+                            .setTextColor(Color.WHITE.darker(1))
                             .widthRel(0.95f)
                             .height(18)
                             .value(new StringSyncValue(entry::getDescription, this::updateDescription))
-                            .align(Alignment.Center));
+                            .alignX(0.5f)
+                            .bottom(6));
         }
 
         private void updateDescription(String desc) {
