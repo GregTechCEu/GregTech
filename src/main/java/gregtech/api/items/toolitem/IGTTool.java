@@ -5,15 +5,13 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.DynamicLabelWidget;
 import gregtech.api.items.gui.ItemUIFactory;
-import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.NBTSyncValue;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -63,6 +61,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import appeng.api.implementations.items.IAEWrench;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.factory.ItemGuiFactory;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.TextWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -636,8 +642,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default EnumActionResult definition$onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
                                                        @NotNull BlockPos pos, @NotNull EnumFacing facing, float hitX,
                                                        float hitY, float hitZ, @NotNull EnumHand hand) {
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand) ==
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
+        List<IToolBehavior> behaviors;
+        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
+        else behaviors = getToolStats().getBehaviors();
+        for (IToolBehavior behavior : behaviors) {
+            if (behavior.onItemUseFirst(stack, player, world, pos, facing, hitX, hitY, hitZ, hand) ==
                     EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
             }
@@ -648,8 +662,18 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                                   EnumFacing facing, float hitX, float hitY, float hitZ) {
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
+        List<IToolBehavior> behaviors;
+        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
+        else behaviors = getToolStats().getBehaviors();
+
+        for (IToolBehavior behavior : behaviors) {
+            if (behavior.onItemUse(stack, player, world, pos, hand, facing, hitX, hitY, hitZ) ==
+                    EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
             }
         }
@@ -659,20 +683,28 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default ActionResult<ItemStack> definition$onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
+        ItemStack original = stack;
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         if (!world.isRemote) {
             // TODO: relocate to keybind action when keybind PR happens
             if (player.isSneaking() && getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
-                PlayerInventoryHolder.openHandItemUI(player, hand);
-                return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+                ItemGuiFactory.open((EntityPlayerMP) player, hand);
+                return ActionResult.newResult(EnumActionResult.SUCCESS, original);
             }
         }
+        List<IToolBehavior> behaviors;
+        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
+        else behaviors = getToolStats().getBehaviors();
 
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior.onItemRightClick(world, player, hand).getType() == EnumActionResult.SUCCESS) {
-                return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+        for (IToolBehavior behavior : behaviors) {
+            if (behavior.onItemRightClick(stack, world, player, hand).getType() == EnumActionResult.SUCCESS) {
+                return ActionResult.newResult(EnumActionResult.SUCCESS, original);
             }
         }
-        return ActionResult.newResult(EnumActionResult.PASS, stack);
+        return ActionResult.newResult(EnumActionResult.PASS, original);
     }
 
     default void definition$getSubItems(@NotNull NonNullList<ItemStack> items) {
@@ -878,6 +910,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // Sound Playing
     default void playCraftingSound(EntityPlayer player, ItemStack stack) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         // player null check for things like auto-crafters
         if (ConfigHolder.client.toolCraftingSounds && getSound() != null && player != null) {
             if (canPlaySound(stack)) {
@@ -903,45 +939,86 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
     }
 
-    default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        NBTTagCompound tag = getBehaviorsTag(holder.getCurrentItem());
-        AoESymmetrical defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
-        return ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 120, 80)
-                .label(6, 10, "item.gt.tool.aoe.columns")
-                .label(49, 10, "item.gt.tool.aoe.rows")
-                .label(79, 10, "item.gt.tool.aoe.layers")
-                .widget(new ClickButtonWidget(15, 24, 20, 20, "+", data -> {
-                    AoESymmetrical.increaseColumn(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(15, 44, 20, 20, "-", data -> {
-                    AoESymmetrical.decreaseColumn(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(50, 24, 20, 20, "+", data -> {
-                    AoESymmetrical.increaseRow(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(50, 44, 20, 20, "-", data -> {
-                    AoESymmetrical.decreaseRow(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(85, 24, 20, 20, "+", data -> {
-                    AoESymmetrical.increaseLayer(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new ClickButtonWidget(85, 44, 20, 20, "-", data -> {
-                    AoESymmetrical.decreaseLayer(tag, defaultDefinition);
-                    holder.markAsDirty();
-                }))
-                .widget(new DynamicLabelWidget(23, 65, () -> Integer.toString(
-                        1 + 2 * AoESymmetrical.getColumn(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(58, 65, () -> Integer.toString(
-                        1 + 2 * AoESymmetrical.getRow(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
-                .widget(new DynamicLabelWidget(93, 65,
-                        () -> Integer.toString(1 +
-                                AoESymmetrical.getLayer(getBehaviorsTag(holder.getCurrentItem()), defaultDefinition))))
-                .build(holder, entityPlayer);
+    @Override
+    default ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
+        ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack().getDisplayName(), 120, 80);
+
+        Supplier<NBTTagCompound> tag = () -> getBehaviorsTag(guiData.getUsedItemStack());
+        AoESymmetrical defaultDefinition = getMaxAoEDefinition(guiData.getUsedItemStack());
+
+        NBTSyncValue nbtSyncer = new NBTSyncValue(tag, (nbt) -> setBehaviorsTag(guiData.getUsedItemStack(), nbt));
+        guiSyncManager.syncValue("NBTSync", nbtSyncer);
+
+        Column columns = new Column();
+        columns.flex().coverChildren().startDefaultMode()
+                .leftRel(0.07f).bottomRel(0.5f).endDefaultMode();
+        columns.child(new TextWidget(IKey.lang("item.gt.tool.aoe.columns")).paddingBottom(5));
+        columns.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
+                .disableHoverBackground().onMousePressed(data -> {
+                    NBTTagCompound nbt = tag.get();
+                    AoESymmetrical.increaseColumn(nbt, defaultDefinition);
+                    nbtSyncer.setValue(nbt, true);
+                    return true;
+                }));
+        columns.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_MINUS).size(9, 18)
+                .disableHoverBackground().onMousePressed(data -> {
+                    NBTTagCompound nbt = tag.get();
+                    AoESymmetrical.decreaseColumn(nbt, defaultDefinition);
+                    nbtSyncer.setValue(nbt, true);
+                    return true;
+                }));
+        columns.child(new TextWidget(
+                IKey.dynamic(() -> String.valueOf(1 + 2 * AoESymmetrical.getColumn(tag.get(), defaultDefinition))))
+                        .paddingTop(5));
+        panel.child(columns);
+
+        Column rows = new Column();
+        rows.flex().coverChildren().startDefaultMode()
+                .rightRel(0.5f).bottomRel(0.5f).endDefaultMode();
+        rows.child(new TextWidget(IKey.lang("item.gt.tool.aoe.rows")).paddingBottom(5));
+        rows.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
+                .disableHoverBackground().onMousePressed(data -> {
+                    NBTTagCompound nbt = tag.get();
+                    AoESymmetrical.increaseRow(nbt, defaultDefinition);
+                    nbtSyncer.setValue(nbt, true);
+                    return true;
+                }));
+        rows.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_MINUS).size(9, 18)
+                .disableHoverBackground().onMousePressed(data -> {
+                    NBTTagCompound nbt = tag.get();
+                    AoESymmetrical.decreaseRow(nbt, defaultDefinition);
+                    nbtSyncer.setValue(nbt, true);
+                    return true;
+                }));
+        rows.child(new TextWidget(
+                IKey.dynamic(() -> String.valueOf(1 + 2 * AoESymmetrical.getRow(tag.get(), defaultDefinition))))
+                        .paddingTop(5));
+        panel.child(rows);
+
+        Column layers = new Column();
+        layers.flex().coverChildren().startDefaultMode()
+                .rightRel(0.07f).bottomRel(0.5f).endDefaultMode();
+        layers.child(new TextWidget(IKey.lang("item.gt.tool.aoe.layers")).paddingBottom(5));
+        layers.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
+                .disableHoverBackground().onMousePressed(data -> {
+                    NBTTagCompound nbt = tag.get();
+                    AoESymmetrical.increaseLayer(nbt, defaultDefinition);
+                    nbtSyncer.setValue(nbt, true);
+                    return true;
+                }));
+        layers.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_MINUS).size(9, 18)
+                .disableHoverBackground().onMousePressed(data -> {
+                    NBTTagCompound nbt = tag.get();
+                    AoESymmetrical.decreaseLayer(nbt, defaultDefinition);
+                    nbtSyncer.setValue(nbt, true);
+                    return true;
+                }));
+        layers.child(new TextWidget(
+                IKey.dynamic(() -> String.valueOf(1 + AoESymmetrical.getLayer(tag.get(), defaultDefinition))))
+                        .paddingTop(5));
+        panel.child(layers);
+
+        return panel;
     }
 
     Set<String> getToolClasses(ItemStack stack);

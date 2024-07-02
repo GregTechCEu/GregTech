@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.stats.StatBase;
@@ -184,11 +185,27 @@ public final class ToolHelper {
     }
 
     public static NBTTagCompound getToolTag(ItemStack stack) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         return stack.getOrCreateSubCompound(TOOL_TAG_KEY);
     }
 
     public static NBTTagCompound getBehaviorsTag(ItemStack stack) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         return stack.getOrCreateSubCompound(BEHAVIOURS_TAG_KEY);
+    }
+
+    public static void setBehaviorsTag(ItemStack stack, NBTTagCompound tag) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
+        stack.setTagInfo(BEHAVIOURS_TAG_KEY, tag);
     }
 
     public static ItemStack getAndSetToolData(IGTTool tool, Material material, int maxDurability, int harvestLevel,
@@ -220,6 +237,13 @@ public final class ToolHelper {
      * @param entity entity that has damaged this stack
      */
     public static void damageItemWhenCrafting(@NotNull ItemStack stack, @Nullable EntityLivingBase entity) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selectedStack = toolbelt.getSelectedItem(stack);
+            if (selectedStack != null) {
+                damageItemWhenCrafting(selectedStack, entity);
+                return;
+            }
+        }
         int damage = 2;
         if (stack.getItem() instanceof IGTTool) {
             damage = ((IGTTool) stack.getItem()).getToolStats().getToolDamagePerCraft(stack);
@@ -254,58 +278,63 @@ public final class ToolHelper {
      * @param damage how much damage the stack will take
      */
     public static void damageItem(@NotNull ItemStack stack, @Nullable EntityLivingBase entity, int damage) {
-        if (!(stack.getItem() instanceof IGTTool)) {
+        if (!(stack.getItem() instanceof IGTTool tool)) {
             if (entity != null) stack.damageItem(damage, entity);
-        } else {
-            if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean(UNBREAKABLE_KEY)) {
+            return;
+        } else if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selectedStack = toolbelt.getSelectedItem(stack);
+            if (selectedStack != null) {
+                damageItem(selectedStack, entity, damage);
                 return;
             }
-            IGTTool tool = (IGTTool) stack.getItem();
-            if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
-                Random random = entity == null ? GTValues.RNG : entity.getRNG();
-                if (tool.isElectric()) {
-                    int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
-                    IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
-                            null);
-                    if (electricItem != null) {
-                        electricItem.discharge(electricDamage, tool.getElectricTier(), true, false, false);
-                        if (electricItem.getCharge() > 0 &&
-                                random.nextInt(100) >= ConfigHolder.tools.rngDamageElectricTools) {
-                            return;
-                        }
-                    } else {
-                        throw new IllegalStateException(
-                                "Electric tool does not have an attached electric item capability.");
+        }
+        if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean(UNBREAKABLE_KEY)) {
+            return;
+        }
+        if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
+            Random random = entity == null ? GTValues.RNG : entity.getRNG();
+            if (tool.isElectric()) {
+                int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
+                IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
+                        null);
+                if (electricItem != null) {
+                    electricItem.discharge(electricDamage, tool.getElectricTier(), true, false, false);
+                    if (electricItem.getCharge() > 0 &&
+                            random.nextInt(100) >= ConfigHolder.tools.rngDamageElectricTools) {
+                        return;
+                    }
+                } else {
+                    throw new IllegalStateException(
+                            "Electric tool does not have an attached electric item capability.");
+                }
+            }
+            int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+            int negated = 0;
+            for (int k = 0; unbreakingLevel > 0 && k < damage; k++) {
+                if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, random)) {
+                    negated++;
+                }
+            }
+            damage -= negated;
+            if (damage <= 0) {
+                return;
+            }
+            int newDurability = stack.getItemDamage() + damage;
+            if (entity instanceof EntityPlayerMP) {
+                CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
+            }
+            stack.setItemDamage(newDurability);
+            if (newDurability > stack.getMaxDamage()) {
+                if (entity instanceof EntityPlayer) {
+                    StatBase stat = StatList.getObjectBreakStats(stack.getItem());
+                    if (stat != null) {
+                        ((EntityPlayer) entity).addStat(stat);
                     }
                 }
-                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
-                int negated = 0;
-                for (int k = 0; unbreakingLevel > 0 && k < damage; k++) {
-                    if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, random)) {
-                        negated++;
-                    }
+                if (entity != null) {
+                    entity.renderBrokenItemStack(stack);
                 }
-                damage -= negated;
-                if (damage <= 0) {
-                    return;
-                }
-                int newDurability = stack.getItemDamage() + damage;
-                if (entity instanceof EntityPlayerMP) {
-                    CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
-                }
-                stack.setItemDamage(newDurability);
-                if (newDurability > stack.getMaxDamage()) {
-                    if (entity instanceof EntityPlayer) {
-                        StatBase stat = StatList.getObjectBreakStats(stack.getItem());
-                        if (stat != null) {
-                            ((EntityPlayer) entity).addStat(stat);
-                        }
-                    }
-                    if (entity != null) {
-                        entity.renderBrokenItemStack(stack);
-                    }
-                    stack.shrink(1);
-                }
+                stack.shrink(1);
             }
         }
     }
@@ -320,6 +349,10 @@ public final class ToolHelper {
      */
     public static void onActionDone(@NotNull EntityPlayer player, @NotNull World world, @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         IGTTool tool = (IGTTool) stack.getItem();
         ToolHelper.damageItem(stack, player);
         if (tool.getSound() != null) {
@@ -347,6 +380,13 @@ public final class ToolHelper {
     }
 
     /**
+     * @return if the itemstack should be considered a tool
+     */
+    public static boolean isTool(ItemStack tool) {
+        return tool.getItem() instanceof ItemTool || tool.getItem() instanceof IGTTool;
+    }
+
+    /**
      * Return if all the specified tool classes exists in the tool
      */
     public static boolean areTools(ItemStack tool, String... toolClasses) {
@@ -363,6 +403,10 @@ public final class ToolHelper {
      * @return The level of Fortune or Looting that the tool is enchanted with, or zero
      */
     public static int getFortuneOrLootingLevel(ItemStack tool) {
+        if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(tool);
+            if (selected != null) tool = selected;
+        }
         if (tool.getItem() instanceof ItemGTSword) {
             return EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, tool);
         } else if (tool.getItem() instanceof IGTTool) {
@@ -384,6 +428,10 @@ public final class ToolHelper {
      * AoE Block Breaking Routine.
      */
     public static boolean areaOfEffectBlockBreakRoutine(ItemStack stack, EntityPlayerMP player) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         int currentDurability = getToolTag(stack).getInteger(DURABILITY_KEY);
         int maximumDurability = getToolTag(stack).getInteger(MAX_DURABILITY_KEY);
         int remainingUses = maximumDurability - currentDurability;
@@ -400,7 +448,11 @@ public final class ToolHelper {
                     return true;
                 }
                 // If the tool is an electric tool, catch the tool breaking and cancel the remaining AOE
-                else if (!player.getHeldItemMainhand().isItemEqualIgnoreDurability(stack)) {
+                ItemStack tool = player.getHeldItemMainhand();
+                if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
+                    ItemStack selected = toolbelt.getSelectedItem(tool);
+                    if (selected != null) tool = selected;
+                } else if (!tool.isItemEqualIgnoreDurability(stack)) {
                     return true;
                 }
             }
@@ -412,6 +464,10 @@ public final class ToolHelper {
     public static Set<BlockPos> iterateAoE(ItemStack stack, AoESymmetrical aoeDefinition, World world,
                                            EntityPlayer player, RayTraceResult rayTraceResult,
                                            QuintFunction<ItemStack, World, EntityPlayer, BlockPos, BlockPos, Boolean> function) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         if (aoeDefinition != AoESymmetrical.none() && rayTraceResult != null &&
                 rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
             int column = aoeDefinition.column;
@@ -659,9 +715,12 @@ public final class ToolHelper {
         }
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean breakBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
         // This is *not* a vanilla/forge convention, Forge never added "shears" to ItemShear's tool classes.
+        if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(tool);
+            if (selected != null) tool = selected;
+        }
         if (isTool(tool, ToolClasses.SHEARS) && shearBlockRoutine(player, tool, pos) == 0) {
             return false;
         }
@@ -710,6 +769,10 @@ public final class ToolHelper {
      */
     public static int shearBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
         if (!player.isCreative()) {
+            if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
+                ItemStack selected = toolbelt.getSelectedItem(tool);
+                if (selected != null) tool = selected;
+            }
             World world = player.world;
             IBlockState state = world.getBlockState(pos);
             if (state.getBlock() instanceof IShearable) {
@@ -768,6 +831,10 @@ public final class ToolHelper {
     }
 
     public static void playToolSound(ItemStack stack, EntityPlayer player) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedItem(stack);
+            if (selected != null) stack = selected;
+        }
         if (stack.getItem() instanceof IGTTool) {
             ((IGTTool) stack.getItem()).playSound(player);
         }
