@@ -279,6 +279,8 @@ public class MaterialRecipeHandler {
     }
 
     public static void processIngot(OrePrefix ingotPrefix, Material material, IngotProperty property) {
+        int workingTier = material.getWorkingTier();
+
         if (material.hasFlag(MORTAR_GRINDABLE)) {
             ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material),
                     OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X',
@@ -286,17 +288,20 @@ public class MaterialRecipeHandler {
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
-            ModHandler.addShapedRecipe(String.format("stick_%s", material),
-                    OreDictUnifier.get(OrePrefix.stick, material, 1),
-                    "f ", " X",
-                    'X', new UnificationEntry(ingotPrefix, material));
+            if (workingTier <= HV) {
+                ModHandler.addShapedRecipe(String.format("stick_%s", material),
+                        OreDictUnifier.get(OrePrefix.stick, material, 1),
+                        "f ", " X",
+                        'X', new UnificationEntry(ingotPrefix, material));
+            }
+
             if (!material.hasFlag(NO_WORKING)) {
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                         .input(ingotPrefix, material)
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_ROD)
                         .outputs(OreDictUnifier.get(OrePrefix.stick, material, 2))
                         .duration((int) material.getMass() * 2)
-                        .EUt(6 * getVoltageMultiplier(material))
+                        .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                         .buildAndRegister();
             }
         }
@@ -306,7 +311,8 @@ public class MaterialRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                     .outputs(OreDictUnifier.get(ingotPrefix, material))
-                    .duration(20).EUt(VA[ULV])
+                    .duration(20)
+                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
                     .buildAndRegister();
         }
 
@@ -316,26 +322,32 @@ public class MaterialRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_INGOT)
                     .outputs(OreDictUnifier.get(OrePrefix.ingot, material))
                     .duration(10)
-                    .EUt(4 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(4 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
 
-        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass())
+        ALLOY_SMELTER_RECIPES.recipeBuilder()
                 .input(ingot, material)
                 .notConsumable(MetaItems.SHAPE_MOLD_NUGGET.getStackForm())
                 .output(nugget, material, 9)
+                .duration((int) material.getMass())
+                .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
                 .buildAndRegister();
 
         if (!OreDictUnifier.get(block, material).isEmpty()) {
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass() * 9)
+            ALLOY_SMELTER_RECIPES.recipeBuilder()
                     .input(block, material)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
                     .output(ingot, material, 9)
+                    .duration((int) material.getMass() * 9)
+                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
                     .buildAndRegister();
 
-            COMPRESSOR_RECIPES.recipeBuilder().EUt(2).duration(300)
+            COMPRESSOR_RECIPES.recipeBuilder()
                     .input(ingot, material, (int) (block.getMaterialAmount(material) / M))
                     .output(block, material)
+                    .duration(300)
+                    .EUt(GTUtility.scaleVoltage(2, workingTier))
                     .buildAndRegister();
         }
 
@@ -348,17 +360,21 @@ public class MaterialRecipeHandler {
                             .circuitMeta(1)
                             .input(ingotPrefix, material)
                             .outputs(plateStack)
-                            .EUt(24).duration((int) (material.getMass()))
+                            .duration((int) (material.getMass()))
+                            .EUt(GTUtility.scaleVoltage(24, workingTier))
                             .buildAndRegister();
 
                     RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
                             .input(ingotPrefix, material, 3)
                             .outputs(GTUtility.copy(2, plateStack))
-                            .EUt(16).duration((int) material.getMass())
+                            .duration((int) material.getMass())
+                            .EUt(GTUtility.scaleVoltage(16, workingTier))
                             .buildAndRegister();
 
-                    ModHandler.addShapedRecipe(String.format("plate_%s", material),
-                            plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
+                    if (workingTier <= HV) {
+                        ModHandler.addShapedRecipe(String.format("plate_%s", material),
+                                plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
+                    }
                 }
             }
 
@@ -369,7 +385,7 @@ public class MaterialRecipeHandler {
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, material))
                         .duration((int) material.getMass())
-                        .EUt(8 * voltageMultiplier)
+                        .EUt(GTUtility.scaleVoltage(8 * voltageMultiplier, workingTier))
                         .buildAndRegister();
 
                 if (material.hasFlag(NO_SMASHING)) {
@@ -378,7 +394,7 @@ public class MaterialRecipeHandler {
                             .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
                             .outputs(OreDictUnifier.get(OrePrefix.plate, material))
                             .duration((int) material.getMass())
-                            .EUt(8 * voltageMultiplier)
+                            .EUt(GTUtility.scaleVoltage(8 * voltageMultiplier, workingTier))
                             .buildAndRegister();
                 }
             }
@@ -418,10 +434,12 @@ public class MaterialRecipeHandler {
 
     public static void processNugget(OrePrefix orePrefix, Material material, DustProperty property) {
         ItemStack nuggetStack = OreDictUnifier.get(orePrefix, material);
+        int workingTier = material.getWorkingTier();
+
         if (material.hasProperty(PropertyKey.INGOT)) {
             ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, material);
 
-            if (!ConfigHolder.recipes.disableManualCompression) {
+            if (!ConfigHolder.recipes.disableManualCompression && workingTier <= HV) {
                 ModHandler.addShapelessRecipe(String.format("nugget_disassembling_%s", material),
                         GTUtility.copy(9, nuggetStack), new UnificationEntry(OrePrefix.ingot, material));
                 ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material),
@@ -431,12 +449,16 @@ public class MaterialRecipeHandler {
             COMPRESSOR_RECIPES.recipeBuilder()
                     .input(nugget, material, 9)
                     .output(ingot, material)
-                    .EUt(2).duration(300).buildAndRegister();
+                    .duration(300)
+                    .EUt(GTUtility.scaleVoltage(2, workingTier))
+                    .buildAndRegister();
 
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass())
+            ALLOY_SMELTER_RECIPES.recipeBuilder()
                     .input(nugget, material, 9)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
                     .output(ingot, material)
+                    .duration((int) material.getMass())
+                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
                     .buildAndRegister();
 
             if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
@@ -445,13 +467,12 @@ public class MaterialRecipeHandler {
                         .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                         .outputs(OreDictUnifier.get(orePrefix, material, 9))
                         .duration((int) material.getMass())
-                        .EUt(VA[ULV])
+                        .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
                         .buildAndRegister();
             }
         } else if (material.hasProperty(PropertyKey.GEM)) {
-            ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, material);
-
-            if (!ConfigHolder.recipes.disableManualCompression) {
+            if (!ConfigHolder.recipes.disableManualCompression && workingTier <= HV) {
+                ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, material);
                 ModHandler.addShapelessRecipe(String.format("nugget_disassembling_%s", material),
                         GTUtility.copy(9, nuggetStack), new UnificationEntry(OrePrefix.gem, material));
                 ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material),
@@ -480,13 +501,16 @@ public class MaterialRecipeHandler {
     public static void processBlock(OrePrefix blockPrefix, Material material, DustProperty property) {
         ItemStack blockStack = OreDictUnifier.get(blockPrefix, material);
         long materialAmount = blockPrefix.getMaterialAmount(material);
+        int workingTier = material.getWorkingTier();
+
         if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(
                             ((int) (materialAmount * L / M))))
                     .outputs(blockStack)
-                    .duration((int) material.getMass()).EUt(VA[ULV])
+                    .duration((int) material.getMass())
+                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier))
                     .buildAndRegister();
         }
 
@@ -496,7 +520,8 @@ public class MaterialRecipeHandler {
                 RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                         .input(blockPrefix, material)
                         .outputs(GTUtility.copy((int) (materialAmount / M), plateStack))
-                        .duration((int) (material.getMass() * 8L)).EUt(VA[LV])
+                        .duration((int) (material.getMass() * 8L))
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
             }
         }
@@ -520,7 +545,7 @@ public class MaterialRecipeHandler {
 
             // do not allow hand crafting or uncrafting of blacklisted blocks
             if (!material.hasFlag(EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES) &&
-                    !ConfigHolder.recipes.disableManualCompression) {
+                    !ConfigHolder.recipes.disableManualCompression && workingTier <= HV) {
                 ModHandler.addShapelessRecipe(String.format("block_compress_%s", material), blockStack,
                         result.toArray());
 
@@ -535,25 +560,31 @@ public class MaterialRecipeHandler {
                         .input(OrePrefix.ingot, material, (int) (materialAmount / M))
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_BLOCK)
                         .outputs(blockStack)
-                        .duration(10).EUt(8 * voltageMultiplier)
+                        .duration(10)
+                        .EUt(GTUtility.scaleVoltage(8 * voltageMultiplier, workingTier))
                         .buildAndRegister();
 
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
                         .input(OrePrefix.ingot, material, (int) (materialAmount / M))
                         .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
                         .outputs(blockStack)
-                        .duration(5).EUt(4 * voltageMultiplier)
+                        .duration(5)
+                        .EUt(GTUtility.scaleVoltage(4 * voltageMultiplier, workingTier))
                         .buildAndRegister();
             } else if (material.hasProperty(PropertyKey.GEM)) {
                 COMPRESSOR_RECIPES.recipeBuilder()
                         .input(gem, material, (int) (block.getMaterialAmount(material) / M))
                         .output(block, material)
-                        .duration(300).EUt(2).buildAndRegister();
+                        .duration(300)
+                        .EUt(GTUtility.scaleVoltage(2, workingTier))
+                        .buildAndRegister();
 
                 FORGE_HAMMER_RECIPES.recipeBuilder()
                         .input(block, material)
                         .output(gem, material, (int) (block.getMaterialAmount(material) / M))
-                        .duration(100).EUt(24).buildAndRegister();
+                        .duration(100)
+                        .EUt(GTUtility.scaleVoltage(24, workingTier))
+                        .buildAndRegister();
             }
         }
     }
