@@ -52,6 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -415,6 +416,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                     .child(createSlotWidget(entry))
                     .child(new ButtonWidget<>()
                             .overlay(GTGuiTextures.BUTTON_CROSS)
+                            .setEnabledIf(w -> !Objects.equals(entry.getColor(), activeEntry.getColor()))
                             .addTooltipLine(IKey.lang("cover.generic.ender.delete_entry"))
                             .onMousePressed(i -> {
                                 // todo option to force delete, maybe as a popup?
