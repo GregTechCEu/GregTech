@@ -1,9 +1,5 @@
 package gregtech.common.covers.ender;
 
-import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
-import com.cleanroommc.modularui.widgets.TextWidget;
-
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
@@ -34,6 +30,7 @@ import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
@@ -41,8 +38,10 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
+import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -89,7 +88,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         return this.color;
     }
 
-    protected final String createName() {;
+    protected final String createName() {
+        ;
         return identifier() + this.color;
     }
 
@@ -274,6 +274,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         @NotNull
         @Override
         public Result onMousePressed(int mouseButton) {
+            Interactable.playButtonClickSound();
             this.syncHandler.setColor(this.entry.getColorStr());
             this.syncHandler.syncToServer(1, buf -> NetworkUtils.writeStringSafe(buf, this.entry.getColorStr()));
             return Result.SUCCESS;
@@ -281,6 +282,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     private static class EntryColorSH extends SyncHandler {
+
         private final Consumer<String> setter;
 
         private EntryColorSH(Consumer<String> setter) {
@@ -292,9 +294,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         }
 
         @Override
-        public void readOnClient(int id, PacketBuffer buf) throws IOException {
-
-        }
+        public void readOnClient(int id, PacketBuffer buf) throws IOException {}
 
         @Override
         public void readOnServer(int id, PacketBuffer buf) throws IOException {
@@ -335,7 +335,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         protected IWidget createRow(String name, ModularPanel mainPanel, GuiSyncManager syncManager) {
             T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
             var entryDescriptionSH = new EntryDescriptionSH(mainPanel, entry);
-            syncManager.syncValue(String.format("entry#%s_description", entry.getColorStr()), isPrivate ? 1 : 0, entryDescriptionSH);
+            syncManager.syncValue(String.format("entry#%s_description", entry.getColorStr()), isPrivate ? 1 : 0,
+                    entryDescriptionSH);
 
             return new Row()
                     .left(4)

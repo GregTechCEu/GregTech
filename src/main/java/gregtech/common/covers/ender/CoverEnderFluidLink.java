@@ -175,8 +175,11 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                 .syncHandler(fluidTank)
                                 .marginRight(2))
                         .child(new ButtonWidget<>()
+                                // .overlay() todo add overlay, maybe a menu-like icon?
                                 .background(GTGuiTextures.MC_BUTTON)
                                 .hoverBackground(GuiTextures.MC_BUTTON_HOVERED)
+                                // todo lang
+                                .tooltip(tooltip -> tooltip.addLine("Open Entry Selector"))
                                 .onMousePressed(i -> {
                                     if (entrySelectorSH.isPanelOpen()) {
                                         entrySelectorSH.closePanel();
