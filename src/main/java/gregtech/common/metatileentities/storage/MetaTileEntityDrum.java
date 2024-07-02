@@ -2,8 +2,11 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.FilteredFluidHandler;
+import gregtech.api.capability.impl.FilteredItemHandler;
+import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
-import gregtech.api.gui.ModularUI;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -26,15 +29,18 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
@@ -57,7 +63,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     private final int tankSize;
     private final Material material;
     private FilteredFluidHandler fluidTank;
+    private IFluidHandler outputFluidInventory;
     private boolean isAutoOutput = false;
+    private boolean allowInputfromOutput = false;
 
     public MetaTileEntityDrum(ResourceLocation metaTileEntityId, Material material, int tankSize) {
         super(metaTileEntityId);
@@ -91,6 +99,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
                     String.format("Material %s requires FluidPipeProperty for Drums", material));
         }
         this.fluidInventory = this.fluidTank = new FilteredFluidHandler(tankSize).setFilter(filter);
+        this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), fluidInventory);
     }
 
     @Override
@@ -176,26 +185,56 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide,
-                                      CuboidRayTraceResult hitResult) {
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
             if (getWorld().isRemote) {
                 scheduleRenderUpdate();
                 return true;
             }
             playerIn.sendStatusMessage(new TextComponentTranslation(
-                    "gregtech.machine.drum." + (isAutoOutput ? "disable" : "enable") + "_output"), true);
-            toggleOutput();
+                    "gregtech.machine.drum." + (isAutoOutput ? "disable" : "enable") +
+                            "_output"),
+                    true);
+            toggleOutput(!isAutoOutput);
             return true;
+        }
+        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+    }
+
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide,
+                                      CuboidRayTraceResult hitResult) {
+        if (!playerIn.isSneaking()) {
+            if (!getWorld().isRemote) {
+                playerIn.sendStatusMessage(new TextComponentTranslation(
+                        "gregtech.machine.basic.input_from_output_side." +
+                                (allowInputfromOutput ? "allow" : "disallow")),
+                        true);
+                toggleInputFromOutput();
+                return true;
+            }
         }
         return super.onScrewdriverClick(playerIn, hand, wrenchSide, hitResult);
     }
 
-    private void toggleOutput() {
-        isAutoOutput = !isAutoOutput;
+    private boolean getAutoOutput() {
+        return isAutoOutput;
+    }
+
+    private void toggleOutput(boolean output) {
+        if (isAutoOutput == output) return;
+        isAutoOutput = output;
         if (!getWorld().isRemote) {
             notifyBlockUpdate();
             writeCustomData(UPDATE_AUTO_OUTPUT, buf -> buf.writeBoolean(isAutoOutput));
+            markDirty();
+        }
+    }
+
+    private void toggleInputFromOutput() {
+        allowInputfromOutput = !allowInputfromOutput;
+        if (!getWorld().isRemote) {
             markDirty();
         }
     }
@@ -248,7 +287,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
         if (TooltipHelper.isShiftDown()) {
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
-            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_down"));
+            tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.auto_output_down"));
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_covers"));
             tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
         }
 
@@ -268,15 +308,11 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("FluidInventory", ((FluidTank) fluidInventory).writeToNBT(new NBTTagCompound()));
         data.setBoolean("AutoOutput", isAutoOutput);
+        data.setBoolean("AllowInputFromOutput", allowInputfromOutput);
         return data;
     }
 
@@ -285,10 +321,35 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         super.readFromNBT(data);
         ((FluidTank) this.fluidInventory).readFromNBT(data.getCompoundTag("FluidInventory"));
         isAutoOutput = data.getBoolean("AutoOutput");
+        allowInputfromOutput = data.getBoolean("AllowInputFromOutput");
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            IFluidHandler fluidHandler = (side == EnumFacing.DOWN && allowInputfromOutput) ? outputFluidInventory :
+                    fluidInventory;
+            if (fluidHandler.getTankProperties().length > 0) {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler);
+            }
+            return null;
+        }
+        return super.getCapability(capability, side);
     }
 
     @Override
     protected boolean shouldSerializeInventories() {
         return false;
+    }
+
+    @Override
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return new FilteredItemHandler(this, 1).setFillPredicate(
+                FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
+    }
+
+    @Override
+    protected IItemHandlerModifiable createExportItemHandler() {
+        return new GTItemStackHandler(this, 1);
     }
 }
