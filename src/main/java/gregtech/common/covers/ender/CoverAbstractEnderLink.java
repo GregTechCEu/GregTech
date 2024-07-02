@@ -170,8 +170,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                 .overlay(GTGuiTextures.MENU_OVERLAY)
                                 .background(GTGuiTextures.MC_BUTTON)
                                 .disableHoverBackground()
-                                // todo lang
-                                .tooltip(tooltip -> tooltip.addLine("Open Entry Selector"))
+                                .addTooltipLine(IKey.lang("cover.generic.ender.open_selector"))
                                 .onMousePressed(i -> {
                                     if (entrySelectorSH.isPanelOpen()) {
                                         entrySelectorSH.closePanel();
@@ -261,13 +260,11 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        // packetBuffer.writeInt(this.color);
         packetBuffer.writeString(this.playerUUID == null ? "null" : this.playerUUID.toString());
     }
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
-        // this.color = packetBuffer.readInt();
         // does client even need uuid info? just in case
         String uuidStr = packetBuffer.readString(36);
         this.playerUUID = uuidStr.equals("null") ? null : UUID.fromString(uuidStr);
@@ -358,7 +355,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             this.names.clear();
             this.names.addAll(VirtualRegistryBase.getEntryNames(getOwner(), type));
             return GTGuis.createPopupPanel("entry_selector", 168, 112)
-                    .child(IKey.str("Known Channels") // todo lang
+                    .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR).asWidget()
                             .top(6)
                             .left(4))
@@ -404,8 +401,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .marginRight(4))
                     .child(new ButtonWidget<>()
                             .overlay(GuiTextures.GEAR)
-                            // todo lang
-                            .tooltipBuilder(tooltip -> tooltip.addLine("Set Description"))
+                            .addTooltipLine(IKey.lang("cover.generic.ender.set_description.tooltip"))
                             .onMousePressed(i -> {
                                 // open entry settings
                                 if (entryDescriptionSH.isPanelOpen()) {
@@ -419,8 +415,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                     .child(createSlotWidget(entry))
                     .child(new ButtonWidget<>()
                             .overlay(GTGuiTextures.BUTTON_CROSS)
-                            // todo lang
-                            .tooltipBuilder(tooltip -> tooltip.addLine("Delete Entry"))
+                            .addTooltipLine(IKey.lang("cover.generic.ender.delete_entry"))
                             .onMousePressed(i -> {
                                 // todo option to force delete, maybe as a popup?
                                 deleteEntry(name, entry);
@@ -466,7 +461,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         @Override
         public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
             return GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
-                    .child(IKey.str(String.format("Set Description [%s]", entry.getColorStr()))
+                    .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
                             .color(UI_TITLE_COLOR)
                             .asWidget()
                             .left(4)
