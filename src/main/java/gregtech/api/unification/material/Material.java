@@ -297,6 +297,21 @@ public class Material implements Comparable<Material> {
         return false;
     }
 
+    // Assumes one mole per item and that it's always "starting to decay"
+    @ZenGetter("decaysPerSecond")
+    public double getDecaysPerSecond() {
+        if (!this.isRadioactive()) {
+            return 0;
+        }
+        if (materialInfo.element != null) {
+            return 6e23 * (Math.log(2) * Math.exp(-Math.log(2) / materialInfo.element.halfLifeSeconds));
+        }
+        double decaysPerSecond = 0;
+        for (MaterialStack material : materialInfo.componentList)
+            decaysPerSecond += material.material.getDecaysPerSecond();
+        return decaysPerSecond;
+    }
+
     @ZenGetter("protons")
     public long getProtons() {
         if (materialInfo.element != null)
@@ -1062,6 +1077,27 @@ public class Material implements Comparable<Material> {
 
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
             properties.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, stacksPerSec));
+            return this;
+        }
+
+        public Builder fissionFuelProperties(int maxTemperature, int duration, double slowNeutronCaptureCrossSection,
+                                             double fastNeutronCaptureCrossSection,
+                                             double slowNeutronFissionCrossSection,
+                                             double fastNeutronFissionCrossSection) {
+            properties.ensureSet(PropertyKey.DUST);
+            properties.setProperty(PropertyKey.FISSION_FUEL,
+                    new FissionFuelProperty(maxTemperature, duration, slowNeutronCaptureCrossSection,
+                            fastNeutronCaptureCrossSection, slowNeutronFissionCrossSection,
+                            fastNeutronFissionCrossSection));
+            return this;
+        }
+
+        public Builder coolantProperty(Material hotHPCoolant, double moderatorFactor,
+                                       double coolingFactor, double boilingPoint, double absorption, double pressure,
+                                       double heatOfVaporization, double specificHeatCapacity) {
+            properties.ensureSet(PropertyKey.FLUID);
+            properties.setProperty(PropertyKey.COOLANT, new CoolantProperty(hotHPCoolant, moderatorFactor,
+                    coolingFactor, boilingPoint, absorption, pressure, heatOfVaporization, specificHeatCapacity));
             return this;
         }
 

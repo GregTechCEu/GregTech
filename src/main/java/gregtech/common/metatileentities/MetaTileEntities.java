@@ -42,11 +42,13 @@ import gregtech.common.metatileentities.electric.SimpleMachineMetaTileEntityResi
 import gregtech.common.metatileentities.multi.BoilerType;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOvenHatch;
+import gregtech.common.metatileentities.multi.MetaTileEntityFissionReactor;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import gregtech.common.metatileentities.multi.MetaTileEntityMultiblockTank;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.MetaTileEntityPumpHatch;
+import gregtech.common.metatileentities.multi.MetaTileEntitySpentFuelPool;
 import gregtech.common.metatileentities.multi.MetaTileEntityTankValve;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
@@ -57,6 +59,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityDistillatio
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityGasCentrifuge;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityImplosionCompressor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeChemicalReactor;
@@ -75,9 +78,14 @@ import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityL
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityAutoMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCleaningMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityComputationHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityControlRodPort;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantImportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityDataAccessHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityEnergyHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodExportHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityLaserHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMachineHatch;
@@ -145,53 +153,81 @@ public class MetaTileEntities {
 
     // HULLS
     public static final MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.V.length];
-    public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no MAX
-    public static final MetaTileEntityTransformer[] HI_AMP_TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; /// no MAX
-    public static final MetaTileEntityTransformer[] POWER_TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no MAX
+    public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length -
+            1]; // no MAX
+    public static final MetaTileEntityTransformer[] HI_AMP_TRANSFORMER = new MetaTileEntityTransformer[
+            GTValues.V.length - 1]; /// no MAX
+    public static final MetaTileEntityTransformer[] POWER_TRANSFORMER = new MetaTileEntityTransformer[
+            GTValues.V.length - 1]; // no MAX
     public static final MetaTileEntityDiode[] DIODES = new MetaTileEntityDiode[GTValues.V.length];
     public static final MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[3][GTValues.V.length];
     public static final MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
 
     // SIMPLE MACHINES SECTION
-    public static final SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] MACERATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] ALLOY_SMELTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] ARC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] AUTOCLAVE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] MACERATOR = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] ALLOY_SMELTER = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ARC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] AUTOCLAVE = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
     public static final SimpleMachineMetaTileEntity[] BENDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] BREWERY = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] CANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] CHEMICAL_BATH = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] CHEMICAL_REACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] COMPRESSOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] CHEMICAL_BATH = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CHEMICAL_REACTOR = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] COMPRESSOR = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
     public static final SimpleMachineMetaTileEntity[] CUTTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] DISTILLERY = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] ELECTROLYZER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] ELECTROMAGNETIC_SEPARATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] EXTRACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] DISTILLERY = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] ELECTROLYZER = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] ELECTROMAGNETIC_SEPARATOR = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] EXTRACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
     public static final SimpleMachineMetaTileEntity[] EXTRUDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] FERMENTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] FLUID_HEATER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] FLUID_SOLIDIFIER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] FORGE_HAMMER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] FORMING_PRESS = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] FERMENTER = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] FLUID_HEATER = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] FLUID_SOLIDIFIER = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] FORGE_HAMMER = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] FORMING_PRESS = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] LATHE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] MIXER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] ORE_WASHER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ORE_WASHER = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
     public static final SimpleMachineMetaTileEntity[] PACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] UNPACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] POLARIZER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] LASER_ENGRAVER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] POLARIZER = new SimpleMachineMetaTileEntity[GTValues.V.length -
+            1];
+    public static final SimpleMachineMetaTileEntity[] LASER_ENGRAVER = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] SIFTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] THERMAL_CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] THERMAL_CENTRIFUGE = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] WIREMILL = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] CIRCUIT_ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CIRCUIT_ASSEMBLER = new SimpleMachineMetaTileEntity[
+            GTValues.V.length - 1];
     // public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1]; // TODO Replication
     // public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1]; // TODO Replication
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length -
+            1];
     public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
     public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
 
@@ -201,7 +237,8 @@ public class MetaTileEntities {
     public static final SimpleGeneratorMetaTileEntity[] GAS_TURBINE = new SimpleGeneratorMetaTileEntity[4];
 
     // MULTIBLOCK PARTS SECTION
-    public static final MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1]; // ULV-UHV
+    public static final MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV +
+            1]; // ULV-UHV
     public static final MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1];
     public static final MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
     public static final MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
@@ -218,7 +255,8 @@ public class MetaTileEntities {
     public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
     public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[6]; // HV, EV, IV, LuV, ZPM, UV
-    public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV + 1]; // LV-UV
+    public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV +
+            1]; // LV-UV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
     public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
     public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
@@ -330,6 +368,16 @@ public class MetaTileEntities {
     public static MetaTileEntityNetworkSwitch NETWORK_SWITCH;
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
+    public static MetaTileEntityFissionReactor FISSION_REACTOR;
+    public static MetaTileEntityHeatExchanger HEAT_EXCHANGER;
+    public static MetaTileEntityFuelRodImportHatch FUEL_ROD_INPUT;
+    public static MetaTileEntityFuelRodExportHatch FUEL_ROD_OUTPUT;
+    public static MetaTileEntityCoolantImportHatch COOLANT_INPUT;
+    public static MetaTileEntityCoolantExportHatch COOLANT_OUTPUT;
+    public static MetaTileEntityControlRodPort CONTROL_ROD;
+    public static MetaTileEntityControlRodPort CONTROL_ROD_MODERATED;
+    public static MetaTileEntitySpentFuelPool SPENT_FUEL_POOL;
+    public static MetaTileEntityGasCentrifuge GAS_CENTRIFUGE;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -772,6 +820,11 @@ public class MetaTileEntities {
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042,
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
+        FISSION_REACTOR = registerMetaTileEntity(1043, new MetaTileEntityFissionReactor(gregtechId("fission_reactor")));
+        SPENT_FUEL_POOL = registerMetaTileEntity(1044, new MetaTileEntitySpentFuelPool(gregtechId("spent_fuel_pool")));
+        HEAT_EXCHANGER = registerMetaTileEntity(1045, new MetaTileEntityHeatExchanger(gregtechId("heat_exchanger")));
+        GAS_CENTRIFUGE = registerMetaTileEntity(1046, new MetaTileEntityGasCentrifuge(gregtechId("gas_centrifuge")));
+
         // MISC MTE's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
@@ -1154,6 +1207,18 @@ public class MetaTileEntities {
         ALARM = registerMetaTileEntity(1751, new MetaTileEntityAlarm(gregtechId("alarm")));
 
         // IDs 1752-1756 are taken by AE2 parts
+
+        // Nuclear hatches, 1800-1805
+        FUEL_ROD_INPUT = registerMetaTileEntity(1800,
+                new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
+        FUEL_ROD_OUTPUT = registerMetaTileEntity(1801,
+                new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
+        COOLANT_INPUT = registerMetaTileEntity(1802, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
+        COOLANT_OUTPUT = registerMetaTileEntity(1803,
+                new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));
+        CONTROL_ROD = registerMetaTileEntity(1804, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
+        CONTROL_ROD_MODERATED = registerMetaTileEntity(1805,
+                new MetaTileEntityControlRodPort(gregtechId("control_rod_moderated"), true));
 
         // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
         // EV hatches separate because of old names/IDs

@@ -1,0 +1,23 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "gas_centrifuge",
+		"particle": "gas_centrifuge"
+	},
+	"elements": [
+		{
+			"from": [3, 0, 3],
+			"to": [13, 16, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 5, 8], "texture": "#0"},
+				"east": {"uv": [0, 0, 5, 8], "texture": "#0"},
+				"south": {"uv": [0, 0, 5, 8], "texture": "#0"},
+				"west": {"uv": [0, 0, 5, 8], "texture": "#0"},
+				"up": {"uv": [10, 5, 5, 0], "texture": "#0"},
+				"down": {"uv": [10, 0, 5, 5], "texture": "#0"}
+			}
+		}
+	]
+}

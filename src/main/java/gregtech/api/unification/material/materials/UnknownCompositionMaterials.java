@@ -331,7 +331,13 @@ public class UnknownCompositionMaterials {
                 .flags(FLAMMABLE)
                 .build();
 
-        // Free IDs 1560-1575
+        Corium = new Material.Builder(1560, gregtechId("corium"))
+                .liquid(new FluidBuilder().temperature(2500).block().density(8.0D))
+                .color(0x7A6B50)
+                .flags(NO_UNIFICATION, STICKY, GLOWING)
+                .build();
+
+        // Free IDs 1561-1575
 
         LPG = new Material.Builder(1576, gregtechId("lpg"))
                 .liquid(new FluidBuilder().customStill())
@@ -640,5 +646,13 @@ public class UnknownCompositionMaterials {
 
         PCBCoolant = new Material.Builder(1650, gregtechId("pcb_coolant"))
                 .fluid().color(0xD5D69C).build();
+
+        SpentUraniumFuelSolution = new Material.Builder(1651, gregtechId("spent_uranium_fuel_solution"))
+                .liquid(new FluidBuilder())
+                .color(0x5B5B5B).build(); // TODO color
+
+        RadonRichGasMixture = new Material.Builder(1652, gregtechId("radon_rich_gas_mixture"))
+                .gas()
+                .color(0xd78dd9).build();
     }
 }

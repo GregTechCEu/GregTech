@@ -90,6 +90,10 @@ public class ConfigHolder {
                 "1.0 means 1L Steam -> 1 EU. 0.5 means 2L Steam -> 1 EU.", "Default: 0.5" })
         public double multiblockSteamToEU = 0.5;
 
+        @Config.Comment({ "Nuclear Max Power multiplier for balancing purposes", "Default: 0.1" })
+        @Config.RangeDouble(min = 0, max = 10000)
+        public double nuclearPowerMultiplier = 0.1;
+
         @Config.Comment({ "Whether machines or boilers damage the terrain when they explode.",
                 "Note machines and boilers always explode when overloaded with power or met with special conditions, regardless of this config.",
                 "Default: true" })
@@ -161,6 +165,16 @@ public class ConfigHolder {
                 "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
                 "Default: true" })
         public boolean allowTickAcceleration = true;
+
+        @Config.Comment({ "The amount of water (in liters) that can be boiled by a single liter of hot coolant.",
+                "Default: 1" })
+        @Config.RangeInt(min = 1)
+        public double coolantRecovery = 1;
+
+        @Config.Comment({
+                "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
+        @Config.RangeInt(min = 5, max = 10000)
+        public double fissionReactorResolution = 100;
     }
 
     public static class WorldGenOptions {
