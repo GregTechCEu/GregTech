@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.handlers;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
@@ -15,6 +16,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTUtility;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
@@ -45,8 +47,11 @@ public class ToolRecipeHandler {
     public static Map<Integer, MetaValueItem> powerUnitItems = new HashMap<>();
 
     public static void register() {
-        OrePrefix.plate.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processTool);
-        OrePrefix.plate.addProcessingHandler(PropertyKey.TOOL, ToolRecipeHandler::processElectricTool);
+        GregTechAPI.oreProcessorManager.registerProcessor(OrePrefix.plate, GTUtility.gregtechId("process_tool"),
+                PropertyKey.TOOL, ToolRecipeHandler::processTool);
+        GregTechAPI.oreProcessorManager.registerProcessor(OrePrefix.plate,
+                GTUtility.gregtechId("process_tool_electric"), PropertyKey.TOOL,
+                ToolRecipeHandler::processElectricTool);
     }
 
     public static void initializeMetaItems() {

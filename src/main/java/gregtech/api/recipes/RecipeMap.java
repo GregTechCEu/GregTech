@@ -21,8 +21,6 @@ import gregtech.api.recipes.map.MapOreDictIngredient;
 import gregtech.api.recipes.map.MapOreDictNBTIngredient;
 import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -30,6 +28,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Mods;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
+import gregtech.core.unification.ore.internal.OreProcessorManagerImpl;
 import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.integration.crafttweaker.recipe.CTRecipe;
 import gregtech.integration.crafttweaker.recipe.CTRecipeBuilder;
@@ -255,14 +254,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public static void setFoundInvalidRecipe(boolean foundInvalidRecipe) {
         RecipeMap.foundInvalidRecipe = RecipeMap.foundInvalidRecipe || foundInvalidRecipe;
-        OrePrefix currentOrePrefix = OrePrefix.getCurrentProcessingPrefix();
-        if (currentOrePrefix != null) {
-            Material currentMaterial = OrePrefix.getCurrentMaterial();
-            GTLog.logger.error(
-                    "Error happened during processing ore registration of prefix {} and material {}. " +
-                            "Seems like cross-mod compatibility issue. Report to GTCEu github.",
-                    currentOrePrefix, currentMaterial);
-        }
+        ((OreProcessorManagerImpl) GregTechAPI.oreProcessorManager).notifyInvalidRecipe();
     }
 
     /**
@@ -976,7 +968,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * This height is used to determine Y position to start drawing info on JEI.
-     * 
+     *
      * @deprecated remove overrides, this method is no longer used in any way.
      */
     @Deprecated
