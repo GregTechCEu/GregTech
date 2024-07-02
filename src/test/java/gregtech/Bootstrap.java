@@ -3,6 +3,7 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.GTFluidRegistration;
+import gregtech.api.metatileentity.registry.MTEManager;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
@@ -19,7 +20,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraftforge.common.util.CompoundDataFixer;
-import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.DummyModContainer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.IFMLSidedHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.Side;
@@ -80,6 +87,9 @@ public final class Bootstrap {
         OrePrefix.runMaterialHandlers();
         GTFluidRegistration.INSTANCE.register();
         MetaItems.init();
+
+        GregTechAPI.mteManager = MTEManager.getInstance();
+
         bootstrapped = true;
     }
 

@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.ludicrous_voltage.68_large_plasma_turbine.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1012
     },
     "frame": "goal"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1012
           }
         ]

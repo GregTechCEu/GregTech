@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.medium_voltage.39_super_tank.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1575
     }
   },
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1575
           }
         ]

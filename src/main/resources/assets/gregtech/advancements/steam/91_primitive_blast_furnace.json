@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.steam.91_primitive_blast_furnace.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1000
     },
     "frame": "goal"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1000
           }
         ]
