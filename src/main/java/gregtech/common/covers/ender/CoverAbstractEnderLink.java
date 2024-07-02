@@ -167,9 +167,9 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                 .marginRight(2))
                         .child(createEntrySlot())
                         .child(new ButtonWidget<>()
-                                // .overlay() todo add overlay, maybe a menu-like icon?
+                                .overlay(GTGuiTextures.MENU_OVERLAY)
                                 .background(GTGuiTextures.MC_BUTTON)
-                                .hoverBackground(GuiTextures.MC_BUTTON_HOVERED)
+                                .disableHoverBackground()
                                 // todo lang
                                 .tooltip(tooltip -> tooltip.addLine("Open Entry Selector"))
                                 .onMousePressed(i -> {
