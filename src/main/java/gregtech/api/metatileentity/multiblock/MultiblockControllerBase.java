@@ -317,6 +317,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return BlockPos::hashCode;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void checkStructurePattern() {
         if (structurePattern == null) return;
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
@@ -334,13 +335,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.setFlipped(context.neededFlip());
             parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
-            for (IMultiblockPart multiblockPart : parts) {
-                if (multiblockPart instanceof IMultiblockAbilityPart) {
-                    @SuppressWarnings("unchecked")
-                    IMultiblockAbilityPart<Object> abilityPart = (IMultiblockAbilityPart<Object>) multiblockPart;
-                    List<Object> abilityInstancesList = abilities.computeIfAbsent(abilityPart.getAbility(),
-                            k -> new ArrayList<>());
-                    abilityPart.registerAbilities(abilityInstancesList);
+            for (IMultiblockPart part : parts) {
+                if (part instanceof IMultiblockAbilityPart abilityPart) {
+                    List<MultiblockAbility> abilityList = abilityPart.getAbilities();
+                    for (MultiblockAbility ability : abilityList) {
+                        List abilityInstancesList = abilities.computeIfAbsent(ability,
+                                k -> new ArrayList<>());
+                        abilityInstancesList.addAll(abilityPart.registerAbilities(ability));
+                    }
                 }
             }
             this.multiblockParts.addAll(parts);
@@ -378,10 +380,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T> List<T> getAbilities(MultiblockAbility<T> ability) {
-        List<T> rawList = (List<T>) multiblockAbilities.getOrDefault(ability, Collections.emptyList());
-        return Collections.unmodifiableList(rawList);
+        return Collections.unmodifiableList(getAbilitiesModifiable(ability));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getAbilitiesModifiable(MultiblockAbility<T> ability) {
+        return (List<T>) multiblockAbilities.getOrDefault(ability, Collections.emptyList());
     }
 
     public List<IMultiblockPart> getMultiblockParts() {

@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.DualHandler;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -618,7 +619,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return null;
         }
 
-        return map.findRecipe(maxVoltage, inputs, fluidInputs);
+        if (inputs instanceof ItemHandlerList list) {
+            List<ItemStack> items = new ArrayList<>();
+            List<FluidStack> fluids = new ArrayList<>();
+            for (var handler : list.getBackingHandlers()) {
+                if (handler instanceof DualHandler dualHandler) {
+                    fluids.addAll(GTUtility.fluidHandlerToList(dualHandler));
+                }
+                items.addAll(GTUtility.itemHandlerToList((IItemHandlerModifiable) handler));
+            }
+            return map.findRecipe(maxVoltage, items, fluids);
+        } else if (inputs instanceof DualHandler dualHandler) {
+            return map.findRecipe(maxVoltage, dualHandler, dualHandler);
+        } else {
+            return map.findRecipe(maxVoltage, inputs, fluidInputs);
+        }
     }
 
     /**
