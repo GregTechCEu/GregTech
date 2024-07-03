@@ -20,16 +20,18 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
 
     @Nullable
     private FluidStack fluidStack = null;
-    private int capacity = DEFAULT_CAPACITY;
+    private int capacity;
     private final IFluidTankProperties[] props = new IFluidTankProperties[] {
             createProperty(this)
     };
 
-    public VirtualTank(Integer capacity) {
+    public VirtualTank(int capacity) {
         this.capacity = capacity;
     }
 
-    public VirtualTank() {}
+    public VirtualTank() {
+        this(DEFAULT_CAPACITY);
+    }
 
     @Override
     public EntryTypes<VirtualTank> getType() {
