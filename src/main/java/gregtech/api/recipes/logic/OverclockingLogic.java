@@ -88,32 +88,27 @@ public final class OverclockingLogic {
 
         while (ocAmount-- > 0) {
             if (subtick) {
-                double potentialEUt = eut * durationFactor;
+                break;
+            }
+
+            double potentialEUt = eut * voltageFactor;
+            if (potentialEUt > maxVoltage || potentialEUt < 1) {
+                break;
+            }
+
+            double potentialDuration = duration * durationFactor;
+            if (potentialDuration < 1) {
+                potentialEUt = eut * durationFactor;
                 if (potentialEUt > maxVoltage || potentialEUt < 1) {
                     break;
                 }
 
-                eut = potentialEUt;
+                subtick = true;
             } else {
-                double potentialEUt = eut * voltageFactor;
-                if (potentialEUt > maxVoltage) {
-                    break;
-                }
-
-                double potentialDuration = duration * durationFactor;
-                if (potentialDuration < 1) {
-                    duration = 1;
-                    potentialEUt = eut * durationFactor;
-                    if (potentialEUt > maxVoltage || potentialEUt < 1) {
-                        break;
-                    }
-
-                    subtick = true;
-                } else {
-                    duration = potentialDuration;
-                }
-                eut = potentialEUt;
+                duration = potentialDuration;
             }
+
+            eut = potentialEUt;
         }
 
         result.init((long) eut, (int) duration);
@@ -159,7 +154,6 @@ public final class OverclockingLogic {
             } else {
                 double potentialDuration = duration * durationFactor;
                 if (potentialDuration < 1) {
-                    duration = 1;
                     parallel /= durationFactor;
                     parallelIterAmount++;
                     shouldParallel = true;
@@ -230,7 +224,6 @@ public final class OverclockingLogic {
                 }
 
                 if (potentialDuration < 1) {
-                    duration = 1;
                     if (perfect) {
                         parallel *= PERFECT_DURATION_FACTOR_INV;
                     } else {
@@ -250,10 +243,65 @@ public final class OverclockingLogic {
     }
 
     /**
-     * @param providedTemp the temperate provided by the machine
-     * @param requiredTemp the required temperature of the recipe
-     * @return the amount of EU/t discounts to apply
+     * Heating Coil overclocking algorithm with sub-tick parallelization.
+     * <p>
+     * While there are overclocks remaining:
+     * <ol>
+     * <li>Multiplies {@code EUt} by {@link #STD_VOLTAGE_FACTOR}
+     * <li>Multiplies {@code duration} by {@link #PERFECT_DURATION_FACTOR} if there are perfect OCs remaining,
+     * otherwise multiplies by {@link #STD_DURATION_FACTOR}
+     * <li>Limit {@code duration} to {@code 1} tick
+     * <li>Parallelize {@code EUt} with {@link #STD_VOLTAGE_FACTOR} and maintain {@code duration} at {@code 1} tick for
+     * overclocks that would have {@code duration < 1}
+     * <li>Parallelization amount per overclock is {@link #PERFECT_DURATION_FACTOR_INV} if there are perfect OCs
+     * remaining, otherwise uses {@link #STD_DURATION_FACTOR_INV}
+     * <li>The maximum amount of perfect OCs is determined by {@link #calculateAmountCoilEUtDiscount(int, int)}, divided
+     * by 2.
+     *
+     * @param params       the overclocking parameters
+     * @param result       the result of the overclock
+     * @param maxVoltage   the maximum voltage allowed to be overclocked to
+     * @param providedTemp the provided temperature
+     * @param requiredTemp the temperature required by the recipe
      */
+    public static void heatingCoilNonSubTickOC(@NotNull OCParams params, @NotNull OCResult result, long maxVoltage,
+                                     int providedTemp, int requiredTemp) {
+        int perfectOCAmount = calculateAmountCoilEUtDiscount(providedTemp, requiredTemp) / 2;
+        double duration = params.duration();
+        double eut = params.eut();
+        int ocAmount = params.ocAmount();
+
+        while (ocAmount-- > 0) {
+            boolean perfect = perfectOCAmount-- > 0;
+
+            double potentialEUt = eut * STD_VOLTAGE_FACTOR;
+            if (potentialEUt > maxVoltage) {
+                break;
+            }
+            eut = potentialEUt;
+
+            double potentialDuration;
+            if (perfect) {
+                potentialDuration = duration * PERFECT_DURATION_FACTOR;
+            } else {
+                potentialDuration = duration * STD_DURATION_FACTOR;
+            }
+
+            if (potentialDuration < 1) {
+                break;
+            }
+            duration = potentialDuration;
+        }
+
+        result.init((long) eut, (int) duration);
+    }
+
+
+        /**
+         * @param providedTemp the temperate provided by the machine
+         * @param requiredTemp the required temperature of the recipe
+         * @return the amount of EU/t discounts to apply
+         */
     private static int calculateAmountCoilEUtDiscount(int providedTemp, int requiredTemp) {
         return Math.max(0, (providedTemp - requiredTemp) / COIL_EUT_DISCOUNT_TEMPERATURE);
     }
