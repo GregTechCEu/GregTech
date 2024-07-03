@@ -54,8 +54,6 @@ public class FissionReactor {
     /**
      * Thresholds important for determining the evolution of the reactor ^^^ This is a very epic comment
      */
-    public int criticalRodInsertion = 15; // determined by k value
-
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
@@ -562,10 +560,10 @@ public class FissionReactor {
             this.kEff = Math.max(0, this.kEff);
             this.prevFuelDepletion = this.fuelDepletion;
             // maps (1, 1.1) to (1, 15); this value basically sets how quickly kEff operates
-            this.criticalRodInsertion = (int) Math.max(1, Math.min(15, (kEff - 1) * 150.));
+            double generationTime = Math.max(1, Math.min(15, (kEff - 1) * 150.));
 
             this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff + 0.0001), this.power,
-                    this.criticalRodInsertion);
+                    generationTime);
             if (power * kEff > this.realMaxPower()) {
                 this.kEff = this.realMaxPower() / power; // Make it display in a vaguely realistic manner for this edge
                                                          // case.
@@ -583,7 +581,7 @@ public class FissionReactor {
     public double realMaxPower() {
         if (this.moderatorTipped && (this.controlRodInsertion <= 9. / 16 && this.controlRodInsertion >= 7. / 16)) {
             return this.maxPower * 1.1;
-        } else if (this.controlRodInsertion > this.criticalRodInsertion || this.isDepleted() || !this.isOn) {
+        } else if (this.isDepleted() || !this.isOn) {
             return this.getDecayHeat();
         } else {
             return this.maxPower;
