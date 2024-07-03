@@ -209,10 +209,7 @@ public class Material implements Comparable<Material> {
             throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
         }
 
-        FluidStorageKey key = prop.getPrimaryKey();
-        Fluid fluid = null;
-
-        if (key != null) fluid = prop.getStorage().get(key);
+        Fluid fluid = prop.getStorage().get(prop.getPrimaryKey());
         if (fluid != null) return fluid;
 
         fluid = getFluid(FluidStorageKeys.LIQUID);
@@ -523,6 +520,10 @@ public class Material implements Comparable<Material> {
             properties.ensureSet(PropertyKey.FLUID);
             FluidProperty property = properties.getProperty(PropertyKey.FLUID);
             property.getStorage().enqueueRegistration(key, builder);
+            if (property.getPrimaryKey() == null) {
+                property.setPrimaryKey(key);
+            }
+
             return this;
         }
 
@@ -536,6 +537,10 @@ public class Material implements Comparable<Material> {
             properties.ensureSet(PropertyKey.FLUID);
             FluidProperty property = properties.getProperty(PropertyKey.FLUID);
             property.getStorage().store(key, fluid);
+            if (property.getPrimaryKey() == null) {
+                property.setPrimaryKey(key);
+            }
+
             postProcessors.add(
                     m -> FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createFluidTooltip(m, fluid, state)));
             return this;

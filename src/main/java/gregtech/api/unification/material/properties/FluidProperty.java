@@ -9,11 +9,12 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 public class FluidProperty implements IMaterialProperty {
 
     private final FluidStorage storage = new FluidStorage();
-    private @Nullable FluidStorageKey primaryKey = null;
+    private FluidStorageKey primaryKey = null;
     private @Nullable Fluid solidifyingFluid = null;
 
     public FluidProperty() {}
@@ -23,27 +24,33 @@ public class FluidProperty implements IMaterialProperty {
     }
 
     /**
+     * This is only {@code Nullable} internally during the Material creation process.
+     * All external use should assume this is {@code Nonnull}.
+     *
      * @return the FluidStorageKey fluid is stored as primarily
      */
-    public @Nullable FluidStorageKey getPrimaryKey() {
+    public @UnknownNullability FluidStorageKey getPrimaryKey() {
         return primaryKey;
     }
 
     /**
      * @param primaryKey the key to use primarily
      */
-    public void setPrimaryKey(@Nullable FluidStorageKey primaryKey) {
+    public void setPrimaryKey(@NotNull FluidStorageKey primaryKey) {
         this.primaryKey = primaryKey;
     }
 
     @Override
-    public void verifyProperty(MaterialProperties properties) {}
+    public void verifyProperty(MaterialProperties properties) {
+        if (this.primaryKey == null) {
+            throw new IllegalStateException("PrimaryKey cannot be null after property verification");
+        }
+    }
 
     /**
      * @return the Fluid which solidifies into the material.
      */
-
-    public Fluid solidifiesFrom() {
+    public @Nullable Fluid solidifiesFrom() {
         if (this.solidifyingFluid == null) {
             return getStorage().get(FluidStorageKeys.LIQUID);
         }
