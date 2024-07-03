@@ -11,6 +11,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.util.virtualregistry.EntryTypes;
 import gregtech.api.util.virtualregistry.VirtualEntry;
 import gregtech.api.util.virtualregistry.VirtualRegistryBase;
+import gregtech.common.mui.widget.InteractableText;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -32,16 +33,13 @@ import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
-import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -54,7 +52,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("SameParameterValue")
@@ -294,53 +291,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         nbt.setInteger("Frequency", activeEntry.getColor());
     }
 
-    private static class InteractableText<T extends VirtualEntry> extends TextWidget implements Interactable {
-
-        private final T entry;
-        private final EntryColorSH syncHandler;
-
-        public InteractableText(T entry, Consumer<String> setter) {
-            super(IKey.str(entry.getColorStr())
-                    .alignment(Alignment.CenterLeft)
-                    .color(Color.WHITE.darker(1)));
-            this.entry = entry;
-            this.syncHandler = new EntryColorSH(setter);
-            setSyncHandler(this.syncHandler);
-        }
-
-        @NotNull
-        @Override
-        public Result onMousePressed(int mouseButton) {
-            Interactable.playButtonClickSound();
-            this.syncHandler.setColor(this.entry.getColorStr());
-            this.syncHandler.syncToServer(1, buf -> NetworkUtils.writeStringSafe(buf, this.entry.getColorStr()));
-            return Result.SUCCESS;
-        }
-    }
-
-    private static class EntryColorSH extends SyncHandler {
-
-        private final Consumer<String> setter;
-
-        private EntryColorSH(Consumer<String> setter) {
-            this.setter = setter;
-        }
-
-        public void setColor(String c) {
-            this.setter.accept(c);
-        }
-
-        @Override
-        public void readOnClient(int id, PacketBuffer buf) throws IOException {}
-
-        @Override
-        public void readOnServer(int id, PacketBuffer buf) throws IOException {
-            if (id == 1) {
-                setColor(NetworkUtils.readStringSafe(buf));
-            }
-        }
-    }
-
     protected abstract class EntrySelectorSH extends PanelSyncHandler {
 
         private final EntryTypes<T> type;
@@ -421,26 +371,17 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .onMousePressed(i -> {
                                 // todo option to force delete, maybe as a popup?
                                 deleteEntry(name, entry);
-                                syncToServer(1, buffer -> {
-                                    buffer.writeByte(name.length());
-                                    buffer.writeString(name);
-                                });
+                                syncToServer(1, buffer -> NetworkUtils.writeStringSafe(buffer, name));
                                 Interactable.playButtonClickSound();
                                 return true;
                             }));
         }
 
         @Override
-        public void readOnClient(int i, PacketBuffer packetBuffer) throws IOException {
-            super.readOnClient(i, packetBuffer);
-        }
-
-        @Override
         public void readOnServer(int i, PacketBuffer packetBuffer) throws IOException {
             super.readOnServer(i, packetBuffer);
             if (i == 1) {
-                int len = packetBuffer.readByte();
-                String name = packetBuffer.readString(len);
+                String name = NetworkUtils.readStringSafe(packetBuffer);
                 T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
                 deleteEntry(name, entry);
             }
