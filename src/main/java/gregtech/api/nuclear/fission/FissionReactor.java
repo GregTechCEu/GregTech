@@ -341,7 +341,7 @@ public class FissionReactor {
             avgHighEnergyCaptureFactor /= fuelRods.size();
             avgLowEnergyCaptureFactor /= fuelRods.size();
 
-            avgFuelRodDistance /= 2. * fuelRods.size();
+            avgFuelRodDistance /= 2. * (fuelRods.size() * fuelRods.size() - fuelRods.size());
 
             double kSlow = avgLowEnergyFissionFactor / avgLowEnergyCaptureFactor * avgGeometricFactorSlowNeutrons;
             double kFast = avgHighEnergyFissionFactor / avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
