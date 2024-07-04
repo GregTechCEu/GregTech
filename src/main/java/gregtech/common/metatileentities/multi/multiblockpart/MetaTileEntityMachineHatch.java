@@ -54,7 +54,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public @NotNull List<? extends IItemHandlerModifiable> registerAbilities(
-            @NotNull MultiblockAbility<? extends IItemHandlerModifiable> multiblockAbility) {
+                                                                             @NotNull MultiblockAbility<? extends IItemHandlerModifiable> multiblockAbility) {
         return Collections.singletonList(machineHandler);
     }
 

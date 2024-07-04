@@ -157,7 +157,7 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
 
     @Override
     public @NotNull List<? extends IPassthroughHatch> registerAbilities(
-            @NotNull MultiblockAbility<? extends IPassthroughHatch> multiblockAbility) {
+                                                                        @NotNull MultiblockAbility<? extends IPassthroughHatch> multiblockAbility) {
         return Collections.singletonList(this);
     }
 

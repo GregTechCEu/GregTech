@@ -187,7 +187,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public @NotNull List<? extends IFluidTank> registerAbilities(
-            @NotNull MultiblockAbility<? extends IFluidTank> multiblockAbility) {
+                                                                 @NotNull MultiblockAbility<? extends IFluidTank> multiblockAbility) {
         return fluidTankList.getFluidTanks();
     }
 
