@@ -381,7 +381,7 @@ public class FissionReactor {
                 effectiveControlRods.add(rod);
             }
         }
-        ControlRod.normalizeWeights(effectiveControlRods);
+        ControlRod.normalizeWeights(effectiveControlRods, fuelRods.size());
     }
 
     /**
@@ -448,6 +448,7 @@ public class FissionReactor {
      * coolant and the difference in temperature between the reactor and the coolant
      */
     public void makeCoolantFlow(int flowRate) {
+        coolantMass = 0;
         for (CoolantChannel channel : coolantChannels) {
             FluidStack tryFluidDrain = channel.getInputHandler().getFluidTank().drain(flowRate, false);
             if (tryFluidDrain != null) {
@@ -523,6 +524,7 @@ public class FissionReactor {
     public void updateTemperature() {
         this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1000000,
                 this.heatRemoved);
+        this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
         this.heatRemoved = 0;
     }
 
