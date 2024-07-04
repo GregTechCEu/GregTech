@@ -181,7 +181,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
                 return;
 
             if (coilTier == 0) {
-                // 25% slower with cupronickel (coilTier = 0)
+                // 75% speed with cupronickel (coilTier = 0)
                 ocResult.setDuration(Math.max(1, (int) (ocResult.duration() * 4.0 / 3)));
             } else {
                 // each coil above kanthal (coilTier = 1) is 50% faster

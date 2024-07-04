@@ -822,6 +822,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
         if (this.parallel == 0) {
             this.parallel = multiplier;
+        } else if (multiplyDuration) {
+            this.parallel += multiplier;
         } else {
             this.parallel *= multiplier;
         }

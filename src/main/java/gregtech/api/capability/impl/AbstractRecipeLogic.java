@@ -686,13 +686,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         modifyOverclockPost(ocResult, recipe.getRecipePropertyStorage());
 
         if (ocResult.parallel() > 1) {
-            Recipe r = subTickOC(ocResult, recipe, importInventory, importFluids);
-            if (r == null) {
+            recipe = subTickOC(ocResult, recipe, importInventory, importFluids);
+            if (recipe == null) {
                 invalidateInputs();
                 return null;
             }
-
-            recipe = r;
         }
 
         if (!hasEnoughPower(ocResult.eut(), ocResult.duration())) {
