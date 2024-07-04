@@ -1,8 +1,9 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.event.MaterialInfoEvent;
+import gregtech.core.unification.ore.internal.OreProcessorManagerImpl;
 import gregtech.loaders.recipe.handlers.DecompositionRecipeHandler;
-import gregtech.loaders.recipe.handlers.RecipeHandlerList;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -20,7 +21,9 @@ public final class GTRecipeManager {
         CraftingRecipeLoader.init();
         MetaTileEntityLoader.init();
         MetaTileEntityMachineRecipeLoader.init();
-        RecipeHandlerList.register();
+        OreProcessorManagerImpl oreProcessorManager = (OreProcessorManagerImpl) GregTechAPI.oreProcessorManager;
+        oreProcessorManager.startRegistration();
+        oreProcessorManager.startRemoval();
     }
 
     public static void loadLatest() {

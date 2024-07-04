@@ -69,6 +69,7 @@ import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
 import gregtech.core.unification.material.internal.MaterialRegistryManager;
+import gregtech.core.unification.ore.internal.OreProcessorManagerImpl;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 
@@ -186,6 +187,8 @@ public class CoreModule implements IGregTechModule {
         /* End Material Registration */
 
         OreDictUnifier.init();
+
+        GregTechAPI.oreProcessorManager = OreProcessorManagerImpl.getInstance();
 
         MetaBlocks.init();
         MetaItems.init();
