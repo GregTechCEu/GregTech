@@ -21,13 +21,15 @@ public interface FluidStorage {
      * @param key the key corresponding with the FluidBuilder
      * @return the fluid builder queued to be registered
      */
-    @Nullable FluidBuilder getQueuedBuilder(@NotNull FluidStorageKey key);
+    @Nullable
+    FluidBuilder getQueuedBuilder(@NotNull FluidStorageKey key);
 
     /**
      * @param key the key corresponding with the fluid
      * @return the fluid associated with the key
      */
-    @Nullable Fluid get(@NotNull FluidStorageKey key);
+    @Nullable
+    Fluid get(@NotNull FluidStorageKey key);
 
     /**
      * Will overwrite existing fluid associations.

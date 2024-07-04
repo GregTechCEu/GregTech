@@ -5,7 +5,6 @@ import gregtech.api.fluids.store.FluidStorage;
 import gregtech.api.fluids.store.FluidStorageImpl;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
-
 import gregtech.api.unification.material.Material;
 
 import net.minecraftforge.fluids.Fluid;
