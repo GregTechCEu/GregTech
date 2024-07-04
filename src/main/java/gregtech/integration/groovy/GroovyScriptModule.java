@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.registry.MTEManager;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeBuilder;
@@ -95,6 +96,12 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         // Not Needed if JEI Module is enabled
         if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI))
             GTRecipeOreInput.refreshStackCache();
+    }
+
+    @SubscribeEvent
+    public static void onMTERegistries(MTEManager.MTERegistryEvent event) {
+        // automatically create a registry for groovyscript to store its MTEs
+        GregTechAPI.mteManager.createRegistry(GroovyScriptModule.getPackId());
     }
 
     public static boolean isCurrentlyRunning() {

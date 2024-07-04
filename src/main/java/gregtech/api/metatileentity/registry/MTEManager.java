@@ -5,6 +5,9 @@ import gregtech.api.GTValues;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
+import net.minecraftforge.fml.common.eventhandler.Event;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -38,14 +41,13 @@ public final class MTEManager {
 
     /**
      * @param modid the modid of the registry
-     * @return the registry associated with the modid, otherwise a new registry
+     * @return the registry associated with the modid, otherwise the default registry
      */
     public @NotNull MTERegistry getRegistry(@NotNull String modid) {
         MTERegistry registry = registryMap.get(modid);
         if (registry == null) {
-            return createRegistry(modid);
+            throw new IllegalArgumentException("No MTE registry exists for modid " + modid);
         }
-
         return registry;
     }
 
@@ -55,7 +57,7 @@ public final class MTEManager {
      * @param modid the modid for the registry
      * @return the created registry
      */
-    private @NotNull MTERegistry createRegistry(@NotNull String modid) {
+    public @NotNull MTERegistry createRegistry(@NotNull String modid) {
         if (registryMap.containsKey(modid)) {
             throw new IllegalArgumentException("MTE Registry for modid " + modid + " is already registered");
         }
@@ -80,4 +82,11 @@ public final class MTEManager {
     public @NotNull @UnmodifiableView Collection<@NotNull MTERegistry> getRegistries() {
         return registryMap.values();
     }
+
+    /**
+     * Event during which MTE Registries should be added by mods.
+     * <p>
+     * Use {@link #createRegistry(String)} to create a new MTE registry.
+     */
+    public static class MTERegistryEvent extends Event {}
 }
