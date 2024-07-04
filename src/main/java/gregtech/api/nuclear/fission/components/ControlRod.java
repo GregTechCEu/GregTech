@@ -20,7 +20,8 @@ public class ControlRod extends ReactorComponent {
 
     public static void normalizeWeights(ArrayList<ControlRod> effectiveControlRods, int fuelRodNum) {
         for (ControlRod control_rod : effectiveControlRods) {
-            control_rod.weight /= (fuelRodNum * fuelRodNum) - fuelRodNum;
+            if (fuelRodNum != 1)
+                control_rod.weight /= (fuelRodNum * fuelRodNum) - fuelRodNum;
         }
     }
 
