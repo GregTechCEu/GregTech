@@ -143,6 +143,16 @@ class OverclockingTest {
         assertThat(oc.duration(), is(1));
         assertThat(oc.parallel(), is(2));
         assertThat(oc.parallelEUt(), is(recipeVoltage * 4 * 4));
+
+        // LV recipe, EV machine
+        machineTier = EV;
+
+        oc = testSubTickParallelOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier]);
+
+        assertThat(oc.eut(), is(recipeVoltage * 4));
+        assertThat(oc.duration(), is(1));
+        assertThat(oc.parallel(), is(2 * 2));
+        assertThat(oc.parallelEUt(), is(recipeVoltage * 4 * 4 * 4));
     }
 
     @Test
@@ -154,7 +164,8 @@ class OverclockingTest {
         // LV recipe, LV machine
         int machineTier = LV;
 
-        OCResult oc = testSubTickParallelPerfectOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier]);
+        OCResult oc = testSubTickParallelPerfectOC(recipeDuration, recipeTier, recipeVoltage, machineTier,
+                V[machineTier]);
 
         assertThat(oc.eut(), is(recipeVoltage));
         assertThat(oc.duration(), is(recipeDuration));
@@ -179,6 +190,16 @@ class OverclockingTest {
         assertThat(oc.duration(), is(recipeDuration));
         assertThat(oc.parallel(), is(4 * 4));
         assertThat(oc.parallelEUt(), is(recipeVoltage * 4 * 4));
+
+        // LV recipe, HV machine
+        machineTier = EV;
+
+        oc = testSubTickParallelPerfectOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier]);
+
+        assertThat(oc.eut(), is(recipeVoltage));
+        assertThat(oc.duration(), is(recipeDuration));
+        assertThat(oc.parallel(), is(4 * 4 * 4));
+        assertThat(oc.parallelEUt(), is(recipeVoltage * 4 * 4 * 4));
     }
 
     @Test
@@ -211,6 +232,15 @@ class OverclockingTest {
         oc = testSubTickNonParallelOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier]);
 
         assertThat(oc.eut(), is(recipeVoltage * 4 / 2));
+        assertThat(oc.duration(), is(recipeDuration / 2));
+        assertThat(oc.parallel(), is(0));
+
+        // LV recipe, EV machine
+        machineTier = EV;
+
+        oc = testSubTickNonParallelOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier]);
+
+        assertThat(oc.eut(), is(recipeVoltage));
         assertThat(oc.duration(), is(recipeDuration / 2));
         assertThat(oc.parallel(), is(0));
     }
@@ -254,7 +284,7 @@ class OverclockingTest {
         final long recipeVoltage = V[recipeTier];
 
         // LV recipe, HV machine
-        final int machineTier = HV;
+        int machineTier = HV;
 
         // 1800K recipe, 1800K machine
         OCResult oc = testHeatingSubtickOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier], 1800,
@@ -288,6 +318,46 @@ class OverclockingTest {
         assertThat(oc.duration(), is(1));
         assertThat(oc.parallel(), is(4));
         assertThat(oc.parallelEUt(), is((long) ((recipeVoltage * Math.pow(0.95, 4))) * 4 * 4));
+
+        // LV recipe, EV machine
+        machineTier = EV;
+
+        // 1800K recipe, 1800K machine
+        oc = testHeatingSubtickOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier], 1800,
+                1800);
+
+        // 0 EU discounts, 2 overclocks, 1 regular subtick overclock
+        assertThat(oc.eut(), is(recipeVoltage * 4 * 4));
+        assertThat(oc.duration(), is(recipeDuration / (2 * 2)));
+        assertThat(oc.parallel(), is(2));
+        assertThat(oc.parallelEUt(), is(recipeVoltage * 4 * 4 * 4));
+
+        // 1800K recipe, 2700K machine
+        oc = testHeatingSubtickOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier], 1800, 2700);
+
+        // 1 EU discount, 2 overclocks, 1 regular subtick overclock
+        assertThat(oc.eut(), is((long) ((recipeVoltage * 0.95)) * 4 * 4));
+        assertThat(oc.duration(), is(recipeDuration / (2 * 2)));
+        assertThat(oc.parallel(), is(2));
+        assertThat(oc.parallelEUt(), is((long) ((recipeVoltage * 0.95)) * 4 * 4 * 4));
+
+        // 1800K recipe, 3600K machine
+        oc = testHeatingSubtickOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier], 1800, 3600);
+
+        // 2 EU discounts, 1 perfect overclock, 2 regular subtick overclock
+        assertThat(oc.eut(), is((long) ((recipeVoltage * Math.pow(0.95, 2))) * 4));
+        assertThat(oc.duration(), is(1));
+        assertThat(oc.parallel(), is(2 * 2));
+        assertThat(oc.parallelEUt(), is((long) ((recipeVoltage * Math.pow(0.95, 2))) * 4 * 4 * 4));
+
+        // 1800K recipe, 5400K machine
+        oc = testHeatingSubtickOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier], 1800, 5400);
+
+        // 4 EU discounts, 1 perfect overclock, 1 perfect subtick overclock, 1 regular subtick overclock
+        assertThat(oc.eut(), is((long) ((recipeVoltage * Math.pow(0.95, 4))) * 4));
+        assertThat(oc.duration(), is(1));
+        assertThat(oc.parallel(), is(4 * 2));
+        assertThat(oc.parallelEUt(), is((long) ((recipeVoltage * Math.pow(0.95, 4))) * 4 * 4 * 4));
     }
 
     @Test
@@ -319,6 +389,14 @@ class OverclockingTest {
 
         assertThat(oc.eut(), is(recipeVoltage * (2 * 2)));
         assertThat(oc.duration(), is(recipeDuration / (2 * 2)));
+
+        // LuV recipe, UHV machine
+        machineTier = UHV;
+
+        oc = testFusionOC(recipeDuration, recipeTier, recipeVoltage, machineTier, V[machineTier]);
+
+        assertThat(oc.eut(), is(recipeVoltage * (2 * 2 * 2)));
+        assertThat(oc.duration(), is(recipeDuration / (2 * 2 * 2)));
     }
 
     private static @NotNull OCResult testOC(int recipeDuration, int recipeTier, long recipeVoltage, int machineTier,
@@ -364,9 +442,10 @@ class OverclockingTest {
         return ocResult;
     }
 
-    private static @NotNull OCResult testSubTickParallelPerfectOC(int recipeDuration, int recipeTier, long recipeVoltage,
-                                                           int machineTier,
-                                                           long maxVoltage) {
+    private static @NotNull OCResult testSubTickParallelPerfectOC(int recipeDuration, int recipeTier,
+                                                                  long recipeVoltage,
+                                                                  int machineTier,
+                                                                  long maxVoltage) {
         int ocAmount = machineTier - recipeTier;
         if (recipeTier == ULV) ocAmount--; // no ULV overclocking
 
@@ -381,7 +460,8 @@ class OverclockingTest {
         OCParams ocParams = new OCParams();
         ocParams.initialize(recipeVoltage, recipeDuration, ocAmount);
 
-        OverclockingLogic.subTickParallelOC(ocParams, ocResult, maxVoltage, PERFECT_DURATION_FACTOR, STD_VOLTAGE_FACTOR);
+        OverclockingLogic.subTickParallelOC(ocParams, ocResult, maxVoltage, PERFECT_DURATION_FACTOR,
+                STD_VOLTAGE_FACTOR);
 
         return ocResult;
     }
@@ -427,7 +507,8 @@ class OverclockingTest {
         OCParams ocParams = new OCParams();
         ocParams.initialize(recipeVoltage, recipeDuration, ocAmount);
 
-        OverclockingLogic.heatingCoilNonSubTickOC(ocParams, ocResult, maxVoltage, machineTemperature, recipeTemperature);
+        OverclockingLogic.heatingCoilNonSubTickOC(ocParams, ocResult, maxVoltage, machineTemperature,
+                recipeTemperature);
 
         return ocResult;
     }

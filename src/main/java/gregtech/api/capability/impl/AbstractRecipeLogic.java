@@ -844,7 +844,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (ocParams.ocAmount() <= 0) {
             // number of OCs is <= 0, so do not overclock
-            ocResult.init(ocParams.eut(), ocParams.duration(), 0);
+            ocResult.init(ocParams.eut(), ocParams.duration());
         } else {
             runOverclockingLogic(ocParams, ocResult, recipe.getRecipePropertyStorage(), getMaximumOverclockVoltage());
         }

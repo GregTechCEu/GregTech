@@ -84,13 +84,7 @@ public final class OverclockingLogic {
         double eut = params.eut();
         int ocAmount = params.ocAmount();
 
-        boolean subtick = false;
-
         while (ocAmount-- > 0) {
-            if (subtick) {
-                break;
-            }
-
             double potentialEUt = eut * voltageFactor;
             if (potentialEUt > maxVoltage || potentialEUt < 1) {
                 break;
@@ -102,8 +96,6 @@ public final class OverclockingLogic {
                 if (potentialEUt > maxVoltage || potentialEUt < 1) {
                     break;
                 }
-
-                subtick = true;
             } else {
                 duration = potentialDuration;
             }
@@ -265,7 +257,7 @@ public final class OverclockingLogic {
      * @param requiredTemp the temperature required by the recipe
      */
     public static void heatingCoilNonSubTickOC(@NotNull OCParams params, @NotNull OCResult result, long maxVoltage,
-                                     int providedTemp, int requiredTemp) {
+                                               int providedTemp, int requiredTemp) {
         int perfectOCAmount = calculateAmountCoilEUtDiscount(providedTemp, requiredTemp) / 2;
         double duration = params.duration();
         double eut = params.eut();
@@ -296,12 +288,11 @@ public final class OverclockingLogic {
         result.init((long) eut, (int) duration);
     }
 
-
-        /**
-         * @param providedTemp the temperate provided by the machine
-         * @param requiredTemp the required temperature of the recipe
-         * @return the amount of EU/t discounts to apply
-         */
+    /**
+     * @param providedTemp the temperate provided by the machine
+     * @param requiredTemp the required temperature of the recipe
+     * @return the amount of EU/t discounts to apply
+     */
     private static int calculateAmountCoilEUtDiscount(int providedTemp, int requiredTemp) {
         return Math.max(0, (providedTemp - requiredTemp) / COIL_EUT_DISCOUNT_TEMPERATURE);
     }

@@ -194,9 +194,9 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     protected void performOverclocking(@NotNull Recipe recipe, @NotNull OCParams ocParams,
                                        @NotNull OCResult ocResult) {
         if (isHighPressure) {
-            ocResult.init(recipe.getEUt() * 2L, recipe.getDuration(), 0);
+            ocResult.init(recipe.getEUt() * 2L, recipe.getDuration());
         } else {
-            ocResult.init(recipe.getEUt(), recipe.getDuration() * 2, 0);
+            ocResult.init(recipe.getEUt(), recipe.getDuration() * 2);
         }
     }
 

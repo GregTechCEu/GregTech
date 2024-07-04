@@ -14,7 +14,7 @@ public final class OCResult {
     }
 
     public void init(long eut, int duration, int parallel) {
-        init(eut, duration, parallel, eut);
+        init(eut, duration, parallel, parallel == 0 ? eut : eut * parallel);
     }
 
     public void init(long eut, int duration, int parallel, long parallelEUt) {
