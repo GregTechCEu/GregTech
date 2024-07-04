@@ -2,12 +2,11 @@ package gregtech.api.metatileentity.registry;
 
 import gregtech.api.GTValues;
 
+import net.minecraftforge.fml.common.eventhandler.Event;
+
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import net.minecraftforge.fml.common.eventhandler.Event;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
