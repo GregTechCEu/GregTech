@@ -8,6 +8,7 @@ import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
 import gregtech.api.gui.UIFactory;
+import gregtech.api.items.effect.IHeldItemEffectManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.modules.IModuleManager;
@@ -52,6 +53,8 @@ public class GregTechAPI {
     public static IMaterialRegistryManager materialManager;
     /** Will be available at the Pre-Initialization stage */
     public static MarkerMaterialRegistry markerMaterialRegistry;
+    /** Will be available at the Initialization stage */
+    public static IHeldItemEffectManager heldItemEffectManager;
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;

@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -25,6 +27,7 @@ import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -667,5 +670,23 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     @Override
     public int getLightOpacity() {
         return 0;
+    }
+
+    @Override
+    public void onItemHeldUpdate(@NotNull ItemStack stack, @NotNull World world, @NotNull Entity entity, int slot,
+                                 boolean isSelected) {
+        if (world.isRemote) return;
+        if (this.tier >= GTValues.IV) return;
+
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null) return;
+
+        if (entity instanceof EntityPlayer player) {
+            if (player.isCreative()) return;
+
+            if (tag.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || tag.hasKey(NBT_PARTIALSTACK, NBT.TAG_COMPOUND)) {
+                GregTechAPI.heldItemEffectManager.tryApplyEffects(player);
+            }
+        }
     }
 }

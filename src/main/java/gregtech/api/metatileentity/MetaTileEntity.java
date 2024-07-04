@@ -44,6 +44,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -1581,6 +1582,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public boolean canVoidRecipeFluidOutputs() {
         return false;
     }
+
+    /**
+     * @param stack      the ItemStack being updated
+     * @param world      the world containing the ItemStack. Called on client and server
+     * @param entity     the entity holding the stack in its inventory
+     * @param slot       the index of the slot containing the stack
+     * @param isSelected if the ItemStack is currently selected in the hotbar
+     * @see net.minecraft.item.Item#onUpdate(ItemStack, World, Entity, int, boolean)
+     */
+    public void onItemHeldUpdate(@NotNull ItemStack stack, @NotNull World world, @NotNull Entity entity, int slot,
+                                 boolean isSelected) {}
 
     @NotNull
     @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)

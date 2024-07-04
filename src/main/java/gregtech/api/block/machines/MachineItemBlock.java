@@ -17,6 +17,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -202,5 +203,14 @@ public class MachineItemBlock extends ItemBlock {
     public int getItemStackLimit(@NotNull ItemStack stack) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity != null ? metaTileEntity.getItemStackLimit(stack) : super.getItemStackLimit(stack);
+    }
+
+    @Override
+    public void onUpdate(@NotNull ItemStack stack, @NotNull World worldIn, @NotNull Entity entityIn, int itemSlot,
+                         boolean isSelected) {
+        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
+        if (metaTileEntity != null) {
+            metaTileEntity.onItemHeldUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
+        }
     }
 }
