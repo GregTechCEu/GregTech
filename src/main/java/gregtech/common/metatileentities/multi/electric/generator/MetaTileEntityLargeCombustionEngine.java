@@ -66,7 +66,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     protected void addDisplayText(List<ITextComponent> textList) {
         LargeCombustionEngineWorkableHandler recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
 
-        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.Builder builder = MultiblockDisplayText
+                .builder(textList, isStructureFormed(), getWallshareBlocker())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
 
         if (isExtreme) {

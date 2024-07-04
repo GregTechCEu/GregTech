@@ -11,6 +11,7 @@ import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
 import gregtech.api.mui.GTGuiTextures;
@@ -326,6 +327,7 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void serverStopped(FMLServerStoppedEvent event) {
+        MultiblockControllerBase.clearReservedLocations();
         VirtualTankRegistry.clearMaps();
         CapesRegistry.clearMaps();
     }
