@@ -121,7 +121,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_MUFFLED = "Muffled";
 
-    protected final MTERegistry registry;
+    private final MTERegistry registry;
 
     public final ResourceLocation metaTileEntityId;
     IGregTechTileEntity holder;

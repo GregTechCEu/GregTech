@@ -2,11 +2,10 @@ package gregtech.api.metatileentity.registry;
 
 import gregtech.api.GTValues;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
-
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -26,6 +25,7 @@ public final class MTEManager {
     /**
      * @return the global MTE Manager instance
      */
+    @ApiStatus.Internal
     public static @NotNull MTEManager getInstance() {
         if (instance == null) {
             instance = new MTEManager();
@@ -37,12 +37,25 @@ public final class MTEManager {
     private MTEManager() {}
 
     /**
+     * @param modid the modid of the registry
+     * @return the registry associated with the modid, otherwise a new registry
+     */
+    public @NotNull MTERegistry getRegistry(@NotNull String modid) {
+        MTERegistry registry = registryMap.get(modid);
+        if (registry == null) {
+            return createRegistry(modid);
+        }
+
+        return registry;
+    }
+
+    /**
      * Create an MTE Registry
      *
      * @param modid the modid for the registry
      * @return the created registry
      */
-    public @NotNull MTERegistry createRegistry(@NotNull String modid) {
+    private @NotNull MTERegistry createRegistry(@NotNull String modid) {
         if (registryMap.containsKey(modid)) {
             throw new IllegalArgumentException("MTE Registry for modid " + modid + " is already registered");
         }
@@ -50,15 +63,6 @@ public final class MTEManager {
         registryMap.put(modid, registry);
         networkMap.put(networkId, registry);
         return registry;
-    }
-
-    /**
-     * @param modid the modid of the registry
-     * @return the registry associated with the modid, otherwise the default registry
-     */
-    public @NotNull MTERegistry getRegistry(@NotNull String modid) {
-        MTERegistry registry = registryMap.get(modid);
-        return registry == null ? internalRegistry : registry;
     }
 
     /**
@@ -76,11 +80,4 @@ public final class MTEManager {
     public @NotNull @UnmodifiableView Collection<@NotNull MTERegistry> getRegistries() {
         return registryMap.values();
     }
-
-    /**
-     * Event during which MTE Registries should be added by mods.
-     * <p>
-     * Use {@link #createRegistry(String)} to create a new MTE registry.
-     */
-    public static class MTERegistryEvent extends Event {}
 }

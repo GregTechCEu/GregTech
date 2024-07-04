@@ -132,6 +132,8 @@ import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 
 import net.minecraft.util.ResourceLocation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -1253,18 +1255,26 @@ public class MetaTileEntities {
         }
     }
 
-    public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
-        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart<?>abilityPart) {
-            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
+    /**
+     * Register a MetaTileEntity
+     *
+     * @param id  the numeric ID to use as item metadata
+     * @param mte the MTE to register
+     * @return the MTE
+     * @param <T> the MTE class
+     */
+    public static <T extends MetaTileEntity> @NotNull T registerMetaTileEntity(int id, @NotNull T mte) {
+        if (mte instanceof IMultiblockAbilityPart<?>abilityPart) {
+            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), mte);
         }
-        if (sampleMetaTileEntity instanceof MultiblockControllerBase controllerBase &&
-                Mods.JustEnoughItems.isModLoaded()) {
-            if (controllerBase.shouldShowInJei()) {
-                MultiblockInfoCategory.registerMultiblock(controllerBase);
-            }
+
+        if (Mods.JustEnoughItems.isModLoaded() && mte instanceof MultiblockControllerBase controller &&
+                controller.shouldShowInJei()) {
+            MultiblockInfoCategory.registerMultiblock(controller);
         }
-        sampleMetaTileEntity.getRegistry().register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
-        return sampleMetaTileEntity;
+
+        mte.getRegistry().register(id, mte.metaTileEntityId, mte);
+        return mte;
     }
 
     @SuppressWarnings("unused")
