@@ -5753,7 +5753,7 @@ gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
 gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
 gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
-gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
+gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
@@ -5780,6 +5780,12 @@ gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
 gregtech.command.copy.click_to_copy=Click to copy
 gregtech.command.copy.copied_start=Copied [
 gregtech.command.copy.copied_end=] to the clipboard
+gregtech.command.datafix.usage=Usage: /gregtech datafix <bqu>
+gregtech.command.datafix.bqu.usage=Usage: /gregtech datafix bqu [confirm]
+gregtech.command.datafix.bqu.backup=Backup your save and BQu config dir, then rerun with the 'confirm' arg
+gregtech.command.datafix.bqu.start=Started Migrating BQu Quest Database...
+gregtech.command.datafix.bqu.complete=Finished Migrating BQu Quest Database
+gregtech.command.datafix.bqu.failed=Failed Migrating BQu Quest Database. Restore your backups!
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 
