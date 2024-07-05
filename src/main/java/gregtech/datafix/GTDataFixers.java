@@ -19,6 +19,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.stream.IntStream;
+
 public final class GTDataFixers {
 
     public static final Logger LOGGER = LogManager.getLogger("GregTech DataFixers");
@@ -63,14 +65,10 @@ public final class GTDataFixers {
     }
 
     /**
-     * Migrate all MTEs to the new blocks automatically
+     * Migrate GT's own MTEs to the new blocks automatically
      */
     private static void migrateMTERegistries() {
         MTERegistriesMigrator migrator = GregTechAPI.MIGRATIONS.registriesMigrator();
-        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
-            for (ResourceLocation key : registry.getKeys()) {
-                migrator.migrate(key.getNamespace(), (short) registry.getIdByObjectName(key));
-            }
-        }
+        migrator.migrate(GTValues.MODID, IntStream.range(0, 2000));
     }
 }
