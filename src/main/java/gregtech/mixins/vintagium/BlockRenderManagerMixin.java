@@ -21,7 +21,7 @@ public abstract class BlockRenderManagerMixin {
     @Shadow(remap = false)
     protected abstract void addMapping(BlockRenderLayer layer, BlockRenderPass type);
 
-    @Unique
+    @SuppressWarnings("UnresolvedMixinReference")
     @Inject(method = "createDefaultMappings",
             at = @At(value = "RETURN"),
             remap = false)
