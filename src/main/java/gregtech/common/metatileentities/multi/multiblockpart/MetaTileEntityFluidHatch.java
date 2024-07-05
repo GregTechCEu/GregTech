@@ -314,7 +314,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
 
         if (this.circuitInventory != null) {
-            SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62)
+            SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 151, 64)
                     .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
             builder.widget(circuitSlot.setConsumer(slotWidget -> {
                 String configString;
