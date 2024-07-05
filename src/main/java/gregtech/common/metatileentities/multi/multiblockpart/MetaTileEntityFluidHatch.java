@@ -69,6 +69,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     // only holding this for convenience
     private final HatchFluidTank fluidTank;
     private GhostCircuitItemStackHandler circuitInventory;
+    private DualHandler dualHandler;
     private boolean workingEnabled;
 
     // export hatch-only fields
@@ -84,6 +85,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         if (this.hasGhostCircuitInventory()) {
             this.circuitInventory = new GhostCircuitItemStackHandler(this);
             this.circuitInventory.addNotifiableMetaTileEntity(this);
+            this.dualHandler = new DualHandler(this.circuitInventory, this.importFluids, isExportHatch);
         }
     }
 
@@ -258,9 +260,9 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     @Override
     public @NotNull List<? extends IFluidTank> registerAbilities(@NotNull MultiblockAbility<? extends IFluidTank> key) {
         if (key.equals(MultiblockAbility.EXPORT_FLUIDS)) {
-            return Collections.singletonList(fluidTank);
+            return Collections.singletonList(this.fluidTank);
         } else if (key.equals(MultiblockAbility.IMPORT_DUAL)) {
-            return Collections.singletonList(new DualHandler(this.circuitInventory, this.importFluids, false));
+            return Collections.singletonList(this.dualHandler);
         }
         return Collections.emptyList();
     }
