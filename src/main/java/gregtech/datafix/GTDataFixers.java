@@ -67,9 +67,10 @@ public final class GTDataFixers {
      */
     private static void migrateMTERegistries() {
         MTERegistriesMigrator migrator = GregTechAPI.MIGRATIONS.registriesMigrator();
-        MTERegistry registry = GregTechAPI.mteManager.getRegistry(GTValues.MODID);
-        for (ResourceLocation key : registry.getKeys()) {
-            migrator.migrate(key.getNamespace(), (short) registry.getIdByObjectName(key));
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            for (ResourceLocation key : registry.getKeys()) {
+                migrator.migrate(key.getNamespace(), (short) registry.getIdByObjectName(key));
+            }
         }
     }
 }

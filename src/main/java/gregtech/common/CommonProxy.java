@@ -405,9 +405,7 @@ public class CommonProxy {
 
     public void onPreLoad() {}
 
-    public void onLoad() {
-        GTDataFixers.init();
-    }
+    public void onLoad() {}
 
     public void onPostLoad() {
         TerminalRegistry.init();
@@ -418,6 +416,9 @@ public class CommonProxy {
     }
 
     public void onLoadComplete() {
+        // Need to initialize data fixers in LoadComplete in order to ensure GroovyScript is covered
+        GTDataFixers.init();
+
         GTRecipeInputCache.disableCache();
 
         // If JEI and GS is not loaded, refresh ore dict ingredients
