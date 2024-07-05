@@ -2,13 +2,11 @@ package gregtech.datafix;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.datafix.migration.impl.MigrateMTEBlockTE;
 import gregtech.datafix.migration.impl.MigrateMTEItems;
 import gregtech.datafix.migration.lib.MTERegistriesMigrator;
 import gregtech.datafix.walker.WalkItemStackLike;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.FixTypes;
 import net.minecraft.util.datafix.IDataWalker;
 import net.minecraftforge.common.util.CompoundDataFixer;
