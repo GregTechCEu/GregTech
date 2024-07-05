@@ -21,7 +21,6 @@ public class CoolantProperty implements IMaterialProperty {
     private double heatOfVaporization;
     // in J/(kg*K)
     private double specificHeatCapacity;
-    private double specialCoolantAbsorption = 1;
     private boolean accumulatesHydrogen = false;
 
     public CoolantProperty(Material hotHPCoolant, double moderatorFactor, double coolingFactor,
@@ -104,24 +103,6 @@ public class CoolantProperty implements IMaterialProperty {
 
     public void setSpecificHeatCapacity(double specificHeatCapacity) {
         this.specificHeatCapacity = specificHeatCapacity;
-    }
-
-    public double getSpecialCoolantAbsorption() {
-        return specialCoolantAbsorption;
-    }
-
-    /**
-     * Used to adjust the amount of heat needed to heat the coolant from the ideal thermodynamic conditions; this is
-     * really only for distilled water.
-     * 
-     * @param specialCoolantAbsorption A divisor to the amount of heat needed to heat the coolant from the ideal
-     *                                 thermodynamic
-     *                                 conditions.
-     * @return The property itself.
-     */
-    public CoolantProperty setSpecialCoolantAbsorption(double specialCoolantAbsorption) {
-        this.specialCoolantAbsorption = specialCoolantAbsorption;
-        return this;
     }
 
     public boolean accumulatesHydrogen() {

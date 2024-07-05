@@ -328,7 +328,14 @@ public class OrePrefix {
     // Nuclear stuff, introduced by Zalgo and Bruberu
     public static final OrePrefix fuelRod = new OrePrefix("fuelRod", -1, null, MaterialIconType.fuelRod, 0,
             material -> material.hasProperty(PropertyKey.FISSION_FUEL),
-            mat -> Collections.singletonList(I18n.format("metaitem.nuclear.tooltip.radioactive")));
+            mat -> Arrays.asList(I18n.format("metaitem.nuclear.tooltip.radioactive"),
+                    I18n.format("metaitem.nuclear.tooltip.duration",
+                            mat.getProperty(PropertyKey.FISSION_FUEL).getDuration()),
+                    I18n.format("metaitem.nuclear.tooltip.temperature",
+                            mat.getProperty(PropertyKey.FISSION_FUEL).getMaxTemperature()),
+                    I18n.format("metaitem.nuclear.tooltip.cross_sections",
+                            mat.getProperty(PropertyKey.FISSION_FUEL).getFastNeutronFissionCrossSection(),
+                            mat.getProperty(PropertyKey.FISSION_FUEL).getSlowNeutronFissionCrossSection())));
     public static final OrePrefix fuelRodDepleted = new OrePrefix("fuelRodDepleted", -1, null,
             MaterialIconType.fuelRodDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL),
             mat -> Collections.singletonList(I18n.format("metaitem.nuclear.tooltip.radioactive")));
@@ -543,8 +550,8 @@ public class OrePrefix {
     private final long materialAmount;
 
     /**
-     * Contains a default material type for self-referencing OrePrefix
-     * For self-referencing prefixes, it is always guaranteed for it to be not null
+     * Contains a default material type for self-referencing OrePrefix For self-referencing prefixes, it is always
+     * guaranteed for it to be not null
      * <p>
      * NOTE: Ore registrations with self-referencing OrePrefix still can occur with other materials
      */
