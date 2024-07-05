@@ -279,7 +279,7 @@ public class MetaItem1 extends StandardMetaItem {
         VOLTAGE_COIL_HV = addItem(99, "voltage_coil.hv").setMaterialInfo(new ItemMaterialInfo(
                 new MaterialStack(Materials.BlackSteel, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
         VOLTAGE_COIL_EV = addItem(100, "voltage_coil.ev")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 2),
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2),
                         new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
         VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setMaterialInfo(new ItemMaterialInfo(
                 new MaterialStack(Materials.Iridium, M * 2), new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
