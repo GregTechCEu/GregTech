@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.capability.IDistillationTower;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.DistillationTowerLogicHandler;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
@@ -13,6 +14,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
@@ -40,8 +42,7 @@ import java.util.function.Function;
 
 import static gregtech.api.util.RelativeDirection.*;
 
-public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController
-                                             implements DistillationTowerLogicHandler.IDistillationTower {
+public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController implements IDistillationTower {
 
     protected DistillationTowerLogicHandler handler;
 
@@ -53,9 +54,8 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId, boolean useAdvHatchLogic) {
         super(metaTileEntityId, RecipeMaps.DISTILLATION_RECIPES);
         if (useAdvHatchLogic) {
-            DistillationTowerRecipeLogic logic = new DistillationTowerRecipeLogic(this);
-            this.recipeMapWorkable = logic;
-            this.handler = new DistillationTowerLogicHandler(this, logic);
+            this.recipeMapWorkable = new DistillationTowerRecipeLogic(this);
+            this.handler = new DistillationTowerLogicHandler(this);
         } else this.handler = null;
     }
 
@@ -164,7 +164,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     public int getFluidOutputLimit() {
-        if (this.handler != null) return this.handler.layerCount;
+        if (this.handler != null) return this.handler.getLayerCount();
         else return super.getFluidOutputLimit();
     }
 
@@ -176,19 +176,50 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
         @Override
         protected void outputRecipeOutputs() {
-            handler.outputRecipeOutputs();
+            GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
+            handler.applyFluidToOutputs(fluidOutputs, true);
         }
 
         @Override
         protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
                                                       @NotNull IItemHandlerModifiable importInventory,
                                                       @NotNull IMultipleTankHandler importFluids) {
-            return handler.setupAndConsumeRecipeInputs(recipe, importInventory, importFluids);
+            this.overclockResults = calculateOverclock(recipe);
+
+            modifyOverclockPost(overclockResults, recipe.getRecipePropertyStorage());
+
+            if (!hasEnoughPower(overclockResults)) {
+                return false;
+            }
+
+            IItemHandlerModifiable exportInventory = getOutputInventory();
+
+            // We have already trimmed outputs and chanced outputs at this time
+            // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
+            if (!metaTileEntity.canVoidRecipeItemOutputs() &&
+                    !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
+                this.isOutputsFull = true;
+                return false;
+            }
+
+            // We have already trimmed fluid outputs at this time
+            if (!metaTileEntity.canVoidRecipeFluidOutputs() &&
+                    !handler.applyFluidToOutputs(recipe.getAllFluidOutputs(), false)) {
+                this.isOutputsFull = true;
+                return false;
+            }
+
+            this.isOutputsFull = false;
+            if (recipe.matches(true, importInventory, importFluids)) {
+                this.metaTileEntity.addNotifiedInput(importInventory);
+                return true;
+            }
+            return false;
         }
 
         @Override
         protected IMultipleTankHandler getOutputTank() {
-            return handler.fluidTanks;
+            return handler.getFluidTanks();
         }
     }
 }
