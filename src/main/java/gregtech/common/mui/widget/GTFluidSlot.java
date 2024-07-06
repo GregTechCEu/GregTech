@@ -233,7 +233,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
                 }
 
                 // empty held item into the tank
-                return fillTankFromStack(heldFluid, tryFillAll);
+                return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
             }
 
             if (heldFluid != null && tank.getFluidAmount() < tank.getCapacity()) {
@@ -241,14 +241,14 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
                 // either action is possible here
                 if (canDrainSlot) {
                     // try to empty the item into the tank
-                    return fillTankFromStack(heldFluid, tryFillAll);
+                    return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
                 }
                 if (!canFillSlot) {
                     // cannot fill the item from the tank, return
                     return ItemStack.EMPTY;
                 }
                 // slot does not allow filling, so try to take from the slot
-                return drainTankFromStack(tryFillAll);
+                return drainTankFromStack(fluidHandlerItem, tryFillAll);
             } else {
                 // tank is full, and there is some fluid available to take
                 if (!canFillSlot) {
@@ -256,16 +256,15 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
                     return ItemStack.EMPTY;
                 }
                 // try to take from the slot
-                return drainTankFromStack(tryFillAll);
+                return drainTankFromStack(fluidHandlerItem, tryFillAll);
             }
         }
 
-        private ItemStack fillTankFromStack(@NotNull FluidStack heldFluid, boolean tryFillAll) {
+        private ItemStack fillTankFromStack(IFluidHandlerItem fluidHandler, @NotNull FluidStack heldFluid,
+                                            boolean tryFillAll) {
             ItemStack heldItem = getSyncManager().getCursorItem();
             if (heldItem == ItemStack.EMPTY || heldItem.getCount() == 0) return ItemStack.EMPTY;
 
-            ItemStack heldItemSizedOne = heldItem.copy();
-            heldItemSizedOne.setCount(1);
             FluidStack currentFluid = tank.getFluid();
             // Fluid type does not match
             if (currentFluid != null && !currentFluid.isFluidEqual(heldFluid)) return ItemStack.EMPTY;
@@ -275,10 +274,6 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
 
             ItemStack itemStackEmptied = ItemStack.EMPTY;
             int fluidAmountTaken = 0;
-
-            IFluidHandlerItem fluidHandler = heldItemSizedOne
-                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandler == null) return ItemStack.EMPTY;
 
             FluidStack drained = fluidHandler.drain(freeSpace, true);
             if (drained != null && drained.amount > 0) {
@@ -302,22 +297,17 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             return itemStackEmptied;
         }
 
-        private ItemStack drainTankFromStack(boolean tryFillAll) {
+        private ItemStack drainTankFromStack(IFluidHandlerItem fluidHandler, boolean tryFillAll) {
             ItemStack heldItem = getSyncManager().getCursorItem();
             if (heldItem == ItemStack.EMPTY || heldItem.getCount() == 0) return ItemStack.EMPTY;
 
-            ItemStack heldItemSizedOne = heldItem.copy();
-            heldItemSizedOne.setCount(1);
             FluidStack currentFluid = tank.getFluid();
             if (currentFluid == null) return ItemStack.EMPTY;
             currentFluid = currentFluid.copy();
 
             int originalFluidAmount = tank.getFluidAmount();
-            IFluidHandlerItem handler = heldItemSizedOne.getCapability(
-                    CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
-                    null);
-            if (handler == null) return ItemStack.EMPTY;
-            ItemStack filledContainer = fillFluidContainer(currentFluid, heldItemSizedOne);
+
+            ItemStack filledContainer = fillFluidContainer(currentFluid, fluidHandler);
             if (filledContainer != ItemStack.EMPTY) {
                 int filledAmount = originalFluidAmount - currentFluid.amount;
                 if (filledAmount <= 0) {
@@ -339,14 +329,11 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             return filledContainer;
         }
 
-        private ItemStack fillFluidContainer(FluidStack fluidStack, ItemStack itemStack) {
-            IFluidHandlerItem fluidHandlerItem = itemStack
-                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandlerItem == null) return ItemStack.EMPTY;
-            int filledAmount = fluidHandlerItem.fill(fluidStack, true);
+        private ItemStack fillFluidContainer(FluidStack fluidStack, IFluidHandlerItem fluidHandler) {
+            int filledAmount = fluidHandler.fill(fluidStack, true);
             if (filledAmount > 0) {
                 fluidStack.amount -= filledAmount;
-                return fluidHandlerItem.getContainer();
+                return fluidHandler.getContainer();
             }
             return ItemStack.EMPTY;
         }
