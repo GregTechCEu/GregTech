@@ -869,6 +869,13 @@ public class MachineRecipeLoader {
                         BlockNuclearCasing.NuclearCasingType.GAS_CENTRIFUGE_HEATER))
                 .buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(48).duration(200)
+                .input(pipeNormalFluid, Steel)
+                .input(pipeTinyFluid, Steel, 3)
+                .outputs(MetaBlocks.GAS_CENTRIFUGE_CASING.getItemVariant(
+                        BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_COLUMN))
+                .buildAndRegister();
+
         ASSEMBLER_RECIPES.recipeBuilder().EUt(64).duration(200)
                 .input(stick, BoronCarbide, 8)
                 .outputs(
