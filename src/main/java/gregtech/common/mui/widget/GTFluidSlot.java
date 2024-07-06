@@ -117,12 +117,8 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
     @NotNull
     @Override
     public Result onMouseTapped(int mouseButton) {
-        // var stack = this.syncHandler.tryClickContainer(mouseButton == 0);
-        // if (!stack.isEmpty()) {
-        // }
         this.syncHandler.syncToServer(1, buffer -> buffer.writeBoolean(mouseButton == 0));
         return Result.SUCCESS;
-        // return Result.IGNORE;
     }
 
     @Override
