@@ -136,7 +136,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     }
 
     @Override
-    protected boolean allowSameFluidFillForOutputs() {
+    public boolean allowSameFluidFillForOutputs() {
         return false;
     }
 
@@ -184,6 +184,11 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                                                       @NotNull IItemHandlerModifiable importInventory,
                                                       @NotNull IMultipleTankHandler importFluids) {
             return handler.setupAndConsumeRecipeInputs(recipe, importInventory, importFluids);
+        }
+
+        @Override
+        protected IMultipleTankHandler getOutputTank() {
+            return handler.fluidTanks;
         }
     }
 }

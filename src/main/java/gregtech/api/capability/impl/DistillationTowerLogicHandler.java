@@ -12,7 +12,9 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMulti
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -31,6 +33,7 @@ public class DistillationTowerLogicHandler {
 
     public int layerCount;
     public List<IFluidHandler> orderedFluidOutputs;
+    public IMultipleTankHandler fluidTanks;
 
     public DistillationTowerLogicHandler(IDistillationTower tower, AbstractRecipeLogic workable) {
         this.tower = tower;
@@ -112,11 +115,13 @@ public class DistillationTowerLogicHandler {
                 .collect(Collectors.toList());
         // the fluidExportParts should come sorted in smallest Y first, largest Y last.
         List<IFluidHandler> orderedHandlerList = new ObjectArrayList<>();
+        List<IFluidTank> tankList = new ObjectArrayList<>();
         int firstY = tower.getPos().getY() + 1;
         int exportIndex = 0;
         for (int y = firstY; y < firstY + this.layerCount; y++) {
             if (fluidExportParts.size() <= exportIndex) {
-                orderedHandlerList.add(null);
+                orderedHandlerList.add(FakeTank.INSTANCE);
+                tankList.add(FakeTank.INSTANCE);
                 continue;
             }
             MetaTileEntityMultiblockPart part = fluidExportParts.get(exportIndex);
@@ -127,17 +132,21 @@ public class DistillationTowerLogicHandler {
                 if (hatchTanks.size() == 1)
                     orderedHandlerList.add(FluidTankHandler.getTankFluidHandler(hatchTanks.get(0)));
                 else orderedHandlerList.add(new FluidTankList(false, hatchTanks));
+                tankList.addAll(hatchTanks);
                 exportIndex++;
             } else if (part.getPos().getY() > y) {
-                orderedHandlerList.add(FakeFluidHandler.INSTANCE);
+                orderedHandlerList.add(FakeTank.INSTANCE);
+                tankList.add(FakeTank.INSTANCE);
             } else {
                 GTLog.logger.error("The Distillation Tower at " + tower.getPos() +
                         " had a fluid export hatch with an unexpected Y position.");
                 tower.invalidateStructure();
                 this.orderedFluidOutputs = new ObjectArrayList<>();
+                this.fluidTanks = new FluidTankList(false);
             }
         }
         this.orderedFluidOutputs = orderedHandlerList;
+        this.fluidTanks = new FluidTankList(tower.allowSameFluidFillForOutputs(), tankList);
     }
 
     public void invalidate() {
@@ -152,18 +161,43 @@ public class DistillationTowerLogicHandler {
         BlockPos getPos();
 
         void invalidateStructure();
+
+        boolean allowSameFluidFillForOutputs();
     }
 
     // an endless void devouring any fluid sent to it
-    protected static class FakeFluidHandler implements IFluidHandler {
+    protected static class FakeTank implements IFluidHandler, IFluidTank {
 
-        protected static final FakeFluidHandler INSTANCE = new FakeFluidHandler();
-
-        private static final IFluidTankProperties[] ARRAY = new IFluidTankProperties[0];
+        protected static final FakeTank INSTANCE = new FakeTank();
+        public static final FluidTankInfo FAKE_TANK_INFO = new FluidTankInfo(null, Integer.MAX_VALUE);
+        public static final IFluidTankProperties FAKE_TANK_PROPERTIES = new FluidTankProperties(null, Integer.MAX_VALUE,
+                true, false);
+        public static final IFluidTankProperties[] FAKE_TANK_PROPERTIES_ARRAY = new IFluidTankProperties[] {
+                FAKE_TANK_PROPERTIES };
 
         @Override
         public IFluidTankProperties[] getTankProperties() {
-            return ARRAY;
+            return FAKE_TANK_PROPERTIES_ARRAY;
+        }
+
+        @Override
+        public FluidStack getFluid() {
+            return null;
+        }
+
+        @Override
+        public int getFluidAmount() {
+            return 0;
+        }
+
+        @Override
+        public int getCapacity() {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public FluidTankInfo getInfo() {
+            return FAKE_TANK_INFO;
         }
 
         @Override
