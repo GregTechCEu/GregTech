@@ -141,6 +141,11 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
     }
 
     @NotNull
+    public MaterialRegistry getDefaultRegistry() {
+        return gregtechRegistry;
+    }
+
+    @NotNull
     public Material getDefaultFallback() {
         return gregtechRegistry.getFallbackMaterial();
     }
