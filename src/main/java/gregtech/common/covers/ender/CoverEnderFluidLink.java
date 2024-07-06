@@ -14,6 +14,7 @@ import gregtech.api.util.virtualregistry.entries.VirtualTank;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
@@ -30,11 +31,9 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
 
@@ -124,10 +123,14 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
             @Override
             protected IWidget createSlotWidget(VirtualTank entry) {
-                return new FluidSlot()
-                        .syncHandler(new FluidSlotSyncHandler(entry)
-                                .canDrainSlot(false)
-                                .canFillSlot(false))
+                var fluidTank = new GTFluidSlot.GTFluidSyncHandler(entry)
+                        .canFillSlot(false)
+                        .canDrainSlot(false);
+
+                return new GTFluidSlot()
+                        .size(18)
+                        .background(GTGuiTextures.FLUID_SLOT)
+                        .syncHandler(fluidTank)
                         .marginRight(2);
             }
 
@@ -140,11 +143,11 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
     @Override
     protected IWidget createEntrySlot() {
-        var fluidTank = new FluidSlotSyncHandler(this.linkedTank);
-        fluidTank.updateCacheFromSource(true);
+        var fluidTank = new GTFluidSlot.GTFluidSyncHandler(this.linkedTank);
 
-        return new FluidSlot()
+        return new GTFluidSlot()
                 .size(18)
+                .background(GTGuiTextures.FLUID_SLOT)
                 .syncHandler(fluidTank)
                 .marginRight(2);
     }
