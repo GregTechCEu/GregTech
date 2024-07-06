@@ -30,14 +30,6 @@ public class MigrateMTEBlockTE implements IFixableData {
     private static final String X = "x";
     private static final String Y = "y";
     private static final String Z = "z";
-    private static final String X_POS = "xPos";
-    private static final String Z_POS = "zPos";
-    private static final String CHUNK_SECTION_Y = "Y";
-    private static final String CHUNK_SECTION_BLOCKS = "Blocks";
-    private static final String CHUNK_SECTION_DATA = "Data";
-    private static final String CHUNK_SECTION_ADD = "Add";
-
-    private static final int BLOCKS_PER_SECTION = 4096;
 
     private final MTEMigrator migrator;
 
@@ -101,7 +93,7 @@ public class MigrateMTEBlockTE implements IFixableData {
         }
 
         var blockStateIDMap = GameData.getBlockStateIDMap();
-        ChunkPos chunkPos = new ChunkPos(level.getInteger(X_POS), level.getInteger(Z_POS));
+        ChunkPos chunkPos = new ChunkPos(level.getInteger(LEVEL_CHUNK_X_POS), level.getInteger(LEVEL_CHUNK_Z_POS));
         NBTTagList sectionTagList = level.getTagList(SECTIONS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < sectionTagList.tagCount(); i++) {
             NBTTagCompound chunkSectionTag = sectionTagList.getCompoundTagAt(i);

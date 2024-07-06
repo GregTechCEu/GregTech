@@ -19,10 +19,18 @@ public interface IMaterialRegistryManager {
     MaterialRegistry createRegistry(@NotNull String modid);
 
     /**
+     * Check if a mod's registry exists. Accessible during all phases.
+     *
+     * @param modid the modid of the registry
+     * @return if the registry exists
+     */
+    boolean hasRegistry(@NotNull String modid);
+
+    /**
      * Get a mod's registry. Accessible during all phases.
      *
      * @param modid the modid of the mod
-     * @return the registry associated with the mod, or the GregTech registry if it does not have one
+     * @return the registry associated with the mod
      */
     @NotNull
     MaterialRegistry getRegistry(@NotNull String modid);
@@ -31,7 +39,7 @@ public interface IMaterialRegistryManager {
      * Get a mod's registry. Accessible during all phases.
      *
      * @param networkId the network ID of the registry
-     * @return the registry associated with the network ID, or the GregTech registry if it does not have one
+     * @return the registry associated with the network ID
      */
     @NotNull
     MaterialRegistry getRegistry(int networkId);

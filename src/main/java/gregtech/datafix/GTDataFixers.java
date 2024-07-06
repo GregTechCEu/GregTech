@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.datafix.migration.impl.MigrateMTEBlockTE;
 import gregtech.datafix.migration.impl.MigrateMTEItems;
+import gregtech.datafix.migration.impl.MigrateMaterialBlock;
 import gregtech.datafix.migration.lib.MTERegistriesMigrator;
 import gregtech.datafix.walker.WalkItemStackLike;
 
@@ -57,6 +58,10 @@ public final class GTDataFixers {
                 MTERegistriesMigrator migrator = GregTechAPI.MIGRATIONS.registriesMigrator();
                 fixer.registerFix(GTFixType.ITEM_STACK_LIKE, new MigrateMTEItems(migrator));
                 fixer.registerFix(FixTypes.CHUNK, new MigrateMTEBlockTE(migrator));
+            }
+            case V2_POST_MATERIALS -> {
+//                fixer.registerFix(GTFixType.ITEM_STACK_LIKE, new MigrateMaterialBlock());
+                fixer.registerFix(FixTypes.CHUNK, new MigrateMaterialBlock());
             }
             default -> {}
         }

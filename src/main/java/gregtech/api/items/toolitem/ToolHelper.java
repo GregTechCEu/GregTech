@@ -196,7 +196,7 @@ public final class ToolHelper {
         ItemStack stack = tool.getRaw();
         GTUtility.getOrCreateNbtCompound(stack).setInteger(HIDE_FLAGS, 2);
         NBTTagCompound toolTag = getToolTag(stack);
-        toolTag.setString(MATERIAL_KEY, material.toString());
+        toolTag.setString(MATERIAL_KEY, material.getRegistryName());
         toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);
         toolTag.setInteger(HARVEST_LEVEL_KEY, harvestLevel);
         toolTag.setFloat(TOOL_SPEED_KEY, toolSpeed);

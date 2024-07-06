@@ -55,18 +55,31 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
         return registry;
     }
 
+    @Override
+    public boolean hasRegistry(@NotNull String modid) {
+        return registries.containsKey(modid);
+    }
+
     @NotNull
     @Override
     public MaterialRegistry getRegistry(@NotNull String modid) {
         MaterialRegistry registry = registries.get(modid);
-        return registry != null ? registry : gregtechRegistry;
+        if (registry == null) {
+            throw new IllegalArgumentException("No Material Registry found for modid: " + modid);
+        }
+
+        return registry;
     }
 
     @NotNull
     @Override
     public MaterialRegistry getRegistry(int networkId) {
         MaterialRegistry registry = networkIds.get(networkId);
-        return registry != null ? registry : gregtechRegistry;
+        if (registry == null) {
+            throw new IllegalArgumentException("No Material Registry found for network id: " + networkId);
+        }
+
+        return registry;
     }
 
     @NotNull
@@ -92,17 +105,23 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
     @Override
     public Material getMaterial(@NotNull String name) {
         if (!name.isEmpty()) {
-            String modid;
+            MaterialRegistry registry;
             String materialName;
             int index = name.indexOf(':');
             if (index >= 0) {
-                modid = name.substring(0, index);
-                materialName = name.substring(index + 1);
+                String modid = name.substring(0, index);
+                if (hasRegistry(modid)) {
+                    registry = getRegistry(modid);
+                    materialName = name.substring(index + 1);
+                } else {
+                    return null;
+                }
             } else {
-                modid = GTValues.MODID;
+                registry = gregtechRegistry;
                 materialName = name;
             }
-            return getRegistry(modid).getObject(materialName);
+
+            return registry.getObject(materialName);
         }
         return null;
     }

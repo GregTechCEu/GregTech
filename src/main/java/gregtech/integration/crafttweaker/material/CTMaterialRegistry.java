@@ -16,7 +16,10 @@ public class CTMaterialRegistry {
 
     @ZenMethod
     public Material get(String modid, String name) {
-        return GregTechAPI.materialManager.getRegistry(modid).getObject(name);
+        if (GregTechAPI.materialManager.hasRegistry(modid)) {
+            return GregTechAPI.materialManager.getRegistry(modid).getObject(name);
+        }
+        return null;
     }
 
     @ZenMethod

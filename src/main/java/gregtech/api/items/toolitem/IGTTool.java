@@ -247,7 +247,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         String string = toolTag.getString(MATERIAL_KEY);
         Material material = GregTechAPI.materialManager.getMaterial(string);
         if (material == null) {
-            toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).toString());
+            toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).getRegistryName());
         }
         return material;
     }
