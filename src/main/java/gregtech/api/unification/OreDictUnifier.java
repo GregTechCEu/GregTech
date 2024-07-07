@@ -217,8 +217,13 @@ public class OreDictUnifier {
         return wildcardNames != null && wildcardNames != names && wildcardNames.contains(oreDictName);
     }
 
-    public static List<ItemStack> getAllWithOreDictionaryName(String oreDictionaryName) {
-        return oreDictNameStacks.get(oreDictionaryName).stream()
+    public static @NotNull List<@NotNull ItemStack> getAllWithOreDictionaryName(@NotNull String oreDictionaryName) {
+        var stacks = oreDictNameStacks.get(oreDictionaryName);
+//        if (stacks == null) {
+//            return Collections.emptyList();
+//        }
+
+        return stacks.stream()
                 .map(ItemStack::copy)
                 .collect(Collectors.toList());
     }
