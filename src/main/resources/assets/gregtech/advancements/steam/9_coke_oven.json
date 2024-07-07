@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.steam.9_coke_oven.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1017
     },
     "frame": "goal"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1017
           }
         ]

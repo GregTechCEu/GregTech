@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.low_voltage.23_lv_assembler.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 110
     },
     "frame": "goal"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 110
           }
         ]

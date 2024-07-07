@@ -42,7 +42,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -571,7 +573,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
                     .value(manualIOmode)
                     .lang("cover.generic.manual_io")
-                    .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
+                    .overlay(new IDrawable[] {
+                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
+                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
+                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
+                    })
                     .build());
 
         if (createConveyorModeRow())

@@ -4831,6 +4831,7 @@ gregtech.multiblock.cleanroom.clean_status=Status: %s
 gregtech.multiblock.cleanroom.clean_state=Clean (%s%%)
 gregtech.multiblock.cleanroom.dirty_state=Contaminated (%s%%)
 gregtech.multiblock.cleanroom.warning_contaminated=Contaminated!
+gregtech.multiblock.cleanroom.low_tier=Energy tier too low, minimum of %s!
 
 gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
 gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
@@ -5431,6 +5432,8 @@ gregtech.gui.overclock.off=X
 gregtech.gui.sort=Sort
 gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
+gregtech.gui.item_auto_input.tooltip.enabled=Item Auto-Input Enabled
+gregtech.gui.item_auto_input.tooltip.disabled=Item Auto-Input Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
 gregtech.gui.item_auto_collapse.tooltip.enabled=Item Auto-Collapse Enabled
@@ -6286,3 +6289,8 @@ gregtech.scanner.forestry.larvae=§oScanned Larvae
 gregtech.scanner.forestry.serum=§oScanned Serum
 gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
+
+# Mutation
+gregtech.mutation.block_of=Block of %s
+
+record.sus=Leonz - Among Us Drip

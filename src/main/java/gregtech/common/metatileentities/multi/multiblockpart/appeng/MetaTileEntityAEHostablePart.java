@@ -101,8 +101,11 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_ONLINE_STATUS) {
-            this.isOnline = buf.readBoolean();
-            scheduleRenderUpdate();
+            boolean isOnline = buf.readBoolean();
+            if (this.isOnline != isOnline) {
+                this.isOnline = isOnline;
+                scheduleRenderUpdate();
+            }
         }
     }
 
@@ -139,18 +142,17 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     public void gridChanged() {}
 
     /**
-     * Update me network connection status.
+     * Get the me network connection status, updating it if on serverside.
      * 
      * @return the updated status.
      */
     public boolean updateMEStatus() {
-        if (this.aeProxy != null) {
-            this.isOnline = this.aeProxy.isActive() && this.aeProxy.isPowered();
-        } else {
-            this.isOnline = false;
-        }
         if (!getWorld().isRemote) {
-            writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(this.isOnline));
+            boolean isOnline = this.aeProxy != null && this.aeProxy.isActive() && this.aeProxy.isPowered();
+            if (this.isOnline != isOnline) {
+                writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(isOnline));
+                this.isOnline = isOnline;
+            }
         }
         return this.isOnline;
     }

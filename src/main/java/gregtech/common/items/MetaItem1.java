@@ -853,7 +853,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Circuit Components: ID 516-565
         VACUUM_TUBE = addItem(516, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.ULV);
-        GLASS_TUBE = addItem(517, "component.glass.tube");
+        GLASS_TUBE = addItem(517, "component.glass.tube")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M)));
         TRANSISTOR = addItem(518, "component.transistor").setUnificationData(OrePrefix.component, Component.Transistor);
         RESISTOR = addItem(519, "component.resistor").setUnificationData(OrePrefix.component, Component.Resistor);
         CAPACITOR = addItem(520, "component.capacitor").setUnificationData(OrePrefix.component, Component.Capacitor);

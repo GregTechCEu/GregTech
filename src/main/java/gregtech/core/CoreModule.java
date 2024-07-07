@@ -11,6 +11,8 @@ import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.registry.MTEManager;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
 import gregtech.api.mui.GTGuiTextures;
@@ -36,6 +38,7 @@ import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
 import gregtech.common.blocks.BlockBatteryPart;
+import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.CommandHand;
@@ -184,6 +187,12 @@ public class CoreModule implements IGregTechModule {
         managerInternal.freezeRegistries();
         /* End Material Registration */
 
+        // need to do this before MetaBlocks runs, to make sure all addons get their own BlockMachine
+        /* Start MTE Registry Addition */
+        GregTechAPI.mteManager = MTEManager.getInstance();
+        MinecraftForge.EVENT_BUS.post(new MTEManager.MTERegistryEvent());
+        /* End MTE Registry Addition */
+
         OreDictUnifier.init();
 
         MetaBlocks.init();
@@ -191,8 +200,10 @@ public class CoreModule implements IGregTechModule {
         ToolItems.init();
         GTFluidRegistration.INSTANCE.register();
 
-        /* Start MetaTileEntity Registration */
-        MTE_REGISTRY.unfreeze();
+        /* Start CEu MetaTileEntity Registration */
+        for (MTERegistry registry : mteManager.getRegistries()) {
+            registry.unfreeze();
+        }
         logger.info("Registering GTCEu Meta Tile Entities");
         MetaTileEntities.init();
         /* End CEu MetaTileEntity Registration */
@@ -206,6 +217,9 @@ public class CoreModule implements IGregTechModule {
         }
         for (BlockBatteryPart.BatteryPartType type : BlockBatteryPart.BatteryPartType.values()) {
             PSS_BATTERIES.put(MetaBlocks.BATTERY_BLOCK.getState(type), type);
+        }
+        for (BlockCleanroomCasing.CasingType type : BlockCleanroomCasing.CasingType.values()) {
+            CLEANROOM_FILTERS.put(MetaBlocks.CLEANROOM_CASING.getState(type), type);
         }
         /* End API Block Registration */
 
@@ -232,7 +246,10 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void init(FMLInitializationEvent event) {
-        MTE_REGISTRY.freeze(); // freeze once addon preInit is finished
+        // freeze once addon preInit is finished
+        for (MTERegistry registry : mteManager.getRegistries()) {
+            registry.freeze();
+        }
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {
             logger.fatal("Seems like invalid recipe was found.");
