@@ -9,7 +9,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -64,7 +63,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     /**
      * @param metaTileEntityId the id for the MTE
-     * @param material         the material the drum is made of, must have {@link gregtech.api.unification.material.properties.FluidProperty}.
+     * @param material         the material the drum is made of, must have
+     *                         {@link gregtech.api.unification.material.properties.FluidProperty}.
      * @param tankSize         the size of the storage tank
      */
     public MetaTileEntityDrum(ResourceLocation metaTileEntityId, @NotNull Material material, int tankSize) {
@@ -238,7 +238,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         if (isWood) {
             return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColorForRendering());
         } else {
-            int color =  GTUtility.convertOpaqueRGBA_CLtoRGB(ColourRGBA.multiply(
+            int color = GTUtility.convertOpaqueRGBA_CLtoRGB(ColourRGBA.multiply(
                     GTUtility.convertRGBtoOpaqueRGBA_CL(this.color),
                     GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
             return Pair.of(Textures.DRUM.getParticleTexture(), color);
