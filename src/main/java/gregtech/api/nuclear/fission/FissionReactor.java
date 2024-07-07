@@ -54,7 +54,7 @@ public class FissionReactor {
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
-    public double controlRodInsertion = 1;
+    public double controlRodInsertion;
     public int reactorDepth;
     public double reactorRadius;
 
@@ -227,8 +227,8 @@ public class FissionReactor {
             for (int j = 0; j < i; j++) {
                 double mij = 0;
                 boolean pathIsClear = true;
-                ArrayList<ControlRod> controlRodsHit = new ArrayList<ControlRod>();
-                ArrayList<CoolantChannel> coolantChannelsHit = new ArrayList<CoolantChannel>();
+                ArrayList<ControlRod> controlRodsHit = new ArrayList<>();
+                ArrayList<CoolantChannel> coolantChannelsHit = new ArrayList<>();
 
                 /*
                  * Geometric factor calculation is done by (rough) numerical integration along a straight path between
