@@ -348,7 +348,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         }
                     }
                 }
-                this.fissionReactor.makeCoolantFlow(isFlowingCorrectly ? flowRate : 0);
 
                 // Fuel handling
                 if (this.fissionReactor.isDepleted()) {
@@ -399,7 +398,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
                 }
             }
-            this.updateReactorState();
+            this.updateReactorState(isFlowingCorrectly ? flowRate : 0);
 
             this.syncReactorStats();
 
@@ -879,9 +878,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         setLockingState(LockingState.LOCKED);
     }
 
-    private void updateReactorState() {
+    private void updateReactorState(int flowRate) {
         this.fissionReactor.updatePower();
-        this.fissionReactor.updateTemperature();
+        this.fissionReactor.updateTemperature(flowRate);
         this.fissionReactor.updatePressure();
         this.fissionReactor.updateNeutronPoisoning();
         this.fissionReactor.regulateControlRods();
