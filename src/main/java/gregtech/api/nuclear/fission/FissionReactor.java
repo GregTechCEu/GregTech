@@ -526,12 +526,8 @@ public class FissionReactor {
     }
 
     public void updateTemperature(int flowRate) {
-        double temp = this.temperature;
         double heatRemoved = this.makeCoolantFlow(flowRate, false);
         this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1000000,
-                heatRemoved);
-        heatRemoved = (heatRemoved + this.makeCoolantFlow(flowRate, true)) / 2; // It's an approximation, but it'll have to do.
-        this.temperature = responseFunctionTemperature(envTemperature, temp, this.power * 1000000,
                 heatRemoved);
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
     }
