@@ -219,9 +219,9 @@ public class OreDictUnifier {
 
     public static @NotNull List<@NotNull ItemStack> getAllWithOreDictionaryName(@NotNull String oreDictionaryName) {
         var stacks = oreDictNameStacks.get(oreDictionaryName);
-        // if (stacks == null) {
-        // return Collections.emptyList();
-        // }
+        if (stacks == null) {
+            return Collections.emptyList();
+        }
 
         return stacks.stream()
                 .map(ItemStack::copy)
