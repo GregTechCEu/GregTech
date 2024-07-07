@@ -30,12 +30,12 @@ public class ControlRod extends ReactorComponent {
         for (ControlRod control_rod : effectiveControlRods) {
             if (control_rod.hasModeratorTip()) {
                 if (insertion <= 0.3) {
-                    crf += insertion / 3 * control_rod.weight;
+                    crf -= insertion / 3 * control_rod.weight;
                 } else {
-                    crf += (-11F / 7 * (insertion - 0.3) + 0.1) * control_rod.weight;
+                    crf -= (-11F / 7 * (insertion - 0.3) + 0.1) * control_rod.weight;
                 }
             } else {
-                crf += -insertion * control_rod.weight;
+                crf += insertion * control_rod.weight;
             }
         }
         return crf;
@@ -66,6 +66,6 @@ public class ControlRod extends ReactorComponent {
     }
 
     public void computeWeightFromFuelRodMap() {
-        this.weight = fuelRodPairs.size() * 2;
+        this.weight = fuelRodPairs.size() * 6; // 6 being a constant to help balance this out
     }
 }

@@ -91,7 +91,6 @@ public class FissionReactor {
     public double maxFuelDepletion = 1;
     public double fuelDepletion = -1;
     public double prevFuelDepletion;
-    public double heatRemoved;
     public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
     public double decayProductsAmount;
     public double envTemperature = roomTemperature; // maybe gotten from config per dim
@@ -141,7 +140,7 @@ public class FissionReactor {
     protected double responseFunctionTemperature(double envTemperature, double currentTemperature, double heatAdded,
                                                  double heatAbsorbed) {
         currentTemperature = Math.max(0.1, currentTemperature);
-        heatAbsorbed = Math.max(0.1, heatAbsorbed);
+        heatAbsorbed = Math.max(0, heatAbsorbed);
         /*
          * Simplifies what is the following:
          * heatTransferCoefficient = 1 / (1 / convectiveHeatTransferCoefficient + wallThickness / thermalConductivity);
@@ -151,11 +150,11 @@ public class FissionReactor {
          * the second convective heat.
          * timeConstant = heatTransferCoefficient * this.surfaceArea / specificHeatCapacity;
          */
+        // Technically the inverse.
         double timeConstant = specificHeatCapacity *
                 (1 / convectiveHeatTransferCoefficient + wallThickness / thermalConductivity) / this.surfaceArea;
 
         // Solves the following differential equation:
-
         // dT/dt = h_added_tot / m_tot - k(T - T_env) at t = 1s with T(0) = T_0
         double expDecay = Math.exp(-timeConstant);
 
@@ -447,7 +446,8 @@ public class FissionReactor {
      * surface area of the coolant channel (which is equivalent to the reactor's depth), as well as the flow rate of
      * coolant and the difference in temperature between the reactor and the coolant
      */
-    public void makeCoolantFlow(int flowRate) {
+    public double makeCoolantFlow(int flowRate, boolean simulate) {
+        double heatRemoved = 0;
         coolantMass = 0;
         for (CoolantChannel channel : coolantChannels) {
             FluidStack tryFluidDrain = channel.getInputHandler().getFluidTank().drain(flowRate, false);
@@ -457,6 +457,10 @@ public class FissionReactor {
                 Material coolant = channel.getCoolant();
 
                 CoolantProperty prop = coolant.getProperty(PropertyKey.COOLANT);
+
+                if (prop.getHotHPCoolant().getFluid().getTemperature() > this.temperature) {
+                    continue;
+                }
 
                 double heatRemovedPerLiter = prop.getSpecificHeatCapacity() *
                         (prop.getHotHPCoolant().getFluid().getTemperature() - coolant.getFluid().getTemperature());
@@ -479,10 +483,10 @@ public class FissionReactor {
                 FluidStack HPCoolant = new FluidStack(
                         prop.getHotHPCoolant().getFluid(), actualFlowRate);
 
-                channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
-
-                channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
-
+                if (!simulate) {
+                    channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
+                    channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
+                }
                 if (prop.accumulatesHydrogen() &&
                         this.temperature > zircaloyHydrogenReactionTemperature) {
                     double boilingPoint = coolantBoilingPoint(coolant);
@@ -495,11 +499,12 @@ public class FissionReactor {
                 }
 
                 this.coolantMass += actualFlowRate * coolant.getMass();
-                this.heatRemoved += actualFlowRate * heatRemovedPerLiter;
+                heatRemoved += actualFlowRate * heatRemovedPerLiter;
             }
         }
         this.coolantMass /= 1000;
         this.accumulatedHydrogen *= 0.98;
+        return heatRemoved;
     }
 
     /**
@@ -520,11 +525,15 @@ public class FissionReactor {
                         coolant.getProperty(PropertyKey.COOLANT).getHeatOfVaporization());
     }
 
-    public void updateTemperature() {
+    public void updateTemperature(int flowRate) {
+        double temp = this.temperature;
+        double heatRemoved = this.makeCoolantFlow(flowRate, false);
         this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1000000,
-                this.heatRemoved);
+                heatRemoved);
+        heatRemoved = (heatRemoved + this.makeCoolantFlow(flowRate, true)) / 2; // It's an approximation, but it'll have to do.
+        this.temperature = responseFunctionTemperature(envTemperature, temp, this.power * 1000000,
+                heatRemoved);
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
-        this.heatRemoved = 0;
     }
 
     public void updatePressure() {
@@ -552,12 +561,12 @@ public class FissionReactor {
 
     public void updatePower() {
         if (this.isOn) {
-            this.kEff = this.k + controlRodFactor;
+            this.kEff = this.k;
             // Since the power defect is a change in the reactivity rho (1 - 1 / kEff), we have to do this thing.
             // (1 - 1 / k) = rho(k) => rho^-1(rho) = 1 / (1 - rho)
             // rho^-1(rho(k) - defect) is thus 1 / (1 - (1 - 1/k - defect)) = 1 / (1/k + defect)
             this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower) +
-                    neutronPoisonAmount * crossSectionRatio / surfaceArea);
+                    neutronPoisonAmount * crossSectionRatio / surfaceArea + controlRodFactor);
             this.kEff = Math.max(0, this.kEff);
             this.prevFuelDepletion = this.fuelDepletion;
             // maps (1, 1.1) to (1, 15); this value basically sets how quickly kEff operates
@@ -608,7 +617,6 @@ public class FissionReactor {
         tagCompound.setDouble("Power", this.power);
         tagCompound.setDouble("FuelDepletion", this.fuelDepletion);
         tagCompound.setDouble("AccumulatedHydrogen", this.accumulatedHydrogen);
-        tagCompound.setDouble("HeatRemoved", this.heatRemoved);
         tagCompound.setDouble("NeutronPoisonAmount", this.neutronPoisonAmount);
         tagCompound.setDouble("DecayProductsAmount", this.decayProductsAmount);
         tagCompound.setBoolean("NeedsOutput", this.needsOutput);
@@ -625,7 +633,6 @@ public class FissionReactor {
         this.power = tagCompound.getDouble("Power");
         this.fuelDepletion = tagCompound.getDouble("FuelDepletion");
         this.accumulatedHydrogen = tagCompound.getDouble("AccumulatedHydrogen");
-        this.heatRemoved = tagCompound.getDouble("HeatRemoved");
         this.neutronPoisonAmount = tagCompound.getDouble("NeutronPoisonAmount");
         this.decayProductsAmount = tagCompound.getDouble("DecayProductsAmount");
         this.needsOutput = tagCompound.getBoolean("NeedsOutput");
