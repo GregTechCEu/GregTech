@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.IFuelRodHandler;
@@ -36,6 +35,7 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.PatternStringError;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.unification.FluidUnifier;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -811,8 +811,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     if (mte instanceof ICoolantHandler coolantIn) {
                         Fluid lockedFluid = coolantIn.getLockedObject();
                         if (lockedFluid != null) {
-                            Material mat = GregTechAPI.materialManager.getMaterial(
-                                    lockedFluid.getName());
+                            Material mat = FluidUnifier.getMaterialFromFluid(lockedFluid);
                             if (mat != null && mat.hasProperty(PropertyKey.COOLANT)) {
                                 coolantIn.setCoolant(mat);
                                 BlockPos exportHatchPos = currentPos.offset(EnumFacing.DOWN, height - 1);
