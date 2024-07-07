@@ -1,5 +1,6 @@
 package gregtech.api.unification.material.materials;
 
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.nuclear.fission.FissionReactor;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.OreProperty;
@@ -412,7 +413,7 @@ public class MaterialFlagAddition {
          * This sometimes cross-references materials
          */
         DistilledWater.setProperty(PropertyKey.COOLANT,
-                new CoolantProperty(HighPressureSteam, 1., 1000,
+                new CoolantProperty(HighPressureSteam, FluidStorageKeys.LIQUID, 1., 1000,
                         373, 10., FissionReactor.standardPressure, 2260000, 4168. / 250)
                                 .setAccumulatesHydrogen(true));
     }

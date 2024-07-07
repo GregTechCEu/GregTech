@@ -1,6 +1,9 @@
 package gregtech.api.unification.material.properties;
 
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.material.Material;
+
+import net.minecraftforge.fluids.Fluid;
 
 public class CoolantProperty implements IMaterialProperty {
 
@@ -22,8 +25,10 @@ public class CoolantProperty implements IMaterialProperty {
     // in J/(kg*K)
     private double specificHeatCapacity;
     private boolean accumulatesHydrogen = false;
+    // To store the specific key
+    private FluidStorageKey key;
 
-    public CoolantProperty(Material hotHPCoolant, double moderatorFactor, double coolingFactor,
+    public CoolantProperty(Material hotHPCoolant, FluidStorageKey key, double moderatorFactor, double coolingFactor,
                            double boilingPoint, double absorption, double pressure, double heatOfVaporization,
                            double specificHeatCapacity) {
         this.hotHPCoolant = hotHPCoolant;
@@ -34,6 +39,7 @@ public class CoolantProperty implements IMaterialProperty {
         this.pressure = pressure;
         this.heatOfVaporization = heatOfVaporization;
         this.specificHeatCapacity = specificHeatCapacity;
+        this.key = key;
     }
 
     @Override
@@ -112,5 +118,9 @@ public class CoolantProperty implements IMaterialProperty {
     public CoolantProperty setAccumulatesHydrogen(boolean accumulatesHydrogen) {
         this.accumulatesHydrogen = accumulatesHydrogen;
         return this;
+    }
+
+    public boolean isCorrectFluid(Material material, Fluid fluid) {
+        return material.getFluid(key) == fluid;
     }
 }
