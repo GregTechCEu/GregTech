@@ -108,7 +108,8 @@ public class FluidTooltipUtil {
                 tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
             }
 
-            if (material.hasProperty(PropertyKey.COOLANT)) {
+            if (material.hasProperty(PropertyKey.COOLANT) &&
+                    material.getProperty(PropertyKey.COOLANT).isCorrectFluid(material, fluid)) {
                 tooltip.add(I18n.format("gregtech.coolant.general"));
                 tooltip.add(I18n.format("gregtech.coolant.boiling_point",
                         material.getProperty(PropertyKey.COOLANT).getBoilingPoint()));
