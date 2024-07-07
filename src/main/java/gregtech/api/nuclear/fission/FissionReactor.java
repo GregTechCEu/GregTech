@@ -52,9 +52,6 @@ public class FissionReactor {
     private double avgPressure;
 
     /**
-     * Thresholds important for determining the evolution of the reactor ^^^ This is a very epic comment
-     */
-    /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
     public double controlRodInsertion = 1;

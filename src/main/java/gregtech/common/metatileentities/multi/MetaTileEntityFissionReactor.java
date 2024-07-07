@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.IFuelRodHandler;
-import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.cover.ICustomEnergyCover;
 import gregtech.api.gui.GuiTextures;
@@ -774,19 +773,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     protected void lockAll() {
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+        for (ICoolantHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
             handler.setLock(true);
         }
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+        for (IFuelRodHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(true);
         }
     }
 
     protected void unlockAll() {
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+        for (ICoolantHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
             handler.setLock(false);
         }
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+        for (IFuelRodHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(false);
         }
         if (this.fissionReactor != null) {
