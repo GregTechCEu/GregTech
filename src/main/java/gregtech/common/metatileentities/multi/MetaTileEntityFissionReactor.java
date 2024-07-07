@@ -569,7 +569,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             holder.setMetaTileEntity(tile);
                             holder.getMetaTileEntity().onPlacement();
                             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
-                            return new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
+                            return new BlockInfo(tile.getBlock().getDefaultState(), holder);
                         }).toArray(BlockInfo[]::new));
     }
 
@@ -813,7 +813,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         Fluid lockedFluid = coolantIn.getLockedObject();
                         if (lockedFluid != null) {
                             Material mat = FluidUnifier.getMaterialFromFluid(lockedFluid);
-                            if (mat != null && mat.hasProperty(PropertyKey.COOLANT)) {
+                            if (mat != null && mat.hasProperty(PropertyKey.COOLANT) &&
+                                    mat.getProperty(PropertyKey.COOLANT).isCorrectFluid(mat, lockedFluid)) {
                                 coolantIn.setCoolant(mat);
                                 BlockPos exportHatchPos = currentPos.offset(EnumFacing.DOWN, height - 1);
                                 if (getWorld().getTileEntity(

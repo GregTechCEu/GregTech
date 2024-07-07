@@ -446,7 +446,7 @@ public class FissionReactor {
      * surface area of the coolant channel (which is equivalent to the reactor's depth), as well as the flow rate of
      * coolant and the difference in temperature between the reactor and the coolant
      */
-    public double makeCoolantFlow(int flowRate, boolean simulate) {
+    public double makeCoolantFlow(int flowRate) {
         double heatRemoved = 0;
         coolantMass = 0;
         for (CoolantChannel channel : coolantChannels) {
@@ -483,10 +483,8 @@ public class FissionReactor {
                 FluidStack HPCoolant = new FluidStack(
                         prop.getHotHPCoolant().getFluid(), actualFlowRate);
 
-                if (!simulate) {
-                    channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
-                    channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
-                }
+                channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
+                channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
                 if (prop.accumulatesHydrogen() &&
                         this.temperature > zircaloyHydrogenReactionTemperature) {
                     double boilingPoint = coolantBoilingPoint(coolant);
@@ -526,7 +524,7 @@ public class FissionReactor {
     }
 
     public void updateTemperature(int flowRate) {
-        double heatRemoved = this.makeCoolantFlow(flowRate, false);
+        double heatRemoved = this.makeCoolantFlow(flowRate);
         this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1000000,
                 heatRemoved);
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
@@ -572,7 +570,7 @@ public class FissionReactor {
                     generationTime);
             if (power * kEff > this.realMaxPower()) {
                 this.kEff = this.realMaxPower() / power; // Make it display in a vaguely realistic manner for this edge
-                                                         // case.
+                // case.
             }
             this.fuelDepletion += this.power;
 
