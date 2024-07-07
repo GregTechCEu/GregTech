@@ -43,7 +43,7 @@ public class DriverFissionReactor extends DriverSidedTileEntity {
     }
 
     public final static class EnvironmentFissionReactor extends
-                                                       EnvironmentMetaTileEntity<MetaTileEntityFissionReactor> {
+                                                        EnvironmentMetaTileEntity<MetaTileEntityFissionReactor> {
 
         public EnvironmentFissionReactor(IGregTechTileEntity holder, MetaTileEntityFissionReactor tileEntity) {
             super(holder, tileEntity, "gt_fusionReactor");

@@ -7,7 +7,6 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.ICustomEnergyCover;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
 
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
