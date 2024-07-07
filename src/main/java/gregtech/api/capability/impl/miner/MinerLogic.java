@@ -158,7 +158,8 @@ public class MinerLogic {
         WorldServer world = (WorldServer) metaTileEntity.getWorld();
         if (mineY.get() < pipeY.get()) {
             var pipePos = new BlockPos(metaTileEntity.getPos().getX(), pipeY.get(), metaTileEntity.getPos().getZ());
-            if (world.getTileEntity(pipePos) == null && world.getBlockState(pipePos).getBlockHardness(world, pipePos) >= 0)
+            if (world.getTileEntity(pipePos) == null &&
+                    world.getBlockState(pipePos).getBlockHardness(world, pipePos) >= 0)
                 world.destroyBlock(pipePos, false);
             pipeY.decrementAndGet();
             incrementPipeLength();
