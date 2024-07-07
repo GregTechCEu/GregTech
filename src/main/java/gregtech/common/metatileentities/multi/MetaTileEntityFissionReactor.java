@@ -785,7 +785,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(false);
         }
-        this.fissionReactor.turnOff();
+        if (this.fissionReactor != null) {
+            this.fissionReactor.turnOff();
+        }
         if (this.lockingState == LockingState.LOCKED) { // Don't remove warnings
             this.setLockingState(LockingState.UNLOCKED);
         }
