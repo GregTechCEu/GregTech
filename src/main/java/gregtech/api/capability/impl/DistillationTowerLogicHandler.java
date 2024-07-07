@@ -15,7 +15,6 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import com.cleanroommc.modularui.utils.FluidTankHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,9 +95,7 @@ public class DistillationTowerLogicHandler {
                 List<IFluidTank> hatchTanks = new ObjectArrayList<>();
                 // noinspection unchecked
                 ((IMultiblockAbilityPart<IFluidTank>) part).registerAbilities(hatchTanks);
-                if (hatchTanks.size() == 1)
-                    orderedHandlerList.add(FluidTankHandler.getTankFluidHandler(hatchTanks.get(0)));
-                else orderedHandlerList.add(new FluidTankList(false, hatchTanks));
+                orderedHandlerList.add(new FluidTankList(false, hatchTanks));
                 tankList.addAll(hatchTanks);
                 exportIndex++;
             } else if (part.getPos().getY() > y) {
