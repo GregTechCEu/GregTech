@@ -157,8 +157,9 @@ public class MinerLogic {
         // drill a hole beneath the miner and extend the pipe downwards by one
         WorldServer world = (WorldServer) metaTileEntity.getWorld();
         if (mineY.get() < pipeY.get()) {
-            world.destroyBlock(
-                    new BlockPos(metaTileEntity.getPos().getX(), pipeY.get(), metaTileEntity.getPos().getZ()), false);
+            var pipePos = new BlockPos(metaTileEntity.getPos().getX(), pipeY.get(), metaTileEntity.getPos().getZ());
+            if (world.getTileEntity(pipePos) == null)
+                world.destroyBlock(pipePos, false);
             pipeY.decrementAndGet();
             incrementPipeLength();
         }
