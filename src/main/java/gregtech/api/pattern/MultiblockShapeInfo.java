@@ -99,7 +99,7 @@ public class MultiblockShapeInfo {
             holder.setMetaTileEntity(tileEntity);
             holder.getMetaTileEntity().onPlacement();
             holder.getMetaTileEntity().setFrontFacing(frontSide);
-            return where(symbol, new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder));
+            return where(symbol, new BlockInfo(tileEntity.getBlock().getDefaultState(), holder));
         }
 
         /**

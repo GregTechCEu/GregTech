@@ -24,6 +24,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
@@ -120,6 +121,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_MUFFLED = "Muffled";
 
+    private final MTERegistry registry;
+
     public final ResourceLocation metaTileEntityId;
     IGregTechTileEntity holder;
 
@@ -157,8 +160,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     private int playSoundCooldown = 0;
     private int lastTick = 0;
 
-    public MetaTileEntity(ResourceLocation metaTileEntityId) {
+    protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
+        this.registry = GregTechAPI.mteManager.getRegistry(metaTileEntityId.getNamespace());
         initializeInventory();
     }
 
@@ -884,14 +888,22 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    public final ItemStack getStackForm(int amount) {
-        int metaTileEntityIntId = GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntityId);
-        return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
+    public final @NotNull ItemStack getStackForm(int amount) {
+        int metaTileEntityIntId = registry.getIdByObjectName(metaTileEntityId);
+        return new ItemStack(registry.getBlock(), amount, metaTileEntityIntId);
     }
 
     @Override
     public final @NotNull ItemStack getStackForm() {
         return getStackForm(1);
+    }
+
+    public final @NotNull MTERegistry getRegistry() {
+        return registry;
+    }
+
+    public final @NotNull BlockMachine getBlock() {
+        return registry.getBlock();
     }
 
     /**

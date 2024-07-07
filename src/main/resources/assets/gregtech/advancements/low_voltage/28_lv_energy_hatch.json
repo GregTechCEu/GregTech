@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.low_voltage.28_lv_energy_hatch.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1211
     }
   },
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1211
           }
         ]

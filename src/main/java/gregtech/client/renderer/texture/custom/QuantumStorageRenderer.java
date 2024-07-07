@@ -25,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
@@ -139,8 +140,14 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     public static void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                                        FluidTank tank, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
         FluidStack stack = tank.getFluid();
-        if (stack == null || stack.amount == 0 || !ConfigHolder.client.enableFancyChestRender)
+        if (stack == null || stack.amount == 0 || !ConfigHolder.client.enableFancyChestRender) {
             return;
+        }
+
+        Fluid fluid = stack.getFluid();
+        if (fluid == null) {
+            return;
+        }
 
         if (world != null) {
             renderState.setBrightness(world, pos);
@@ -150,7 +157,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
                 14.9375 / 16.0, 14.9375 / 16.0);
 
         double fillFraction = (double) stack.amount / tank.getCapacity();
-        boolean gas = stack.getFluid().isGaseous();
+        boolean gas = fluid.isGaseous(stack);
         if (gas) {
             partialFluidBox.min.y = Math.max(13.9375 - (11.875 * fillFraction), 2.0) / 16.0;
         } else {
@@ -158,7 +165,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         }
 
         renderState.setFluidColour(stack);
-        ResourceLocation fluidStill = stack.getFluid().getStill(stack);
+        ResourceLocation fluidStill = fluid.getStill(stack);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
                 .getAtlasSprite(fluidStill.toString());
 

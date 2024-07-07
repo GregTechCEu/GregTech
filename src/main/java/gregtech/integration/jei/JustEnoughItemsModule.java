@@ -10,11 +10,13 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.category.GTRecipeCategory;
+import gregtech.api.recipes.category.ICategoryOverride;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
@@ -113,8 +115,10 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         for (MetaItem<?> metaItem : MetaItems.ITEMS) {
             subtypeRegistry.registerSubtypeInterpreter(metaItem, subtype);
         }
-        subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(MetaBlocks.MACHINE),
-                new MachineSubtypeHandler());
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(registry.getBlock()),
+                    new MachineSubtypeHandler());
+        }
     }
 
     @Override
@@ -190,30 +194,47 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             }
         }
 
-        for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
-            MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
-            assert metaTileEntity != null;
-            if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
-                IControllable workableCapability = metaTileEntity
-                        .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+        for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
+            for (ResourceLocation metaTileEntityId : mteRegistry.getKeys()) {
+                MetaTileEntity metaTileEntity = mteRegistry.getObject(metaTileEntityId);
+                assert metaTileEntity != null;
 
-                if (workableCapability instanceof AbstractRecipeLogic logic) {
-                    if (metaTileEntity instanceof IMultipleRecipeMaps) {
-                        for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
+                if (metaTileEntity instanceof ICategoryOverride override && override.shouldOverride()) {
+                    for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
+                        registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                    }
+                    if (override.getJEICategoryOverrides().length != 0)
+                        registry.addRecipeCatalyst(metaTileEntity.getStackForm(), override.getJEICategoryOverrides());
+                    if (override.shouldReplace()) continue;
+                }
+
+                if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
+                    IControllable workableCapability = metaTileEntity
+                            .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+
+                    if (workableCapability instanceof ICategoryOverride override && override.shouldOverride()) {
+                        for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
-                    } else if (logic.getRecipeMap() != null) {
-                        registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
+                        if (override.getJEICategoryOverrides().length != 0)
+                            registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
+                                    override.getJEICategoryOverrides());
+                        if (override.shouldReplace()) continue;
+                    }
+
+                    if (workableCapability instanceof AbstractRecipeLogic logic) {
+                        if (metaTileEntity instanceof IMultipleRecipeMaps) {
+                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity)
+                                    .getAvailableRecipeMaps()) {
+                                registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                            }
+                        } else if (logic.getRecipeMap() != null) {
+                            registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
+                        }
                     }
                 }
             }
         }
-
-        String semiFluidMapId = GTValues.MODID + ":" + RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.getUnlocalizedName();
-        registry.addRecipeCatalyst(MetaTileEntities.LARGE_BRONZE_BOILER.getStackForm(), semiFluidMapId);
-        registry.addRecipeCatalyst(MetaTileEntities.LARGE_STEEL_BOILER.getStackForm(), semiFluidMapId);
-        registry.addRecipeCatalyst(MetaTileEntities.LARGE_TITANIUM_BOILER.getStackForm(), semiFluidMapId);
-        registry.addRecipeCatalyst(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER.getStackForm(), semiFluidMapId);
 
         List<OreByProduct> oreByproductList = new ArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
@@ -296,6 +317,9 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         });
         registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM,
                 I18n.format("tile.brittle_charcoal.tooltip.1", I18n.format("tile.brittle_charcoal.tooltip.2")));
+
+        // Refresh Ore Ingredients Cache
+        GTRecipeOreInput.refreshStackCache();
     }
 
     private void setupInputHandler() {

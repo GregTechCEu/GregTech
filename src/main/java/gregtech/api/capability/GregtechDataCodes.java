@@ -155,6 +155,8 @@ public class GregtechDataCodes {
 
     // From MetaTileEntityHolder
     public static final String CUSTOM_NAME = "CustomName";
+    public static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
+    public static final String TAG_KEY_MTE = "MetaTileEntity";
 
     // From MetaTileEntity
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";

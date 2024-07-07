@@ -1204,7 +1204,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Iron3Chloride = new Material.Builder(411, gregtechId("iron_iii_chloride"))
-                .fluid()
+                .liquid()
                 .color(0x060B0B)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Iron, 1, Chlorine, 3)
