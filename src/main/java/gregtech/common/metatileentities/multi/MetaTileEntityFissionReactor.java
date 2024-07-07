@@ -5,6 +5,7 @@ import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.IMaintenanceHatch;
+import gregtech.api.cover.ICustomEnergyCover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -87,7 +88,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
-                                          implements IDataInfoProvider, IProgressBarMultiblock {
+                                          implements IDataInfoProvider, IProgressBarMultiblock, ICustomEnergyCover {
 
     private FissionReactor fissionReactor;
     private int diameter;
@@ -894,6 +895,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
             writeCustomData(GregtechDataCodes.SYNC_LOCKING_STATE, (buf) -> buf.writeEnumValue(lockingState));
         }
         this.lockingState = lockingState;
+    }
+
+    @Override
+    public long getCoverCapacity() {
+        // power is in MW
+        return (int) (this.maxPower * 1e6);
+    }
+
+    @Override
+    public long getCoverStored() {
+        // power is in MW
+        return (int) (this.power * 1e6);
     }
 
     private enum LockingState {
