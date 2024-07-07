@@ -79,6 +79,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -209,13 +210,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         .setTooltipText("gregtech.gui.fission.helper");
     }
 
-    private void toggleControlRodRegulation(boolean b) {
+    public void toggleControlRodRegulation(boolean b) {
         if (fissionReactor != null) {
             this.fissionReactor.controlRodRegulationOn = b;
         }
     }
 
-    private boolean areControlRodsRegulated() {
+    public boolean areControlRodsRegulated() {
         return fissionReactor != null && this.fissionReactor.controlRodRegulationOn;
     }
 
@@ -238,7 +239,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         if (flowRate < 1) flowRate = 1;
     }
 
-    private void setControlRodInsertionValue(float value) {
+    public void setControlRodInsertionValue(float value) {
         this.controlRodInsertionValue = value;
         if (fissionReactor != null)
             fissionReactor.updateControlRodInsertion(controlRodInsertionValue);
@@ -1048,5 +1049,33 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.3"));
+    }
+
+    public double getMaxPower() {
+        return maxPower;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public double getMaxPressure() {
+        return maxPressure;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public double getMaxTemperature() {
+        return maxTemperature;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public double getControlRodInsertion() {
+        return controlRodInsertionValue;
     }
 }
