@@ -209,6 +209,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         .setTooltipText("gregtech.gui.fission.helper");
     }
 
+    /**
+     * Public for OC integration, use it if you want ig
+     */
     public void toggleControlRodRegulation(boolean b) {
         if (fissionReactor != null) {
             this.fissionReactor.controlRodRegulationOn = b;
