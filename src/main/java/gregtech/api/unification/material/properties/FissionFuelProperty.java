@@ -14,6 +14,8 @@ public class FissionFuelProperty implements IMaterialProperty {
     private double slowNeutronFissionCrossSection;
     // How likely it is for a not-yet-moderated neutron to cause fission in this fuel.
     private double fastNeutronFissionCrossSection;
+    // The average time for a neutron to be emitted during a fission event. Do not make this accurate.
+    private double neutronGenerationTime;
 
     @Override
     public void verifyProperty(MaterialProperties properties) {
@@ -22,17 +24,14 @@ public class FissionFuelProperty implements IMaterialProperty {
 
     public FissionFuelProperty(int maxTemperature, int duration, double slowNeutronCaptureCrossSection,
                                double fastNeutronCaptureCrossSection, double slowNeutronFissionCrossSection,
-                               double fastNeutronFissionCrossSection) {
+                               double fastNeutronFissionCrossSection, double neutronGenerationTime) {
         this.maxTemperature = maxTemperature;
         this.duration = duration;
         this.slowNeutronCaptureCrossSection = slowNeutronCaptureCrossSection;
         this.fastNeutronCaptureCrossSection = fastNeutronCaptureCrossSection;
         this.slowNeutronFissionCrossSection = slowNeutronFissionCrossSection;
         this.fastNeutronFissionCrossSection = fastNeutronFissionCrossSection;
-    }
-
-    public FissionFuelProperty() {
-        this(1, 1, 0.1D, 0.1D, 0.1D, 0.1D);
+        this.neutronGenerationTime = neutronGenerationTime;
     }
 
     public int getMaxTemperature() {
@@ -83,5 +82,13 @@ public class FissionFuelProperty implements IMaterialProperty {
 
     public void setFastNeutronFissionCrossSection(double fastNeutronFissionCrossSection) {
         this.fastNeutronFissionCrossSection = fastNeutronFissionCrossSection;
+    }
+
+    public double getNeutronGenerationTime() {
+        return neutronGenerationTime;
+    }
+
+    public void setNeutronGenerationTime(double neutronGenerationTime) {
+        this.neutronGenerationTime = neutronGenerationTime;
     }
 }

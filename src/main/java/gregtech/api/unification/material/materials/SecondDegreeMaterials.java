@@ -509,7 +509,7 @@ public class SecondDegreeMaterials {
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(HighEnrichedUraniumDioxide, 1, DepletedUraniumDioxide, 19)
-                .fissionFuelProperties(1500, 750, 55., 1., 2500., 0.)
+                .fissionFuelProperties(1500, 750, 55., 1., 2500., 0., 3.5)
                 .build()
                 .setFormula("UO2", true);
 
@@ -518,7 +518,7 @@ public class SecondDegreeMaterials {
                 .color(0x242826).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(HighEnrichedUraniumDioxide, 1, DepletedUraniumDioxide, 4)
-                .fissionFuelProperties(1800, 600, 40., 1., 3000., 0.)
+                .fissionFuelProperties(1800, 600, 40., 1., 3000., 0., 2.5)
                 .build()
                 .setFormula("UO2", true);
 
@@ -527,7 +527,7 @@ public class SecondDegreeMaterials {
                 .color(0x62C032).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(FissilePlutoniumDioxide, 1, Uraninite, 19)
-                .fissionFuelProperties(1600, 1000, 50., 10., 4000., 10.)
+                .fissionFuelProperties(1600, 1000, 50., 10., 4000., 10., 1.5)
                 .build()
                 .setFormula("(U,Pu)O2", true);
 
@@ -536,7 +536,7 @@ public class SecondDegreeMaterials {
                 .color(0x7EA432).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(FissilePlutoniumDioxide, 1, Uraninite, 4)
-                .fissionFuelProperties(2000, 800, 35., 25., 5500., 25.)
+                .fissionFuelProperties(2000, 800, 35., 25., 5500., 0., 1)
                 .build()
                 .setFormula("(U,Pu)O2", true);
     }

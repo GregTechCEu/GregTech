@@ -5,13 +5,14 @@ import gregtech.api.unification.material.properties.FissionFuelProperty;
 public class FuelRod extends ReactorComponent {
 
     private FissionFuelProperty fuel;
-    private final double neutronSourceIntensity;
 
-    public FuelRod(double maxTemperature, double thermalConductivity, FissionFuelProperty fuel, double mass,
-                   double neutronSourceIntensity) {
+    public FuelRod(double maxTemperature, double thermalConductivity, FissionFuelProperty fuel, double mass) {
         super(0, maxTemperature, thermalConductivity, mass, true);
         this.fuel = fuel;
-        this.neutronSourceIntensity = neutronSourceIntensity;
+    }
+
+    public double getDuration() {
+        return fuel.getDuration();
     }
 
     public double getHEFissionFactor() {
@@ -30,8 +31,8 @@ public class FuelRod extends ReactorComponent {
         return fuel.getSlowNeutronCaptureCrossSection();
     }
 
-    public double getNeutronSourceIntensity() {
-        return neutronSourceIntensity;
+    public double getNeutronGenerationTime() {
+        return fuel.getNeutronGenerationTime();
     }
 
     public FissionFuelProperty getFuel() {
