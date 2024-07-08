@@ -3,8 +3,8 @@ package gregtech.common.metatileentities.multi;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.IFuelRodHandler;
-import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.IMaintenanceHatch;
+import gregtech.api.cover.ICustomEnergyCover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -87,7 +87,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
-                                          implements IDataInfoProvider, IProgressBarMultiblock {
+                                          implements IDataInfoProvider, IProgressBarMultiblock, ICustomEnergyCover {
 
     private FissionReactor fissionReactor;
     private int diameter;
@@ -208,13 +208,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         .setTooltipText("gregtech.gui.fission.helper");
     }
 
-    private void toggleControlRodRegulation(boolean b) {
+    /**
+     * Public for OC integration, use it if you want ig
+     */
+    public void toggleControlRodRegulation(boolean b) {
         if (fissionReactor != null) {
             this.fissionReactor.controlRodRegulationOn = b;
         }
     }
 
-    private boolean areControlRodsRegulated() {
+    public boolean areControlRodsRegulated() {
         return fissionReactor != null && this.fissionReactor.controlRodRegulationOn;
     }
 
@@ -237,7 +240,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         if (flowRate < 1) flowRate = 1;
     }
 
-    private void setControlRodInsertionValue(float value) {
+    public void setControlRodInsertionValue(float value) {
         this.controlRodInsertionValue = value;
         if (fissionReactor != null)
             fissionReactor.updateControlRodInsertion(controlRodInsertionValue);
@@ -770,19 +773,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     protected void lockAll() {
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+        for (ICoolantHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
             handler.setLock(true);
         }
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+        for (IFuelRodHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(true);
         }
     }
 
     protected void unlockAll() {
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+        for (ICoolantHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
             handler.setLock(false);
         }
-        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+        for (IFuelRodHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
             handler.setLock(false);
         }
         if (this.fissionReactor != null) {
@@ -894,6 +897,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
             writeCustomData(GregtechDataCodes.SYNC_LOCKING_STATE, (buf) -> buf.writeEnumValue(lockingState));
         }
         this.lockingState = lockingState;
+    }
+
+    @Override
+    public long getCoverCapacity() {
+        // power is in MW
+        return (int) (this.maxPower * 1e6);
+    }
+
+    @Override
+    public long getCoverStored() {
+        // power is in MW
+        return (int) (this.power * 1e6);
     }
 
     private enum LockingState {
@@ -1035,5 +1050,33 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.fission_reactor.tooltip.3"));
+    }
+
+    public double getMaxPower() {
+        return maxPower;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public double getMaxPressure() {
+        return maxPressure;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public double getMaxTemperature() {
+        return maxTemperature;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public double getControlRodInsertion() {
+        return controlRodInsertionValue;
     }
 }

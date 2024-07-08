@@ -49,15 +49,10 @@ public class FissionReactor {
 
     public double kEff; // criticality value, based on k
 
-    private double avgPressure;
-
-    /**
-     * Thresholds important for determining the evolution of the reactor ^^^ This is a very epic comment
-     */
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
-    public double controlRodInsertion = 1;
+    public double controlRodInsertion;
     public int reactorDepth;
     public double reactorRadius;
 
@@ -90,7 +85,6 @@ public class FissionReactor {
     public double coolantBaseTemperature;
     public double maxFuelDepletion = 1;
     public double fuelDepletion = -1;
-    public double prevFuelDepletion;
     public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
     public double decayProductsAmount;
     public double envTemperature = roomTemperature; // maybe gotten from config per dim
@@ -230,8 +224,8 @@ public class FissionReactor {
             for (int j = 0; j < i; j++) {
                 double mij = 0;
                 boolean pathIsClear = true;
-                ArrayList<ControlRod> controlRodsHit = new ArrayList<ControlRod>();
-                ArrayList<CoolantChannel> coolantChannelsHit = new ArrayList<CoolantChannel>();
+                ArrayList<ControlRod> controlRodsHit = new ArrayList<>();
+                ArrayList<CoolantChannel> coolantChannelsHit = new ArrayList<>();
 
                 /*
                  * Geometric factor calculation is done by (rough) numerical integration along a straight path between
@@ -404,7 +398,6 @@ public class FissionReactor {
     public void prepareInitialConditions() {
         coolantBaseTemperature = 0;
         coolantBoilingPointStandardPressure = 0;
-        avgPressure = 0;
         coolantHeatOfVaporization = 0;
         maxFuelDepletion = 0;
         for (FuelRod rod : fuelRods) {
@@ -422,17 +415,12 @@ public class FissionReactor {
                     channel.getWeight();
             coolantBoilingPointStandardPressure += prop.getBoilingPoint() *
                     channel.getWeight();
-            avgPressure += prop.getPressure() *
-                    channel.getWeight();
             coolantHeatOfVaporization += prop.getHeatOfVaporization() *
                     channel.getWeight();
         }
 
         if (coolantBaseTemperature == 0) {
             coolantBaseTemperature = envTemperature;
-        }
-        if (avgPressure == 0) {
-            avgPressure = standardPressure;
         }
         if (coolantBoilingPointStandardPressure == 0) {
             coolantBoilingPointStandardPressure = airBoilingPoint;
@@ -524,9 +512,14 @@ public class FissionReactor {
     }
 
     public void updateTemperature(int flowRate) {
+        double oldTemp = this.temperature;
+        // simulate heat based only on the reactor power
+        this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1e6, 0);
+        // prevent temperature from going above meltdown temp, to stop coolant from absorbing more heat than it should
+        this.temperature = Math.min(maxTemperature, temperature);
         double heatRemoved = this.makeCoolantFlow(flowRate);
-        this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1000000,
-                heatRemoved);
+        // calculate the actual temperature based on the reactor power and the heat removed
+        this.temperature = responseFunctionTemperature(envTemperature, oldTemp, this.power * 1e6, heatRemoved);
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
     }
 
@@ -562,7 +555,6 @@ public class FissionReactor {
             this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower) +
                     neutronPoisonAmount * crossSectionRatio / surfaceArea + controlRodFactor);
             this.kEff = Math.max(0, this.kEff);
-            this.prevFuelDepletion = this.fuelDepletion;
             // maps (1, 1.1) to (1, 15); this value basically sets how quickly kEff operates
             double generationTime = Math.max(1, Math.min(15, (kEff - 1) * 150.));
 
@@ -574,7 +566,7 @@ public class FissionReactor {
             }
             this.fuelDepletion += this.power;
 
-            this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.) / 1000;
+            this.decayProductsAmount += Math.max(power, 0.) / 1000;
         } else {
             this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff), this.power,
                     1);
