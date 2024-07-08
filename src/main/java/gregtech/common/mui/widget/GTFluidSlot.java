@@ -2,6 +2,7 @@ package gregtech.common.mui.widget;
 
 import gregtech.api.GTValues;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 
@@ -38,7 +39,6 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.List;
 
 public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiGhostIngredientSlot<FluidStack>,
@@ -50,6 +50,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
     public GTFluidSlot() {
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
+            if (!isSynced()) return;
             var fluid = this.syncHandler.getFluid();
             if (fluid == null) return;
 
@@ -118,6 +119,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
     @Override
     public Result onMouseTapped(int mouseButton) {
         this.syncHandler.syncToServer(1, buffer -> buffer.writeBoolean(mouseButton == 0));
+        Interactable.playButtonClickSound();
         return Result.SUCCESS;
     }
 
@@ -188,15 +190,14 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         }
 
         @Override
-        public void readOnClient(int id, PacketBuffer buf) throws IOException {
+        public void readOnClient(int id, PacketBuffer buf) {
             if (id == 1) {
-                var stack = NetworkUtils.readItemStack(buf);
-                getSyncManager().setCursorItem(stack);
+                replaceCursorItemStack(NetworkUtils.readItemStack(buf));
             }
         }
 
         @Override
-        public void readOnServer(int id, PacketBuffer buf) throws IOException {
+        public void readOnServer(int id, PacketBuffer buf) {
             if (id == 1) {
                 var stack = tryClickContainer(buf.readBoolean());
                 if (!stack.isEmpty())
@@ -205,65 +206,42 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         }
 
         public ItemStack tryClickContainer(boolean tryFillAll) {
-            ItemStack currentStack = getSyncManager().getCursorItem();
-            if (currentStack == ItemStack.EMPTY || currentStack.getCount() == 0)
+            ItemStack playerHeldStack = getSyncManager().getCursorItem();
+            if (playerHeldStack.isEmpty())
                 return ItemStack.EMPTY;
 
-            ItemStack heldItemSizedOne = currentStack.copy();
-            heldItemSizedOne.setCount(1);
-            IFluidHandlerItem fluidHandlerItem = heldItemSizedOne
+            ItemStack useStack = GTUtility.copy(1, playerHeldStack);
+            IFluidHandlerItem fluidHandlerItem = useStack
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null) return ItemStack.EMPTY;
 
             FluidStack tankFluid = tank.getFluid();
             FluidStack heldFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
-            if (heldFluid != null && heldFluid.amount <= 0) {
-                heldFluid = null;
-            }
 
-            if (tankFluid == null) {
-                // Tank is empty, only try to drain the held item
-                if (!canDrainSlot) {
-                    // tank does not allow emptying cells into it, return
-                    return ItemStack.EMPTY;
-                }
-                if (heldFluid == null) {
-                    // held item has no fluid, return
-                    return ItemStack.EMPTY;
-                }
+            // nothing to do, return
+            if (tankFluid == null && heldFluid == null)
+                return ItemStack.EMPTY;
 
-                // empty held item into the tank
+            // tank is empty, try to fill tank
+            if (canFillSlot && tankFluid == null) {
+                return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+
+                // hand is empty, try to drain tank
+            } else if (canDrainSlot && heldFluid == null) {
+                return drainTankFromStack(fluidHandlerItem, tankFluid, tryFillAll);
+
+                // neither is empty but tank is not full, try to fill tank
+            } else if (canFillSlot && tank.getFluidAmount() < tank.getCapacity() && heldFluid != null) {
                 return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
             }
 
-            if (heldFluid != null && tank.getFluidAmount() < tank.getCapacity()) {
-                // held item has a fluid, and so does the tank. tank still has some room left in it
-                // either action is possible here
-                if (canDrainSlot) {
-                    // try to empty the item into the tank
-                    return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
-                }
-                if (!canFillSlot) {
-                    // cannot fill the item from the tank, return
-                    return ItemStack.EMPTY;
-                }
-                // slot does not allow filling, so try to take from the slot
-                return drainTankFromStack(fluidHandlerItem, tryFillAll);
-            } else {
-                // tank is full, and there is some fluid available to take
-                if (!canFillSlot) {
-                    // slot does not allow taking, return
-                    return ItemStack.EMPTY;
-                }
-                // try to take from the slot
-                return drainTankFromStack(fluidHandlerItem, tryFillAll);
-            }
+            return ItemStack.EMPTY;
         }
 
         private ItemStack fillTankFromStack(IFluidHandlerItem fluidHandler, @NotNull FluidStack heldFluid,
                                             boolean tryFillAll) {
             ItemStack heldItem = getSyncManager().getCursorItem();
-            if (heldItem == ItemStack.EMPTY || heldItem.getCount() == 0) return ItemStack.EMPTY;
+            if (heldItem.isEmpty()) return ItemStack.EMPTY;
 
             FluidStack currentFluid = tank.getFluid();
             // Fluid type does not match
@@ -297,43 +275,27 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             return itemStackEmptied;
         }
 
-        private ItemStack drainTankFromStack(IFluidHandlerItem fluidHandler, boolean tryFillAll) {
+        private ItemStack drainTankFromStack(IFluidHandlerItem fluidHandler, FluidStack tankFluid, boolean tryFillAll) {
             ItemStack heldItem = getSyncManager().getCursorItem();
-            if (heldItem == ItemStack.EMPTY || heldItem.getCount() == 0) return ItemStack.EMPTY;
+            if (heldItem.isEmpty()) return ItemStack.EMPTY;
 
-            FluidStack currentFluid = tank.getFluid();
-            if (currentFluid == null) return ItemStack.EMPTY;
-            currentFluid = currentFluid.copy();
-
-            int originalFluidAmount = tank.getFluidAmount();
-
-            ItemStack filledContainer = fillFluidContainer(currentFluid, fluidHandler);
-            if (filledContainer != ItemStack.EMPTY) {
-                int filledAmount = originalFluidAmount - currentFluid.amount;
-                if (filledAmount <= 0) {
-                    return ItemStack.EMPTY;
-                }
-                tank.drain(filledAmount, true);
-                if (tryFillAll) {
+            ItemStack fluidContainer = fluidHandler.getContainer();
+            int filled = fluidHandler.fill(tankFluid, false);
+            if (filled > 0) {
+                tank.drain(filled, true);
+                fluidHandler.fill(tankFluid, true);
+                int additional = Math.min(heldItem.getCount(), tankFluid.amount / filled) - 1;
+                if (tryFillAll && additional > 0) {
                     // Determine how many more items we can fill. One item is already filled. Integer division means
                     // it will round down, so it will only fill equivalent fluid amounts. For example:
                     // Click with 3 cells, with 2500L of fluid in the tank. 2 cells will be filled, and 500L will
                     // be left behind in the tank.
-                    int additional = Math.min(heldItem.getCount() - 1, currentFluid.amount / filledAmount);
-                    tank.drain(filledAmount * additional, true);
-                    filledContainer.grow(additional);
+                    tank.drain(filled * additional, true);
+                    fluidContainer.grow(additional);
                 }
-                replaceCursorItemStack(filledContainer);
-                playSound(currentFluid, false);
-            }
-            return filledContainer;
-        }
-
-        private ItemStack fillFluidContainer(FluidStack fluidStack, IFluidHandlerItem fluidHandler) {
-            int filledAmount = fluidHandler.fill(fluidStack, true);
-            if (filledAmount > 0) {
-                fluidStack.amount -= filledAmount;
-                return fluidHandler.getContainer();
+                replaceCursorItemStack(fluidContainer);
+                playSound(tankFluid, false);
+                return fluidContainer;
             }
             return ItemStack.EMPTY;
         }
@@ -345,34 +307,43 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
          * and shrink the held stack by the appropriate amount.
          */
         private void replaceCursorItemStack(ItemStack resultStack) {
-            EntityPlayer player = getSyncManager().getPlayer();
             int resultStackSize = resultStack.getMaxStackSize();
+            ItemStack playerStack = getSyncManager().getCursorItem();
+
+            if (!getSyncManager().isClient())
+                syncToClient(1, buffer -> NetworkUtils.writeItemStack(buffer, resultStack));
+
             while (resultStack.getCount() > resultStackSize) {
-                player.inventory.getItemStack().shrink(resultStackSize);
-                addItemToPlayerInventory(player, resultStack.splitStack(resultStackSize));
+                playerStack.shrink(resultStackSize);
+                addItemToPlayerInventory(resultStack.splitStack(resultStackSize));
             }
-            if (player.inventory.getItemStack().getCount() == resultStack.getCount()) {
+            if (playerStack.getCount() == resultStack.getCount()) {
                 // every item on the cursor is mutated, so leave it there
-                player.inventory.setItemStack(resultStack);
+                getSyncManager().setCursorItem(resultStack);
             } else {
                 // some items not mutated. Mutated items go into the inventory/world.
-                ItemStack heldStack = player.inventory.getItemStack();
-                heldStack.shrink(resultStack.getCount());
-                player.inventory.setItemStack(heldStack);
-                addItemToPlayerInventory(player, resultStack);
+                playerStack.shrink(resultStack.getCount());
+                getSyncManager().setCursorItem(playerStack);
+                addItemToPlayerInventory(resultStack);
             }
         }
 
         /** Place an item into the player's inventory, or drop it in-world as an item entity if it cannot fit. */
-        private static void addItemToPlayerInventory(EntityPlayer player, ItemStack stack) {
+        private void addItemToPlayerInventory(ItemStack stack) {
             if (stack == null) return;
+            var player = getSyncManager().getPlayer();
+
             if (!player.inventory.addItemStackToInventory(stack) && !player.world.isRemote) {
                 EntityItem dropItem = player.entityDropItem(stack, 0);
                 if (dropItem != null) dropItem.setPickupDelay(0);
             }
         }
 
-        /** Play the appropriate fluid interaction sound for the fluid. */
+        /**
+         * Play the appropriate fluid interaction sound for the fluid.
+         * <br />
+         * Must be called on server to work correctly
+         **/
         private void playSound(FluidStack fluid, boolean fill) {
             if (fluid == null) return;
             SoundEvent soundEvent;

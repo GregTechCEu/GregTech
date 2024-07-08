@@ -143,12 +143,10 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
     @Override
     protected IWidget createEntrySlot() {
-        var fluidTank = new GTFluidSlot.GTFluidSyncHandler(this.linkedTank);
-
         return new GTFluidSlot()
                 .size(18)
                 .background(GTGuiTextures.FLUID_SLOT)
-                .syncHandler(fluidTank)
+                .syncHandler(this.linkedTank)
                 .marginRight(2);
     }
 
