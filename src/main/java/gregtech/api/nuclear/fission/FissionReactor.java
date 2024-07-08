@@ -112,7 +112,7 @@ public class FissionReactor {
     public static double poisonFraction = 0.063; // Xenon-135 yield from fission
     public static double crossSectionRatio = 4; // The ratio between the cross section for typical fuels and xenon-135;
     public static double weightedGenerationTimeDelayed = 2; // The mean generation time in seconds, adjusted for
-                                                              // simple Minecraft players
+                                                            // simple Minecraft players
 
     // very much changed here for balance purposes
 
@@ -331,8 +331,8 @@ public class FissionReactor {
         }
 
         if (fuelRods.size() > 1) {
-            avgGeometricFactorSlowNeutrons *= 0.125 / fuelRods.size();
-            avgGeometricFactorFastNeutrons *= 0.125 / fuelRods.size();
+            avgGeometricFactorSlowNeutrons *= 0.25 / fuelRods.size();
+            avgGeometricFactorFastNeutrons *= 0.25 / fuelRods.size();
 
             avgHighEnergyFissionFactor /= fuelRods.size();
             avgLowEnergyFissionFactor /= fuelRods.size();
@@ -567,7 +567,7 @@ public class FissionReactor {
 
             double inverseReactorPeriod = (this.kEff - 1) / weightedGenerationTimeDelayed;
 
-            this.power += 0.00001; // Let it kickstart itself
+            this.power += 0.001; // Let it kickstart itself
             this.power *= Math.exp(inverseReactorPeriod);
 
             this.fuelDepletion += this.power;
