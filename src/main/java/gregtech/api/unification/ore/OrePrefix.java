@@ -335,7 +335,9 @@ public class OrePrefix {
                             mat.getProperty(PropertyKey.FISSION_FUEL).getMaxTemperature()),
                     I18n.format("metaitem.nuclear.tooltip.cross_sections",
                             mat.getProperty(PropertyKey.FISSION_FUEL).getFastNeutronFissionCrossSection(),
-                            mat.getProperty(PropertyKey.FISSION_FUEL).getSlowNeutronFissionCrossSection())));
+                            mat.getProperty(PropertyKey.FISSION_FUEL).getSlowNeutronFissionCrossSection()),
+                    I18n.format("metaitem.nuclear.tooltip.neutron_time",
+                            mat.getProperty(PropertyKey.FISSION_FUEL).getNeutronGenerationTime())));
     public static final OrePrefix fuelRodDepleted = new OrePrefix("fuelRodDepleted", -1, null,
             MaterialIconType.fuelRodDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL),
             mat -> Collections.singletonList(I18n.format("metaitem.nuclear.tooltip.radioactive")));

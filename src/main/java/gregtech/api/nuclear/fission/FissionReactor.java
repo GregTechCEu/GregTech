@@ -90,6 +90,7 @@ public class FissionReactor {
     public double decayProductsAmount;
     public double envTemperature = roomTemperature; // maybe gotten from config per dim
     public double accumulatedHydrogen;
+    public double weightedGenerationTime = 2; // The mean generation time in seconds, accounting for delayed neutrons
 
     public double maxTemperature = 2000;
     // Pascals
@@ -111,8 +112,7 @@ public class FissionReactor {
     // Minecraft days, and yes, I am using this for plutonium too
     public static double poisonFraction = 0.063; // Xenon-135 yield from fission
     public static double crossSectionRatio = 4; // The ratio between the cross section for typical fuels and xenon-135;
-    public static double weightedGenerationTimeDelayed = 2; // The mean generation time in seconds, adjusted for
-                                                            // simple Minecraft players
+
 
     // very much changed here for balance purposes
 
@@ -406,12 +406,16 @@ public class FissionReactor {
         coolantBoilingPointStandardPressure = 0;
         coolantHeatOfVaporization = 0;
         maxFuelDepletion = 0;
+        weightedGenerationTime = 0;
+
         for (FuelRod rod : fuelRods) {
-            maxFuelDepletion += rod.getFuel().getDuration();
+            maxFuelDepletion += rod.getDuration();
+            weightedGenerationTime += rod.getNeutronGenerationTime();
         }
         if (fuelDepletion < 0) {
             fuelDepletion = maxFuelDepletion;
         }
+        weightedGenerationTime /= fuelRods.size();
 
         for (CoolantChannel channel : effectiveCoolantChannels) {
 
@@ -565,7 +569,7 @@ public class FissionReactor {
                     neutronPoisonAmount * crossSectionRatio / surfaceArea + controlRodFactor);
             this.kEff = Math.max(0, this.kEff);
 
-            double inverseReactorPeriod = (this.kEff - 1) / weightedGenerationTimeDelayed;
+            double inverseReactorPeriod = (this.kEff - 1) / weightedGenerationTime;
 
             this.power += 0.001; // Let it kickstart itself
             this.power *= Math.exp(inverseReactorPeriod);
@@ -647,8 +651,14 @@ public class FissionReactor {
             this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
             this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
         }
-        if (load > 3. / 10) {
-            if (kEff > 1.005) {
+        if (load > 9. / 10) {
+            if (kEff > 1) {
+                this.controlRodInsertion += 1f / 255;
+                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
+                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+            }
+        } else if (load > 3. / 10) {
+            if (kEff > 1.008) {
                 this.controlRodInsertion += 2f / 255;
                 this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
                 this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
@@ -658,13 +668,7 @@ public class FissionReactor {
                 this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
             }
         }
-        if (load > 9. / 10) {
-            if (kEff > 1) {
-                this.controlRodInsertion += 1f / 255;
-                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
-                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
-            }
-        }
+
     }
 
     public void turnOff() {
