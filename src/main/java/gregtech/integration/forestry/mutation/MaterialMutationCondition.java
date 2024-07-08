@@ -2,6 +2,8 @@ package gregtech.integration.forestry.mutation;
 
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.LocalizationUtils;
 
 import net.minecraft.block.Block;
@@ -19,22 +21,21 @@ import forestry.api.genetics.IAllele;
 import forestry.api.genetics.IGenome;
 import forestry.api.genetics.IMutationCondition;
 import forestry.core.tiles.TileUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.apache.commons.lang3.StringUtils.capitalize;
-
 public class MaterialMutationCondition implements IMutationCondition {
 
-    private final Set<IBlockState> acceptedBlocks = new HashSet();
+    private final Set<IBlockState> acceptedBlocks = new HashSet<>();
     private final String displayName;
 
-    public MaterialMutationCondition(Material material) {
+    public MaterialMutationCondition(@NotNull Material material) {
         this.displayName = LocalizationUtils.format("gregtech.mutation.block_of", material.getLocalizedName());
-        String oredictName = "block" + capitalize(material.getName());
+        String oreDictName = new UnificationEntry(OrePrefix.block, material).toString();
 
-        for (ItemStack ore : OreDictUnifier.getAllWithOreDictionaryName(oredictName)) {
+        for (ItemStack ore : OreDictUnifier.getAllWithOreDictionaryName(oreDictName)) {
             if (!ore.isEmpty()) {
                 Item oreItem = ore.getItem();
                 Block oreBlock = Block.getBlockFromItem(oreItem);
@@ -45,8 +46,10 @@ public class MaterialMutationCondition implements IMutationCondition {
         }
     }
 
-    public float getChance(World world, BlockPos pos, IAllele allele0, IAllele allele1, IGenome genome0,
-                           IGenome genome1, IClimateProvider climate) {
+    @Override
+    public float getChance(@NotNull World world, @NotNull BlockPos pos, @NotNull IAllele allele0,
+                           @NotNull IAllele allele1, @NotNull IGenome genome0,
+                           @NotNull IGenome genome1, @NotNull IClimateProvider climate) {
         TileEntity tile;
         do {
             pos = pos.down();
@@ -57,7 +60,8 @@ public class MaterialMutationCondition implements IMutationCondition {
         return this.acceptedBlocks.contains(blockState) ? 1.0F : 0.0F;
     }
 
-    public String getDescription() {
+    @Override
+    public @NotNull String getDescription() {
         return LocalizationUtils.format("for.mutation.condition.resource", this.displayName);
     }
 }
