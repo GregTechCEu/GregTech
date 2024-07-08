@@ -183,13 +183,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
 
     @Override
     protected final ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = createUITemplate(player);
+        ModularUI.Builder builder = createUITemplate(player, 0);
         return builder.build(this.getHolder(), player);
     }
 
-    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
+    protected ModularUI.Builder createUITemplate(EntityPlayer player, int heightOverride) {
         ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
+                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94 + heightOverride)
                 .label(10, 5, getMetaFullName());
         // ME Network status
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
@@ -198,10 +198,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
                 0x404040);
 
         // Config slots
-        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
+        builder.widget(new AEItemConfigWidget(7, 25 + heightOverride, this.getAEItemHandler()));
 
         // Ghost circuit slot
-        SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 7 + 18 * 4, 25 + 18 * 3)
+        SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 7 + 18 * 4, 25 + 18 * 3 + heightOverride)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
         builder.widget(circuitSlot.setConsumer(w -> {
             String configString;
@@ -217,14 +217,14 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         }));
 
         // Extra slot
-        builder.widget(new SlotWidget(extraSlotInventory, 0, 7 + 18 * 4, 25 + 18 * 2)
+        builder.widget(new SlotWidget(extraSlotInventory, 0, 7 + 18 * 4, 25 + 18 * 2 + heightOverride)
                 .setBackgroundTexture(GuiTextures.SLOT)
                 .setTooltipText("gregtech.gui.me_bus.extra_slot"));
 
         // Arrow image
-        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
+        builder.image(7 + 18 * 4, 25 + 18 + heightOverride, 18, 18, GuiTextures.ARROW_DOUBLE);
 
-        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
+        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12 + heightOverride);
         return builder;
     }
 
