@@ -87,7 +87,6 @@ public class FissionReactor {
     public double coolantBaseTemperature;
     public double maxFuelDepletion = 1;
     public double fuelDepletion = -1;
-    public double prevFuelDepletion;
     public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
     public double decayProductsAmount;
     public double envTemperature = roomTemperature; // maybe gotten from config per dim
@@ -564,7 +563,6 @@ public class FissionReactor {
             this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower) +
                     neutronPoisonAmount * crossSectionRatio / surfaceArea + controlRodFactor);
             this.kEff = Math.max(0, this.kEff);
-            this.prevFuelDepletion = this.fuelDepletion;
             // maps (1, 1.1) to (1, 15); this value basically sets how quickly kEff operates
             double generationTime = Math.max(1, Math.min(15, (kEff - 1) * 150.));
 
@@ -576,7 +574,7 @@ public class FissionReactor {
             }
             this.fuelDepletion += this.power;
 
-            this.decayProductsAmount += Math.max(this.fuelDepletion - this.prevFuelDepletion, 0.) / 1000;
+            this.decayProductsAmount += Math.max(power, 0.) / 1000;
         } else {
             this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff), this.power,
                     1);
