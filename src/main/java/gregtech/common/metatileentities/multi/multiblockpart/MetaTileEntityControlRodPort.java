@@ -91,7 +91,7 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
-        tooltip.add(I18n.format(this.getMetaName() + "tooltip.1"));
+        tooltip.add(I18n.format(this.getMetaName() + ".tooltip.1"));
     }
 
     @Override
