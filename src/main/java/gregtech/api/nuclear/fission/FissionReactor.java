@@ -521,9 +521,14 @@ public class FissionReactor {
     }
 
     public void updateTemperature(int flowRate) {
+        double oldTemp = this.temperature;
+        // simulate heat based only on the reactor power
+        this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1e6, 0);
+        // prevent temperature from going above meltdown temp, to stop coolant from absorbing more heat than it should
+        this.temperature = Math.min(maxTemperature, temperature);
         double heatRemoved = this.makeCoolantFlow(flowRate);
-        this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1000000,
-                heatRemoved);
+        // calculate the actual temperature based on the reactor power and the heat removed
+        this.temperature = responseFunctionTemperature(envTemperature, oldTemp, this.power * 1e6, heatRemoved);
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
     }
 
