@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.8.8 - beta
-# 対応バージョン: 2.8.8 - beta
+# Corresponding Version: 2.8.10 - beta
+# 対応バージョン: 2.8.10 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -552,7 +552,7 @@ metaitem.tool.datamodule.tooltip=とても複雑なデータの保管に/n§cデ
 metaitem.circuit.integrated.name=プログラム回路
 metaitem.circuit.integrated.tooltip=使うと設定画面を開く/n/nプログラム回路スロットを持つ機械に/nシフト右クリックをすると/nこの回路の番号に設定される/n
 metaitem.circuit.integrated.gui=プログラム回路設定
-metaitem.circuit.integrated.jei_description=JEIでは設定した番号のレシピのみが表示されます。/n番号はプログラム回路の一覧タブで選択できます。
+metaitem.circuit.integrated.jei_description=JEIでは設定した番号のレシピのみが表示されます。\n番号はプログラム回路の一覧タブで選択できます。
 
 item.glass.lens=白いガラスレンズ
 metaitem.glass_lens.orange.name=橙色のガラスレンズ
@@ -1327,6 +1327,11 @@ cover.fluid_regulator.transfer_mode.description=§eすべて移動§r - この�
 cover.fluid_regulator.supply_exact=供給モード: %s
 cover.fluid_regulator.keep_exact=保持モード: %s
 
+cover.machine_controller.title=機械制御設定
+cover.machine_controller.normal=通常
+cover.machine_controller.inverted=反転
+cover.machine_controller.inverted.description=§e通常§r - このモードは、設定した信号強度よりも弱い信号が入力されている時に機械が動作するようになります。/n§e反転§r -  このモードは、設定した信号強度よりも強い信号が入力されている時に機械が動作するようになります。
+cover.machine_controller.redstone=最低レッドストーン信号強度: %,d
 cover.machine_controller.mode.machine=機械制御
 cover.machine_controller.mode.cover_up=上面カバー制御
 cover.machine_controller.mode.cover_down=下面カバー制御
@@ -1334,12 +1339,6 @@ cover.machine_controller.mode.cover_south=南面カバー制御
 cover.machine_controller.mode.cover_north=北面カバー制御
 cover.machine_controller.mode.cover_east=東面カバー制御
 cover.machine_controller.mode.cover_west=西面カバー制御
-cover.machine_controller.this_cover=§cこのカバー
-cover.machine_controller.cover_not_controllable=§c制御可能なカバーがない
-cover.machine_controller.machine_not_controllable=§c機械が制御可能でない
-cover.machine_controller.control=制御対象:
-cover.machine_controller.enable_with_redstone=赤石信号で動作
-cover.machine_controller.disable_with_redstone=赤石信号で停止
 
 cover.ender_fluid_link.title=液体エンダーリンク
 cover.ender_fluid_link.iomode.enabled=I/O 有効
@@ -5429,7 +5428,7 @@ gregtech.gui.item_auto_output.tooltip.disabled=アイテム自動搬出を有効
 gregtech.gui.item_auto_collapse.tooltip.enabled=アイテムの整頓を有効化 (現在は無効)
 gregtech.gui.item_auto_collapse.tooltip.disabled=アイテムの整頓を無効化 (現在は有効)
 gregtech.gui.charger_slot.tooltip=§f充電スロット§r/n%s§7バッテリーからエネルギーを吸い取る。§r/n%s§7の電動ツールとバッテリーを充電できる。
-gregtech.gui.configurator_slot.tooltip=§fプログラム回路スロット§r\n§a設定番号: §f%d§7\n\n§7右/左クリック/スクロールで値を変更する。\n§7シフト左クリックで選択画面を表示。\n§7シフト右クリックでやり直し。
+gregtech.gui.configurator_slot.tooltip=§fプログラム回路スロット§r/n§a設定番号: §f%d§7/n/n§7右/左クリック/スクロールで値を変更する。/n§7シフト右クリックでやり直し。
 gregtech.gui.configurator_slot.no_value=なし
 gregtech.gui.configurator_slot.unavailable.tooltip=プログラム回路スロットは使いません
 gregtech.gui.fluid_lock.tooltip.enabled=液体ロックを無効化 (現在は有効)
@@ -6279,3 +6278,6 @@ gregtech.scanner.forestry.larvae=§o解析済みの幼虫
 gregtech.scanner.forestry.serum=§o解析済みの漿液
 gregtech.scanner.forestry.caterpillar=§o解析済みの幼虫
 gregtech.scanner.forestry.pollen=§o解析済みの花粉
+
+# Mutation
+gregtech.mutation.block_of=%sブロック
