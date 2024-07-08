@@ -62,6 +62,7 @@ public class FissionReactor {
      * Megawatts
      */
     public double power;
+
     /**
      * Temperature of the reactor
      */
@@ -110,6 +111,9 @@ public class FissionReactor {
     // Minecraft days, and yes, I am using this for plutonium too
     public static double poisonFraction = 0.063; // Xenon-135 yield from fission
     public static double crossSectionRatio = 4; // The ratio between the cross section for typical fuels and xenon-135;
+    public static double weightedGenerationTimeDelayed = 1.5; // The mean generation time in seconds, adjusted for
+                                                              // simple Minecraft players
+
     // very much changed here for balance purposes
 
     public double coolantMass;
@@ -311,8 +315,10 @@ public class FissionReactor {
 
         double avgFuelRodDistance = 0.;
 
-        for (FuelRod i : fuelRods) {
-            for (FuelRod j : fuelRods) {
+        for (int iIdx = 0; iIdx < fuelRods.size(); iIdx++) {
+            FuelRod i = fuelRods.get(iIdx);
+            for (int jIdx = 0; jIdx < iIdx; jIdx++) {
+                FuelRod j = fuelRods.get(jIdx);
                 avgGeometricFactorSlowNeutrons += geometricMatrixSlowNeutrons[i.getID()][j.getID()];
                 avgGeometricFactorFastNeutrons += geometricMatrixFastNeutrons[i.getID()][j.getID()];
 
@@ -322,7 +328,6 @@ public class FissionReactor {
             avgLowEnergyFissionFactor += i.getLEFissionFactor();
             avgHighEnergyCaptureFactor += i.getHECaptureFactor();
             avgLowEnergyCaptureFactor += i.getLECaptureFactor();
-
         }
 
         if (fuelRods.size() > 1) {
@@ -334,7 +339,8 @@ public class FissionReactor {
             avgHighEnergyCaptureFactor /= fuelRods.size();
             avgLowEnergyCaptureFactor /= fuelRods.size();
 
-            avgFuelRodDistance /= 2. * (fuelRods.size() * fuelRods.size() - fuelRods.size());
+            avgFuelRodDistance /= (fuelRods.size() * fuelRods.size() - fuelRods.size());
+            avgFuelRodDistance *= 2;
 
             double kSlow = avgLowEnergyFissionFactor / avgLowEnergyCaptureFactor * avgGeometricFactorSlowNeutrons;
             double kFast = avgHighEnergyFissionFactor / avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
@@ -459,6 +465,8 @@ public class FissionReactor {
                 double idealHeatFlux = heatFluxPerAreaAndTemp * 4 * reactorDepth *
                         (temperature - coolant.getFluid().getTemperature());
 
+                idealHeatFlux = Math.min(idealHeatFlux, realMaxPower() / (1e6 * coolantChannels.size()));
+
                 double idealFluidUsed = idealHeatFlux / heatRemovedPerLiter;
 
                 int remainingSpace = channel.getOutputHandler().getFluidTank().getCapacity() -
@@ -537,7 +545,8 @@ public class FissionReactor {
     }
 
     public double getDecayHeat() {
-        return this.neutronPoisonAmount * 0.05 + this.decayProductsAmount * 0.1;
+        return this.neutronPoisonAmount * 0.05 + this.decayProductsAmount * 0.1 + 0.0001; // The extra constant is to
+                                                                                          // kickstart the reactor.
     }
 
     /*
@@ -555,15 +564,12 @@ public class FissionReactor {
             this.kEff = 1 / ((1 / this.kEff) + powerDefectCoefficient * (this.power / this.maxPower) +
                     neutronPoisonAmount * crossSectionRatio / surfaceArea + controlRodFactor);
             this.kEff = Math.max(0, this.kEff);
-            // maps (1, 1.1) to (1, 15); this value basically sets how quickly kEff operates
-            double generationTime = Math.max(1, Math.min(15, (kEff - 1) * 150.));
 
-            this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff + 0.0001), this.power,
-                    generationTime);
-            if (power * kEff > this.realMaxPower()) {
-                this.kEff = this.realMaxPower() / power; // Make it display in a vaguely realistic manner for this edge
-                // case.
-            }
+            double inverseReactorPeriod = (this.kEff - 1) / weightedGenerationTimeDelayed;
+
+            this.power += getDecayHeat();
+            this.power *= Math.exp(inverseReactorPeriod);
+
             this.fuelDepletion += this.power;
 
             this.decayProductsAmount += Math.max(power, 0.) / 1000;

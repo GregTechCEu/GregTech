@@ -2,7 +2,6 @@ package gregtech.integration.opencomputers.drivers.specific;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.metatileentities.multi.MetaTileEntityFissionReactor;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
 import gregtech.integration.opencomputers.drivers.EnvironmentMetaTileEntity;
 
 import net.minecraft.tileentity.TileEntity;
