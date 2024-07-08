@@ -49,8 +49,6 @@ public class FissionReactor {
 
     public double kEff; // criticality value, based on k
 
-    private double avgPressure;
-
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
@@ -400,7 +398,6 @@ public class FissionReactor {
     public void prepareInitialConditions() {
         coolantBaseTemperature = 0;
         coolantBoilingPointStandardPressure = 0;
-        avgPressure = 0;
         coolantHeatOfVaporization = 0;
         maxFuelDepletion = 0;
         for (FuelRod rod : fuelRods) {
@@ -418,17 +415,12 @@ public class FissionReactor {
                     channel.getWeight();
             coolantBoilingPointStandardPressure += prop.getBoilingPoint() *
                     channel.getWeight();
-            avgPressure += prop.getPressure() *
-                    channel.getWeight();
             coolantHeatOfVaporization += prop.getHeatOfVaporization() *
                     channel.getWeight();
         }
 
         if (coolantBaseTemperature == 0) {
             coolantBaseTemperature = envTemperature;
-        }
-        if (avgPressure == 0) {
-            avgPressure = standardPressure;
         }
         if (coolantBoilingPointStandardPressure == 0) {
             coolantBoilingPointStandardPressure = airBoilingPoint;
