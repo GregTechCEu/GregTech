@@ -29,14 +29,13 @@ public class CoolantProperty implements IMaterialProperty {
     private FluidStorageKey key;
 
     public CoolantProperty(Material hotHPCoolant, FluidStorageKey key, double moderatorFactor, double coolingFactor,
-                           double boilingPoint, double absorption, double pressure, double heatOfVaporization,
+                           double boilingPoint, double absorption, double heatOfVaporization,
                            double specificHeatCapacity) {
         this.hotHPCoolant = hotHPCoolant;
         this.moderatorFactor = moderatorFactor;
         this.coolingFactor = coolingFactor;
         this.boilingPoint = boilingPoint;
         this.absorption = absorption;
-        this.pressure = pressure;
         this.heatOfVaporization = heatOfVaporization;
         this.specificHeatCapacity = specificHeatCapacity;
         this.key = key;
@@ -85,14 +84,6 @@ public class CoolantProperty implements IMaterialProperty {
 
     public double getAbsorption() {
         return absorption;
-    }
-
-    public void setPressure(double pressure) {
-        this.pressure = pressure;
-    }
-
-    public double getPressure() {
-        return pressure;
     }
 
     public double getHeatOfVaporization() {

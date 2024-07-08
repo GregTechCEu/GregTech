@@ -197,7 +197,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         } else if (index == 1) {
             return this.pressure / this.maxPressure;
         } else {
-            return this.power / this.maxPower;
+            if (this.maxPower / this.power > Math.exp(12)) {
+                return 0;
+            }
+            return (Math.log(this.power / this.maxPower) + 12) / 12;
         }
     }
 
