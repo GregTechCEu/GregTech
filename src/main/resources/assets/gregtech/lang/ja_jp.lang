@@ -6278,3 +6278,6 @@ gregtech.scanner.forestry.larvae=§o解析済みの幼虫
 gregtech.scanner.forestry.serum=§o解析済みの漿液
 gregtech.scanner.forestry.caterpillar=§o解析済みの幼虫
 gregtech.scanner.forestry.pollen=§o解析済みの花粉
+
+# Mutation
+gregtech.mutation.block_of=%sブロック
