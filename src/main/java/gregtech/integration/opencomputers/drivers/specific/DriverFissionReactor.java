@@ -20,7 +20,7 @@ public class DriverFissionReactor extends DriverSidedTileEntity {
 
     @Override
     public Class<?> getTileEntityClass() {
-        return MetaTileEntityFusionReactor.class;
+        return MetaTileEntityFissionReactor.class;
     }
 
     @Override
