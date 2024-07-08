@@ -70,6 +70,10 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         });
     }
 
+    public static GTFluidSyncHandler sync(IFluidTank tank) {
+        return new GTFluidSyncHandler(tank);
+    }
+
     @Override
     public void onInit() {
         this.textRenderer.setShadow(true);
