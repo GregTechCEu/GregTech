@@ -46,7 +46,7 @@ public class DriverFissionReactor extends DriverSidedTileEntity {
                                                         EnvironmentMetaTileEntity<MetaTileEntityFissionReactor> {
 
         public EnvironmentFissionReactor(IGregTechTileEntity holder, MetaTileEntityFissionReactor tileEntity) {
-            super(holder, tileEntity, "gt_fusionReactor");
+            super(holder, tileEntity, "gt_fissionReactor");
         }
 
         @Callback(doc = "function():number --  Returns the max power of the reactor, in MW.")
