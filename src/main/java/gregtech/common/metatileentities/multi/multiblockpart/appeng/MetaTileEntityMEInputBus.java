@@ -201,8 +201,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         builder.widget(new AEItemConfigWidget(7, 25 + heightOverride, this.getAEItemHandler()));
 
         // Ghost circuit slot
-        SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 7 + 18 * 4, 25 + 18 * 3 + heightOverride)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
+        SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 7 + 18 * 4,
+                25 + 18 * 3 + heightOverride)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
         builder.widget(circuitSlot.setConsumer(w -> {
             String configString;
             if (circuitInventory == null ||

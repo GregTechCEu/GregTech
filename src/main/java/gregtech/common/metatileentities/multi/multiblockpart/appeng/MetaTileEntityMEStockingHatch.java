@@ -229,7 +229,8 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
                 () -> autoPull, this::setAutoPull).setTooltipHoverString("gregtech.gui.me_hatch.auto_pull_button"));
 
         builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 28, 16, 16, GuiTextures.BUTTON_AUTO_PULL_FILTERED,
-                () -> applyMinCount, this::setApplyMinCount).setTooltipHoverString("gregtech.gui.me_hatch.filtered_auto_pull_button"));
+                () -> applyMinCount, this::setApplyMinCount)
+                        .setTooltipHoverString("gregtech.gui.me_hatch.filtered_auto_pull_button"));
 
         builder.widget(new ImageWidget(8, 26, 68, 20, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(10, 32, 66, 16, () -> String.valueOf(this.minCount), value -> {
