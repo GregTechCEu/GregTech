@@ -44,14 +44,12 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     private static final int CONFIG_SIZE = 16;
     private boolean autoPull;
     private Predicate<FluidStack> autoPullTest;
-    private boolean applyMinCount;
-    private int minCount;
+    private int minAutoPullStackSize;
 
     public MetaTileEntityMEStockingHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.LuV);
         this.autoPullTest = $ -> false;
-        this.applyMinCount = false;
-        this.minCount = 0;
+        this.minAutoPullStackSize = 1;
     }
 
     @Override
@@ -164,11 +162,6 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         }
     }
 
-    private void setApplyMinCount(boolean applyMinCount) {
-        this.applyMinCount = applyMinCount;
-        refreshList();
-    }
-
     private void refreshList() {
         IMEMonitor<IAEFluidStack> monitor = getMonitor();
         if (monitor == null) {
@@ -185,9 +178,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         int index = 0;
         for (IAEFluidStack stack : storageList) {
             if (index >= CONFIG_SIZE) break;
-            long checkAmount = stack.getStackSize();
-            if (checkAmount == 0) continue;
-            if (applyMinCount && (minCount > checkAmount)) continue;
+            if (stack.getStackSize() >= minAutoPullStackSize) continue;
             stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
             if (stack == null || stack.getStackSize() == 0) continue;
 
@@ -228,17 +219,13 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26 + 22, 16, 16, GuiTextures.BUTTON_AUTO_PULL,
                 () -> autoPull, this::setAutoPull).setTooltipHoverString("gregtech.gui.me_hatch.auto_pull_button"));
 
-        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 28, 16, 16, GuiTextures.BUTTON_AUTO_PULL_FILTERED,
-                () -> applyMinCount, this::setApplyMinCount)
-                        .setTooltipHoverString("gregtech.gui.me_hatch.filtered_auto_pull_button"));
-
         builder.widget(new ImageWidget(8, 26, 68, 20, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(10, 32, 66, 16, () -> String.valueOf(this.minCount), value -> {
+        builder.widget(new TextFieldWidget2(10, 32, 66, 16, () -> String.valueOf(this.minAutoPullStackSize), value -> {
             if (!value.isEmpty()) {
-                this.minCount = Integer.parseInt(value);
+                this.minAutoPullStackSize = Integer.parseInt(value);
             }
         })
-                .setNumbersOnly(0, Integer.MAX_VALUE)
+                .setNumbersOnly(1, Integer.MAX_VALUE)
                 .setMaxLength(10));
 
         return builder;
@@ -264,8 +251,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("AutoPull", autoPull);
-        data.setBoolean("ApplyMinCount", applyMinCount);
-        data.setInteger("MinCount", minCount);
+        data.setInteger("minAutoPullStackSize", minAutoPullStackSize);
         return data;
     }
 
@@ -274,16 +260,10 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         super.readFromNBT(data);
         this.autoPull = data.getBoolean("AutoPull");
 
-        if (data.hasKey("ApplyMinCount")) {
-            this.applyMinCount = data.getBoolean("ApplyMinCount");
+        if (data.hasKey("minAutoPullStackSize")) {
+            this.minAutoPullStackSize = data.getInteger("minAutoPullStackSize");
         } else {
-            this.applyMinCount = false;
-        }
-
-        if (data.hasKey("MinCount")) {
-            this.minCount = data.getInteger("MinCount");
-        } else {
-            this.minCount = 0;
+            this.minAutoPullStackSize = 0;
         }
     }
 
@@ -320,8 +300,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         // if in auto-pull, no need to write actual configured slots, but still need to write the ghost circuit
         NBTTagCompound tag = new NBTTagCompound();
         tag.setBoolean("AutoPull", true);
-        tag.setBoolean("ApplyMinCount", applyMinCount);
-        tag.setInteger("MinCount", minCount);
+        tag.setInteger("minAutoPullStackSize", minAutoPullStackSize);
         return tag;
     }
 
@@ -331,16 +310,10 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             // if being set to auto-pull, no need to read the configured slots
             this.setAutoPull(true);
 
-            if (tag.hasKey("ApplyMinCount")) {
-                this.applyMinCount = tag.getBoolean("ApplyMinCount");
+            if (tag.hasKey("minAutoPullStackSize")) {
+                this.minAutoPullStackSize = tag.getInteger("minAutoPullStackSize");
             } else {
-                this.applyMinCount = false;
-            }
-
-            if (tag.hasKey("MinCount")) {
-                this.minCount = tag.getInteger("MinCount");
-            } else {
-                this.minCount = 0;
+                this.minAutoPullStackSize = 0;
             }
             return;
         }
