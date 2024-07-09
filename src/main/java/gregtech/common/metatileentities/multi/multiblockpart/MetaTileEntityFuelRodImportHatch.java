@@ -34,6 +34,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 
+import java.io.IOException;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
@@ -150,6 +151,23 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
         return super.writeToNBT(data);
     }
 
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeItemStack(getLockedImport().getStackInSlot(0));
+        buf.writeBoolean(getLockedImport().isLocked());
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        try {
+            getLockedImport().setStackInSlot(0, buf.readItemStack());
+        } catch (IOException e) { // ignored
+        }
+        getLockedImport().setLock(buf.readBoolean());
+    }
+
     private LockableItemStackHandler getLockedImport() {
         return (LockableItemStackHandler) importItems;
     }
@@ -157,7 +175,9 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     @Override
     public void setLock(boolean isLocked) {
         getLockedImport().setLock(isLocked);
-        writeCustomData(LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
+        writeCustomData(LOCK_UPDATE, (packetBuffer -> {
+            packetBuffer.writeBoolean(isLocked);
+        }));
     }
 
     @Override
