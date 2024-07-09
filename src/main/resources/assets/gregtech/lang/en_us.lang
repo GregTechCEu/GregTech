@@ -5464,9 +5464,7 @@ gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
 gregtech.gui.config_slot.auto_pull_managed=§4Disabled:§7 Managed by Auto-Pull
 gregtech.gui.me_bus.extra_slot=Extra Slot/n§7Put extra items for recipes here, like Molds or Lenses
 gregtech.gui.me_bus.auto_pull_button=Click to toggle automatic item pulling from ME
-gregtech.gui.me_bus.filtered_auto_pull_button=Click to enable filtering by a minimum item amount
 gregtech.gui.me_hatch.auto_pull_button=Click to toggle automatic fluid pulling from ME
-gregtech.gui.me_hatch.filtered_auto_pull_button=Click to enable filtering by a minimum fluid amount, in liters
 gregtech.gui.alarm.radius=Radius:
 
 
