@@ -675,6 +675,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         data.setInteger("flowRate", this.flowRate);
         data.setDouble("controlRodInsertion", this.controlRodInsertionValue);
         data.setBoolean("locked", this.lockingState == LockingState.LOCKED);
+        data.setDouble("kEff", this.kEff);
         if (fissionReactor != null) {
             data.setTag("transientData", this.fissionReactor.serializeNBT());
         }
@@ -691,6 +692,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         this.flowRate = data.getInteger("flowRate");
         this.controlRodInsertionValue = data.getDouble("controlRodInsertion");
         this.height = this.heightTop + this.heightBottom + 1;
+        this.kEff = data.getDouble("kEff");
         if (data.getBoolean("locked")) {
             this.lockingState = LockingState.SHOULD_LOCK;
         }
