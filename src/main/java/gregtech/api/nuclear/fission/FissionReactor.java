@@ -644,7 +644,8 @@ public class FissionReactor {
         if (!this.isOn || !this.controlRodRegulationOn)
             return;
 
-        if (temperature > coolantExitTemperature * 0.7 + maxTemperature * 0.3) {
+        if (pressure > maxPressure * 0.8 || (temperature > coolantExitTemperature * 0.7 + maxTemperature * 0.3 &&
+                temperature > maxTemperature - 150)) {
             if (kEff > 1) {
                 this.controlRodInsertion += 0.004;
                 this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
@@ -667,6 +668,16 @@ public class FissionReactor {
                 this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
             } else if (kEff < 1.015) {
                 this.controlRodInsertion -= 0.004;
+                this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
+                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+            }
+        } else {
+            if (kEff > 1.1) {
+                this.controlRodInsertion += 0.02;
+                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
+                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+            } else if (kEff < 1.05) {
+                this.controlRodInsertion -= 0.006;
                 this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
                 this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
             }
