@@ -474,7 +474,6 @@ public class FissionReactor {
                 double idealHeatFlux = heatFluxPerAreaAndTemp * 4 * reactorDepth *
                         (temperature - cooledTemperature);
 
-
                 // Don't cut off cooling when it turns off
                 if (realMaxPower() != this.getDecayHeat() && realMaxPower() != 0) {
                     idealHeatFlux = Math.min(idealHeatFlux, realMaxPower() * 1e6 / coolantChannels.size());
