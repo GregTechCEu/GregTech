@@ -267,9 +267,9 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         int rowSize = (int) Math.sqrt(getInventorySize());
-        guiSyncManager.registerSlotGroup("item_inv", rowSize);
+        panelSyncManager.registerSlotGroup("item_inv", rowSize);
 
         int backgroundWidth = Math.max(
                 9 * 18 + 18 + 14 + 5,   // Player Inv width
@@ -297,9 +297,9 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         }
 
         BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
-        guiSyncManager.syncValue("working_state", workingStateValue);
+        panelSyncManager.syncValue("working_state", workingStateValue);
         BooleanSyncValue collapseStateValue = new BooleanSyncValue(() -> autoCollapse, val -> autoCollapse = val);
-        guiSyncManager.syncValue("collapse_state", collapseStateValue);
+        panelSyncManager.syncValue("collapse_state", collapseStateValue);
 
         boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
 
