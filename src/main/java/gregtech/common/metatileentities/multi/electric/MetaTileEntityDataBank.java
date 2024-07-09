@@ -226,7 +226,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
