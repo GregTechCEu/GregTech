@@ -18,6 +18,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.sync.BigIntegerSyncValue;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
@@ -51,6 +54,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -67,7 +73,7 @@ import java.util.function.Supplier;
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
-                                           implements IControllable, IProgressBarMultiblock {
+                                           implements IControllable, ProgressBarMultiblock {
 
     // Structure Constants
     public static final int MAX_BATTERY_LAYERS = 18;
@@ -232,7 +238,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
@@ -579,23 +585,32 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public double getFillPercentage(int index) {
-        if (energyBank == null) return 0;
-        return energyBank.getStored().doubleValue() / energyBank.getCapacity().doubleValue();
+    public int getProgressBarCount() {
+        return 1;
     }
 
     @Override
-    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
-        String stored = energyBank != null ? TextFormattingUtil.formatNumbers(energyBank.getStored()) : "0";
-        String capacity = energyBank != null ? TextFormattingUtil.formatNumbers(energyBank.getCapacity()) : "0";
+    public @NotNull ProgressWidget createProgressBar(@NotNull PanelSyncManager panelSyncManager, int index) {
+        BigIntegerSyncValue energyStoredValue = new BigIntegerSyncValue(
+                () -> energyBank == null ? BigInteger.ZERO : energyBank.getStored(), null);
+        BigIntegerSyncValue energyCapacityValue = new BigIntegerSyncValue(
+                () -> energyBank == null ? BigInteger.ZERO : energyBank.getCapacity(), null);
+        panelSyncManager.syncValue("energy_stored", energyStoredValue);
+        panelSyncManager.syncValue("energy_capacity", energyCapacityValue);
 
-        ITextComponent energyInfo = TextComponentUtil.stringWithColor(
-                TextFormatting.YELLOW,
-                stored + " / " + capacity + " EU");
-        hoverList.add(TextComponentUtil.translationWithColor(
-                TextFormatting.GRAY,
-                "gregtech.multiblock.energy_stored",
-                energyInfo));
+        return new ProgressWidget()
+                .progress(
+                        () -> energyStoredValue.getValue().doubleValue() / energyCapacityValue.getValue().doubleValue())
+                .texture(GTGuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW, MultiblockUIFactory.Bars.FULL_WIDTH)
+                .tooltipBuilder(t -> {
+                    t.setAutoUpdate(true);
+                    if (isStructureFormed()) {
+                        t.addLine(IKey.lang("gregtech.multiblock.energy_stored", energyStoredValue.getValue(),
+                                energyCapacityValue.getValue()));
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                    }
+                });
     }
 
     public static class PowerStationEnergyBank {
