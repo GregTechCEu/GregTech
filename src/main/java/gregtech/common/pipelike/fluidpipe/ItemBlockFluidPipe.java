@@ -44,7 +44,7 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
             tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
         }
 
-        BlockMaterialPipe<?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?>) blockPipe;
+        BlockMaterialPipe<?, ?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?, ?>) blockPipe;
 
         if (ConfigHolder.misc.debug) {
             tooltip.add("MetaItem Id: " + blockMaterialPipe.getPrefix().name +

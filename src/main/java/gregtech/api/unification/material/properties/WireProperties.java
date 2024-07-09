@@ -1,33 +1,45 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.store.FluidStorageKeys;
+import gregtech.api.pipenet.INodeData;
 import gregtech.api.unification.material.Material;
 
+import net.minecraftforge.fluids.Fluid;
+
+import java.util.List;
 import java.util.Objects;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 
-public class WireProperties implements IMaterialProperty {
+public class WireProperties implements IMaterialProperty, INodeData<WireProperties> {
 
     private int voltage;
     private int amperage;
     private int lossPerBlock;
+    private int meltTemperature;
     private int superconductorCriticalTemperature;
     private boolean isSuperconductor;
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock) {
-        this(voltage, baseAmperage, lossPerBlock, false);
+        this(voltage, baseAmperage, lossPerBlock, 0, false);
     }
 
-    public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
-        this(voltage, baseAmperage, lossPerBlock, isSuperCon, 0);
+    public WireProperties(int voltage, int baseAmperage, int lossPerBlock, int meltTemperature) {
+        this(voltage, baseAmperage, lossPerBlock, meltTemperature, false);
     }
 
-    public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon,
+    public WireProperties(int voltage, int baseAmperage, int lossPerBlock, int meltTemperature, boolean isSuperCon) {
+        this(voltage, baseAmperage, lossPerBlock, meltTemperature, isSuperCon, 0);
+    }
+
+    public WireProperties(int voltage, int baseAmperage, int lossPerBlock, int meltTemperature, boolean isSuperCon,
                           int criticalTemperature) {
         this.voltage = voltage;
         this.amperage = baseAmperage;
         this.lossPerBlock = isSuperCon ? 0 : lossPerBlock;
+        this.meltTemperature = meltTemperature;
         this.superconductorCriticalTemperature = isSuperCon ? criticalTemperature : 0;
         this.isSuperconductor = isSuperCon;
     }
@@ -36,7 +48,7 @@ public class WireProperties implements IMaterialProperty {
      * Default values constructor
      */
     public WireProperties() {
-        this(8, 1, 1, false);
+        this(8, 1, 1, 0, false);
     }
 
     /**
@@ -80,7 +92,7 @@ public class WireProperties implements IMaterialProperty {
      *
      * @return The current wire loss per block
      */
-    public int getLossPerBlock() {
+    public int getLoss() {
         return lossPerBlock;
     }
 
@@ -91,6 +103,24 @@ public class WireProperties implements IMaterialProperty {
      */
     public void setLossPerBlock(int lossPerBlock) {
         this.lossPerBlock = lossPerBlock;
+    }
+
+    /**
+     * Retrieves the current melt temperature.
+     *
+     * @return The current melt temperature
+     */
+    public int getMeltTemperature() {
+        return meltTemperature == 0 ? 3000 : meltTemperature;
+    }
+
+    /**
+     * Sets the current melt temperature
+     *
+     * @param meltTemperature The new melt temperature
+     */
+    public void setMeltTemperature(int meltTemperature) {
+        this.meltTemperature = meltTemperature;
     }
 
     /**
@@ -140,22 +170,58 @@ public class WireProperties implements IMaterialProperty {
                 thisMaterial.addFlags(GENERATE_FOIL);
             }
         }
+        if (this.meltTemperature == 0 && properties.hasProperty(PropertyKey.FLUID)) {
+            // autodetermine melt temperature from registered fluid
+            FluidProperty prop = properties.getProperty(PropertyKey.FLUID);
+            Fluid fluid = prop.getStorage().get(FluidStorageKeys.LIQUID);
+            if (fluid == null) {
+                FluidBuilder builder = prop.getStorage().getQueuedBuilder(FluidStorageKeys.LIQUID);
+                if (builder != null) {
+                    this.setMeltTemperature(builder.currentTemp());
+                }
+            } else {
+                this.setMeltTemperature(fluid.getTemperature());
+            }
+        }
+    }
+
+    @Override
+    public double getWeightFactor() {
+        return this.getLoss() + 0.001 / this.getAmperage();
+    }
+
+    @Override
+    public int getThroughput() {
+        return this.getAmperage();
+    }
+
+    @Override
+    public WireProperties getSumData(List<WireProperties> datas) {
+        int amperage = this.getAmperage();
+        int voltage = this.getVoltage();
+        int loss = this.getLoss();
+        for (WireProperties data : datas) {
+            amperage = Math.min(amperage, data.getAmperage());
+            voltage = Math.min(voltage, data.getVoltage());
+            loss += data.getLoss();
+        }
+        return new WireProperties(voltage, amperage, loss);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof WireProperties)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         WireProperties that = (WireProperties) o;
-        return voltage == that.voltage &&
-                amperage == that.amperage &&
-                lossPerBlock == that.lossPerBlock &&
+        return voltage == that.voltage && amperage == that.amperage && lossPerBlock == that.lossPerBlock &&
+                meltTemperature == that.meltTemperature &&
                 superconductorCriticalTemperature == that.superconductorCriticalTemperature &&
                 isSuperconductor == that.isSuperconductor;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(voltage, amperage, lossPerBlock);
+        return Objects.hash(voltage, amperage, lossPerBlock, meltTemperature, superconductorCriticalTemperature,
+                isSuperconductor);
     }
 }

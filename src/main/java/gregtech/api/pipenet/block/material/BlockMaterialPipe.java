@@ -1,10 +1,11 @@
 package gregtech.api.pipenet.block.material;
 
 import gregtech.api.GTValues;
-import gregtech.api.pipenet.PipeNet;
-import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.WorldPipeNetBase;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -27,9 +28,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public abstract class BlockMaterialPipe<
-        PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType,
-        WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>>
-                                       extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
+        PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge,
+        WorldPipeNetType extends WorldPipeNetBase<NodeDataType, PipeType, Edge>>
+                                       extends BlockPipe<PipeType, NodeDataType, Edge, WorldPipeNetType> {
 
     protected final PipeType pipeType;
     private final MaterialRegistry registry;
@@ -40,9 +42,9 @@ public abstract class BlockMaterialPipe<
     }
 
     @Override
-    public NodeDataType createProperties(IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public NodeDataType createProperties(IPipeTile<PipeType, NodeDataType, Edge> pipeTile) {
         PipeType pipeType = pipeTile.getPipeType();
-        Material material = ((IMaterialPipeTile<PipeType, NodeDataType>) pipeTile).getPipeMaterial();
+        Material material = ((IMaterialPipeTile<PipeType, NodeDataType, Edge>) pipeTile).getPipeMaterial();
         if (pipeType == null || material == null) {
             return getFallbackType();
         }
@@ -69,14 +71,14 @@ public abstract class BlockMaterialPipe<
     }
 
     @Override
-    public void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType> pipeTile, ItemStack itemStack) {
-        ((TileEntityMaterialPipeBase<PipeType, NodeDataType>) pipeTile).setPipeData(this, pipeType,
+    public void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType, Edge> pipeTile, ItemStack itemStack) {
+        ((TileEntityMaterialPipeBase<PipeType, NodeDataType, Edge>) pipeTile).setPipeData(this, pipeType,
                 getItemMaterial(itemStack));
     }
 
     @Override
-    public ItemStack getDropItem(IPipeTile<PipeType, NodeDataType> pipeTile) {
-        Material material = ((IMaterialPipeTile<PipeType, NodeDataType>) pipeTile).getPipeMaterial();
+    public ItemStack getDropItem(IPipeTile<PipeType, NodeDataType, Edge> pipeTile) {
+        Material material = ((IMaterialPipeTile<PipeType, NodeDataType, Edge>) pipeTile).getPipeMaterial();
         return getItem(material);
     }
 

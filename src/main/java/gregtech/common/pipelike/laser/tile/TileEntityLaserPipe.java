@@ -3,13 +3,13 @@ package gregtech.common.pipelike.laser.tile;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.TaskScheduler;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
 import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.net.LaserNetHandler;
-import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,15 +22,13 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 
-public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties> {
+public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties, NetEdge> {
 
     private final EnumMap<EnumFacing, LaserNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the LaserNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final ILaserContainer clientCapability = new DefaultLaserContainer();
-    private WeakReference<LaserPipeNet> currentPipeNet = new WeakReference<>(null);
     private LaserNetHandler defaultHandler;
 
     private int ticksActive = 0;
@@ -53,8 +51,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     private void initHandlers() {
-        LaserPipeNet net = getLaserPipeNet();
-        if (net == null) return;
+        WorldLaserPipeNet net = WorldLaserPipeNet.getWorldPipeNet(getPipeWorld());
         for (EnumFacing facing : EnumFacing.VALUES) {
             handlers.put(facing, new LaserNetHandler(net, this, facing));
         }
@@ -72,44 +69,15 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
                 initHandlers();
             }
 
-            checkNetwork();
             return GregtechTileCapabilities.CAPABILITY_LASER.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
     }
 
-    public void checkNetwork() {
-        if (defaultHandler != null) {
-            LaserPipeNet current = getLaserPipeNet();
-            if (defaultHandler.getNet() != current) {
-                defaultHandler.updateNetwork(current);
-                for (LaserNetHandler handler : handlers.values()) {
-                    handler.updateNetwork(current);
-                }
-            }
-        }
-    }
-
-    public LaserPipeNet getLaserPipeNet() {
-        if (world == null || world.isRemote) {
-            return null;
-        }
-        LaserPipeNet currentPipeNet = this.currentPipeNet.get();
-        if (currentPipeNet != null && currentPipeNet.isValid() && currentPipeNet.containsNode(getPipePos())) {
-            return currentPipeNet;
-        }
-        WorldLaserPipeNet worldNet = (WorldLaserPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
-        currentPipeNet = worldNet.getNetFromPos(getPipePos());
-        if (currentPipeNet != null) {
-            this.currentPipeNet = new WeakReference<>(currentPipeNet);
-        }
-        return currentPipeNet;
-    }
-
     @Override
-    public void transferDataFrom(IPipeTile<LaserPipeType, LaserPipeProperties> tileEntity) {
+    public void transferDataFrom(IPipeTile<LaserPipeType, LaserPipeProperties, NetEdge> tileEntity) {
         super.transferDataFrom(tileEntity);
-        if (getLaserPipeNet() == null) {
+        if (getPipeBlock().getWorldPipeNet(getPipeWorld()) == null) {
             return;
         }
 
@@ -136,7 +104,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
 
             // check the same for the targeted pipe
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
-            if (tile instanceof IPipeTile<?, ?>pipeTile &&
+            if (tile instanceof IPipeTile<?, ?, ?>pipeTile &&
                     pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
                 connections = pipeTile.getConnections();
                 connections &= ~(1 << side.getIndex());
@@ -186,7 +154,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         super.receiveCustomData(discriminator, buf);
         if (discriminator == GregtechDataCodes.PIPE_LASER_ACTIVE) {
             this.isActive = buf.readBoolean();
-            scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 
@@ -206,7 +174,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isActive = buf.readBoolean();
-        scheduleChunkForRenderUpdate();
+        scheduleRenderUpdate();
     }
 
     @NotNull
@@ -224,16 +192,10 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
     }
 
-    @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
-        this.handlers.clear();
-    }
-
     private static class DefaultLaserContainer implements ILaserContainer {
 
         @Override
-        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
             return 0;
         }
 

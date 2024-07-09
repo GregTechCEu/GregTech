@@ -815,7 +815,9 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
             if (fe != null) {
                 return new IEnergyContainer() {
 
-                    public long acceptEnergyFromNetwork(EnumFacing enumFacing, long l, long l1) {
+                    @Override
+                    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage,
+                                                        boolean simulate) {
                         return 0;
                     }
 

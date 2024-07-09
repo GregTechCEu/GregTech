@@ -18,6 +18,14 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     private final TileEntity[] neighbors = new TileEntity[6];
     private boolean neighborsInvalidated = false;
 
+    /**
+     * @param doInvalidationHere set to false if you override {@link NeighborCacheTileEntityBase#invalidateNeighbors()}
+     *                           with a method that references something you do not yet have set.
+     */
+    public NeighborCacheTileEntityBase(boolean doInvalidationHere) {
+        if (doInvalidationHere) invalidateNeighbors();
+    }
+
     public NeighborCacheTileEntityBase() {
         invalidateNeighbors();
     }

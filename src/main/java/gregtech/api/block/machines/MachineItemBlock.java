@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
@@ -95,11 +94,9 @@ public class MachineItemBlock extends ItemBlock {
         if (superVal && !world.isRemote) {
             BlockPos possiblePipe = pos.offset(side.getOpposite());
             Block block = world.getBlockState(possiblePipe).getBlock();
-            if (block instanceof BlockPipe) {
-                IPipeTile pipeTile = ((BlockPipe<?, ?, ?>) block).getPipeTileEntity(world, possiblePipe);
-                if (pipeTile != null && ((BlockPipe<?, ?, ?>) block).canPipeConnectToBlock(pipeTile, side.getOpposite(),
-                        world.getTileEntity(pos))) {
-                    pipeTile.setConnection(side, true, false);
+            if (block instanceof BlockPipe<?, ?, ?, ?>pipe) {
+                if (pipe.canPipeConnectToBlock(world, possiblePipe, side.getOpposite(), world.getTileEntity(pos))) {
+                    pipe.getPipeTileEntity(world, possiblePipe).setConnection(side, true, false);
                 }
             }
         }

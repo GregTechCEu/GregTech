@@ -41,8 +41,9 @@ public class LaserPipeRenderer extends PipeRenderer {
     }
 
     @Override
-    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe,
-                              @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material) {
+    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?, ?> blockPipe,
+                              @Nullable IPipeTile<?, ?, ?> pipeTile, IPipeType<?> pipeType,
+                              @Nullable Material material) {
         if (pipeType instanceof LaserPipeType) {
             renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)))
                     .addSideRender(false, new IconTransformation(Textures.LASER_PIPE_SIDE));

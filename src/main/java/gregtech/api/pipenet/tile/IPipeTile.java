@@ -1,11 +1,15 @@
 package gregtech.api.pipenet.tile;
 
 import gregtech.api.metatileentity.interfaces.INeighborCache;
+import gregtech.api.pipenet.INodeData;
+import gregtech.api.pipenet.NetNode;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.edge.NetEdge;
 import gregtech.api.unification.material.Material;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -15,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType>
-                          extends INeighborCache {
+public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>,
+        NodeDataType extends INodeData<NodeDataType>, Edge extends NetEdge> extends INeighborCache {
 
     World getPipeWorld();
 
@@ -36,9 +40,9 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         return getPipeWorld().getTotalWorldTime();
     }
 
-    BlockPipe<PipeType, NodeDataType, ?> getPipeBlock();
+    BlockPipe<PipeType, NodeDataType, Edge, ?> getPipeBlock();
 
-    void transferDataFrom(IPipeTile<PipeType, NodeDataType> sourceTile);
+    void transferDataFrom(IPipeTile<PipeType, NodeDataType, Edge> sourceTile);
 
     int getPaintingColor();
 
@@ -56,12 +60,16 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor);
 
+    void onConnectionChange();
+
     // if a face is blocked it will still render as connected, but it won't be able to receive stuff from that direction
     default boolean canHaveBlockedFaces() {
         return true;
     }
 
     int getBlockedConnections();
+
+    void onBlockedChange();
 
     boolean isFaceBlocked(EnumFacing side);
 
@@ -73,6 +81,11 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     NodeDataType getNodeData();
 
+    NetNode<PipeType, NodeDataType, Edge> getNode();
+
+    @Nullable
+    TileEntity getNonPipeNeighbour(EnumFacing facing);
+
     PipeCoverableImplementation getCoverableImplementation();
 
     @Nullable
@@ -80,7 +93,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     boolean supportsTicking();
 
-    IPipeTile<PipeType, NodeDataType> setSupportsTicking();
+    IPipeTile<PipeType, NodeDataType, Edge> setSupportsTicking();
 
     boolean canPlaceCoverOnSide(EnumFacing side);
 
@@ -95,6 +108,4 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     void markAsDirty();
 
     boolean isValidTile();
-
-    void scheduleChunkForRenderUpdate();
 }

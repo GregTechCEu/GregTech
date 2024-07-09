@@ -2,8 +2,8 @@ package gregtech.integration.theoneprobe.provider.debug;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.Node;
-import gregtech.api.pipenet.PipeNet;
+import gregtech.api.pipenet.NetNode;
+import gregtech.api.pipenet.WorldPipeNetBase;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -45,19 +45,22 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                 }
             }
             if (tileEntity instanceof TileEntityPipeBase) {
-                IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
-                BlockPipe<?, ?, ?> blockPipe = pipeTile.getPipeBlock();
-                PipeNet<?> pipeNet = blockPipe.getWorldPipeNet(world).getNetFromPos(data.getPos());
+                IPipeTile<?, ?, ?> pipeTile = (IPipeTile<?, ?, ?>) tileEntity;
+                BlockPipe<?, ?, ?, ?> blockPipe = pipeTile.getPipeBlock();
+                WorldPipeNetBase<?, ?, ?> pipeNet = blockPipe.getWorldPipeNet(world);
                 if (pipeNet != null) {
                     probeInfo.text("Net: " + pipeNet.hashCode());
-                    probeInfo.text("Node Info: ");
+                    probeInfo.text("NetNode Info: ");
                     StringBuilder builder = new StringBuilder();
-                    Node<?> node = pipeNet.getAllNodes().get(data.getPos());
-                    builder.append("{")
-                            .append("active: ").append(node.isActive)
-                            .append(", mark: ").append(node.mark)
-                            .append(", open: ").append(node.openConnections)
-                            .append("}");
+                    NetNode<?, ?, ?> node = pipeNet.getNode(data.getPos());
+                    if (node != null) {
+                        builder.append("{")
+                                .append("active: ").append(node.isActive)
+                                .append(", mark: ").append(node.mark)
+                                .append(", open: ").append(node.getOpenConnections())
+                                .append(", blocked: ").append(node.getBlockedConnections())
+                                .append("}");
+                    }
                     probeInfo.text(builder.toString());
                 }
                 probeInfo.text("tile open: " + pipeTile.getConnections());
