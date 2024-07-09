@@ -74,6 +74,8 @@ public class FissionReactor {
      * coolant boiling points in {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantBoilingPointStandardPressure;
+    public double coolantExitTemperature;
+
     /**
      * Latent heat of vaporization in J/mol Determined by a weighted sum of the individual heats of vaporization in
      * {@link FissionReactor#prepareInitialConditions()}
@@ -403,6 +405,7 @@ public class FissionReactor {
     public void prepareInitialConditions() {
         coolantBaseTemperature = 0;
         coolantBoilingPointStandardPressure = 0;
+        coolantExitTemperature = 0;
         coolantHeatOfVaporization = 0;
         maxFuelDepletion = 0;
         weightedGenerationTime = 0;
@@ -416,17 +419,19 @@ public class FissionReactor {
         }
         weightedGenerationTime /= fuelRods.size();
 
-        for (CoolantChannel channel : effectiveCoolantChannels) {
-
+        for (CoolantChannel channel : coolantChannels) {
             CoolantProperty prop = channel.getCoolant().getProperty(PropertyKey.COOLANT);
 
-            coolantBaseTemperature += channel.getCoolant().getFluid().getTemperature() *
-                    channel.getWeight();
-            coolantBoilingPointStandardPressure += prop.getBoilingPoint() *
-                    channel.getWeight();
-            coolantHeatOfVaporization += prop.getHeatOfVaporization() *
-                    channel.getWeight();
+            coolantBaseTemperature += channel.getCoolant().getFluid().getTemperature();
+            coolantBoilingPointStandardPressure += prop.getBoilingPoint();
+            coolantExitTemperature += prop.getHotHPCoolant().getFluid().getTemperature();
+            coolantHeatOfVaporization += prop.getHeatOfVaporization();
         }
+
+        coolantBaseTemperature /= effectiveCoolantChannels.size();
+        coolantBoilingPointStandardPressure /= effectiveCoolantChannels.size();
+        coolantExitTemperature /= effectiveCoolantChannels.size();
+        coolantHeatOfVaporization /= effectiveCoolantChannels.size();
 
         if (coolantBaseTemperature == 0) {
             coolantBaseTemperature = envTemperature;
@@ -455,18 +460,19 @@ public class FissionReactor {
 
                 CoolantProperty prop = coolant.getProperty(PropertyKey.COOLANT);
 
-                if (prop.getHotHPCoolant().getFluid().getTemperature() > this.temperature) {
+                double cooledTemperature = prop.getHotHPCoolant().getFluid().getTemperature();
+                if (cooledTemperature > this.temperature) {
                     continue;
                 }
 
                 double heatRemovedPerLiter = prop.getSpecificHeatCapacity() *
-                        (prop.getHotHPCoolant().getFluid().getTemperature() - coolant.getFluid().getTemperature());
+                        (cooledTemperature - coolant.getFluid().getTemperature());
                 // Explained by:
                 // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa
                 double heatFluxPerAreaAndTemp = 1 /
                         (1 / prop.getCoolingFactor() + coolantWallThickness / thermalConductivity);
                 double idealHeatFlux = heatFluxPerAreaAndTemp * 4 * reactorDepth *
-                        (temperature - coolant.getFluid().getTemperature());
+                        (temperature - cooledTemperature);
 
                 idealHeatFlux = Math.min(idealHeatFlux, realMaxPower() * 1e6 / coolantChannels.size());
 
@@ -531,6 +537,7 @@ public class FissionReactor {
         double heatRemoved = this.makeCoolantFlow(flowRate);
         // calculate the actual temperature based on the reactor power and the heat removed
         this.temperature = responseFunctionTemperature(envTemperature, oldTemp, this.power * 1e6, heatRemoved);
+
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
     }
 
@@ -543,20 +550,13 @@ public class FissionReactor {
 
     public void updateNeutronPoisoning() {
         this.neutronPoisonAmount += this.decayProductsAmount * (1 - decayProductRate) * poisonFraction;
-        this.neutronPoisonAmount *= decayProductRate;
-        this.neutronPoisonAmount -= this.neutronPoisonAmount * crossSectionRatio * power / surfaceArea;
+        this.neutronPoisonAmount *= decayProductRate * Math.exp(-crossSectionRatio * power / surfaceArea);
     }
 
     public double getDecayHeat() {
         return this.neutronPoisonAmount * 0.05 + this.decayProductsAmount * 0.1 + 0.0001; // The extra constant is to
         // kickstart the reactor.
     }
-
-    /*
-     * public double voidContribution() {
-     * return this.temperature > this.coolantBoilingPoint() ? this.voidFactor() * this.maxPressure : 0.;
-     * }
-     */
 
     public void updatePower() {
         if (this.isOn) {
@@ -643,25 +643,30 @@ public class FissionReactor {
     public void regulateControlRods() {
         if (!this.isOn || !this.controlRodRegulationOn)
             return;
-        double load = Math.max(temperature / maxTemperature, pressure / maxPressure);
-        if (load > 1. / 40 && kEff > 1.02) {
-            this.controlRodInsertion += 5f / 255;
-            this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
-            this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
-        }
-        if (load > 9. / 10) {
+
+        if (temperature > coolantExitTemperature * 0.7 + maxTemperature * 0.3) {
             if (kEff > 1) {
-                this.controlRodInsertion += 1f / 255;
+                this.controlRodInsertion += 0.004;
                 this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
                 this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
             }
-        } else if (load > 3. / 10) {
-            if (kEff > 1.008) {
-                this.controlRodInsertion += 2f / 255;
+        } else if (temperature > coolantExitTemperature * 0.3 + coolantBaseTemperature * 0.7) {
+            if (kEff > 1.01) {
+                this.controlRodInsertion += 0.008;
                 this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
                 this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
             } else if (kEff < 1.005) {
-                this.controlRodInsertion -= 1f / 255;
+                this.controlRodInsertion -= 0.001;
+                this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
+                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+            }
+        } else if (temperature > coolantExitTemperature * 0.1 + coolantBaseTemperature * 0.9) {
+            if (kEff > 1.025) {
+                this.controlRodInsertion += 0.012;
+                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
+                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+            } else if (kEff < 1.015) {
+                this.controlRodInsertion -= 0.004;
                 this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
                 this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
             }
