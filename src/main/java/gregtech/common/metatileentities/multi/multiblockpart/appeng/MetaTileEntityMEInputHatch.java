@@ -145,13 +145,13 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
 
     @Override
     protected final ModularUI createUI(EntityPlayer player) {
-        ModularUI.Builder builder = createUITemplate(player, 0);
+        ModularUI.Builder builder = createUITemplate(player);
         return builder.build(this.getHolder(), player);
     }
 
-    protected ModularUI.Builder createUITemplate(EntityPlayer player, int heightOverride) {
+    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94 + heightOverride)
+                .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
                 .label(10, 5, getMetaFullName());
         // ME Network status
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
@@ -160,17 +160,17 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
                 0x404040);
 
         // Config slots
-        builder.widget(new AEFluidConfigWidget(7, 25 + heightOverride, this.getAEFluidHandler()));
+        builder.widget(new AEFluidConfigWidget(7, 25, this.getAEFluidHandler()));
 
         // Arrow image
-        builder.image(7 + 18 * 4, 25 + 18 + heightOverride, 18, 18, GuiTextures.ARROW_DOUBLE);
+        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
 
         // GT Logo, cause there's some free real estate
-        builder.widget(new ImageWidget(7 + 18 * 4, 25 + 18 * 3 + heightOverride, 17, 17,
+        builder.widget(new ImageWidget(7 + 18 * 4, 25 + 18 * 3, 17, 17,
                 GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
                         .setIgnoreColor(true));
 
-        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12 + heightOverride);
+        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder;
     }
 

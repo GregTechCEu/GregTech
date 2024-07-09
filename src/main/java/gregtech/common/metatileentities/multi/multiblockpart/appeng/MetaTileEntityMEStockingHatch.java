@@ -4,8 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -45,11 +43,13 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     private boolean autoPull;
     private Predicate<FluidStack> autoPullTest;
     private int minAutoPullStackSize;
+    private int autoPullRefreshTime;
 
     public MetaTileEntityMEStockingHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.LuV);
         this.autoPullTest = $ -> false;
-        this.minAutoPullStackSize = 1;
+        this.minAutoPullStackSize = 1; // Default to requiring 1 item to pull
+        this.autoPullRefreshTime = 100; // Default to 5 seconds
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
+        if (!getWorld().isRemote && isWorkingEnabled() && autoPull && getOffsetTimer() % autoPullRefreshTime == 0) {
             refreshList();
             syncME();
         }
@@ -178,7 +178,7 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         int index = 0;
         for (IAEFluidStack stack : storageList) {
             if (index >= CONFIG_SIZE) break;
-            if (stack.getStackSize() >= minAutoPullStackSize) continue;
+            if (stack.getStackSize() < minAutoPullStackSize) continue;
             stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
             if (stack == null || stack.getStackSize() == 0) continue;
 
@@ -213,20 +213,11 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer player, int heightOverride) {
-        ModularUI.Builder builder = super.createUITemplate(player, 22);
+    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
+        ModularUI.Builder builder = super.createUITemplate(player);
 
-        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26 + 22, 16, 16, GuiTextures.BUTTON_AUTO_PULL,
+        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26, 16, 16, GuiTextures.BUTTON_AUTO_PULL,
                 () -> autoPull, this::setAutoPull).setTooltipHoverString("gregtech.gui.me_hatch.auto_pull_button"));
-
-        builder.widget(new ImageWidget(8, 26, 68, 20, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(10, 32, 66, 16, () -> String.valueOf(this.minAutoPullStackSize), value -> {
-            if (!value.isEmpty()) {
-                this.minAutoPullStackSize = Integer.parseInt(value);
-            }
-        })
-                .setNumbersOnly(1, Integer.MAX_VALUE)
-                .setMaxLength(10));
 
         return builder;
     }
@@ -251,7 +242,8 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("AutoPull", autoPull);
-        data.setInteger("minAutoPullStackSize", minAutoPullStackSize);
+        data.setInteger("MinAutoPullStackSize", minAutoPullStackSize);
+        data.setInteger("AutoPullRefreshTime", autoPullRefreshTime);
         return data;
     }
 
@@ -260,10 +252,16 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         super.readFromNBT(data);
         this.autoPull = data.getBoolean("AutoPull");
 
-        if (data.hasKey("minAutoPullStackSize")) {
-            this.minAutoPullStackSize = data.getInteger("minAutoPullStackSize");
+        if (data.hasKey("MinAutoPullStackSize")) {
+            this.minAutoPullStackSize = data.getInteger("MinAutoPullStackSize");
         } else {
-            this.minAutoPullStackSize = 0;
+            this.minAutoPullStackSize = 1;
+        }
+
+        if (data.hasKey("AutoPullRefreshTime")) {
+            this.autoPullRefreshTime = data.getInteger("AutoPullRefreshTime");
+        } else {
+            this.autoPullRefreshTime = 100;
         }
     }
 
@@ -300,7 +298,8 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
         // if in auto-pull, no need to write actual configured slots, but still need to write the ghost circuit
         NBTTagCompound tag = new NBTTagCompound();
         tag.setBoolean("AutoPull", true);
-        tag.setInteger("minAutoPullStackSize", minAutoPullStackSize);
+        tag.setInteger("MinAutoPullStackSize", minAutoPullStackSize);
+        tag.setInteger("AutoPullRefreshTime", autoPullRefreshTime);
         return tag;
     }
 
@@ -310,11 +309,18 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             // if being set to auto-pull, no need to read the configured slots
             this.setAutoPull(true);
 
-            if (tag.hasKey("minAutoPullStackSize")) {
-                this.minAutoPullStackSize = tag.getInteger("minAutoPullStackSize");
+            if (tag.hasKey("MinAutoPullStackSize")) {
+                this.minAutoPullStackSize = tag.getInteger("MinAutoPullStackSize");
             } else {
-                this.minAutoPullStackSize = 0;
+                this.minAutoPullStackSize = 1;
             }
+
+            if (tag.hasKey("AutoPullRefreshTime")) {
+                this.autoPullRefreshTime = tag.getInteger("AutoPullRefreshTime");
+            } else {
+                this.autoPullRefreshTime = 100;
+            }
+
             return;
         }
         // set auto pull first to avoid issues with clearing the config after reading from the data stick
