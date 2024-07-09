@@ -3,12 +3,9 @@ package gregtech.api.metatileentity.multiblock;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleRecipeMaps;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.LocalizationUtils;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,6 +22,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.IntValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,17 +137,23 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     }
 
     @Override
-    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
+    public void createExtraButtons(@NotNull ModularPanel parentPanel, @NotNull PanelSyncManager panelSyncManager,
+                                   @NotNull List<Widget<?>> list) {
         if (getAvailableRecipeMaps() != null && getAvailableRecipeMaps().length > 1) {
-            return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MULTI_MAP,
-                    getAvailableRecipeMaps().length, this::getRecipeMapIndex, this::setRecipeMapIndex)
-                            .shouldUseBaseBackground().singleTexture()
-                            .setTooltipHoverString(i -> LocalizationUtils
-                                    .format("gregtech.multiblock.multiple_recipemaps.header") + " " +
-                                    LocalizationUtils.format(
-                                            "recipemap." + getAvailableRecipeMaps()[i].getUnlocalizedName() + ".name"));
+            IntSyncValue recipeMapValue = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
+            panelSyncManager.syncValue("recipemap_state", recipeMapValue);
+            list.add(new CycleButtonWidget()
+                    .textureGetter(i -> GTGuiTextures.BUTTON_MULTI_MAP)
+                    .background(GTGuiTextures.BUTTON)
+                    .disableHoverBackground() // TODO find out why this needs to be called
+                    .value(new IntValue.Dynamic(recipeMapValue::getIntValue, recipeMapValue::setIntValue))
+                    .length(getAvailableRecipeMaps().length)
+                    .tooltipBuilder(t -> t.setAutoUpdate(true)
+                            .addLine(IKey.comp(
+                                    IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
+                                            IKey.lang(getAvailableRecipeMaps()[recipeMapValue.getIntValue()]
+                                                    .getTranslationKey()))))));
         }
-        return super.getFlexButton(x, y, width, height);
     }
 
     @Override
