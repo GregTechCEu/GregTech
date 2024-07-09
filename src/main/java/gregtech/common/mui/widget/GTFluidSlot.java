@@ -273,12 +273,13 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             if (filled > 0) {
                 tank.drain(filled, true);
                 fluidHandler.fill(tankFluid, true);
-                int additional = Math.min(heldItem.getCount(), tankFluid.amount / filled) - 1;
-                if (tryFillAll && additional > 0) {
-                    // Determine how many more items we can fill. One item is already filled. Integer division means
-                    // it will round down, so it will only fill equivalent fluid amounts. For example:
-                    // Click with 3 cells, with 2500L of fluid in the tank. 2 cells will be filled, and 500L will
-                    // be left behind in the tank.
+                if (tryFillAll) {
+                    // Determine how many more items we can fill. One item is already filled.
+                    // Integer division means it will round down, so it will only fill equivalent fluid amounts.
+                    // For example:
+                    // Click with 3 cells, with 2500L of fluid in the tank.
+                    // 2 cells will be filled, and 500L will be left behind in the tank.
+                    int additional = Math.min(heldItem.getCount(), tankFluid.amount / filled) - 1;
                     tank.drain(filled * additional, true);
                     fluidContainer.grow(additional);
                 }
