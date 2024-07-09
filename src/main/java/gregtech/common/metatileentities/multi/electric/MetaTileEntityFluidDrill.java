@@ -8,12 +8,12 @@ import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidDrillLogic;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -48,6 +48,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +60,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
-                                      implements ITieredMetaTileEntity, IWorkable, IProgressBarMultiblock {
+                                      implements ITieredMetaTileEntity, IWorkable, ProgressBarMultiblock {
 
     private final FluidDrillLogic minerLogic;
     private final int tier;
@@ -110,7 +114,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
@@ -367,50 +371,49 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
-    }
-
-    @Override
-    public boolean showProgressBar() {
-        return tier > GTValues.MV; // only show for T2/3 fluid rigs
-    }
-
-    @Override
-    public double getFillPercentage(int index) {
-        int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(),
-                minerLogic.getChunkZ());
-        int maxOperations = BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
-        return 1.0 * numOperationsLeft / maxOperations;
-    }
-
-    @Override
-    public TextureArea getProgressBarTexture(int index) {
-        return GuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION;
-    }
-
-    @Override
-    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
-        int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(),
-                minerLogic.getChunkZ());
-        int maxOperations = BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
-        int percentage = (int) Math.round(1.0 * numOperationsLeft / maxOperations * 100);
-        TextFormatting color = percentage > 40 ? TextFormatting.GREEN :
-                percentage > 10 ? TextFormatting.YELLOW : TextFormatting.RED;
-
-        if (numOperationsLeft == 0) {
-            hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
-                    "gregtech.multiblock.fluid_rig.vein_depleted"));
-        } else {
-            ITextComponent veinInfo = TextComponentUtil.stringWithColor(color, percentage + "%");
-            hoverList.add(TextComponentUtil.translationWithColor(
-                    TextFormatting.GRAY,
-                    "gregtech.multiblock.fluid_rig.vein_depletion",
-                    veinInfo));
-        }
     }
 
     public boolean allowsExtendedFacing() {
         return false;
+    }
+
+    @Override
+    public int getProgressBarCount() {
+        // only show for T2/3 fluid rigs
+        return tier > GTValues.MV ? 1 : 0;
+    }
+
+    @Override
+    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
+        IntSyncValue operationsValue = new IntSyncValue(() -> BedrockFluidVeinHandler.getOperationsRemaining(getWorld(),
+                minerLogic.getChunkX(), minerLogic.getChunkZ()), null);
+        panelSyncManager.syncValue("operations_remaining", operationsValue);
+
+        return new ProgressWidget()
+                .progress(() -> operationsValue.getIntValue() * 1.0 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS)
+                .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION, MultiblockUIFactory.Bars.FULL_WIDTH)
+                .tooltipBuilder(t -> {
+                    t.setAutoUpdate(true);
+                    if (isStructureFormed()) {
+                        if (operationsValue.getIntValue() == 0) {
+                            t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depleted"));
+                        } else {
+                            // TODO working dynamic color substitutions into IKey.lang
+                            int percent = (int) Math.round(100.0 * operationsValue.getIntValue() /
+                                    BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
+                            if (percent > 40) {
+                                t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depletion.high", percent));
+                            } else if (percent > 10) {
+                                t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depletion.medium", percent));
+                            } else {
+                                t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depletion.low", percent));
+                            }
+                        }
+                    } else {
+                        t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                    }
+                });
     }
 }

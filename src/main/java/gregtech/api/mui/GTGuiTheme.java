@@ -229,7 +229,9 @@ public class GTGuiTheme {
                             .add("background", new JsonBuilder()
                                     .add("type", "texture")
                                     .add("id", buttonId))
-                            .add("hoverBackground", hoverId)
+                            .add("hoverBackground", new JsonBuilder()
+                                    .add("type", "texture")
+                                    .add("id", hoverId))
                             .add("textColor", textColor)
                             .add("textShadow", textShadow)));
             return this;
