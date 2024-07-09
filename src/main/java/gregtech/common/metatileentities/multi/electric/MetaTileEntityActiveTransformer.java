@@ -208,7 +208,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
