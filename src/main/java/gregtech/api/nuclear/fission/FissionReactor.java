@@ -647,8 +647,7 @@ public class FissionReactor {
         if (!this.isOn || !this.controlRodRegulationOn)
             return;
 
-        if (pressure > maxPressure * 0.8 || (temperature > coolantExitTemperature * 0.7 + maxTemperature * 0.3 &&
-                temperature > maxTemperature - 150)) {
+        if (pressure > maxPressure * 0.8 || temperature > (coolantExitTemperature + maxTemperature) / 2 || temperature > maxTemperature - 150) {
             if (kEff > 1) {
                 this.controlRodInsertion += 0.004;
                 this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
