@@ -124,7 +124,7 @@ public class FissionReactor {
     public boolean isOn = false;
 
     protected static double responseFunction(double target, double current, double criticalRate) {
-        if (current <= 0) {
+        if (current < 0) {
             if (criticalRate < 1) {
                 return 0;
             } else {
@@ -550,7 +550,7 @@ public class FissionReactor {
 
     public double getDecayHeat() {
         return this.neutronPoisonAmount * 0.05 + this.decayProductsAmount * 0.1 + 0.0001; // The extra constant is to
-                                                                                          // kickstart the reactor.
+        // kickstart the reactor.
     }
 
     /*
@@ -578,8 +578,7 @@ public class FissionReactor {
 
             this.decayProductsAmount += Math.max(power, 0.) / 1000;
         } else {
-            this.power = responseFunction(Math.min(this.realMaxPower(), this.power * kEff), this.power,
-                    1);
+            this.power *= 0.5;
         }
         this.decayProductsAmount *= decayProductRate;
     }
@@ -587,7 +586,7 @@ public class FissionReactor {
     public double realMaxPower() {
         if (this.moderatorTipped && (this.controlRodInsertion <= 9. / 16 && this.controlRodInsertion >= 7. / 16)) {
             return this.maxPower * 1.1;
-        } else if (this.isDepleted() || !this.isOn) {
+        } else if (!this.isOn) {
             return this.getDecayHeat();
         } else {
             return this.maxPower;
