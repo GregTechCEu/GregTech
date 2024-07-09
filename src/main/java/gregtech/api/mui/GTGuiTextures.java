@@ -362,8 +362,30 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_CROSS = fullImage("textures/gui/widget/button_cross.png");
     public static final UITexture BUTTON_REDSTONE_ON = fullImage("textures/gui/widget/button_redstone_on.png");
     public static final UITexture BUTTON_REDSTONE_OFF = fullImage("textures/gui/widget/button_redstone_off.png");
-    public static final UITexture BUTTON_THROTTLE_PLUS = fullImage("textures/gui/widget/button_throttle_plus.png");
-    public static final UITexture BUTTON_THROTTLE_MINUS = fullImage("textures/gui/widget/button_throttle_minus.png");
+    public static final UITexture BUTTON_POWER_ON = fullImage("textures/gui/widget/button_power.png", true); // TODO fix
+    public static final UITexture BUTTON_POWER_OFF = fullImage("textures/gui/widget/button_power.png", true); // TODO
+                                                                                                              // fix
+    public static final UITexture BUTTON_POWER_DETAIL = fullImage("textures/gui/widget/button_power_detail.png", true);
+    public static final UITexture BUTTON_VOID_DISABLED = fullImage("textures/gui/widget/button_void_multiblock.png",
+            true); // TODO fix
+    public static final UITexture BUTTON_VOID_ITEM = fullImage("textures/gui/widget/button_void_multiblock.png", true); // TODO
+                                                                                                                        // fix
+    public static final UITexture BUTTON_VOID_FLUID = fullImage("textures/gui/widget/button_void_multiblock.png", true); // TODO
+                                                                                                                         // fix
+    public static final UITexture BUTTON_VOID_ITEM_FLUID = fullImage("textures/gui/widget/button_void_multiblock.png",
+            true); // TODO fix
+    public static final UITexture BUTTON_VOID_NONE = fullImage("textures/gui/widget/button_void_none.png", true);
+    public static final UITexture BUTTON_DISTINCT_BUSES = fullImage("textures/gui/widget/button_distinct_buses.png",
+            true);
+    public static final UITexture BUTTON_NO_DISTINCT_BUSES = fullImage(
+            "textures/gui/widget/button_no_distinct_buses.png", true);
+    public static final UITexture BUTTON_NO_FLEX = fullImage("textures/gui/widget/button_no_flex.png", true);
+    public static final UITexture BUTTON_MULTI_MAP = fullImage("textures/gui/widget/button_multi_map.png", true);
+    public static final UITexture BUTTON_MINER_MODES = fullImage("textures/gui/widget/button_miner_modes.png", true);
+    public static final UITexture BUTTON_THROTTLE_MINUS = fullImage("textures/gui/widget/button_throttle_minus.png",
+            true); // TODO new texture
+    public static final UITexture BUTTON_THROTTLE_PLUS = fullImage("textures/gui/widget/button_throttle_plus.png",
+            true); // TODO remove this
 
     // PROGRESS BARS
     public static final UITexture PROGRESS_BAR_ARC_FURNACE = progressBar(
@@ -466,9 +488,9 @@ public class GTGuiTextures {
             .adaptable(1)
             .build();
     public static final UITexture PROGRESS_BAR_BOILER_FUEL_BRONZE = progressBar(
-            "textures/gui/progress_bar/progress_bar_boiler_fuel_bronze.png", 18, 36);
+            "textures/gui/progress_bar/progress_bar_boiler_fuel_bronze.png", 18, 36, true);
     public static final UITexture PROGRESS_BAR_BOILER_FUEL_STEEL = progressBar(
-            "textures/gui/progress_bar/progress_bar_boiler_fuel_steel.png", 18, 36);
+            "textures/gui/progress_bar/progress_bar_boiler_fuel_steel.png", 18, 36, true);
     public static final UITexture PROGRESS_BAR_BOILER_HEAT = progressBar(
             "textures/gui/progress_bar/progress_bar_boiler_heat.png", true);
     public static final UITexture PROGRESS_BAR_ASSEMBLY_LINE = progressBar(
@@ -480,9 +502,9 @@ public class GTGuiTextures {
     public static final UITexture PROGRESS_BAR_DISTILLATION_TOWER = progressBar(
             "textures/gui/progress_bar/progress_bar_distillation_tower.png", 66, 116, true);
     public static final UITexture PROGRESS_BAR_SOLAR_BRONZE = progressBar(
-            "textures/gui/progress_bar/progress_bar_solar_bronze.png", 10, 20);
+            "textures/gui/progress_bar/progress_bar_solar_bronze.png", 10, 20, true);
     public static final UITexture PROGRESS_BAR_SOLAR_STEEL = progressBar(
-            "textures/gui/progress_bar/progress_bar_solar_steel.png", 10, 20);
+            "textures/gui/progress_bar/progress_bar_solar_steel.png", 10, 20, true);
     public static final UITexture PROGRESS_BAR_RESEARCH_STATION_1 = progressBar(
             "textures/gui/progress_bar/progress_bar_research_station_1.png", 54, 10, true);
     public static final UITexture PROGRESS_BAR_RESEARCH_STATION_2 = progressBar(
@@ -490,25 +512,25 @@ public class GTGuiTextures {
     public static final UITexture PROGRESS_BAR_RESEARCH_STATION_BASE = fullImage(
             "textures/gui/progress_bar/progress_bar_research_station_base.png", true);
     public static final UITexture PROGRESS_BAR_FUSION_ENERGY = progressBar(
-            "textures/gui/progress_bar/progress_bar_fusion_energy.png", 94, 14);
+            "textures/gui/progress_bar/progress_bar_fusion_energy.png", 94, 14, true);
     public static final UITexture PROGRESS_BAR_FUSION_HEAT = progressBar(
-            "textures/gui/progress_bar/progress_bar_fusion_heat.png", 94, 14);
+            "textures/gui/progress_bar/progress_bar_fusion_heat.png", 94, 14, true);
     public static final UITexture PROGRESS_BAR_MULTI_ENERGY_YELLOW = progressBar(
-            "textures/gui/progress_bar/progress_bar_multi_energy_yellow.png", 190, 14);
+            "textures/gui/progress_bar/progress_bar_multi_energy_yellow.png", 190, 14, true);
     public static final UITexture PROGRESS_BAR_HPCA_COMPUTATION = progressBar(
-            "textures/gui/progress_bar/progress_bar_hpca_computation.png", 94, 14);
+            "textures/gui/progress_bar/progress_bar_hpca_computation.png", 94, 14, true);
     public static final UITexture PROGRESS_BAR_LCE_FUEL = progressBar(
-            "textures/gui/progress_bar/progress_bar_lce_fuel.png", 62, 14);
+            "textures/gui/progress_bar/progress_bar_lce_fuel.png", 62, 14, true);
     public static final UITexture PROGRESS_BAR_LCE_LUBRICANT = progressBar(
-            "textures/gui/progress_bar/progress_bar_lce_lubricant.png", 62, 14);
+            "textures/gui/progress_bar/progress_bar_lce_lubricant.png", 62, 14, true);
     public static final UITexture PROGRESS_BAR_LCE_OXYGEN = progressBar(
-            "textures/gui/progress_bar/progress_bar_lce_oxygen.png", 62, 14);
+            "textures/gui/progress_bar/progress_bar_lce_oxygen.png", 62, 14, true);
     public static final UITexture PROGRESS_BAR_TURBINE_ROTOR_SPEED = progressBar(
-            "textures/gui/progress_bar/progress_bar_turbine_rotor_speed.png", 62, 14);
+            "textures/gui/progress_bar/progress_bar_turbine_rotor_speed.png", 62, 14, true);
     public static final UITexture PROGRESS_BAR_TURBINE_ROTOR_DURABILITY = progressBar(
-            "textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png", 62, 14);
+            "textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png", 62, 14, true);
     public static final UITexture PROGRESS_BAR_FLUID_RIG_DEPLETION = progressBar(
-            "textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png", 190, 14);
+            "textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png", 190, 14, true);
 
     // MISC
 
