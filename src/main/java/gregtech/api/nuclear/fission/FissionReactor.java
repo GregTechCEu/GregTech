@@ -428,10 +428,10 @@ public class FissionReactor {
             coolantHeatOfVaporization += prop.getHeatOfVaporization();
         }
 
-        coolantBaseTemperature /= effectiveCoolantChannels.size();
-        coolantBoilingPointStandardPressure /= effectiveCoolantChannels.size();
-        coolantExitTemperature /= effectiveCoolantChannels.size();
-        coolantHeatOfVaporization /= effectiveCoolantChannels.size();
+        coolantBaseTemperature /= coolantChannels.size();
+        coolantBoilingPointStandardPressure /= coolantChannels.size();
+        coolantExitTemperature /= coolantChannels.size();
+        coolantHeatOfVaporization /= coolantChannels.size();
 
         if (coolantBaseTemperature == 0) {
             coolantBaseTemperature = envTemperature;
