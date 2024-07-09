@@ -181,7 +181,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .child(createIoRow());
     }
 
-    protected abstract EntrySelectorSH createEntrySelector(ModularPanel panel);
+    protected abstract PanelSyncHandler createEntrySelector(ModularPanel panel);
 
     protected abstract IWidget createEntrySlot();
 

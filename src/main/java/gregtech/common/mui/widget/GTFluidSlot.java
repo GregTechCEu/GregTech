@@ -24,7 +24,6 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.TextRenderer;
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.Tooltip;
@@ -41,8 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiGhostIngredientSlot<FluidStack>,
-                         JeiIngredientProvider {
+public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider {
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
@@ -79,7 +77,6 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         this.textRenderer.setShadow(true);
         this.textRenderer.setScale(0.5f);
         this.textRenderer.setColor(Color.WHITE.main);
-        getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
@@ -136,16 +133,6 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
     }
 
     @Override
-    public void setGhostIngredient(@NotNull FluidStack ingredient) {
-        this.syncHandler.setFluid(ingredient);
-    }
-
-    @Override
-    public @Nullable FluidStack castGhostIngredientIfValid(@NotNull Object ingredient) {
-        return ingredient instanceof FluidStack fluidStack ? fluidStack : null;
-    }
-
-    @Override
     public @Nullable Object getIngredient() {
         return this.syncHandler.getFluid();
     }
@@ -179,11 +166,6 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
 
         public int getCapacity() {
             return this.tank.getCapacity();
-        }
-
-        public void setFluid(FluidStack fluid) {
-            this.tank.drain(Integer.MAX_VALUE, true);
-            this.tank.fill(fluid, true);
         }
 
         public GTFluidSyncHandler canDrainSlot(boolean canDrainSlot) {

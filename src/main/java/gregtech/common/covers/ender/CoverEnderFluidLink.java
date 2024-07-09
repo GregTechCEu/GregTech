@@ -32,8 +32,7 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,7 +117,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     @Override
-    protected CoverAbstractEnderLink<VirtualTank>.EntrySelectorSH createEntrySelector(ModularPanel panel) {
+    protected PanelSyncHandler createEntrySelector(ModularPanel panel) {
         return new EntrySelectorSH(panel, EntryTypes.ENDER_FLUID) {
 
             @Override
