@@ -113,7 +113,6 @@ public class FissionReactor {
     public static double poisonFraction = 0.063; // Xenon-135 yield from fission
     public static double crossSectionRatio = 4; // The ratio between the cross section for typical fuels and xenon-135;
 
-
     // very much changed here for balance purposes
 
     public double coolantMass;
@@ -667,7 +666,6 @@ public class FissionReactor {
                 this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
             }
         }
-
     }
 
     public void turnOff() {
