@@ -49,7 +49,6 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
 
     public MetaTileEntityCoolantExportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, true);
-        this.frontFacing = EnumFacing.DOWN;
     }
 
     @Override
@@ -99,11 +98,6 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
             SimpleOverlayRenderer overlay = Textures.FLUID_HATCH_OUTPUT_OVERLAY;
             overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
-    }
-
-    @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(EnumFacing.DOWN);
     }
 
     @Override

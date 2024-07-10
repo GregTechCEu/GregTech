@@ -51,7 +51,6 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
 
     public MetaTileEntityFuelRodImportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, false);
-        this.frontFacing = EnumFacing.UP;
     }
 
     @Override
@@ -122,11 +121,6 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     @Override
     public void registerAbilities(List<IFuelRodHandler> abilityList) {
         abilityList.add(this);
-    }
-
-    @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(EnumFacing.UP);
     }
 
     @Override
@@ -241,12 +235,12 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     public MetaTileEntityFuelRodExportHatch getExportHatch(int depth) {
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) !=
+            if (getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), i)) !=
                     MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
                 return null;
             }
         }
-        if (getWorld().getTileEntity(pos.offset(EnumFacing.DOWN, depth)) instanceof IGregTechTileEntity gtTe) {
+        if (getWorld().getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
             MetaTileEntity mte = gtTe.getMetaTileEntity();
             if (mte instanceof MetaTileEntityFuelRodExportHatch) {
                 return (MetaTileEntityFuelRodExportHatch) mte;
