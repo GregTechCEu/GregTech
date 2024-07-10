@@ -74,7 +74,13 @@ public class FissionReactor {
      * coolant boiling points in {@link FissionReactor#prepareInitialConditions()}
      */
     public double coolantBoilingPointStandardPressure;
+
+    /**
+     * Average temperature of the coolant in kelvin as coolant exits the reactor.
+     */
     public double coolantExitTemperature;
+
+    public double prevTemperature;
 
     /**
      * Latent heat of vaporization in J/mol Determined by a weighted sum of the individual heats of vaporization in
@@ -532,14 +538,14 @@ public class FissionReactor {
     }
 
     public void updateTemperature(int flowRate) {
-        double oldTemp = this.temperature;
+        this.prevTemperature = this.temperature;
         // simulate heat based only on the reactor power
         this.temperature = responseFunctionTemperature(envTemperature, this.temperature, this.power * 1e6, 0);
         // prevent temperature from going above meltdown temp, to stop coolant from absorbing more heat than it should
         this.temperature = Math.min(maxTemperature, temperature);
         double heatRemoved = this.makeCoolantFlow(flowRate);
         // calculate the actual temperature based on the reactor power and the heat removed
-        this.temperature = responseFunctionTemperature(envTemperature, oldTemp, this.power * 1e6, heatRemoved);
+        this.temperature = responseFunctionTemperature(envTemperature, prevTemperature, this.power * 1e6, heatRemoved);
 
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
     }
@@ -610,6 +616,7 @@ public class FissionReactor {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setDouble("Temperature", this.temperature);
+        tagCompound.setDouble("PrevTemperature", this.prevTemperature);
         tagCompound.setDouble("Pressure", this.pressure);
         tagCompound.setDouble("Power", this.power);
         tagCompound.setDouble("FuelDepletion", this.fuelDepletion);
@@ -626,6 +633,7 @@ public class FissionReactor {
 
     public void deserializeNBT(NBTTagCompound tagCompound) {
         this.temperature = tagCompound.getDouble("Temperature");
+        this.prevTemperature = tagCompound.getDouble("PrevTemperature");
         this.pressure = tagCompound.getDouble("Pressure");
         this.power = tagCompound.getDouble("Power");
         this.fuelDepletion = tagCompound.getDouble("FuelDepletion");
@@ -648,7 +656,7 @@ public class FissionReactor {
             return;
 
         if (pressure > maxPressure * 0.8 || temperature > (coolantExitTemperature + maxTemperature) / 2 ||
-                temperature > maxTemperature - 150) {
+                temperature > maxTemperature - 150 || temperature - prevTemperature > 30) {
             if (kEff > 1) {
                 this.controlRodInsertion += 0.004;
                 this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
