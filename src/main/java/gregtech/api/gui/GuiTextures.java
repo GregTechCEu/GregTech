@@ -510,6 +510,8 @@ public class GuiTextures {
     public static final TextureArea BUTTON_AUTO_PULL = TextureArea
             .fullImage("textures/gui/widget/button_me_auto_pull.png");
     public static final TextureArea ARROW_DOUBLE = TextureArea.fullImage("textures/gui/widget/arrow_double.png");
+    public static final TextureArea BUTTON_AUTO_PULL_FILTERED = TextureArea
+            .fullImage("textures/gui/widget/button_me_auto_pull_filtered.png");
 
     // Fusion Reactor custom images
     public static final TextureArea FUSION_REACTOR_MK1_TITLE = TextureArea

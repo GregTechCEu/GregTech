@@ -4,6 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -42,14 +44,14 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     private static final int CONFIG_SIZE = 16;
     private boolean autoPull;
     private Predicate<ItemStack> autoPullTest;
-    private int minAutoPullStackSize;
-    private int autoPullRefreshTime;
+    private boolean applyMinCount;
+    private int minCount;
 
     public MetaTileEntityMEStockingBus(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.LuV);
         this.autoPullTest = $ -> false;
-        this.minAutoPullStackSize = 1; // Default to requiring 1 item to pull
-        this.autoPullRefreshTime = 100; // Default to 5 seconds
+        this.applyMinCount = false;
+        this.minCount = 0;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && isWorkingEnabled() && autoPull && getOffsetTimer() % autoPullRefreshTime == 0) {
+        if (!getWorld().isRemote && isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
             refreshList();
             syncME();
         }
@@ -191,6 +193,11 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         }
     }
 
+    private void setApplyMinCount(boolean applyMinCount) {
+        this.applyMinCount = applyMinCount;
+        refreshList();
+    }
+
     /**
      * Refresh the configuration list in auto-pull mode.
      * Sets the config to the first 16 valid items found in the network.
@@ -211,7 +218,9 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         int index = 0;
         for (IAEItemStack stack : storageList) {
             if (index >= CONFIG_SIZE) break;
-            if (stack.getStackSize() < minAutoPullStackSize) continue;
+            long checkAmount = stack.getStackSize();
+            if (checkAmount == 0) continue;
+            if (applyMinCount && (minCount > checkAmount)) continue;
             stack = monitor.extractItems(stack, Actionable.SIMULATE, getActionSource());
             if (stack == null || stack.getStackSize() == 0) continue;
 
@@ -248,11 +257,24 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = super.createUITemplate(player);
+    protected ModularUI.Builder createUITemplate(EntityPlayer player, int heightOverride) {
+        ModularUI.Builder builder = super.createUITemplate(player, 22);
 
-        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26, 16, 16, GuiTextures.BUTTON_AUTO_PULL,
+        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 26 + 22, 16, 16, GuiTextures.BUTTON_AUTO_PULL,
                 () -> autoPull, this::setAutoPull).setTooltipHoverString("gregtech.gui.me_bus.auto_pull_button"));
+
+        builder.widget(new ImageCycleButtonWidget(7 + 18 * 4 + 1, 28, 16, 16, GuiTextures.BUTTON_AUTO_PULL_FILTERED,
+                () -> applyMinCount, this::setApplyMinCount)
+                        .setTooltipHoverString("gregtech.gui.me_bus.filtered_auto_pull_button"));
+
+        builder.widget(new ImageWidget(8, 26, 68, 20, GuiTextures.DISPLAY));
+        builder.widget(new TextFieldWidget2(10, 32, 66, 16, () -> String.valueOf(this.minCount), value -> {
+            if (!value.isEmpty()) {
+                this.minCount = Integer.parseInt(value);
+            }
+        })
+                .setNumbersOnly(0, Integer.MAX_VALUE)
+                .setMaxLength(10));
 
         return builder;
     }
@@ -277,8 +299,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("AutoPull", autoPull);
-        data.setInteger("MinAutoPullStackSize", minAutoPullStackSize);
-        data.setInteger("AutoPullRefreshTime", autoPullRefreshTime);
+        data.setBoolean("ApplyMinCount", applyMinCount);
+        data.setInteger("MinCount", minCount);
         return data;
     }
 
@@ -287,16 +309,16 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         super.readFromNBT(data);
         this.autoPull = data.getBoolean("AutoPull");
 
-        if (data.hasKey("MinAutoPullStackSize")) {
-            this.minAutoPullStackSize = data.getInteger("MinAutoPullStackSize");
+        if (data.hasKey("ApplyMinCount")) {
+            this.applyMinCount = data.getBoolean("ApplyMinCount");
         } else {
-            this.minAutoPullStackSize = 1;
+            this.applyMinCount = false;
         }
 
-        if (data.hasKey("AutoPullRefreshTime")) {
-            this.autoPullRefreshTime = data.getInteger("AutoPullRefreshTime");
+        if (data.hasKey("MinCount")) {
+            this.minCount = data.getInteger("MinCount");
         } else {
-            this.autoPullRefreshTime = 100;
+            this.minCount = 0;
         }
     }
 
@@ -394,8 +416,8 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setBoolean("AutoPull", true);
         tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
-        tag.setInteger("MinAutoPullStackSize", minAutoPullStackSize);
-        tag.setInteger("AutoPullRefreshTime", autoPullRefreshTime);
+        tag.setBoolean("ApplyMinCount", applyMinCount);
+        tag.setInteger("MinCount", minCount);
         return tag;
     }
 
@@ -406,16 +428,16 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             this.setAutoPull(true);
             this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
 
-            if (tag.hasKey("MinAutoPullStackSize")) {
-                this.minAutoPullStackSize = tag.getInteger("MinAutoPullStackSize");
+            if (tag.hasKey("ApplyMinCount")) {
+                this.applyMinCount = tag.getBoolean("ApplyMinCount");
             } else {
-                this.minAutoPullStackSize = 1;
+                this.applyMinCount = false;
             }
 
-            if (tag.hasKey("AutoPullRefreshTime")) {
-                this.autoPullRefreshTime = tag.getInteger("AutoPullRefreshTime");
+            if (tag.hasKey("MinCount")) {
+                this.minCount = tag.getInteger("MinCount");
             } else {
-                this.autoPullRefreshTime = 100;
+                this.minCount = 0;
             }
 
             return;
