@@ -91,4 +91,19 @@ public class FissionFuelProperty implements IMaterialProperty {
     public void setNeutronGenerationTime(double neutronGenerationTime) {
         this.neutronGenerationTime = neutronGenerationTime;
     }
+
+    /*
+     * Helper method for the tooltip; 0 corresponds to stable, 1 to somewhat stable, 2 to dangerous, 3 to very dangerous
+     */
+    public int getNeutronGenerationTimeCategory() {
+        if (this.neutronGenerationTime > 2) {
+            return 0;
+        } else if (this.neutronGenerationTime > 1.25) {
+            return 1;
+        } else if (this.neutronGenerationTime > 0.9) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
 }
