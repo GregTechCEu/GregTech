@@ -195,7 +195,9 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
 
     private void setApplyMinCount(boolean applyMinCount) {
         this.applyMinCount = applyMinCount;
-        refreshList();
+        if (autoPull) {
+            refreshList();
+        }
     }
 
     /**

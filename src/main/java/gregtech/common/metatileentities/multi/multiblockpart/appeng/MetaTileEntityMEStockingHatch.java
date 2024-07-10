@@ -166,7 +166,9 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
 
     private void setApplyMinCount(boolean applyMinCount) {
         this.applyMinCount = applyMinCount;
-        refreshList();
+        if (autoPull) {
+            refreshList();
+        }
     }
 
     private void refreshList() {
