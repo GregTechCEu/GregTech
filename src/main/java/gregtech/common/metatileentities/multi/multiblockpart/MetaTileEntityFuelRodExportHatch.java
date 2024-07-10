@@ -32,7 +32,6 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
 
     public MetaTileEntityFuelRodExportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, true);
-        this.frontFacing = EnumFacing.DOWN;
     }
 
     @Override
@@ -105,11 +104,6 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
         abilityList.add(this.exportItems);
-    }
-
-    @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(EnumFacing.DOWN);
     }
 
     @Override

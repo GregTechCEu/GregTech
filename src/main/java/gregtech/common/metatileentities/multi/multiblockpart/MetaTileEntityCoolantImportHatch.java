@@ -54,7 +54,6 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
 
     public MetaTileEntityCoolantImportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, false);
-        this.frontFacing = EnumFacing.UP;
     }
 
     @Override
@@ -113,21 +112,16 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(EnumFacing.UP);
-    }
-
-    @Override
     public boolean checkValidity(int depth) {
         // Export ports are always considered valid
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) !=
+            if (getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), i)) !=
                     MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL)) {
                 return false;
             }
         }
-        if (getWorld().getTileEntity(pos.offset(EnumFacing.DOWN, depth)) instanceof IGregTechTileEntity gtTe) {
+        if (getWorld().getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
             return gtTe.getMetaTileEntity().metaTileEntityId.equals(MetaTileEntities.COOLANT_OUTPUT.metaTileEntityId);
         }
         return false;

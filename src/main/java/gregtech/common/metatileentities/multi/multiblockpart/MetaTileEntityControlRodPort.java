@@ -35,7 +35,6 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
 
     public MetaTileEntityControlRodPort(ResourceLocation metaTileEntityId, boolean hasModeratorTip) {
         super(metaTileEntityId, 4, false);
-        this.frontFacing = EnumFacing.UP;
         this.hasModeratorTip = hasModeratorTip;
     }
 
@@ -55,21 +54,16 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(EnumFacing.UP);
-    }
-
-    @Override
     public boolean checkValidity(int depth) {
         // Export ports are always considered valid
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) !=
+            if (getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), i)) !=
                     MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL)) {
                 return false;
             }
         }
-        return getWorld().getBlockState(pos.offset(EnumFacing.DOWN, depth)) ==
+        return getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), depth)) ==
                 MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.REACTOR_VESSEL);
     }
 

@@ -294,7 +294,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                 String.format("%.2f", this.fuelDepletionPercent * 100)));
     }
 
-    public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction, int steps) {
+    protected boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction, int steps) {
         BlockPos test = pos.offset(direction, steps);
 
         if (world.getBlockState(test).getBlock() == MetaBlocks.FISSION_CASING) {
@@ -309,13 +309,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         return !(potentialTile instanceof IFissionReactorHatch || potentialTile instanceof IMaintenanceHatch);
     }
 
+    protected EnumFacing getUp() {
+        return RelativeDirection.UP.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+    }
+
+    protected EnumFacing getRight() {
+        return RelativeDirection.RIGHT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+    }
+
     /**
      * Uses the upper layer to determine the diameter of the structure
      */
-    public int findDiameter(int heightAbove) {
+    protected int findDiameter(int heightAbove) {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), this.getPos().up(heightAbove), this.getFrontFacing().getOpposite(),
+            if (this.isBlockEdge(this.getWorld(), this.getPos().offset(getUp(), heightAbove), this.getFrontFacing().getOpposite(),
                     i))
                 break;
             i++;
@@ -326,19 +334,14 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     /**
      * Checks for casings on top or bottom of the controller to determine the height of the reactor
      */
-    public int findHeight(boolean top) {
+    protected int findHeight(boolean top) {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), this.getPos(), top ? EnumFacing.UP : EnumFacing.DOWN, i))
+            if (this.isBlockEdge(this.getWorld(), this.getPos(), top ? getUp() : getUp().getOpposite(), i))
                 break;
             i++;
         }
         return i - 1;
-    }
-
-    @Override
-    public boolean allowsExtendedFacing() {
-        return false;
     }
 
     @Override
@@ -817,8 +820,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                 if (Math.pow(i, 2) + Math.pow(j, 2) > Math.pow(radius, 2) + radius)         // (radius + .5)^2 =
                     // radius^2 + radius + .25
                     continue;
-                BlockPos currentPos = reactorOrigin.offset(this.frontFacing.rotateYCCW(), i)
-                        .offset(this.frontFacing.getOpposite(), j).offset(EnumFacing.UP, heightTop);
+                BlockPos currentPos = reactorOrigin.offset(this.getRight(), i)
+                        .offset(this.frontFacing.getOpposite(), j).offset(getUp(), heightTop);
                 if (getWorld().getTileEntity(currentPos) instanceof IGregTechTileEntity gtTe) {
                     MetaTileEntity mte = gtTe.getMetaTileEntity();
                     if (mte instanceof ICoolantHandler coolantIn) {
@@ -828,7 +831,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             if (mat != null && mat.hasProperty(PropertyKey.COOLANT) &&
                                     mat.getProperty(PropertyKey.COOLANT).isCorrectFluid(mat, lockedFluid)) {
                                 coolantIn.setCoolant(mat);
-                                BlockPos exportHatchPos = currentPos.offset(EnumFacing.DOWN, height - 1);
+                                BlockPos exportHatchPos = currentPos.offset(coolantIn.getFrontFacing().getOpposite(), height - 1);
                                 if (getWorld().getTileEntity(
                                         exportHatchPos) instanceof IGregTechTileEntity coolantOutCandidate) {
                                     MetaTileEntity coolantOutMTE = coolantOutCandidate.getMetaTileEntity();
@@ -836,7 +839,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                         coolantOut.setCoolant(mat);
                                         CoolantChannel component = new CoolantChannel(100050, 0, mat, 1000, coolantIn,
                                                 coolantOut);
-                                        fissionReactor.addComponent(component, i + radius, j + radius);
+                                        fissionReactor.addComponent(component, i + radius - 1, j + radius - 1);
                                         continue;
                                     }
                                 }
@@ -867,7 +870,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                         fuelIn.setInternalFuelRod(component);
                                     }
                                     fuelIn.setInternalFuelRod(component);
-                                    fissionReactor.addComponent(component, i + radius, j + radius);
+                                    fissionReactor.addComponent(component, i + radius - 1, j + radius - 1);
                                     continue;
                                 }
                             }
@@ -877,7 +880,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         return;
                     } else if (mte instanceof IControlRodPort controlIn) {
                         ControlRod component = new ControlRod(100000, controlIn.hasModeratorTip(), 1, 800);
-                        fissionReactor.addComponent(component, i + radius, j + radius);
+                        fissionReactor.addComponent(component, i + radius - 1, j + radius - 1);
                     }
                 }
             }
