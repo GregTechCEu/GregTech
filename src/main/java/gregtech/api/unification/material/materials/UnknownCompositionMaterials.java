@@ -332,7 +332,7 @@ public class UnknownCompositionMaterials {
                 .build();
 
         Corium = new Material.Builder(1560, gregtechId("corium"))
-                .liquid(new FluidBuilder().temperature(2500).block().density(8.0D))
+                .liquid(new FluidBuilder().temperature(2500).block().density(8.0D).viscosity(10000))
                 .color(0x7A6B50)
                 .flags(NO_UNIFICATION, STICKY, GLOWING)
                 .build();

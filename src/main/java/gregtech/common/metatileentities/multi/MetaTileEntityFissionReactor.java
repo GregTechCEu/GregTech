@@ -337,6 +337,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
+
+    @Override
     public void updateFormedValid() {
         // Take in coolant, take in fuel, update reactor, output steam
 
@@ -806,7 +811,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         int radius = this.diameter / 2;     // This is the floor of the radius, the actual radius is 0.5 blocks
         // larger
         BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite(), radius);
-        radius--;
         boolean foundFuel = false;
         for (int i = -radius; i <= radius; i++) {
             for (int j = -radius; j <= radius; j++) {
