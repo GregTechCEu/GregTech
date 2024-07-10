@@ -337,6 +337,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
+
+    @Override
     public void updateFormedValid() {
         // Take in coolant, take in fuel, update reactor, output steam
 
