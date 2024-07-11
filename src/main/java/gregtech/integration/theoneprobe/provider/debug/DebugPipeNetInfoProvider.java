@@ -1,12 +1,12 @@
 package gregtech.integration.theoneprobe.provider.debug;
 
+import gregtech.api.graphnet.pipenetold.PipeNetNode;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.NetNode;
-import gregtech.api.pipenet.WorldPipeNetBase;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.graphnet.pipenetold.WorldPipeNetBase;
+import gregtech.api.graphnet.pipenetold.block.BlockPipe;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.state.IBlockState;
@@ -50,9 +50,9 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                 WorldPipeNetBase<?, ?, ?> pipeNet = blockPipe.getWorldPipeNet(world);
                 if (pipeNet != null) {
                     probeInfo.text("Net: " + pipeNet.hashCode());
-                    probeInfo.text("NetNode Info: ");
+                    probeInfo.text("WorldPipeNetNode Info: ");
                     StringBuilder builder = new StringBuilder();
-                    NetNode<?, ?, ?> node = pipeNet.getNode(data.getPos());
+                    PipeNetNode<?, ?, ?> node = pipeNet.getNode(data.getPos());
                     if (node != null) {
                         builder.append("{")
                                 .append("active: ").append(node.isActive)

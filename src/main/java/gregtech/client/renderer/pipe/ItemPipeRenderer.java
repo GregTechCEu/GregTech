@@ -1,12 +1,12 @@
 package gregtech.client.renderer.pipe;
 
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.block.BlockPipe;
+import gregtech.api.graphnet.pipenetold.block.IPipeType;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.pipelike.itempipe.ItemPipeType;
+import gregtech.common.pipelikeold.itempipe.ItemPipeType;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;

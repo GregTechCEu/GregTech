@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.graphnet.pipenetold.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;

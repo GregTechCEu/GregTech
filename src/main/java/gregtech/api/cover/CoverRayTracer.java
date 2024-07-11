@@ -1,6 +1,6 @@
 package gregtech.api.cover;
 
-import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.graphnet.pipenetold.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.entity.player.EntityPlayer;

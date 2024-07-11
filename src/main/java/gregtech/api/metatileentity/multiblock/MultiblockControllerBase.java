@@ -9,7 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
-import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;

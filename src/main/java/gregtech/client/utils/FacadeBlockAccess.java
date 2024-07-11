@@ -1,6 +1,6 @@
 package gregtech.client.utils;
 
-import gregtech.api.pipenet.IBlockAppearance;
+import gregtech.api.graphnet.pipenetold.IBlockAppearance;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

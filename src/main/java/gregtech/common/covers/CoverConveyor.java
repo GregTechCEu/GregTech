@@ -15,7 +15,7 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
-import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+import gregtech.common.pipelikeold.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;

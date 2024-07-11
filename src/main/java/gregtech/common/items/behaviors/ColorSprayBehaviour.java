@@ -3,7 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.util.GradientUtil;
 import gregtech.api.util.Mods;
 import gregtech.core.sound.GTSoundEvents;

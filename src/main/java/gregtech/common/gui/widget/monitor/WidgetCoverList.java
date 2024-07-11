@@ -6,7 +6,7 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.pipenet.tile.PipeCoverableImplementation;
+import gregtech.api.graphnet.pipenetold.tile.PipeCoverableImplementation;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;

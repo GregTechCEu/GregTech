@@ -7,13 +7,14 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
-import gregtech.api.pipenet.INodeData;
-import gregtech.api.pipenet.NodeLossResult;
-import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.IPipeNetData;
+import gregtech.api.graphnet.pipenetold.NodeLossResult;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.util.EntityDamageUtil;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
+import gregtech.common.pipelikeold.fluidpipe.tile.TileEntityFluidPipe;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
@@ -33,12 +34,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter, INodeData<FluidPipeProperties> {
+public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter,
+                                            IPipeNetData<FluidPipeProperties> {
 
     private final Object2BooleanMap<FluidAttribute> containmentPredicate = new Object2BooleanOpenHashMap<>();
 
     private int throughput;
-    private final int tanks;
+    private int tanks;
 
     private int maxFluidTemperature;
     private boolean gasProof;
@@ -52,7 +54,7 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
 
     /**
      * Should only be called from
-     * {@link gregtech.common.pipelike.fluidpipe.FluidPipeType#modifyProperties(FluidPipeProperties)}
+     * {@link gregtech.common.pipelikeold.fluidpipe.FluidPipeType#modifyProperties(FluidPipeProperties)}
      */
     public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, boolean acidProof,
                                boolean cryoProof, boolean plasmaProof, int tanks) {
@@ -324,6 +326,30 @@ public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFil
             plasmaProof &= data.isPlasmaProof();
         }
         return new FluidPipeProperties(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof);
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setInteger("max_temperature", this.getMaxFluidTemperature());
+        tagCompound.setInteger("throughput", this.getThroughput());
+        tagCompound.setBoolean("gas_proof", this.isGasProof());
+        tagCompound.setBoolean("acid_proof", this.isAcidProof());
+        tagCompound.setBoolean("cryo_proof", this.isCryoProof());
+        tagCompound.setBoolean("plasma_proof", this.isPlasmaProof());
+        tagCompound.setInteger("channels", this.getTanks());
+        return tagCompound;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound tagCompound) {
+        maxFluidTemperature = tagCompound.getInteger("max_temperature");
+        throughput = tagCompound.getInteger("throughput");
+        gasProof = tagCompound.getBoolean("gas_proof");
+        if (tagCompound.getBoolean("acid_proof")) setCanContain(FluidAttributes.ACID, true);
+        cryoProof = tagCompound.getBoolean("cryo_proof");
+        plasmaProof = tagCompound.getBoolean("plasma_proof");
+        tanks = tagCompound.getInteger("channels");
     }
 
     @Override

@@ -15,7 +15,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;

@@ -12,7 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pipenet.IBlockAppearance;
+import gregtech.api.graphnet.pipenetold.IBlockAppearance;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;

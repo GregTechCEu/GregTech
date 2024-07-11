@@ -1,15 +1,15 @@
 package gregtech.client.renderer.pipe;
 
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.block.BlockPipe;
+import gregtech.api.graphnet.pipenetold.block.IPipeType;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.common.pipelike.laser.LaserPipeType;
-import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
+import gregtech.common.pipelikeold.laser.LaserPipeType;
+import gregtech.common.pipelikeold.laser.tile.TileEntityLaserPipe;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;

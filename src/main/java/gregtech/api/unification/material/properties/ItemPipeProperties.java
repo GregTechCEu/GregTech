@@ -1,11 +1,11 @@
 package gregtech.api.unification.material.properties;
 
-import gregtech.api.pipenet.INodeData;
+import gregtech.api.graphnet.pipenetold.IPipeNetData;
 
 import java.util.List;
 import java.util.Objects;
 
-public class ItemPipeProperties implements IMaterialProperty, INodeData<ItemPipeProperties> {
+public class ItemPipeProperties implements IMaterialProperty, IPipeNetData<ItemPipeProperties> {
 
     /**
      * Items will try to take the path with the lowest priority

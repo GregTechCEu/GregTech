@@ -1,13 +1,13 @@
 package gregtech.client.renderer.pipe;
 
 import gregtech.api.cover.CoverHolder;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.pipenet.block.ItemBlockPipe;
-import gregtech.api.pipenet.block.material.BlockMaterialPipe;
-import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.graphnet.pipenetold.block.BlockPipe;
+import gregtech.api.graphnet.pipenetold.block.IPipeType;
+import gregtech.api.graphnet.pipenetold.block.ItemBlockPipe;
+import gregtech.api.graphnet.pipenetold.block.material.BlockMaterialPipe;
+import gregtech.api.graphnet.pipenetold.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;

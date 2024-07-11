@@ -9,13 +9,13 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
+import gregtech.common.pipelikeold.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;

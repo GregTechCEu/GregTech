@@ -6,7 +6,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.SmartItemFilter;
-import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
+import gregtech.common.pipelikeold.itempipe.net.ItemNetHandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

@@ -2,10 +2,10 @@ package gregtech.common.blocks;
 
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.block.ItemBlockPipe;
-import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.graphnet.pipenetold.block.BlockPipe;
+import gregtech.api.graphnet.pipenetold.block.ItemBlockPipe;
+import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
+import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;

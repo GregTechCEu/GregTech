@@ -3,7 +3,7 @@ package gregtech.api.unification.material.properties;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKeys;
-import gregtech.api.pipenet.INodeData;
+import gregtech.api.graphnet.pipenetold.IPipeNetData;
 import gregtech.api.unification.material.Material;
 
 import net.minecraftforge.fluids.Fluid;
@@ -13,7 +13,7 @@ import java.util.Objects;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 
-public class WireProperties implements IMaterialProperty, INodeData<WireProperties> {
+public class WireProperties implements IMaterialProperty, IPipeNetData<WireProperties> {
 
     private int voltage;
     private int amperage;

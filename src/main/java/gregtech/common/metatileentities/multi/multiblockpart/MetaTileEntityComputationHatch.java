@@ -11,7 +11,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+import gregtech.common.pipelikeold.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;

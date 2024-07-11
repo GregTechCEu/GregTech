@@ -8,7 +8,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;

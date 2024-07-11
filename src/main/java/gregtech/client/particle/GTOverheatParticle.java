@@ -8,7 +8,7 @@ import gregtech.client.utils.EffectRenderContext;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.common.pipelike.cable.tile.TileEntityCable;
+import gregtech.common.pipelikeold.cable.tile.TileEntityCable;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;

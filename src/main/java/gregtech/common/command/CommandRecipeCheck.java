@@ -5,7 +5,7 @@ import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.graphnet.pipenetold.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;

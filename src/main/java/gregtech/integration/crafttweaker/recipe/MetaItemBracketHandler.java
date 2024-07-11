@@ -8,9 +8,9 @@ import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.pipelike.cable.BlockCable;
-import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.common.pipelike.itempipe.BlockItemPipe;
+import gregtech.common.pipelikeold.cable.BlockCable;
+import gregtech.common.pipelikeold.fluidpipe.BlockFluidPipe;
+import gregtech.common.pipelikeold.itempipe.BlockItemPipe;
 import gregtech.integration.groovy.GroovyScriptModule;
 
 import net.minecraft.item.ItemStack;
