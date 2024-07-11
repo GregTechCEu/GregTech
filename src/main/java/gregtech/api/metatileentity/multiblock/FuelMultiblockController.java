@@ -48,8 +48,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         if (ConfigHolder.machines.allowLaserHatchesOnMultis) {
             predicate = predicate.or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.OUTPUT_LASER)
                     .setExactLimit(1));
-        }
-        else {
+        } else {
             predicate = predicate.or(abilities(MultiblockAbility.OUTPUT_ENERGY)
                     .setExactLimit(1));
         }

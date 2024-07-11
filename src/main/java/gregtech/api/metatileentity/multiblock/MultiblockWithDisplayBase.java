@@ -341,7 +341,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return autoAbilities(true, true, true, ConfigHolder.machines.energyHatchCount);
     }
 
-    public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler, boolean checkEnergyIn, int maxHatchCount) {
+    public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler, boolean checkEnergyIn,
+                                               int maxHatchCount) {
         TraceabilityPredicate predicate = new TraceabilityPredicate();
         if (checkMaintenance && hasMaintenanceMechanics()) {
             predicate = predicate.or(maintenancePredicate());
@@ -356,8 +357,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                         .setMinGlobalLimited(1)
                         .setMaxGlobalLimited(maxHatchCount)
                         .setPreviewCount(1));
-            }
-            else {
+            } else {
                 predicate = predicate.or(abilities(MultiblockAbility.INPUT_ENERGY)
                         .setMinGlobalLimited(1)
                         .setMaxGlobalLimited(maxHatchCount)
