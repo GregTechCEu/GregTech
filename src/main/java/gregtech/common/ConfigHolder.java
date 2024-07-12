@@ -168,7 +168,7 @@ public class ConfigHolder {
 
         @Config.Comment({ "How much the amount of power required to boil a coolant is divided by." })
         @Config.RangeDouble(min = 0.1, max = 1000)
-        public double fissionCoolantDivisor = 125;
+        public double fissionCoolantDivisor = 15;
 
         @Config.Comment({
                 "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
