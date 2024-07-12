@@ -294,7 +294,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                 String.format("%.2f", this.fuelDepletionPercent * 100)));
     }
 
-    protected boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction, int steps) {
+    protected boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction,
+                                  int steps) {
         BlockPos test = pos.offset(direction, steps);
 
         if (world.getBlockState(test).getBlock() == MetaBlocks.FISSION_CASING) {
@@ -323,7 +324,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     protected int findDiameter(int heightAbove) {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), this.getPos().offset(getUp(), heightAbove), this.getFrontFacing().getOpposite(),
+            if (this.isBlockEdge(this.getWorld(), this.getPos().offset(getUp(), heightAbove),
+                    this.getFrontFacing().getOpposite(),
                     i))
                 break;
             i++;
@@ -831,7 +833,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             if (mat != null && mat.hasProperty(PropertyKey.COOLANT) &&
                                     mat.getProperty(PropertyKey.COOLANT).isCorrectFluid(mat, lockedFluid)) {
                                 coolantIn.setCoolant(mat);
-                                BlockPos exportHatchPos = currentPos.offset(coolantIn.getFrontFacing().getOpposite(), height - 1);
+                                BlockPos exportHatchPos = currentPos.offset(coolantIn.getFrontFacing().getOpposite(),
+                                        height - 1);
                                 if (getWorld().getTileEntity(
                                         exportHatchPos) instanceof IGregTechTileEntity coolantOutCandidate) {
                                     MetaTileEntity coolantOutMTE = coolantOutCandidate.getMetaTileEntity();

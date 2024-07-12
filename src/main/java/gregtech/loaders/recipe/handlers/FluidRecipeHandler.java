@@ -6,7 +6,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.common.ConfigHolder;
 
 public class FluidRecipeHandler {
 
@@ -28,7 +27,8 @@ public class FluidRecipeHandler {
                 .fluidOutputs(mat.getFluid(coolantAmt), Materials.Steam.getFluid(waterAmt * 160)).buildAndRegister();
 
         RecipeMaps.HEAT_EXCHANGER_RECIPES.recipeBuilder().duration(1).circuitMeta(1)
-                .fluidInputs(coolant.getHotHPCoolant().getFluid(coolantAmt), Materials.DistilledWater.getFluid(waterAmt))
+                .fluidInputs(coolant.getHotHPCoolant().getFluid(coolantAmt),
+                        Materials.DistilledWater.getFluid(waterAmt))
                 .fluidOutputs(mat.getFluid(coolantAmt), Materials.Steam.getFluid(waterAmt * 160)).buildAndRegister();
         waterAmt = 600;
         // Slightly more efficient
@@ -40,7 +40,8 @@ public class FluidRecipeHandler {
                 .fluidOutputs(mat.getFluid(coolantAmt), Materials.Steam.getFluid(waterAmt * 160)).buildAndRegister();
 
         RecipeMaps.HEAT_EXCHANGER_RECIPES.recipeBuilder().duration(1).circuitMeta(2)
-                .fluidInputs(coolant.getHotHPCoolant().getFluid(coolantAmt), Materials.DistilledWater.getFluid(waterAmt))
+                .fluidInputs(coolant.getHotHPCoolant().getFluid(coolantAmt),
+                        Materials.DistilledWater.getFluid(waterAmt))
                 .fluidOutputs(mat.getFluid(coolantAmt), Materials.Steam.getFluid(waterAmt * 160)).buildAndRegister();
 
         // Radiator

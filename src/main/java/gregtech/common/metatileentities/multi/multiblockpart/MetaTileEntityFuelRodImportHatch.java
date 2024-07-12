@@ -24,7 +24,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -240,7 +239,8 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
                 return null;
             }
         }
-        if (getWorld().getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
+        if (getWorld()
+                .getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
             MetaTileEntity mte = gtTe.getMetaTileEntity();
             if (mte instanceof MetaTileEntityFuelRodExportHatch) {
                 return (MetaTileEntityFuelRodExportHatch) mte;
