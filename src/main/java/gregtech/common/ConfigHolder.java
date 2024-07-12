@@ -166,7 +166,7 @@ public class ConfigHolder {
                 "Default: true" })
         public boolean allowTickAcceleration = true;
 
-        @Config.Comment({ "How much the amount of power required to boil a coolant is divided by."})
+        @Config.Comment({ "How much the amount of power required to boil a coolant is divided by." })
         @Config.RangeDouble(min = 0.1, max = 1000)
         public double fissionCoolantDivisor = 125;
 

@@ -27,7 +27,6 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
@@ -121,7 +120,8 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
                 return false;
             }
         }
-        if (getWorld().getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
+        if (getWorld()
+                .getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
             return gtTe.getMetaTileEntity().metaTileEntityId.equals(MetaTileEntities.COOLANT_OUTPUT.metaTileEntityId);
         }
         return false;
