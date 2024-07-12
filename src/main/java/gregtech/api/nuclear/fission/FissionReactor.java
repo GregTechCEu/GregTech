@@ -10,6 +10,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.config.Config;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -471,8 +472,9 @@ public class FissionReactor {
                     continue;
                 }
 
-                double heatRemovedPerLiter = prop.getSpecificHeatCapacity() *
-                        (cooledTemperature - coolant.getFluid().getTemperature());
+                double heatRemovedPerLiter =
+                        prop.getSpecificHeatCapacity() / ConfigHolder.machines.nuclearPowerMultiplier *
+                                (cooledTemperature - coolant.getFluid().getTemperature());
                 // Explained by:
                 // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa
                 double heatFluxPerAreaAndTemp = 1 /
