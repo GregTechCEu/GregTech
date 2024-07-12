@@ -413,7 +413,7 @@ public class MaterialFlagAddition {
          */
         DistilledWater.setProperty(PropertyKey.COOLANT,
                 new CoolantProperty(HighPressureSteam, FluidStorageKeys.LIQUID, 1., 1000,
-                        373, 10., 2260000, 4168. / 250)
+                        373, 10., 2260000, 4168.)
                                 .setAccumulatesHydrogen(true));
     }
 }

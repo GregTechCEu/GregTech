@@ -166,10 +166,9 @@ public class ConfigHolder {
                 "Default: true" })
         public boolean allowTickAcceleration = true;
 
-        @Config.Comment({ "The amount of water (in liters) that can be boiled by a single liter of hot coolant.",
-                "Default: 1" })
-        @Config.RangeInt(min = 1)
-        public double coolantRecovery = 1;
+        @Config.Comment({ "How much the amount of power required to boil a coolant is divided by."})
+        @Config.RangeDouble(min = 0.1, max = 1000)
+        public double fissionCoolantDivisor = 125;
 
         @Config.Comment({
                 "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
