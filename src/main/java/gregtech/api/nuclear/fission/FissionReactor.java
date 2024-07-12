@@ -487,13 +487,14 @@ public class FissionReactor {
                 }
 
                 double idealFluidUsed = idealHeatFlux / heatRemovedPerLiter;
+                double cappedFluidUsed = Math.min(drained, idealFluidUsed);
 
                 int remainingSpace = channel.getOutputHandler().getFluidTank().getCapacity() -
                         channel.getOutputHandler().getFluidTank().getFluidAmount();
-                int actualFlowRate = Math.min(Math.min(remainingSpace, drained),
-                        (int) (idealFluidUsed + channel.partialCoolant));
+                int actualFlowRate = Math.min(remainingSpace,
+                        (int) (cappedFluidUsed + channel.partialCoolant));
                 // Should occasionally decrease when coolant is actually consumed.
-                channel.partialCoolant += Math.max(0, Math.min(idealFluidUsed, drained)) - actualFlowRate;
+                channel.partialCoolant += cappedFluidUsed - actualFlowRate;
 
                 FluidStack HPCoolant = new FluidStack(
                         prop.getHotHPCoolant().getFluid(), actualFlowRate);
@@ -511,8 +512,8 @@ public class FissionReactor {
                     }
                 }
 
-                this.coolantMass += actualFlowRate * coolant.getMass();
-                heatRemoved += actualFlowRate * heatRemovedPerLiter;
+                this.coolantMass += cappedFluidUsed * coolant.getMass();
+                heatRemoved += cappedFluidUsed * heatRemovedPerLiter;
             }
         }
         this.coolantMass /= 1000;
@@ -548,6 +549,10 @@ public class FissionReactor {
         // calculate the actual temperature based on the reactor power and the heat removed
         this.temperature = responseFunctionTemperature(envTemperature, prevTemperature, this.power * 1e6, heatRemoved);
 
+        if (this.temperature > this.coolantExitTemperature) {
+            // reduce spikiness for high heat-capacity coolant
+            this.temperature = Math.max(this.temperature, (this.coolantExitTemperature + this.temperature) / 2);
+        }
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
     }
 
