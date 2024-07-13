@@ -40,6 +40,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         super(tileEntity, tileEntity.recipeMap, hasPerfectOC);
     }
 
+    public MultiblockRecipeLogic(MultiblockWithDisplayBase tileEntity, RecipeMap<?> recipeMap) {
+        super(tileEntity, recipeMap);
+    }
+
     @Override
     public void update() {}
 
