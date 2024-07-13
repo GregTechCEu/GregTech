@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "gregtech:items/material_sets/dull/fuel_rod"
+    "layer0": "gregtech:items/material_sets/dull/fuel_rod",
+    "layer1": "gregtech:items/material_sets/dull/fuel_rod_overlay"
   }
 }

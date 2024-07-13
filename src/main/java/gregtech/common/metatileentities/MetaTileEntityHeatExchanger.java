@@ -1,6 +1,6 @@
 package gregtech.common.metatileentities;
 
-import gregtech.api.capability.impl.NoEnergyMultiblockRecipeLogic;
+import gregtech.api.capability.impl.PrimitiveRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -23,7 +23,7 @@ public class MetaTileEntityHeatExchanger extends RecipeMapMultiblockController {
 
     public MetaTileEntityHeatExchanger(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.HEAT_EXCHANGER_RECIPES);
-        this.recipeMapWorkable = new NoEnergyMultiblockRecipeLogic(this);
+        this.recipeMapWorkable = new PrimitiveRecipeLogic(this, RecipeMaps.HEAT_EXCHANGER_RECIPES);
     }
 
     @Override
