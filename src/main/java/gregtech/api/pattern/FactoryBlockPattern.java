@@ -3,8 +3,11 @@ package gregtech.api.pattern;
 import gregtech.api.util.RelativeDirection;
 
 import com.google.common.base.Joiner;
+import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -15,16 +18,54 @@ import java.util.Map.Entry;
 
 import static gregtech.api.util.RelativeDirection.*;
 
+/**
+ * A builder class for {@link BlockPattern}<br />
+ * When the multiblock is placed, its facings are concrete. Then, the {@link RelativeDirection}s passed into
+ * {@link FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)} are ways in which the
+ * pattern progresses. It can be thought like this, where startPos() is either defined via {@link FactoryBlockPattern#setStartOffset(int...)}
+ * , or automatically detected(for legacy compat only, you should use {@link FactoryBlockPattern#setStartOffset(int...)} always for new code):
+ * <pre>
+ * {@code
+ * for(int aisleI in 0..aisles):
+ *     for(int stringI in 0..strings):
+ *         for(int charI in 0..chars):
+ *             pos = startPos()
+ *             pos.move(aisleI in aisleDir)
+ *             pos.move(stringI in stringDir)
+ *             pos.move(charI in charDir)
+ *             predicate = aisles[aisleI].stringAt(stringI).charAt(charI)
+ * }
+ * </pre>
+ */
 public class FactoryBlockPattern {
 
     private static final Joiner COMMA_JOIN = Joiner.on(",");
-    private final List<String[]> depth = new ArrayList<>();
-    private final List<int[]> aisleRepetitions = new ArrayList<>();
-    private final Map<Character, TraceabilityPredicate> symbolMap = new HashMap<>();
-    private int aisleHeight;
-    private int rowWidth;
+
+    /**
+     * In the form of [ num char per string, num string per aisle, num aisles ]
+     */
+    private final int[] dimensions = { -1, -1, -1 };
+    /**
+     * In the form of [ aisleOffset, stringOffset, charOffset ] where the offsets are the opposite {@link RelativeDirection} of structure directions
+     */
+    private int[] startOffset;
+    private char centerChar;
+
+    private final List<PatternAisle> aisles = new ArrayList<>();
+
+    /**
+     * Map going from chars to the predicates
+     */
+    private final Char2ObjectMap<TraceabilityPredicate> symbolMap = new Char2ObjectOpenHashMap<>();
+
+    /**
+     * In the form of [ charDir, stringDir, aisleDir ]
+     */
     private final RelativeDirection[] structureDir = new RelativeDirection[3];
 
+    /**
+     * @see FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)
+     */
     private FactoryBlockPattern(RelativeDirection charDir, RelativeDirection stringDir, RelativeDirection aisleDir) {
         structureDir[0] = charDir;
         structureDir[1] = stringDir;
@@ -52,40 +93,43 @@ public class FactoryBlockPattern {
 
     /**
      * Adds a repeatable aisle to this pattern.
+     * @param aisle The aisle to add
+     * @see FactoryBlockPattern#setRepeatable(int, int)
      */
-    public FactoryBlockPattern aisleRepeatable(int minRepeat, int maxRepeat, String... aisle) {
-        if (!ArrayUtils.isEmpty(aisle) && !StringUtils.isEmpty(aisle[0])) {
-            if (this.depth.isEmpty()) {
-                this.aisleHeight = aisle.length;
-                this.rowWidth = aisle[0].length();
-            }
+    public FactoryBlockPattern aisleRepeatable(int minRepeat, int maxRepeat, @NotNull String... aisle) {
+        if (ArrayUtils.isEmpty(aisle) || StringUtils.isEmpty(aisle[0]))
+            throw new IllegalArgumentException("Empty pattern for aisle");
 
-            if (aisle.length != this.aisleHeight) {
-                throw new IllegalArgumentException("Expected aisle with height of " + this.aisleHeight +
-                        ", but was given one with a height of " + aisle.length + ")");
-            } else {
-                for (String s : aisle) {
-                    if (s.length() != this.rowWidth) {
-                        throw new IllegalArgumentException(
-                                "Not all rows in the given aisle are the correct width (expected " + this.rowWidth +
-                                        ", found one with " + s.length() + ")");
-                    }
+        // set the dimensions if the user hasn't already
+        if (dimensions[0] == -1) {
+            dimensions[0] = aisle[0].length();
+        }
+        if (dimensions[1] == -1) {
+            dimensions[1] = aisle.length;
+        }
 
-                    for (char c0 : s.toCharArray()) {
-                        if (!this.symbolMap.containsKey(c0)) {
-                            this.symbolMap.put(c0, null);
-                        }
-                    }
+        if (aisle.length != dimensions[1]) {
+            throw new IllegalArgumentException("Expected aisle with height of " + dimensions[1] +
+                    ", but was given one with a height of " + aisle.length + ")");
+        } else {
+            for (String s : aisle) {
+                if (s.length() != dimensions[0]) {
+                    throw new IllegalArgumentException(
+                            "Not all rows in the given aisle are the correct width (expected " + dimensions[0] +
+                                    ", found one with " + s.length() + ")");
                 }
 
-                this.depth.add(aisle);
-                if (minRepeat > maxRepeat)
-                    throw new IllegalArgumentException("Lower bound of repeat counting must smaller than upper bound!");
-                aisleRepetitions.add(new int[] { minRepeat, maxRepeat });
-                return this;
+                for (char c : s.toCharArray()) {
+                    if (!this.symbolMap.containsKey(c)) {
+                        this.symbolMap.put(c, null);
+                    }
+                }
             }
-        } else {
-            throw new IllegalArgumentException("Empty pattern for aisle");
+
+            aisles.add(new PatternAisle(minRepeat, maxRepeat, aisle));
+            if (minRepeat > maxRepeat)
+                throw new IllegalArgumentException("Lower bound of repeat counting must smaller than upper bound!");
+            return this;
         }
     }
 
@@ -98,32 +142,58 @@ public class FactoryBlockPattern {
 
     /**
      * Set last aisle repeatable
+     * @param minRepeat Minimum amount of repeats, inclusive
+     * @param maxRepeat Maximum amount of repeats, inclusive
      */
     public FactoryBlockPattern setRepeatable(int minRepeat, int maxRepeat) {
         if (minRepeat > maxRepeat)
             throw new IllegalArgumentException("Lower bound of repeat counting must smaller than upper bound!");
-        aisleRepetitions.set(aisleRepetitions.size() - 1, new int[] { minRepeat, maxRepeat });
+        aisles.get(aisles.size() - 1).setRepeats(minRepeat, maxRepeat);
         return this;
     }
 
     /**
      * Set last aisle repeatable
+     * @param repeatCount The amount to repeat
      */
     public FactoryBlockPattern setRepeatable(int repeatCount) {
         return setRepeatable(repeatCount, repeatCount);
     }
 
+    public FactoryBlockPattern setStartOffset(int aisleOffset, int stringOffset, int charOffset) {
+        this.startOffset[0] = aisleOffset;
+        this.startOffset[1] = stringOffset;
+        this.startOffset[2] = charOffset;
+        return this;
+    }
+
+    /**
+     * Starts the builder, this is equivlent to calling {@link FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)} with RIGHT, UP, BACK
+     * @see FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)
+     */
     public static FactoryBlockPattern start() {
         return new FactoryBlockPattern(RIGHT, UP, BACK);
     }
 
+    /**
+     * Starts the builder, each pair of {@link RelativeDirection} must be used at exactly once!
+     * @param charDir The direction chars progress in, each successive char in a string progresses by this direction
+     * @param stringDir The direction strings progress in, each successive string in an aisle progresses by this direction
+     * @param aisleDir The direction aisles progress in, each successive {@link FactoryBlockPattern#aisle(String...)} progresses in this direction
+     */
     public static FactoryBlockPattern start(RelativeDirection charDir, RelativeDirection stringDir,
                                             RelativeDirection aisleDir) {
         return new FactoryBlockPattern(charDir, stringDir, aisleDir);
     }
 
+    /**
+     * Puts a symbol onto the predicate map
+     * @param symbol The symbol, will override previous identical ones
+     * @param blockMatcher The predicate to put
+     */
     public FactoryBlockPattern where(char symbol, TraceabilityPredicate blockMatcher) {
         this.symbolMap.put(symbol, new TraceabilityPredicate(blockMatcher).sort());
+        if (blockMatcher.isCenter) centerChar = symbol;
         return this;
     }
 
@@ -136,24 +206,9 @@ public class FactoryBlockPattern {
     }
 
     public BlockPattern build() {
-        return new BlockPattern(makePredicateArray(), structureDir,
-                aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));
-    }
-
-    private TraceabilityPredicate[][][] makePredicateArray() {
-        this.checkMissingPredicates();
-        TraceabilityPredicate[][][] predicate = (TraceabilityPredicate[][][]) Array
-                .newInstance(TraceabilityPredicate.class, this.depth.size(), this.aisleHeight, this.rowWidth);
-
-        for (int i = 0; i < this.depth.size(); ++i) {
-            for (int j = 0; j < this.aisleHeight; ++j) {
-                for (int k = 0; k < this.rowWidth; ++k) {
-                    predicate[i][j][k] = this.symbolMap.get(this.depth.get(i)[j].charAt(k));
-                }
-            }
-        }
-
-        return predicate;
+        checkMissingPredicates();
+        this.dimensions[2] = aisles.size();
+        return new BlockPattern(aisles.toArray(PatternAisle[]::new), dimensions, structureDir, startOffset, symbolMap, centerChar);
     }
 
     private void checkMissingPredicates() {

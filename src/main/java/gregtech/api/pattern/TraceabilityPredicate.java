@@ -7,6 +7,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -24,9 +26,9 @@ import java.util.stream.Collectors;
 public class TraceabilityPredicate {
 
     // Allow any block.
-    public static TraceabilityPredicate ANY = new TraceabilityPredicate((state) -> true);
+    public static final TraceabilityPredicate ANY = new TraceabilityPredicate((state) -> true);
     // Allow the air block.
-    public static TraceabilityPredicate AIR = new TraceabilityPredicate(
+    public static final TraceabilityPredicate AIR = new TraceabilityPredicate(
             blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(),
                     blockWorldState.getWorld(), blockWorldState.getPos()));
     // Allow all heating coils, and require them to have the same type.
@@ -304,7 +306,7 @@ public class TraceabilityPredicate {
             return testGlobal(blockWorldState) && testLayer(blockWorldState);
         }
 
-        public boolean testGlobal(BlockWorldState blockWorldState) {
+        public SinglePredicateError testGlobal(BlockWorldState blockWorldState) {
             if (minGlobalCount == -1 && maxGlobalCount == -1) return true;
             Integer count = blockWorldState.globalCount.get(this);
             boolean base = predicate.test(blockWorldState);
@@ -315,9 +317,15 @@ public class TraceabilityPredicate {
             return false;
         }
 
-        public boolean testLayer(BlockWorldState blockWorldState) {
-            if (minLayerCount == -1 && maxLayerCount == -1) return true;
-            Integer count = blockWorldState.layerCount.get(this);
+        /**
+         *
+         * @param blockWorldState
+         * @return
+         */
+        public SinglePredicateError testLayer(Object2IntMap<TraceabilityPredicate> cache) {
+            if (minLayerCount == -1 && maxLayerCount == -1) return null;
+
+            int count = cache.get(this);
             boolean base = predicate.test(blockWorldState);
             count = (count == null ? 0 : count) + (base ? 1 : 0);
             blockWorldState.layerCount.put(this, count);

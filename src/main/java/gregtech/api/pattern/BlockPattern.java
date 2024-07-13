@@ -9,6 +9,8 @@ import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 
+import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -24,81 +26,66 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BlockPattern {
 
     static EnumFacing[] FACINGS = { EnumFacing.SOUTH, EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.EAST, EnumFacing.UP,
             EnumFacing.DOWN };
-    public final int[][] aisleRepetitions;
     public final RelativeDirection[] structureDir;
-    protected final TraceabilityPredicate[][][] blockMatches; // [z][y][x]
-    protected final int fingerLength; // z size
-    protected final int thumbLength; // y size
-    protected final int palmLength; // x size
+    protected final int[] dimensions;
+    protected final int[] startOffset;
+    protected final PatternAisle[] aisles;
+    protected final Char2ObjectMap<TraceabilityPredicate> predicates;
     protected final BlockWorldState worldState = new BlockWorldState();
     protected final PatternMatchContext matchContext = new PatternMatchContext();
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
 
     public Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
-    // x, y, z, minZ, maxZ
-    private int[] centerOffset = null;
 
     /**
      * The repetitions per aisle along the axis of repetition
      */
     public int[] formedRepetitionCount;
 
-    public BlockPattern(@NotNull TraceabilityPredicate[][][] predicatesIn, @NotNull RelativeDirection[] structureDir,
-                        @NotNull int[][] aisleRepetitions) {
-        this.blockMatches = predicatesIn;
-        this.globalCount = new HashMap<>();
-        this.layerCount = new HashMap<>();
-        this.fingerLength = predicatesIn.length;
-        this.structureDir = structureDir;
-        this.aisleRepetitions = aisleRepetitions;
-        this.formedRepetitionCount = new int[aisleRepetitions.length];
+    // how many not nulls to keep someone from not passing in null?
+    public BlockPattern(@NotNull PatternAisle @NotNull [] aisles, int @NotNull [] dimensions, @NotNull RelativeDirection @NotNull [] directions,
+                        int @Nullable [] startOffset, @NotNull Char2ObjectMap<TraceabilityPredicate> predicates, char centerChar) {
+        this.aisles = aisles;
+        this.dimensions = dimensions;
+        this.structureDir = directions;
+        this.predicates = predicates;
+        this.startOffset = startOffset;
 
-        if (this.fingerLength > 0) {
-            this.thumbLength = predicatesIn[0].length;
-
-            if (this.thumbLength > 0) {
-                this.palmLength = predicatesIn[0][0].length;
-            } else {
-                this.palmLength = 0;
-            }
-        } else {
-            this.thumbLength = 0;
-            this.palmLength = 0;
-        }
-
-        initializeCenterOffsets();
+        if (this.startOffset == null) legacyStartOffset(centerChar);
     }
 
-    private void initializeCenterOffsets() {
-        loop:
-        for (int x = 0; x < this.palmLength; x++) {
-            for (int y = 0; y < this.thumbLength; y++) {
-                for (int z = 0, minZ = 0, maxZ = 0; z <
-                        this.fingerLength; minZ += aisleRepetitions[z][0], maxZ += aisleRepetitions[z][1], z++) {
-                    TraceabilityPredicate predicate = this.blockMatches[z][y][x];
-                    if (predicate.isCenter) {
-                        centerOffset = new int[] { x, y, z, minZ, maxZ };
-                        break loop;
-                    }
-                }
+    /**
+     * For legacy compat only,
+     * @param center The center char to look for
+     */
+    private void legacyStartOffset(char center) {
+        // could also use aisles.length but this is cooler
+        for (int aisleI = 0; aisleI < dimensions[2]; aisleI++) {
+            int[] result = aisles[aisleI].firstInstanceOf(center);
+            if (result != null) {
+                startOffset[0] = aisleI;
+                startOffset[1] = result[0];
+                startOffset[2] = result[2];
+                return;
             }
         }
-        if (centerOffset == null) {
-            throw new IllegalArgumentException("Didn't find center predicate");
-        }
+
+        throw new IllegalArgumentException("Didn't find center predicate");
     }
 
     public PatternError getError() {
@@ -165,8 +152,7 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing,
-                                isFlipped, structureDir)
+                        BlockPos pos = setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing, isFlipped)
                                 .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         TileEntity tileEntity = worldState.getTileEntity();
@@ -251,10 +237,9 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, facing,
-                                controllerBase.getUpwardsFacing(),
-                                controllerBase.isFlipped(), structureDir)
-                                .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
+                        BlockPos pos = setActualRelativeOffset(x, y, z, facing, controllerBase.getUpwardsFacing(),
+                                controllerBase.isFlipped())
+                                        .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         if (!world.getBlockState(pos).getMaterial().isReplaceable()) {
                             blocks.put(pos, world.getBlockState(pos));
@@ -573,8 +558,7 @@ public class BlockPattern {
                             }
                         }
                         BlockInfo info = infos == null || infos.length == 0 ? BlockInfo.EMPTY : infos[0];
-                        BlockPos pos = RelativeDirection.setActualRelativeOffset(z, y, x, EnumFacing.NORTH,
-                                EnumFacing.UP, false, structureDir);
+                        BlockPos pos = setActualRelativeOffset(z, y, x, EnumFacing.NORTH, EnumFacing.UP, false);
                         // TODO
                         if (info.getTileEntity() instanceof MetaTileEntityHolder) {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
@@ -626,5 +610,97 @@ public class BlockPattern {
             result[pos.getX() - finalMinX][pos.getY() - finalMinY][pos.getZ() - finalMinZ] = info;
         });
         return result;
+    }
+
+    private BlockPos offsetFrom(BlockPos start, int aisleOffset, int stringOffset, int charOffset, EnumFacing frontFacing,
+                                EnumFacing upFacing, boolean flip) {
+        GreggyBlockPos pos = new GreggyBlockPos(start);
+        pos.offset(structureDir[0].getRelativeFacing(frontFacing, upFacing, flip), aisleOffset);
+        pos.offset(structureDir[1].getRelativeFacing(frontFacing, upFacing, flip), stringOffset);
+        pos.offset(structureDir[2].getRelativeFacing(frontFacing, upFacing, flip), charOffset);
+        return pos.immutable();
+    }
+
+    private BlockPos setActualRelativeOffset(int x, int y, int z, EnumFacing facing, EnumFacing upwardsFacing,
+                                             boolean isFlipped) {
+        int[] c0 = new int[] { x, y, z }, c1 = new int[3];
+        if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
+            EnumFacing of = facing == EnumFacing.DOWN ? upwardsFacing : upwardsFacing.getOpposite();
+            for (int i = 0; i < 3; i++) {
+                switch (structureDir[i].getActualFacing(of)) {
+                    case UP -> c1[1] = c0[i];
+                    case DOWN -> c1[1] = -c0[i];
+                    case WEST -> c1[0] = -c0[i];
+                    case EAST -> c1[0] = c0[i];
+                    case NORTH -> c1[2] = -c0[i];
+                    case SOUTH -> c1[2] = c0[i];
+                }
+            }
+            int xOffset = upwardsFacing.getXOffset();
+            int zOffset = upwardsFacing.getZOffset();
+            int tmp;
+            if (xOffset == 0) {
+                tmp = c1[2];
+                c1[2] = zOffset > 0 ? c1[1] : -c1[1];
+                c1[1] = zOffset > 0 ? -tmp : tmp;
+            } else {
+                tmp = c1[0];
+                c1[0] = xOffset > 0 ? c1[1] : -c1[1];
+                c1[1] = xOffset > 0 ? -tmp : tmp;
+            }
+            if (isFlipped) {
+                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
+                    c1[0] = -c1[0]; // flip X-axis
+                } else {
+                    c1[2] = -c1[2]; // flip Z-axis
+                }
+            }
+        } else {
+            for (int i = 0; i < 3; i++) {
+                switch (structureDir[i].getActualFacing(facing)) {
+                    case UP -> c1[1] = c0[i];
+                    case DOWN -> c1[1] = -c0[i];
+                    case WEST -> c1[0] = -c0[i];
+                    case EAST -> c1[0] = c0[i];
+                    case NORTH -> c1[2] = -c0[i];
+                    case SOUTH -> c1[2] = c0[i];
+                }
+            }
+            if (upwardsFacing == EnumFacing.WEST || upwardsFacing == EnumFacing.EAST) {
+                int xOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getXOffset() :
+                        facing.rotateY().getOpposite().getXOffset();
+                int zOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getZOffset() :
+                        facing.rotateY().getOpposite().getZOffset();
+                int tmp;
+                if (xOffset == 0) {
+                    tmp = c1[2];
+                    c1[2] = zOffset > 0 ? -c1[1] : c1[1];
+                    c1[1] = zOffset > 0 ? tmp : -tmp;
+                } else {
+                    tmp = c1[0];
+                    c1[0] = xOffset > 0 ? -c1[1] : c1[1];
+                    c1[1] = xOffset > 0 ? tmp : -tmp;
+                }
+            } else if (upwardsFacing == EnumFacing.SOUTH) {
+                c1[1] = -c1[1];
+                if (facing.getXOffset() == 0) {
+                    c1[0] = -c1[0];
+                } else {
+                    c1[2] = -c1[2];
+                }
+            }
+            if (isFlipped) {
+                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
+                    if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH) {
+                        c1[0] = -c1[0]; // flip X-axis
+                    } else {
+                        c1[2] = -c1[2]; // flip Z-axis
+                    }
+                } else {
+                    c1[1] = -c1[1]; // flip Y-axis
+                }
+            }
+        }
+        return new BlockPos(c1[0], c1[1], c1[2]);
     }
 }

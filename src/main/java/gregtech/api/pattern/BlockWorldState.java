@@ -19,14 +19,10 @@ public class BlockWorldState {
     protected TileEntity tileEntity;
     protected boolean tileEntityInitialized;
     protected PatternMatchContext matchContext;
-    protected Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
-    protected Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
     protected TraceabilityPredicate predicate;
     protected PatternError error;
 
     public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext,
-                       Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount,
-                       Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount,
                        TraceabilityPredicate predicate) {
         this.world = worldIn;
         this.pos = posIn;
@@ -34,9 +30,6 @@ public class BlockWorldState {
         this.tileEntity = null;
         this.tileEntityInitialized = false;
         this.matchContext = matchContext;
-        this.globalCount = globalCount;
-        this.layerCount = layerCount;
-        this.predicate = predicate;
         this.error = null;
     }
 
@@ -75,16 +68,6 @@ public class BlockWorldState {
 
     public BlockPos getPos() {
         return this.pos.toImmutable();
-    }
-
-    public IBlockState getOffsetState(EnumFacing face) {
-        if (pos instanceof MutableBlockPos) {
-            ((MutableBlockPos) pos).move(face);
-            IBlockState blockState = world.getBlockState(pos);
-            ((MutableBlockPos) pos).move(face.getOpposite());
-            return blockState;
-        }
-        return world.getBlockState(this.pos.offset(face));
     }
 
     public World getWorld() {
