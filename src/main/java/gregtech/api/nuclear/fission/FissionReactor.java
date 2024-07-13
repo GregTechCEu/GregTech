@@ -548,11 +548,6 @@ public class FissionReactor {
         double heatRemoved = this.makeCoolantFlow(flowRate);
         // calculate the actual temperature based on the reactor power and the heat removed
         this.temperature = responseFunctionTemperature(envTemperature, prevTemperature, this.power * 1e6, heatRemoved);
-
-        if (this.temperature > this.coolantExitTemperature) {
-            // reduce spikiness for high heat-capacity coolant
-            this.temperature = Math.max(this.temperature, (this.coolantExitTemperature + this.temperature) / 2);
-        }
         this.temperature = Math.max(this.temperature, this.coolantBaseTemperature);
     }
 
