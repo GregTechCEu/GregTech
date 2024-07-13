@@ -12,9 +12,14 @@ public final class MultiNetCountLogic extends AbstractIntLogicData<MultiNetCount
     }
 
     @Override
+    public MultiNetCountLogic getNew() {
+        return new MultiNetCountLogic();
+    }
+
+    @Override
     public MultiNetCountLogic union(INetLogicEntry<?, ?> other) {
         if (other instanceof MultiNetCountLogic l) {
-            return new MultiNetCountLogic().setValue(Math.min(this.getValue(), l.getValue()));
-        } else return new MultiNetCountLogic().setValue(1);
+            return this.getValue() < l.getValue() ? this : l;
+        } else return this;
     }
 }

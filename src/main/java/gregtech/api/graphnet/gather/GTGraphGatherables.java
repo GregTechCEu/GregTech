@@ -3,12 +3,16 @@ package gregtech.api.graphnet.gather;
 import gregtech.api.GTValues;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.INetLogicEntry;
-import gregtech.api.graphnet.logic.LossAbsoluteLogic;
+import gregtech.api.graphnet.logic.TemperatureLogic;
+import gregtech.common.pipelike.block.cable.CableStructure;
+import gregtech.common.pipelike.net.energy.LossAbsoluteLogic;
 import gregtech.api.graphnet.logic.MultiNetCountLogic;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 
 import gregtech.api.graphnet.predicate.IEdgePredicate;
+
+import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -47,10 +51,17 @@ public final class GTGraphGatherables {
 
     @SubscribeEvent
     public static void gatherLogics(GatherLogicsEvent event) {
-        event.registerSupplier(WeightFactorLogic.INSTANCE.getName(), WeightFactorLogic::new);
-        event.registerSupplier(ThroughputLogic.INSTANCE.getName(), ThroughputLogic::new);
-        event.registerSupplier(ChannelCountLogic.INSTANCE.getName(), ChannelCountLogic::new);
-        event.registerSupplier(MultiNetCountLogic.INSTANCE.getName(), MultiNetCountLogic::new);
-        event.registerSupplier(LossAbsoluteLogic.INSTANCE.getName(), LossAbsoluteLogic::new);
+        event.registerLogic(WeightFactorLogic.INSTANCE);
+        event.registerLogic(ThroughputLogic.INSTANCE);
+        event.registerLogic(ChannelCountLogic.INSTANCE);
+        event.registerLogic(MultiNetCountLogic.INSTANCE);
+        event.registerLogic(LossAbsoluteLogic.INSTANCE);
+        event.registerLogic(VoltageLimitLogic.INSTANCE);
+        event.registerLogic(TemperatureLogic.INSTANCE);
+    }
+
+    @SubscribeEvent
+    public static void gatherMaterialStructures(GatherMaterialStructuresEvent event) {
+        CableStructure.registerDefaultStructures(event::registerMaterialStructure);
     }
 }

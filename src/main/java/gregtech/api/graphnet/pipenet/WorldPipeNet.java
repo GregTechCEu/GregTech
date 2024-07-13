@@ -6,7 +6,10 @@ import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.alg.INetAlgorithm;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.logic.MultiNetCountLogic;
+import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.worldnet.WorldNet;
+
+import gregtech.api.graphnet.worldnet.WorldNetNode;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
@@ -16,6 +19,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.world.World;
+
+import net.minecraftforge.common.capabilities.Capability;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +55,15 @@ public abstract class WorldPipeNet extends WorldNet {
             v.add(new WeakReference<>(this));
             return v;
         });
+    }
+
+    public abstract Capability<?>[] getTargetCapabilities();
+
+    public abstract IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node);
+
+    @Override
+    public @NotNull WorldPipeNetNode getOrCreateNode(@NotNull BlockPos pos) {
+        return (WorldPipeNetNode) super.getOrCreateNode(pos);
     }
 
     @Override

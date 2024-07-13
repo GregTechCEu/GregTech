@@ -1,35 +1,30 @@
 package gregtech.api.graphnet.edge.util;
 
-import gregtech.api.graphnet.pipenetold.IPipeNetData;
-import gregtech.api.graphnet.pipenetold.PipeNetNode;
-import gregtech.api.graphnet.pipenetold.block.IPipeType;
+import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.predicate.test.FluidTestObject;
 
-import org.jgrapht.Graph;
+import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
-public class FlowConsumer<PT extends Enum<PT> & IPipeType<NDT>, NDT extends IPipeNetData<NDT>,
-        E extends AbstractNetFlowEdge> implements Consumer<Double> {
+public class FlowConsumer {
 
-    private final E edge;
-    private final FluidTestObject testObject;
-    private final Graph<PipeNetNode<PT, NDT, E>, E> graph;
-    private final long flow;
+    private final AbstractNetFlowEdge edge;
+    private final IPredicateTestObject testObject;
+    private final IGraphNet graph;
+    private double flow;
     private final long tick;
     private final SimulatorKey simulatorKey;
     private final Consumer<Long> extra;
 
-    private double ratio = 1;
-
-    public FlowConsumer(E edge, FluidTestObject testObject, Graph<PipeNetNode<PT, NDT, E>, E> graph, long flow,
+    public FlowConsumer(AbstractNetFlowEdge edge, IPredicateTestObject testObject, IGraphNet graph, long flow,
                         long tick, SimulatorKey simulatorKey) {
         this(edge, testObject, graph, flow, tick, simulatorKey, null);
     }
 
-    public FlowConsumer(E edge, FluidTestObject testObject, Graph<PipeNetNode<PT, NDT, E>, E> graph, long flow,
+    public FlowConsumer(AbstractNetFlowEdge edge, IPredicateTestObject testObject, IGraphNet graph, long flow,
                         long tick, SimulatorKey simulatorKey, Consumer<Long> extra) {
         this.edge = edge;
         this.testObject = testObject;
@@ -41,13 +36,37 @@ public class FlowConsumer<PT extends Enum<PT> & IPipeType<NDT>, NDT extends IPip
     }
 
     public void modifyRatio(Double ratio) {
-        this.ratio *= ratio;
+        this.flow *= ratio;
     }
 
-    @Override
-    public void accept(Double finalRatio) {
-        long consumption = (long) (finalRatio * ratio * flow);
-        edge.consumeFlowLimit(testObject, graph, consumption, tick, simulatorKey);
-        if (extra != null) extra.accept(consumption);
+    public void modifyReduction(Long reduction) {
+        this.flow -= reduction;
+    }
+
+    public void modifyArbitrary(UnaryOperator<Double> modification) {
+        this.flow = modification.apply(this.flow);
+    }
+
+    public void finalRatio(Double finalRatio) {
+        modifyRatio(finalRatio);
+        consume();
+    }
+
+    public void finalReduction(Long finalReduction) {
+        modifyReduction(finalReduction);
+        consume();
+    }
+
+    public void finalArbitrary(UnaryOperator<Double> modification) {
+        modifyArbitrary(modification);
+        consume();
+    }
+
+    public void consume() {
+        long consumption = (long) Math.ceil(this.flow);
+        if (consumption > 0) {
+            edge.consumeFlowLimit(testObject, graph, consumption, tick, simulatorKey);
+            if (extra != null) extra.accept(consumption);
+        }
     }
 }

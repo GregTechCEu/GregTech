@@ -1,39 +1,67 @@
 package gregtech.api.graphnet.edge.util;
 
-import gregtech.api.graphnet.pipenetold.IPipeNetData;
-import gregtech.api.graphnet.pipenetold.PipeNetNode;
-import gregtech.api.graphnet.pipenetold.block.IPipeType;
+import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.predicate.test.FluidTestObject;
+
+import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.jgrapht.Graph;
 
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
-public class FlowConsumerList<PT extends Enum<PT> & IPipeType<NDT>, NDT extends IPipeNetData<NDT>,
-        E extends AbstractNetFlowEdge> extends ObjectArrayList<FlowConsumer<PT, NDT, E>> {
+public class FlowConsumerList extends ObjectArrayList<FlowConsumer> {
 
-    public void add(E edge, FluidTestObject testObject, Graph<PipeNetNode<PT, NDT, E>, E> graph, long flow,
+    public void add(AbstractNetFlowEdge edge, IPredicateTestObject testObject, IGraphNet graph, long flow,
                     long tick, SimulatorKey simulatorKey) {
-        this.add(new FlowConsumer<>(edge, testObject, graph, flow, tick, simulatorKey));
+        this.add(new FlowConsumer(edge, testObject, graph, flow, tick, simulatorKey));
     }
 
-    public void add(E edge, FluidTestObject testObject, Graph<PipeNetNode<PT, NDT, E>, E> graph, long flow,
+    public void add(AbstractNetFlowEdge edge, IPredicateTestObject testObject, IGraphNet graph, long flow,
                     long tick, SimulatorKey simulatorKey, Consumer<Long> extra) {
-        this.add(new FlowConsumer<>(edge, testObject, graph, flow, tick, simulatorKey, extra));
+        this.add(new FlowConsumer(edge, testObject, graph, flow, tick, simulatorKey, extra));
     }
 
     public void modifyRatios(double ratio) {
-        for (FlowConsumer<PT, NDT, E> consumer : this) {
+        for (FlowConsumer consumer : this) {
             consumer.modifyRatio(ratio);
         }
     }
 
-    public void doConsumption(double ratio) {
-        for (FlowConsumer<PT, NDT, E> consumer : this) {
-            consumer.accept(ratio);
+    public void modifyReductions(long reduction) {
+        for (FlowConsumer consumer : this) {
+            consumer.modifyReduction(reduction);
+        }
+    }
+
+    public void modifyArbitrary(UnaryOperator<Double> modifier) {
+        for (FlowConsumer consumer : this) {
+            consumer.modifyArbitrary(modifier);
+        }
+    }
+
+    public void doConsumption(double finalRatio) {
+        for (FlowConsumer consumer : this) {
+            consumer.finalRatio(finalRatio);
+        }
+    }
+
+    public void doConsumption(long finalReduction) {
+        for (FlowConsumer consumer : this) {
+            consumer.finalReduction(finalReduction);
+        }
+    }
+
+    public void doConsumption(UnaryOperator<Double> finalModifier) {
+        for (FlowConsumer consumer : this) {
+            consumer.finalArbitrary(finalModifier);
+        }
+    }
+
+    public void doConsumption() {
+        for (FlowConsumer consumer : this) {
+            consumer.consume();
         }
     }
 }

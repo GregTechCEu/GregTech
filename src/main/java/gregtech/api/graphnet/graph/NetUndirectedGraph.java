@@ -30,13 +30,9 @@ public class NetUndirectedGraph extends SimpleWeightedGraph<GraphVertex, GraphEd
     }
 
     @Override
-    public void prepareForDynamicWeightAlgorithmRun(IPredicateTestObject testObject, SimulatorKey simulator) {
-        if (!net.dynamicWeights()) throw new IllegalStateException("Net does not support dynamic weights!");
+    public void prepareForAlgorithmRun(IPredicateTestObject testObject, SimulatorKey simulator, long queryTick) {
         this.testObject = testObject;
         this.simulator = simulator;
-    }
-
-    public void setQueryTick(long queryTick) {
         this.queryTick = queryTick;
     }
 
@@ -51,11 +47,11 @@ public class NetUndirectedGraph extends SimpleWeightedGraph<GraphVertex, GraphEd
                 !graphEdge.getTarget().wrapped.traverse(queryTick, true))
             return Double.POSITIVE_INFINITY;
 
-        if (net.dynamicWeights()) {
-            return graphEdge.wrapped.test(testObject) ?
-                    graphEdge.wrapped.getDynamicWeight(testObject, simulator, queryTick, () -> super.getEdgeWeight(graphEdge)) :
-                    Double.POSITIVE_INFINITY;
-        } else return super.getEdgeWeight(graphEdge);
+        if (graphEdge.wrapped.test(testObject)) {
+            if (net.dynamicWeights()) {
+                return graphEdge.wrapped.getDynamicWeight(testObject, simulator, queryTick, () -> super.getEdgeWeight(graphEdge));
+            } else return super.getEdgeWeight(graphEdge);
+        } else return Double.POSITIVE_INFINITY;
     }
 
     public static Function<IGraphNet, INetGraph> standardBuilder() {

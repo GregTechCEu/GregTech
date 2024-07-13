@@ -1,8 +1,11 @@
 package gregtech.api.graphnet.alg;
 
 import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.path.INetPath;
 import gregtech.api.graphnet.graph.GraphVertex;
+
+import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +40,8 @@ public class NetAlgorithmWrapper {
         return alg.supportsDynamicWeights();
     }
 
-    public <Path extends INetPath<?, ?>> Iterator<Path> getPathsIterator(GraphVertex source, NetPathMapper<Path> remapper) {
-        net.getGraph().setQueryTick(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
+    public <Path extends INetPath<?, ?>> Iterator<Path> getPathsIterator(GraphVertex source, NetPathMapper<Path> remapper, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
+        net.getGraph().prepareForAlgorithmRun(testObject, simulator, queryTick);
         if (alg == null) alg = builder.apply(net);
         return alg.getPathsIterator(source, remapper);
     }

@@ -12,9 +12,14 @@ public final class ChannelCountLogic extends AbstractIntLogicData<ChannelCountLo
     }
 
     @Override
+    public ChannelCountLogic getNew() {
+        return new ChannelCountLogic();
+    }
+
+    @Override
     public ChannelCountLogic union(INetLogicEntry<?, ?> other) {
         if (other instanceof ChannelCountLogic l) {
-            return new ChannelCountLogic().setValue(Math.min(this.getValue(), l.getValue()));
-        } else return new ChannelCountLogic().setValue(1);
+            return this.getValue() < l.getValue() ? this : l;
+        } else return this;
     }
 }

@@ -106,7 +106,7 @@ public class EnergyNetHandler implements IEnergyContainer, IPipeNetHandler {
         SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
         destSimulationCache = simulate ? new Object2LongOpenHashMap<>() : null;
 
-        this.getNet().getGraph().prepareForDynamicWeightAlgorithmRun(null, simulator);
+        this.getNet().getGraph().prepareForAlgorithmRun(null, simulator);
         long amperesUsed = distributionRespectCapacity(side, voltage, amperage, queryTick,
                 this.getNet().getPaths(cable), simulator);
         if (amperesUsed < amperage) {

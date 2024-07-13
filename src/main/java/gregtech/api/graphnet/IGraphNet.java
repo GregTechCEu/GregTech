@@ -23,6 +23,14 @@ import java.util.Iterator;
 public interface IGraphNet {
 
     /**
+     * Controls whether dynamic weight lookup will be used.
+     * If the algorithm does not support dynamic weights, this will be ignored.
+     */
+    default boolean usesDynamicWeights() {
+        return true;
+    }
+
+    /**
      * Adds a node to the graphnet.
      * @param node The node to add.
      */
@@ -103,7 +111,7 @@ public interface IGraphNet {
      */
     @NotNull
     default NetLogicData getDefaultNodeData() {
-        return new NetLogicData().setLogicEntry(new WeightFactorLogic().setValue(1));
+        return new NetLogicData().setLogicEntry(WeightFactorLogic.INSTANCE.getWith(1));
     }
 
     /**

@@ -1,5 +1,6 @@
 package gregtech.api.graphnet.worldnet;
 
+import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.path.GenericGraphNetPath;
 import gregtech.api.graphnet.GraphNetBacker;
 import gregtech.api.graphnet.IGraphNet;
@@ -15,6 +16,8 @@ import gregtech.api.graphnet.graph.NetUndirectedGraph;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 
+import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.function.Function;
 
-public abstract class WorldNet extends WorldSavedData implements IGraphNet {
+public abstract class WorldNet extends WorldSavedData implements IGraphNet, GenericGraphNetPath.Provider {
 
     protected final GraphNetBacker backer;
     private World world;
@@ -51,8 +54,10 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet {
         return world;
     }
 
-    public Iterator<GenericGraphNetPath> getGenericPaths(WorldNetNode node) {
-        return backer.getPaths(node, GenericGraphNetPath.MAPPER);
+    @Override
+    public Iterator<GenericGraphNetPath> getPaths(NetNode node, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
+        nodeClassCheck(node);
+        return backer.getPaths(node, GenericGraphNetPath.MAPPER, testObject, simulator, queryTick);
     }
 
     @NotNull

@@ -102,7 +102,7 @@ public class FluidNetHandler implements IFluidHandler, IPipeNetHandler {
         FluidStack helper = resource.copy();
         if (!doFill) this.simulatorKey = SimulatorKey.getNewSimulatorInstance();
         else this.simulatorKey = null;
-        this.getNet().getGraph().prepareForDynamicWeightAlgorithmRun(testObject, simulatorKey);
+        this.getNet().getGraph().prepareForAlgorithmRun(testObject, simulatorKey);
         mainloop:
         for (Iterator<PipeNetPath<FluidPipeType, FluidPipeProperties, NetFlowEdge>> iter = this.getNet()
                 .getPaths(pipe); iter.hasNext();) {

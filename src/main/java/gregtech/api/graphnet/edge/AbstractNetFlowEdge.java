@@ -32,7 +32,8 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
     }
 
     public boolean cannotSupportChannel(IPredicateTestObject channel, long queryTick, @Nullable SimulatorKey simulator) {
-        return getChannels(simulator).cannotSupportChannel(channel, queryTick);
+        if (!this.test(channel)) return false;
+        else return getChannels(simulator).cannotSupportChannel(channel, queryTick);
     }
 
     protected AbstractChannelsHolder getChannels(@Nullable SimulatorKey simulator) {
@@ -51,20 +52,24 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
         return getData().getLogicEntryDefaultable(ChannelCountLogic.INSTANCE).getValue();
     }
 
-    protected int getThroughput() {
+    protected long getThroughput() {
         return getData().getLogicEntryDefaultable(ThroughputLogic.INSTANCE).getValue();
     }
 
     public long getFlowLimit(IPredicateTestObject channel, IGraphNet graph, long queryTick, @Nullable SimulatorKey simulator) {
-        return getChannels(simulator).getFlowLimit(channel, graph, queryTick);
+        if (!this.test(channel)) return 0;
+        else return getChannels(simulator).getFlowLimit(channel, graph, queryTick);
     }
 
     public long getConsumedLimit(IPredicateTestObject channel, long queryTick, @Nullable SimulatorKey simulator) {
-        return getChannels(simulator).getConsumedLimit(channel, queryTick);
+        if (!this.test(channel)) return 0;
+        else return getChannels(simulator).getConsumedLimit(channel, queryTick);
     }
 
     public void consumeFlowLimit(IPredicateTestObject channel, IGraphNet graph, long amount, long queryTick, @Nullable SimulatorKey simulator) {
-        getChannels(simulator).consumeFlowLimit(channel, graph, amount, queryTick);
+        if (this.test(channel)) {
+            getChannels(simulator).consumeFlowLimit(channel, graph, amount, queryTick);
+        }
     }
 
     public Set<IPredicateTestObject> getActiveChannels(@Nullable SimulatorKey simulator, long queryTick) {

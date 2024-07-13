@@ -3,6 +3,7 @@ package gregtech.api.graphnet.pipenet;
 import gregtech.api.graphnet.GraphNetBacker;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.MultiNetNodeHandler;
+import gregtech.api.graphnet.pipenet.physical.PipeTileEntity;
 import gregtech.api.graphnet.worldnet.WorldNet;
 import gregtech.api.graphnet.worldnet.WorldNetNode;
 
@@ -18,6 +19,11 @@ public final class WorldPipeNetNode extends WorldNetNode {
 
     public WorldPipeNetNode(WorldPipeNet net) {
         super(net);
+    }
+
+    public PipeTileEntity getTileEntity() {
+        // should this be cached? It's only ever used for active nodes when they are being targeted by a path traversal.
+        return (PipeTileEntity) getNet().getWorld().getTileEntity(getEquivalencyData());
     }
 
     @Override

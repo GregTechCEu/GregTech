@@ -20,7 +20,6 @@ public final class SimulatorKey {
 
     @Override
     public int hashCode() {
-        // enforcing hash uniqueness improves weak map performance
         return id;
     }
 }

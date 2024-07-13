@@ -2,25 +2,30 @@ package gregtech.common.pipelikeold.cable.net;
 
 import gregtech.api.graphnet.AbstractGroupData;
 
-import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class EnergyGroupData extends AbstractGroupData {
 
     private long lastEnergyFluxPerSec;
     private long energyFluxPerSec;
-    private long lastTime;
+    private long updateTime;
 
     public long getEnergyFluxPerSec() {
-        World world = this.group.net.getWorld();
-        if (world != null && !world.isRemote && (world.getTotalWorldTime() - lastTime) >= 20) {
-            lastTime = world.getTotalWorldTime();
-            clearCache();
-        }
+        updateCache();
         return lastEnergyFluxPerSec;
     }
 
     public void addEnergyFluxPerSec(long energy) {
+        updateCache();
         energyFluxPerSec += energy;
+    }
+
+    private void updateCache() {
+        long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        if (tick > updateTime) {
+            updateTime = updateTime + 20;
+            clearCache();
+        }
     }
 
     public void clearCache() {

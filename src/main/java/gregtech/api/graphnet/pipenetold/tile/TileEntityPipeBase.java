@@ -247,7 +247,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.paintingColor = paintingColor;
         if (!getWorld().isRemote) {
             getPipeBlock().getWorldPipeNet(getWorld()).updateMark(getPos(), getCableMark());
-            writeCustomData(UPDATE_INSULATION_COLOR, buffer -> buffer.writeInt(paintingColor));
+            writeCustomData(UPDATE_PAINT, buffer -> buffer.writeInt(paintingColor));
             markDirty();
         }
     }
@@ -545,7 +545,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.tickingPipe.receiveCustomData(discriminator, buf);
             return;
         }
-        if (discriminator == UPDATE_INSULATION_COLOR) {
+        if (discriminator == UPDATE_PAINT) {
             this.paintingColor = buf.readInt();
         } else if (discriminator == UPDATE_CONNECTIONS) {
             this.getNode().setOpenConnections(buf.readVarInt());

@@ -15,7 +15,7 @@ public class GatherLogicsEvent extends Event {
 
     GatherLogicsEvent() {}
 
-    public void registerSupplier(String name, Supplier<INetLogicEntry<?, ?>> supplier) {
-        gathered.put(name, supplier);
+    public void registerLogic(INetLogicEntry<?, ?> logic) {
+        gathered.put(logic.getName(), logic::getNew);
     }
 }

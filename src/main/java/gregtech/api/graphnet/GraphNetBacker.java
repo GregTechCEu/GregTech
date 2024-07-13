@@ -5,12 +5,15 @@ import gregtech.api.graphnet.alg.NetAlgorithmWrapper;
 import gregtech.api.graphnet.alg.NetPathMapper;
 import gregtech.api.graphnet.alg.iter.ICacheableIterator;
 import gregtech.api.graphnet.edge.NetEdge;
+import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 
 import gregtech.api.graphnet.graph.GraphVertex;
 
 import gregtech.api.graphnet.path.INetPath;
+
+import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -104,7 +107,7 @@ public final class GraphNetBacker {
     }
 
     public boolean dynamicWeights() {
-        return netAlgorithm.supportsDynamicWeights();
+        return netAlgorithm.getNet().usesDynamicWeights() &&  netAlgorithm.supportsDynamicWeights();
     }
 
     /**
@@ -112,13 +115,13 @@ public final class GraphNetBacker {
      * most likely a bad remapper was passed in. <br>
      * This method should never be exposed outside the net this backer is backing due to this fragility.
      */
-    public <Path extends INetPath<?, ?>> Iterator<Path> getPaths(@Nullable NetNode node, @NotNull NetPathMapper<Path> remapper) {
+    public <Path extends INetPath<?, ?>> Iterator<Path> getPaths(@Nullable NetNode node, @NotNull NetPathMapper<Path> remapper, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
         if (node == null) return Collections.emptyIterator();
 
         Iterator<? extends INetPath<?, ?>> cache = node.getPathCache();
         if (cache != null) return (Iterator<Path>) cache;
 
-        Iterator<Path> iter = this.netAlgorithm.getPathsIterator(node.wrapper, remapper);
+        Iterator<Path> iter = this.netAlgorithm.getPathsIterator(node.wrapper, remapper, testObject, simulator, queryTick);
         if (iter instanceof ICacheableIterator) {
             return (Iterator<Path>) node.setPathCache((ICacheableIterator<Path>) iter);
         } else return iter;

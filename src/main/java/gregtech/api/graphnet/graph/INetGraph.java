@@ -12,9 +12,7 @@ public interface INetGraph extends Graph<GraphVertex, GraphEdge> {
     @ApiStatus.Internal
     void setOwningNet(GraphNetBacker net);
 
-    void prepareForDynamicWeightAlgorithmRun(IPredicateTestObject testObject, SimulatorKey simulator);
-
-    void setQueryTick(long queryTick);
+    void prepareForAlgorithmRun(IPredicateTestObject testObject, SimulatorKey simulator, long queryTick);
 
     boolean isDirected();
 }
