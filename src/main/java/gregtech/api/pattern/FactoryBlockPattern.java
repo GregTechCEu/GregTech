@@ -1,6 +1,5 @@
 package gregtech.api.pattern;
 
-import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import com.google.common.base.Joiner;
@@ -132,7 +131,8 @@ public class FactoryBlockPattern {
         if (symbol.length() == 1) {
             return where(symbol.charAt(0), blockMatcher);
         }
-        throw new IllegalArgumentException(String.format("Symbol \"%s\" is invalid! It must be exactly one character!", symbol));
+        throw new IllegalArgumentException(
+                String.format("Symbol \"%s\" is invalid! It must be exactly one character!", symbol));
     }
 
     public BlockPattern build() {
