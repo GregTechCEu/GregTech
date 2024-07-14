@@ -1,8 +1,10 @@
 package gregtech.api.pattern;
 
 public class StructureInfo {
+
     protected final PatternMatchContext context;
     protected PatternError error;
+
     public StructureInfo(PatternMatchContext context, PatternError error) {
         this.context = context;
         this.error = error;

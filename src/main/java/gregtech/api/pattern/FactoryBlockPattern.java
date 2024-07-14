@@ -19,8 +19,11 @@ import static gregtech.api.util.RelativeDirection.*;
  * A builder class for {@link BlockPattern}<br />
  * When the multiblock is placed, its facings are concrete. Then, the {@link RelativeDirection}s passed into
  * {@link FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)} are ways in which the
- * pattern progresses. It can be thought like this, where startPos() is either defined via {@link FactoryBlockPattern#setStartOffset(int, int, int)}
- * , or automatically detected(for legacy compat only, you should use {@link FactoryBlockPattern#setStartOffset(int, int, int)} always for new code):
+ * pattern progresses. It can be thought like this, where startPos() is either defined via
+ * {@link FactoryBlockPattern#setStartOffset(int, int, int)}
+ * , or automatically detected(for legacy compat only, you should use
+ * {@link FactoryBlockPattern#setStartOffset(int, int, int)} always for new code):
+ * 
  * <pre>
  * {@code
  * for(int aisleI in 0..aisles):
@@ -43,9 +46,10 @@ public class FactoryBlockPattern {
      */
     private final int[] dimensions = { -1, -1, -1 };
     /**
-     * In the form of [ aisleOffset, stringOffset, charOffset ] where the offsets are the opposite {@link RelativeDirection} of structure directions
+     * In the form of [ aisleOffset, stringOffset, charOffset ] where the offsets are the opposite
+     * {@link RelativeDirection} of structure directions
      */
-    private final int[] startOffset = new int[3];
+    private int[] startOffset;
     private char centerChar;
 
     private final List<PatternAisle> aisles = new ArrayList<>();
@@ -90,6 +94,7 @@ public class FactoryBlockPattern {
 
     /**
      * Adds a repeatable aisle to this pattern.
+     * 
      * @param aisle The aisle to add
      * @see FactoryBlockPattern#setRepeatable(int, int)
      */
@@ -139,6 +144,7 @@ public class FactoryBlockPattern {
 
     /**
      * Set last aisle repeatable
+     * 
      * @param minRepeat Minimum amount of repeats, inclusive
      * @param maxRepeat Maximum amount of repeats, inclusive
      */
@@ -151,6 +157,7 @@ public class FactoryBlockPattern {
 
     /**
      * Set last aisle repeatable
+     * 
      * @param repeatCount The amount to repeat
      */
     public FactoryBlockPattern setRepeatable(int repeatCount) {
@@ -165,7 +172,9 @@ public class FactoryBlockPattern {
     }
 
     /**
-     * Starts the builder, this is equivlent to calling {@link FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)} with RIGHT, UP, BACK
+     * Starts the builder, this is equivlent to calling
+     * {@link FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)} with RIGHT, UP, BACK
+     * 
      * @see FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)
      */
     public static FactoryBlockPattern start() {
@@ -174,9 +183,12 @@ public class FactoryBlockPattern {
 
     /**
      * Starts the builder, each pair of {@link RelativeDirection} must be used at exactly once!
-     * @param charDir The direction chars progress in, each successive char in a string progresses by this direction
-     * @param stringDir The direction strings progress in, each successive string in an aisle progresses by this direction
-     * @param aisleDir The direction aisles progress in, each successive {@link FactoryBlockPattern#aisle(String...)} progresses in this direction
+     * 
+     * @param charDir   The direction chars progress in, each successive char in a string progresses by this direction
+     * @param stringDir The direction strings progress in, each successive string in an aisle progresses by this
+     *                  direction
+     * @param aisleDir  The direction aisles progress in, each successive {@link FactoryBlockPattern#aisle(String...)}
+     *                  progresses in this direction
      */
     public static FactoryBlockPattern start(RelativeDirection charDir, RelativeDirection stringDir,
                                             RelativeDirection aisleDir) {
@@ -185,7 +197,8 @@ public class FactoryBlockPattern {
 
     /**
      * Puts a symbol onto the predicate map
-     * @param symbol The symbol, will override previous identical ones
+     * 
+     * @param symbol       The symbol, will override previous identical ones
      * @param blockMatcher The predicate to put
      */
     public FactoryBlockPattern where(char symbol, TraceabilityPredicate blockMatcher) {
@@ -205,7 +218,8 @@ public class FactoryBlockPattern {
     public BlockPattern build() {
         checkMissingPredicates();
         this.dimensions[0] = aisles.size();
-        return new BlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, structureDir, startOffset, symbolMap, centerChar);
+        return new BlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, structureDir, startOffset, symbolMap,
+                centerChar);
     }
 
     private void checkMissingPredicates() {

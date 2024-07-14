@@ -64,6 +64,7 @@ public class GreggyBlockPos {
 
     /**
      * Sets this pos's position to be the same as the other one
+     * 
      * @param other The other pos to get position from
      */
     public GreggyBlockPos from(GreggyBlockPos other) {

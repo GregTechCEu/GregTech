@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * Class allowing access to a block at a certain pos for structure checks and contains structure information for legacy
  */
 public class BlockWorldState {
+
     protected static boolean warned = false;
     protected World world;
     protected BlockPos pos;
@@ -99,7 +100,8 @@ public class BlockWorldState {
     protected void warn(String name) {
         if (warned) return;
 
-        GTLog.logger.warn("Calling " + name + " on BlockWorldState is deprecated! Use the method on StructureInfo, obtained via BlockWorldState#getStructureInfo() !");
+        GTLog.logger.warn("Calling " + name +
+                " on BlockWorldState is deprecated! Use the method on StructureInfo, obtained via BlockWorldState#getStructureInfo() !");
         warned = true;
     }
 }
