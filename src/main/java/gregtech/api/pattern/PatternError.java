@@ -7,40 +7,36 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class PatternError {
 
-    protected BlockWorldState worldState;
+    protected BlockPos pos;
+    protected List<List<ItemStack>> candidates;
 
-    public void setWorldState(BlockWorldState worldState) {
-        this.worldState = worldState;
+    public PatternError(BlockPos pos, List<List<ItemStack>> candidates) {
+        this.pos = pos;
+        this.candidates = candidates;
     }
 
-    public World getWorld() {
-        return worldState.getWorld();
+    public PatternError(BlockPos pos, TraceabilityPredicate failingPredicate) {
+        this(pos, failingPredicate.getCandidates());
     }
 
+    @Nullable
     public BlockPos getPos() {
-        return worldState.getPos();
+        return pos;
     }
 
     public List<List<ItemStack>> getCandidates() {
-        TraceabilityPredicate predicate = worldState.predicate;
-        List<List<ItemStack>> candidates = new ArrayList<>();
-        for (TraceabilityPredicate.SimplePredicate common : predicate.common) {
-            candidates.add(common.getCandidates());
-        }
-        for (TraceabilityPredicate.SimplePredicate limited : predicate.limited) {
-            candidates.add(limited.getCandidates());
-        }
-        return candidates;
+        return this.candidates;
     }
 
     @SideOnly(Side.CLIENT)
     public String getErrorInfo() {
-        List<List<ItemStack>> candidates = getCandidates();
         StringBuilder builder = new StringBuilder();
         for (List<ItemStack> candidate : candidates) {
             if (!candidate.isEmpty()) {
@@ -49,6 +45,6 @@ public class PatternError {
             }
         }
         builder.append("...");
-        return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), worldState.pos);
+        return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), pos);
     }
 }

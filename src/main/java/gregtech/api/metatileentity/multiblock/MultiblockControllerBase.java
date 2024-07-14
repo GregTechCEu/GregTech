@@ -551,14 +551,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        if (this.structurePattern == null) {
-            this.reinitializeStructurePattern();
-            if (this.structurePattern == null) {
-                return Collections.emptyList();
-            }
-        }
-        int[][] aisleRepetitions = this.structurePattern.aisleRepetitions;
-        return repetitionDFS(new ArrayList<>(), aisleRepetitions, new Stack<>());
+        return Collections.emptyList();
+//        if (this.structurePattern == null) {
+//            this.reinitializeStructurePattern();
+//            if (this.structurePattern == null) {
+//                return Collections.emptyList();
+//            }
+//        }
+//        int[][] aisleRepetitions = this.structurePattern.aisleRepetitions;
+//        return repetitionDFS(new ArrayList<>(), aisleRepetitions, new Stack<>());
     }
 
     private List<MultiblockShapeInfo> repetitionDFS(List<MultiblockShapeInfo> pages, int[][] aisleRepetitions,

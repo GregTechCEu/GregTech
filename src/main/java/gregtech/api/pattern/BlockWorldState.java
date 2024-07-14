@@ -1,51 +1,69 @@
 package gregtech.api.pattern;
 
+import gregtech.api.util.GTLog;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
+/**
+ * Class allowing access to a block at a certain pos for structure checks and contains structure information for legacy
+ */
 public class BlockWorldState {
-
+    protected static boolean warned = false;
     protected World world;
     protected BlockPos pos;
     protected IBlockState state;
     protected TileEntity tileEntity;
     protected boolean tileEntityInitialized;
-    protected PatternMatchContext matchContext;
-    protected TraceabilityPredicate predicate;
-    protected PatternError error;
+    protected final StructureInfo info;
 
-    public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext,
-                       TraceabilityPredicate predicate) {
+    public BlockWorldState(StructureInfo info) {
+        this.info = info;
+    }
+
+    public void update(World worldIn, GreggyBlockPos pos) {
         this.world = worldIn;
-        this.pos = posIn;
+        this.pos = pos.immutable();
         this.state = null;
         this.tileEntity = null;
         this.tileEntityInitialized = false;
-        this.matchContext = matchContext;
-        this.error = null;
     }
 
+    public void setPos(GreggyBlockPos pos) {
+        setPos(pos.immutable());
+    }
+
+    public void setPos(BlockPos pos) {
+        this.pos = pos.toImmutable();
+        this.state = null;
+        this.tileEntity = null;
+        this.tileEntityInitialized = false;
+    }
+
+    @Deprecated
     public boolean hasError() {
-        return error != null;
+        warn("hasError()");
+        return info.getError() != null;
     }
 
+    @Deprecated
     public void setError(PatternError error) {
-        this.error = error;
-        if (error != null) {
-            error.setWorldState(this);
-        }
+        warn("setError(PatternError)");
+        info.setError(error);
     }
 
+    @Deprecated
     public PatternMatchContext getMatchContext() {
-        return matchContext;
+        warn("getMatchContext()");
+        return info.getContext();
+    }
+
+    public StructureInfo getStructureInfo() {
+        return this.info;
     }
 
     public IBlockState getBlockState() {
@@ -72,5 +90,16 @@ public class BlockWorldState {
 
     public World getWorld() {
         return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    protected void warn(String name) {
+        if (warned) return;
+
+        GTLog.logger.warn("Calling " + name + " on BlockWorldState is deprecated! Use the method on StructureInfo, obtained via BlockWorldState#getStructureInfo() !");
+        warned = true;
     }
 }

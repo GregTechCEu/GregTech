@@ -46,4 +46,14 @@ public class PatternAisle {
         }
         return null;
     }
+
+    /**
+     * Gets the char at the specified position.
+     * @param stringI The string index to get from
+     * @param charI The char index to get
+     * @return The char
+     */
+    public char charAt(int stringI, int charI) {
+        return pattern[stringI].charAt(charI);
+    }
 }

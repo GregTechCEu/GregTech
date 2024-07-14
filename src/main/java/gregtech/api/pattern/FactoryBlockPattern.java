@@ -9,11 +9,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -22,8 +19,8 @@ import static gregtech.api.util.RelativeDirection.*;
  * A builder class for {@link BlockPattern}<br />
  * When the multiblock is placed, its facings are concrete. Then, the {@link RelativeDirection}s passed into
  * {@link FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)} are ways in which the
- * pattern progresses. It can be thought like this, where startPos() is either defined via {@link FactoryBlockPattern#setStartOffset(int...)}
- * , or automatically detected(for legacy compat only, you should use {@link FactoryBlockPattern#setStartOffset(int...)} always for new code):
+ * pattern progresses. It can be thought like this, where startPos() is either defined via {@link FactoryBlockPattern#setStartOffset(int, int, int)}
+ * , or automatically detected(for legacy compat only, you should use {@link FactoryBlockPattern#setStartOffset(int, int, int)} always for new code):
  * <pre>
  * {@code
  * for(int aisleI in 0..aisles):
@@ -42,13 +39,13 @@ public class FactoryBlockPattern {
     private static final Joiner COMMA_JOIN = Joiner.on(",");
 
     /**
-     * In the form of [ num char per string, num string per aisle, num aisles ]
+     * In the form of [ num aisles, num string per aisle, num char per string ]
      */
     private final int[] dimensions = { -1, -1, -1 };
     /**
      * In the form of [ aisleOffset, stringOffset, charOffset ] where the offsets are the opposite {@link RelativeDirection} of structure directions
      */
-    private int[] startOffset;
+    private final int[] startOffset = new int[3];
     private char centerChar;
 
     private final List<PatternAisle> aisles = new ArrayList<>();
@@ -101,8 +98,8 @@ public class FactoryBlockPattern {
             throw new IllegalArgumentException("Empty pattern for aisle");
 
         // set the dimensions if the user hasn't already
-        if (dimensions[0] == -1) {
-            dimensions[0] = aisle[0].length();
+        if (dimensions[2] == -1) {
+            dimensions[2] = aisle[0].length();
         }
         if (dimensions[1] == -1) {
             dimensions[1] = aisle.length;
@@ -113,9 +110,9 @@ public class FactoryBlockPattern {
                     ", but was given one with a height of " + aisle.length + ")");
         } else {
             for (String s : aisle) {
-                if (s.length() != dimensions[0]) {
+                if (s.length() != dimensions[2]) {
                     throw new IllegalArgumentException(
-                            "Not all rows in the given aisle are the correct width (expected " + dimensions[0] +
+                            "Not all rows in the given aisle are the correct width (expected " + dimensions[2] +
                                     ", found one with " + s.length() + ")");
                 }
 
@@ -207,8 +204,8 @@ public class FactoryBlockPattern {
 
     public BlockPattern build() {
         checkMissingPredicates();
-        this.dimensions[2] = aisles.size();
-        return new BlockPattern(aisles.toArray(PatternAisle[]::new), dimensions, structureDir, startOffset, symbolMap, centerChar);
+        this.dimensions[0] = aisles.size();
+        return new BlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, structureDir, startOffset, symbolMap, centerChar);
     }
 
     private void checkMissingPredicates() {

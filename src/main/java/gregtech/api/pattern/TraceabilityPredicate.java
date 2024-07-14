@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -32,16 +33,16 @@ public class TraceabilityPredicate {
             blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(),
                     blockWorldState.getWorld(), blockWorldState.getPos()));
     // Allow all heating coils, and require them to have the same type.
-    public static Supplier<TraceabilityPredicate> HEATING_COILS = () -> new TraceabilityPredicate(blockWorldState -> {
+    public static Supplier<TraceabilityPredicate> HEATING_COILS = () -> new TraceabilityPredicate((blockWorldState, info) -> {
         IBlockState blockState = blockWorldState.getBlockState();
         if (GregTechAPI.HEATING_COILS.containsKey(blockState)) {
             IHeatingCoilBlockStats stats = GregTechAPI.HEATING_COILS.get(blockState);
-            Object currentCoil = blockWorldState.getMatchContext().getOrPut("CoilType", stats);
+            Object currentCoil = info.getContext().getOrPut("CoilType", stats);
             if (!currentCoil.equals(stats)) {
-                blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.coils"));
+                info.setError(new PatternStringError("gregtech.multiblock.pattern.error.coils"));
                 return false;
             }
-            blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
+            info.getContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
             return true;
         }
         return false;
@@ -68,6 +69,7 @@ public class TraceabilityPredicate {
         isSingle = predicate.isSingle;
     }
 
+    @Deprecated
     public TraceabilityPredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
         common.add(new SimplePredicate(predicate, candidates));
     }
@@ -76,8 +78,13 @@ public class TraceabilityPredicate {
         this(predicate, null);
     }
 
-    public boolean isHasAir() {
-        return hasAir;
+    @Deprecated
+    public TraceabilityPredicate(BiPredicate<BlockWorldState, StructureInfo> predicate, Supplier<BlockInfo[]> candidates) {
+        common.add(new SimplePredicate(predicate, candidates));
+    }
+
+    public TraceabilityPredicate(BiPredicate<BlockWorldState, StructureInfo> predicate) {
+        this(predicate, null);
     }
 
     public boolean isSingle() {
@@ -122,6 +129,21 @@ public class TraceabilityPredicate {
             });
         }
         return this;
+    }
+
+    /**
+     * Gets the candidates for this predicate.
+     * @return A list containing lists which group together candidates
+     */
+    public List<List<ItemStack>> getCandidates() {
+        List<List<ItemStack>> candidates = new ArrayList<>();
+        for (TraceabilityPredicate.SimplePredicate common : common) {
+            candidates.add(common.getCandidates());
+        }
+        for (TraceabilityPredicate.SimplePredicate limited : limited) {
+            candidates.add(limited.getCandidates());
+        }
+        return candidates;
     }
 
     /**
@@ -216,14 +238,13 @@ public class TraceabilityPredicate {
         return this;
     }
 
-    public boolean test(BlockWorldState blockWorldState) {
-        boolean flag = false;
+    public boolean test(BlockWorldState blockWorldState, StructureInfo info, Object2IntMap<SimplePredicate> globalCache, Object2IntMap<SimplePredicate> layerCache) {
         for (SimplePredicate predicate : limited) {
-            if (predicate.testLimited(blockWorldState)) {
-                flag = true;
+            if (predicate.testLimited(blockWorldState, info, globalCache, layerCache)) {
+                return true;
             }
         }
-        return flag || common.stream().anyMatch(predicate -> predicate.test(blockWorldState));
+        return common.stream().anyMatch(predicate -> predicate.test(blockWorldState, info));
     }
 
     public TraceabilityPredicate or(TraceabilityPredicate other) {
@@ -246,7 +267,7 @@ public class TraceabilityPredicate {
 
         public final Supplier<BlockInfo[]> candidates;
 
-        public final Predicate<BlockWorldState> predicate;
+        public final BiPredicate<BlockWorldState, StructureInfo> predicate;
 
         @SideOnly(Side.CLIENT)
         private List<String> toolTips;
@@ -258,7 +279,14 @@ public class TraceabilityPredicate {
 
         public int previewCount = -1;
 
+        @Deprecated
         public SimplePredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
+            // legacy compat
+            this.predicate = (state, info) -> predicate.test(state);
+            this.candidates = candidates;
+        }
+
+        public SimplePredicate(BiPredicate<BlockWorldState, StructureInfo> predicate, Supplier<BlockInfo[]> candidates) {
             this.predicate = predicate;
             this.candidates = candidates;
         }
@@ -298,39 +326,35 @@ public class TraceabilityPredicate {
             return result;
         }
 
-        public boolean test(BlockWorldState blockWorldState) {
-            return predicate.test(blockWorldState);
+        public boolean test(BlockWorldState state, StructureInfo info) {
+            return predicate.test(state, info);
         }
 
-        public boolean testLimited(BlockWorldState blockWorldState) {
-            return testGlobal(blockWorldState) && testLayer(blockWorldState);
+        public boolean testLimited(BlockWorldState blockWorldState, StructureInfo info, Object2IntMap<SimplePredicate> globalCache, Object2IntMap<SimplePredicate> layerCache) {
+            return testGlobal(blockWorldState, info, globalCache) && testLayer(blockWorldState, info, layerCache);
         }
 
-        public SinglePredicateError testGlobal(BlockWorldState blockWorldState) {
+        public boolean testGlobal(BlockWorldState blockWorldState, StructureInfo info,Object2IntMap<SimplePredicate> cache) {
             if (minGlobalCount == -1 && maxGlobalCount == -1) return true;
-            Integer count = blockWorldState.globalCount.get(this);
-            boolean base = predicate.test(blockWorldState);
-            count = (count == null ? 0 : count) + (base ? 1 : 0);
-            blockWorldState.globalCount.put(this, count);
+
+            boolean base = predicate.test(blockWorldState, info);
+            int count = cache.getInt(this);
+            count += base ? 1 : 0;
+            cache.put(this, count);
             if (maxGlobalCount == -1 || count <= maxGlobalCount) return base;
-            blockWorldState.setError(new SinglePredicateError(this, 0));
+            info.setError(new SinglePredicateError(this, 0));
             return false;
         }
 
-        /**
-         *
-         * @param blockWorldState
-         * @return
-         */
-        public SinglePredicateError testLayer(Object2IntMap<TraceabilityPredicate> cache) {
-            if (minLayerCount == -1 && maxLayerCount == -1) return null;
+        public boolean testLayer(BlockWorldState blockWorldState, StructureInfo info,Object2IntMap<SimplePredicate> cache) {
+            if (minLayerCount == -1 && maxLayerCount == -1) return true;
 
-            int count = cache.get(this);
-            boolean base = predicate.test(blockWorldState);
-            count = (count == null ? 0 : count) + (base ? 1 : 0);
-            blockWorldState.layerCount.put(this, count);
+            boolean base = predicate.test(blockWorldState, info);
+            int count = cache.getInt(this);
+            count += base ? 1 : 0;
+            cache.put(this, count);
             if (maxLayerCount == -1 || count <= maxLayerCount) return base;
-            blockWorldState.setError(new SinglePredicateError(this, 2));
+            info.setError(new SinglePredicateError(this, 2));
             return false;
         }
 
@@ -352,27 +376,24 @@ public class TraceabilityPredicate {
 
     public static class SinglePredicateError extends PatternError {
 
-        public final SimplePredicate predicate;
-        public final int type;
+        public final int type, number;
 
-        public SinglePredicateError(SimplePredicate predicate, int type) {
-            this.predicate = predicate;
+        public SinglePredicateError(SimplePredicate failingPredicate, int type) {
+            super(null, Collections.singletonList(failingPredicate.getCandidates()));
             this.type = type;
-        }
 
-        @Override
-        public List<List<ItemStack>> getCandidates() {
-            return Collections.singletonList(predicate.getCandidates());
+            int number = -1;
+            if (type == 0) number = failingPredicate.maxGlobalCount;
+            if (type == 1) number = failingPredicate.minGlobalCount;
+            if (type == 2) number = failingPredicate.maxLayerCount;
+            if (type == 3) number = failingPredicate.minLayerCount;
+
+            this.number = number;
         }
 
         @SideOnly(Side.CLIENT)
         @Override
         public String getErrorInfo() {
-            int number = -1;
-            if (type == 0) number = predicate.maxGlobalCount;
-            if (type == 1) number = predicate.minGlobalCount;
-            if (type == 2) number = predicate.maxLayerCount;
-            if (type == 3) number = predicate.minLayerCount;
             return I18n.format("gregtech.multiblock.pattern.error.limited." + type, number);
         }
     }
