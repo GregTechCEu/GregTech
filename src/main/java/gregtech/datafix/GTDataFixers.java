@@ -2,13 +2,11 @@ package gregtech.datafix;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.datafix.migration.impl.MigrateMTEBlockTE;
 import gregtech.datafix.migration.impl.MigrateMTEItems;
 import gregtech.datafix.migration.lib.MTERegistriesMigrator;
 import gregtech.datafix.walker.WalkItemStackLike;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.FixTypes;
 import net.minecraft.util.datafix.IDataWalker;
 import net.minecraftforge.common.util.CompoundDataFixer;
@@ -18,6 +16,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.stream.IntStream;
 
 public final class GTDataFixers {
 
@@ -63,13 +63,10 @@ public final class GTDataFixers {
     }
 
     /**
-     * Migrate all MTEs to the new blocks automatically
+     * Migrate GT's own MTEs to the new blocks automatically
      */
     private static void migrateMTERegistries() {
         MTERegistriesMigrator migrator = GregTechAPI.MIGRATIONS.registriesMigrator();
-        MTERegistry registry = GregTechAPI.mteManager.getRegistry(GTValues.MODID);
-        for (ResourceLocation key : registry.getKeys()) {
-            migrator.migrate(key.getNamespace(), (short) registry.getIdByObjectName(key));
-        }
+        migrator.migrate(GTValues.MODID, IntStream.range(0, 2000));
     }
 }
