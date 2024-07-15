@@ -338,7 +338,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         int metaTileEntityId = buf.readVarInt();
         MTERegistry registry = GregTechAPI.mteManager.getRegistry(networkId);
         setMetaTileEntity(registry.getObjectById(metaTileEntityId));
-        this.metaTileEntity.onPlacement();
+        this.metaTileEntity.onPlacement(null);
         this.metaTileEntity.receiveInitialSyncData(buf);
         scheduleRenderUpdate();
         this.needToUpdateLightning = true;
@@ -395,7 +395,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, IBlockState oldState,
                                  IBlockState newState) {
         return oldState.getBlock() != newState.getBlock(); // MetaTileEntityHolder should never refresh (until block
-                                                           // changes)
+        // changes)
     }
 
     @Override

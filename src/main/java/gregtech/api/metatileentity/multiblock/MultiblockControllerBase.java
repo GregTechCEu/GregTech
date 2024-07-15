@@ -30,6 +30,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -91,8 +92,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
-    public void onPlacement() {
-        super.onPlacement();
+    public void onPlacement(EntityLivingBase placer) {
+        super.onPlacement(placer);
         reinitializeStructurePattern();
     }
 
@@ -219,7 +220,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
-            holder.getMetaTileEntity().onPlacement();
+            holder.getMetaTileEntity().onPlacement(null);
             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
             return new BlockInfo(tile.getBlock().getDefaultState(), holder);
         }).toArray(BlockInfo[]::new);
