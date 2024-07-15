@@ -10,6 +10,10 @@ public class StructureInfo {
         this.error = error;
     }
 
+    public boolean hasError() {
+        return error != null;
+    }
+
     public PatternError getError() {
         return error;
     }

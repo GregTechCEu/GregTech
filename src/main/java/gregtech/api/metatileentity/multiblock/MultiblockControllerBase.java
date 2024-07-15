@@ -335,8 +335,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void checkStructurePattern() {
         if (structurePattern == null) return;
+        long time = System.nanoTime();
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
+        System.out.println("structure check for " + getClass().getSimpleName() + " took " + (System.nanoTime() - time) + " nanos");
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);

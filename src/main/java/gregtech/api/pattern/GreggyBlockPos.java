@@ -1,15 +1,28 @@
 package gregtech.api.pattern;
 
+import gregtech.api.util.GTLog;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
  * A possibly saner(and mutable) alternative to BlockPos, where getters and setters use indices and axis instead of
- * separate names to avoid stupid code
+ * separate names to avoid stupid code. All methods that return GreggyBlockPos return {@code this} whenever possible, except for .copy() which returns
+ * a new instance.
  */
 public class GreggyBlockPos {
 
     protected final int[] pos;
+    public static final int NUM_X_BITS = 1 + MathHelper.log2(MathHelper.smallestEncompassingPowerOfTwo(30000000));
+    public static final int NUM_Z_BITS = NUM_X_BITS, NUM_Y_BITS = 64 - 2 * NUM_X_BITS;
+    public static final int Y_SHIFT = NUM_Z_BITS;
+    public static final int X_SHIFT = Y_SHIFT + NUM_Y_BITS;
+    public static final long Z_MASK = (1L << NUM_Z_BITS) - 1;
+    public static final long Y_MASK = (1L << (NUM_Z_BITS + NUM_Y_BITS)) - 1 - Z_MASK;
 
     public GreggyBlockPos() {
         this(0, 0, 0);
@@ -21,6 +34,15 @@ public class GreggyBlockPos {
 
     public GreggyBlockPos(BlockPos base) {
         pos = new int[] { base.getX(), base.getY(), base.getZ() };
+    }
+
+    /**
+     * Creates a new instance using the serialized long
+     * @see GreggyBlockPos#fromLong(long) 
+     */
+    public GreggyBlockPos(long l) {
+        pos = new int[3];
+        fromLong(l);
     }
 
     /**
@@ -77,6 +99,28 @@ public class GreggyBlockPos {
      */
     public GreggyBlockPos offset(EnumFacing facing) {
         return offset(facing, 1);
+    }
+
+    /**
+     * Serializes this pos to long, this should be identical to {@link BlockPos}.
+     * But the blockpos impl is so bad, who let them cook???
+     * @return Long rep
+     */
+    public long toLong() {
+        // x values too large get automatically cut off
+        return (long) pos[0] << X_SHIFT | ((long) pos[1] << Y_SHIFT) & Y_MASK | (pos[2] & Z_MASK);
+    }
+
+    /**
+     * Sets this pos to the long
+     * @param l Serialized long, from {@link GreggyBlockPos#toLong()}
+     * @see GreggyBlockPos#GreggyBlockPos(long)
+     */
+    public GreggyBlockPos fromLong(long l) {
+        pos[0] = (int) (l >> X_SHIFT);
+        pos[1] = (int) ((l & Y_MASK) >> Y_SHIFT);
+        pos[2] = (int) (l & Z_MASK);
+        return this;
     }
 
     /**

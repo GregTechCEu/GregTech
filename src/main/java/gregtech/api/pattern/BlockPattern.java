@@ -1,8 +1,8 @@
 package gregtech.api.pattern;
 
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
@@ -19,9 +19,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
-import java.util.function.BiPredicate;
 
 public class BlockPattern {
     /**
@@ -71,7 +68,7 @@ public class BlockPattern {
             this.startOffset = startOffset;
         }
 
-        this.info = new StructureInfo(new PatternMatchContext(), null);
+        this.info = new StructureInfo(matchContext, null);
         this.worldState = new BlockWorldState(info);
     }
 
@@ -82,7 +79,7 @@ public class BlockPattern {
      */
     private void legacyStartOffset(char center) {
         // could also use aisles.length but this is cooler
-        for (int aisleI = 0; aisleI < dimensions[2]; aisleI++) {
+        for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
             int[] result = aisles[aisleI].firstInstanceOf(center);
             if (result != null) {
                 startOffset[0] = aisleI;
@@ -92,7 +89,7 @@ public class BlockPattern {
             }
         }
 
-        throw new IllegalArgumentException("Didn't find center predicate");
+        System.out.println("FAILED TO FIND PREDICATE");
     }
 
     public PatternError getError() {
@@ -103,14 +100,18 @@ public class BlockPattern {
                                                   EnumFacing upwardsFacing, boolean allowsFlip) {
         if (!cache.isEmpty()) {
             boolean pass = true;
-            for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
-                BlockPos pos = BlockPos.fromLong(entry.getKey());
+            GreggyBlockPos gregPos = new GreggyBlockPos();
+            for (Long2ObjectMap.Entry<BlockInfo> entry : cache.long2ObjectEntrySet()) {
+                BlockPos pos = gregPos.fromLong(entry.getLongKey()).immutable();
                 IBlockState blockState = world.getBlockState(pos);
+
                 if (blockState != entry.getValue().getBlockState()) {
                     pass = false;
                     break;
                 }
+
                 TileEntity cachedTileEntity = entry.getValue().getTileEntity();
+
                 if (cachedTileEntity != null) {
                     TileEntity tileEntity = world.getTileEntity(pos);
                     if (tileEntity != cachedTileEntity) {
@@ -119,16 +120,16 @@ public class BlockPattern {
                     }
                 }
             }
-            if (pass) return worldState.hasError() ? null : matchContext;
+            if (pass) return info.hasError() ? null : matchContext;
         }
 
         // First try normal pattern, and if it fails, try flipped (if allowed).
         boolean valid = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
         if (valid) return matchContext;
 
-//        if (allowsFlip) {
-//            valid = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
-//        }
+        if (allowsFlip) {
+            valid = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
+        }
         if (!valid) clearCache(); // we don't want a random cache of a partially formed multi
         return null;
     }
@@ -172,6 +173,7 @@ public class BlockPattern {
             aisleOffset += actualRepeats;
         }
 
+        // global minimum checks
         for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : globalCount.object2IntEntrySet()) {
             if (entry.getIntValue() < entry.getKey().minGlobalCount) {
                 info.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 1));
@@ -219,7 +221,12 @@ public class BlockPattern {
             for (int charI = 0; charI < dimensions[2]; charI++) {
                 worldState.setPos(charPos);
                 TraceabilityPredicate predicate = predicates.get(aisle.charAt(stringI, charI));
-//                GTLog.logger.info("Checked pos at " + charPos);
+
+                if (predicate != TraceabilityPredicate.ANY) {
+                    TileEntity te = worldState.getTileEntity();
+                    cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(), !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
+                }
+
                 boolean result = predicate.test(worldState, info, globalCount, layerCount);
                 if (!result) return false;
 

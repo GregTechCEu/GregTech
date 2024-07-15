@@ -44,9 +44,8 @@ public class PatternAisle {
      */
     public int[] firstInstanceOf(char c) {
         for (int strI = 0; strI < pattern.length; strI++) {
-            for (int chrI = 0; chrI < pattern[0].length(); chrI++) {
-                if (pattern[strI].charAt(chrI) == c) return new int[] { strI, chrI };
-            }
+            int pos = pattern[strI].indexOf(c);
+            if (pos != -1) return new int[] { strI, pos };
         }
         return null;
     }
