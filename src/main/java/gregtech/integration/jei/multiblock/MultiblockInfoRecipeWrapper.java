@@ -181,7 +181,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         } else {
             zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, 999);
             setNextLayer(getLayerIndex());
-            if (predicates != null && predicates.size() > 0) {
+            if (predicates != null && !predicates.isEmpty()) {
                 setItemStackGroup();
             }
         }

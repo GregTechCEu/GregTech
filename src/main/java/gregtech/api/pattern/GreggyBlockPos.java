@@ -103,4 +103,9 @@ public class GreggyBlockPos {
     public GreggyBlockPos copy() {
         return new GreggyBlockPos().from(this);
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[x=" + pos[0] + ", y=" + pos[1] + ", z=" + pos[2] + "]";
+    }
 }

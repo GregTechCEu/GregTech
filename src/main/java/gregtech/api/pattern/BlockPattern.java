@@ -2,6 +2,7 @@ package gregtech.api.pattern;
 
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
@@ -20,12 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.function.BiPredicate;
 
 public class BlockPattern {
-
-    static EnumFacing[] FACINGS = { EnumFacing.SOUTH, EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.EAST, EnumFacing.UP,
-            EnumFacing.DOWN };
-
     /**
      * In the form of [ charDir, stringDir, aisleDir ]
      */
@@ -128,9 +126,9 @@ public class BlockPattern {
         boolean valid = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
         if (valid) return matchContext;
 
-        if (allowsFlip) {
-            valid = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
-        }
+//        if (allowsFlip) {
+//            valid = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
+//        }
         if (!valid) clearCache(); // we don't want a random cache of a partially formed multi
         return null;
     }
@@ -153,32 +151,31 @@ public class BlockPattern {
 
         for (int aisleI = 0; aisleI < aisles.length; aisleI++) {
             PatternAisle aisle = aisles[aisleI];
+            // if this doesn't get set in the inner loop, then it means all repeats passed
+            int actualRepeats = aisle.maxRepeats;
 
             for (int repeats = aisle.minRepeats; repeats <= aisle.maxRepeats; repeats++) {
                 boolean aisleResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI,
                         aisleOffset + repeats, isFlipped);
 
-                // since aisle repetitions goes up, if this amount of repetitions are invalid, and all smaller
-                // repetitions
-                // have already been checked, then all larger repetitions will also be invalid(since they must also
-                // contain
-                // the problematic section), so the pattern cannot be correct
-                if (!aisleResult) return false;
-
-                // if this isn't the last aisle, then check the next aisle after to see if this repetition matches with
-                // that
-                // if not, then this repetition is invalid. This only checks the first aisle even if it has a min repeat
-                // > 1, but yeah
-                if (aisleI != aisles.length - 1) {
-                    boolean nextResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI + 1,
-                            aisleOffset + repeats + 1, isFlipped);
-
-                    // if the next aisle is also valid, then move on
-                    if (nextResult) {
-                        aisleOffset += repeats;
-                        break;
+                // greedy search, tries to make the current aisle repeat as much as possible
+                if (!aisleResult) {
+                    // if the min repetition is invalid then the whole pattern is invalid
+                    if (repeats == aisle.minRepeats) {
+                        return false;
                     }
+                    // otherwise this is the max repeats
+                    actualRepeats = repeats - 1;
                 }
+            }
+
+            aisleOffset += actualRepeats;
+        }
+
+        for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : globalCount.object2IntEntrySet()) {
+            if (entry.getIntValue() < entry.getKey().minGlobalCount) {
+                info.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 1));
+                return false;
             }
         }
 
@@ -222,6 +219,7 @@ public class BlockPattern {
             for (int charI = 0; charI < dimensions[2]; charI++) {
                 worldState.setPos(charPos);
                 TraceabilityPredicate predicate = predicates.get(aisle.charAt(stringI, charI));
+//                GTLog.logger.info("Checked pos at " + charPos);
                 boolean result = predicate.test(worldState, info, globalCount, layerCount);
                 if (!result) return false;
 
@@ -652,88 +650,5 @@ public class BlockPattern {
         // negate since the offsets are the opposite direction of structureDir
         return offsetFrom(controllerPos, -startOffset[0], -startOffset[1], -startOffset[2], frontFacing, upFacing,
                 flip);
-    }
-
-    private BlockPos setActualRelativeOffset(int x, int y, int z, EnumFacing facing, EnumFacing upwardsFacing,
-                                             boolean isFlipped) {
-        int[] c0 = new int[] { x, y, z }, c1 = new int[3];
-        if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
-            EnumFacing of = facing == EnumFacing.DOWN ? upwardsFacing : upwardsFacing.getOpposite();
-            for (int i = 0; i < 3; i++) {
-                switch (structureDir[i].getActualFacing(of)) {
-                    case UP -> c1[1] = c0[i];
-                    case DOWN -> c1[1] = -c0[i];
-                    case WEST -> c1[0] = -c0[i];
-                    case EAST -> c1[0] = c0[i];
-                    case NORTH -> c1[2] = -c0[i];
-                    case SOUTH -> c1[2] = c0[i];
-                }
-            }
-            int xOffset = upwardsFacing.getXOffset();
-            int zOffset = upwardsFacing.getZOffset();
-            int tmp;
-            if (xOffset == 0) {
-                tmp = c1[2];
-                c1[2] = zOffset > 0 ? c1[1] : -c1[1];
-                c1[1] = zOffset > 0 ? -tmp : tmp;
-            } else {
-                tmp = c1[0];
-                c1[0] = xOffset > 0 ? c1[1] : -c1[1];
-                c1[1] = xOffset > 0 ? -tmp : tmp;
-            }
-            if (isFlipped) {
-                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
-                    c1[0] = -c1[0]; // flip X-axis
-                } else {
-                    c1[2] = -c1[2]; // flip Z-axis
-                }
-            }
-        } else {
-            for (int i = 0; i < 3; i++) {
-                switch (structureDir[i].getActualFacing(facing)) {
-                    case UP -> c1[1] = c0[i];
-                    case DOWN -> c1[1] = -c0[i];
-                    case WEST -> c1[0] = -c0[i];
-                    case EAST -> c1[0] = c0[i];
-                    case NORTH -> c1[2] = -c0[i];
-                    case SOUTH -> c1[2] = c0[i];
-                }
-            }
-            if (upwardsFacing == EnumFacing.WEST || upwardsFacing == EnumFacing.EAST) {
-                int xOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getXOffset() :
-                        facing.rotateY().getOpposite().getXOffset();
-                int zOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getZOffset() :
-                        facing.rotateY().getOpposite().getZOffset();
-                int tmp;
-                if (xOffset == 0) {
-                    tmp = c1[2];
-                    c1[2] = zOffset > 0 ? -c1[1] : c1[1];
-                    c1[1] = zOffset > 0 ? tmp : -tmp;
-                } else {
-                    tmp = c1[0];
-                    c1[0] = xOffset > 0 ? -c1[1] : c1[1];
-                    c1[1] = xOffset > 0 ? tmp : -tmp;
-                }
-            } else if (upwardsFacing == EnumFacing.SOUTH) {
-                c1[1] = -c1[1];
-                if (facing.getXOffset() == 0) {
-                    c1[0] = -c1[0];
-                } else {
-                    c1[2] = -c1[2];
-                }
-            }
-            if (isFlipped) {
-                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
-                    if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH) {
-                        c1[0] = -c1[0]; // flip X-axis
-                    } else {
-                        c1[2] = -c1[2]; // flip Z-axis
-                    }
-                } else {
-                    c1[1] = -c1[1]; // flip Y-axis
-                }
-            }
-        }
-        return new BlockPos(c1[0], c1[1], c1[2]);
     }
 }

@@ -218,6 +218,9 @@ public class FactoryBlockPattern {
     public BlockPattern build() {
         checkMissingPredicates();
         this.dimensions[0] = aisles.size();
+        RelativeDirection temp = structureDir[0];
+        structureDir[0] = structureDir[2];
+        structureDir[2] = temp;
         return new BlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, structureDir, startOffset, symbolMap,
                 centerChar);
     }
