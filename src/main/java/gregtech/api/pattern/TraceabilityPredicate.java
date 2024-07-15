@@ -79,7 +79,6 @@ public class TraceabilityPredicate {
         this(predicate, null);
     }
 
-    @Deprecated
     public TraceabilityPredicate(BiPredicate<BlockWorldState, StructureInfo> predicate,
                                  Supplier<BlockInfo[]> candidates) {
         common.add(new SimplePredicate(predicate, candidates));

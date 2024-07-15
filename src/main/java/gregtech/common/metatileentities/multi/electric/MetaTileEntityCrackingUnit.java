@@ -52,7 +52,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("HCHCH", "HCHCH", "HCHCH")
                 .aisle("HCHCH", "H###H", "HCHCH")

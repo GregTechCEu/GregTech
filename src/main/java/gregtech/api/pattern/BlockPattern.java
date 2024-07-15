@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockPattern {
+
     /**
      * In the form of [ charDir, stringDir, aisleDir ]
      */
@@ -224,7 +225,8 @@ public class BlockPattern {
 
                 if (predicate != TraceabilityPredicate.ANY) {
                     TileEntity te = worldState.getTileEntity();
-                    cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(), !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
+                    cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(),
+                            !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
                 }
 
                 boolean result = predicate.test(worldState, info, globalCount, layerCount);

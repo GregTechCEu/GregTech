@@ -1,17 +1,13 @@
 package gregtech.api.pattern;
 
-import gregtech.api.util.GTLog;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-
 /**
  * A possibly saner(and mutable) alternative to BlockPos, where getters and setters use indices and axis instead of
- * separate names to avoid stupid code. All methods that return GreggyBlockPos return {@code this} whenever possible, except for .copy() which returns
+ * separate names to avoid stupid code. All methods that return GreggyBlockPos return {@code this} whenever possible,
+ * except for .copy() which returns
  * a new instance.
  */
 public class GreggyBlockPos {
@@ -38,7 +34,8 @@ public class GreggyBlockPos {
 
     /**
      * Creates a new instance using the serialized long
-     * @see GreggyBlockPos#fromLong(long) 
+     * 
+     * @see GreggyBlockPos#fromLong(long)
      */
     public GreggyBlockPos(long l) {
         pos = new int[3];
@@ -104,6 +101,7 @@ public class GreggyBlockPos {
     /**
      * Serializes this pos to long, this should be identical to {@link BlockPos}.
      * But the blockpos impl is so bad, who let them cook???
+     * 
      * @return Long rep
      */
     public long toLong() {
@@ -113,6 +111,7 @@ public class GreggyBlockPos {
 
     /**
      * Sets this pos to the long
+     * 
      * @param l Serialized long, from {@link GreggyBlockPos#toLong()}
      * @see GreggyBlockPos#GreggyBlockPos(long)
      */

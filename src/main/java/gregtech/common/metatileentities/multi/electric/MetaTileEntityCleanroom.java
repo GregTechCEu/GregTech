@@ -385,19 +385,19 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @NotNull
     protected TraceabilityPredicate filterPredicate() {
-        return new TraceabilityPredicate(blockWorldState -> {
+        return new TraceabilityPredicate((blockWorldState, info) -> {
             IBlockState blockState = blockWorldState.getBlockState();
             if (GregTechAPI.CLEANROOM_FILTERS.containsKey(blockState)) {
                 ICleanroomFilter cleanroomFilter = GregTechAPI.CLEANROOM_FILTERS.get(blockState);
                 if (cleanroomFilter.getCleanroomType() == null) return false;
 
-                ICleanroomFilter currentFilter = blockWorldState.getMatchContext().getOrPut("FilterType",
+                ICleanroomFilter currentFilter = info.getContext().getOrPut("FilterType",
                         cleanroomFilter);
                 if (!currentFilter.getCleanroomType().equals(cleanroomFilter.getCleanroomType())) {
-                    blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.filters"));
+                    info.setError(new PatternStringError("gregtech.multiblock.pattern.error.filters"));
                     return false;
                 }
-                blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
+                info.getContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
                 return true;
             }
             return false;

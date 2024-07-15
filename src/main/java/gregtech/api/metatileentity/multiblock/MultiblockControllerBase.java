@@ -191,14 +191,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public static TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
                                                       @Nullable Supplier<BlockInfo[]> candidates) {
-        return new TraceabilityPredicate(blockWorldState -> {
+        return new TraceabilityPredicate((blockWorldState, info) -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
             if (!(tileEntity instanceof IGregTechTileEntity))
                 return false;
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (predicate.apply(blockWorldState, metaTileEntity)) {
                 if (metaTileEntity instanceof IMultiblockPart) {
-                    Set<IMultiblockPart> partsFound = blockWorldState.getMatchContext().getOrCreate("MultiblockParts",
+                    Set<IMultiblockPart> partsFound = info.getContext().getOrCreate("MultiblockParts",
                             HashSet::new);
                     partsFound.add((IMultiblockPart) metaTileEntity);
                 }
@@ -239,10 +239,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
-        return new TraceabilityPredicate(blockWorldState -> {
+        return new TraceabilityPredicate((blockWorldState, info) -> {
             IBlockState state = blockWorldState.getBlockState();
             if (state.getBlock() instanceof VariantActiveBlock) {
-                blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
+                info.getContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
             }
             return ArrayUtils.contains(allowedStates, state);
         }, getCandidates(allowedStates));
@@ -256,17 +256,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 .toArray(IBlockState[]::new))
                         .or(new TraceabilityPredicate(blockWorldState -> {
                             TileEntity tileEntity = blockWorldState.getTileEntity();
-                            if (!(tileEntity instanceof IPipeTile)) {
+                            if (!(tileEntity instanceof IPipeTile<?, ?>pipeTile)) {
                                 return false;
                             }
-                            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
                             return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
                         }));
     }
 
     public static TraceabilityPredicate blocks(Block... block) {
         return new TraceabilityPredicate(
-                blockWorldState -> ArrayUtils.contains(block, blockWorldState.getBlockState().getBlock()),
+                (blockWorldState, info) -> ArrayUtils.contains(block, blockWorldState.getBlockState().getBlock()),
                 getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
     }
 
@@ -338,7 +337,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         long time = System.nanoTime();
         PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
-        System.out.println("structure check for " + getClass().getSimpleName() + " took " + (System.nanoTime() - time) + " nanos");
+        System.out.println(
+                "structure check for " + getClass().getSimpleName() + " took " + (System.nanoTime() - time) + " nanos");
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
