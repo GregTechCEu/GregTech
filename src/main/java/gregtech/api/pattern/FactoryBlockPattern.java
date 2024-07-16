@@ -39,7 +39,7 @@ import static gregtech.api.util.RelativeDirection.*;
  */
 public class FactoryBlockPattern {
 
-    private static final Joiner COMMA_JOIN = Joiner.on(",");
+    protected static final Joiner COMMA_JOIN = Joiner.on(",");
 
     /**
      * In the form of [ num aisles, num string per aisle, num char per string ]

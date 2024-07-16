@@ -60,4 +60,12 @@ public class PatternAisle {
     public char charAt(int stringI, int charI) {
         return pattern[stringI].charAt(charI);
     }
+
+    public int getStringCount() {
+        return pattern.length;
+    }
+
+    public int getCharCount() {
+        return pattern[0].length();
+    }
 }

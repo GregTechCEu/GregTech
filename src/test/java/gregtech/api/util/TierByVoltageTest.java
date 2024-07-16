@@ -4,8 +4,6 @@ import gregtech.api.pattern.GreggyBlockPos;
 
 import net.minecraft.util.EnumFacing;
 
-import net.minecraft.util.math.BlockPos;
-
 import org.junit.jupiter.api.Test;
 
 import static gregtech.api.GTValues.*;
@@ -19,15 +17,16 @@ public class TierByVoltageTest {
     public void temp() {
         // todo remove this
         int iters = 0;
-        for (GreggyBlockPos a : GreggyBlockPos.allInBox(new GreggyBlockPos(0, 0, 0), new GreggyBlockPos(2, 3, 4), EnumFacing.NORTH, EnumFacing.UP, EnumFacing.WEST)) {
+        for (GreggyBlockPos a : GreggyBlockPos.allInBox(new GreggyBlockPos(0, 0, 0), new GreggyBlockPos(2, 3, 4),
+                EnumFacing.NORTH, EnumFacing.UP, EnumFacing.WEST)) {
             System.out.println(a);
             iters++;
         }
 
-//        for (BlockPos a : BlockPos.getAllInBox(new BlockPos(0, 0, 0), new BlockPos(2, 3, 4))) {
-//            System.out.println(a.toString());
-//            iters++;
-//        }
+        // for (BlockPos a : BlockPos.getAllInBox(new BlockPos(0, 0, 0), new BlockPos(2, 3, 4))) {
+        // System.out.println(a.toString());
+        // iters++;
+        // }
 
         assertEquals(3 * 4 * 5, iters);
     }

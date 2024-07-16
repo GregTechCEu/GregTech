@@ -12,6 +12,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.PreviewBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
@@ -25,6 +26,8 @@ import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.common.blocks.MetaBlocks;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -72,6 +75,7 @@ import java.util.Stack;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -564,23 +568,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         // return repetitionDFS(new ArrayList<>(), aisleRepetitions, new Stack<>());
     }
 
-    private List<MultiblockShapeInfo> repetitionDFS(List<MultiblockShapeInfo> pages, int[][] aisleRepetitions,
-                                                    Stack<Integer> repetitionStack) {
-        if (repetitionStack.size() == aisleRepetitions.length) {
-            int[] repetition = new int[repetitionStack.size()];
-            for (int i = 0; i < repetitionStack.size(); i++) {
-                repetition[i] = repetitionStack.get(i);
-            }
-            pages.add(new MultiblockShapeInfo(Objects.requireNonNull(this.structurePattern).getPreview(repetition)));
-        } else {
-            for (int i = aisleRepetitions[repetitionStack.size()][0]; i <=
-                    aisleRepetitions[repetitionStack.size()][1]; i++) {
-                repetitionStack.push(i);
-                repetitionDFS(pages, aisleRepetitions, repetitionStack);
-                repetitionStack.pop();
-            }
-        }
-        return pages;
+    /**
+     * The new(and better) way of getting shapes for in world, jei, and autobuild. Default impl just converts
+     * {@link MultiblockControllerBase#getMatchingShapes()} to this
+     * @param keyMap A map for autobuild, or null if it is an in world or jei preview.
+     * @param hatches This is whether you should put hatches, JEI previews need hatches, but autobuild and in world
+     *                previews shouldn't(unless the hatch is necessary and only has one valid spot, such as EBF)
+     */
+    // todo add use for the keyMap with the multiblock builder
+    public List<PreviewBlockPattern> getBuildableShapes(@Nullable Object2IntMap<String> keyMap, boolean hatches) {
+        return getMatchingShapes().stream().map(PreviewBlockPattern::new).collect(Collectors.toList());
     }
 
     @SideOnly(Side.CLIENT)

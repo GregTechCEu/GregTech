@@ -446,7 +446,7 @@ public class BlockPattern {
         // });
     }
 
-    public BlockInfo[][][] getPreview(int[] repetition) {
+    public BlockInfo[][][] getDefaultShape() {
         return null;
         // Map<TraceabilityPredicate.SimplePredicate, BlockInfo[]> cacheInfos = new HashMap<>();
         // Map<TraceabilityPredicate.SimplePredicate, Integer> cacheGlobal = new HashMap<>();
