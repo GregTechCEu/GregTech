@@ -36,9 +36,11 @@ public final class TraverseHelpers {
             @NotNull D data,
             @NotNull Iterator<P> paths,
             long flowIn) {
+        boolean simulate = data.getSimulatorKey() != null;
         long availableFlow = flowIn;
         pathloop:
         while (paths.hasNext()) {
+            List<Runnable> pathTraverseCalls = simulate ? null : new ObjectArrayList<>();
             long pathFlowIn = availableFlow;
             long pathFlow = availableFlow;
             P path = paths.next();
@@ -55,6 +57,14 @@ public final class TraverseHelpers {
             for (int i = 0; i < edges.size(); i++) {
                 E edge = edges.get(i);
                 targetNode = nodes.get(i + 1);
+
+                if (targetNode.traverse(data.getQueryTick(), true)) {
+                    if (!simulate) {
+                        N finalTargetNode = targetNode;
+                        pathTraverseCalls.add(() -> finalTargetNode.traverse(data.getQueryTick(), false));
+                    }
+                } else continue pathloop;
+
                 long flowLimit = edge.getFlowLimit(data.getTestObject(), data.getGraphNet(), data.getQueryTick(), data.getSimulatorKey());
                 if (flowLimit < pathFlow) {
                     double ratio = (double) flowLimit / pathFlow;
@@ -65,11 +75,13 @@ public final class TraverseHelpers {
                 flowConsumers.add(edge, data.getTestObject(), data.getGraphNet(), pathFlow, data.getQueryTick(), data.getSimulatorKey());
                 pathFlow = data.traverseToNode(targetNode, pathFlow);
 
+
                 if (pathFlow <= 0) continue pathloop;
             }
             long accepted = data.finalizeAtDestination(targetNode, pathFlow);
             double ratio = (double) accepted / pathFlow;
             flowConsumers.doConsumption(ratio);
+            if (!simulate) pathTraverseCalls.forEach(Runnable::run);
             availableFlow -= pathFlowIn * ratio;
 
             if (availableFlow <= 0) break;
@@ -95,9 +107,12 @@ public final class TraverseHelpers {
             @NotNull Iterator<P> paths,
             @Nullable BiConsumer<N, Long> overflowListener,
             long flowIn) {
+        boolean simulate = data.getSimulatorKey() != null;
+        boolean flow = overflowListener != null;
         long availableFlow = flowIn;
         pathloop:
         while (paths.hasNext()) {
+            List<Runnable> pathTraverseCalls = simulate ? null : new ObjectArrayList<>();
             long pathFlowIn = availableFlow;
             long pathFlow = availableFlow;
             P path = paths.next();
@@ -106,8 +121,8 @@ public final class TraverseHelpers {
             List<N> nodes = path.getOrderedNodes();
             List<E> edges = path.getOrderedEdges();
 
-            FlowConsumerList flowConsumers = overflowListener == null ? null : new FlowConsumerList();
-            List<Consumer<Long>> overflowReporters = overflowListener == null ? null : new ObjectArrayList<>();
+            FlowConsumerList flowConsumers = flow ? new FlowConsumerList() : null;
+            List<Consumer<Long>> overflowReporters = flow ? new ObjectArrayList<>() : null;
             assert nodes.size() == edges.size() + 1;
 
             N targetNode = nodes.get(0);
@@ -116,7 +131,15 @@ public final class TraverseHelpers {
             for (int i = 0; i < edges.size(); i++) {
                 E edge = edges.get(i);
                 targetNode = nodes.get(i + 1);
-                if (overflowListener != null && edge instanceof AbstractNetFlowEdge flowEdge) {
+
+                if (targetNode.traverse(data.getQueryTick(), true)) {
+                    if (!simulate) {
+                        N finalTargetNode = targetNode;
+                        pathTraverseCalls.add(() -> finalTargetNode.traverse(data.getQueryTick(), false));
+                    }
+                } else continue pathloop;
+
+                if (flow && edge instanceof AbstractNetFlowEdge flowEdge) {
                     long flowLimit = flowEdge.getFlowLimit(data.getTestObject(), data.getGraphNet(), data.getQueryTick(), data.getSimulatorKey());
                     if (flowLimit < pathFlow) {
                         long overflow = pathFlow - flowLimit;
@@ -135,10 +158,11 @@ public final class TraverseHelpers {
             }
             long accepted = data.finalizeAtDestination(targetNode, pathFlow);
             long unaccepted = pathFlow - accepted;
-            if (overflowListener != null) {
+            if (flow) {
                 flowConsumers.doConsumption(unaccepted);
                 overflowReporters.forEach((c) -> c.accept(unaccepted));
             }
+            if (!simulate) pathTraverseCalls.forEach(Runnable::run);
             availableFlow -= pathFlowIn - unaccepted;
 
             if (availableFlow <= 0) break;

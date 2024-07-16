@@ -6,7 +6,6 @@ import gregtech.api.graphnet.AbstractGroupData;
 import gregtech.api.graphnet.NetGroup;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
-import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.edge.util.FlowConsumer;
 import gregtech.api.graphnet.logic.NetLogicData;
@@ -15,7 +14,7 @@ import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
-import gregtech.api.graphnet.pipenet.physical.PipeTileEntity;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
@@ -80,8 +79,16 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         data.runPostActions();
 
         consumer.finalReduction(availableAmperage);
+
+        long accepted = amperage - availableAmperage;
+        if (!simulate) {
+            EnergyGroupData group = getEnergyData();
+            if (group != null) {
+                group.addEnergyInPerSec(accepted * voltage, data.getQueryTick());
+            }
+        }
         this.transferring = false;
-        return amperage - availableAmperage;
+        return accepted;
     }
 
     private Iterator<FlowWorldPipeNetPath> getPaths(EnergyTraverseData data) {
@@ -89,15 +96,16 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         return provider.getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(), data.getQueryTick());
     }
 
-    private long getFlux() {
-        if (tile == null) return 0;
+    @Nullable
+    private EnergyGroupData getEnergyData() {
+        if (tile == null) return null;
         NetNode node = net.getNode(tile.getPos());
-        if (node == null) return 0;
+        if (node == null) return null;
         NetGroup group = node.getGroupUnsafe();
-        if (group == null) return 0;
+        if (group == null) return null;
         AbstractGroupData data = group.getData();
-        if (!(data instanceof EnergyGroupData e)) return 0;
-        return e.getEnergyFluxPerSec();
+        if (!(data instanceof EnergyGroupData e)) return null;
+        return e;
     }
 
     @Override
@@ -133,12 +141,16 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
 
     @Override
     public long getInputPerSec() {
-        return getFlux();
+        EnergyGroupData data = getEnergyData();
+        if (data == null) return 0;
+        else return data.getEnergyFluxPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())[0];
     }
 
     @Override
     public long getOutputPerSec() {
-        return getFlux();
+        EnergyGroupData data = getEnergyData();
+        if (data == null) return 0;
+        else return data.getEnergyFluxPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())[1];
     }
 
     @Override

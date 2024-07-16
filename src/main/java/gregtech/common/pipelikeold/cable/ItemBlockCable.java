@@ -3,7 +3,6 @@ package gregtech.common.pipelikeold.cable;
 import gregtech.api.GTValues;
 import gregtech.api.graphnet.pipenetold.block.material.BlockMaterialPipe;
 import gregtech.api.graphnet.pipenetold.block.material.ItemBlockMaterialPipe;
-import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;

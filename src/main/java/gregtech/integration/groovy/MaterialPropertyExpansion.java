@@ -14,13 +14,15 @@ import gregtech.api.unification.material.properties.GemProperty;
 import gregtech.api.unification.material.properties.IngotProperty;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.properties.OreProperty;
+import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
-import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.properties.WoodProperty;
 
 import com.cleanroommc.groovyscript.api.GroovyBlacklist;
 import com.cleanroommc.groovyscript.api.GroovyLog;
+
+import gregtech.common.pipelike.properties.MaterialEnergyProperties;
 
 import static gregtech.integration.groovy.GroovyScriptModule.checkFrozen;
 
@@ -68,7 +70,8 @@ public class MaterialPropertyExpansion {
     }
 
     public static boolean hasWires(Material m) {
-        return m.hasProperty(PropertyKey.WIRE);
+        return m.hasProperty(PropertyKey.PIPENET_PROPERTIES) &&
+                m.getProperty(PropertyKey.PIPENET_PROPERTIES).hasProperty(MaterialEnergyProperties.KEY);
     }
 
     ////////////////////////////////////
@@ -319,43 +322,33 @@ public class MaterialPropertyExpansion {
                 .durabilityMultiplier(durabilityMultiplier));
     }
 
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, false, 0);
+    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock) {
+        addWires(m, voltage, baseAmperage, lossPerBlock, 0);
     }
 
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, isSuperCon, 0);
+    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock, int meltTemperature) {
+        addWires(m, voltage, baseAmperage, lossPerBlock, meltTemperature, 0);
     }
 
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon,
-                                int criticalTemp) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp, 0);
-    }
-
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon,
-                                int criticalTemp, int meltTemperature) {
+    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock, int meltTemperature,
+                                int superconductorTemp) {
         if (checkFrozen("add Wires to a material")) return;
-        if (m.hasProperty(PropertyKey.WIRE)) {
-            m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
-            m.getProperty(PropertyKey.WIRE).setAmperage(baseAmperage);
-            m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
-            m.getProperty(PropertyKey.WIRE).setMeltTemperature(meltTemperature);
-            m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
-            m.getProperty(PropertyKey.WIRE).setSuperconductorCriticalTemperature(criticalTemp);
-        } else m.setProperty(PropertyKey.WIRE,
-                new WireProperties(voltage, baseAmperage, lossPerBlock, meltTemperature, isSuperCon, criticalTemp));
+        if (!m.hasProperty(PropertyKey.PIPENET_PROPERTIES)) {
+            m.setProperty(PropertyKey.PIPENET_PROPERTIES, new PipeNetProperties());
+        }
+        m.getProperty(PropertyKey.PIPENET_PROPERTIES).setProperty(new MaterialEnergyProperties(voltage, baseAmperage, lossPerBlock, meltTemperature, superconductorTemp));
     }
 
-    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, false, 0);
+    public static void addCables(Material m, long voltage, long baseAmperage, long lossPerBlock) {
+        addWires(m, voltage, baseAmperage, lossPerBlock);
     }
 
-    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, isSuperCon, 0);
+    public static void addCables(Material m, long voltage, long baseAmperage, long lossPerBlock, int meltTemperature) {
+        addWires(m, voltage, baseAmperage, lossPerBlock, meltTemperature);
     }
 
-    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon,
-                                 int criticalTemp) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp);
+    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock, int meltTemperature,
+                                 int superconductorTemp) {
+        addWires(m, voltage, baseAmperage, lossPerBlock, meltTemperature, superconductorTemp);
     }
 }

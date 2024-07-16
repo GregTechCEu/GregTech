@@ -75,6 +75,7 @@ public final class GraphNetBacker {
     public void removeVertex(GraphVertex vertex) {
         this.getGraph().removeVertex(vertex);
         this.vertexMap.remove(vertex.wrapped.getEquivalencyData());
+        vertex.wrapped.onRemove();
     }
 
     @Nullable

@@ -1,12 +1,18 @@
-package gregtech.api.graphnet.pipenet.physical;
+package gregtech.api.graphnet.pipenet.physical.block;
 
-import net.minecraft.block.Block;
+import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
+
+import gregtech.common.items.MetaItems;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemBlock;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -14,22 +20,31 @@ import org.jetbrains.annotations.NotNull;
 
 public class ItemPipeBlock extends ItemBlock {
 
-    public ItemPipeBlock(PipeBlock block) {
+    public ItemPipeBlock(WorldPipeBlock block) {
         super(block);
     }
 
     @Override
-    public @NotNull PipeBlock getBlock() {
-        return (PipeBlock) super.getBlock();
+    public @NotNull WorldPipeBlock getBlock() {
+        return (WorldPipeBlock) super.getBlock();
     }
 
     @Override
     public boolean placeBlockAt(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing side,
                                 float hitX, float hitY, float hitZ, @NotNull IBlockState newState) {
         if (super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState)) {
+            ItemStack offhand = player.getHeldItemOffhand();
+            for (int i = 0; i < EnumDyeColor.values().length; i++) {
+                if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                    MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse(player, world,
+                            pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
+                    break;
+                }
+            }
+
             PipeTileEntity tile = getBlock().getTileEntity(world, pos);
-            // TODO set pipe color based on offhand here
             if (tile != null) {
+                tile.placedBy(stack, player);
                 getBlock().doPlacementLogic(tile, side.getOpposite());
             }
             return true;

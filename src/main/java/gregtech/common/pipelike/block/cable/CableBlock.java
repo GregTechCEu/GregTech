@@ -1,29 +1,35 @@
 package gregtech.common.pipelike.block.cable;
 
+import gregtech.api.graphnet.gather.GatherStructuresEvent;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
-import gregtech.api.graphnet.pipenet.physical.PipeMaterialBlock;
-import gregtech.api.unification.material.Material;
+import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 
+import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraftforge.common.MinecraftForge;
 
-import java.util.Collection;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
+import java.util.Set;
 
 public class CableBlock extends PipeMaterialBlock implements IBurnable {
 
     private static final Map<MaterialRegistry, Map<CableStructure, CableBlock>> CACHE = new Object2ObjectOpenHashMap<>();
 
-    public CableBlock(CableStructure structure, MaterialRegistry registry, Collection<? extends Material> materials) {
-        super(structure, registry, materials);
+    public CableBlock(CableStructure structure, MaterialRegistry registry) {
+        super(structure, registry);
         CACHE.compute(registry, (k, v) -> {
             if (v == null) v = new Object2ObjectOpenHashMap<>();
             v.put(structure, this);
@@ -32,15 +38,27 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
     }
 
     @Override
+    public boolean isPipeTool(@NotNull ItemStack stack) {
+        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
+    }
+
+    public static Set<CableStructure> gatherStructures() {
+        GatherStructuresEvent<CableStructure> event = new GatherStructuresEvent<>(CableStructure.class);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getGathered();
+    }
+
+    @Override
     public void partialBurn(IBlockState state, World world, BlockPos pos) {
         CableStructure structure = (CableStructure) getStructure();
         if (structure.partialBurnStructure() != null) {
             CableBlock newBlock = CACHE.get(registry).get(structure.partialBurnStructure());
+            //noinspection deprecation
             world.setBlockState(pos, newBlock.getStateFromMeta(this.getMetaFromState(state)));
         }
     }
 
-    // TODO
+    // TODO rendering
     @Override
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         return null;

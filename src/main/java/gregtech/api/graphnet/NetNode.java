@@ -31,7 +31,7 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
 
     private final IGraphNet net;
     private NetLogicData data;
-    private NetGroup group = null;
+    private @Nullable NetGroup group = null;
 
     @Nullable
     private ICacheableIterator<? extends INetPath<?, ?>> pathCache = null;
@@ -110,9 +110,11 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
         return group;
     }
 
-    void clearGroup() {
-        this.group = null;
-    }
+    /**
+     * Use this to remove references that would keep this node from being collected by the garbage collector.
+     * This is called when a node is removed from the graph and should be discarded.
+     */
+    public void onRemove() {}
 
     @Override
     public NBTTagCompound serializeNBT() {

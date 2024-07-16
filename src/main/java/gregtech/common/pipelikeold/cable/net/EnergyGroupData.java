@@ -6,30 +6,37 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class EnergyGroupData extends AbstractGroupData {
 
-    private long lastEnergyFluxPerSec;
-    private long energyFluxPerSec;
+    private final long[] lastEnergyFluxPerSec = new long[2];
+    private final long[] energyFluxPerSec = new long[2];
     private long updateTime;
 
-    public long getEnergyFluxPerSec() {
-        updateCache();
+
+    public long[] getEnergyFluxPerSec(long queryTick) {
+        updateCache(queryTick);
         return lastEnergyFluxPerSec;
     }
 
-    public void addEnergyFluxPerSec(long energy) {
-        updateCache();
-        energyFluxPerSec += energy;
+    public void addEnergyInPerSec(long energy, long queryTick) {
+        updateCache(queryTick);
+        energyFluxPerSec[0] += energy;
     }
 
-    private void updateCache() {
-        long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-        if (tick > updateTime) {
+    public void addEnergyOutPerSec(long energy, long queryTick) {
+        updateCache(queryTick);
+        energyFluxPerSec[1] += energy;
+    }
+
+    private void updateCache(long queryTick) {
+        if (queryTick > updateTime) {
             updateTime = updateTime + 20;
             clearCache();
         }
     }
 
     public void clearCache() {
-        lastEnergyFluxPerSec = energyFluxPerSec;
-        energyFluxPerSec = 0;
+        lastEnergyFluxPerSec[0] = energyFluxPerSec[0];
+        lastEnergyFluxPerSec[1] = energyFluxPerSec[1];
+        energyFluxPerSec[0] = 0;
+        energyFluxPerSec[1] = 0;
     }
 }

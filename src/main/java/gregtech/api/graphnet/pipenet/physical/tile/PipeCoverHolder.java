@@ -1,9 +1,8 @@
-package gregtech.api.graphnet.pipenet.physical;
+package gregtech.api.graphnet.pipenet.physical.tile;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverSaveHandler;
-import gregtech.api.graphnet.pipenetold.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
@@ -57,7 +56,7 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
             // do not sync or handle logic on client side
             CoverSaveHandler.writeCoverPlacement(this, COVER_ATTACHED_PIPE, side, cover);
             if (cover.shouldAutoConnectToPipes()) {
-                if (holder.canConnectTo(side)) holder.setOpen(side);
+                if (holder.canConnectTo(side)) holder.setConnected(side, false);
             }
         }
 
@@ -80,8 +79,8 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
         writeCustomData(COVER_REMOVED_PIPE, buffer -> buffer.writeByte(side.getIndex()));
         if (cover.shouldAutoConnectToPipes()) {
             PipeTileEntity other;
-            if (holder.isOpen(side) && (other = holder.getPipeNeighbor(side)) != null && !other.isOpen(side.getOpposite()))
-                holder.setClosed(side);
+            if (holder.isConnected(side) && (other = holder.getPipeNeighbor(side, true)) != null && !other.isConnected(side.getOpposite()))
+                holder.setDisconnected(side);
         }
         holder.notifyBlockUpdate();
         holder.markAsDirty();

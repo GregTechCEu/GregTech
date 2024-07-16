@@ -6,12 +6,13 @@ import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 
 import com.google.common.collect.ImmutableMap;
+
+import gregtech.common.pipelike.properties.MaterialEnergyProperties;
 
 import java.util.Map;
 
@@ -51,19 +52,19 @@ public class WireRecipeHandler {
 
     public static void register() {
         // Generate 1x Wire creation recipes (Wiremill, Extruder, Wire Cutters)
-        wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::processWireSingle);
+        wireGtSingle.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireRecipeHandler::processWireSingle));
 
         // Generate Cable Covering Recipes
-        wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
-        wireGtDouble.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
-        wireGtQuadruple.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
-        wireGtOctal.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
-        wireGtHex.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
+        wireGtSingle.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireRecipeHandler::generateCableCovering));
+        wireGtDouble.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireRecipeHandler::generateCableCovering));
+        wireGtQuadruple.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireRecipeHandler::generateCableCovering));
+        wireGtOctal.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireRecipeHandler::generateCableCovering));
+        wireGtHex.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireRecipeHandler::generateCableCovering));
     }
 
     private static final OrePrefix[] wireSizes = { wireGtDouble, wireGtQuadruple, wireGtOctal, wireGtHex };
 
-    public static void processWireSingle(OrePrefix wirePrefix, Material material, WireProperties property) {
+    public static void processWireSingle(OrePrefix wirePrefix, Material material, MaterialEnergyProperties property) {
         OrePrefix prefix = material.hasProperty(PropertyKey.INGOT) ? ingot :
                 material.hasProperty(PropertyKey.GEM) ? gem : dust;
 
@@ -101,7 +102,7 @@ public class WireRecipeHandler {
         }
     }
 
-    public static void generateCableCovering(OrePrefix wirePrefix, Material material, WireProperties property) {
+    public static void generateCableCovering(OrePrefix wirePrefix, Material material, MaterialEnergyProperties property) {
         // Superconductors have no Cables, so exit early
         if (property.isSuperconductor()) return;
 

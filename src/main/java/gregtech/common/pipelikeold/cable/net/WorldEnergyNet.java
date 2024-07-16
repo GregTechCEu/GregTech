@@ -6,7 +6,6 @@ import gregtech.api.graphnet.pipenetold.WorldPipeNetComplex;
 import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.common.pipelikeold.cable.Insulation;
 import gregtech.common.pipelikeold.cable.tile.TileEntityCable;
 

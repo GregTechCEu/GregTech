@@ -6,11 +6,13 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 
 import com.google.common.collect.ImmutableMap;
+
+import gregtech.common.pipelike.properties.MaterialEnergyProperties;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Map;
@@ -33,20 +35,20 @@ public class WireCombiningHandler {
 
     public static void register() {
         // Generate Wire Packer/Unpacker recipes TODO Move into generateWireCombining?
-        wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::processWireCompression);
+        wireGtSingle.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireCombiningHandler::processWireCompression));
 
         // Generate manual recipes for combining Wires/Cables
         for (OrePrefix wirePrefix : WIRE_DOUBLING_ORDER) {
-            wirePrefix.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::generateWireCombiningRecipe);
+            wirePrefix.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireCombiningHandler::generateWireCombiningRecipe));
         }
 
         // Generate Cable -> Wire recipes in the unpacker
         for (OrePrefix cablePrefix : cableToWireMap.keySet()) {
-            cablePrefix.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::processCableStripping);
+            cablePrefix.addProcessingHandler(MaterialEnergyProperties.registrationHandler(WireCombiningHandler::processCableStripping));
         }
     }
 
-    private static void generateWireCombiningRecipe(OrePrefix wirePrefix, Material material, WireProperties property) {
+    private static void generateWireCombiningRecipe(OrePrefix wirePrefix, Material material, MaterialEnergyProperties property) {
         int wireIndex = ArrayUtils.indexOf(WIRE_DOUBLING_ORDER, wirePrefix);
 
         if (wireIndex < WIRE_DOUBLING_ORDER.length - 1) {
@@ -72,7 +74,7 @@ public class WireCombiningHandler {
         }
     }
 
-    private static void processWireCompression(OrePrefix prefix, Material material, WireProperties property) {
+    private static void processWireCompression(OrePrefix prefix, Material material,MaterialEnergyProperties property) {
         for (int startTier = 0; startTier < 4; startTier++) {
             for (int i = 1; i < 5 - startTier; i++) {
                 PACKER_RECIPES.recipeBuilder()
@@ -92,7 +94,7 @@ public class WireCombiningHandler {
         }
     }
 
-    private static void processCableStripping(OrePrefix prefix, Material material, WireProperties property) {
+    private static void processCableStripping(OrePrefix prefix, Material material, MaterialEnergyProperties property) {
         PACKER_RECIPES.recipeBuilder()
                 .input(prefix, material)
                 .output(cableToWireMap.get(prefix), material)

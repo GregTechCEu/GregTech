@@ -403,7 +403,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         BlockPipe<PipeType, NodeDataType, Edge, ?> pipeBlock = getPipeBlock();
         if (pipeBlock != null) {
             // noinspection ConstantConditions
-            compound.setString("PipeBlock", pipeBlock.getRegistryName().toString());
+            compound.setString("WorldPipeBlock", pipeBlock.getRegistryName().toString());
         }
         compound.setInteger("PipeNetVersion", 2);
         compound.setInteger("PipeType", pipeType.ordinal());
@@ -424,8 +424,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             return;
         }
         super.readFromNBT(compound);
-        if (compound.hasKey("PipeBlock", NBT.TAG_STRING)) {
-            Block block = Block.REGISTRY.getObject(new ResourceLocation(compound.getString("PipeBlock")));
+        if (compound.hasKey("WorldPipeBlock", NBT.TAG_STRING)) {
+            Block block = Block.REGISTRY.getObject(new ResourceLocation(compound.getString("WorldPipeBlock")));
             // noinspection unchecked
             this.pipeBlock = block instanceof BlockPipe<?, ?, ?, ?>blockPipe ?
                     (BlockPipe<PipeType, NodeDataType, Edge, ?>) blockPipe : null;

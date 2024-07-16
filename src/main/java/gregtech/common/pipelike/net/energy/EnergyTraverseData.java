@@ -4,26 +4,23 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
-import gregtech.api.graphnet.pipenet.physical.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
 
 import gregtech.api.util.GTUtility;
 
+import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
-import journeymap.client.render.map.Tile;
-
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
@@ -110,7 +107,12 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
                         getSimulatorKey() != null);
             }
         }
-        return flowReachingDestination - availableFlow;
+        long accepted = flowReachingDestination - availableFlow;
+        if (getSimulatorKey() == null && destination.getGroupUnsafe() != null &&
+                destination.getGroupSafe().getData() instanceof EnergyGroupData data) {
+            data.addEnergyOutPerSec(accepted * pathVoltage, getQueryTick());
+        }
+        return accepted;
     }
 
     public void runPostActions() {

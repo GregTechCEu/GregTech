@@ -1,24 +1,34 @@
-package gregtech.api.graphnet.pipenet.physical;
+package gregtech.api.graphnet.pipenet.physical.tile;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.gather.GTGraphGatherables;
 import gregtech.api.graphnet.logic.INetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.physical.IInsulatable;
+import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
+import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 
 import gregtech.api.unification.material.Material;
 
+import gregtech.client.particle.GTOverheatParticle;
+
+import gregtech.common.blocks.MetaBlocks;
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -28,27 +38,31 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_PAINT;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_LOGIC;
 
 public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITickable {
 
     private final Object2ObjectOpenHashMap<String, NetLogicData> netLogicDatas = new Object2ObjectOpenHashMap<>();
     private final ObjectOpenHashSet<NetLogicData.LogicDataListener> listeners = new ObjectOpenHashSet<>();
 
-    private final PipeBlock block;
+    private final WorldPipeBlock block;
 
     // information that is only required for determining graph topology should be stored on the tile entity level,
     // while information interacted with during graph traversal should be stored on the NetLogicData level.
 
     private byte connectionMask;
+    private byte renderMask;
     private byte blockedMask;
     private int paintingColor;
 
@@ -61,17 +75,29 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private final Object2ObjectOpenHashMap<Capability<?>, IPipeCapabilityObject> capabilities = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectOpenHashMap<WorldPipeNetNode, PipeCapabilityWrapper> netCapabilities = new Object2ObjectOpenHashMap<>();
 
+    @Nullable
+    private TemperatureLogic temperatureLogic;
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    private GTOverheatParticle overheatParticle;
+
     private final int offset = (int) (Math.random() * 20);
 
-    public PipeTileEntity(PipeBlock block) {
+    public PipeTileEntity(WorldPipeBlock block) {
         this.block = block;
     }
 
     @Nullable
-    public PipeTileEntity getPipeNeighbor(EnumFacing facing) {
-        TileEntity tile = getNeighbor(facing);
+    public PipeTileEntity getPipeNeighbor(EnumFacing facing, boolean allowChunkloading) {
+        TileEntity tile = allowChunkloading ? getNeighbor(facing) : getNeighborNoChunkloading(facing);
         if (tile instanceof PipeTileEntity pipe) return pipe;
         else return null;
+    }
+
+    public void getDrops(NonNullList<ItemStack> drops, @NotNull IBlockState state) {
+        drops.add(this.getBlockType().getDrop(this.getWorld(), this.getPos(), state));
+        if (getFrameMaterial() != null)
+            drops.add(MetaBlocks.FRAMES.get(getFrameMaterial()).getItem(getFrameMaterial()));
     }
 
     public ItemStack getDrop() {
@@ -82,24 +108,44 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter() + offset;
     }
 
+    public void placedBy(ItemStack stack, EntityPlayer player) {}
+    
+    public IPipeStructure getStructure() {
+        return getBlockType().getStructure();
+    }
+
     // mask //
 
     public boolean canConnectTo(EnumFacing facing) {
-        return this.getBlockType().getStructure().canConnectTo(facing, connectionMask);
+        return this.getStructure().canConnectTo(facing, connectionMask);
     }
 
-    public void setOpen(EnumFacing facing) {
+    public void setConnected(EnumFacing facing, boolean renderClosed) {
         this.connectionMask |= 1 << facing.ordinal();
         updateActiveStatus(facing, false);
+        if (renderClosed) {        
+            this.renderMask |= 1 << facing.ordinal();
+        } else {
+            this.renderMask &= ~(1 << facing.ordinal());
+        }
     }
 
-    public void setClosed(EnumFacing facing) {
+    public void setDisconnected(EnumFacing facing) {
         this.connectionMask &= ~(1 << facing.ordinal());
+        this.renderMask &= ~(1 << facing.ordinal());
         updateActiveStatus(facing, false);
     }
 
-    public boolean isOpen(EnumFacing facing) {
+    public boolean isConnected(EnumFacing facing) {
         return (this.connectionMask & 1 << facing.ordinal()) > 0;
+    }
+
+    public boolean renderClosed(EnumFacing facing) {
+        return (this.renderMask & 1 << facing.ordinal()) > 0;
+    }
+
+    public byte getConnectionMask() {
+        return connectionMask;
     }
 
     public void setBlocked(EnumFacing facing) {
@@ -112,6 +158,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     public boolean isBlocked(EnumFacing facing) {
         return (this.blockedMask & 1 << facing.ordinal()) > 0;
+    }
+
+    public byte getBlockedMask() {
+        return blockedMask;
     }
 
     // paint //
@@ -168,7 +218,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     public void removeTicker(ITickable ticker) {
-        this.tickers.remove(this);
+        this.tickers.remove(ticker);
         //noinspection ConstantValue
         if (!this.isTicking() && getWorld() != null) getWorld().tickableTileEntities.remove(this);
     }
@@ -218,7 +268,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             }
             return;
         }
-        if (!this.isOpen(facing) && !canOpenConnection) {
+        if (!this.isConnected(facing) && !canOpenConnection) {
             setAllIdle(facing);
             return;
         }
@@ -241,7 +291,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             }
             netCapability.getKey().setActive(oneMatch);
         }
-        if (oneActive) this.setOpen(facing);
+        if (oneActive) this.setConnected(facing, false);
     }
 
     private void setAllIdle(EnumFacing facing) {
@@ -277,7 +327,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
         Cover cover = facing == null ? null : getCoverHolder().getCoverAtSide(facing);
         if (cover == null) {
-            if (facing == null || isOpen(facing)) {
+            if (facing == null || isConnected(facing)) {
                 return pipeCapability;
             }
             return null;
@@ -285,7 +335,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
         T coverCapability = cover.getCapability(capability, pipeCapability);
         if (coverCapability == pipeCapability) {
-            if (isOpen(facing)) {
+            if (isConnected(facing)) {
                 return pipeCapability;
             }
             return null;
@@ -300,7 +350,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     @Override
-    public @NotNull PipeBlock getBlockType() {
+    public @NotNull WorldPipeBlock getBlockType() {
         return block;
     }
 
@@ -308,19 +358,24 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public void setWorld(@NotNull World worldIn) {
         if (worldIn == this.getWorld()) return;
         super.setWorld(worldIn);
+        this.initialize(worldIn);
+    }
+
+    protected void initialize(World worldIn) {
         if (!worldIn.isRemote) {
             this.netLogicDatas.clear();
             this.capabilities.clear();
             this.netCapabilities.clear();
             this.listeners.forEach(NetLogicData.LogicDataListener::invalidate);
             this.listeners.clear();
+            boolean firstNode = true;
             for (WorldPipeNetNode node : getBlockType().getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
                 this.netCapabilities.put(node, new PipeCapabilityWrapper(node.getNet().getTargetCapabilities()));
                 String netName = node.getNet().mapName;
                 netLogicDatas.put(netName, node.getData());
                 var listener = node.getData().new LogicDataListener((e, r, f) ->
-                        writeCustomData(GregtechDataCodes.UPDATE_PIPE_LOGIC, buf -> {
+                        writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
                             buf.writeString(netName);
                             buf.writeString(e.getName());
                             buf.writeBoolean(r);
@@ -331,6 +386,11 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                         }));
                 this.listeners.add(listener);
                 node.getData().addListener(listener);
+                if (firstNode) {
+                    firstNode = false;
+                    this.temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+                }
+                node.getNet().updatePredication(node, this);
             }
             this.netLogicDatas.trim();
             this.listeners.trim();
@@ -362,34 +422,30 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        NBTTagCompound tag = new NBTTagCompound();
+        buf.writeVarInt(netLogicDatas.size());
         for (Map.Entry<String, NetLogicData> entry : netLogicDatas.entrySet()) {
-            tag.setTag(entry.getKey(), entry.getValue().serializeNBT());
+            buf.writeString(entry.getKey());
+            entry.getValue().encode(buf);
         }
-        buf.writeCompoundTag(tag);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         if (world.isRemote) {
             netLogicDatas.clear();
-            try {
-                NBTTagCompound logics = buf.readCompoundTag();
-                if (logics == null) return;
-                for (String name : logics.getKeySet()) {
-                    NetLogicData data = new NetLogicData();
-                    data.deserializeNBT((NBTTagList) logics.getTag("LogicData"));
-                    netLogicDatas.put(name, data);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            int count = buf.readVarInt();
+            for (int i = 0; i < count; i++) {
+                String key = buf.readString(255);
+                NetLogicData data = new NetLogicData();
+                data.decode(buf);
+                netLogicDatas.put(key, data);
             }
         }
     }
 
     @Override
     public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {
-        if (discriminator == GregtechDataCodes.UPDATE_PIPE_LOGIC) {
+        if (discriminator == UPDATE_PIPE_LOGIC) {
             // extra check just to make sure we don't affect actual net data with our writes
             if (world.isRemote) {
                 String netName = buf.readString(255);
@@ -399,19 +455,67 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 if (removed) {
                     this.netLogicDatas.computeIfPresent(netName, (k, v) -> v.removeLogicEntry(identifier));
                 } else {
-                    INetLogicEntry<?, ?> logic = GTGraphGatherables.getLogicsRegistry()
-                            .getOrDefault(identifier, () -> null).get();
-                    logic.decode(buf, fullChange);
-                    this.netLogicDatas.compute(netName, (k, v) -> {
-                        if (v == null) v = new NetLogicData();
-                        v.setLogicEntry(logic);
-                        return v;
-                    });
+                    if (fullChange) {
+                        INetLogicEntry<?, ?> logic = GTGraphGatherables.getLogicsRegistry()
+                                .getOrDefault(identifier, () -> null).get();
+                        logic.decode(buf, fullChange);
+                        this.netLogicDatas.compute(netName, (k, v) -> {
+                            if (v == null) v = new NetLogicData();
+                            v.setLogicEntry(logic);
+                            return v;
+                        });
+                    } else {
+                        NetLogicData data = this.netLogicDatas.get(netName);
+                        if (data != null) {
+                            INetLogicEntry<?, ?> entry = data.getLogicEntryNullable(identifier);
+                            if (entry != null) entry.decode(buf);
+                        } else return;
+                    }
+                    if (identifier.equals(TemperatureLogic.INSTANCE.getName())) {
+                        TemperatureLogic tempLogic = this.netLogicDatas.get(netName)
+                                .getLogicEntryNullable(TemperatureLogic.INSTANCE);
+                        if (tempLogic != null) updateTemperatureLogic(tempLogic);
+                    }
                 }
             }
+        } else if (discriminator == UPDATE_PAINT) {
+            this.paintingColor = buf.readInt();
         } else {
             this.getCoverHolder().readCustomData(discriminator, buf);
         }
+    }
+
+    // particle //
+
+    public void updateTemperatureLogic(@NotNull TemperatureLogic logic) {
+        if (overheatParticle == null || !overheatParticle.isAlive()) {
+            long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+            int temp = logic.getTemperature(tick);
+            if (temp > GTOverheatParticle.TEMPERATURE_CUTOFF) {
+                IPipeStructure structure = this.getStructure();
+                overheatParticle = new GTOverheatParticle(this, logic, structure.getPipeBoxes(this),
+                        structure instanceof IInsulatable i && i.isInsulated());
+            }
+        } else {
+            overheatParticle.setTemperatureLogic(logic);
+        }
+    }
+
+    public @Nullable TemperatureLogic getTemperatureLogic() {
+        return temperatureLogic;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void killOverheatParticle() {
+        if (overheatParticle != null) {
+            overheatParticle.setExpired();
+            overheatParticle = null;
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean isOverheatParticleAlive() {
+        return overheatParticle != null && overheatParticle.isAlive();
     }
 
     // misc overrides //
@@ -444,5 +548,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public void markAsDirty() {
         markDirty();
         // this most notably gets called when the covers of a pipe get updated, aka the edge predicates need syncing.
+        for (var node : this.netCapabilities.keySet()) {
+            node.getNet().updatePredication(node, this);
+        }
     }
 }

@@ -18,6 +18,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 
+import gregtech.common.pipelike.properties.MaterialEnergyProperties;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
@@ -1032,37 +1034,33 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss) {
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss));
+        private PipeNetProperties getOrCreatePipeNetProperties() {
+            if (properties.hasProperty(PropertyKey.PIPENET_PROPERTIES)) {
+                return properties.getProperty(PropertyKey.PIPENET_PROPERTIES);
+            } else {
+                PipeNetProperties prop = new PipeNetProperties();
+                properties.setProperty(PropertyKey.PIPENET_PROPERTIES, prop);
+                return prop;
+            }
+        }
+
+        public Builder cableProperties(long voltage, long amperage, long loss) {
+            getOrCreatePipeNetProperties().setProperty(MaterialEnergyProperties.create(voltage, amperage, loss));
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature) {
-            properties.setProperty(PropertyKey.WIRE,
-                    new WireProperties((int) voltage, amperage, loss, meltTemperature));
+        public Builder cablePropertiesT(long voltage, long amperage, long loss, int meltTemperature) {
+            getOrCreatePipeNetProperties().setProperty(MaterialEnergyProperties.createT(voltage, amperage, loss, meltTemperature));
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
-            return cableProperties(voltage, amperage, loss, 0, isSuperCon);
-        }
-
-        public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature, boolean isSuperCon) {
-            properties.setProperty(PropertyKey.WIRE,
-                    new WireProperties((int) voltage, amperage, loss, meltTemperature, isSuperCon));
+        public Builder cablePropertiesS(long voltage, long amperage, long loss, int superconductorTemperature) {
+            getOrCreatePipeNetProperties().setProperty(MaterialEnergyProperties.createS(voltage, amperage, loss, superconductorTemperature));
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon,
-                                       int criticalTemperature) {
-            return cableProperties(voltage, amperage, loss, 0, isSuperCon, criticalTemperature);
-        }
-
-        public Builder cableProperties(long voltage, int amperage, int loss, int meltTemperature, boolean isSuperCon,
-                                       int criticalTemperature) {
-            properties.setProperty(PropertyKey.WIRE,
-                    new WireProperties((int) voltage, amperage, loss, meltTemperature, isSuperCon,
-                            criticalTemperature));
+        public Builder cableProperties(long voltage, long amperage, long loss, int meltTemperature, int superconductorTemperature) {
+            getOrCreatePipeNetProperties().setProperty(new MaterialEnergyProperties(voltage, amperage, loss, meltTemperature, superconductorTemperature));
             return this;
         }
 

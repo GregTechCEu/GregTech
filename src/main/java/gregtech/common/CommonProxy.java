@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.GTRecipeInputCache;
@@ -24,6 +25,8 @@ import gregtech.api.util.GTLog;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
+import gregtech.common.pipelike.block.cable.CableBlock;
+import gregtech.common.pipelike.block.pipe.PipeBlock;
 import gregtech.common.pipelikeold.cable.BlockCable;
 import gregtech.common.pipelikeold.cable.ItemBlockCable;
 import gregtech.common.pipelikeold.fluidpipe.BlockFluidPipe;
@@ -86,33 +89,10 @@ public class CommonProxy {
                 if (material.hasProperty(PropertyKey.ORE) && !material.hasFlag(MaterialFlags.DISABLE_ORE_BLOCK)) {
                     createOreBlock(material);
                 }
-
-                if (material.hasProperty(PropertyKey.WIRE)) {
-                    for (BlockCable cable : CABLES.get(materialRegistry.getModid())) {
-                        if (!cable.getItemPipeType(null).isCable() ||
-                                !material.getProperty(PropertyKey.WIRE).isSuperconductor())
-                            cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
-                    }
-                }
-                if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
-                    for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) {
-                        if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
-                            pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
-                        }
-                    }
-                }
-                if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
-                    for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) {
-                        if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
-                            pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
-                        }
-                    }
-                }
             }
 
-            for (BlockCable cable : CABLES.get(materialRegistry.getModid())) registry.register(cable);
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) registry.register(pipe);
-            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) registry.register(pipe);
+            for (CableBlock cable : CABLES.get(materialRegistry.getModid())) registry.register(cable);
+            for (PipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid())) registry.register(cable);
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(pipe);
         for (BlockLaserPipe pipe : LASER_PIPES) registry.register(pipe);
@@ -225,12 +205,10 @@ public class CommonProxy {
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
-            for (BlockCable cable : CABLES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(cable, ItemBlockCable::new));
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
-            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
+            for (CableBlock cable : CABLES.get(materialRegistry.getModid()))
+                registry.register(createItemBlock(cable, ItemPipeBlock::new));
+            for (PipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid()))
+                registry.register(createItemBlock(cable, ItemPipeBlock::new));
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemBlockOpticalPipe::new));
         for (BlockLaserPipe pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemBlockLaserPipe::new));

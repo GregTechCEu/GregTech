@@ -9,6 +9,9 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.*;
 
 import crafttweaker.annotations.ZenRegister;
+
+import gregtech.common.pipelike.properties.MaterialEnergyProperties;
+
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -72,7 +75,8 @@ public class MaterialPropertyExpansion {
 
     @ZenMethod
     public static boolean hasWires(Material m) {
-        return m.hasProperty(PropertyKey.WIRE);
+        return m.hasProperty(PropertyKey.PIPENET_PROPERTIES) &&
+                m.getProperty(PropertyKey.PIPENET_PROPERTIES).hasProperty(MaterialEnergyProperties.KEY);
     }
 
     ////////////////////////////////////
@@ -246,18 +250,12 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock,
-                                @Optional boolean isSuperCon, @Optional int criticalTemp,
-                                @Optional int meltTemperature) {
+    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock,
+                                @Optional int meltTemperature, @Optional int superconductorTemp) {
         if (checkFrozen("add Wires to a material")) return;
-        if (m.hasProperty(PropertyKey.WIRE)) {
-            m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
-            m.getProperty(PropertyKey.WIRE).setAmperage(baseAmperage);
-            m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
-            m.getProperty(PropertyKey.WIRE).setMeltTemperature(meltTemperature);
-            m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
-            m.getProperty(PropertyKey.WIRE).setSuperconductorCriticalTemperature(criticalTemp);
-        } else m.setProperty(PropertyKey.WIRE,
-                new WireProperties(voltage, baseAmperage, lossPerBlock, meltTemperature, isSuperCon, criticalTemp));
+        if (!m.hasProperty(PropertyKey.PIPENET_PROPERTIES)) {
+            m.setProperty(PropertyKey.PIPENET_PROPERTIES, new PipeNetProperties());
+        }
+        m.getProperty(PropertyKey.PIPENET_PROPERTIES).setProperty(new MaterialEnergyProperties(voltage, baseAmperage, lossPerBlock, meltTemperature, superconductorTemp));
     }
 }

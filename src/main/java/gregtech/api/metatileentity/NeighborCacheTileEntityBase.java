@@ -67,13 +67,29 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
 
     @Override
     public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
-        if (world == null || pos == null) return null;
+        if (world() == null || pos() == null) return null;
         int i = facing.getIndex();
         TileEntity neighbor = this.neighbors[i];
         if (neighbor == this || (neighbor != null && neighbor.isInvalid())) {
-            neighbor = world.getTileEntity(pos.offset(facing));
+            neighbor = world().getTileEntity(pos().offset(facing));
             this.neighbors[i] = neighbor;
             this.neighborsInvalidated = false;
+        }
+        return neighbor;
+    }
+
+    @Override
+    public @Nullable TileEntity getNeighborNoChunkloading(@NotNull EnumFacing facing) {
+        if (world() == null || pos() == null) return null;
+        int i = facing.getIndex();
+        TileEntity neighbor = this.neighbors[i];
+        if (neighbor == this || (neighbor != null && neighbor.isInvalid())) {
+            BlockPos pos = pos().offset(facing);
+            if (world().isBlockLoaded(pos)) {
+                neighbor = world().getTileEntity(pos);
+                this.neighbors[i] = neighbor;
+                this.neighborsInvalidated = false;
+            } else return null;
         }
         return neighbor;
     }

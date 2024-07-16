@@ -10,8 +10,6 @@ import gregtech.api.graphnet.logic.NetLogicData;
 
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 
-import gregtech.api.graphnet.worldnet.WorldNetNode;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.util.Iterator;
+import java.util.Set;
 
 public interface IGraphNet {
 
@@ -79,7 +78,7 @@ public interface IGraphNet {
     void removeEdge(@NotNull NetNode source, @NotNull NetNode target, boolean bothWays);
 
     /**
-     * Gets the net graph backing this graphnet. This should NEVER be modified directly.
+     * Gets the net graph backing this graphnet. This should NEVER be modified directly, but can be queried.
      * @return the backing net graph
      */
     @ApiStatus.Internal
@@ -144,6 +143,16 @@ public interface IGraphNet {
                 return iterator.next().wrapped;
             }
         };
+    }
+
+    /**
+     * Used in {@link MultiNodeHelper} to determine if a node can be traversed, based on the nets that have been
+     * recently traversed in the {@link MultiNodeHelper}.
+     * @param net a recently traversed net
+     * @return if node traversal should be blocked.
+     */
+    default boolean clashesWith(IGraphNet net) {
+        return false;
     }
 
     /**

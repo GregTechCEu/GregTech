@@ -7,6 +7,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Note - all implementers of this interface are suggested to be final, in order to avoid unexpected {@link #union(IEdgePredicate)} behavior.
@@ -22,12 +23,17 @@ public interface IEdgePredicate<T extends IEdgePredicate<T, N>, N extends NBTBas
      * For example, if a predicate handler has 2 and-y predicates and 3 or-y predicates,
      * the effective result of evaluation will be: <br> (andy1) && (andy2) && (ory1 || ory2 || ory3)
      */
-    default boolean andy() {
-        return false;
-    }
+    boolean andy();
+
+    T getNew();
 
     boolean test(IPredicateTestObject object);
 
-    @Contract("_ -> new")
-    T union(IEdgePredicate<?, ?> other);
+    /**
+     * Returns null if the operation is not supported.
+     */
+    @Nullable
+    default T union(IEdgePredicate<?, ?> other) {
+        return null;
+    }
 }

@@ -10,7 +10,6 @@ import gregtech.api.graphnet.pipenetold.block.BlockPipe;
 import gregtech.api.graphnet.pipenetold.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTOverheatParticle;

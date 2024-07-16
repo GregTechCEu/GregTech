@@ -1,21 +1,26 @@
 package gregtech.api.graphnet.pipenet;
 
+import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.MultiNetNodeHandler;
+import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.alg.INetAlgorithm;
+import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
-import gregtech.api.graphnet.logic.MultiNetCountLogic;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
+import gregtech.api.graphnet.predicate.ShutterPredicate;
 import gregtech.api.graphnet.worldnet.WorldNet;
 
-import gregtech.api.graphnet.worldnet.WorldNetNode;
+import gregtech.api.util.IDirtyNotifiable;
+import gregtech.common.covers.CoverShutter;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.world.World;
@@ -26,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -55,6 +59,57 @@ public abstract class WorldPipeNet extends WorldNet {
             v.add(new WeakReference<>(this));
             return v;
         });
+    }
+
+    /**
+     * Called when a PipeTileEntity is marked dirty through {@link IDirtyNotifiable#markAsDirty()}, which is generally
+     * when the state of its covers is changed.
+     * @param node
+     * @param tile
+     */
+    public void updatePredication(@NotNull WorldPipeNetNode node, @NotNull PipeTileEntity tile) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            PipeTileEntity neighbor = tile.getPipeNeighbor(facing, false);
+            if (neighbor != null) {
+                WorldPipeNetNode neighborNode = this.getNode(neighbor.getPos());
+                if (neighborNode != null) {
+                    updatePredication(node, tile.getCoverHolder().getCoverAtSide(facing), neighborNode,
+                            neighbor.getCoverHolder().getCoverAtSide(facing.getOpposite()));
+                }
+            }
+        }
+    }
+
+    /**
+     * Preferred method to override if your net has custom predication rules. If the net is directed,
+     * this method will not be called twice, so special handling for directedness is needed.
+     * @param source the source of the edge.
+     * @param coverSource the cover on the source facing the target.
+     * @param target the target of the edge.
+     * @param coverTarget the cover on the target facing the source.
+     */
+    public void updatePredication(@NotNull WorldPipeNetNode source, @Nullable Cover coverSource,
+                                  @NotNull WorldPipeNetNode target, @Nullable Cover coverTarget) {
+        NetEdge edge = getEdge(source, target);
+        if (edge == null) return;
+        edge.getPredicateHandler().clearPredicates();
+        shutterify(edge, coverSource, coverTarget);
+        if (getGraph().isDirected()) {
+            edge = getEdge(target, source);
+            if (edge == null) return;
+            edge.getPredicateHandler().clearPredicates();
+            shutterify(edge, coverSource, coverTarget);
+        }
+    }
+
+    protected final void shutterify(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {
+        if (a instanceof CoverShutter s && !s.canPipePassThrough()) {
+            edge.getPredicateHandler().setPredicate(ShutterPredicate.INSTANCE);
+            return;
+        }
+        if (b instanceof CoverShutter s && !s.canPipePassThrough()) {
+            edge.getPredicateHandler().setPredicate(ShutterPredicate.INSTANCE);
+        }
     }
 
     public abstract Capability<?>[] getTargetCapabilities();
@@ -89,19 +144,20 @@ public abstract class WorldPipeNet extends WorldNet {
         // this is disk-load safe, since this method is called during nbt deserialization.
         sameDimensionNetsStream().map(n -> n.getNode(node.getEquivalencyData())).filter(Objects::nonNull)
                 .forEach(n -> {
-                    if (n.handler != node.handler) {
-                        if (node.handler == null) {
+                    if (n.overlapHelper != node.overlapHelper) {
+                        if (node.overlapHelper == null) {
                             // n handler is not null
-                            node.handler = n.handler;
+                            node.overlapHelper = n.overlapHelper;
+                            n.overlapHelper.addNode(node);
                             return;
                         }
-                    } else if (n.handler == null) {
+                    } else if (n.overlapHelper == null) {
                         // both handlers are null
-                        node.handler = new MultiNetNodeHandler(node.getData().getLogicEntryDefaultable(
-                                MultiNetCountLogic.INSTANCE).getValue(), MULTI_NET_TIMEOUT);
+                        node.overlapHelper = new MultiNodeHelper(MULTI_NET_TIMEOUT);
                     }
                     // n handler does not match cast handler
-                    n.handler = node.handler;
+                    n.overlapHelper = node.overlapHelper;
+                    n.overlapHelper.addNode(node);
                 });
     }
 

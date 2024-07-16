@@ -3,8 +3,9 @@ package gregtech.api.graphnet.gather;
 import gregtech.api.GTValues;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.INetLogicEntry;
-import gregtech.api.graphnet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.common.pipelike.block.cable.CableStructure;
+import gregtech.common.pipelike.block.pipe.PipeStructure;
 import gregtech.common.pipelike.net.energy.LossAbsoluteLogic;
 import gregtech.api.graphnet.logic.MultiNetCountLogic;
 import gregtech.api.graphnet.logic.ThroughputLogic;
@@ -61,7 +62,14 @@ public final class GTGraphGatherables {
     }
 
     @SubscribeEvent
-    public static void gatherMaterialStructures(GatherMaterialStructuresEvent event) {
-        CableStructure.registerDefaultStructures(event::registerMaterialStructure);
+    public static void gatherStructures(GatherStructuresEvent<?> event) {
+        if (event.getStructure() == PipeStructure.class) {
+            GatherStructuresEvent<PipeStructure> cast = (GatherStructuresEvent<PipeStructure>) event;
+            PipeStructure.registerDefaultStructures(cast::registerMaterialStructure);
+        }
+        if (event.getStructure() == CableStructure.class) {
+            GatherStructuresEvent<CableStructure> cast = (GatherStructuresEvent<CableStructure>) event;
+            CableStructure.registerDefaultStructures(cast::registerMaterialStructure);
+        }
     }
 }
