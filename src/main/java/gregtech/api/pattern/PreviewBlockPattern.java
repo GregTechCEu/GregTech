@@ -124,6 +124,21 @@ public class PreviewBlockPattern {
             return new Builder(aisleDir, stringDir, charDir);
         }
 
+        // protected because it doesn't do any dimension checks and just uses trust
+        protected Builder aisle(int repeats, PatternAisle aisle) {
+            for (String str : aisle.pattern) {
+                for (char c : str.toCharArray()) {
+                    if (!this.symbolMap.containsKey(c)) {
+                        this.symbolMap.put(c, null);
+                    }
+                }
+            }
+            PatternAisle copy = aisle.copy();
+            copy.actualRepeats = repeats;
+            aisles.add(copy);
+            return this;
+        }
+
         /**
          * Adds a new aisle to the builder.
          * @param repeats Amount of repeats.

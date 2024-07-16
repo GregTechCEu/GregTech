@@ -68,4 +68,10 @@ public class PatternAisle {
     public int getCharCount() {
         return pattern[0].length();
     }
+
+    public PatternAisle copy() {
+        PatternAisle clone = new PatternAisle(minRepeats, maxRepeats, pattern.clone());
+        clone.actualRepeats = this.actualRepeats;
+        return clone;
+    }
 }

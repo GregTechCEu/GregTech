@@ -83,7 +83,7 @@ public class GreggyBlockPos {
     public GreggyBlockPos setAxisRelative(EnumFacing.Axis a1, EnumFacing.Axis a2, int p1, int p2, int p3) {
         set(a1, p1);
         set(a2, p2);
-        // the 3 ordinals add up to 3, so to find the third axis just subtract the other 2 from 3
+        // the 3 ordinals add up to 3, so to find the third axis just subtract the other 2 ordinals from 3
         pos[3 - a1.ordinal() - a2.ordinal()] = p3;
         return this;
     }

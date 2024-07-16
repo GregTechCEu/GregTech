@@ -106,7 +106,8 @@ public class MultiblockPreviewRenderer {
         previewFacing = controllerBase.getFrontFacing();
         BlockPos controllerPos = BlockPos.ORIGIN;
         MultiblockControllerBase mte = null;
-        BlockInfo[][][] blocks = shapeInfo.getBlocks();
+        // todo fix
+        BlockInfo[][][] blocks = null;
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         int maxY = 0;
         for (int x = 0; x < blocks.length; x++) {

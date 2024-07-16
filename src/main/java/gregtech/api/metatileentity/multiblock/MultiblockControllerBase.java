@@ -84,6 +84,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Nullable
     public BlockPattern structurePattern;
 
+    /**
+     * Null until the first time {@link MultiblockControllerBase#getMatchingShapes()} is called, if it is not overriden
+     */
+    protected PreviewBlockPattern defaultPattern;
+
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
     private boolean structureFormed;
@@ -558,14 +563,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public List<MultiblockShapeInfo> getMatchingShapes() {
         return Collections.emptyList();
-        // if (this.structurePattern == null) {
-        // this.reinitializeStructurePattern();
-        // if (this.structurePattern == null) {
-        // return Collections.emptyList();
-        // }
-        // }
-        // int[][] aisleRepetitions = this.structurePattern.aisleRepetitions;
-        // return repetitionDFS(new ArrayList<>(), aisleRepetitions, new Stack<>());
     }
 
     /**
@@ -577,6 +574,21 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      */
     // todo add use for the keyMap with the multiblock builder
     public List<PreviewBlockPattern> getBuildableShapes(@Nullable Object2IntMap<String> keyMap, boolean hatches) {
+        List<MultiblockShapeInfo> infos = getMatchingShapes();
+
+        // if there is no overriden getMatchingShapes() just return the default one
+        if (infos.isEmpty()) {
+            if (defaultPattern == null) {
+                if (structurePattern == null) reinitializeStructurePattern();
+                if (structurePattern == null) return Collections.emptyList();
+
+                defaultPattern = structurePattern.getDefaultShape();
+            }
+
+            return Collections.singletonList(defaultPattern);
+        }
+
+        // otherwise just convert them all the preview block pattern and return
         return getMatchingShapes().stream().map(PreviewBlockPattern::new).collect(Collectors.toList());
     }
 

@@ -572,7 +572,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         MultiblockControllerBase controllerBase = null;
-        BlockInfo[][][] blocks = shapeInfo.getBlocks();
+        BlockInfo[][][] blocks = null;
+        // todo fix
         for (int x = 0; x < blocks.length; x++) {
             BlockInfo[][] aisle = blocks[x];
             for (int y = 0; y < aisle.length; y++) {
