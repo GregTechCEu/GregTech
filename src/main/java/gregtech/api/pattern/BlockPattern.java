@@ -37,6 +37,11 @@ public class BlockPattern {
      * {@link RelativeDirection} of structure directions
      */
     protected final int[] startOffset;
+
+    /**
+     * True if startOffset was passed in, false if it was null and automatically detected
+     */
+    protected final boolean hasStartOffset;
     protected final PatternAisle[] aisles;
     protected final Char2ObjectMap<TraceabilityPredicate> predicates;
     protected final StructureInfo info;
@@ -61,6 +66,7 @@ public class BlockPattern {
         this.dimensions = dimensions;
         this.structureDir = directions;
         this.predicates = predicates;
+        hasStartOffset = startOffset != null;
 
         if (startOffset == null) {
             this.startOffset = new int[3];
@@ -79,6 +85,8 @@ public class BlockPattern {
      * @param center The center char to look for
      */
     private void legacyStartOffset(char center) {
+        // don't do anything if center char isn't specified, this allows MultiblockControllerBase#validateStructurePatterns to do its thing while not logging an error here
+        if (center == 0) return;
         // could also use aisles.length but this is cooler
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
             int[] result = aisles[aisleI].firstInstanceOf(center);
@@ -90,7 +98,7 @@ public class BlockPattern {
             }
         }
 
-        System.out.println("FAILED TO FIND PREDICATE");
+        throw new IllegalStateException("Failed to find center char: '" + center + "'");
     }
 
     public PatternError getError() {
@@ -447,8 +455,23 @@ public class BlockPattern {
     }
 
     public PreviewBlockPattern getDefaultShape() {
-        Math.floor(1);
+        char[][][] pattern = new char[dimensions[2]][dimensions[1]][dimensions[0]];
+
+        for (PatternAisle aisle : aisles) {
+            char[][] resultAisle = new char[dimensions[2]][dimensions[1]];
+
+            for (String str : aisle.pattern) {
+                for (char c : str.toCharArray()) {
+                    TraceabilityPredicate predicate =
+                }
+            }
+        }
+
         return null;
+    }
+
+    public boolean hasStartOffset() {
+        return hasStartOffset;
     }
 
     private GreggyBlockPos offsetFrom(GreggyBlockPos start, int aisleOffset, int stringOffset, int charOffset,

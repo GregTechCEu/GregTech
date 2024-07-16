@@ -43,12 +43,14 @@ public class PreviewBlockPattern {
         structureDir = new RelativeDirection[] { RelativeDirection.BACK, RelativeDirection.UP,
                 RelativeDirection.RIGHT };
         this.startOffset = new int[3];
-        // i am lazy so hopefully addons follow the convention of using 'S' for their self predicate(aka center predicate)
+        // i am lazy so hopefully addons follow the convention of using 'S' for their self predicate(aka center
+        // predicate)
         legacyStartOffset('S');
         this.symbols = info.symbols;
     }
 
-    public PreviewBlockPattern(PatternAisle[] aisles, int[] dimensions, RelativeDirection[] directions, int[] startOffset, Char2ObjectMap<BlockInfo> symbols) {
+    public PreviewBlockPattern(PatternAisle[] aisles, int[] dimensions, RelativeDirection[] directions,
+                               int[] startOffset, Char2ObjectMap<BlockInfo> symbols) {
         this.aisles = aisles;
         this.dimensions = dimensions;
         this.structureDir = directions;
@@ -85,6 +87,7 @@ public class PreviewBlockPattern {
 
         /**
          * Way the builder progresses
+         * 
          * @see FactoryBlockPattern
          */
         protected final RelativeDirection[] directions = new RelativeDirection[3];
@@ -107,7 +110,8 @@ public class PreviewBlockPattern {
         }
 
         /**
-         * Same as calling {@link Builder#start(RelativeDirection, RelativeDirection, RelativeDirection)} with BACK, UP, RIGHT
+         * Same as calling {@link Builder#start(RelativeDirection, RelativeDirection, RelativeDirection)} with BACK, UP,
+         * RIGHT
          */
         public static Builder start() {
             return new Builder(RelativeDirection.BACK, RelativeDirection.UP, RelativeDirection.RIGHT);
@@ -115,9 +119,10 @@ public class PreviewBlockPattern {
 
         /**
          * Starts the builder, each pair of relative directions must be used exactly once!
-         * @param aisleDir The direction for aisles to advance in.
+         * 
+         * @param aisleDir  The direction for aisles to advance in.
          * @param stringDir The direction for strings to advance in.
-         * @param charDir The direction for chars to advance in.
+         * @param charDir   The direction for chars to advance in.
          */
         public static Builder start(RelativeDirection aisleDir, RelativeDirection stringDir,
                                     RelativeDirection charDir) {
@@ -141,8 +146,9 @@ public class PreviewBlockPattern {
 
         /**
          * Adds a new aisle to the builder.
+         * 
          * @param repeats Amount of repeats.
-         * @param aisle The aisle.
+         * @param aisle   The aisle.
          */
         public Builder aisle(int repeats, String... aisle) {
             // straight up copied from factory block pattern's code
@@ -240,7 +246,8 @@ public class PreviewBlockPattern {
         public PreviewBlockPattern build() {
             validateMissingValues();
             dimensions[0] = aisles.size();
-            return new PreviewBlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, directions, offset, symbolMap);
+            return new PreviewBlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, directions, offset,
+                    symbolMap);
         }
     }
 }

@@ -27,7 +27,8 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.common.blocks.MetaBlocks;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -54,6 +55,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -71,7 +73,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Stack;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -81,8 +82,8 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
-    @Nullable
-    public BlockPattern structurePattern;
+    // array is not null, but elements can be null
+    protected @Nullable BlockPattern @NotNull [] structurePatterns = new BlockPattern[64];
 
     /**
      * Null until the first time {@link MultiblockControllerBase#getMatchingShapes()} is called, if it is not overriden
@@ -91,10 +92,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
-    private boolean structureFormed;
+//    private boolean structureFormed;
 
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
-    protected boolean isFlipped;
+    // todo unplaceholder value
+    protected boolean[] isFlipped = new boolean[64];
+    protected boolean[] structuresFormed = new boolean[64];
+    protected long lastStructureFormedState = 0;
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -107,7 +111,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public void reinitializeStructurePattern() {
-        this.structurePattern = createStructurePattern();
+        createStructurePatterns();
+        validateStructurePatterns();
     }
 
     @Override
@@ -136,6 +141,29 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @NotNull
     protected abstract BlockPattern createStructurePattern();
 
+    /**
+     * Populate the structurePatterns array with structure patterns, values can be null. Doing this prevents
+     * frequent new BlockPatterns from being made.
+     */
+    protected void createStructurePatterns() {
+        structurePatterns[0] = createStructurePattern();
+    }
+
+    private void validateStructurePatterns() {
+        IntList failures = new IntArrayList();
+
+        for (int i = 1; i < structurePatterns.length; i++) {
+            //noinspection DataFlowIssue
+            if (structurePatterns[i] != null && !structurePatterns[i].hasStartOffset()) {
+                failures.add(i);
+            }
+        }
+
+        if (!failures.isEmpty()) {
+            throw new IllegalStateException("Structure patterns " + Arrays.toString(failures.toArray()) + " didn't have a manually set start offset");
+        }
+    }
+
     public EnumFacing getUpwardsFacing() {
         return upwardsFacing;
     }
@@ -152,26 +180,28 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 notifyBlockUpdate();
                 markDirty();
                 writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeByte(upwardsFacing.getIndex()));
-                if (structurePattern != null) {
-                    structurePattern.clearCache();
-                    checkStructurePattern();
+                for (BlockPattern pattern : structurePatterns) {
+                    if (pattern != null) pattern.clearCache();
                 }
+                checkStructurePattern();
             }
         }
     }
 
     public boolean isFlipped() {
-        return isFlipped;
+        return isFlipped[0];
     }
 
     /** <strong>Should not be called outside of structure formation logic!</strong> */
     @ApiStatus.Internal
-    protected void setFlipped(boolean isFlipped) {
-        if (this.isFlipped != isFlipped) {
-            this.isFlipped = isFlipped;
+    protected void setFlipped(boolean flipped, int index) {
+        if (index >= 64) throw new IllegalArgumentException("Max structure count of 64, dont @ me");
+        boolean flip = isFlipped[index];
+        if (flip != flipped) {
+            isFlipped[index] = flipped;
             notifyBlockUpdate();
             markDirty();
-            writeCustomData(UPDATE_FLIP, buf -> buf.writeBoolean(isFlipped));
+            writeCustomData(UPDATE_FLIP, buf -> buf.writeLong(GTUtility.boolArrToLong(isFlipped)));
         }
     }
 
@@ -341,14 +371,36 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return BlockPos::hashCode;
     }
 
+    /**
+     * Whether a structure at the index should be checked. The check is only performed if this returns true and the structure is not null.
+     * @param index The index, with 0 being the main structure
+     * @return True if the structure should be checked
+     */
+    protected boolean shouldCheckStructure(int index) {
+        return true;
+    }
+
     public void checkStructurePattern() {
-        if (structurePattern == null) return;
+
+    }
+
+    public void checkStructurePatterns() {
+        for (int i = 0; i < structurePatterns.length; i++) {
+            checkStructurePattern(i);
+        }
+    }
+
+    public void checkStructurePattern(int index) {
+        BlockPattern pattern = structurePatterns[index];
+        if (pattern == null || !shouldCheckStructure(index)) return;
+
         long time = System.nanoTime();
-        PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(),
+        PatternMatchContext context = pattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
         System.out.println(
                 "structure check for " + getClass().getSimpleName() + " took " + (System.nanoTime() - time) + " nanos");
-        if (context != null && !structureFormed) {
+
+        if (context != null && !structuresFormed[index]) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
             for (IMultiblockPart part : parts) {
@@ -358,7 +410,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     }
                 }
             }
-            this.setFlipped(context.neededFlip());
+            this.setFlipped(context.neededFlip(), index);
+
             parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
             for (IMultiblockPart multiblockPart : parts) {
@@ -370,18 +423,19 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     abilityPart.registerAbilities(abilityInstancesList);
                 }
             }
+
             this.multiblockParts.addAll(parts);
             this.multiblockAbilities.putAll(abilities);
             parts.forEach(part -> part.addToMultiBlock(this));
-            this.structureFormed = true;
+            this.structuresFormed[index] = true;
             writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(true));
             formStructure(context);
-        } else if (context == null && structureFormed) {
+        } else if (context == null && structuresFormed[index]) {
             invalidateStructure();
         } else if (context != null) {
             // ensure flip is ok, possibly not necessary but good to check just in case
             if (context.neededFlip() != isFlipped()) {
-                setFlipped(context.neededFlip());
+                setFlipped(context.neededFlip(), index);
             }
         }
     }
@@ -392,15 +446,21 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         this.multiblockParts.forEach(part -> part.removeFromMultiBlock(this));
         this.multiblockAbilities.clear();
         this.multiblockParts.clear();
-        this.structureFormed = false;
-        this.setFlipped(false);
+        Arrays.fill(structuresFormed, false);
+        Arrays.fill(isFlipped, false);
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(false));
+    }
+
+    protected void invalidStructureCaches() {
+        for (BlockPattern pattern : structurePatterns) {
+            if (pattern != null) pattern.clearCache();
+        }
     }
 
     @Override
     public void onRemoval() {
         super.onRemoval();
-        if (!getWorld().isRemote && structureFormed) {
+        if (!getWorld().isRemote) {
             invalidateStructure();
         }
     }
@@ -422,7 +482,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpwardsFacing")];
         }
         if (data.hasKey("IsFlipped")) {
-            this.isFlipped = data.getBoolean("IsFlipped");
+            GTUtility.longToBoolArr(data.getLong("IsFlipped"), isFlipped);
         }
         this.reinitializeStructurePattern();
     }
@@ -431,39 +491,40 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setByte("UpwardsFacing", (byte) upwardsFacing.getIndex());
-        data.setBoolean("IsFlipped", isFlipped);
+        data.setLong("IsFlipped", GTUtility.boolArrToLong(isFlipped));
         return data;
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeBoolean(structureFormed);
         buf.writeByte(upwardsFacing.getIndex());
-        buf.writeBoolean(isFlipped);
+        buf.writeLong(GTUtility.boolArrToLong(structuresFormed));
+        buf.writeLong(GTUtility.boolArrToLong(isFlipped));
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.structureFormed = buf.readBoolean();
         this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
-        this.isFlipped = buf.readBoolean();
+        GTUtility.longToBoolArr(buf.readLong(), structuresFormed);
+        GTUtility.longToBoolArr(buf.readLong(), isFlipped);
     }
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == STRUCTURE_FORMED) {
-            this.structureFormed = buf.readBoolean();
-            if (!structureFormed) {
-                GregTechAPI.soundManager.stopTileSound(getPos());
-            }
-        } else if (dataId == UPDATE_UPWARDS_FACING) {
+        if (dataId == UPDATE_UPWARDS_FACING) {
             this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
-        } else if (dataId == UPDATE_FLIP) {
-            this.isFlipped = buf.readBoolean();
+        } else if (dataId == STRUCTURE_FORMED) {
+            GTUtility.longToBoolArr(buf.readLong(), structuresFormed);
+            if (!isStructureFormed()) {
+                GregTechAPI.soundManager.stopTileSound(getPos());
+            }
+        }
+        else if (dataId == UPDATE_FLIP) {
+            GTUtility.longToBoolArr(buf.readLong(), isFlipped);
         }
     }
 
@@ -479,7 +540,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public boolean isStructureFormed() {
-        return structureFormed;
+        return structuresFormed[0];
     }
 
     @Override
@@ -494,10 +555,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             setUpwardsFacing(newUpwardsFacing);
         }
 
-        if (getWorld() != null && !getWorld().isRemote && structurePattern != null) {
+        if (getWorld() != null && !getWorld().isRemote) {
             // clear cache since the cache has no concept of pre-existing facing
             // for the controller block (or any block) in the structure
-            structurePattern.clearCache();
+            invalidStructureCaches();
             // recheck structure pattern immediately to avoid a slight "lag"
             // on deforming when rotating a multiblock controller
             checkStructurePattern();
@@ -567,8 +628,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     /**
      * The new(and better) way of getting shapes for in world, jei, and autobuild. Default impl just converts
-     * {@link MultiblockControllerBase#getMatchingShapes()} to this
-     * @param keyMap A map for autobuild, or null if it is an in world or jei preview.
+     * {@link MultiblockControllerBase#getMatchingShapes()}, if not empty, to this. If getMatchingShapes is empty, uses
+     * a default generated structure pattern, it's not very good which is why you should override this.
+     * 
+     * @param keyMap  A map for autobuild, or null if it is an in world or jei preview.
      * @param hatches This is whether you should put hatches, JEI previews need hatches, but autobuild and in world
      *                previews shouldn't(unless the hatch is necessary and only has one valid spot, such as EBF)
      */
@@ -579,10 +642,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         // if there is no overriden getMatchingShapes() just return the default one
         if (infos.isEmpty()) {
             if (defaultPattern == null) {
-                if (structurePattern == null) reinitializeStructurePattern();
-                if (structurePattern == null) return Collections.emptyList();
+                if (structurePatterns[0] == null) return Collections.emptyList();
 
-                defaultPattern = structurePattern.getDefaultShape();
+                // only generate for the first pattern, if you have more than 1 pattern you better override this
+                defaultPattern = structurePatterns[0].getDefaultShape();
             }
 
             return Collections.singletonList(defaultPattern);
