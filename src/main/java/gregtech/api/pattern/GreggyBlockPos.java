@@ -4,6 +4,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
+import com.google.common.collect.AbstractIterator;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Iterator;
+
 /**
  * A possibly saner(and mutable) alternative to BlockPos, where getters and setters use indices and axis instead of
  * separate names to avoid stupid code. All methods that return GreggyBlockPos return {@code this} whenever possible,
@@ -18,7 +24,7 @@ public class GreggyBlockPos {
     public static final int Y_SHIFT = NUM_Z_BITS;
     public static final int X_SHIFT = Y_SHIFT + NUM_Y_BITS;
     public static final long Z_MASK = (1L << NUM_Z_BITS) - 1;
-    public static final long Y_MASK = (1L << (NUM_Z_BITS + NUM_Y_BITS)) - 1 - Z_MASK;
+    public static final long Y_MASK = (1L << (NUM_Z_BITS + NUM_Y_BITS)) - 1;
 
     public GreggyBlockPos() {
         this(0, 0, 0);
@@ -50,6 +56,17 @@ public class GreggyBlockPos {
      */
     public GreggyBlockPos set(EnumFacing.Axis axis, int value) {
         pos[axis.ordinal()] = value;
+        return this;
+    }
+
+    /**
+     * Sets a coordinate in the axis to the value of that axis in the other pos.
+     * 
+     * @param axis  The axis to set.
+     * @param other The pos to take the other axis' value from.
+     */
+    public GreggyBlockPos set(EnumFacing.Axis axis, GreggyBlockPos other) {
+        pos[axis.ordinal()] = other.pos[axis.ordinal()];
         return this;
     }
 
@@ -105,7 +122,6 @@ public class GreggyBlockPos {
      * @return Long rep
      */
     public long toLong() {
-        // x values too large get automatically cut off
         return (long) pos[0] << X_SHIFT | ((long) pos[1] << Y_SHIFT) & Y_MASK | (pos[2] & Z_MASK);
     }
 
@@ -150,5 +166,92 @@ public class GreggyBlockPos {
     @Override
     public String toString() {
         return super.toString() + "[x=" + pos[0] + ", y=" + pos[1] + ", z=" + pos[2] + "]";
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof GreggyBlockPos greg)) return false;
+
+        return Arrays.equals(pos, greg.pos);
+    }
+
+    /**
+     * Returns an iterable going over all blocks in the cube. Although this iterator returns a mutable pos, it has
+     * an internal pos that sets the mutable one so modifying the mutable pos is safe. The iterator starts at one of the
+     * 8 points on the cube.
+     * Which of the 8 is determined by the 3 facings, the selected one is the one in the least {facing} direction for
+     * all 3 facings. The ending
+     * point is simply the point on the opposite corner to the first.
+     * For example, if the 3 facings are UP, NORTH, and WEST, then the first is the point in the most DOWN, SOUTH, and
+     * EAST direction.
+     * The 3 facings must be all in distinct axis, that is, their .getAxis() must all be distinct.
+     * 
+     * @param first   One corner of the cube.
+     * @param second  Other corner of the cube.
+     * @param facings 3 facings in the order of [ point, line, plane ]
+     */
+    public static Iterable<GreggyBlockPos> allInBox(GreggyBlockPos first, GreggyBlockPos second,
+                                                    EnumFacing... facings) {
+        if (facings.length != 3) throw new IllegalArgumentException("Facings must be array of length 3!");
+
+        // validate facings, int division so opposite facings mark the same element
+        boolean[] dirs = new boolean[3];
+        for (int i = 0; i < 3; i++) {
+            dirs[facings[i].ordinal() / 2] = true;
+        }
+
+        if (!(dirs[0] && dirs[1] && dirs[2]))
+            throw new IllegalArgumentException("The 3 facings must use each axis exactly once!");
+
+        GreggyBlockPos start = new GreggyBlockPos();
+        int[] length = new int[3];
+
+        for (int i = 0; i < 3; i++) {
+            int a = first.get(facings[i].getAxis());
+            int b = second.get(facings[i].getAxis());
+
+            // multiplying by -1 reverses the direction of min(...)
+            int mult = facings[i].getAxisDirection().getOffset();
+
+            start.set(facings[i].getAxis(), Math.min(a * mult, b * mult) * mult);
+
+            // length of the bounding box's axis
+            length[i] = Math.abs(a - b);
+        }
+
+        return new Iterable<>() {
+
+            @NotNull
+            @Override
+            public Iterator<GreggyBlockPos> iterator() {
+                return new AbstractIterator<>() {
+
+                    // offset, elements are always positive
+                    // the -1 here is to offset the first time offset[0]++ is called, so that the first
+                    // result is the start pos
+                    private final int[] offset = new int[] { -1, 0, 0 };
+                    private final GreggyBlockPos result = start.copy();
+
+                    @Override
+                    protected GreggyBlockPos computeNext() {
+                        offset[0]++;
+                        if (offset[0] > length[0]) {
+                            offset[0] = 0;
+                            offset[1]++;
+                        }
+
+                        if (offset[1] > length[1]) {
+                            offset[1] = 0;
+                            offset[2]++;
+                        }
+
+                        if (offset[2] > length[2]) return endOfData();
+
+                        return result.from(start).offset(facings[0], offset[0]).offset(facings[1], offset[1])
+                                .offset(facings[2], offset[2]);
+                    }
+                };
+            }
+        };
     }
 }
