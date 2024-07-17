@@ -372,7 +372,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * Whether a structure at the index should be checked. The check is only performed if this returns true and the
+     * Whether a structure at the index should be checked for correct pattern. The check is only performed if this returns true and the
      * structure is not null. This helps save on performance if there is a redundant structure.
      * 
      * @param index The index, with 0 being the main structure
@@ -388,7 +388,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void checkStructurePatterns() {
         for (int i = 0; i < structurePatterns.length; i++) {
-            checkStructurePattern(i);
+            if (shouldCheckStructure(i)) checkStructurePattern(i);
         }
     }
 
@@ -431,9 +431,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             parts.forEach(part -> part.addToMultiBlock(this));
             this.structuresFormed[index] = true;
             writeCustomData(STRUCTURE_FORMED, buf -> buf.writeVarInt(index));
-            formStructure(context);
+            formStructure(context, index);
         } else if (context == null && structuresFormed[index]) {
-            invalidateStructure();
+            invalidateStructure(index);
         } else if (context != null) {
             // ensure flip is ok, possibly not necessary but good to check just in case
             if (context.neededFlip() != isFlipped()) {
@@ -446,6 +446,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     protected void formStructure(PatternMatchContext context) {}
 
+    protected void formStructure(PatternMatchContext context, int index) {
+        // form the main structure
+        if (index == 0) formStructure(context);
+    }
+
     public void invalidateStructure() {
         this.multiblockParts.forEach(part -> part.removeFromMultiBlock(this));
         this.multiblockAbilities.clear();
@@ -453,6 +458,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         Arrays.fill(structuresFormed, false);
         Arrays.fill(isFlipped, false);
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeVarInt(-1));
+    }
+
+    public void invalidateStructure(int index) {
+        // invalidate the main structure
+        if (index == 0) invalidateStructure();
     }
 
     protected void invalidStructureCaches() {
