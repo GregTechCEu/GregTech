@@ -44,20 +44,20 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
             if (!multiblock.isStructureFormed()) {
-                multiblock.structurePattern.autoBuild(player, multiblock);
+//                multiblock.structurePatterns[0].autoBuild(player, multiblock);
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;
         } else {
             // If not sneaking, try to show structure debug info (if any) in chat.
             if (!multiblock.isStructureFormed()) {
-                PatternError error = multiblock.structurePattern.getError();
-                if (error != null) {
-                    player.sendMessage(
-                            new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
-                    player.sendMessage(new TextComponentString(error.getErrorInfo()));
-                    return EnumActionResult.SUCCESS;
-                }
+//                PatternError error = multiblock.structurePatterns[0].getError();
+//                if (error != null) {
+//                    player.sendMessage(
+//                            new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
+//                    player.sendMessage(new TextComponentString(error.getErrorInfo()));
+//                    return EnumActionResult.SUCCESS;
+//                }
             }
             player.sendMessage(new TextComponentTranslation("gregtech.multiblock.pattern.no_errors")
                     .setStyle(new Style().setColor(TextFormatting.GREEN)));

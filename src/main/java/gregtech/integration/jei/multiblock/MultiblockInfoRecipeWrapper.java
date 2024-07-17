@@ -618,13 +618,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
         Map<BlockPos, TraceabilityPredicate> predicateMap = new HashMap<>();
         if (controllerBase != null) {
-//            if (controllerBase.structurePattern == null) {
-//                controllerBase.reinitializeStructurePattern();
-//            }
-//            if (controllerBase.structurePattern != null) {
-//                controllerBase.structurePattern.cache.forEach((pos, blockInfo) -> predicateMap
-//                        .put(BlockPos.fromLong(pos), (TraceabilityPredicate) blockInfo.getInfo()));
-//            }
+            // if (controllerBase.structurePattern == null) {
+            // controllerBase.reinitializeStructurePattern();
+            // }
+            // if (controllerBase.structurePattern != null) {
+            // controllerBase.structurePattern.cache.forEach((pos, blockInfo) -> predicateMap
+            // .put(BlockPos.fromLong(pos), (TraceabilityPredicate) blockInfo.getInfo()));
+            // }
         }
 
         List<ItemStack> sortedParts = gatherStructureBlocks(worldSceneRenderer.world, blockMap, parts).stream()

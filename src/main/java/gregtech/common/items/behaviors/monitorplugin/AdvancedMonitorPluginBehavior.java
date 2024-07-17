@@ -219,65 +219,65 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public void update() {
-        super.update();
-        if (this.screen.getOffsetTimer() % 20 == 0) {
-            if (this.screen.getWorld().isRemote) { // check connections
-                if (worldSceneRenderer == null && validPos != null && validPos.size() > 0) {
-                    createWorldScene();
-                }
-                if (this.connect && worldSceneRenderer != null &&
-                        this.screen.getController() instanceof MetaTileEntityCentralMonitor) {
-                    if (connections == null) connections = new HashMap<>();
-                    connections.clear();
-                    for (MetaTileEntityMonitorScreen[] monitorScreens : ((MetaTileEntityCentralMonitor) this.screen
-                            .getController()).screens) {
-                        for (MetaTileEntityMonitorScreen screen : monitorScreens) {
-                            if (screen != null && screen.plugin instanceof FakeGuiPluginBehavior &&
-                                    ((FakeGuiPluginBehavior) screen.plugin).getHolder() == this.holder) {
-                                MetaTileEntity met = ((FakeGuiPluginBehavior) screen.plugin).getRealMTE();
-                                if (met != null) {
-                                    BlockPos pos = met.getPos();
-                                    Pair<List<MetaTileEntityMonitorScreen>, Vector3f> tuple = connections
-                                            .getOrDefault(pos, new MutablePair<>(new ArrayList<>(), null));
-                                    tuple.getLeft().add(screen);
-                                    connections.put(pos, tuple);
-                                }
-                            }
-                        }
-                    }
-                }
-            } else { // check multi-block valid
-                if (holder != null && holder.getMetaTileEntity() instanceof MultiblockControllerBase) {
-                    MultiblockControllerBase entity = (MultiblockControllerBase) holder.getMetaTileEntity();
-                    if (entity.isStructureFormed()) {
-                        if (!isValid) {
-                            PatternMatchContext result = entity.structurePattern.checkPatternFastAt(
-                                    entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite(),
-                                    entity.getUpwardsFacing(), entity.allowsFlip());
-                            if (result != null) {
-                                validPos = entity.structurePattern.cache.keySet().stream().map(BlockPos::fromLong)
-                                        .collect(Collectors.toSet());
-                                writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> {
-                                    buf.writeVarInt(validPos.size());
-                                    for (BlockPos pos : validPos) {
-                                        buf.writeBlockPos(pos);
-                                    }
-                                });
-                                isValid = true;
-                            } else {
-                                validPos = Collections.emptySet();
-                            }
-                        }
-                    } else if (isValid) {
-                        writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> buf.writeVarInt(0));
-                        isValid = false;
-                    }
-                }
-            }
-        }
-        if (this.screen.getWorld().isRemote && spin > 0 && lastMouse == null) {
-            rotationPitch = (int) ((rotationPitch + spin * 4) % 360);
-        }
+//        super.update();
+//        if (this.screen.getOffsetTimer() % 20 == 0) {
+//            if (this.screen.getWorld().isRemote) { // check connections
+//                if (worldSceneRenderer == null && validPos != null && validPos.size() > 0) {
+//                    createWorldScene();
+//                }
+//                if (this.connect && worldSceneRenderer != null &&
+//                        this.screen.getController() instanceof MetaTileEntityCentralMonitor) {
+//                    if (connections == null) connections = new HashMap<>();
+//                    connections.clear();
+//                    for (MetaTileEntityMonitorScreen[] monitorScreens : ((MetaTileEntityCentralMonitor) this.screen
+//                            .getController()).screens) {
+//                        for (MetaTileEntityMonitorScreen screen : monitorScreens) {
+//                            if (screen != null && screen.plugin instanceof FakeGuiPluginBehavior &&
+//                                    ((FakeGuiPluginBehavior) screen.plugin).getHolder() == this.holder) {
+//                                MetaTileEntity met = ((FakeGuiPluginBehavior) screen.plugin).getRealMTE();
+//                                if (met != null) {
+//                                    BlockPos pos = met.getPos();
+//                                    Pair<List<MetaTileEntityMonitorScreen>, Vector3f> tuple = connections
+//                                            .getOrDefault(pos, new MutablePair<>(new ArrayList<>(), null));
+//                                    tuple.getLeft().add(screen);
+//                                    connections.put(pos, tuple);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            } else { // check multi-block valid
+//                if (holder != null && holder.getMetaTileEntity() instanceof MultiblockControllerBase) {
+//                    MultiblockControllerBase entity = (MultiblockControllerBase) holder.getMetaTileEntity();
+//                    if (entity.isStructureFormed()) {
+//                        if (!isValid) {
+//                            PatternMatchContext result = entity.structurePattern.checkPatternFastAt(
+//                                    entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite(),
+//                                    entity.getUpwardsFacing(), entity.allowsFlip());
+//                            if (result != null) {
+//                                validPos = entity.structurePattern.cache.keySet().stream().map(BlockPos::fromLong)
+//                                        .collect(Collectors.toSet());
+//                                writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> {
+//                                    buf.writeVarInt(validPos.size());
+//                                    for (BlockPos pos : validPos) {
+//                                        buf.writeBlockPos(pos);
+//                                    }
+//                                });
+//                                isValid = true;
+//                            } else {
+//                                validPos = Collections.emptySet();
+//                            }
+//                        }
+//                    } else if (isValid) {
+//                        writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> buf.writeVarInt(0));
+//                        isValid = false;
+//                    }
+//                }
+//            }
+//        }
+//        if (this.screen.getWorld().isRemote && spin > 0 && lastMouse == null) {
+//            rotationPitch = (int) ((rotationPitch + spin * 4) % 360);
+//        }
     }
 
     @Override

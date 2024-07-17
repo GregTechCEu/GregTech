@@ -44,6 +44,16 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
                 .build();
     }
 
+    @Override
+    protected void createStructurePatterns() {
+        super.createStructurePatterns();
+        structurePatterns[1] = FactoryBlockPattern.start()
+                .aisle("X")
+                .where('X', states(getCasingState()))
+                .setStartOffset(5, 0, 0)
+                .build();
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {

@@ -27,9 +27,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.common.blocks.MetaBlocks;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -55,6 +52,8 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -92,7 +91,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
-//    private boolean structureFormed;
+    // private boolean structureFormed;
 
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
     // todo unplaceholder value
@@ -153,14 +152,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         IntList failures = new IntArrayList();
 
         for (int i = 1; i < structurePatterns.length; i++) {
-            //noinspection DataFlowIssue
+            // noinspection DataFlowIssue
             if (structurePatterns[i] != null && !structurePatterns[i].hasStartOffset()) {
                 failures.add(i);
             }
         }
 
         if (!failures.isEmpty()) {
-            throw new IllegalStateException("Structure patterns " + Arrays.toString(failures.toArray()) + " didn't have a manually set start offset");
+            throw new IllegalStateException("Structure patterns " + Arrays.toString(failures.toArray()) +
+                    " didn't have a manually set start offset");
         }
     }
 
@@ -372,7 +372,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * Whether a structure at the index should be checked. The check is only performed if this returns true and the structure is not null.
+     * Whether a structure at the index should be checked. The check is only performed if this returns true and the
+     * structure is not null.
+     * 
      * @param index The index, with 0 being the main structure
      * @return True if the structure should be checked
      */
@@ -380,9 +382,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return true;
     }
 
-    public void checkStructurePattern() {
-
-    }
+    public void checkStructurePattern() {}
 
     public void checkStructurePatterns() {
         for (int i = 0; i < structurePatterns.length; i++) {
@@ -522,8 +522,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (!isStructureFormed()) {
                 GregTechAPI.soundManager.stopTileSound(getPos());
             }
-        }
-        else if (dataId == UPDATE_FLIP) {
+        } else if (dataId == UPDATE_FLIP) {
             GTUtility.longToBoolArr(buf.readLong(), isFlipped);
         }
     }

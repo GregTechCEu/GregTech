@@ -105,8 +105,8 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        if (this.handler == null || this.structurePattern == null) return;
-        handler.determineLayerCount(this.structurePattern);
+        if (this.handler == null || this.structurePatterns[0] == null) return;
+        handler.determineLayerCount(this.structurePatterns[0]);
         handler.determineOrderedFluidOutputs();
     }
 

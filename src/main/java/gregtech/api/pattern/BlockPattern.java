@@ -85,7 +85,8 @@ public class BlockPattern {
      * @param center The center char to look for
      */
     private void legacyStartOffset(char center) {
-        // don't do anything if center char isn't specified, this allows MultiblockControllerBase#validateStructurePatterns to do its thing while not logging an error here
+        // don't do anything if center char isn't specified, this allows
+        // MultiblockControllerBase#validateStructurePatterns to do its thing while not logging an error here
         if (center == 0) return;
         // could also use aisles.length but this is cooler
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
@@ -462,7 +463,7 @@ public class BlockPattern {
 
             for (String str : aisle.pattern) {
                 for (char c : str.toCharArray()) {
-//                    TraceabilityPredicate predicate =
+                    // TraceabilityPredicate predicate =
                 }
             }
         }
