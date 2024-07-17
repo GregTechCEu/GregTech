@@ -462,7 +462,7 @@ public class BlockPattern {
 
             for (String str : aisle.pattern) {
                 for (char c : str.toCharArray()) {
-                    TraceabilityPredicate predicate =
+//                    TraceabilityPredicate predicate =
                 }
             }
         }
