@@ -245,7 +245,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (drawEUt) defaultLines++;
         if (drawDuration) defaultLines++;
 
-        int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
+        int yPosition = recipeHeight - ((recipe.getAdditionalLinesCount() + defaultLines) * 10 - 3);
 
         // Default entries
         if (drawTotalEU) {
