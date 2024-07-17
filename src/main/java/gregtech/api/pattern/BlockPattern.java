@@ -3,6 +3,7 @@ package gregtech.api.pattern;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class BlockPattern {
 
     /**
-     * In the form of [ charDir, stringDir, aisleDir ]
+     * In the form of [ aisleDir, stringDir, charDir ]
      */
     public final RelativeDirection[] structureDir;
 
@@ -33,8 +34,10 @@ public class BlockPattern {
     protected final int[] dimensions;
 
     /**
-     * In the form of [ aisleOffset, stringOffset, charOffset ] where the offsets are the opposite
-     * {@link RelativeDirection} of structure directions
+     * In the form of { pair 1 -> amount, pair 2 -> amount, pair 3 -> amount }.
+     * Each pair is relative directions, such as FRONT, BACK, or RIGHT, LEFT.
+     * The amount is the offset in the first of each pair, can be negative.
+     * {@link RelativeDirection} of structure directions, stored as ordinals
      */
     protected final int[] startOffset;
 
@@ -92,9 +95,11 @@ public class BlockPattern {
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
             int[] result = aisles[aisleI].firstInstanceOf(center);
             if (result != null) {
-                startOffset[0] = aisleI;
-                startOffset[1] = result[0];
-                startOffset[2] = result[1];
+                // when legacyStartOffset() is called, aisles have been reversed, so don't reverse it manually here
+                // the scuffed ternary is so that if the structure dir is the first thing, then don't reverse it
+                startOffset[0] = aisleI * (structureDir[0] == RelativeDirection.VALUES[0] ? 1 : -1);
+                startOffset[1] = (dimensions[1] - 1 - result[0]) * (structureDir[1] == RelativeDirection.VALUES[2] ? 1 : -1);
+                startOffset[2] = (dimensions[2] - 1 - result[1]) * (structureDir[2] == RelativeDirection.VALUES[4] ? 1 : -1);
                 return;
             }
         }
@@ -237,6 +242,8 @@ public class BlockPattern {
                     cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(),
                             !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
                 }
+
+                GTLog.logger.info("Checked pos at " + charPos + " with flip " + flip);
 
                 boolean result = predicate.test(worldState, info, globalCount, layerCount);
                 if (!result) return false;
@@ -475,20 +482,40 @@ public class BlockPattern {
         return hasStartOffset;
     }
 
-    private GreggyBlockPos offsetFrom(GreggyBlockPos start, int aisleOffset, int stringOffset, int charOffset,
-                                      @NotNull EnumFacing frontFacing,
-                                      @NotNull EnumFacing upFacing, boolean flip) {
-        GreggyBlockPos pos = start.copy();
-        pos.offset(structureDir[0].getRelativeFacing(frontFacing, upFacing, flip), aisleOffset);
-        pos.offset(structureDir[1].getRelativeFacing(frontFacing, upFacing, flip), stringOffset);
-        pos.offset(structureDir[2].getRelativeFacing(frontFacing, upFacing, flip), charOffset);
-        return pos;
-    }
-
     private GreggyBlockPos startPos(GreggyBlockPos controllerPos, EnumFacing frontFacing, EnumFacing upFacing,
                                     boolean flip) {
-        // negate since the offsets are the opposite direction of structureDir
-        return offsetFrom(controllerPos, -startOffset[0], -startOffset[1], -startOffset[2], frontFacing, upFacing,
-                flip);
+        GreggyBlockPos start = controllerPos.copy();
+        for (int i = 0; i < 3; i++) {
+            start.offset(RelativeDirection.VALUES[2 * i].getRelativeFacing(frontFacing, upFacing, flip), startOffset[i]);
+        }
+        return start;
+    }
+
+    /**
+     * Moves the start offset in the given direction and amount, use {@link BlockPattern#clearCache()} after to prevent the cache from being stuck in the old offset.
+     * @param dir The direction, relative to controller.
+     * @param amount The amount to offset.
+     */
+    public void moveStartOffset(RelativeDirection dir, int amount) {
+        // reverse amount if its in the opposite direction
+        amount *= (dir.ordinal() % 2 == 0) ? 1 : -1;
+        startOffset[dir.ordinal() / 2] += amount;
+    }
+
+    /**
+     * Gets the start offset. You probably should use {@link BlockPattern#moveStartOffset(RelativeDirection, int)} instead of mutating the result, but I can't stop you.
+     * @return The start offset.
+     */
+    public int[] getStartOffset() {
+        return startOffset;
+    }
+
+    /**
+     * Get the start offset in the given direction.
+     * @param dir The direction, relative to controller.
+     * @return The amount, can be negative.
+     */
+    public int getStartOffset(RelativeDirection dir) {
+        return startOffset[dir.ordinal() / 2] * (dir.ordinal() % 2 == 0 ? 1 : -1);
     }
 }

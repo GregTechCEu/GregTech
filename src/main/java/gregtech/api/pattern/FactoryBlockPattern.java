@@ -1,10 +1,13 @@
 package gregtech.api.pattern;
 
+import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import com.google.common.base.Joiner;
+
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -20,9 +23,9 @@ import static gregtech.api.util.RelativeDirection.*;
  * When the multiblock is placed, its facings are concrete. Then, the {@link RelativeDirection}s passed into
  * {@link FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)} are ways in which the
  * pattern progresses. It can be thought like this, where startPos() is either defined via
- * {@link FactoryBlockPattern#setStartOffset(int, int, int)}
+ * {@link FactoryBlockPattern#startOffset(RelativeDirection, int)}
  * , or automatically detected(for legacy compat only, you should use
- * {@link FactoryBlockPattern#setStartOffset(int, int, int)} always for new code):
+ * {@link FactoryBlockPattern#startOffset(RelativeDirection, int)} always for new code):
  * 
  * <pre>
  * {@code
@@ -46,11 +49,11 @@ public class FactoryBlockPattern {
      */
     private final int[] dimensions = { -1, -1, -1 };
     /**
-     * In the form of [ aisleOffset, stringOffset, charOffset ] where the offsets are the opposite
-     * {@link RelativeDirection} of structure directions
+     * Look at the field with the same name in  {@link BlockPattern} for docs
      */
     private int[] startOffset;
     private char centerChar;
+    private boolean reverse = true;
 
     private final List<PatternAisle> aisles = new ArrayList<>();
 
@@ -72,7 +75,7 @@ public class FactoryBlockPattern {
         structureDir[1] = stringDir;
         structureDir[2] = aisleDir;
         int flags = 0;
-        for (int i = 0; i < this.structureDir.length; i++) {
+        for (int i = 0; i < 3; i++) {
             switch (structureDir[i]) {
                 case UP:
                 case DOWN:
@@ -164,10 +167,15 @@ public class FactoryBlockPattern {
         return setRepeatable(repeatCount, repeatCount);
     }
 
-    public FactoryBlockPattern setStartOffset(int aisleOffset, int stringOffset, int charOffset) {
-        this.startOffset[0] = aisleOffset;
-        this.startOffset[1] = stringOffset;
-        this.startOffset[2] = charOffset;
+    /**
+     * Sets a part of the start offset in the given direction.
+     * @param dir The direction to offset, relative to controller.
+     * @param amount The amount to offset.
+     */
+    public FactoryBlockPattern startOffset(RelativeDirection dir, int amount) {
+        if (startOffset == null) startOffset = new int[3];
+
+        startOffset[dir.ordinal() / 2] = amount * (dir.ordinal() % 2 == 0 ? 1 : -1);
         return this;
     }
 
@@ -207,12 +215,13 @@ public class FactoryBlockPattern {
         return this;
     }
 
-    public FactoryBlockPattern where(String symbol, TraceabilityPredicate blockMatcher) {
-        if (symbol.length() == 1) {
-            return where(symbol.charAt(0), blockMatcher);
-        }
-        throw new IllegalArgumentException(
-                String.format("Symbol \"%s\" is invalid! It must be exactly one character!", symbol));
+    /**
+     * Calling this stops the reversal of aisles, you should call this on all new patterns
+     */
+    // todo remove this stuff
+    public FactoryBlockPattern modern() {
+        reverse = false;
+        return this;
     }
 
     public BlockPattern build() {
@@ -221,8 +230,13 @@ public class FactoryBlockPattern {
         RelativeDirection temp = structureDir[0];
         structureDir[0] = structureDir[2];
         structureDir[2] = temp;
-        return new BlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, structureDir, startOffset, symbolMap,
-                centerChar);
+        PatternAisle[] aisleArray = aisles.toArray(new PatternAisle[0]);
+        if (reverse) {
+            ArrayUtils.reverse(aisleArray);
+        } else {
+            if (startOffset == null) GTLog.logger.warn("You used .modern() on the builder without using .startOffset()! This will have unintended behavior!");
+        }
+        return new BlockPattern(aisleArray, dimensions, structureDir, startOffset, symbolMap, centerChar);
     }
 
     private void checkMissingPredicates() {

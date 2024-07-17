@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -7,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -16,10 +18,16 @@ import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 
 public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
 
@@ -50,8 +58,30 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
         structurePatterns[1] = FactoryBlockPattern.start()
                 .aisle("X")
                 .where('X', states(getCasingState()))
-                .setStartOffset(5, 0, 0)
+                .startOffset(RelativeDirection.FRONT, 5)
                 .build();
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+
+        ITextComponent button = new TextComponentString("Second structure offset: " + structurePatterns[1].getStartOffset(RelativeDirection.FRONT));
+        button.appendText(" ");
+        button.appendSibling(withButton(new TextComponentString("[-]"), "sub"));
+        button.appendText(" ");
+        button.appendSibling(withButton(new TextComponentString("[+]"), "add"));
+        textList.add(button);
+
+        textList.add(new TextComponentString("Second structure: " + (structuresFormed[1] ? "FORMED" : "UNFORMED")));
+    }
+
+    @Override
+    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
+        super.handleDisplayClick(componentData, clickData);
+        int mod = componentData.equals("add") ? 1 : -1;
+        structurePatterns[1].moveStartOffset(RelativeDirection.FRONT, mod);
+        structurePatterns[1].clearCache();
     }
 
     @SideOnly(Side.CLIENT)
