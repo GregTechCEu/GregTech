@@ -1044,10 +1044,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     .where('r', this.getControlRodChannelState())
                     .where('e', MetaTileEntities.FUEL_ROD_INPUT, EnumFacing.UP)
                     .where('g', MetaTileEntities.FUEL_ROD_OUTPUT, EnumFacing.DOWN)
-                    .where('b', MetaTileEntities.COOLANT_INPUT, EnumFacing.DOWN)
-                    .where('d', MetaTileEntities.COOLANT_OUTPUT, EnumFacing.UP)
+                    .where('b', MetaTileEntities.COOLANT_INPUT, EnumFacing.UP)
+                    .where('d', MetaTileEntities.COOLANT_OUTPUT, EnumFacing.DOWN)
                     .where('q', MetaTileEntities.CONTROL_ROD, EnumFacing.UP)
-                    .where('m', MetaTileEntities.CONTROL_ROD_MODERATED, EnumFacing.DOWN)
+                    .where('m', MetaTileEntities.CONTROL_ROD_MODERATED, EnumFacing.UP)
 
                     // B for the vessel blocks on the walls
                     .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
